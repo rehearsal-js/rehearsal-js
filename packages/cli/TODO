@@ -1,0 +1,18 @@
+// dumping ground for thoughts at project conception
+TODO: Investigate just writing a custom eslint-typescript plugin for autofix
+
+TODO: Aggregate insights into summary for the "pain ahead" with logical next steps based on TS identifier. Even with autofix this should be done. eg. summary similar to NYC possibly via https://www.npmjs.com/package/create-jest-runner
+
+TODO: Autofix to include shim for newly introduced primitive types maybe leverage https://github.com/sandersn/downlevel-dts
+
+TODO: Does TS have a WIP for this (check with Daniel from TS Team)?
+
+TODO: Possibly decouple EmberTry into new package and use it?
+
+TODO: Possibly leverage CheckupJS tasks?
+
+TODO: Possibly if speed is a factor down the road experiment with Rust
+
+TODO: Possibly rename rehearsal into projects with namespaces @rehearsal/cli /api /rust etc
+
+TODO: Possibly convert to mono repo and version the autofix transforms

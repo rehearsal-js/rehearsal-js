@@ -1,0 +1,122 @@
+{
+  "name": "@rehearsal-js/cli",
+  "version": "0.0.1",
+  "description": "Rehearsal-JS CLI",
+  "license": "BSD-2-Clause",
+  "files": [
+    "bin",
+    "dist",
+    "src",
+    "static",
+    "oclif.manifest.json"
+  ],
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "bin": {
+    "rehearsal": "./bin/run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rehearsal-js/rehearsal-js.git"
+  },
+  "scripts": {
+    "build": "yarn tsc -b",
+    "docs": "yarn api-extractor run --typescript-compiler-folder ./node_modules/typescript && yarn api-documenter markdown -i ./temp -o ./docs",
+    "lint": "yarn npm-run-all lint:*",
+    "lint:eslint": "yarn eslint . --ext .ts",
+    "lint:tsc-src": "yarn tsc --noEmit",
+    "oclif": "npm-run-all oclif:*",
+    "oclif:manifest": "yarn oclif-dev manifest",
+    "oclif:readme": "yarn oclif-dev readme",
+    "oclif:markdown": "oclif-dev readme --dir ./markdown --multi",
+    "prepack": "yarn docs",
+    "prepare": "husky install && yarn build",
+    "test": "yarn lint && yarn nyc --extension .ts mocha"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ]
+  },
+  "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/errors": "^1.3.4",
+    "@oclif/parser": "^3.8.5",
+    "@oclif/plugin-help": "^3.2.2",
+    "compare-versions": "^3.6.0",
+    "debug": "^4.3.2",
+    "execa": "^5.1.1",
+    "fs-extra": "^10.0.0",
+    "jscodeshift": "^0.13.0",
+    "json5": "^2.2.0",
+    "listr2": "^3.12.2",
+    "tmp": "^0.2.1",
+    "ts-migrate": "^0.1.26",
+    "ts-migrate-plugins": "^0.1.26",
+    "ts-migrate-server": "^0.1.26",
+    "@rehearsal-js/reporter": "^0.0.1",
+    "@rehearsal-js/tsc-transforms": "^0.0.1",
+    "@rehearsal-js/plugin-ts-migrate": "^0.0.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^13.2.1",
+    "@commitlint/config-conventional": "^13.2.0",
+    "@microsoft/api-documenter": "^7.13.63",
+    "@microsoft/api-extractor": "^7.18.16",
+    "@oclif/dev-cli": "^1.26.0",
+    "@oclif/test": "^1.2.8",
+    "@types/chai": "^4.2.22",
+    "@types/chai-as-promised": "^7.1.4",
+    "@types/chai-fs": "^2.0.2",
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.13",
+    "@types/inquirer": "^8.1.3",
+    "@types/jscodeshift": "^0.11.2",
+    "@types/json5": "*",
+    "@types/mime-types": "^2.1.1",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.3",
+    "@types/tmp": "^0.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-fs": "^2.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-filenames": "^1.3.2",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-oclif": "^0.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "husky": "^7.0.4",
+    "mocha": "^9.1.3",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^15.1.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.3.1",
+    "typescript": "~4.4.4"
+  },
+  "oclif": {
+    "commands": "./dist/src/commands",
+    "bin": "rehearsal",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "engines": {
+    "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+  },
+  "volta": {
+    "node": "16.0.0",
+    "yarn": "1.22.17"
+  }
+}

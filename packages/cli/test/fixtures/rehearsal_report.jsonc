@@ -1,0 +1,299 @@
+{
+  "projectName": "rehearsal",
+  "tscVersion": "4.5.0-beta",
+  "fileCount": 19,
+  "cumulativeErrors": 5,
+  "uniqueErrors": 1,
+  "uniqueErrorList": ["2307"],
+  "autofixedErrorList": [],
+  "autofixedCumulativeErrors": 0,
+  "tscLog": [
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/create-isolated-page-benchmark.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [
+        {
+          "errorCategory": "error",
+          "errorCode": "2307",
+          "errorMessage": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-model' or i... Remove this comment to see the full error message",
+          "helpMessage": "Try running `yarn add 'string'.`",
+          "source": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-model' or i... Remove this comment to see the full error message",
+          "sourceLocation": {
+            "end": { "column": 147, "line": 1 },
+            "start": { "column": 0, "line": 1 }
+          }
+        }
+      ],
+      "filePath": "./src/create-trace-navigation-benchmark.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/index.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/run.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/trace/archive-trace.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/trace/auth.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/trace/conditions.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [
+        {
+          "errorCategory": "error",
+          "errorCode": "2307",
+          "errorMessage": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "helpMessage": "Try running `yarn add 'string'.`",
+          "source": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "sourceLocation": {
+            "end": { "column": 147, "line": 1 },
+            "start": { "column": 0, "line": 1 }
+          }
+        }
+      ],
+      "filePath": "./src/create-trace-benchmark.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/trace/index.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/trace/utils.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/gc.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [
+        {
+          "errorCategory": "error",
+          "errorCode": "2307",
+          "errorMessage": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "helpMessage": "Try running `yarn add 'string'.`",
+          "source": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "sourceLocation": {
+            "end": { "column": 147, "line": 1 },
+            "start": { "column": 0, "line": 1 }
+          }
+        },
+        {
+          "errorCategory": "error",
+          "errorCode": "2307",
+          "errorMessage": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-model' or i... Remove this comment to see the full error message",
+          "helpMessage": "Try running `yarn add 'string'.`",
+          "source": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-model' or i... Remove this comment to see the full error message",
+          "sourceLocation": {
+            "end": { "column": 149, "line": 9 },
+            "start": { "column": 2, "line": 9 }
+          }
+        }
+      ],
+      "filePath": "./src/metrics/extract-navigation-sample.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/inject-mark-observer.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/is-navigation-timing-mark.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/interfaces.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/read-handle.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [
+        {
+          "errorCategory": "error",
+          "errorCode": "2307",
+          "errorMessage": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "helpMessage": "Try running `yarn add 'string'.`",
+          "source": " @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message",
+          "sourceLocation": {
+            "end": { "column": 147, "line": 1 },
+            "start": { "column": 0, "line": 1 }
+          }
+        }
+      ],
+      "filePath": "./src/util/run-trace.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/navigate.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    },
+    {
+      "autofixedCumulativeErrors": 0,
+      "autofixedErrorList": [],
+      "cumulativeErrors": 0,
+      "errors": [],
+      "filePath": "./src/util/setup-page.ts",
+      "level": "info",
+      "message": "tsc-log-entry",
+      "service": "rehearsal-js",
+      "uniqueErrorList": [],
+      "uniqueErrors": 0
+    }
+  ]
+}
