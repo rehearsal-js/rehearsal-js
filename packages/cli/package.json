@@ -65,7 +65,7 @@
     "@rehearsal-js/plugin-ts-migrate": "^0.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^13.2.1",
+    "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^13.2.0",
     "@microsoft/api-documenter": "^7.13.63",
     "@microsoft/api-extractor": "^7.18.16",
