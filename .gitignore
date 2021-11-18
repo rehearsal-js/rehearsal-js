@@ -1,0 +1,17 @@
+.Rapp.history
+dist/
+node_modules/
+vendor/
+tmp/
+/*workspace
+*.log
+*.tgz
+*.tmp
+.nyc_output
+.idea/*
+.vscode/
+/packages/cli/bin/run.js
+**SCRATCH**
+**/test/results/**
+*.tsbuildinfo
+**.DS_Store**
