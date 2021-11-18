@@ -15,7 +15,7 @@
     "lerna": "^4.0.0",
     "husky": "^7.0.4",
     "conventional-changelog-cli": "^2.1.1",
-    "@commitlint/config-conventional": "^12.1.4",
+    "@commitlint/config-conventional": "^15.0.0",
     "@commitlint/cli": "^13.1.0",
     "@microsoft/api-extractor": "^7.18.11",
     "@microsoft/api-documenter": "^7.13.54",
