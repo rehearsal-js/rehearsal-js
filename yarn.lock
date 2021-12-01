@@ -2012,9 +2012,9 @@
     write-file-atomic "^3.0.3"
 
 "@microsoft/api-documenter@^7.13.54", "@microsoft/api-documenter@^7.13.63", "@microsoft/api-documenter@^7.13.68":
-  version "7.13.68"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.13.68.tgz#c1e144764cac0684adefe78fd848d78c3f374681"
-  integrity sha512-cRjwK1TDyGxFGgCsRG8G0Yi3Z4akvfWgw1pWAxKFbm7ajlQQGZcHPnb+n4lKlSeQ5g/cxc7hcdw54Mvisne9Bg==
+  version "7.13.70"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.13.70.tgz#231a0529c245d0fb9fc24484eb637747f3aacf83"
+  integrity sha512-bQFF1riylANQOkKi8dU7yJOe0k/hcQ9En8uvr3Wr1rwVxCIqmzEzigWmQkPG/z8wFEqI8cPipWymXSBPv2dIpw==
   dependencies:
     "@microsoft/api-extractor-model" "7.13.16"
     "@microsoft/tsdoc" "0.13.2"
