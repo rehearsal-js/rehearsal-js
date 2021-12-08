@@ -14,12 +14,12 @@
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "license": "BSD-2-Clause",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "yarn tsc -b",
     "lint": "npm-run-all lint:*",
@@ -34,6 +34,21 @@
     "jscodeshift": "^0.13.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
+    "@microsoft/api-documenter": "^7.13.68",
+    "@microsoft/api-extractor": "^7.18.19",
+    "@types/chai": "^4.2.22",
+    "@types/chai-as-promised": "^7.1.4",
+    "@types/chai-fs": "^2.0.2",
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.13",
+    "@types/json5": "*",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.7",
+    "@types/tmp": "^0.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "chai-fs": "^2.0.0",
@@ -51,22 +66,7 @@
     "pre-commit": "^1.2.2",
     "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
-    "typescript": "~4.5.2",
-    "@commitlint/cli": "^15.0.0",
-    "@commitlint/config-conventional": "^15.0.0",
-    "@types/chai": "^4.2.22",
-    "@types/chai-as-promised": "^7.1.4",
-    "@types/chai-fs": "^2.0.2",
-    "@types/debug": "^4.1.7",
-    "@types/fs-extra": "^9.0.13",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.11.7",
-    "@microsoft/api-documenter": "^7.13.68",
-    "@microsoft/api-extractor": "^7.18.19",
-    "@types/json5": "*",
-    "@types/tmp": "^0.2.2",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0"
+    "typescript": "~4.5.2"
   },
   "engines": {
     "node": "^12.22.0 || ^14.17.0 || >=16.0.0"

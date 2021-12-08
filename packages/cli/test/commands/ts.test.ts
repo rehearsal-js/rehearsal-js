@@ -3,8 +3,8 @@ import { expect } from "chai";
 
 import TS from "../../src/commands/ts";
 
-describe("ts: without flag on throw error", () => {
-  test.stderr().it(`runs ts`, async () => {
+describe("ts:on test arg throw error", () => {
+  test.stderr().it(`runs ts as test`, async () => {
     try {
       await TS.run(["--is_test"]);
     } catch (error) {

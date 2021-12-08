@@ -61,8 +61,7 @@ const pluginTSMigrateAutofix: Plugin<any> = {
     };
 
     // find all comments
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    root.find(TS_PARSER.Comment).forEach((astPath: any) => {
+    root.find(TS_PARSER.CommentLine).forEach((astPath) => {
       const commentText = astPath.value.value;
 
       if (commentText.includes("ts-migrate")) {

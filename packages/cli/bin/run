@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// tslint:disable: no-var-requires
 require("@oclif/command")
-  .run()
+  .run(undefined, __dirname)
   .then(require("@oclif/command/flush"))
   .catch(require("@oclif/errors/handle"));

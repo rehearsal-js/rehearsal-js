@@ -1,7 +1,6 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
 import execa from "execa";
-
 import type { GitDescribe } from "./interfaces";
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
@@ -93,7 +92,7 @@ export function parseLongDescribe(desc: string): GitDescribe {
 }
 
 /**
- * Convert instances like "foo-web-1.2.3" and "1.2.3" to "1.2.3"
+ * Convert instances like "foo-web_10.2.3" and "1.2.3" to "1.2.3"
  *
  * @param versionString - version string to convert into just numbers and periods
  * @returns version string with only numbers and periods

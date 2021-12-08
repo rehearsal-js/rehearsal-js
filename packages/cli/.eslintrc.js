@@ -7,7 +7,7 @@ module.exports = {
   parserOptions: {
     sourceType: "module",
   },
-  plugins: ["oclif", "@typescript-eslint", "import", "prettier", "filenames"],
+  plugins: ["@typescript-eslint", "import", "prettier", "filenames"],
   extends: [
     "eslint:recommended",
     "plugin:prettier/recommended",
