@@ -1,9 +1,9 @@
 import { Plugin } from "ts-migrate-server";
 import jscodeshift from "jscodeshift";
-import { diagnosticAutofix } from "@rehearsal-js/tsc-transforms";
+import { diagnosticAutofix } from "@rehearsal/tsc-transforms";
 
 import type { SourceLocation } from "jscodeshift";
-import type { TSCLog, TSCLogError } from "@rehearsal-js/reporter";
+import type { TSCLog, TSCLogError } from "@rehearsal/reporter";
 
 const TS_PARSER = jscodeshift.withParser("ts");
 

@@ -1,9 +1,9 @@
 {
-  "name": "@rehearsal-js/tsc-transforms",
+  "name": "@rehearsal/tsc-transforms",
   "version": "0.0.1",
-  "description": "Rehearsal-JS TSC Transforms",
+  "description": "Rehearsal TSC Transforms",
   "keywords": [
-    "rehearsal-js",
+    "rehearsal",
     "ast",
     "transforms",
     "ts-migrate",

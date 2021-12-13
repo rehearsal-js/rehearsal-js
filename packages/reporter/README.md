@@ -1,3 +1,3 @@
-# @rehearsal-js/reporter
+# @rehearsal/reporter
 
-Terminal and File reporter for @rehearsal-js/cli
+Terminal and File reporter for @rehearsal/cli

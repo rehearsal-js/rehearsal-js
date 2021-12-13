@@ -1,3 +1,3 @@
-# @rehearsal-js/plugin-ts-migrate
+# @rehearsal/plugin-ts-migrate
 
 Plugins for ts-migrate

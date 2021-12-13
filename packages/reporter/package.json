@@ -1,9 +1,9 @@
 {
-  "name": "@rehearsal-js/reporter",
+  "name": "@rehearsal/reporter",
   "version": "0.0.1",
-  "description": "Rehearsal-JS Reporter",
+  "description": "Rehearsal Reporter",
   "keywords": [
-    "rehearsal-js",
+    "rehearsal",
     "reporter",
     "typescript"
   ],

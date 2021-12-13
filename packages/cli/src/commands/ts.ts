@@ -2,7 +2,7 @@ import { Command } from "@oclif/command";
 import * as compareVersions from "compare-versions";
 import { Listr } from "listr2";
 import { resolve } from "path";
-import { Reporter } from "@rehearsal-js/reporter";
+import { Reporter } from "@rehearsal/reporter";
 
 import execa = require("execa");
 import { tsMigrateAutofix } from "../ts-migrate";

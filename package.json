@@ -1,5 +1,5 @@
 {
-  "name": "rehearsal-js-workspace",
+  "name": "rehearsal-workspace",
   "private": true,
   "workspaces": [
     "packages/*"
