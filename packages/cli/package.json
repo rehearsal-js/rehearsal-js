@@ -25,7 +25,6 @@
     "oclif:manifest": "yarn oclif-dev manifest",
     "oclif:readme": "yarn oclif-dev readme",
     "oclif:markdown": "oclif-dev readme --dir ./markdown --multi",
-    "prepack": "yarn docs",
     "prepare": "yarn build",
     "test": "yarn lint && nyc --extension .ts mocha \"test/commands/**/*.test.ts\" \"test/helpers/**/*.test.ts\""
   },
