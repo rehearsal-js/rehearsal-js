@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
-import execa from "execa";
+
+import execa = require("execa");
 import type { GitDescribe } from "./interfaces";
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
