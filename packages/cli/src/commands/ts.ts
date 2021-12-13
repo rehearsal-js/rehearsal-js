@@ -1,12 +1,12 @@
 import { Command } from "@oclif/command";
 import * as compareVersions from "compare-versions";
 import { Listr } from "listr2";
-import execa from "execa";
 import { resolve } from "path";
 import { Reporter } from "@rehearsal-js/reporter";
-import { tsMigrateAutofix } from "../ts-migrate";
 
-import { build, src_dir, is_test } from "../helpers/flags";
+import execa = require("execa");
+import { tsMigrateAutofix } from "../ts-migrate";
+import { build, src_dir, is_test, autofix, update_dep } from "../helpers/flags";
 import { git, timestamp } from "../utils";
 
 const DEFAULT_TS_BUILD = "beta";
@@ -29,7 +29,7 @@ type Context = {
 export default class TS extends Command {
   static aliases = ["typescript"];
   static description =
-    "bump typescript dev-dependency with compilation insights and auto-fix";
+    "bump typescript dev-dependency with compilation insights and auto-fix options";
   static flags = {
     build: build({
       default: DEFAULT_TS_BUILD,
@@ -37,6 +37,8 @@ export default class TS extends Command {
     src_dir: src_dir({
       default: "./app",
     }),
+    autofix,
+    update_dep,
     // hidden flags for testing purposes only
     is_test,
   };
@@ -146,10 +148,15 @@ export default class TS extends Command {
                   try {
                     await execa(TSC_PATH, ["-b"]);
 
+                    // if we should update package.json with typescript version and submit a PR
                     task.newListr(() => [
                       {
                         title: "Creating Pull Request",
                         task: async (_ctx, task) => {
+                          if (!flags.update_dep) {
+                            task.skip("update_dep flag not set");
+                          }
+
                           // do PR work here
                           task.title = `Pull Request Link "https://github.com/foo/foo/pull/00000"`;
                           // successful exit
@@ -182,6 +189,9 @@ export default class TS extends Command {
       {
         title: "Attempting Autofix",
         task: async (_ctx, task) => {
+          if (!flags.autofix) {
+            task.skip("Autofix not enabled");
+          }
           const exitCode = await tsMigrateAutofix(resolvedSrcDir, REPORTER);
           if (exitCode === 0) {
             task.title = "Autofix successful";
