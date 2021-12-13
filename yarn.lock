@@ -2103,9 +2103,9 @@
     wrap-ansi "^6.2.0"
 
 "@oclif/plugin-help@^3.2.2":
-  version "3.2.15"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-help/-/plugin-help-3.2.15.tgz#b3a4a8b5677ff4128d785d4dae57bdd21e741c86"
-  integrity sha512-Qx+sUSR62xbZlYaFpaxyv8jgTpmTUdOwKfhGGhl1uRZ2L8+eqKsMzmPXhb4miRfUbvxAQGfPAm8+jkX3ASxPvw==
+  version "3.2.16"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-help/-/plugin-help-3.2.16.tgz#5690afde9c3641b8acc567ee5bacf54df5fef505"
+  integrity sha512-O78iV+NhBQtviIhVEVuI21vZ9nRr9B5pR+P60oB5XFvvPKkSkV5Culih42mYU30VuWiaiWlg7+OdA4pmSPEpwg==
   dependencies:
     "@oclif/command" "1.8.11"
     "@oclif/config" "1.18.2"
