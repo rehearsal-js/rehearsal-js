@@ -3,12 +3,14 @@ import * as compareVersions from "compare-versions";
 import { Listr } from "listr2";
 import { resolve } from "path";
 import { Reporter } from "@rehearsal/reporter";
-
+import debug from "debug";
 import execa = require("execa");
+
 import { tsMigrateAutofix } from "../ts-migrate";
 import { build, src_dir, is_test, autofix, update_dep } from "../helpers/flags";
 import { git, timestamp } from "../utils";
 
+const DEBUG_CALLBACK = debug("rehearsal:ts");
 const DEFAULT_TS_BUILD = "beta";
 const TSC_PATH = resolve("./node_modules/.bin/tsc");
 const TS_MIGRATE_PATH = resolve("./node_modules/.bin/ts-migrate");
@@ -53,6 +55,8 @@ export default class TS extends Command {
       this.error("throw if test");
     }
 
+    DEBUG_CALLBACK("flags %O", flags);
+
     // oclif already parses the package.json of the consuming app
     REPORTER.projectName = this.config.pjson.name;
 
@@ -70,6 +74,7 @@ export default class TS extends Command {
                   "version",
                 ]);
                 ctx.latestELRdBuild = stdout;
+                DEBUG_CALLBACK("ctx:latestELRdBuild", ctx.latestELRdBuild);
               },
             },
             {
@@ -78,6 +83,7 @@ export default class TS extends Command {
                 const { stdout } = await execa(TSC_PATH, ["--version"]);
                 // Version 4.5.0-beta
                 ctx.currentTSVersion = stdout.split(" ")[1];
+                DEBUG_CALLBACK("ctx:currentTSVersion", ctx.currentTSVersion);
               },
             },
             {
@@ -93,6 +99,7 @@ export default class TS extends Command {
                   ctx.tsVersion = ctx.latestELRdBuild;
                   parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                   REPORTER.tscVersion = ctx.tsVersion;
+                  DEBUG_CALLBACK("ctx:tsVersion", ctx.tsVersion);
                 } else {
                   parent.title = `This version of typescript has already been tested. Exiting.`;
                   // successful exit
