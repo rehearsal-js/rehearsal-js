@@ -29,8 +29,8 @@
     "test": "yarn lint && yarn nyc --extension .ts mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.1",
-    "@rehearsal/tsc-transforms": "^0.0.1",
+    "@rehearsal/reporter": "^0.0.2",
+    "@rehearsal/tsc-transforms": "^0.0.2",
     "jscodeshift": "^0.13.0",
     "ts-migrate-server": "^0.1.26"
   },
