@@ -19,12 +19,13 @@ import { git, timestamp } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
 const DEFAULT_TS_BUILD = "beta";
-const TSC_PATH = resolve("./node_modules/.bin/tsc");
-const TS_MIGRATE_PATH = resolve("./node_modules/.bin/ts-migrate");
 
 const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");
 const NPM_PATH = resolve(VOLTA_HOME, "bin/npm");
+
+let TSC_PATH = "";
+let TS_MIGRATE_PATH = "";
 
 DEBUG_CALLBACK("paths %O", { VOLTA_HOME, YARN_PATH, NPM_PATH });
 
@@ -55,6 +56,18 @@ export default class TS extends Command {
     is_test,
   };
 
+  // rather than explicity setting from node_modules dir we need to handle workspaces use case
+  async setTSMigratePath(): Promise<void> {
+    const { stdout } = await execa(YARN_PATH, ["which", "ts-migrate"]);
+    TS_MIGRATE_PATH = resolve(stdout.trim());
+  }
+
+  // rather than explicity setting from node_modules dir we need to handle workspaces use case
+  async setTSCPath(): Promise<void> {
+    const { stdout } = await execa(YARN_PATH, ["which", "tsc"]);
+    TSC_PATH = resolve(stdout.trim());
+  }
+
   async run(): Promise<void> {
     const { flags } = this.parse(TS);
     const { build, src_dir } = flags;
@@ -64,6 +77,9 @@ export default class TS extends Command {
       // do some stuff for tests
       this.error("throw if test");
     }
+
+    await this.setTSMigratePath();
+    await this.setTSCPath();
 
     DEBUG_CALLBACK("flags %O", flags);
 
