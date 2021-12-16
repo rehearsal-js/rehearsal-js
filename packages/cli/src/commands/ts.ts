@@ -59,13 +59,17 @@ export default class TS extends Command {
   // rather than explicity setting from node_modules dir we need to handle workspaces use case
   async setTSMigratePath(): Promise<void> {
     const { stdout } = await execa(YARN_PATH, ["which", "ts-migrate"]);
-    TS_MIGRATE_PATH = resolve(stdout.trim());
+    TS_MIGRATE_PATH = stdout.split("\n")[2].trim();
+
+    DEBUG_CALLBACK("TS_MIGRATE_PATH", TS_MIGRATE_PATH);
   }
 
   // rather than explicity setting from node_modules dir we need to handle workspaces use case
   async setTSCPath(): Promise<void> {
     const { stdout } = await execa(YARN_PATH, ["which", "tsc"]);
-    TSC_PATH = resolve(stdout.trim());
+    TSC_PATH = stdout.split("\n")[2].trim();
+
+    DEBUG_CALLBACK("TSC_PATH", TSC_PATH);
   }
 
   async run(): Promise<void> {
