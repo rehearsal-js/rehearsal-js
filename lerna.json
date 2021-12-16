@@ -1,7 +1,12 @@
 {
-  "version": "0.0.2",
-  "packages": ["packages/*"],
-  "ignoreChanges": ["**/test/**", "**/*.md"],
+  "version": "0.0.3",
+  "packages": [
+    "packages/*"
+  ],
+  "ignoreChanges": [
+    "**/test/**",
+    "**/*.md"
+  ],
   "npmClient": "yarn",
   "useWorkspaces": true
 }
