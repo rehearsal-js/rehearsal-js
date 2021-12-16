@@ -1,24 +1,7 @@
 {
-  "command": {
-    "publish": {
-      "tempTag": true
-    },
-    "version": {
-      "allowBranch": "master",
-      "conventionalCommits": true,
-      "createRelease": "github",
-      "exact": true,
-      "message": "chore(release): %s"
-    }
-  },
-  "version": "4.0.0",
-  "packages": [
-    "packages/*"
-  ],
-  "ignoreChanges": [
-    "**/test/**",
-    "**/*.md"
-  ],
+  "version": "0.0.2",
+  "packages": ["packages/*"],
+  "ignoreChanges": ["**/test/**", "**/*.md"],
   "npmClient": "yarn",
   "useWorkspaces": true
 }
