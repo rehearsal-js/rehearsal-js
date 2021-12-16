@@ -33,14 +33,14 @@ export default class Reporter {
 
     this.terminalLogger = createLogger({
       defaultMeta: {
-        service: "rehearsal-js",
+        service: "rehearsal",
       },
       transports: [new transports.Console({})],
     });
 
     this.fileLogger = createLogger({
       defaultMeta: {
-        service: "rehearsal-js",
+        service: "rehearsal",
       },
       transports: [new transports.File({ filename: this.streamFile })],
       format: format.combine(format.json()),

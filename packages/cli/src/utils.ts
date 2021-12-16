@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
+import findUp from "find-up";
 
 import execa = require("execa");
 import type { GitDescribe } from "./interfaces";
@@ -104,4 +105,34 @@ export function normalizeVersionString(versionString: string): string {
     return result ? result[1] : versionString;
   }
   return versionString;
+}
+
+export async function determineProjectName(
+  directory = process.cwd()
+): Promise<string | null> {
+  const packageJSONPath = await findUp("package.json", {
+    cwd: directory,
+  });
+
+  if (!packageJSONPath) {
+    return null;
+  }
+  const packageJSON = readJSON<{ name: string }>(packageJSONPath);
+  return packageJSON?.name ?? null;
+}
+
+// rather than explicity setting from node_modules dir we need to handle workspaces use case
+export async function getPathToBinary(
+  yarnPath: string,
+  binaryName: string
+): Promise<string> {
+  const { stdout } = await execa(yarnPath, ["which", binaryName]);
+  try {
+    return stdout
+      .split("\n")
+      .filter((p) => p.includes(`.bin/${binaryName}`))[0]
+      .trim();
+  } catch (error) {
+    throw new Error(`Unable to find ${binaryName} in ${yarnPath}`);
+  }
 }

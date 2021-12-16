@@ -1,6 +1,6 @@
 import { inspect } from "util";
 import { test } from "mocha";
-
+import { resolve } from "path";
 
 type ArgsOf<T extends (...args: readonly unknown[]) => unknown> = T extends (
   // tslint:disable-next-line: no-unused
@@ -34,3 +34,6 @@ export function eachCase<
     });
   });
 }
+
+export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
+export const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");

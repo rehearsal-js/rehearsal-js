@@ -15,7 +15,12 @@ import {
   update_dep,
   tsc_version,
 } from "../helpers/flags";
-import { git, timestamp } from "../utils";
+import {
+  git,
+  timestamp,
+  determineProjectName,
+  getPathToBinary,
+} from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
 const DEFAULT_TS_BUILD = "beta";
@@ -36,6 +41,7 @@ type Context = {
   tsVersion: string;
   latestELRdBuild: string;
   currentTSVersion: string;
+  skip: boolean;
 };
 
 export default class TS extends Command {
@@ -56,22 +62,6 @@ export default class TS extends Command {
     is_test,
   };
 
-  // rather than explicity setting from node_modules dir we need to handle workspaces use case
-  async setTSMigratePath(): Promise<void> {
-    const { stdout } = await execa(YARN_PATH, ["which", "ts-migrate"]);
-    TS_MIGRATE_PATH = stdout.split("\n")[2].trim();
-
-    DEBUG_CALLBACK("TS_MIGRATE_PATH", TS_MIGRATE_PATH);
-  }
-
-  // rather than explicity setting from node_modules dir we need to handle workspaces use case
-  async setTSCPath(): Promise<void> {
-    const { stdout } = await execa(YARN_PATH, ["which", "tsc"]);
-    TSC_PATH = stdout.split("\n")[2].trim();
-
-    DEBUG_CALLBACK("TSC_PATH", TSC_PATH);
-  }
-
   async run(): Promise<void> {
     const { flags } = this.parse(TS);
     const { build, src_dir } = flags;
@@ -82,13 +72,16 @@ export default class TS extends Command {
       this.error("throw if test");
     }
 
-    await this.setTSMigratePath();
-    await this.setTSCPath();
+    TS_MIGRATE_PATH = await getPathToBinary(YARN_PATH, "ts-migrate");
+    TSC_PATH = await getPathToBinary(YARN_PATH, "tsc");
 
+    DEBUG_CALLBACK("TSC_PATH", TSC_PATH);
+    DEBUG_CALLBACK("TS_MIGRATE_PATH", TS_MIGRATE_PATH);
     DEBUG_CALLBACK("flags %O", flags);
 
-    // oclif already parses the package.json of the consuming app
-    REPORTER.projectName = this.config.pjson.name;
+    // grab the consuming apps project name
+    const projectName = await determineProjectName();
+    REPORTER.projectName = projectName ? projectName : "";
 
     const tasks = new Listr<Context>([
       {
@@ -136,9 +129,9 @@ export default class TS extends Command {
                   parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                   REPORTER.tscVersion = ctx.tsVersion;
                 } else {
-                  parent.title = `This version of typescript has already been tested. Exiting.`;
-                  // successful exit
-                  process.exit(0);
+                  parent.title = `This application is already on TypeScript@${ctx.latestELRdBuild}. Exiting.`;
+                  // this is a master skip that will skip the remainder of the tasks
+                  ctx.skip = true;
                 }
               },
             },
@@ -146,6 +139,7 @@ export default class TS extends Command {
       },
       {
         title: `Bumping TypeScript Dev-Dependency`,
+        skip: (ctx): boolean => ctx.skip,
         task: (ctx: Context, task): Listr =>
           task.newListr(() => [
             {
@@ -181,6 +175,7 @@ export default class TS extends Command {
       },
       {
         title: "Checking for compilation errors",
+        skip: (ctx): boolean => ctx.skip,
         task: (_ctx: Context, task): Listr =>
           task.newListr(
             () => [
@@ -217,12 +212,14 @@ export default class TS extends Command {
       },
       {
         title: "Re-Building TypeScript with Clean",
+        skip: (ctx): boolean => ctx.skip,
         task: async () => {
           await execa(TSC_PATH, ["-b", "--clean"]);
         },
       },
       {
         title: "Running TS-Migrate Reignore",
+        skip: (ctx): boolean => ctx.skip,
         task: async () => {
           // this will add the @ts-expect-error and error-code for compiliation errors
           await execa(TS_MIGRATE_PATH, ["reignore", resolvedSrcDir]);
@@ -230,6 +227,7 @@ export default class TS extends Command {
       },
       {
         title: "Attempting Autofix",
+        skip: (ctx): boolean => ctx.skip,
         task: async (_ctx, task) => {
           if (!flags.autofix) {
             task.skip("Autofix not enabled");

@@ -1,2 +1,3 @@
-# rehearsal-js
-Rehearsal-JS Workspace
+# rehearsal
+
+Rehearsal Workspace
