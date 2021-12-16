@@ -7,7 +7,14 @@ import debug from "debug";
 import execa = require("execa");
 
 import { tsMigrateAutofix } from "../ts-migrate";
-import { build, src_dir, is_test, autofix, update_dep } from "../helpers/flags";
+import {
+  build,
+  src_dir,
+  is_test,
+  autofix,
+  update_dep,
+  tsc_version,
+} from "../helpers/flags";
 import { git, timestamp } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
@@ -18,6 +25,8 @@ const TS_MIGRATE_PATH = resolve("./node_modules/.bin/ts-migrate");
 const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");
 const NPM_PATH = resolve(VOLTA_HOME, "bin/npm");
+
+DEBUG_CALLBACK("paths %O", { VOLTA_HOME, YARN_PATH, NPM_PATH });
 
 // TODO remove cwd for development only
 const REPORTER = new Reporter({ cwd: process.cwd() });
@@ -39,6 +48,7 @@ export default class TS extends Command {
     src_dir: src_dir({
       default: "./app",
     }),
+    tsc_version: tsc_version(),
     autofix,
     update_dep,
     // hidden flags for testing purposes only
@@ -67,23 +77,29 @@ export default class TS extends Command {
           task.newListr((parent) => [
             {
               title: `Fetching latest published typescript@${build}`,
-              task: async (ctx) => {
-                const { stdout } = await execa(NPM_PATH, [
-                  "show",
-                  `typescript@${build}`,
-                  "version",
-                ]);
-                ctx.latestELRdBuild = stdout;
-                DEBUG_CALLBACK("ctx:latestELRdBuild", ctx.latestELRdBuild);
+              task: async (ctx, task) => {
+                if (!flags.tsc_version) {
+                  const { stdout } = await execa(NPM_PATH, [
+                    "show",
+                    `typescript@${build}`,
+                    "version",
+                  ]);
+
+                  ctx.latestELRdBuild = stdout;
+                  task.title = `Latest typescript@${build} version is ${ctx.latestELRdBuild}`;
+                } else {
+                  ctx.latestELRdBuild = flags.tsc_version;
+                  task.title = `Rehearsing with typescript version ${ctx.latestELRdBuild}`;
+                }
               },
             },
             {
               title: "Fetching installed typescript version",
-              task: async (ctx) => {
+              task: async (ctx, task) => {
                 const { stdout } = await execa(TSC_PATH, ["--version"]);
                 // Version 4.5.0-beta
                 ctx.currentTSVersion = stdout.split(" ")[1];
-                DEBUG_CALLBACK("ctx:currentTSVersion", ctx.currentTSVersion);
+                task.title = `Currently on typescript version ${ctx.currentTSVersion}`;
               },
             },
             {
@@ -99,7 +115,6 @@ export default class TS extends Command {
                   ctx.tsVersion = ctx.latestELRdBuild;
                   parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                   REPORTER.tscVersion = ctx.tsVersion;
-                  DEBUG_CALLBACK("ctx:tsVersion", ctx.tsVersion);
                 } else {
                   parent.title = `This version of typescript has already been tested. Exiting.`;
                   // successful exit
@@ -213,7 +228,10 @@ export default class TS extends Command {
 
     try {
       const startTime = timestamp(true);
-      await tasks.run();
+      await tasks.run().then(async (ctx) => {
+        DEBUG_CALLBACK("ctx %O", ctx);
+      });
+
       this.log(
         `\nRehearsal Duration: ${Math.floor(
           timestamp(true) - startTime

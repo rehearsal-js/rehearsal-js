@@ -28,3 +28,9 @@ export const update_dep = flags.boolean({
   char: "u",
   description: "generate a PR with typescript dependency bump",
 });
+
+export const tsc_version = flags.build({
+  char: "t",
+  description:
+    "override the build variant by specifying the typescript compiler version",
+});

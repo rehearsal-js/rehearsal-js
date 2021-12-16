@@ -1,6 +1,6 @@
 {
   "name": "rehearsal-workspace",
-  "private": false,
+  "private": true,
   "workspaces": [
     "packages/*"
   ],
