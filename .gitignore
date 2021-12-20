@@ -10,9 +10,10 @@ tmp/
 .nyc_output
 .idea/*
 .vscode/
-/packages/cli/bin/run.js
+packages/cli/bin/run.js
 **SCRATCH**
 **/test/results/**
 *.tsbuildinfo
 **.DS_Store**
-.rehearsal.json
+packages/cli/.rehearsal.json
+packages/cli/test/fixtures/app/.rehearsal.json
