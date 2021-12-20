@@ -280,13 +280,19 @@ export default class TS extends Command {
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost
       // be sure to check for is_test flag and only reset within the fixture app and package.json
-      if (flags.is_test) {
-        // await git(["reset", "--hard", "HEAD"], process.cwd());
-      } else {
-        if (flags.dry_run) {
-          // await git(["reset", "--hard", "HEAD"], process.cwd());
-        }
-      }
+      // if (flags.dry_run) {
+      //   if (flags.is_test) {
+      //     await git(
+      //       ["restore", "package.json", "../../yarn.lock", `${flags.src_dir}`],
+      //       process.cwd()
+      //     );
+      //   } else {
+      //     await git(
+      //       ["restore", "package.json", "yarn.lock", `${flags.src_dir}`],
+      //       process.cwd()
+      //     );
+      //   }
+      // }
     } catch (e) {
       this.error(`${e}`);
     }
