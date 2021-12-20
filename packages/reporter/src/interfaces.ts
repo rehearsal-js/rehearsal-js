@@ -16,6 +16,7 @@ export interface Report extends ReporterSummary {
   fileCount: number;
   tscVersion: string;
   tscLog: TSCLog[];
+  startedDateTime: string;
 }
 
 export interface TSCLog extends ReporterSummary {

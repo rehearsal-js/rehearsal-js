@@ -12,6 +12,14 @@ export async function git(args: string[], cwd: string): Promise<string> {
   return stdout;
 }
 
+export async function gitCommit(msg: string): Promise<string> {
+  const stdout = await git(
+    ["commit", "-m", `chore(deps-dev): [REHEARSAL-BOT] ${msg}`],
+    process.cwd()
+  );
+  return stdout;
+}
+
 /**
  * Function to introduce a wait
  *

@@ -24,13 +24,17 @@ export const autofix = flags.boolean({
   description: "autofix tsc errors where available",
 });
 
-export const update_dep = flags.boolean({
-  char: "u",
-  description: "generate a PR with typescript dependency bump",
+export const dry_run = flags.boolean({
+  char: "d",
+  description: "dry run. dont commit any changes. reporting only.",
 });
 
 export const tsc_version = flags.build({
   char: "t",
   description:
     "override the build variant by specifying the typescript compiler version",
+});
+
+export const report_output = flags.build({
+  description: "set the directory for the report output",
 });

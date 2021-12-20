@@ -14,7 +14,7 @@ import type { TSCLog, ReporterOptions, Report } from "./interfaces";
  * @param options - ReporterOptions
  */
 export default class Reporter {
-  private readonly cwd: ReporterOptions["cwd"];
+  public cwd: ReporterOptions["cwd"];
   public streamFile: string;
   private filepath: string;
   public filename: string;
@@ -48,6 +48,7 @@ export default class Reporter {
 
     this.report = {
       projectName: options.projectName || "",
+      startedDateTime: new Date().toISOString(),
       tscVersion: options.tscVersion || "",
       fileCount: 0,
       cumulativeErrors: 0,
@@ -95,6 +96,11 @@ export default class Reporter {
 
   public set projectName(name: string) {
     this.report.projectName = name;
+  }
+
+  public setCWD(cwd: string): void {
+    this.cwd = cwd;
+    this.filepath = join(this.cwd, this.filename);
   }
 
   public async end(): Promise<void> {
