@@ -294,7 +294,6 @@ export default class TS extends Command {
       // be sure to check for is_test flag and only reset within the fixture app and package.json
       // this is reset within the afterEach hook for testing
       if (flags.dry_run && !flags.is_test) {
-        await remove(join(`${flags.src_dir}`, ".rehearsal.json"));
         await git(
           ["restore", "package.json", "yarn.lock", `${flags.src_dir}`],
           process.cwd()
