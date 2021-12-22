@@ -144,3 +144,13 @@ export async function getPathToBinary(
     throw new Error(`Unable to find ${binaryName} in ${yarnPath}`);
   }
 }
+
+export async function isRepoDirty(
+  path: string
+): Promise<{ hasUncommittedFiles: boolean; uncommittedFilesMessage: string }> {
+  const desc = await git(["describe", "--tags", "--long", "--dirty"], path);
+  return {
+    hasUncommittedFiles: parseLongDescribe(desc).dirty,
+    uncommittedFilesMessage: `You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.`,
+  };
+}

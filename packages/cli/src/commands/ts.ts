@@ -1,10 +1,11 @@
 import { Command } from "@oclif/command";
 import * as compareVersions from "compare-versions";
 import { Listr } from "listr2";
-import { resolve } from "path";
+import { resolve, join } from "path";
 import { Reporter } from "@rehearsal/reporter";
 import debug from "debug";
 import execa = require("execa");
+import { remove } from "fs-extra";
 
 import { tsMigrateAutofix } from "../ts-migrate";
 import {
@@ -22,6 +23,7 @@ import {
   determineProjectName,
   getPathToBinary,
   gitCommit,
+  isRepoDirty,
 } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
@@ -70,6 +72,16 @@ export default class TS extends Command {
     const { build, src_dir } = flags;
     const resolvedSrcDir = resolve(src_dir);
 
+    // WARN: is git dirty check and exit if dirty
+    if (!flags.is_test) {
+      const { hasUncommittedFiles, uncommittedFilesMessage } =
+        await isRepoDirty(process.cwd());
+      if (hasUncommittedFiles) {
+        this.warn(uncommittedFilesMessage);
+        process.exit(0);
+      }
+    }
+
     TS_MIGRATE_PATH = await getPathToBinary(YARN_PATH, "ts-migrate");
     TSC_PATH = await getPathToBinary(YARN_PATH, "tsc");
 
@@ -93,6 +105,7 @@ export default class TS extends Command {
             task.newListr((parent) => [
               {
                 title: `Fetching latest published typescript@${build}`,
+                exitOnError: true,
                 task: async (ctx, task) => {
                   if (!flags.tsc_version) {
                     const { stdout } = await execa(NPM_PATH, [
@@ -157,7 +170,7 @@ export default class TS extends Command {
                 },
               },
               {
-                title: `Adding and Committing Change`,
+                title: `Committing Changes`,
                 skip: true,
                 task: async (ctx: Context) => {
                   if (flags.dry_run || flags.is_test) {
@@ -240,6 +253,7 @@ export default class TS extends Command {
           task: async (ctx, task) => {
             if (!flags.autofix) {
               task.skip("Autofix not enabled");
+              return;
             }
             const exitCode = await tsMigrateAutofix(resolvedSrcDir, REPORTER);
             if (exitCode === 0) {
@@ -254,8 +268,6 @@ export default class TS extends Command {
             } else {
               throw new Error("Autofix un-successful");
             }
-
-            return;
           },
         },
       ],
@@ -280,19 +292,14 @@ export default class TS extends Command {
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost
       // be sure to check for is_test flag and only reset within the fixture app and package.json
-      // if (flags.dry_run) {
-      //   if (flags.is_test) {
-      //     await git(
-      //       ["restore", "package.json", "../../yarn.lock", `${flags.src_dir}`],
-      //       process.cwd()
-      //     );
-      //   } else {
-      //     await git(
-      //       ["restore", "package.json", "yarn.lock", `${flags.src_dir}`],
-      //       process.cwd()
-      //     );
-      //   }
-      // }
+      // this is reset within the afterEach hook for testing
+      if (flags.dry_run && !flags.is_test) {
+        await remove(join(`${flags.src_dir}`, ".rehearsal.json"));
+        await git(
+          ["restore", "package.json", "yarn.lock", `${flags.src_dir}`],
+          process.cwd()
+        );
+      }
     } catch (e) {
       this.error(`${e}`);
     }

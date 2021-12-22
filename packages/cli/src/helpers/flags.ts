@@ -3,6 +3,7 @@
 */
 
 import { flags } from "@oclif/command";
+import semver = require("semver");
 
 export const build = flags.build({
   char: "b",
@@ -32,7 +33,16 @@ export const dry_run = flags.boolean({
 export const tsc_version = flags.build({
   char: "t",
   description:
-    "override the build variant by specifying the typescript compiler version",
+    "override the build variant by specifying the typescript compiler version as n.n.n",
+  parse: (input: string): string => {
+    if (!semver.valid(input)) {
+      throw new Error(
+        "The tsc_version specified is an invalid string. Please specify a valid version as n.n.n"
+      );
+    } else {
+      return input;
+    }
+  },
 });
 
 export const report_output = flags.build({

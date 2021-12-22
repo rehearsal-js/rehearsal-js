@@ -16,4 +16,3 @@ packages/cli/bin/run.js
 *.tsbuildinfo
 **.DS_Store**
 packages/cli/.rehearsal.json
-packages/cli/test/fixtures/app/.rehearsal.json
