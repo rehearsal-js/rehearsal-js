@@ -32,7 +32,8 @@
     "@rehearsal/reporter": "^0.0.5",
     "@rehearsal/tsc-transforms": "^0.0.5",
     "jscodeshift": "^0.13.0",
-    "ts-migrate-server": "^0.1.26"
+    "ts-migrate-server": "^0.1.26",
+    "debug": "^4.3.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",

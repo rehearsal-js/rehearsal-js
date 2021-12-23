@@ -1,11 +1,13 @@
 import { Plugin } from "ts-migrate-server";
 import jscodeshift from "jscodeshift";
 import { diagnosticAutofix } from "@rehearsal/tsc-transforms";
+import debug from "debug";
 
 import type { SourceLocation } from "jscodeshift";
 import type { TSCLog, TSCLogError } from "@rehearsal/reporter";
 
 const TS_PARSER = jscodeshift.withParser("ts");
+const DEBUG_CALLBACK = debug("rehearsal:plugin-autofix");
 
 class ErrorEntry implements TSCLogError {
   errorCode: string;
@@ -69,6 +71,8 @@ const pluginTSMigrateAutofix: Plugin<any> = {
         const diagnosticMatch = commentText.match("([0-9]+)") as [string];
         const diagnosticCode = diagnosticMatch[0];
 
+        DEBUG_CALLBACK(`diagnosticCode: ${diagnosticCode}`);
+
         // if code is found
         if (diagnosticCode.length > 0) {
           try {
@@ -77,6 +81,8 @@ const pluginTSMigrateAutofix: Plugin<any> = {
               root,
               astPath
             );
+
+            DEBUG_CALLBACK("astPath.name", astPath.name);
 
             // TODO: the source should not be commentText but the source of the astPath
             // TODO: the parseHelp() should be passed the positional information from the transform
@@ -103,6 +109,8 @@ const pluginTSMigrateAutofix: Plugin<any> = {
 
             tscLog.errors.push(errorEntry);
           } catch (error) {
+            DEBUG_CALLBACK("error", `${error}`);
+
             reporter.terminalLogger.error(
               `Rehearsal autofix transform for ${diagnosticCode} failed or does not exist`
             );
@@ -110,7 +118,7 @@ const pluginTSMigrateAutofix: Plugin<any> = {
         }
       }
     });
-
+    DEBUG_CALLBACK("logging entry %O", tscLog);
     // log the entry to the tmp file stream
     reporter.fileLogger.log("info", "tsc-log-entry-rehearsal", tscLog);
 
