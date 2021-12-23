@@ -1,11 +1,10 @@
 import { Command } from "@oclif/command";
 import * as compareVersions from "compare-versions";
 import { Listr } from "listr2";
-import { resolve, join } from "path";
+import { resolve } from "path";
 import { Reporter } from "@rehearsal/reporter";
 import debug from "debug";
 import execa = require("execa");
-import { remove } from "fs-extra";
 
 import { tsMigrateAutofix } from "../ts-migrate";
 import {
@@ -24,6 +23,7 @@ import {
   getPathToBinary,
   gitCommit,
   isRepoDirty,
+  sleep,
 } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
@@ -209,6 +209,7 @@ export default class TS extends Command {
                           title: "Creating Pull Request",
                           task: async (ctx, task) => {
                             if (flags.dry_run) {
+                              ctx.skip = true;
                               task.skip(
                                 "Skipping task because dry_run flag is set"
                               );
@@ -243,7 +244,9 @@ export default class TS extends Command {
           title: "Running TS-Migrate Reignore",
           skip: (ctx): boolean => ctx.skip,
           task: async () => {
+            // FIXME: ts-migrate is screwing with listr2 and mutating the log titles
             // this will add the @ts-expect-error and error-code for compiliation errors
+            // the autofix ts-migrate plugins will look for these comments and fix the errors based on the comment code
             await execa(TS_MIGRATE_PATH, ["reignore", resolvedSrcDir]);
           },
         },
@@ -287,6 +290,8 @@ export default class TS extends Command {
       );
       // end the reporter stream
       // and parse the results into a json file
+      // FIXME: this is a hack to get the reporter to finish need to isolate which promise isn't resolving
+      await sleep(2000);
       await REPORTER.end();
 
       // after the reporter closes the stream reset git to the original state

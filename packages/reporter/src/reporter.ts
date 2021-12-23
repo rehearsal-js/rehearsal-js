@@ -1,11 +1,14 @@
 import { dirSync, setGracefulCleanup } from "tmp";
 import { join } from "path";
 import { createLogger, transports, format } from "winston";
-import { writeJSONSync } from "fs-extra";
+import { writeJSON } from "fs-extra";
 import { readJSONString } from "./utils";
+import debug from "debug";
 
 import type { Logger } from "winston";
 import type { TSCLog, ReporterOptions, Report } from "./interfaces";
+
+const DEBUG_CALLBACK = debug("rehearsal:reporter");
 
 /**
  * Reporter class which handles the stdout/file report for Rehearsal
@@ -60,14 +63,16 @@ export default class Reporter {
     };
   }
 
-  private parseLog(): void {
+  private async parseLog(): Promise<void> {
     this.report.tscLog = readJSONString<TSCLog>(this.streamFile);
+    DEBUG_CALLBACK("parseLog()", "log parsed");
     this.report.fileCount = this.report.tscLog.length;
     this.report.cumulativeErrors = this.getCumulativeErrors();
     this.report.uniqueErrors = this.uniqueErrors;
     this.report.uniqueErrorList = Array.from(this.getUniqueErrorsList());
 
-    writeJSONSync(this.filepath, this.report);
+    await writeJSON(this.filepath, this.report);
+    DEBUG_CALLBACK("parseLog()", "report written to file");
   }
 
   private getCumulativeErrors(): number {
@@ -104,10 +109,25 @@ export default class Reporter {
   }
 
   public async end(): Promise<void> {
+    DEBUG_CALLBACK("end()", "end called");
+
+    this.fileLogger.on("finish", async () => {
+      DEBUG_CALLBACK("end()", "fileLogger on finish event subscribed");
+
+      await this.parseLog();
+      setGracefulCleanup();
+
+      DEBUG_CALLBACK("setGracefulCleanup()", "cleanup finsished");
+    });
+
+    this.fileLogger.on("error", (err) => {
+      throw new Error(`${err}`);
+    });
+
     this.terminalLogger.end();
+    DEBUG_CALLBACK("end()", "terminalLogger ended");
+
     this.fileLogger.end();
-    this.parseLog();
-    // clean tmp files
-    setGracefulCleanup();
+    DEBUG_CALLBACK("end()", "fileLogger ended");
   }
 }

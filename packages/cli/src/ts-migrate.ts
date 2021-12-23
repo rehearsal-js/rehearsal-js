@@ -1,5 +1,6 @@
 import { migrate, MigrateConfig } from "ts-migrate-server";
 import { pluginTSMigrateAutofix } from "@rehearsal/plugin-ts-migrate";
+
 import type { Reporter } from "@rehearsal/reporter";
 
 export type PluginOptions = { reporter: Reporter };

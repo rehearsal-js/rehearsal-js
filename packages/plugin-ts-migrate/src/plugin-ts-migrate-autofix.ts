@@ -49,7 +49,7 @@ const pluginTSMigrateAutofix: Plugin<any> = {
     const root = TS_PARSER(text);
     const reporter = options.reporter;
 
-    // TODO write additional methods for error reporting with context
+    // TODO: write additional methods for error reporting with context
     const tscLog: TSCLog = {
       filePath: fileName,
       cumulativeErrors: 0,
@@ -72,18 +72,14 @@ const pluginTSMigrateAutofix: Plugin<any> = {
         // if code is found
         if (diagnosticCode.length > 0) {
           try {
-            // const autofix = {
-            //   autofix: diagnosticAutofix[diagnosticCode].help,
-            // };
-
             // run some transform
             astPath = diagnosticAutofix[diagnosticCode].transform(
               root,
               astPath
             );
 
-            // TODO the source should not be commentText but the source of the astPath
-            // TODO the parseHelp() should be passed the positional information from the transform
+            // TODO: the source should not be commentText but the source of the astPath
+            // TODO: the parseHelp() should be passed the positional information from the transform
             const errorEntry = new ErrorEntry({
               errorCode: diagnosticCode,
               errorCategory: diagnosticAutofix[diagnosticCode].category,
@@ -107,14 +103,16 @@ const pluginTSMigrateAutofix: Plugin<any> = {
 
             tscLog.errors.push(errorEntry);
           } catch (error) {
-            reporter.terminalLogger.error(`Rehearsal: Your on your own.`);
+            reporter.terminalLogger.error(
+              `Rehearsal autofix transform for ${diagnosticCode} failed or does not exist`
+            );
           }
         }
       }
     });
 
     // log the entry to the tmp file stream
-    reporter.fileLogger.log("info", "tsc-log-entry", tscLog);
+    reporter.fileLogger.log("info", "tsc-log-entry-rehearsal", tscLog);
 
     return root.toSource();
   },

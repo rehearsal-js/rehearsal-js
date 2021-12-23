@@ -51,7 +51,7 @@ describe("ts:command", async () => {
     );
   });
 
-  test.stdout().it("with fixture app", async (ctx) => {
+  test.stdout().it("with fixture app NO autofix", async (ctx) => {
     await TS.run([
       "--src_dir",
       FIXTURE_APP_PATH,
@@ -68,6 +68,26 @@ describe("ts:command", async () => {
     );
     const report: Report = readJSONSync(RESULTS_FILEPATH);
     assert.equal(report.projectName, "@rehearsal/cli");
+  });
+
+  test.stdout().it("with fixture app WITH autofix", async (ctx) => {
+    await TS.run([
+      "--src_dir",
+      FIXTURE_APP_PATH,
+      "--dry_run",
+      "--is_test",
+      "--report_output",
+      FIXTURE_APP_PATH,
+      "--autofix"
+    ]);
+
+    assert.ok(
+      existsSync(RESULTS_FILEPATH),
+      `result file ${RESULTS_FILEPATH} should exists`
+    );
+    const report: Report = readJSONSync(RESULTS_FILEPATH);
+    assert.equal(report.projectName, "@rehearsal/cli");
+    assert.equal(report.fileCount, 3);
   });
 })
   .beforeEach(async () => {

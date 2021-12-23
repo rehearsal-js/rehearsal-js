@@ -65,8 +65,16 @@ const DIAGNOSTIC_AUTOFIX: { [key: string]: DiagnosticAutofix } = {
     }
   ),
   "2345": new DiagnosticAutofix(
-    23,
+    2345,
     "Try changing type '{0}' to type '{1}'.",
+    "error",
+    (root, context_ast_path) => {
+      return tsMigrateComments(root, context_ast_path);
+    }
+  ),
+  "6133": new DiagnosticAutofix(
+    6133,
+    "'{0}' is declared but its value is never read.",
     "error",
     (root, context_ast_path) => {
       return tsMigrateComments(root, context_ast_path);
