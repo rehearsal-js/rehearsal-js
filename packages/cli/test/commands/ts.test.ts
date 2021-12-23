@@ -70,7 +70,7 @@ describe("ts:command", async () => {
     assert.equal(report.projectName, "@rehearsal/cli");
   });
 
-  test.stdout().it("with fixture app WITH autofix", async (ctx) => {
+  test.stdout().it("with fixture app WITH autofix", async () => {
     await TS.run([
       "--src_dir",
       FIXTURE_APP_PATH,
