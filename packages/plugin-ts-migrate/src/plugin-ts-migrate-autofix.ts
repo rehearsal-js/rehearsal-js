@@ -48,6 +48,13 @@ class SourceLocationEntry implements SourceLocation {
 const pluginTSMigrateAutofix: Plugin<any> = {
   name: "plugin-ts-migrate-autofix",
   async run({ text, options, fileName }) {
+    // console.log(text);
+    // console.log(options);
+    // console.log(fileName);
+
+    // console.log(rootDir);
+    // console.log(getLanguageService);
+
     const root = TS_PARSER(text);
     const reporter = options.reporter;
 
@@ -63,6 +70,18 @@ const pluginTSMigrateAutofix: Plugin<any> = {
     };
 
     // find all comments
+    // TS_PARSER.CommentLine was the prior
+    try {
+      root.find(TS_PARSER.CommentLine).forEach((astPath) => {
+        const commentText = astPath.value.value;
+        DEBUG_CALLBACK("commentText", commentText);
+        console.log(commentText);
+      });
+    } catch (error) {
+      DEBUG_CALLBACK("commentText error", `${error}`);
+      console.log(`${error}`);
+    }
+
     root.find(TS_PARSER.CommentLine).forEach((astPath) => {
       const commentText = astPath.value.value;
 
