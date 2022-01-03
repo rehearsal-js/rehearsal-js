@@ -1,3 +1,4 @@
+// @ts-expect-error ts-migrate(6133) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message
 import { readFileSync } from "fs";
 import { parse } from "json5";
 

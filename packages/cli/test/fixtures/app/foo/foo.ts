@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
+// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message
 import { parse } from "json5";
-
+// @ts-expect-error ts-migrate(2322) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message
 import execa = require("execa");
 
 interface GitDescribe {
@@ -11,7 +12,7 @@ interface GitDescribe {
 }
 
 const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
-
+// @ts-expect-error ts-migrate(2345) FIXME: Cannot find module '@tracerbench/trace-event' or i... Remove this comment to see the full error message
 async function git(args: string[], cwd: string): Promise<string> {
   const { stdout } = await execa("git", args, { cwd });
   return stdout;

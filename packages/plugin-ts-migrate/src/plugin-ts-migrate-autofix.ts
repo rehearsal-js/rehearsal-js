@@ -1,13 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plugin } from "ts-migrate-server";
 import jscodeshift from "jscodeshift";
 import { diagnosticAutofix } from "@rehearsal/tsc-transforms";
 import debug from "debug";
 
+import type { SourceFile } from "typescript";
 import type { SourceLocation } from "jscodeshift";
 import type { TSCLog, TSCLogError } from "@rehearsal/reporter";
 
 const TS_PARSER = jscodeshift.withParser("ts");
 const DEBUG_CALLBACK = debug("rehearsal:plugin-autofix");
+
+interface SourceFileExt extends SourceFile {
+  commentDirectives: [{ range: { pos: number; end: number }; type: number }];
+}
+
+type DiagnosticSource = {
+  source: string;
+  sourceLocation: SourceLocation;
+};
 
 class ErrorEntry implements TSCLogError {
   errorCode: string;
@@ -47,18 +58,12 @@ class SourceLocationEntry implements SourceLocation {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pluginTSMigrateAutofix: Plugin<any> = {
   name: "plugin-ts-migrate-autofix",
-  async run({ text, options, fileName }) {
-    // console.log(text);
-    // console.log(options);
-    // console.log(fileName);
-
-    // console.log(rootDir);
-    // console.log(getLanguageService);
-
+  async run({ text, options, fileName, sourceFile }) {
     const root = TS_PARSER(text);
     const reporter = options.reporter;
-
-    // TODO: write additional methods for error reporting with context
+    const { commentDirectives } = sourceFile as unknown as SourceFileExt;
+    const diagnosticSources: DiagnosticSource[] = [];
+    // TODO: write additional methods for error reporting with context this should be a class instance
     const tscLog: TSCLog = {
       filePath: fileName,
       cumulativeErrors: 0,
@@ -69,61 +74,50 @@ const pluginTSMigrateAutofix: Plugin<any> = {
       errors: [],
     };
 
-    // find all comments
-    // TS_PARSER.CommentLine was the prior
-    try {
-      root.find(TS_PARSER.CommentLine).forEach((astPath) => {
-        const commentText = astPath.value.value;
-        DEBUG_CALLBACK("commentText", commentText);
-        console.log(commentText);
+    // for each sourceFile grab all commentsDirectives
+    // which only contain the string position of the comment
+    // and parse the diagnostic code and comment text
+    if (commentDirectives) {
+      commentDirectives.forEach(({ range }) => {
+        diagnosticSources.push({
+          source: text.slice(range.pos, range.end),
+          sourceLocation: new SourceLocationEntry(
+            [range.pos, range.pos],
+            [range.end, range.end]
+          ),
+        });
       });
-    } catch (error) {
-      DEBUG_CALLBACK("commentText error", `${error}`);
-      console.log(`${error}`);
     }
 
-    root.find(TS_PARSER.CommentLine).forEach((astPath) => {
-      const commentText = astPath.value.value;
-
-      if (commentText.includes("ts-migrate")) {
+    diagnosticSources.forEach(({ source, sourceLocation }) => {
+      if (source.includes("ts-migrate")) {
         // eg "(2307)"
-        const diagnosticMatch = commentText.match("([0-9]+)") as [string];
+        const diagnosticMatch = source.match("([0-9]+)") as [string];
         const diagnosticCode = diagnosticMatch[0];
-
         DEBUG_CALLBACK(`diagnosticCode: ${diagnosticCode}`);
 
-        // if code is found
         if (diagnosticCode.length > 0) {
           try {
             // run some transform
-            astPath = diagnosticAutofix[diagnosticCode].transform(
-              root,
-              astPath
-            );
+            // astPath = diagnosticAutofix[diagnosticCode].transform(
+            //   root,
+            //   astPath
+            // );
 
-            DEBUG_CALLBACK("astPath.name", astPath.name);
+            // DEBUG_CALLBACK("astPath.name", astPath.name);
 
             // TODO: the source should not be commentText but the source of the astPath
             // TODO: the parseHelp() should be passed the positional information from the transform
             const errorEntry = new ErrorEntry({
               errorCode: diagnosticCode,
               errorCategory: diagnosticAutofix[diagnosticCode].category,
-              errorMessage: commentText,
+              errorMessage: source,
               helpMessage: diagnosticAutofix[diagnosticCode].parseHelp([
                 "string",
                 "number",
               ]),
-              source: commentText,
-              sourceLocation: new SourceLocationEntry(
-                [
-                  astPath.value.loc?.start.line as number,
-                  astPath.value.loc?.start.column as number,
-                ],
-                [
-                  astPath.value.loc?.end.line as number,
-                  astPath.value.loc?.end.column as number,
-                ]
-              ),
+              source: source,
+              sourceLocation: sourceLocation,
             });
 
             tscLog.errors.push(errorEntry);
@@ -131,12 +125,13 @@ const pluginTSMigrateAutofix: Plugin<any> = {
             DEBUG_CALLBACK("error", `${error}`);
 
             reporter.terminalLogger.error(
-              `Rehearsal autofix transform for ${diagnosticCode} failed or does not exist`
+              `Rehearsal autofix transform for typescript diagnostic code: ${diagnosticCode} failed or does not exist`
             );
           }
         }
       }
     });
+
     DEBUG_CALLBACK("logging entry %O", tscLog);
     // log the entry to the tmp file stream
     reporter.fileLogger.log("info", "tsc-log-entry-rehearsal", tscLog);
