@@ -88,6 +88,18 @@ describe("ts:command", async () => {
     const report: Report = readJSONSync(RESULTS_FILEPATH);
     assert.equal(report.projectName, "@rehearsal/cli");
     assert.equal(report.fileCount, 3);
+    assert.equal(report.cumulativeErrors, 21);
+    assert.equal(report.uniqueErrors, 1);
+    assert.equal(report.uniqueErrors[0], "6133");
+    assert.equal(report.tscLog.length, 3);
+    assert.equal(
+      report.tscLog[0].errors[0].errorMessage,
+      "// @ts-expect-error ts-migrate(6133) FIXME: 'git' is declared but its value is never read."
+    );
+    assert.equal(
+      report.tscLog[0].errors[0].helpMessage,
+      "'string' is declared but its value is never read."
+    );
   });
 })
   .beforeEach(async () => {
