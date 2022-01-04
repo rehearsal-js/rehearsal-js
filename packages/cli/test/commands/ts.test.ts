@@ -90,7 +90,7 @@ describe("ts:command", async () => {
     assert.equal(report.fileCount, 3);
     assert.equal(report.cumulativeErrors, 21);
     assert.equal(report.uniqueErrors, 1);
-    assert.equal(report.uniqueErrors[0], "6133");
+    assert.equal(report.uniqueErrorList[0], "6133");
     assert.equal(report.tscLog.length, 3);
     assert.equal(
       report.tscLog[0].errors[0].errorMessage,
@@ -109,6 +109,7 @@ describe("ts:command", async () => {
     TSC_VERSION = stdout.split(" ")[1];
   })
   .afterEach(async () => {
+    console.log("afterEach");
     // cleanup and reset
     await remove(join(FIXTURE_APP_PATH, ".rehearsal.json"));
     await git(
