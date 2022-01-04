@@ -134,7 +134,7 @@ export async function getPathToBinary(
   yarnPath: string,
   binaryName: string
 ): Promise<string> {
-  const { stdout } = await execa(yarnPath, ["which", binaryName]);
+  const { stdout } = await execa(yarnPath, ["node-which", binaryName]);
   try {
     return stdout
       .split("\n")

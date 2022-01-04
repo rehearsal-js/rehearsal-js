@@ -61,6 +61,7 @@
     "ts-migrate": "^0.1.26",
     "ts-migrate-plugins": "^0.1.26",
     "ts-migrate-server": "^0.1.26",
+    "which": "^2.0.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
