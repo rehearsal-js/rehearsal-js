@@ -2,7 +2,7 @@ import { dirSync, setGracefulCleanup } from "tmp";
 import { join } from "path";
 import { createLogger, transports, format } from "winston";
 import { writeJSON } from "fs-extra";
-import { readJSONString } from "./utils";
+import { readJSONString, sleep } from "./utils";
 import debug from "debug";
 
 import type { Logger } from "winston";
@@ -109,6 +109,8 @@ export default class Reporter {
   }
 
   public async end(): Promise<void> {
+    await sleep(1000);
+
     DEBUG_CALLBACK("end()", "end called");
 
     this.fileLogger.on("finish", async () => {
@@ -129,5 +131,9 @@ export default class Reporter {
 
     this.fileLogger.end();
     DEBUG_CALLBACK("end()", "fileLogger ended");
+
+    // winston is racing a promise to finish, so we need to wait for it to finish
+    // 2 seconds is more than enough
+    await sleep(1000);
   }
 }

@@ -33,3 +33,7 @@ export function readJSONString<TJson = unknown>(
 
   return strJSONArray.map((a) => parse(a));
 }
+
+export async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

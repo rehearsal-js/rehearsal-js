@@ -12,7 +12,7 @@ import type {
 
 suite("utils", () => {
   it("readJSONString()", () => {
-    const filepath = resolve(__dirname, "./fixtures/rehearsal_report.txt");
+    const filepath = resolve(__dirname, "./fixtures/rehearsal.txt");
     const tscLog = readJSONString<TSCLog>(filepath);
     assert.equal(tscLog[0].autofixedCumulativeErrors, 0);
     assert.equal(tscLog.length, 19);

@@ -23,7 +23,6 @@ import {
   getPathToBinary,
   gitCommit,
   isRepoDirty,
-  sleep,
 } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
@@ -290,8 +289,6 @@ export default class TS extends Command {
       );
       // end the reporter stream
       // and parse the results into a json file
-      // FIXME: this is a hack to get the reporter to finish need to isolate which promise isn't resolving
-      await sleep(2000);
       await REPORTER.end();
 
       // after the reporter closes the stream reset git to the original state

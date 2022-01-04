@@ -53,7 +53,6 @@ REPORTER.fileLogger.log("info", "tsc-log-entry", LOG_ENTRY);
 suite("reporter", () => {
   it(`runs reporter.end()`, async () => {
     await REPORTER.end();
-
     assert.ok(
       existsSync(RESULTS_FILEPATH),
       `result file ${RESULTS_FILEPATH} should exists`
