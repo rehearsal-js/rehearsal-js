@@ -16,7 +16,86 @@ const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
 let TSC_VERSION = "";
 
-describe("ts:command", async () => {
+const beforeEachSetup = async () => {
+  const tscBinary = await getPathToBinary(YARN_PATH, "tsc");
+  const { stdout } = await execa(tscBinary, ["--version"]);
+  // stdout "Version N.N.N" split at the space
+  TSC_VERSION = stdout.split(" ")[1];
+};
+
+const afterEachCleanup = async () => {
+  await remove(join(FIXTURE_APP_PATH, ".rehearsal.json"));
+  await git(
+    ["restore", "package.json", "../../yarn.lock", FIXTURE_APP_PATH],
+    process.cwd()
+  );
+  await execa(YARN_PATH, [
+    "add",
+    "-D",
+    `typescript@${TSC_VERSION}`,
+    "--ignore-scripts"
+  ]);
+};
+
+describe("ts:command against fixture", async () => {
+  test.stdout().it("WITH autofix", async (ctx) => {
+    await TS.run([
+      "--src_dir",
+      FIXTURE_APP_PATH,
+      "--dry_run",
+      "--is_test",
+      "--report_output",
+      FIXTURE_APP_PATH,
+      "--autofix"
+    ]);
+
+    expect(ctx.stdout).to.contain(`Rehearsing with typescript@`);
+    expect(ctx.stdout).to.contain(`Running TS-Migrate Reignore`);
+    expect(ctx.stdout).to.contain(`Autofix successful`);
+    assert.ok(
+      existsSync(RESULTS_FILEPATH),
+      `result file ${RESULTS_FILEPATH} should exists`
+    );
+    const report: Report = readJSONSync(RESULTS_FILEPATH);
+    assert.equal(report.projectName, "@rehearsal/cli");
+    assert.equal(report.fileCount, 3);
+    assert.equal(report.cumulativeErrors, 21);
+    assert.equal(report.uniqueErrors, 1);
+    assert.equal(report.uniqueErrorList[0], "6133");
+    assert.equal(report.tscLog.length, 3);
+    assert.equal(
+      report.tscLog[0].errors[0].errorMessage,
+      "// @ts-expect-error ts-migrate(6133) FIXME: 'git' is declared but its value is never read."
+    );
+    assert.equal(
+      report.tscLog[0].errors[0].helpMessage,
+      "'string' is declared but its value is never read."
+    );
+
+    test.stdout().it("NO autofix", async (ctx) => {
+      await TS.run([
+        "--src_dir",
+        FIXTURE_APP_PATH,
+        "--dry_run",
+        "--is_test",
+        "--report_output",
+        FIXTURE_APP_PATH
+      ]);
+
+      expect(ctx.stdout).to.contain(`Autofix not enabled`);
+    });
+  });
+})
+  .beforeEach(async () => {
+    // setup defaults
+    await beforeEachSetup();
+  })
+  .afterEach(async () => {
+    // cleanup and reset
+    await afterEachCleanup();
+  });
+
+describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
     try {
       await TS.run(["--tsc_version", ""]);
@@ -50,76 +129,12 @@ describe("ts:command", async () => {
       `This application is already on the latest version of TypeScript@${TSC_VERSION}`
     );
   });
-
-  test.stdout().it("with fixture app NO autofix", async (ctx) => {
-    await TS.run([
-      "--src_dir",
-      FIXTURE_APP_PATH,
-      "--dry_run",
-      "--is_test",
-      "--report_output",
-      FIXTURE_APP_PATH
-    ]);
-
-    expect(ctx.stdout).to.contain(`Autofix not enabled`);
-    assert.ok(
-      existsSync(RESULTS_FILEPATH),
-      `result file ${RESULTS_FILEPATH} should exists`
-    );
-    const report: Report = readJSONSync(RESULTS_FILEPATH);
-    assert.equal(report.projectName, "@rehearsal/cli");
-  });
-
-  test.stdout().it("with fixture app WITH autofix", async () => {
-    await TS.run([
-      "--src_dir",
-      FIXTURE_APP_PATH,
-      "--dry_run",
-      "--is_test",
-      "--report_output",
-      FIXTURE_APP_PATH,
-      "--autofix"
-    ]);
-
-    assert.ok(
-      existsSync(RESULTS_FILEPATH),
-      `result file ${RESULTS_FILEPATH} should exists`
-    );
-    const report: Report = readJSONSync(RESULTS_FILEPATH);
-    assert.equal(report.projectName, "@rehearsal/cli");
-    assert.equal(report.fileCount, 3);
-    assert.equal(report.cumulativeErrors, 21);
-    assert.equal(report.uniqueErrors, 1);
-    assert.equal(report.uniqueErrorList[0], "6133");
-    assert.equal(report.tscLog.length, 3);
-    assert.equal(
-      report.tscLog[0].errors[0].errorMessage,
-      "// @ts-expect-error ts-migrate(6133) FIXME: 'git' is declared but its value is never read."
-    );
-    assert.equal(
-      report.tscLog[0].errors[0].helpMessage,
-      "'string' is declared but its value is never read."
-    );
-  });
 })
   .beforeEach(async () => {
-    const tscBinary = await getPathToBinary(YARN_PATH, "tsc");
-    const { stdout } = await execa(tscBinary, ["--version"]);
-    // stdout "Version N.N.N" split at the space
-    TSC_VERSION = stdout.split(" ")[1];
+    // setup defaults
+    await beforeEachSetup();
   })
   .afterEach(async () => {
-    console.log("afterEach");
     // cleanup and reset
-    await remove(join(FIXTURE_APP_PATH, ".rehearsal.json"));
-    await git(
-      ["restore", "package.json", "../../yarn.lock", FIXTURE_APP_PATH],
-      process.cwd()
-    );
-    await execa(YARN_PATH, [
-      "add",
-      "-D",
-      `typescript@${TSC_VERSION}`,
-      "--ignore-scripts"
-    ]);
+    await afterEachCleanup();
   });

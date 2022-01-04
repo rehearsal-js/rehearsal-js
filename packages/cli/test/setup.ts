@@ -1,4 +1,4 @@
-import { setGracefulCleanup } from 'tmp';
+import { setGracefulCleanup } from "tmp";
 
 after(() => {
   setGracefulCleanup();
