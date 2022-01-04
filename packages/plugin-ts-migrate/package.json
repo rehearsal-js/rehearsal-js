@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/plugin-ts-migrate",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Rehearsal Plugin-TS-Migrate",
   "keywords": [
     "rehearsal",
@@ -29,11 +29,11 @@
     "test": "yarn lint && yarn nyc --extension .ts mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.5",
-    "@rehearsal/tsc-transforms": "^0.0.5",
+    "@rehearsal/reporter": "^0.0.6",
+    "@rehearsal/tsc-transforms": "^0.0.6",
+    "debug": "^4.3.3",
     "jscodeshift": "^0.13.0",
-    "ts-migrate-server": "^0.1.26",
-    "debug": "^4.3.3"
+    "ts-migrate-server": "^0.1.26"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
