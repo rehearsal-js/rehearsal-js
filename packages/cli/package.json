@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -45,9 +45,9 @@
     "@oclif/errors": "^1.3.4",
     "@oclif/parser": "^3.8.5",
     "@oclif/plugin-help": "^3.2.2",
-    "@rehearsal/plugin-ts-migrate": "^0.0.7",
-    "@rehearsal/reporter": "^0.0.7",
-    "@rehearsal/tsc-transforms": "^0.0.7",
+    "@rehearsal/plugin-ts-migrate": "^0.0.8",
+    "@rehearsal/reporter": "^0.0.8",
+    "@rehearsal/tsc-transforms": "^0.0.8",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "execa": "^5.1.1",
