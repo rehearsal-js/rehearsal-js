@@ -45,7 +45,6 @@
     "@types/chai-fs": "^2.0.2",
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.13",
-    "@types/jscodeshift": "^0.11.3",
     "@types/json5": "*",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.7",
