@@ -32,7 +32,7 @@
     "@rehearsal/reporter": "^0.0.7",
     "@rehearsal/tsc-transforms": "^0.0.7",
     "debug": "^4.3.3",
-    "jscodeshift": "^0.13.0",
+    "recast": "^0.20.5",
     "ts-migrate-server": "^0.1.26"
   },
   "devDependencies": {

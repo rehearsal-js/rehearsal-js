@@ -7997,7 +7997,7 @@ recast@^0.16.1:
     private "~0.1.5"
     source-map "~0.6.1"
 
-recast@^0.20.3, recast@^0.20.4:
+recast@^0.20.3, recast@^0.20.4, recast@^0.20.5:
   version "0.20.5"
   resolved "https://registry.yarnpkg.com/recast/-/recast-0.20.5.tgz#8e2c6c96827a1b339c634dd232957d230553ceae"
   integrity sha512-E5qICoPoNL4yU0H0NoBDntNB0Q5oMSNh9usFctYniLBluTthi3RsQVBXIJNbApOlvSwW/RGxIuokPcAc59J5fQ==

@@ -1,9 +1,6 @@
 /*
 ! THE REPORTER OUTPUT IS BOTH A TERMINAL PRINT AND A JSON FILE. SINCE WE DONT WANT _ KEYS IN THE JSON FILE, WE USE CAMEL
 */
-
-import type { SourceLocation } from "jscodeshift";
-
 export interface ReporterOptions {
   cwd?: string;
   filename?: string;
@@ -36,7 +33,6 @@ export interface TSCLogError {
   errorCode: string;
   errorCategory: string;
   errorMessage: string;
-  sourceLocation: SourceLocation;
-  source: string;
+  stringLocation: { start: number; end: number };
   helpMessage: string;
 }

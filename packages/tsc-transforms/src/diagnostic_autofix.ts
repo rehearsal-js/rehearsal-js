@@ -8,19 +8,22 @@
  https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
 */
 
-import type { ASTPath, Collection } from "jscodeshift";
-
 import { tsMigrateComments } from "./transforms";
 import { strPositionalReplacement } from "./utils";
+
+import type { types } from "recast";
+import type { NodePath } from "ast-types/lib/node-path";
+
+// NodePath<Comment> should have node.leadingComments
+interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
+  node: any;
+}
 
 export type Autofix = {
   code: number;
   help: string;
   category: string;
-  transform: (
-    root: Collection<any>,
-    context_ast_path: ASTPath<any>
-  ) => ASTPath<any>;
+  transform: (astPath: NodePathComment) => NodePathComment;
   parseHelp: (...args: any[]) => string;
 };
 
@@ -29,10 +32,7 @@ class DiagnosticAutofix implements Autofix {
     public code: number,
     public help: string,
     public category: string,
-    public transform: (
-      root: Collection<any>,
-      context_ast_path: ASTPath<any>
-    ) => ASTPath<any>
+    public transform: (astPath: NodePathComment) => NodePathComment
   ) {
     return {
       code,
@@ -42,6 +42,7 @@ class DiagnosticAutofix implements Autofix {
       parseHelp: this.parseHelp,
     };
   }
+  // TODO at instantiation, parse the help string and replace the positional args with the correct types
   parseHelp(replacements: string[]): string {
     return strPositionalReplacement(this.help, replacements);
   }
@@ -52,32 +53,32 @@ const DIAGNOSTIC_AUTOFIX: { [key: string]: DiagnosticAutofix } = {
     2307,
     "Try running `yarn add '{0}'.`",
     "error",
-    (root, context_ast_path) => {
-      return tsMigrateComments(root, context_ast_path);
+    (astPath) => {
+      return tsMigrateComments(astPath);
     }
   ),
   "2322": new DiagnosticAutofix(
     2322,
     "Try changing type '{0}' to type '{1}'.",
     "error",
-    (root, context_ast_path) => {
-      return tsMigrateComments(root, context_ast_path);
+    (astPath) => {
+      return tsMigrateComments(astPath);
     }
   ),
   "2345": new DiagnosticAutofix(
     2345,
     "Try changing type '{0}' to type '{1}'.",
     "error",
-    (root, context_ast_path) => {
-      return tsMigrateComments(root, context_ast_path);
+    (astPath) => {
+      return tsMigrateComments(astPath);
     }
   ),
   "6133": new DiagnosticAutofix(
     6133,
     "'{0}' is declared but its value is never read.",
     "error",
-    (root, context_ast_path) => {
-      return tsMigrateComments(root, context_ast_path);
+    (astPath) => {
+      return tsMigrateComments(astPath);
     }
   ),
 };

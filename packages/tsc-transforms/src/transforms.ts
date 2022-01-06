@@ -1,31 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { Collection, ASTPath, Comment } from "jscodeshift";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { types } from "recast";
+import type { NodePath } from "ast-types/lib/node-path";
 
-import { withParser } from "jscodeshift";
-
-const TS_PARSER = withParser("ts");
-
-// TODO: remove me
-export function identifierReverseExample(
-  root: Collection,
-  _context_ast_path: ASTPath<Comment>
-): string {
-  return root
-    .find(TS_PARSER.Identifier)
-    .replaceWith((p) => {
-      return {
-        ...p.node,
-        name: p.node.name.split("").reverse().join(""),
-      };
-    })
-    .toSource();
+// NodePath<Comment> should have node.leadingComments
+interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
+  node: any;
 }
 
-export function tsMigrateComments(
-  _root: Collection,
-  contextASTPath: ASTPath<Comment>
-): ASTPath<Comment> {
-  contextASTPath.value.value =
-    contextASTPath.value.value.concat(" FOO FOO FOO");
-  return contextASTPath;
+// TODO remove this trivial example once we start writting transforms
+export function tsMigrateComments(astPath: NodePathComment): NodePathComment {
+  const associatedNode = astPath.node;
+  const commentNode = astPath.value;
+  const comment = commentNode.value;
+  const newCommentValue = comment.replace("FIXME", "FIXED");
+
+  associatedNode.leadingComments[0].value = newCommentValue;
+  commentNode.value = newCommentValue;
+
+  return astPath;
 }

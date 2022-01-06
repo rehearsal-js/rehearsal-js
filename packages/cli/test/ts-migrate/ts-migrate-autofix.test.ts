@@ -3,7 +3,8 @@ import { Reporter } from "@rehearsal/reporter";
 
 import { tsMigrateAutofix } from "../../src/index";
 
-const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
+// this test assumes ts-migrate has already been run with "ts-migrate" comments
+const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app_with_comments");
 const reporter = new Reporter({ cwd: process.cwd() });
 reporter.setCWD(FIXTURE_APP_PATH);
 
