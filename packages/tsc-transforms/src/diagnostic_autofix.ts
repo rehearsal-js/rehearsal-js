@@ -15,15 +15,21 @@ import type { types } from "recast";
 import type { NodePath } from "ast-types/lib/node-path";
 
 // NodePath<Comment> should have node.leadingComments
-interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
+export interface NodePathComment
+  extends NodePath<types.namedTypes.Comment, any> {
   node: any;
+}
+
+export interface TransformResponse {
+  path: NodePathComment;
+  isSuccess: boolean;
 }
 
 export type Autofix = {
   code: number;
   help: string;
   category: string;
-  transform: (astPath: NodePathComment) => NodePathComment;
+  transform: (astPath: NodePathComment) => TransformResponse;
   parseHelp: (...args: any[]) => string;
 };
 
@@ -32,7 +38,7 @@ class DiagnosticAutofix implements Autofix {
     public code: number,
     public help: string,
     public category: string,
-    public transform: (astPath: NodePathComment) => NodePathComment
+    public transform: (astPath: NodePathComment) => TransformResponse
   ) {
     return {
       code,

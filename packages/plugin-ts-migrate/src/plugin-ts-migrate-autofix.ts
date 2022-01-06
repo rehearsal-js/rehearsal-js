@@ -6,7 +6,7 @@ import * as recast from "recast";
 
 import type { TSCLog, TSCLogError, Reporter } from "@rehearsal/reporter";
 import type { types } from "recast";
-import type { NodePath } from "ast-types/lib/node-path";
+import type { NodePathComment } from "@rehearsal/tsc-transforms";
 
 const DEBUG_CALLBACK = debug("rehearsal:plugin-autofix");
 let reporter: Reporter;
@@ -16,14 +16,10 @@ interface CommentLineExt extends types.namedTypes.CommentLine {
   end: number;
 }
 
-// NodePath<Comment> should have node.leadingComments
-interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
-  node: any;
-}
-
 type DiagnosticSource = {
   diagnosticLookupID: string;
   commentNode: CommentLineExt;
+  isAutofixed: boolean;
 };
 
 class ErrorEntry implements TSCLogError {
@@ -35,17 +31,19 @@ class ErrorEntry implements TSCLogError {
     end: 0,
   };
   helpMessage = "";
+  isAutofixed: boolean;
   constructor(args: TSCLogError) {
     this.errorCode = args.errorCode;
     this.errorCategory = args.errorCategory;
     this.errorMessage = args.errorMessage;
     this.stringLocation = args.stringLocation;
     this.helpMessage = args.helpMessage;
+    this.isAutofixed = args.isAutofixed;
   }
 }
 
 function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
-  const { diagnosticLookupID, commentNode } = commentEntry;
+  const { diagnosticLookupID, commentNode, isAutofixed } = commentEntry;
   return new ErrorEntry({
     errorCode: diagnosticLookupID,
     errorCategory: diagnosticAutofix[diagnosticLookupID].category,
@@ -55,20 +53,39 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
       "number",
     ]),
     stringLocation: { start: commentNode.start, end: commentNode.end },
+    isAutofixed,
   });
 }
 
 function runTransform(
   astPath: NodePathComment,
-  diagnosticLookupID: string
+  tscLog: Pick<TSCLog, "filePath" | "errors">
 ): any {
+  // log the comment
+  const commentEntry: DiagnosticSource = {
+    commentNode: astPath.value,
+    diagnosticLookupID: astPath.value.value.match("([0-9]+)")[0],
+    isAutofixed: false,
+  };
+  const { diagnosticLookupID } = commentEntry;
+
+  // eg "(2307)"
+  DEBUG_CALLBACK(`diagnosticCode: ${diagnosticLookupID}`);
+
   try {
     const transformLookup = diagnosticAutofix[diagnosticLookupID];
-    // if we have a trasform for this diagnostic id, apply it
+    // if we have a transform for this diagnostic id, apply it
     if (transformLookup) {
       DEBUG_CALLBACK("transform", transformLookup);
+      const { isSuccess, path } = transformLookup.transform(astPath);
 
-      return transformLookup.transform(astPath);
+      if (isSuccess) {
+        commentEntry.isAutofixed = true;
+      }
+
+      tscLog.errors.push(logErrorEntry(commentEntry));
+
+      return path;
     }
   } catch (error) {
     DEBUG_CALLBACK("error", `${error}`);
@@ -77,6 +94,9 @@ function runTransform(
     reporter.terminalLogger.error(msg);
     reporter.fileLogger.error(msg);
   }
+
+  // log not matter what
+  tscLog.errors.push(logErrorEntry(commentEntry));
 
   return astPath;
 }
@@ -92,43 +112,25 @@ const pluginTSMigrateAutofix: Plugin<any> = {
     const tsAST: types.ASTNode = recast.parse(text, {
       parser: require("recast/parsers/typescript"),
     });
-
-    reporter = options.reporter;
-    const tscLogErrors: TSCLogError[] = [];
-    const tscLog: TSCLog = {
+    const tscLog: Pick<TSCLog, "filePath" | "errors"> = {
       filePath: fileName,
-      cumulativeErrors: 0,
-      uniqueErrors: 0,
-      uniqueErrorList: [],
-      autofixedCumulativeErrors: 0,
-      autofixedErrorList: [],
       errors: [],
     };
 
+    reporter = options.reporter;
+
     recast.visit(tsAST, {
       visitComment(astPath: NodePathComment) {
-        const commentNode = astPath.value;
-        const comment = commentNode.value;
-        if (comment.includes("ts-migrate")) {
-          // log the comment
-          const commentEntry: { commentNode: any; diagnosticLookupID: string } =
-            {
-              commentNode,
-              diagnosticLookupID: comment.match("([0-9]+)")[0],
-            };
-
-          // eg "(2307)"
-          DEBUG_CALLBACK(`diagnosticCode: ${commentEntry.diagnosticLookupID}`);
-          tscLogErrors.push(logErrorEntry(commentEntry));
-
+        if (astPath.value.includes("ts-migrate")) {
           // execute the transform
-          astPath = runTransform(astPath, commentEntry.diagnosticLookupID);
+          astPath = runTransform(astPath, tscLog);
         }
 
         this.traverse(astPath);
       },
     });
 
+    // log the entry to the filelog stream
     reporter.fileLogger.log("info", "tsc-log-entry-rehearsal", tscLog);
 
     DEBUG_CALLBACK("logging entry %O", tscLog);

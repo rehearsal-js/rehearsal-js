@@ -8,25 +8,24 @@ export interface ReporterOptions {
   tscVersion?: string;
 }
 
+export interface ReporterSummary {
+  cumulativeErrors: number;
+  uniqueCumulativeErrors: number;
+  uniqueErrorList: string[];
+  autofixedCumulativeErrors: number;
+  autofixedUniqueErrorList: string[];
+}
 export interface Report extends ReporterSummary {
   projectName: string;
   fileCount: number;
   tscVersion: string;
   tscLog: TSCLog[];
-  startedDateTime: string;
+  timestamp: string;
 }
 
 export interface TSCLog extends ReporterSummary {
   filePath: string;
   errors: TSCLogError[];
-}
-
-export interface ReporterSummary {
-  cumulativeErrors: number;
-  uniqueErrors: number;
-  uniqueErrorList: string[];
-  autofixedCumulativeErrors: number;
-  autofixedErrorList: string[];
 }
 
 export interface TSCLogError {
@@ -35,4 +34,5 @@ export interface TSCLogError {
   errorMessage: string;
   stringLocation: { start: number; end: number };
   helpMessage: string;
+  isAutofixed: boolean;
 }

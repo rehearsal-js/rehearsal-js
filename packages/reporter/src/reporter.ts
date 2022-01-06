@@ -51,39 +51,77 @@ export default class Reporter {
 
     this.report = {
       projectName: options.projectName || "",
-      startedDateTime: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       tscVersion: options.tscVersion || "",
-      fileCount: 0,
-      cumulativeErrors: 0,
-      uniqueErrors: 0,
-      uniqueErrorList: [],
-      autofixedErrorList: [],
-      autofixedCumulativeErrors: 0,
       tscLog: [],
+
+      // the number of files that were parsed
+      fileCount: 0,
+      // the total number of tsc errors found before fixing
+      cumulativeErrors: 0,
+      // the total number of unique tsc errors found before fixing
+      uniqueCumulativeErrors: 0,
+      // the unique tsc diagnostic lookup id's found
+      uniqueErrorList: [],
+      // the fixed total number of tsc errors
+      autofixedCumulativeErrors: 0,
+      // the fixed and unique tsc diagnostic lookup id's found
+      autofixedUniqueErrorList: [],
     };
   }
 
+  // happends after the stream has finished
   private async parseLog(): Promise<void> {
+    // build a JSON representation of the log
     this.report.tscLog = readJSONString<TSCLog>(this.streamFile);
     DEBUG_CALLBACK("parseLog()", "log parsed");
+
+    // set all cumulative properties
     this.report.fileCount = this.report.tscLog.length;
-    this.report.cumulativeErrors = this.getCumulativeErrors();
-    this.report.uniqueErrors = this.uniqueErrors;
-    this.report.uniqueErrorList = Array.from(this.getUniqueErrorsList());
+
+    this.report.cumulativeErrors = this.getCumulativeErrors(this.report.tscLog);
+
+    this.report.uniqueCumulativeErrors = this.uniqueCumulativeErrors;
+    this.report.uniqueErrorList = Array.from(
+      this.getUniqueErrorsList(this.report.tscLog)
+    );
+
+    this.report.autofixedUniqueErrorList = Array.from(
+      this.getAutofixedUniqueErrorList(this.report.tscLog)
+    );
+    this.report.autofixedCumulativeErrors = this.autofixedCumulativeErrors;
 
     await writeJSON(this.filepath, this.report);
     DEBUG_CALLBACK("parseLog()", "report written to file");
   }
 
-  private getCumulativeErrors(): number {
-    return this.report.tscLog.reduce((acc, curr) => {
+  // get the total number of tsc errors found before fixing
+  private getCumulativeErrors(tscLog: TSCLog[]): number {
+    return tscLog.reduce((acc, curr) => {
       return acc + curr.errors.length;
     }, 0);
   }
 
-  private getUniqueErrorsList(): Set<string> {
+  private getAutofixedUniqueErrorList(tscLog: TSCLog[]): Set<string> {
     const uniqueErrors = new Set<string>();
-    this.report.tscLog.forEach((log) => {
+    tscLog.forEach((log) => {
+      log.errors.forEach((error) => {
+        // if the tsc error was autofixed by rehearsal then add it to the unique errors
+        if (error.isAutofixed) {
+          uniqueErrors.add(error.errorCode);
+        }
+      });
+    });
+    return uniqueErrors;
+  }
+
+  private get autofixedCumulativeErrors(): number {
+    return this.getAutofixedUniqueErrorList(this.report.tscLog).size;
+  }
+
+  private getUniqueErrorsList(tscLog: TSCLog[]): Set<string> {
+    const uniqueErrors = new Set<string>();
+    tscLog.forEach((log) => {
       log.errors.forEach((error) => {
         uniqueErrors.add(error.errorCode);
       });
@@ -91,8 +129,8 @@ export default class Reporter {
     return uniqueErrors;
   }
 
-  private get uniqueErrors(): number {
-    return this.getUniqueErrorsList().size;
+  private get uniqueCumulativeErrors(): number {
+    return this.getUniqueErrorsList(this.report.tscLog).size;
   }
 
   public set tscVersion(version: string) {

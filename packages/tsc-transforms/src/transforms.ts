@@ -1,14 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { types } from "recast";
-import type { NodePath } from "ast-types/lib/node-path";
-
-// NodePath<Comment> should have node.leadingComments
-interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
-  node: any;
-}
+import type { TransformResponse, NodePathComment } from "./diagnostic_autofix";
 
 // TODO remove this trivial example once we start writting transforms
-export function tsMigrateComments(astPath: NodePathComment): NodePathComment {
+export function tsMigrateComments(astPath: NodePathComment): TransformResponse {
   const associatedNode = astPath.node;
   const commentNode = astPath.value;
   const comment = commentNode.value;
@@ -17,5 +10,8 @@ export function tsMigrateComments(astPath: NodePathComment): NodePathComment {
   associatedNode.leadingComments[0].value = newCommentValue;
   commentNode.value = newCommentValue;
 
-  return astPath;
+  return {
+    path: astPath,
+    isSuccess: true,
+  };
 }
