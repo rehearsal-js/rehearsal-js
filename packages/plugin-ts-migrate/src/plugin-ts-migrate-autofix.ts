@@ -44,17 +44,24 @@ class ErrorEntry implements TSCLogError {
 
 function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
   const { diagnosticLookupID, commentNode, isAutofixed } = commentEntry;
-  return new ErrorEntry({
+  const entry = {
     errorCode: diagnosticLookupID,
-    errorCategory: diagnosticAutofix[diagnosticLookupID].category,
+    errorCategory: "",
     errorMessage: commentNode.value,
-    helpMessage: diagnosticAutofix[diagnosticLookupID].parseHelp([
-      "string",
-      "number",
-    ]),
+    helpMessage: "",
     stringLocation: { start: commentNode.start, end: commentNode.end },
     isAutofixed,
-  });
+  };
+
+  if (diagnosticAutofix[diagnosticLookupID]) {
+    entry.errorCategory = diagnosticAutofix[diagnosticLookupID].category;
+    entry.helpMessage = diagnosticAutofix[diagnosticLookupID].parseHelp([
+      "string",
+      "number",
+    ]);
+  }
+
+  return new ErrorEntry(entry);
 }
 
 function runTransform(
@@ -89,10 +96,6 @@ function runTransform(
     }
   } catch (error) {
     DEBUG_CALLBACK("error", `${error}`);
-    // log the failure
-    const msg = `Rehearsal autofix transform for typescript diagnostic code: ${diagnosticLookupID} failed or does not exist`;
-    reporter.terminalLogger.error(msg);
-    reporter.fileLogger.error(msg);
   }
 
   // log not matter what
