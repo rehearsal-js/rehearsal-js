@@ -30,18 +30,11 @@ const LOG_ENTRY: TSCLog = {
     errorCode: ENTRY_ERROR_CODE,
     errorCategory: "error",
     errorMessage: "error message is foo la la",
-    sourceLocation: {
-      start: {
-        line: 0,
-        column: 0
-      },
-      end: {
-        line: 20,
-        column: 1
-      }
-    },
-    source: "this is some foo source",
-    helpMessage: "this will help you"
+    helpMessage: "this will help you",
+    stringLocation: {
+      start: 0,
+      end: 0
+    }
   }],
 };
 
