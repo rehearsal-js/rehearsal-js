@@ -60,12 +60,12 @@ describe("ts:command against fixture", async () => {
     assert.equal(report.projectName, "@rehearsal/cli");
     assert.equal(report.fileCount, 3);
     assert.equal(report.cumulativeErrors, 21);
-    assert.equal(report.uniqueErrors, 1);
+    assert.equal(report.uniqueCumulativeErrors, 1);
     assert.equal(report.uniqueErrorList[0], "6133");
     assert.equal(report.tscLog.length, 3);
     assert.equal(
       report.tscLog[0].errors[0].errorMessage,
-      "// @ts-expect-error ts-migrate(6133) FIXME: 'git' is declared but its value is never read."
+      " @ts-expect-error ts-migrate(6133) FIXED: 'git' is declared but its value is never read."
     );
     assert.equal(
       report.tscLog[0].errors[0].helpMessage,

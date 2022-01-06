@@ -121,7 +121,7 @@ const pluginTSMigrateAutofix: Plugin<any> = {
 
     recast.visit(tsAST, {
       visitComment(astPath: NodePathComment) {
-        if (astPath.value.includes("ts-migrate")) {
+        if (astPath.value.value.includes("ts-migrate")) {
           // execute the transform
           astPath = runTransform(astPath, tscLog);
         }
