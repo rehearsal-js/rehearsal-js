@@ -100,7 +100,7 @@
     "typescript": "4.2.4"
   },
   "engines": {
-    "node": ">=15.0.0"
+    "node": ">=17.0.0"
   },
   "oclif": {
     "commands": "dist/src/commands",
@@ -110,7 +110,7 @@
     ]
   },
   "volta": {
-    "node": "15.14.0",
+    "node": "17.3.0",
     "yarn": "1.22.17"
   }
 }
