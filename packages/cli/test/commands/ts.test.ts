@@ -4,13 +4,11 @@ import execa = require("execa");
 import { existsSync, readJSONSync, remove } from "fs-extra";
 import { join } from "path";
 import { resolve } from "path";
+import { TS, getPathToBinary, git } from "@rehearsal/cli";
 
 import type { Report } from "@rehearsal/reporter";
 
-import TS from "../../src/commands/ts";
-import { getPathToBinary } from "../../src/utils";
 import { YARN_PATH } from "../test-helpers";
-import { git } from "../../src/utils";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
@@ -37,7 +35,7 @@ const afterEachCleanup = async () => {
   ]);
 };
 
-describe.skip("ts:command against fixture", async () => {
+describe("ts:command against fixture", async () => {
   test.stdout().it("WITH autofix", async (ctx) => {
     await TS.run([
       "--src_dir",
@@ -57,20 +55,27 @@ describe.skip("ts:command against fixture", async () => {
       `result file ${RESULTS_FILEPATH} should exists`
     );
     const report: Report = readJSONSync(RESULTS_FILEPATH);
+    const firstFileReportError = report.tscLog[0].errors[0];
     assert.equal(report.projectName, "@rehearsal/cli");
     assert.equal(report.fileCount, 3);
     assert.equal(report.cumulativeErrors, 21);
     assert.equal(report.uniqueCumulativeErrors, 1);
+    assert.equal(report.autofixedCumulativeErrors, 1);
+    assert.equal(report.autofixedUniqueErrorList[0], "6133");
     assert.equal(report.uniqueErrorList[0], "6133");
     assert.equal(report.tscLog.length, 3);
     assert.equal(
-      report.tscLog[0].errors[0].errorMessage,
+      firstFileReportError.errorMessage,
       " @ts-expect-error ts-migrate(6133) FIXED: 'git' is declared but its value is never read."
     );
     assert.equal(
-      report.tscLog[0].errors[0].helpMessage,
+      firstFileReportError.helpMessage,
       "'string' is declared but its value is never read."
     );
+    assert.equal(firstFileReportError.errorCode, "6133");
+    assert.equal(firstFileReportError.isAutofixed, true);
+    assert.equal(firstFileReportError.stringLocation.end, 326);
+    assert.equal(firstFileReportError.stringLocation.start, 236);
 
     test.stdout().it("NO autofix", async (ctx) => {
       await TS.run([
@@ -85,17 +90,17 @@ describe.skip("ts:command against fixture", async () => {
       expect(ctx.stdout).to.contain(`Autofix not enabled`);
     });
   });
-});
-// // .beforeEach(async () => {
-// //   // setup defaults
-// //   await beforeEachSetup();
-// // })
-// .afterEach(async () => {
-//   // cleanup and reset
-//   await afterEachCleanup();
-// });
+})
+  .beforeEach(async () => {
+    // setup defaults
+    await beforeEachSetup();
+  })
+  .afterEach(async () => {
+    // cleanup and reset
+    await afterEachCleanup();
+  });
 
-describe.skip("ts:command tsc version check", async () => {
+describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
     try {
       await TS.run(["--tsc_version", ""]);
@@ -128,20 +133,6 @@ describe.skip("ts:command tsc version check", async () => {
     expect(ctx.stdout).to.contain(
       `This application is already on the latest version of TypeScript@${TSC_VERSION}`
     );
-  });
-});
-// .beforeEach(async () => {
-//   // setup defaults
-//   await beforeEachSetup();
-// })
-// .afterEach(async () => {
-//   // cleanup and reset
-//   await afterEachCleanup();
-// });
-
-describe("ts:command foo test", async () => {
-  test.stdout().it(`foo`, async () => {
-    expect("t").to.contain("t");
   });
 })
   .beforeEach(async () => {
