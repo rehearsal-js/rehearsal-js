@@ -28,7 +28,7 @@
     "oclif:readme": "yarn oclif-dev readme",
     "oclif:markdown": "oclif-dev readme --dir ./markdown --multi",
     "prepare": "yarn build",
-    "test": "yarn lint && yarn nyc --extension .ts mocha",
+    "test": "DEBUG=* yarn nyc --extension .ts mocha",
     "dev:clean": "rm test/fixtures/app/.rehearsal.json && git restore test/fixtures/app/foo test/fixtures/app/foo_2 package.json ../../yarn.lock && yarn add -D typescript@4.2.4 --ignore-scripts && yarn build"
   },
   "husky": {
