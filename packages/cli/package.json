@@ -21,7 +21,9 @@
   "scripts": {
     "build": "yarn tsc -b",
     "docs": "yarn api-extractor run --typescript-compiler-folder ./node_modules/typescript && yarn api-documenter markdown -i ./temp -o ./docs",
-    "lint": "eslint -c .eslintrc.js --ext .ts .",
+    "lint": "npm-run-all lint:*",
+    "lint:eslint": "yarn eslint . --ext .ts",
+    "lint:tsc-src": "yarn tsc --noEmit",
     "oclif:manifest": "yarn oclif-dev manifest",
     "oclif:readme": "yarn oclif-dev readme",
     "oclif:markdown": "oclif-dev readme --dir ./markdown --multi",
