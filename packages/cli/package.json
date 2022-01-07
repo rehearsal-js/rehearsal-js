@@ -28,7 +28,8 @@
     "oclif:readme": "yarn oclif-dev readme",
     "oclif:markdown": "oclif-dev readme --dir ./markdown --multi",
     "prepare": "yarn build",
-    "test": "yarn lint && nyc --extension .ts mocha \"test/commands/**/*.test.ts\" \"test/helpers/**/*.test.ts\"",
+    "test": "yarn tsc --noEmit",
+    "foo": "yarn lint && nyc --extension .ts mocha \"test/commands/**/*.test.ts\" \"test/helpers/**/*.test.ts\"",
     "dev:clean": "rm test/fixtures/app/.rehearsal.json && git restore test/fixtures/app/foo test/fixtures/app/foo_2 package.json ../../yarn.lock && yarn add -D typescript@4.2.4 --ignore-scripts && yarn build"
   },
   "husky": {
@@ -103,7 +104,7 @@
     "node": ">=16.0.0"
   },
   "oclif": {
-    "commands": "./dist/src/commands",
+    "commands": "dist/src/commands",
     "bin": "rehearsal",
     "plugins": [
       "@oclif/plugin-help"
