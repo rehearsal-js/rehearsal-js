@@ -95,7 +95,7 @@ describe.skip("ts:command against fixture", async () => {
 //   await afterEachCleanup();
 // });
 
-describe("ts:command tsc version check", async () => {
+describe.skip("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
     try {
       await TS.run(["--tsc_version", ""]);
@@ -128,6 +128,20 @@ describe("ts:command tsc version check", async () => {
     expect(ctx.stdout).to.contain(
       `This application is already on the latest version of TypeScript@${TSC_VERSION}`
     );
+  });
+});
+// .beforeEach(async () => {
+//   // setup defaults
+//   await beforeEachSetup();
+// })
+// .afterEach(async () => {
+//   // cleanup and reset
+//   await afterEachCleanup();
+// });
+
+describe("ts:command foo test", async () => {
+  test.stdout().it(`foo`, async () => {
+    expect("t").to.contain("t");
   });
 })
   .beforeEach(async () => {
