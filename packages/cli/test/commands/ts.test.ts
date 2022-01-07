@@ -37,7 +37,7 @@ const afterEachCleanup = async () => {
   ]);
 };
 
-describe("ts:command against fixture", async () => {
+describe.skip("ts:command against fixture", async () => {
   test.stdout().it("WITH autofix", async (ctx) => {
     await TS.run([
       "--src_dir",
@@ -85,15 +85,15 @@ describe("ts:command against fixture", async () => {
       expect(ctx.stdout).to.contain(`Autofix not enabled`);
     });
   });
-})
-  .beforeEach(async () => {
-    // setup defaults
-    await beforeEachSetup();
-  })
-  .afterEach(async () => {
-    // cleanup and reset
-    await afterEachCleanup();
-  });
+});
+// // .beforeEach(async () => {
+// //   // setup defaults
+// //   await beforeEachSetup();
+// // })
+// .afterEach(async () => {
+//   // cleanup and reset
+//   await afterEachCleanup();
+// });
 
 describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
