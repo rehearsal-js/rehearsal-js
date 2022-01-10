@@ -19,6 +19,9 @@
     "@microsoft/api-documenter": "^7.13.68",
     "ts-migrate-server": "^0.1.26"
   },
+  "resolutions": {
+    "colors": "1.4.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
