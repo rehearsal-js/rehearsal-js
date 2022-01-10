@@ -4,11 +4,12 @@ import execa = require("execa");
 import { existsSync, readJSONSync, remove } from "fs-extra";
 import { join } from "path";
 import { resolve } from "path";
-import { TS, getPathToBinary, git } from "@rehearsal/cli";
 
 import type { Report } from "@rehearsal/reporter";
 
 import { YARN_PATH } from "../test-helpers";
+import TS from "../../src/commands/ts";
+import { getPathToBinary, git } from "../../src/utils";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
