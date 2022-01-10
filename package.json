@@ -15,8 +15,6 @@
     "lerna": "^4.0.0",
     "husky": "^7.0.4",
     "conventional-changelog-cli": "^2.1.1",
-    "@commitlint/config-conventional": "^15.0.0",
-    "@commitlint/cli": "^15.0.0",
     "@microsoft/api-extractor": "^7.18.19",
     "@microsoft/api-documenter": "^7.13.68",
     "ts-migrate-server": "^0.1.26"

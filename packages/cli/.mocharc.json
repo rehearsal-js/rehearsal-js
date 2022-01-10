@@ -1,5 +1,4 @@
 {
-  "require": "ts-node/register",
   "extension": ["ts"],
   "watch-files": ["test/**/*.test.ts"],
   "recursive": true,
@@ -12,5 +11,9 @@
     "test/ts-migrate/**/*",
     "test/setup.ts",
     "test/test-helpers.ts"
+  ],
+  "node-option": [
+    "experimental-specifier-resolution=node",
+    "loader=ts-node/esm"
   ]
 }

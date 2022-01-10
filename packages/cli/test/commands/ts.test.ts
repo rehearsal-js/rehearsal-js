@@ -8,18 +8,21 @@ import { resolve } from "path";
 import type { Report } from "@rehearsal/reporter";
 
 import TS from "../../src/commands/ts";
-import { getPathToBinary, git } from "../../src/utils";
 import { YARN_PATH } from "../test-helpers";
+import { git } from "../../src/utils";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
-let TSC_VERSION = "";
+// we need an older version of typescript that'll flag errors
+let TSC_VERSION = "4.2.4";
 
-const beforeEachSetup = async () => {
-  const tscBinary = await getPathToBinary(YARN_PATH, "tsc");
-  const { stdout } = await execa(tscBinary, ["--version"]);
-  // stdout "Version N.N.N" split at the space
-  TSC_VERSION = stdout.split(" ")[1];
+const beforeEachDefault = async () => {
+  await execa(YARN_PATH, [
+    "add",
+    "-D",
+    `typescript@${TSC_VERSION}`,
+    "--ignore-scripts"
+  ]);
 };
 
 const afterEachCleanup = async () => {
@@ -28,12 +31,6 @@ const afterEachCleanup = async () => {
     ["restore", "package.json", "../../yarn.lock", FIXTURE_APP_PATH],
     process.cwd()
   );
-  await execa(YARN_PATH, [
-    "add",
-    "-D",
-    `typescript@${TSC_VERSION}`,
-    "--ignore-scripts"
-  ]);
 };
 
 describe("ts:command against fixture", async () => {
@@ -93,8 +90,7 @@ describe("ts:command against fixture", async () => {
   });
 })
   .beforeEach(async () => {
-    // setup defaults
-    await beforeEachSetup();
+    await beforeEachDefault();
   })
   .afterEach(async () => {
     // cleanup and reset
@@ -137,8 +133,7 @@ describe("ts:command tsc version check", async () => {
   });
 })
   .beforeEach(async () => {
-    // setup defaults
-    await beforeEachSetup();
+    await beforeEachDefault();
   })
   .afterEach(async () => {
     // cleanup and reset
