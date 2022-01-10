@@ -17,6 +17,4 @@ jobs:
           node-version: 16
       - run: yarn install
       - run: yarn test
-        with:
-          node-version: 16
       - run: yarn lint
