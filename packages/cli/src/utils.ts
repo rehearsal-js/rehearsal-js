@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
-import findUp from "find-up";
+// import findUp from "find-up";
 
 import execa = require("execa");
 import type { GitDescribe } from "./interfaces";
@@ -115,19 +115,19 @@ export function normalizeVersionString(versionString: string): string {
   return versionString;
 }
 
-export async function determineProjectName(
-  directory = process.cwd()
-): Promise<string | null> {
-  const packageJSONPath = await findUp("package.json", {
-    cwd: directory,
-  });
+// export async function determineProjectName(
+//   directory = process.cwd()
+// ): Promise<string | null> {
+//   const packageJSONPath = await findUp("package.json", {
+//     cwd: directory,
+//   });
 
-  if (!packageJSONPath) {
-    return null;
-  }
-  const packageJSON = readJSON<{ name: string }>(packageJSONPath);
-  return packageJSON?.name ?? null;
-}
+//   if (!packageJSONPath) {
+//     return null;
+//   }
+//   const packageJSON = readJSON<{ name: string }>(packageJSONPath);
+//   return packageJSON?.name ?? null;
+// }
 
 // rather than explicity setting from node_modules dir we need to handle workspaces use case
 export async function getPathToBinary(

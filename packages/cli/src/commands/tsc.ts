@@ -19,7 +19,6 @@ import {
 import {
   git,
   timestamp,
-  determineProjectName,
   getPathToBinary,
   gitCommit,
   isRepoDirty,
@@ -89,7 +88,7 @@ export default class TSC extends Command {
     DEBUG_CALLBACK("flags %O", flags);
 
     // grab the consuming apps project name
-    const projectName = await determineProjectName();
+    const projectName = "foo";
     REPORTER.projectName = projectName ? projectName : "";
 
     if (flags.report_output || flags.is_test) {
