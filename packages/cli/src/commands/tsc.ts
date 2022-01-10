@@ -47,8 +47,8 @@ type Context = {
   skip: boolean;
 };
 
-export default class TS extends Command {
-  static aliases = ["typescript"];
+export default class TSC extends Command {
+  static aliases = ["typescript", "ts"];
   static description =
     "bump typescript dev-dependency with compilation insights and auto-fix options";
   static flags = {
@@ -67,7 +67,7 @@ export default class TS extends Command {
   };
 
   async run(): Promise<void> {
-    const { flags } = this.parse(TS);
+    const { flags } = this.parse(TSC);
     const { build, src_dir } = flags;
     const resolvedSrcDir = resolve(src_dir);
 

@@ -7,7 +7,7 @@ import { resolve } from "path";
 
 import type { Report } from "@rehearsal/reporter";
 
-import TS from "../../src/commands/ts";
+import { TSC } from "../../src";
 import { YARN_PATH } from "../test-helpers";
 import { git } from "../../src/utils";
 
@@ -35,7 +35,7 @@ const afterEachCleanup = async () => {
 
 describe("ts:command against fixture", async () => {
   test.stdout().it("WITH autofix", async (ctx) => {
-    await TS.run([
+    await TSC.run([
       "--src_dir",
       FIXTURE_APP_PATH,
       "--dry_run",
@@ -76,7 +76,7 @@ describe("ts:command against fixture", async () => {
     assert.equal(firstFileReportError.stringLocation.start, 236);
 
     test.stdout().it("NO autofix", async (ctx) => {
-      await TS.run([
+      await TSC.run([
         "--src_dir",
         FIXTURE_APP_PATH,
         "--dry_run",
@@ -100,7 +100,7 @@ describe("ts:command against fixture", async () => {
 describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
     try {
-      await TS.run(["--tsc_version", ""]);
+      await TSC.run(["--tsc_version", ""]);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -108,7 +108,7 @@ describe("ts:command tsc version check", async () => {
     }
 
     try {
-      await TS.run(["--tsc_version", "0"]);
+      await TSC.run(["--tsc_version", "0"]);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -118,7 +118,7 @@ describe("ts:command tsc version check", async () => {
 
   test.stdout().it(`on typescript version already tested`, async (ctx) => {
     // this will test the version already installed
-    await TS.run([
+    await TSC.run([
       "--src_dir",
       FIXTURE_APP_PATH,
       "--tsc_version",
