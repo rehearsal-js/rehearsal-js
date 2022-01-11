@@ -1,25 +1,20 @@
 import { test } from "@oclif/test";
+import { describe } from "mocha";
 import { expect, assert } from "chai";
 import execa = require("execa");
 import { existsSync, readJSONSync, remove } from "fs-extra";
 import { join } from "path";
 import { resolve } from "path";
-import { TS, getPathToBinary, git } from "@rehearsal/cli";
 
 import type { Report } from "@rehearsal/reporter";
 
 import { YARN_PATH } from "../test-helpers";
+import { TS, git } from "../../src";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
-let TSC_VERSION = "";
-
-const beforeEachSetup = async () => {
-  const tscBinary = await getPathToBinary(YARN_PATH, "tsc");
-  const { stdout } = await execa(tscBinary, ["--version"]);
-  // stdout "Version N.N.N" split at the space
-  TSC_VERSION = stdout.split(" ")[1];
-};
+// need an older version of tsc to throw an error against latest
+let TSC_VERSION = "4.2.4";
 
 const afterEachCleanup = async () => {
   await remove(join(FIXTURE_APP_PATH, ".rehearsal.json"));
@@ -90,15 +85,10 @@ describe("ts:command against fixture", async () => {
       expect(ctx.stdout).to.contain(`Autofix not enabled`);
     });
   });
-})
-  .beforeEach(async () => {
-    // setup defaults
-    await beforeEachSetup();
-  })
-  .afterEach(async () => {
-    // cleanup and reset
-    await afterEachCleanup();
-  });
+}).afterEach(async () => {
+  // cleanup and reset
+  await afterEachCleanup();
+});
 
 describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
@@ -134,12 +124,7 @@ describe("ts:command tsc version check", async () => {
       `This application is already on the latest version of TypeScript@${TSC_VERSION}`
     );
   });
-})
-  .beforeEach(async () => {
-    // setup defaults
-    await beforeEachSetup();
-  })
-  .afterEach(async () => {
-    // cleanup and reset
-    await afterEachCleanup();
-  });
+}).afterEach(async () => {
+  // cleanup and reset
+  await afterEachCleanup();
+});

@@ -13,8 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+      - uses: volta-cli/action@v1
         with:
-          node-version: 17
+          node-version: 16
+          yarn-version: 1.22.17
       - run: yarn install
       - run: yarn test
       - run: yarn lint
