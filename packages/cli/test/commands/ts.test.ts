@@ -2,35 +2,41 @@ import { test } from "@oclif/test";
 import { describe } from "mocha";
 import { expect, assert } from "chai";
 import execa = require("execa");
-import { existsSync, readJSONSync, remove } from "fs-extra";
-import { join } from "path";
-import { resolve } from "path";
+import { existsSync, readJSONSync } from "fs-extra";
+import { join, resolve } from "path";
 
 import type { Report } from "@rehearsal/reporter";
 
-import { YARN_PATH } from "../test-helpers";
-import { TS, git } from "../../src";
+import { restoreLocalGit, YARN_PATH } from "../test-helpers";
+import { TS } from "../../src";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
-// need an older version of tsc to throw an error against latest
-let TSC_VERSION = "4.2.4";
+const TEST_TSC_VERSION = "4.2.4";
 
-const afterEachCleanup = async () => {
-  await remove(join(FIXTURE_APP_PATH, ".rehearsal.json"));
-  await git(
-    ["restore", "package.json", "../../yarn.lock", FIXTURE_APP_PATH],
-    process.cwd()
-  );
+const beforeSetup = async () => {
+  // install the test version of tsc
   await execa(YARN_PATH, [
     "add",
     "-D",
-    `typescript@${TSC_VERSION}`,
+    `typescript@${TEST_TSC_VERSION}`,
+    "--ignore-scripts"
+  ]);
+};
+
+const afterEachCleanup = async () => {
+  await restoreLocalGit(FIXTURE_APP_PATH);
+  await execa(YARN_PATH, [
+    "add",
+    "-D",
+    `typescript@${TEST_TSC_VERSION}`,
     "--ignore-scripts"
   ]);
 };
 
 describe("ts:command against fixture", async () => {
+  before(beforeSetup);
+
   test.stdout().it("WITH autofix", async (ctx) => {
     await TS.run([
       "--src_dir",
@@ -85,10 +91,7 @@ describe("ts:command against fixture", async () => {
       expect(ctx.stdout).to.contain(`Autofix not enabled`);
     });
   });
-}).afterEach(async () => {
-  // cleanup and reset
-  await afterEachCleanup();
-});
+}).afterEach(afterEachCleanup);
 
 describe("ts:command tsc version check", async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
@@ -115,16 +118,13 @@ describe("ts:command tsc version check", async () => {
       "--src_dir",
       FIXTURE_APP_PATH,
       "--tsc_version",
-      TSC_VERSION,
+      TEST_TSC_VERSION,
       "--dry_run",
       "--is_test"
     ]);
 
     expect(ctx.stdout).to.contain(
-      `This application is already on the latest version of TypeScript@${TSC_VERSION}`
+      `This application is already on the latest version of TypeScript@${TEST_TSC_VERSION}`
     );
   });
-}).afterEach(async () => {
-  // cleanup and reset
-  await afterEachCleanup();
-});
+}).afterEach(afterEachCleanup);

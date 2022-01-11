@@ -1,26 +1,11 @@
 import { setGracefulCleanup } from "tmp";
-import { after, before } from "mocha";
-import execa = require("execa");
+import { after } from "mocha";
+import { resolve } from "path";
+import { restoreLocalGit } from "./test-helpers";
 
-import { getPathToBinary } from "../src";
-import { YARN_PATH } from "./test-helpers";
-
-let TSC_VERSION = "";
-
-before(async () => {
-  // get the current version of tsc and install it once testing is done
-  const tscBinary = await getPathToBinary(YARN_PATH, "tsc");
-  const { stdout } = await execa(tscBinary, ["--version"]);
-  // stdout "Version N.N.N" split at the space
-  TSC_VERSION = stdout.split(" ")[1];
-});
+const FIXTURE_APP_PATH = resolve(__dirname, "./fixtures/app");
 
 after(async () => {
-  await execa(YARN_PATH, [
-    "add",
-    "-D",
-    `typescript@${TSC_VERSION}`,
-    "--ignore-scripts"
-  ]);
+  await restoreLocalGit(FIXTURE_APP_PATH);
   setGracefulCleanup();
 });
