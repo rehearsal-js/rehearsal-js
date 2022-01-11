@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/plugin-ts-migrate",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Rehearsal Plugin-TS-Migrate",
   "keywords": [
     "rehearsal",
@@ -29,8 +29,8 @@
     "test": "yarn lint"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.9",
-    "@rehearsal/tsc-transforms": "^0.0.9",
+    "@rehearsal/reporter": "^0.0.10",
+    "@rehearsal/tsc-transforms": "^0.0.10",
     "debug": "^4.3.3",
     "recast": "^0.20.5",
     "ts-migrate-server": "^0.1.26"
