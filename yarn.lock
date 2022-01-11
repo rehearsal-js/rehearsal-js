@@ -8977,9 +8977,9 @@ ts-migrate-plugins@^0.1.26:
     ts-migrate-server "^0.1.26"
 
 ts-migrate-server@^0.1.26:
-  version "0.1.26"
-  resolved "https://registry.yarnpkg.com/ts-migrate-server/-/ts-migrate-server-0.1.26.tgz#3a1ccc7fd3e1e04550ead8f849ce49a9444a9bea"
-  integrity sha512-B8NNb2D4j1D3oJyZFg8fZU74E8S6c/Z07OUT+LagFf+KN2yzDwZrnVh+gQm8FZbkmN2aq5FMjutfoboaoYvJxQ==
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/ts-migrate-server/-/ts-migrate-server-0.1.27.tgz#daa95b01634a651f4dd5ff90d35b93791e564905"
+  integrity sha512-sDcrBx2oUL/Ycs3YNwqMz5KxPtNjwMIDGpVbvuxDkVXDG+ly4tyF+tc5byQzKpVGx2mI+ccxrX8VG74wICTJlg==
   dependencies:
     "@ts-morph/bootstrap" "^0.9.1"
     pretty-ms "^7.0.1"
