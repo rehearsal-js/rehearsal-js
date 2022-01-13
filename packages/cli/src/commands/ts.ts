@@ -37,7 +37,7 @@ let TS_MIGRATE_PATH = "";
 
 DEBUG_CALLBACK("paths %O", { VOLTA_HOME, YARN_PATH, NPM_PATH });
 
-// TODO remove cwd for development only
+// cwd for development only
 const REPORTER = new Reporter({ cwd: process.cwd() });
 
 type Context = {
@@ -282,14 +282,15 @@ export default class TS extends Command {
         DEBUG_CALLBACK("ctx %O", ctx);
       });
 
-      this.log(
-        `\nRehearsal Duration: ${Math.floor(
-          timestamp(true) - startTime
-        )} seconds`
-      );
       // end the reporter stream
       // and parse the results into a json file
       await REPORTER.end();
+
+      this.log(
+        `Rehearsal Duration:      ${Math.floor(
+          timestamp(true) - startTime
+        )} seconds`
+      );
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost

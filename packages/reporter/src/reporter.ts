@@ -146,6 +146,15 @@ export default class Reporter {
     this.filepath = join(this.cwd, this.filename);
   }
 
+  public logSummary(): void {
+    console.log(`\n`);
+    console.log(`Files Parsed:            ${this.report.fileCount}`);
+    console.log(`Total Errors:            ${this.report.cumulativeErrors}`);
+    console.log(
+      `Total Errors Autofixed:        ${this.report.autofixedCumulativeErrors}`
+    );
+  }
+
   public async end(): Promise<void> {
     await sleep(1000);
 
@@ -173,5 +182,6 @@ export default class Reporter {
     // winston is racing a promise to finish, so we need to wait for it to finish
     // 2 seconds is more than enough
     await sleep(1000);
+    this.logSummary();
   }
 }

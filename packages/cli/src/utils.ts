@@ -135,7 +135,7 @@ export async function getPathToBinary(
   binaryName: string
 ): Promise<string> {
   let stdoutMsg;
-  // TODO: node-which doesnt play nice with yarn workspaces and volta. this is a workaround with which fallback
+  // node-which doesnt play nice with yarn workspaces and volta. this is a workaround with fallback
   try {
     const { stdout } = await execa(yarnPath, ["node-which", binaryName]);
     stdoutMsg = stdout;
