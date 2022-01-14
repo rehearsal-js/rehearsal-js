@@ -29,6 +29,7 @@ const DEBUG_CALLBACK = debug("rehearsal:ts");
 const DEFAULT_TS_BUILD = "beta";
 
 const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
+
 const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");
 const NPM_PATH = resolve(VOLTA_HOME, "bin/npm");
 
@@ -284,13 +285,13 @@ export default class TS extends Command {
 
       // end the reporter stream
       // and parse the results into a json file
-      await REPORTER.end();
-
-      this.log(
-        `Rehearsal Duration:      ${Math.floor(
-          timestamp(true) - startTime
-        )} seconds`
-      );
+      await REPORTER.end(() => {
+        console.log(
+          `Duration:              ${Math.floor(
+            timestamp(true) - startTime
+          )} sec`
+        );
+      });
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost

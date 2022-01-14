@@ -148,14 +148,15 @@ export default class Reporter {
 
   public logSummary(): void {
     console.log(`\n`);
-    console.log(`Files Parsed:            ${this.report.fileCount}`);
-    console.log(`Total Errors:            ${this.report.cumulativeErrors}`);
+    console.log(`Files Parsed:          ${this.report.fileCount} total`);
+    console.log(`TSC Errors:            ${this.report.cumulativeErrors} total`);
     console.log(
-      `Total Errors Autofixed:        ${this.report.autofixedCumulativeErrors}`
+      `TSC Errors Autofixed:  ${this.report.autofixedCumulativeErrors} total`
     );
   }
 
-  public async end(): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public async end(_cb = () => {}): Promise<void> {
     await sleep(1000);
 
     DEBUG_CALLBACK("end()", "end called");
@@ -183,5 +184,8 @@ export default class Reporter {
     // 2 seconds is more than enough
     await sleep(1000);
     this.logSummary();
+
+    // optional callback to be called after the reporter has finished
+    _cb();
   }
 }
