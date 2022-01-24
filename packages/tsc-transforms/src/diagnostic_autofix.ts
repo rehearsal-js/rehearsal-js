@@ -54,6 +54,7 @@ class DiagnosticAutofix implements Autofix {
   }
 }
 
+// TODO the tsMigrateComments transform is a trivial placeholder example and should be swapped out
 const DIAGNOSTIC_AUTOFIX: { [key: string]: DiagnosticAutofix } = {
   "2307": new DiagnosticAutofix(
     2307,

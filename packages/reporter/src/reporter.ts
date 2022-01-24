@@ -60,11 +60,11 @@ export default class Reporter {
       // the total number of tsc errors found before fixing
       cumulativeErrors: 0,
       // the total number of unique tsc errors found before fixing
-      uniqueCumulativeErrors: 0,
+      uniqueErrors: 0,
       // the unique tsc diagnostic lookup id's found
       uniqueErrorList: [],
-      // the fixed total number of tsc errors
-      autofixedCumulativeErrors: 0,
+      // the fixed total number of tsc errors fixed
+      autofixedErrors: 0,
       // the fixed and unique tsc diagnostic lookup id's found
       autofixedUniqueErrorList: [],
     };
@@ -81,15 +81,16 @@ export default class Reporter {
 
     this.report.cumulativeErrors = this.getCumulativeErrors(this.report.tscLog);
 
-    this.report.uniqueCumulativeErrors = this.uniqueCumulativeErrors;
+    this.report.uniqueErrors = this.uniqueErrors;
     this.report.uniqueErrorList = Array.from(
       this.getUniqueErrorsList(this.report.tscLog)
     );
 
-    this.report.autofixedUniqueErrorList = Array.from(
-      this.getAutofixedUniqueErrorList(this.report.tscLog)
+    const { uniqueErrors } = this.getAutofixedUniqueErrorList(
+      this.report.tscLog
     );
-    this.report.autofixedCumulativeErrors = this.autofixedCumulativeErrors;
+    this.report.autofixedUniqueErrorList = Array.from(uniqueErrors);
+    this.report.autofixedErrors = this.autofixedErrors;
 
     await writeJSON(this.filepath, this.report);
     DEBUG_CALLBACK("parseLog()", "report written to file");
@@ -102,21 +103,29 @@ export default class Reporter {
     }, 0);
   }
 
-  private getAutofixedUniqueErrorList(tscLog: TSCLog[]): Set<string> {
+  private getAutofixedUniqueErrorList(tscLog: TSCLog[]): {
+    uniqueErrors: Set<string>;
+    errorCount: number;
+  } {
     const uniqueErrors = new Set<string>();
+    let errorCount = 0;
+
     tscLog.forEach((log) => {
       log.errors.forEach((error) => {
         // if the tsc error was autofixed by rehearsal then add it to the unique errors
         if (error.isAutofixed) {
           uniqueErrors.add(error.errorCode);
+          errorCount++;
         }
       });
     });
-    return uniqueErrors;
+
+    return { uniqueErrors, errorCount };
   }
 
-  private get autofixedCumulativeErrors(): number {
-    return this.getAutofixedUniqueErrorList(this.report.tscLog).size;
+  private get autofixedErrors(): number {
+    const { errorCount } = this.getAutofixedUniqueErrorList(this.report.tscLog);
+    return errorCount;
   }
 
   private getUniqueErrorsList(tscLog: TSCLog[]): Set<string> {
@@ -129,7 +138,7 @@ export default class Reporter {
     return uniqueErrors;
   }
 
-  private get uniqueCumulativeErrors(): number {
+  private get uniqueErrors(): number {
     return this.getUniqueErrorsList(this.report.tscLog).size;
   }
 
@@ -150,9 +159,7 @@ export default class Reporter {
     console.log(`\n`);
     console.log(`Files Parsed:          ${this.report.fileCount} total`);
     console.log(`TSC Errors:            ${this.report.cumulativeErrors} total`);
-    console.log(
-      `TSC Errors Autofixed:  ${this.report.autofixedCumulativeErrors} total`
-    );
+    console.log(`TSC Errors Autofixed:  ${this.report.autofixedErrors} total`);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

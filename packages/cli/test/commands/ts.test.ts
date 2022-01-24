@@ -32,6 +32,7 @@ const afterEachCleanup = async () => {
     `typescript@${TEST_TSC_VERSION}`,
     "--ignore-scripts"
   ]);
+  await execa(YARN_PATH, ["install"]);
 };
 
 describe("ts:command against fixture", async () => {
@@ -60,8 +61,8 @@ describe("ts:command against fixture", async () => {
     assert.equal(report.projectName, "@rehearsal/cli");
     assert.equal(report.fileCount, 3);
     assert.equal(report.cumulativeErrors, 21);
-    assert.equal(report.uniqueCumulativeErrors, 1);
-    assert.equal(report.autofixedCumulativeErrors, 1);
+    assert.equal(report.uniqueErrors, 1);
+    assert.equal(report.autofixedErrors, 21);
     assert.equal(report.autofixedUniqueErrorList[0], "6133");
     assert.equal(report.uniqueErrorList[0], "6133");
     assert.equal(report.tscLog.length, 3);
@@ -114,6 +115,8 @@ describe("ts:command tsc version check", async () => {
 
   test.stdout().it(`on typescript version already tested`, async (ctx) => {
     // this will test the version already installed
+    // the test sandbox should have an older version of tsc installed
+    // during the afterEachCleanup() phase
     await TS.run([
       "--src_dir",
       FIXTURE_APP_PATH,

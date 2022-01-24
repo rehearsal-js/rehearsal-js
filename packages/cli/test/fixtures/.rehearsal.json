@@ -9,10 +9,10 @@
     "6133"
   ],
   "autofixedErrorList": [],
-  "autofixedCumulativeErrors": 0,
+  "autofixedErrors": 0,
   "tscLog": [
     {
-      "autofixedCumulativeErrors": 0,
+      "autofixedErrors": 0,
       "autofixedErrorList": [],
       "cumulativeErrors": 0,
       "errors": [
@@ -144,7 +144,7 @@
       "uniqueErrors": 0
     },
     {
-      "autofixedCumulativeErrors": 0,
+      "autofixedErrors": 0,
       "autofixedErrorList": [],
       "cumulativeErrors": 0,
       "errors": [
@@ -276,7 +276,7 @@
       "uniqueErrors": 0
     },
     {
-      "autofixedCumulativeErrors": 0,
+      "autofixedErrors": 0,
       "autofixedErrorList": [],
       "cumulativeErrors": 0,
       "errors": [

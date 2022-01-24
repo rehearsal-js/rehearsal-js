@@ -23,20 +23,15 @@ import {
   getPathToBinary,
   gitCommit,
   isRepoDirty,
+  bumpDevDep,
+  isYarnManager,
 } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
 const DEFAULT_TS_BUILD = "beta";
 
-const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-
-const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");
-const NPM_PATH = resolve(VOLTA_HOME, "bin/npm");
-
 let TSC_PATH = "";
 let TS_MIGRATE_PATH = "";
-
-DEBUG_CALLBACK("paths %O", { VOLTA_HOME, YARN_PATH, NPM_PATH });
 
 // cwd for development only
 const REPORTER = new Reporter({ cwd: process.cwd() });
@@ -82,8 +77,8 @@ export default class TS extends Command {
       }
     }
 
-    TS_MIGRATE_PATH = await getPathToBinary(YARN_PATH, "ts-migrate");
-    TSC_PATH = await getPathToBinary(YARN_PATH, "tsc");
+    TS_MIGRATE_PATH = await getPathToBinary("ts-migrate");
+    TSC_PATH = await getPathToBinary("tsc");
 
     DEBUG_CALLBACK("TSC_PATH", TSC_PATH);
     DEBUG_CALLBACK("TS_MIGRATE_PATH", TS_MIGRATE_PATH);
@@ -108,7 +103,7 @@ export default class TS extends Command {
                 exitOnError: true,
                 task: async (ctx, task) => {
                   if (!flags.tsc_version) {
-                    const { stdout } = await execa(NPM_PATH, [
+                    const { stdout } = await execa("npm", [
                       "show",
                       `typescript@${build}`,
                       "version",
@@ -161,12 +156,7 @@ export default class TS extends Command {
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
                 task: async (ctx: Context) => {
-                  await execa(YARN_PATH, [
-                    "add",
-                    "-D",
-                    `typescript@${ctx.tsVersion}`,
-                    "--ignore-scripts",
-                  ]);
+                  await bumpDevDep(`typescript@${ctx.tsVersion}`);
                 },
               },
               {
@@ -177,11 +167,10 @@ export default class TS extends Command {
                     task.skip("Skipping task because dry_run flag is set");
                   } else {
                     // eventually commit change
-                    // add package.json and yarn.lock (assumes yarn)
-                    await git(
-                      ["add", "package.json", "yarn.lock"],
-                      process.cwd()
-                    );
+                    const lockFile = (await isYarnManager())
+                      ? "yarn.lock"
+                      : "package-lock.json";
+                    await git(["add", "package.json", lockFile], process.cwd());
 
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`

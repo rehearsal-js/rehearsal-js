@@ -23,8 +23,8 @@ const LOG_ENTRY: TSCLog = {
   filePath: ENTRY_FILEPATH,
   cumulativeErrors: 0,
   uniqueErrorList: [],
-  uniqueCumulativeErrors: 0,
-  autofixedCumulativeErrors: 0,
+  uniqueErrors: 0,
+  autofixedErrors: 0,
   autofixedUniqueErrorList: [],
   errors: [{
     isAutofixed: false,
@@ -58,7 +58,7 @@ suite("reporter", () => {
     assert.equal(report.tscVersion, TSC_VERSION);
     assert.equal(report.tscLog[0].filePath, ENTRY_FILEPATH);
     assert.deepEqual(report.uniqueErrorList, [ENTRY_ERROR_CODE]);
-    assert.equal(report.uniqueCumulativeErrors, 1);
+    assert.equal(report.uniqueErrors, 1);
     assert.equal(report.cumulativeErrors, 1);
     assert.equal(report.fileCount, 1);
   });

@@ -1,6 +1,6 @@
 import { inspect } from "util";
 import { test } from "mocha";
-import { resolve, join } from "path";
+import { join, resolve } from "path";
 import { remove } from "fs-extra";
 
 import { git } from "../src";

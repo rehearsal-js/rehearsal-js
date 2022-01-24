@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
 import findUp from "find-up";
-
+import { resolve } from "path";
 import execa = require("execa");
 import type { GitDescribe } from "./interfaces";
 
@@ -129,34 +129,55 @@ export async function determineProjectName(
   return packageJSON?.name ?? null;
 }
 
+export async function isYarnManager(): Promise<boolean> {
+  const yarnPath = await findUp("yarn.lock", {
+    cwd: process.cwd(),
+  });
+
+  return !!yarnPath;
+}
+
+// devDep: dep@version eg. typescript@4.4.4 or typescript or etc
+export async function bumpDevDep(devDep: string): Promise<void> {
+  const isYarn = await isYarnManager();
+  // check if npm or yarn
+  const binAndArgs = {
+    bin: isYarn ? "yarn" : "npm",
+    args: isYarn
+      ? ["add", "-D", `${devDep}`, "--ignore-scripts"]
+      : ["install", `${devDep}`, "--save-dev", "--ignore-scripts"],
+  };
+
+  await execa(binAndArgs.bin, binAndArgs.args);
+}
+
 // rather than explicity setting from node_modules dir we need to handle workspaces use case
-export async function getPathToBinary(
-  yarnPath: string,
-  binaryName: string
-): Promise<string> {
+// we need to handle volta use case and check for npm or yarn
+export async function getPathToBinary(binaryName: string): Promise<string> {
+  // if volta exists on the path use it
+  let packageManager = (await isYarnManager()) ? "yarn" : "npm";
   let stdoutMsg;
-  // node-which doesnt play nice with yarn workspaces and volta. this is a workaround with fallback
-  try {
-    const { stdout } = await execa(yarnPath, ["node-which", binaryName]);
-    stdoutMsg = stdout;
-  } catch (error) {
-    try {
-      const { stdout } = await execa(yarnPath, ["which", binaryName]);
-      stdoutMsg = stdout;
-    } catch (error) {
-      throw new Error(
-        `Unable to execute node-which or which for binary path to ${binaryName}`
-      );
-    }
+  const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
+
+  if (VOLTA_HOME) {
+    packageManager = resolve(VOLTA_HOME, `bin/${packageManager}`);
   }
 
   try {
+    const { stdout } = await execa(packageManager, ["bin", binaryName]);
+    stdoutMsg = stdout;
+  } catch (e) {
+    throw new Error(`Unable to find binary path to ${binaryName}`);
+  }
+
+  // return the path to the binary
+  try {
     return stdoutMsg
       .split("\n")
-      .filter((p) => p.includes(`.bin/${binaryName}`))[0]
+      .filter((p) => p.includes(`bin/${binaryName}`))[0]
       .trim();
   } catch (error) {
-    throw new Error(`Unable to find ${binaryName} in ${yarnPath}`);
+    throw new Error(`Unable to find ${binaryName} with ${packageManager}`);
   }
 }
 

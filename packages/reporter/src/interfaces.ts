@@ -10,9 +10,9 @@ export interface ReporterOptions {
 
 export interface ReporterSummary {
   cumulativeErrors: number;
-  uniqueCumulativeErrors: number;
+  uniqueErrors: number;
   uniqueErrorList: string[];
-  autofixedCumulativeErrors: number;
+  autofixedErrors: number;
   autofixedUniqueErrorList: string[];
 }
 export interface Report extends ReporterSummary {
