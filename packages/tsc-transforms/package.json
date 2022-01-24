@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/tsc-transforms",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Rehearsal TSC Transforms",
   "keywords": [
     "rehearsal",
@@ -68,9 +68,9 @@
     "nyc": "^15.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "^2.4.1",
+    "recast": "^0.20.5",
     "ts-node": "^10.4.0",
-    "typescript": "~4.5.2",
-    "recast": "^0.20.5"
+    "typescript": "~4.5.2"
   },
   "engines": {
     "node": ">=10.0.0"
