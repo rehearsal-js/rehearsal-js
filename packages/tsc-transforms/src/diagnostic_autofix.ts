@@ -85,7 +85,7 @@ const DIAGNOSTIC_AUTOFIX: { [key: string]: DiagnosticAutofix } = {
   ),
   "6133": new DiagnosticAutofix(
     6133,
-    "'{0}' is declared but its value is never read.",
+    "The declaration '{0}' is never read. Remove the declaration or use it.",
     "error",
     (astPath) => {
       return tsMigrateComments(astPath);
