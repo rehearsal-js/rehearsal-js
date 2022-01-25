@@ -72,7 +72,7 @@ describe("ts:command against fixture", async () => {
     );
     assert.equal(
       firstFileReportError.helpMessage,
-      "'string' is declared but its value is never read."
+      "The declaration 'git' is never read. Remove the declaration or use it."
     );
     assert.equal(firstFileReportError.errorCode, "6133");
     assert.equal(firstFileReportError.isAutofixed, true);

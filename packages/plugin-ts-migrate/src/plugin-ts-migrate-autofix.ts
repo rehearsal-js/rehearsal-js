@@ -55,10 +55,10 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
 
   if (diagnosticAutofix[diagnosticLookupID]) {
     entry.errorCategory = diagnosticAutofix[diagnosticLookupID].category;
-    entry.helpMessage = diagnosticAutofix[diagnosticLookupID].parseHelp([
-      "string",
-      "number",
-    ]);
+    // eg " @ts-expect-error ts-migrate(7006) Parameter 'p' implicitly has an 'any' type."
+    entry.helpMessage = diagnosticAutofix[diagnosticLookupID].parseHelp(
+      commentNode.value
+    );
   }
 
   return new ErrorEntry(entry);

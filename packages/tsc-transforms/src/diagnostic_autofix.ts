@@ -30,7 +30,7 @@ export type Autofix = {
   help: string;
   category: string;
   transform: (astPath: NodePathComment) => TransformResponse;
-  parseHelp: (...args: any[]) => string;
+  parseHelp: (message: string) => string;
 };
 
 class DiagnosticAutofix implements Autofix {
@@ -48,8 +48,11 @@ class DiagnosticAutofix implements Autofix {
       parseHelp: this.parseHelp,
     };
   }
-  // TODO at instantiation, parse the help string and replace the positional args with the correct types
-  parseHelp(replacements: string[]): string {
+  // replace the positional arguments with the string replacements for the "help" message
+  parseHelp(tsMigrateMessage: string): string {
+    // this will expose the parsed diagnostic message coming from the typescript compiler
+    // eg. "Parameter 'p' implicitly has an 'any' type." into ["'p'", "'any'"]
+    const replacements = tsMigrateMessage.match(/'[^']+'/gm) as string[];
     return strPositionalReplacement(this.help, replacements);
   }
 }
