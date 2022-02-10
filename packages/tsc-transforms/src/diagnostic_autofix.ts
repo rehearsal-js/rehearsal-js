@@ -8,7 +8,6 @@
  https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
 */
 
-import { tsMigrateComments } from "./transforms";
 import { strPositionalReplacement } from "./utils";
 
 import type { types } from "recast";
@@ -33,7 +32,7 @@ export type Autofix = {
   parseHelp: (message: string) => string;
 };
 
-class DiagnosticAutofix implements Autofix {
+export class DiagnosticAutofix implements Autofix {
   constructor(
     public code: number,
     public help: string,
@@ -56,41 +55,3 @@ class DiagnosticAutofix implements Autofix {
     return strPositionalReplacement(this.help, replacements);
   }
 }
-
-// TODO the tsMigrateComments transform is a trivial placeholder example and should be swapped out
-const DIAGNOSTIC_AUTOFIX: { [key: string]: DiagnosticAutofix } = {
-  "2307": new DiagnosticAutofix(
-    2307,
-    "Try running `yarn add '{0}'.`",
-    "error",
-    (astPath) => {
-      return tsMigrateComments(astPath);
-    }
-  ),
-  "2322": new DiagnosticAutofix(
-    2322,
-    "Try changing type '{0}' to type '{1}'.",
-    "error",
-    (astPath) => {
-      return tsMigrateComments(astPath);
-    }
-  ),
-  "2345": new DiagnosticAutofix(
-    2345,
-    "Try changing type '{0}' to type '{1}'.",
-    "error",
-    (astPath) => {
-      return tsMigrateComments(astPath);
-    }
-  ),
-  "6133": new DiagnosticAutofix(
-    6133,
-    "The declaration '{0}' is never read. Remove the declaration or use it.",
-    "error",
-    (astPath) => {
-      return tsMigrateComments(astPath);
-    }
-  ),
-};
-
-export default DIAGNOSTIC_AUTOFIX;

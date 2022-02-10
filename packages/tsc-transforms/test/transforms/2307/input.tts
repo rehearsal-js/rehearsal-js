@@ -1,0 +1,2 @@
+// @ts-expect-error ts-migrate(2307) FIXME: Cannot find module '{0}' or its corresponding type declarations.
+let path = resolve('a', 'b');
