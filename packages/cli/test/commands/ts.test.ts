@@ -50,8 +50,7 @@ describe("ts:command against fixture", async () => {
     ]);
 
     expect(ctx.stdout).to.contain(`Rehearsing with typescript@`);
-    expect(ctx.stdout).to.contain(`Running TS-Migrate Reignore`);
-    expect(ctx.stdout).to.contain(`Autofix successful`);
+    expect(ctx.stdout).to.contain(`Autofix successful: code changes applied`);
     assert.ok(
       existsSync(RESULTS_FILEPATH),
       `result file ${RESULTS_FILEPATH} should exists`
@@ -89,7 +88,7 @@ describe("ts:command against fixture", async () => {
         FIXTURE_APP_PATH
       ]);
 
-      expect(ctx.stdout).to.contain(`Autofix not enabled`);
+      expect(ctx.stdout).to.contain(`Autofix successful: ts-expect-error comments added`);
     });
   });
 }).afterEach(afterEachCleanup);

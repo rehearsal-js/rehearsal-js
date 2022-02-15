@@ -21,12 +21,12 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// @ts-expect-error ts-migrate(7006) FIXME: Parameter 'p' implicitly has an 'any' type.
+// @ts-expect-error ts-migrate(6133) FIXME: 'msToSeconds' is declared but its value is never read.
 function msToSeconds(ms: number): number {
   return Math.round(ms / 1000);
 }
 
-// @ts-expect-error ts-migrate(6133) FIXME: 'readJSON' is declared but its value is never read... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(6133) FIXME: 'readJSON' is declared but its value is never read.
 function readJSON<TJson = unknown>(file: string): TJson | undefined {
   const text = readText(file);
   if (text !== undefined) {
@@ -57,12 +57,12 @@ function readFile(
   }
 }
 
-// @ts-expect-error ts-migrate(6133) FIXME: 'timestamp' is declared but its value is never rea... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(6133) FIXME: 'timestamp' is declared but its value is never read.
 function timestamp(inSeconds = false): number {
   return inSeconds ? Date.now() / 1000 : Date.now();
 }
 
-// @ts-expect-error ts-migrate(6133) FIXME: 'parseLongDescribe' is declared but its value is n... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(6133) FIXME: 'parseLongDescribe' is declared but its value is never read.
 function parseLongDescribe(desc: string): GitDescribe {
   const result = /^(.+)-(\d+)-g([a-f0-9]+)(?:-(dirty))?$/.exec(desc);
 
@@ -80,7 +80,7 @@ function parseLongDescribe(desc: string): GitDescribe {
   };
 }
 
-// @ts-expect-error ts-migrate(6133) FIXME: 'normalizeVersionString' is declared but its value... Remove this comment to see the full error message
+// @ts-expect-error ts-migrate(6133) FIXME: 'normalizeVersionString' is declared but its value is never read.
 function normalizeVersionString(versionString: string): string {
   if (VERSION_PATTERN.test(versionString)) {
     const result = VERSION_PATTERN.exec(versionString);

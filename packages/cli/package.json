@@ -59,9 +59,9 @@
     "listr2": "^4.0.2",
     "semver": "^7.3.5",
     "tmp": "^0.2.1",
-    "ts-migrate": "^0.1.26",
-    "ts-migrate-plugins": "^0.1.26",
-    "ts-migrate-server": "^0.1.26",
+    "ts-migrate": "^0.1.28",
+    "ts-migrate-plugins": "^0.1.28",
+    "ts-migrate-server": "^0.1.27",
     "which": "^2.0.2",
     "winston": "^3.3.3"
   },
