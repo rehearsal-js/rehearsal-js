@@ -19,7 +19,7 @@
     "conventional-changelog-cli": "^2.1.1",
     "husky": "^7.0.4",
     "lerna": "^4.0.0",
-    "ts-migrate-server": "^0.1.26"
+    "ts-migrate-server": "^0.1.27"
   },
   "repository": {
     "type": "git",

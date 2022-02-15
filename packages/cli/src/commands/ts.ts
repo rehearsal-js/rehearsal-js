@@ -230,26 +230,25 @@ export default class TS extends Command {
           },
         },
         {
-          title: "Running TS-Migrate Reignore",
-          skip: (ctx): boolean => ctx.skip,
-          task: async () => {
-            // FIXME: ts-migrate is screwing with listr2 and mutating the log titles
-            // this will add the @ts-expect-error and error-code for compiliation errors
-            // the autofix ts-migrate plugins will look for these comments and fix the errors based on the comment code
-            await execa(TS_MIGRATE_PATH, ["reignore", resolvedSrcDir]);
-          },
-        },
-        {
           title: "Attempting Autofix",
           skip: (ctx): boolean => ctx.skip,
           task: async (ctx, task) => {
-            if (!flags.autofix) {
-              task.skip("Autofix not enabled");
-              return;
-            }
-            const exitCode = await tsMigrateAutofix(resolvedSrcDir, REPORTER);
+            const runTransforms = flags.autofix ?? false;
+
+            const exitCode = await tsMigrateAutofix(
+              resolvedSrcDir,
+              REPORTER,
+              runTransforms
+            );
+
             if (exitCode === 0) {
-              task.title = "Autofix successful";
+              if (runTransforms) {
+                task.title = "Autofix successful: code changes applied";
+              } else {
+                task.title =
+                  "Autofix successful: ts-expect-error comments added";
+              }
+
               // commit changes if its not a dry_run and not a test
               if (!flags.dry_run && !flags.is_test) {
                 await git(["add", `${flags.src_dir}`], process.cwd());

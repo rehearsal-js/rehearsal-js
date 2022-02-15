@@ -33,7 +33,7 @@
     "@rehearsal/tsc-transforms": "^0.0.12",
     "debug": "^4.3.3",
     "recast": "^0.20.5",
-    "ts-migrate-server": "^0.1.26"
+    "ts-migrate-server": "^0.1.27"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
