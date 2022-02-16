@@ -33,9 +33,6 @@ const DEFAULT_TS_BUILD = "beta";
 let TSC_PATH = "";
 let TS_MIGRATE_PATH = "";
 
-// cwd for development only
-const REPORTER = new Reporter({ cwd: process.cwd() });
-
 type Context = {
   tsVersion: string;
   latestELRdBuild: string;
@@ -86,10 +83,13 @@ export default class TS extends Command {
 
     // grab the consuming apps project name
     const projectName = await determineProjectName();
-    REPORTER.projectName = projectName ? projectName : "";
+
+    const reporter = new Reporter({ cwd: process.cwd() });
+
+    reporter.projectName = projectName ? projectName : "";
 
     if (flags.report_output || flags.is_test) {
-      REPORTER.setCWD(resolvedSrcDir);
+      reporter.setCWD(resolvedSrcDir);
     }
 
     const tasks = new Listr<Context>(
@@ -138,7 +138,7 @@ export default class TS extends Command {
                   ) {
                     ctx.tsVersion = ctx.latestELRdBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
-                    REPORTER.tscVersion = ctx.tsVersion;
+                    reporter.tscVersion = ctx.tsVersion;
                   } else {
                     parent.title = `This application is already on the latest version of TypeScript@${ctx.currentTSVersion}. Exiting.`;
                     // this is a master skip that will skip the remainder of the tasks
@@ -237,7 +237,7 @@ export default class TS extends Command {
 
             const exitCode = await tsMigrateAutofix(
               resolvedSrcDir,
-              REPORTER,
+              reporter,
               runTransforms
             );
 
@@ -273,7 +273,7 @@ export default class TS extends Command {
 
       // end the reporter stream
       // and parse the results into a json file
-      await REPORTER.end(() => {
+      await reporter.end(() => {
         console.log(
           `Duration:              ${Math.floor(
             timestamp(true) - startTime

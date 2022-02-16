@@ -77,19 +77,19 @@ describe("ts:command against fixture", async () => {
     assert.equal(firstFileReportError.isAutofixed, true);
     assert.equal(firstFileReportError.stringLocation.end, 326);
     assert.equal(firstFileReportError.stringLocation.start, 236);
+  });
 
-    test.stdout().it("NO autofix", async (ctx) => {
-      await TS.run([
-        "--src_dir",
-        FIXTURE_APP_PATH,
-        "--dry_run",
-        "--is_test",
-        "--report_output",
-        FIXTURE_APP_PATH
-      ]);
+  test.stdout().it("NO autofix", async (ctx) => {
+    await TS.run([
+      "--src_dir",
+      FIXTURE_APP_PATH,
+      "--dry_run",
+      "--is_test",
+      "--report_output",
+      FIXTURE_APP_PATH
+    ]);
 
-      expect(ctx.stdout).to.contain(`Autofix successful: ts-expect-error comments added`);
-    });
+    expect(ctx.stdout).to.contain(`Autofix successful: ts-expect-error comments added`);
   });
 }).afterEach(afterEachCleanup);
 
