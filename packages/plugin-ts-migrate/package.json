@@ -26,11 +26,12 @@
     "lint:eslint": "yarn eslint . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
-    "test": "yarn lint"
+    "test": "yarn nyc mocha"
   },
   "dependencies": {
     "@rehearsal/reporter": "^0.0.12",
     "@rehearsal/tsc-transforms": "^0.0.12",
+    "@ts-morph/bootstrap": "^0.12.2",
     "debug": "^4.3.3",
     "recast": "^0.20.5",
     "ts-migrate-server": "^0.1.27"
