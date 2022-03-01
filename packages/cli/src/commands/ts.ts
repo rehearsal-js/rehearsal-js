@@ -25,6 +25,7 @@ import {
   isRepoDirty,
   bumpDevDep,
   isYarnManager,
+  getLatestTSVersion,
 } from "../utils";
 
 const DEBUG_CALLBACK = debug("rehearsal:ts");
@@ -103,13 +104,7 @@ export default class TS extends Command {
                 exitOnError: true,
                 task: async (ctx, task) => {
                   if (!flags.tsc_version) {
-                    const { stdout } = await execa("npm", [
-                      "show",
-                      `typescript@${build}`,
-                      "version",
-                    ]);
-
-                    ctx.latestELRdBuild = stdout;
+                    ctx.latestELRdBuild = await getLatestTSVersion(build);
                     task.title = `Latest typescript@${build} version is ${ctx.latestELRdBuild}`;
                   } else {
                     ctx.latestELRdBuild = flags.tsc_version;

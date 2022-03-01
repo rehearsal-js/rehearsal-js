@@ -9,6 +9,7 @@ import type { Report } from "@rehearsal/reporter";
 
 import { restoreLocalGit, YARN_PATH } from "../test-helpers";
 import { TS } from "../../src";
+import { getLatestTSVersion } from "../../src/utils";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
@@ -51,7 +52,10 @@ describe("ts:command against fixture", async () => {
       "--autofix"
     ]);
 
-    expect(ctx.stdout).to.contain(`Rehearsing with typescript@`);
+    // default is beta unless otherwise specified
+    const latestPublishedTSVersion = await getLatestTSVersion();
+
+    expect(ctx.stdout).to.contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
     expect(ctx.stdout).to.contain(`Autofix successful: code changes applied`);
     assert.ok(
       existsSync(RESULTS_FILEPATH),

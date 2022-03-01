@@ -190,3 +190,14 @@ export async function isRepoDirty(
     uncommittedFilesMessage: `You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.`,
   };
 }
+
+// defaults to beta unless other
+export async function getLatestTSVersion(build = "beta"): Promise<string> {
+  const { stdout } = await execa("npm", [
+    "show",
+    `typescript@${build}`,
+    "version",
+  ]);
+
+  return stdout;
+}
