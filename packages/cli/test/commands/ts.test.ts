@@ -12,6 +12,8 @@ import { TS } from "../../src";
 
 const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app");
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, ".rehearsal.json");
+// we want an older version of typescript to test against
+// eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = "4.2.4";
 
 const beforeSetup = async () => {
