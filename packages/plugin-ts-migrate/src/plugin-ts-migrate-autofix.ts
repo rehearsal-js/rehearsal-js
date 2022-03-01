@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plugin } from "ts-migrate-server";
 import { diagnosticAutofix } from "@rehearsal/tsc-transforms";
 import debug from "debug";
@@ -10,6 +9,10 @@ import type { NodePathComment } from "@rehearsal/tsc-transforms";
 
 const DEBUG_CALLBACK = debug("rehearsal:plugin-autofix");
 let reporter: Reporter;
+
+interface TPluginOptions {
+  reporter: Reporter;
+}
 
 interface CommentLineExt extends types.namedTypes.CommentLine {
   start: number;
@@ -67,7 +70,7 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
 function runTransform(
   astPath: NodePathComment,
   tscLog: Pick<TSCLog, "filePath" | "errors">
-): any {
+): NodePathComment {
   // log the comment
   const commentEntry: DiagnosticSource = {
     commentNode: astPath.value,
@@ -109,7 +112,7 @@ function runTransform(
  * parse the typescript diagnostic code into a more helpful comment
  * and if possible will autofix and mitigate based on the diagnostic code
  */
-const pluginTSMigrateAutofix: Plugin<any> = {
+const pluginTSMigrateAutofix: Plugin<TPluginOptions> = {
   name: "plugin-ts-migrate-autofix",
   async run({ text, options, fileName }) {
     const tsAST: types.ASTNode = recast.parse(text, {
@@ -138,11 +141,7 @@ const pluginTSMigrateAutofix: Plugin<any> = {
 
     DEBUG_CALLBACK("logging entry %O", tscLog);
 
-    // const content = recast.print(TS_AST).code;
-    // writeFileSync(filePath, content, { encoding: "utf8", flag: "w" });
-
     return recast.print(tsAST).code;
-    // return root.toSource();
   },
 };
 

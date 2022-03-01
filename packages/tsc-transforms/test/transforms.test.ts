@@ -11,43 +11,33 @@ import { diagnosticAutofix, NodePathComment } from '../src';
 
 const tests = getTests();
 
-describe('Test transforms', function() {
+describe('transforms matrix', function() {
   tests.forEach((transformCode) => {
     it(`Autofix for TS${transformCode} code`, async () => {
 
-      const inputContent = await readTestFileContent(transformCode, 'input.tts');
+      // fixture input source file
+      const inputSource = await readTestFileContent(transformCode, 'input.tts');
 
-      const ast: types.ASTNode = recast.parse(inputContent, {
+      // run the transform for the given diagnostic code
+      const ast: types.ASTNode = recast.parse(inputSource, {
         parser: require("recast/parsers/typescript"),
       });
-
       recast.visit(ast, {
         visitComment(astPath: NodePathComment) {
           if (astPath.value.value.includes("ts-migrate")) {
-
             diagnosticAutofix[transformCode].transform(astPath);
-
-            //console.log(diagnosticAutofix[transformCode]);
-
-            //console.log(resolve("../src/transforms", transformCode));
-            //import("../src/transforms/6133").then((transform) => {
-            //  transform.default.transform(astPath);
-            //  this.traverse(astPath);
-            //});
-
-            //transform.default.transform(astPath);
-
-
             this.traverse(astPath);
           }
         }
       });
 
-      const transformedContent = recast.print(ast).code;
+      // transformed fixture input source file
+      const transformedSource = recast.print(ast).code;
 
-      const expectedContent = await readTestFileContent(transformCode, 'output.tts');
+      // fixture output source file
+      const expectedSourceOutput = await readTestFileContent(transformCode, 'output.tts');
 
-      assert.equal(transformedContent, expectedContent, `Transform ${transformCode}`);
+      assert.equal(transformedSource, expectedSourceOutput, `Transform ${transformCode}`);
     });
   });
 });
