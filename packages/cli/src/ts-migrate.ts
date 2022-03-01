@@ -11,7 +11,7 @@ import type { Reporter } from "@rehearsal/reporter";
 export async function tsMigrateAutofix(
   srcDir: string,
   reporter: Reporter,
-  transformCode: boolean
+  transformCode?: boolean
 ): Promise<number> {
   const config = new MigrateConfig()
     .addPlugin(stripTSIgnorePlugin, {})
