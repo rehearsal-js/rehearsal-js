@@ -12,6 +12,7 @@ let reporter: Reporter;
 
 interface TPluginOptions {
   reporter: Reporter;
+  updateCommentsOnly?: boolean;
 }
 
 interface CommentLineExt extends types.namedTypes.CommentLine {
