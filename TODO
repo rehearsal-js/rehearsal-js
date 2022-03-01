@@ -1,11 +1,10 @@
-// dumping ground for thoughts at project conception
 TODO: Autofix to include shim for newly introduced primitive types maybe leverage https://github.com/sandersn/downlevel-dts
 
 TODO: Possibly leverage CheckupJS tasks?
 
-TODO: Possibly if speed is a factor down the road experiment with porting the CLI into Rust
+TODO: Possibly if speed is a factor down the road experiment with porting into Rust
 
-TODO: For the PR generation leverage Greenkeeper.
+TODO: For the PR generation leverage Greenkeeper?
 
 TODO: Versioning of transforms. Either as a cascade of transforms starting at latest down, or as a separate transform by version
 
