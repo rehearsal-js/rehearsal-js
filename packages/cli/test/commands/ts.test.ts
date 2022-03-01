@@ -81,8 +81,6 @@ describe("ts:command against fixture", async () => {
     );
     assert.equal(firstFileReportError.errorCode, "6133");
     assert.equal(firstFileReportError.isAutofixed, true);
-    assert.equal(firstFileReportError.stringLocation.end, 328);
-    assert.equal(firstFileReportError.stringLocation.start, 238);
   });
 
   test.stdout().it("NO autofix", async (ctx) => {
