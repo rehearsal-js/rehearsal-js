@@ -9,7 +9,6 @@ tmp/
 *.tmp
 .nyc_output
 .idea/*
-.vscode/
 packages/cli/bin/run.js
 **SCRATCH**
 **/test/results/**
