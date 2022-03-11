@@ -1,9 +1,9 @@
-import { inspect } from "util";
-import { test } from "mocha";
-import { join, resolve } from "path";
-import { remove } from "fs-extra";
+import { inspect } from 'util';
+import { test } from 'mocha';
+import { join, resolve } from 'path';
+import { remove } from 'fs-extra';
 
-import { git } from "../src";
+import { git } from '../src';
 
 type ArgsOf<T extends (...args: readonly unknown[]) => unknown> = T extends (
   // tslint:disable-next-line: no-unused
@@ -27,10 +27,7 @@ export function eachCase<
   T extends (...args: readonly any[]) => any,
   Args extends readonly unknown[] = ArgsOf<T>,
   Result = ReturnType<T>
->(
-  cases: TestCase<Args, Result>[],
-  callback: TestCaseCallback<Args, Result>
-): void {
+>(cases: TestCase<Args, Result>[], callback: TestCaseCallback<Args, Result>): void {
   cases.forEach(({ args, expected }) => {
     test(inspect(args, { compact: true }), () => {
       callback(args, expected);
@@ -39,12 +36,9 @@ export function eachCase<
 }
 
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-export const YARN_PATH = resolve(VOLTA_HOME, "bin/yarn");
+export const YARN_PATH = resolve(VOLTA_HOME, 'bin/yarn');
 
-export async function restoreLocalGit(fixtureAppPath: string) {
-  await git(
-    ["restore", "package.json", "../../yarn.lock", fixtureAppPath],
-    process.cwd()
-  );
-  await remove(join(fixtureAppPath, ".rehearsal.json"));
+export async function restoreLocalGit(fixtureAppPath: string): Promise<void> {
+  await git(['restore', 'package.json', '../../yarn.lock', fixtureAppPath], process.cwd());
+  await remove(join(fixtureAppPath, '.rehearsal.json'));
 }

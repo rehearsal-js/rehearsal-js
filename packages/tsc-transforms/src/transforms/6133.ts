@@ -1,8 +1,4 @@
-import {
-  DiagnosticAutofix,
-  NodePathComment,
-  TransformResponse,
-} from "../diagnostic_autofix";
+import { DiagnosticAutofix, NodePathComment, TransformResponse } from '../diagnostic_autofix';
 
 export const Autofix6133 = new DiagnosticAutofix(
   6133,
@@ -12,7 +8,7 @@ export const Autofix6133 = new DiagnosticAutofix(
     const associatedNode = astPath.node;
     const commentNode = astPath.value;
     const comment = commentNode.value;
-    const newCommentValue = comment.replace("FIXME", "FIXED");
+    const newCommentValue = comment.replace('FIXME', 'FIXED');
 
     associatedNode.leadingComments[0].value = newCommentValue;
     commentNode.value = newCommentValue;

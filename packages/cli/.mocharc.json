@@ -1,16 +1,11 @@
 {
-  "require": "ts-node/register",
-  "extension": ["ts"],
-  "watch-files": ["test/**/*.test.ts"],
-  "recursive": true,
-  "forbid-only": true,
-  "reporter": "spec",
-  "timeout": 60000,
+  "extends": "../../.mocharc.json",
   "file": ["test/setup.ts"],
   "ignore": [
     "test/fixtures/**/*",
     "test/ts-migrate/**/*",
     "test/setup.ts",
     "test/test-helpers.ts"
-  ]
+  ],
+  "timeout": 60000
 }

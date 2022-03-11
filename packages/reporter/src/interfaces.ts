@@ -15,6 +15,7 @@ export interface ReporterSummary {
   autofixedErrors: number;
   autofixedUniqueErrorList: string[];
 }
+
 export interface Report extends ReporterSummary {
   projectName: string;
   fileCount: number;

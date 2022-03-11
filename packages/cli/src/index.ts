@@ -1,6 +1,6 @@
-import TS from "./commands/ts";
+import TS from './commands/ts';
 
-export { run } from "@oclif/command";
+export { run } from '@oclif/command';
 export { TS };
-export * from "./utils";
-export * from "./ts-migrate";
+export * from './utils';
+export * from './ts-migrate';

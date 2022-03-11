@@ -1,26 +1,7 @@
 {
-  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig",
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": ["types/*"]
-    },
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "newLine": "LF",
-    "moduleResolution": "node",
-    "module": "commonjs",
-    "resolveJsonModule": true,
-    "target": "es2017",
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "outDir": "dist"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "test"]
+  "exclude": ["node_modules", "dist", "test"]
 }

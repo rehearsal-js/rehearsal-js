@@ -1,1 +1,1 @@
-export { default as pluginTSMigrateAutofix } from "./plugin-ts-migrate-autofix";
+export { default as pluginTSMigrateAutofix } from './plugin-ts-migrate-autofix';

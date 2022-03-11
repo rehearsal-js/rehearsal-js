@@ -1,3 +1,4 @@
+import { LanguageService } from 'typescript';
 import { PluginParams } from 'ts-migrate-server';
 import { createProject } from '@ts-morph/bootstrap';
 
@@ -18,7 +19,7 @@ export async function realPluginParams<TOptions = unknown>(params: {
   });
   const sourceFile = project.createSourceFile(fileName, text);
 
-  const getLanguageService = () => project.getLanguageService();
+  const getLanguageService = (): LanguageService => project.getLanguageService();
 
   return {
     options: options as unknown as TOptions,

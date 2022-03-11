@@ -8,14 +8,13 @@
  https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
 */
 
-import { strPositionalReplacement } from "./utils";
+import { strPositionalReplacement } from './utils';
 
-import type { types } from "recast";
-import type { NodePath } from "ast-types/lib/node-path";
+import type { types } from 'recast';
+import type { NodePath } from 'ast-types/lib/node-path';
 
 // NodePath<Comment> should have node.leadingComments
-export interface NodePathComment
-  extends NodePath<types.namedTypes.Comment, any> {
+export interface NodePathComment extends NodePath<types.namedTypes.Comment, any> {
   node: any;
 }
 

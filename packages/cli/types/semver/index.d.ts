@@ -1,3 +1,3 @@
-declare module "semver" {
+declare module 'semver' {
   export function valid(str: string): boolean;
 }
