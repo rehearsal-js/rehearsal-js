@@ -1,9 +1,5 @@
-import {
-  DiagnosticAutofix,
-  NodePathComment,
-  TransformResponse,
-} from "../diagnostic_autofix";
-import { tsMigrateComments } from "../transforms";
+import { DiagnosticAutofix, NodePathComment, TransformResponse } from '../diagnostic_autofix';
+import { tsMigrateComments } from '../transforms';
 
 const Autofix2322 = new DiagnosticAutofix(
   2322,

@@ -1,20 +1,20 @@
-import { readFileSync } from "fs";
-import { parse } from "json5";
-import findUp from "find-up";
-import { resolve } from "path";
-import execa = require("execa");
-import type { GitDescribe } from "./interfaces";
+import { readFileSync } from 'fs';
+import { parse } from 'json5';
+import findUp from 'find-up';
+import { resolve } from 'path';
+import execa = require('execa');
+import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
 export async function git(args: string[], cwd: string): Promise<string> {
-  const { stdout } = await execa("git", args, { cwd });
+  const { stdout } = await execa('git', args, { cwd });
   return stdout;
 }
 
 export async function gitCommit(msg: string): Promise<string> {
   const stdout = await git(
-    ["commit", "-m", `chore(deps-dev): [REHEARSAL-BOT] ${msg}`],
+    ['commit', '-m', `chore(deps-dev): [REHEARSAL-BOT] ${msg}`],
     process.cwd()
   );
   return stdout;
@@ -47,22 +47,16 @@ export function readJSON<TJson = unknown>(file: string): TJson | undefined {
 }
 
 export function readText(file: string): string | undefined {
-  return readFile(file, "utf8");
+  return readFile(file, 'utf8');
 }
 
-export function readFile(file: string, encoding: "utf8"): string | undefined;
-export function readFile(
-  file: string,
-  encoding?: undefined
-): Buffer | undefined;
-export function readFile(
-  file: string,
-  encoding?: "utf8"
-): string | Buffer | undefined {
+export function readFile(file: string, encoding: 'utf8'): string | undefined;
+export function readFile(file: string, encoding?: undefined): Buffer | undefined;
+export function readFile(file: string, encoding?: 'utf8'): string | Buffer | undefined {
   try {
     return readFileSync(file, encoding);
   } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
       return;
     }
     throw e;
@@ -115,10 +109,8 @@ export function normalizeVersionString(versionString: string): string {
   return versionString;
 }
 
-export async function determineProjectName(
-  directory = process.cwd()
-): Promise<string | null> {
-  const packageJSONPath = await findUp("package.json", {
+export async function determineProjectName(directory = process.cwd()): Promise<string | null> {
+  const packageJSONPath = await findUp('package.json', {
     cwd: directory,
   });
 
@@ -130,7 +122,7 @@ export async function determineProjectName(
 }
 
 export async function isYarnManager(): Promise<boolean> {
-  const yarnPath = await findUp("yarn.lock", {
+  const yarnPath = await findUp('yarn.lock', {
     cwd: process.cwd(),
   });
 
@@ -142,10 +134,10 @@ export async function bumpDevDep(devDep: string): Promise<void> {
   const isYarn = await isYarnManager();
   // check if npm or yarn
   const binAndArgs = {
-    bin: isYarn ? "yarn" : "npm",
+    bin: isYarn ? 'yarn' : 'npm',
     args: isYarn
-      ? ["add", "-D", `${devDep}`, "--ignore-scripts"]
-      : ["install", `${devDep}`, "--save-dev", "--ignore-scripts"],
+      ? ['add', '-D', `${devDep}`, '--ignore-scripts']
+      : ['install', `${devDep}`, '--save-dev', '--ignore-scripts'],
   };
 
   await execa(binAndArgs.bin, binAndArgs.args);
@@ -155,7 +147,7 @@ export async function bumpDevDep(devDep: string): Promise<void> {
 // we need to handle volta use case and check for npm or yarn
 export async function getPathToBinary(binaryName: string): Promise<string> {
   // if volta exists on the path use it
-  let packageManager = (await isYarnManager()) ? "yarn" : "npm";
+  let packageManager = (await isYarnManager()) ? 'yarn' : 'npm';
   let stdoutMsg;
   const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 
@@ -164,7 +156,7 @@ export async function getPathToBinary(binaryName: string): Promise<string> {
   }
 
   try {
-    const { stdout } = await execa(packageManager, ["bin", binaryName]);
+    const { stdout } = await execa(packageManager, ['bin', binaryName]);
     stdoutMsg = stdout;
   } catch (e) {
     throw new Error(`Unable to find binary path to ${binaryName}`);
@@ -173,7 +165,7 @@ export async function getPathToBinary(binaryName: string): Promise<string> {
   // return the path to the binary
   try {
     return stdoutMsg
-      .split("\n")
+      .split('\n')
       .filter((p) => p.includes(`bin/${binaryName}`))[0]
       .trim();
   } catch (error) {
@@ -184,7 +176,7 @@ export async function getPathToBinary(binaryName: string): Promise<string> {
 export async function isRepoDirty(
   path: string
 ): Promise<{ hasUncommittedFiles: boolean; uncommittedFilesMessage: string }> {
-  const desc = await git(["describe", "--tags", "--long", "--dirty"], path);
+  const desc = await git(['describe', '--tags', '--long', '--dirty'], path);
   return {
     hasUncommittedFiles: parseLongDescribe(desc).dirty,
     uncommittedFilesMessage: `You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.`,
@@ -192,12 +184,8 @@ export async function isRepoDirty(
 }
 
 // defaults to beta unless other
-export async function getLatestTSVersion(build = "beta"): Promise<string> {
-  const { stdout } = await execa("npm", [
-    "show",
-    `typescript@${build}`,
-    "version",
-  ]);
+export async function getLatestTSVersion(build = 'beta'): Promise<string> {
+  const { stdout } = await execa('npm', ['show', `typescript@${build}`, 'version']);
 
   return stdout;
 }

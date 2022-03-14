@@ -1,0 +1,5 @@
+*.config.js
+dist
+docs
+fixtures
+node_modules

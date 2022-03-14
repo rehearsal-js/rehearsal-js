@@ -6,8 +6,7 @@ import { Reporter } from '@rehearsal/reporter';
 import { realPluginParams } from './utils';
 import pluginTSMigrateAutofix from '../src/plugin-ts-migrate-autofix';
 
-
-describe('Test pluginTSMigrateAutofix', function() {
+describe('Test pluginTSMigrateAutofix', function () {
   it(`run`, async () => {
     const input = `
       // @ts-expect-error ts-migrate(6133) FIXME: The declaration '{0}' is never read. Remove the declaration or use it.
@@ -19,8 +18,8 @@ describe('Test pluginTSMigrateAutofix', function() {
     const params = await realPluginParams({
       text: input,
       options: {
-        reporter: new Reporter()
-      }
+        reporter: new Reporter(),
+      },
     });
 
     const output = await pluginTSMigrateAutofix.run(params);

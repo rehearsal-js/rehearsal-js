@@ -1,6 +1,6 @@
-import { Plugin } from "ts-migrate-server";
+import { Plugin } from 'ts-migrate-server';
 
-import type { Reporter } from "@rehearsal/reporter";
+import type { Reporter } from '@rehearsal/reporter';
 
 /**
  * This ts-migrate plugin will match against "ts-migrate" comments per file
@@ -11,7 +11,7 @@ const tsAutofixPlugin: Plugin<{
   reporter: Reporter;
   updateCommentsOnly?: boolean;
 }> = {
-  name: "ts-autofix-plugin",
+  name: 'ts-autofix-plugin',
   async run({ fileName, text, getLanguageService }) {
     const diagnostics = getLanguageService().getSemanticDiagnostics(fileName);
     console.log(diagnostics);

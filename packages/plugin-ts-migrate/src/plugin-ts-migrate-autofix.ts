@@ -1,13 +1,13 @@
-import { Plugin } from "ts-migrate-server";
-import { diagnosticAutofix } from "@rehearsal/tsc-transforms";
-import debug from "debug";
-import * as recast from "recast";
+import { Plugin } from 'ts-migrate-server';
+import { diagnosticAutofix } from '@rehearsal/tsc-transforms';
+import debug from 'debug';
+import * as recast from 'recast';
 
-import type { TSCLog, TSCLogError, Reporter } from "@rehearsal/reporter";
-import type { types } from "recast";
-import type { NodePathComment } from "@rehearsal/tsc-transforms";
+import type { TSCLog, TSCLogError, Reporter } from '@rehearsal/reporter';
+import type { types } from 'recast';
+import type { NodePathComment } from '@rehearsal/tsc-transforms';
 
-const DEBUG_CALLBACK = debug("rehearsal:plugin-autofix");
+const DEBUG_CALLBACK = debug('rehearsal:plugin-autofix');
 let reporter: Reporter;
 
 interface TPluginOptions {
@@ -34,7 +34,7 @@ class ErrorEntry implements TSCLogError {
     start: 0,
     end: 0,
   };
-  helpMessage = "";
+  helpMessage = '';
   isAutofixed: boolean;
   constructor(args: TSCLogError) {
     this.errorCode = args.errorCode;
@@ -50,9 +50,9 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
   const { diagnosticLookupID, commentNode, isAutofixed } = commentEntry;
   const entry = {
     errorCode: diagnosticLookupID,
-    errorCategory: "",
+    errorCategory: '',
     errorMessage: commentNode.value,
-    helpMessage: "",
+    helpMessage: '',
     stringLocation: { start: commentNode.start, end: commentNode.end },
     isAutofixed,
   };
@@ -60,9 +60,7 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
   if (diagnosticAutofix[diagnosticLookupID]) {
     entry.errorCategory = diagnosticAutofix[diagnosticLookupID].category;
     // eg " @ts-expect-error ts-migrate(7006) Parameter 'p' implicitly has an 'any' type."
-    entry.helpMessage = diagnosticAutofix[diagnosticLookupID].parseHelp(
-      commentNode.value
-    );
+    entry.helpMessage = diagnosticAutofix[diagnosticLookupID].parseHelp(commentNode.value);
   }
 
   return new ErrorEntry(entry);
@@ -70,12 +68,12 @@ function logErrorEntry(commentEntry: DiagnosticSource): ErrorEntry {
 
 function runTransform(
   astPath: NodePathComment,
-  tscLog: Pick<TSCLog, "filePath" | "errors">
+  tscLog: Pick<TSCLog, 'filePath' | 'errors'>
 ): NodePathComment {
   // log the comment
   const commentEntry: DiagnosticSource = {
     commentNode: astPath.value,
-    diagnosticLookupID: astPath.value.value.match("([0-9]+)")[0],
+    diagnosticLookupID: astPath.value.value.match('([0-9]+)')[0],
     isAutofixed: false,
   };
   const { diagnosticLookupID } = commentEntry;
@@ -87,7 +85,7 @@ function runTransform(
     const transformLookup = diagnosticAutofix[diagnosticLookupID];
     // if we have a transform for this diagnostic id, apply it
     if (transformLookup) {
-      DEBUG_CALLBACK("transform", transformLookup);
+      DEBUG_CALLBACK('transform', transformLookup);
       const { isSuccess, path } = transformLookup.transform(astPath);
 
       if (isSuccess) {
@@ -99,7 +97,7 @@ function runTransform(
       return path;
     }
   } catch (error) {
-    DEBUG_CALLBACK("error", `${error}`);
+    DEBUG_CALLBACK('error', `${error}`);
   }
 
   // log not matter what
@@ -114,12 +112,12 @@ function runTransform(
  * and if possible will autofix and mitigate based on the diagnostic code
  */
 const pluginTSMigrateAutofix: Plugin<TPluginOptions> = {
-  name: "plugin-ts-migrate-autofix",
+  name: 'plugin-ts-migrate-autofix',
   async run({ text, options, fileName }) {
     const tsAST: types.ASTNode = recast.parse(text, {
-      parser: require("recast/parsers/typescript"),
+      parser: require('recast/parsers/typescript'),
     });
-    const tscLog: Pick<TSCLog, "filePath" | "errors"> = {
+    const tscLog: Pick<TSCLog, 'filePath' | 'errors'> = {
       filePath: fileName,
       errors: [],
     };
@@ -128,7 +126,7 @@ const pluginTSMigrateAutofix: Plugin<TPluginOptions> = {
 
     recast.visit(tsAST, {
       visitComment(astPath: NodePathComment) {
-        if (astPath.value.value.includes("ts-migrate")) {
+        if (astPath.value.value.includes('ts-migrate')) {
           // execute the transform
           astPath = runTransform(astPath, tscLog);
         }
@@ -138,9 +136,9 @@ const pluginTSMigrateAutofix: Plugin<TPluginOptions> = {
     });
 
     // log the entry to the filelog stream
-    reporter.fileLogger.log("info", "tsc-log-entry-rehearsal", tscLog);
+    reporter.fileLogger.log('info', 'tsc-log-entry-rehearsal', tscLog);
 
-    DEBUG_CALLBACK("logging entry %O", tscLog);
+    DEBUG_CALLBACK('logging entry %O', tscLog);
 
     return recast.print(tsAST).code;
   },
