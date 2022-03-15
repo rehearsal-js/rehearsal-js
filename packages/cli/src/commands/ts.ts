@@ -1,12 +1,12 @@
-import { Command } from "@oclif/command";
-import * as compareVersions from "compare-versions";
-import { Listr } from "listr2";
-import { resolve } from "path";
-import { Reporter } from "@rehearsal/reporter";
-import debug from "debug";
-import execa = require("execa");
+import { Command } from '@oclif/command';
+import * as compareVersions from 'compare-versions';
+import { Listr } from 'listr2';
+import { resolve } from 'path';
+import { Reporter } from '@rehearsal/reporter';
+import debug from 'debug';
+import execa = require('execa');
 
-import { tsMigrateAutofix } from "../ts-migrate";
+import { tsMigrateAutofix } from '../ts-migrate';
 import {
   build,
   src_dir,
@@ -15,7 +15,7 @@ import {
   dry_run,
   tsc_version,
   report_output,
-} from "../helpers/flags";
+} from '../helpers/flags';
 import {
   git,
   timestamp,
@@ -26,13 +26,13 @@ import {
   bumpDevDep,
   isYarnManager,
   getLatestTSVersion,
-} from "../utils";
+} from '../utils';
 
-const DEBUG_CALLBACK = debug("rehearsal:ts");
-const DEFAULT_TS_BUILD = "beta";
+const DEBUG_CALLBACK = debug('rehearsal:ts');
+const DEFAULT_TS_BUILD = 'beta';
 
-let TSC_PATH = "";
-let TS_MIGRATE_PATH = "";
+let TSC_PATH = '';
+let TS_MIGRATE_PATH = '';
 
 type Context = {
   tsVersion: string;
@@ -42,15 +42,15 @@ type Context = {
 };
 
 export default class TS extends Command {
-  static aliases = ["typescript"];
+  static aliases = ['typescript'];
   static description =
-    "bump typescript dev-dependency with compilation insights and auto-fix options";
+    'bump typescript dev-dependency with compilation insights and auto-fix options';
   static flags = {
     build: build({
       default: DEFAULT_TS_BUILD,
     }),
     src_dir: src_dir({
-      default: "./app",
+      default: './app',
     }),
     tsc_version: tsc_version(),
     autofix,
@@ -67,27 +67,26 @@ export default class TS extends Command {
 
     // WARN: is git dirty check and exit if dirty
     if (!flags.is_test) {
-      const { hasUncommittedFiles, uncommittedFilesMessage } =
-        await isRepoDirty(process.cwd());
+      const { hasUncommittedFiles, uncommittedFilesMessage } = await isRepoDirty(process.cwd());
       if (hasUncommittedFiles) {
         this.warn(uncommittedFilesMessage);
         process.exit(0);
       }
     }
 
-    TS_MIGRATE_PATH = await getPathToBinary("ts-migrate");
-    TSC_PATH = await getPathToBinary("tsc");
+    TS_MIGRATE_PATH = await getPathToBinary('ts-migrate');
+    TSC_PATH = await getPathToBinary('tsc');
 
-    DEBUG_CALLBACK("TSC_PATH", TSC_PATH);
-    DEBUG_CALLBACK("TS_MIGRATE_PATH", TS_MIGRATE_PATH);
-    DEBUG_CALLBACK("flags %O", flags);
+    DEBUG_CALLBACK('TSC_PATH', TSC_PATH);
+    DEBUG_CALLBACK('TS_MIGRATE_PATH', TS_MIGRATE_PATH);
+    DEBUG_CALLBACK('flags %O', flags);
 
     // grab the consuming apps project name
     const projectName = await determineProjectName();
 
     const reporter = new Reporter({ cwd: process.cwd() });
 
-    reporter.projectName = projectName ? projectName : "";
+    reporter.projectName = projectName ? projectName : '';
 
     if (flags.report_output || flags.is_test) {
       reporter.setCWD(resolvedSrcDir);
@@ -96,7 +95,7 @@ export default class TS extends Command {
     const tasks = new Listr<Context>(
       [
         {
-          title: "Setting TypeScript version for rehearsal",
+          title: 'Setting TypeScript version for rehearsal',
           task: (_ctx: Context, task): Listr =>
             task.newListr((parent) => [
               {
@@ -113,24 +112,18 @@ export default class TS extends Command {
                 },
               },
               {
-                title: "Fetching installed typescript version",
+                title: 'Fetching installed typescript version',
                 task: async (ctx, task) => {
-                  const { stdout } = await execa(TSC_PATH, ["--version"]);
+                  const { stdout } = await execa(TSC_PATH, ['--version']);
                   // Version 4.5.0-beta
-                  ctx.currentTSVersion = stdout.split(" ")[1];
+                  ctx.currentTSVersion = stdout.split(' ')[1];
                   task.title = `Currently on typescript version ${ctx.currentTSVersion}`;
                 },
               },
               {
-                title: "Comparing TypeScript versions",
+                title: 'Comparing TypeScript versions',
                 task: async (ctx) => {
-                  if (
-                    compareVersions.compare(
-                      ctx.latestELRdBuild,
-                      ctx.currentTSVersion,
-                      ">"
-                    )
-                  ) {
+                  if (compareVersions.compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestELRdBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                     reporter.tscVersion = ctx.tsVersion;
@@ -159,13 +152,11 @@ export default class TS extends Command {
                 skip: true,
                 task: async (ctx: Context) => {
                   if (flags.dry_run || flags.is_test) {
-                    task.skip("Skipping task because dry_run flag is set");
+                    task.skip('Skipping task because dry_run flag is set');
                   } else {
                     // eventually commit change
-                    const lockFile = (await isYarnManager())
-                      ? "yarn.lock"
-                      : "package-lock.json";
-                    await git(["add", "package.json", lockFile], process.cwd());
+                    const lockFile = (await isYarnManager()) ? 'yarn.lock' : 'package-lock.json';
+                    await git(['add', 'package.json', lockFile], process.cwd());
 
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
@@ -176,27 +167,25 @@ export default class TS extends Command {
             ]),
         },
         {
-          title: "Checking for compilation errors",
+          title: 'Checking for compilation errors',
           skip: (ctx): boolean => ctx.skip,
           task: (_ctx: Context, task): Listr =>
             task.newListr(
               () => [
                 {
-                  title: "Building TypeScript",
+                  title: 'Building TypeScript',
                   task: async (_ctx, task) => {
                     try {
-                      await execa(TSC_PATH, ["-b"]);
+                      await execa(TSC_PATH, ['-b']);
 
                       // if we should update package.json with typescript version and submit a PR
                       task.newListr(() => [
                         {
-                          title: "Creating Pull Request",
+                          title: 'Creating Pull Request',
                           task: async (ctx, task) => {
                             if (flags.dry_run) {
                               ctx.skip = true;
-                              task.skip(
-                                "Skipping task because dry_run flag is set"
-                              );
+                              task.skip('Skipping task because dry_run flag is set');
                             }
 
                             // do PR work here
@@ -209,7 +198,7 @@ export default class TS extends Command {
                     } catch (error) {
                       // catch the tsc build compliation error
                       // re-run with tsc --clean and try and mitigate the error with ts-migrate plugins
-                      throw new Error("Compilation Error");
+                      throw new Error('Compilation Error');
                     }
                   },
                 },
@@ -218,41 +207,34 @@ export default class TS extends Command {
             ),
         },
         {
-          title: "Re-Building TypeScript with Clean",
+          title: 'Re-Building TypeScript with Clean',
           skip: (ctx): boolean => ctx.skip,
           task: async () => {
-            await execa(TSC_PATH, ["-b", "--clean"]);
+            await execa(TSC_PATH, ['-b', '--clean']);
           },
         },
         {
-          title: "Attempting Autofix",
+          title: 'Attempting Autofix',
           skip: (ctx): boolean => ctx.skip,
           task: async (ctx, task) => {
             const runTransforms = flags.autofix ?? false;
 
-            const exitCode = await tsMigrateAutofix(
-              resolvedSrcDir,
-              reporter,
-              runTransforms
-            );
+            const exitCode = await tsMigrateAutofix(resolvedSrcDir, reporter, runTransforms);
 
             if (exitCode === 0) {
               if (runTransforms) {
-                task.title = "Autofix successful: code changes applied";
+                task.title = 'Autofix successful: code changes applied';
               } else {
-                task.title =
-                  "Autofix successful: ts-expect-error comments added";
+                task.title = 'Autofix successful: ts-expect-error comments added';
               }
 
               // commit changes if its not a dry_run and not a test
               if (!flags.dry_run && !flags.is_test) {
-                await git(["add", `${flags.src_dir}`], process.cwd());
-                await gitCommit(
-                  `fixes tsc type errors with TypeScript@${ctx.tsVersion}`
-                );
+                await git(['add', `${flags.src_dir}`], process.cwd());
+                await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
               }
             } else {
-              throw new Error("Autofix un-successful");
+              throw new Error('Autofix un-successful');
             }
           },
         },
@@ -263,17 +245,13 @@ export default class TS extends Command {
     try {
       const startTime = timestamp(true);
       await tasks.run().then(async (ctx) => {
-        DEBUG_CALLBACK("ctx %O", ctx);
+        DEBUG_CALLBACK('ctx %O', ctx);
       });
 
       // end the reporter stream
       // and parse the results into a json file
       await reporter.end(() => {
-        console.log(
-          `Duration:              ${Math.floor(
-            timestamp(true) - startTime
-          )} sec`
-        );
+        console.log(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
       });
 
       // after the reporter closes the stream reset git to the original state
@@ -281,10 +259,7 @@ export default class TS extends Command {
       // be sure to check for is_test flag and only reset within the fixture app and package.json
       // this is reset within the afterEach hook for testing
       if (flags.dry_run && !flags.is_test) {
-        await git(
-          ["restore", "package.json", "yarn.lock", `${flags.src_dir}`],
-          process.cwd()
-        );
+        await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
       }
     } catch (e) {
       this.error(`${e}`);

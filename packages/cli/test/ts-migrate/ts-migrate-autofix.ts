@@ -1,14 +1,14 @@
-import { resolve } from "path";
-import { Reporter } from "@rehearsal/reporter";
+import { resolve } from 'path';
+import { Reporter } from '@rehearsal/reporter';
 
-import { tsMigrateAutofix } from "../../src/index";
+import { tsMigrateAutofix } from '../../src/index';
 
 // this test assumes ts-migrate has already been run with "ts-migrate" comments
-const FIXTURE_APP_PATH = resolve(__dirname, "../fixtures/app_with_comments");
+const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app_with_comments');
 const reporter = new Reporter({ cwd: process.cwd() });
 reporter.setCWD(FIXTURE_APP_PATH);
 
-async function run() {
+async function run(): Promise<void> {
   const exitCode = await tsMigrateAutofix(FIXTURE_APP_PATH, reporter);
   await reporter.end();
 

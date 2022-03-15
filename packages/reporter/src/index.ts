@@ -1,9 +1,3 @@
-export { default as Reporter } from "./reporter";
+export { default as Reporter } from './reporter';
 
-export type {
-  ReporterOptions,
-  Report,
-  TSCLog,
-  ReporterSummary,
-  TSCLogError,
-} from "./interfaces";
+export type { ReporterOptions, Report, TSCLog, ReporterSummary, TSCLogError } from './interfaces';

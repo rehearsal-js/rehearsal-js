@@ -1,12 +1,8 @@
-import { migrate, MigrateConfig } from "ts-migrate-server";
-import { pluginTSMigrateAutofix } from "@rehearsal/plugin-ts-migrate";
-import {
-  eslintFixPlugin,
-  stripTSIgnorePlugin,
-  tsIgnorePlugin,
-} from "ts-migrate-plugins";
+import { migrate, MigrateConfig } from 'ts-migrate-server';
+import { pluginTSMigrateAutofix } from '@rehearsal/plugin-ts-migrate';
+import { eslintFixPlugin, stripTSIgnorePlugin, tsIgnorePlugin } from 'ts-migrate-plugins';
 
-import type { Reporter } from "@rehearsal/reporter";
+import type { Reporter } from '@rehearsal/reporter';
 
 export async function tsMigrateAutofix(
   srcDir: string,
