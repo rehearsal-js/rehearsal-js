@@ -1,5 +1,7 @@
 # rehearsal
 
+## NOTE: REHEARSAL IS AN ACTIVE WORK IN PROGRESS. BREAKING OFTEN. USE IS NOT YET RECOMMENDED. YOU HAVE BEEN WARNED.
+
 **Rehearsal** helps to improve the experience of upgrading TypeScript versions.
 
 **Rehearsal** tests your project against the newer version of TypeScript,
