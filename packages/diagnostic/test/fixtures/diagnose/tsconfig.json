@@ -5,15 +5,17 @@
     "composite": true,
     "declaration": true,
     "esModuleInterop": true,
+    "jsx": "react",
     "module": "commonjs",
     "moduleResolution": "node",
     "newLine": "LF",
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "strictFunctionTypes": true,
     "outDir": "dist",
     "resolveJsonModule": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
   }
 }

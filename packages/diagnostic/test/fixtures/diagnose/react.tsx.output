@@ -1,0 +1,12 @@
+import React from 'react';
+
+function Foo() {
+  return (
+    <>
+      {/* @ts-ignore @rehearsal({"code":2304,"message":"Cannot find name 'DoesNotExist'.","start":80,"length":12,"nodeKind":"79","nodeText":"DoesNotExist"}) */}
+      <DoesNotExist />
+    </>
+  );
+}
+
+export default Foo;

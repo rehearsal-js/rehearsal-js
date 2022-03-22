@@ -1,3 +1,0 @@
-function readText(file: string): string | undefined {
-  return readFileSync(file, 'utf8');
-}
