@@ -1,10 +1,12 @@
 import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
+
 import { parse, resolve } from 'path';
 
 import DiagnosticReporter from './diagnostic-reporter';
 import DiagnosticService from './diagnostic-service';
+
 import { lint } from './helpers/lint';
 import { preserveEmptyLines, restoreEmptyLines } from './helpers/empty-lines';
 
