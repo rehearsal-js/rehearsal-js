@@ -1,1 +1,1 @@
-export { default as diagnose } from './diagnose';
+export { default as diagnose, DiagnoseInput, DiagnoseOutput } from './diagnose';

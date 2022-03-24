@@ -16,7 +16,7 @@ describe('Test diagnose', function () {
   it(`run`, async () => {
     createTsFilesFromInputs(files);
 
-    const result = await diagnose(basePath);
+    const result = await diagnose({ basePath });
 
     assert.deepEqual(result, {
       basePath,
@@ -45,12 +45,11 @@ describe('Test diagnose', function () {
   it(`run without file modification`, async () => {
     createTsFilesFromInputs(files);
 
-    const result = await diagnose(
+    const result = await diagnose({
       basePath,
-      'tsconfig.json',
-      '.rehearsal-diagnostics-only.json',
-      false
-    );
+      reportName: '.rehearsal-diagnostics-only.json',
+      modifySourceFiles: false,
+    });
 
     assert.deepEqual(result, {
       basePath,
@@ -80,7 +79,7 @@ describe('Test diagnose', function () {
   });
 
   it(`run with a wrong base directory `, async () => {
-    await diagnose('/').catch((reason) => {
+    await diagnose({ basePath: '/' }).catch((reason) => {
       assert.equal(`Error: Config file 'tsconfig.json' not found in '/'`, reason.toString());
     });
   });

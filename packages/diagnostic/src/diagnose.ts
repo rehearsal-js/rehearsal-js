@@ -10,7 +10,15 @@ import DiagnosticService from './diagnostic-service';
 import { lint } from './helpers/lint';
 import { preserveEmptyLines, restoreEmptyLines } from './helpers/empty-lines';
 
-type DiagnoseOutput = {
+export type DiagnoseInput = {
+  basePath: string;
+  configName?: string;
+  reportName?: string;
+  modifySourceFiles?: boolean;
+  logger?: winston.Logger;
+};
+
+export type DiagnoseOutput = {
   basePath: string;
   configFile: string;
   reportFile: string;
@@ -21,25 +29,21 @@ type DiagnoseOutput = {
 /**
  * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
  */
-export default async function diagnose(
-  basePath: string,
-  configName = 'tsconfig.json',
-  reportName = '.rehearsal-diagnostics.json',
-  modifySourceFiles = true,
-  logger?: winston.Logger
-): Promise<DiagnoseOutput> {
-  logger?.info('Diagnose started.');
+export default async function diagnose(input: DiagnoseInput): Promise<DiagnoseOutput> {
+  const basePath = resolve(input.basePath);
+  const configName = input.configName || 'tsconfig.json';
+  const reportName = input.reportName || '.rehearsal-diagnostics.json';
+  const modifySourceFiles = input.modifySourceFiles !== undefined ? input.modifySourceFiles : true;
+  const logger = input.logger;
 
-  basePath = resolve(basePath);
+  logger?.info('Diagnose started.');
   logger?.info(`Base path: ${basePath}`);
 
   const configFile = ts.findConfigFile(basePath, ts.sys.fileExists, configName);
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
-
     logger?.error(message);
-
     throw Error(message);
   }
 

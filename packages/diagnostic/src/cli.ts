@@ -14,8 +14,13 @@ commander.program
   .option('-m, --modify', 'Add diagnostic @ts-ignore comments to source files')
   .option('-v, --verbose', 'Display diagnostic progress')
   .action(async (basePath, options) => {
-    const a = createLogger(!options.verbose);
-    await diagnose(basePath, options.config, options.report, !!options.modify, a)
+    await diagnose({
+      basePath: basePath as string,
+      configName: options.config as string,
+      reportName: options.report as string,
+      modifySourceFiles: !!options.modify,
+      logger: createLogger(!options.verbose),
+    })
       .then((result) => {
         console.log(`\nDiagnose result:`);
         console.log(result);
