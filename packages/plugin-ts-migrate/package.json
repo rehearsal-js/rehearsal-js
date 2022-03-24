@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/plugin-ts-migrate",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Rehearsal Plugin-TS-Migrate",
   "keywords": [
     "rehearsal",
@@ -29,8 +29,8 @@
     "test": "yarn nyc mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.13",
-    "@rehearsal/tsc-transforms": "^0.0.13",
+    "@rehearsal/reporter": "^0.0.14",
+    "@rehearsal/tsc-transforms": "^0.0.14",
     "@ts-morph/bootstrap": "^0.12.2",
     "debug": "^4.3.3",
     "recast": "^0.20.5",
