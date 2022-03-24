@@ -1,81 +1,64 @@
-import ts from 'typescript';
 import fs from 'fs';
+import ts from 'typescript';
 
 export default class DiagnosticService {
-  readonly host: ts.LanguageServiceHost;
+  readonly files: ts.MapLike<{ version: string }>;
   readonly service: ts.LanguageService;
 
-  readonly fileNames: string[];
-  readonly fileMeta: ts.MapLike<{ version: number }>;
-
-  constructor(basePath: string, configFile: string, compilerOptions: ts.CompilerOptions = {}) {
-    this.fileMeta = {};
-    this.fileNames = [];
-
-    const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
-    const { options, fileNames } = ts.parseJsonConfigFileContent(
-      config,
-      ts.sys,
-      basePath,
-      compilerOptions
-    );
-
-    this.fileNames = fileNames;
-
-    this.initMeta(this.fileNames);
-    this.host = this.createHost(this.fileNames, options);
-    this.service = ts.createLanguageService(this.host, ts.createDocumentRegistry());
-
-    // throw Error(`Can't create a TypeScript Language Service`);
+  constructor(fileNames: string[], compilerOptions: ts.CompilerOptions = {}) {
+    this.files = Object.fromEntries(fileNames.map((fileName) => [fileName, { version: '0' }]));
+    this.service = this.createLanguageService(fileNames, compilerOptions);
   }
 
-  getRootSourceFiles(): ts.SourceFile[] {
-    return (
-      this.service
-        .getProgram()
-        ?.getSourceFiles()
-        ?.filter(({ fileName }) => this.fileNames.includes(fileName)) || []
-    );
+  /**
+   * Gets a SourceFile object from the compiled program
+   */
+  getSourceFile(fileName: string): ts.SourceFile {
+    return this.service.getProgram()!.getSourceFile(fileName)!;
   }
 
-  getSemanticDiagnostics(sourceFile: ts.SourceFile): ts.Diagnostic[] {
-    return this.service.getSemanticDiagnostics(sourceFile.fileName);
+  /**
+   * Gets a list of semantic diagnostic objects only with location information (those have related node in the AST)
+   */
+  getSemanticDiagnosticsWithLocation(fileName: string): ts.DiagnosticWithLocation[] {
+    return this.service.getSemanticDiagnostics(fileName).filter(this.isDiagnosticWithLocation);
   }
 
-  updateSourceFile(sourceFile: ts.SourceFile): ts.SourceFile {
-    fs.writeFileSync(sourceFile.fileName, sourceFile.text, 'utf8');
-    this.fileMeta[sourceFile.fileName].version++;
-    this.service.getEmitOutput(sourceFile.fileName);
-
-    return this.service.getProgram()!.getSourceFile(sourceFile.fileName)!;
+  /**
+   * Returns the string representation of AST tree of the SourceFile
+   */
+  printSourceFile(sourceFile: ts.SourceFile): string {
+    return ts
+      .createPrinter({
+        newLine: ts.NewLineKind.LineFeed,
+        removeComments: false,
+      })
+      .printFile(sourceFile);
   }
 
-  initMeta(fileNames: string[]): void {
-    for (const fileName of fileNames) {
-      this.fileMeta[fileName] = { version: 0 };
-    }
+  isDiagnosticWithLocation(diagnostic: ts.Diagnostic): diagnostic is ts.DiagnosticWithLocation {
+    return diagnostic.start !== undefined && diagnostic.length !== undefined;
   }
 
-  createHost(fileNames: string[], compilerOptions: ts.CompilerOptions): ts.LanguageServiceHost {
-    return {
-      getScriptFileNames: () => fileNames,
-      getScriptVersion: (fileName) =>
-        this.fileMeta[fileName] && this.fileMeta[fileName].version.toString(),
-      getScriptSnapshot: (fileName) => {
-        if (!fs.existsSync(fileName)) {
-          return undefined;
-        }
-
-        return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
-      },
-      getCurrentDirectory: () => process.cwd(),
+  private createLanguageService(
+    fileNames: string[],
+    compilerOptions: ts.CompilerOptions
+  ): ts.LanguageService {
+    return ts.createLanguageService({
       getCompilationSettings: () => compilerOptions,
+      getCurrentDirectory: () => process.cwd(),
       getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
-      fileExists: ts.sys.fileExists,
-      readFile: ts.sys.readFile,
-      readDirectory: ts.sys.readDirectory,
+      getScriptFileNames: () => fileNames,
+      getScriptVersion: (fileName) => this.files[fileName] && this.files[fileName].version,
+      getScriptSnapshot: (fileName) =>
+        ts.sys.readFile(fileName)
+          ? ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString())
+          : undefined,
       directoryExists: ts.sys.directoryExists,
+      fileExists: ts.sys.fileExists,
       getDirectories: ts.sys.getDirectories,
-    };
+      readDirectory: ts.sys.readDirectory,
+      readFile: ts.sys.readFile,
+    });
   }
 }

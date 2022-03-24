@@ -1,5 +1,6 @@
 .DS_Store
 .rehearsal.json
+.rehearsal-diagnostics.json
 
 .idea/
 .history/

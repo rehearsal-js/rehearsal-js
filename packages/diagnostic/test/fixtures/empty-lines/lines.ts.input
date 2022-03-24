@@ -1,0 +1,20 @@
+
+
+function test(): string {
+  const a = 'something';
+  
+  const b = 'test';
+  const c = 'test';
+  
+  // Yeah! Return something
+  return 'done';
+}
+
+          
+class Test {
+  // Constructor
+  construct() {
+    
+  }
+
+}

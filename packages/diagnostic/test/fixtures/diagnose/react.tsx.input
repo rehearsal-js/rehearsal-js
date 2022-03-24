@@ -1,0 +1,11 @@
+import React from 'react';
+
+function Foo() {
+  return (
+    <>
+      <DoesNotExist />
+    </>
+  );
+}
+
+export default Foo;
