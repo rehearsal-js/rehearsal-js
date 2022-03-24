@@ -52,7 +52,7 @@
     "@rehearsal/reporter": "^0.0.14",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
-    "execa": "^5.1.1",
+    "execa": "^6.1.0",
     "find-up": "^5.0.0",
     "fs-extra": "^10.0.0",
     "json5": "^2.2.0",
