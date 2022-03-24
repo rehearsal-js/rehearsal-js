@@ -1,5 +1,7 @@
 import winston from 'winston';
-import ESLint = require('eslint');
+
+import { ESLint } from 'eslint';
+
 /**
  * Lint the text
  */
