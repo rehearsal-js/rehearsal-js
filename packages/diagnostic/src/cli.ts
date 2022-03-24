@@ -1,9 +1,15 @@
 import commander from 'commander';
 import winston from 'winston';
-
 import { parse, resolve } from 'path';
 
 import { diagnose } from './index';
+
+type CommanderProgramOptions = {
+  config: string;
+  report: string;
+  modify: boolean | undefined;
+  verbose: boolean | undefined;
+};
 
 commander.program
   .name('diagnose')
@@ -13,11 +19,11 @@ commander.program
   .option('-r, --report <name>', 'Report file name.', parseFileName, '.rehearsal-diagnostics.json')
   .option('-m, --modify', 'Add diagnostic @ts-ignore comments to source files')
   .option('-v, --verbose', 'Display diagnostic progress')
-  .action(async (basePath, options) => {
+  .action(async (basePath: string, options: CommanderProgramOptions) => {
     await diagnose({
-      basePath: basePath as string,
-      configName: options.config as string,
-      reportName: options.report as string,
+      basePath,
+      configName: options.config,
+      reportName: options.report,
       modifySourceFiles: !!options.modify,
       logger: createLogger(!options.verbose),
     })
