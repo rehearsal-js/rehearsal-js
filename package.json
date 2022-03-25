@@ -11,6 +11,9 @@
     "prepack": "lerna run prepack --stream",
     "changelog": "yarn conventional-changelog -i CHANGELOG.md -s"
   },
+  "dependencies": {
+    "debug": "^4.3.4"
+  },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.0.0",

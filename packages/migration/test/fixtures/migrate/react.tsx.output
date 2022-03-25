@@ -1,0 +1,12 @@
+import React from 'react';
+
+function Foo() {
+  return (
+    <>
+      {/* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'DoesNotExist'. */}
+      <DoesNotExist />
+    </>
+  );
+}
+
+export default Foo;
