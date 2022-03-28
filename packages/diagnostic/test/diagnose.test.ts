@@ -7,10 +7,10 @@ import { resolve } from 'path';
 import diagnose from '../src/diagnose';
 
 const basePath = resolve(__dirname, 'fixtures', 'diagnose');
-const filesNames = ['first.ts', 'react.tsx', 'second.ts'];
+const fileNames = ['first.ts', 'react.tsx', 'second.ts'];
 
 // Append basePath to file names
-const files = filesNames.map((file) => resolve(basePath, file));
+const files = fileNames.map((file) => resolve(basePath, file));
 
 describe('Test diagnose', function () {
   it(`run`, async () => {

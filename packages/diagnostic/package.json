@@ -15,7 +15,11 @@
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "bin": {
+    "diagnose": "./bin/diagnose.sh"
+  },
   "files": [
+    "bin",
     "dist",
     "src"
   ],
