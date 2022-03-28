@@ -5,6 +5,13 @@ import { parse, resolve } from 'path';
 
 import { diagnose } from './index';
 
+type DiagnosticCommandOptions = {
+  config: string;
+  report: string;
+  modify: boolean | undefined;
+  verbose: boolean | undefined;
+};
+
 commander.program
   .name('diagnose')
   .description('Compiles TypeScript project and provides diagnostic reports and comments.')
@@ -13,11 +20,11 @@ commander.program
   .option('-r, --report <name>', 'Report file name.', parseFileName, '.rehearsal-diagnostics.json')
   .option('-m, --modify', 'Add diagnostic @ts-ignore comments to source files')
   .option('-v, --verbose', 'Display diagnostic progress')
-  .action(async (basePath, options) => {
+  .action(async (basePath: string, options: DiagnosticCommandOptions) => {
     await diagnose({
-      basePath: basePath as string,
-      configName: options.config as string,
-      reportName: options.report as string,
+      basePath: basePath,
+      configName: options.config,
+      reportName: options.report,
       modifySourceFiles: !!options.modify,
       logger: createLogger(!options.verbose),
     })
