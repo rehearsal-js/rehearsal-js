@@ -1,0 +1,28 @@
+/* @ts-ignore @rehearsal TODO TS2307: Cannot find module 'path' or its corresponding type declarations. */
+import { resolve } from 'path';
+
+/* @ts-ignore @rehearsal TODO TS6133: The declaration 'sleep' is never read or used. Remove the declaration or use it. */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Existing multiline comment
+ */
+/* @ts-ignore @rehearsal TODO TS6133: The declaration 'inSeconds' is never read or used. Remove the declaration or use it. */
+function timestamp(inSeconds = false): string {
+  // Existing comment
+  const resolved = resolve('a');
+  /* @ts-ignore @rehearsal TODO TS6133: The declaration 'timestamp' is never read or used. Remove the declaration or use it. */
+  function timestamp(inMinutes = false): void {
+    /* @ts-ignore @rehearsal TODO TS6133: The declaration 'b' is never read or used. Remove the declaration or use it. */
+    const b = null;
+    /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is not assignable to type 'void'. */
+    return a;
+  }
+
+  return resolved;
+}
+
+// Existing Comment
+timestamp();

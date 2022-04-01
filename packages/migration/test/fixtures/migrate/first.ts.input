@@ -1,0 +1,22 @@
+import fs from 'fs';
+import { resolve, parse } from 'path';
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+
+   /**
+    * Existing multiline comment
+    */
+   function timestamp(  inSeconds = false):   string { 
+      // Existing comment
+      const resolved = resolve('a');
+      function timestamp(  inMinutes = false): void { const b = null; return a; }
+   
+   return resolved; }
+
+
+// Existing Comment
+timestamp(   );
