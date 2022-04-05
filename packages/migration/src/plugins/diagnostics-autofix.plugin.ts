@@ -3,6 +3,42 @@ import ts from 'typescript';
 import FixTransform from '../interfaces/fix-transform';
 import FixTransform6133 from '../transforms/6133-fix-transform';
 
+import { Plugin, PluginParams, PluginResult } from '../interfaces/plugin';
+
+/**
+ * Diagnose issues in the file and applied transforms to fix them
+ */
+export default class DiagnosticAutofixPlugin extends Plugin {
+  async run(params: PluginParams<undefined>): PluginResult {
+    let diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
+    let tries = diagnostics.length + 1;
+
+    this.logger?.debug(`Plugin 'DiagnosticAutofix' run on ${params.fileName}`);
+
+    while (diagnostics.length > 0 && tries-- > 0) {
+      const diagnostic = diagnostics.shift()!;
+
+      const fix = getFixForDiagnostic(diagnostic);
+
+      let text = fix.run(diagnostic, this.service.getLanguageService());
+
+      if (diagnostic.file.getFullText() === text) {
+        text = addHintComment(diagnostic, fix);
+        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
+      } else {
+        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
+      }
+
+      this.service.setFileText(params.fileName, text);
+
+      // Get updated list of diagnostics
+      diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
+    }
+
+    return this.service.getFileText(params.fileName);
+  }
+}
+
 /**
  * BELOW:
  * Parts of autofix plugin.
