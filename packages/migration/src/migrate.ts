@@ -6,15 +6,16 @@ import { parse, resolve } from 'path';
 import RehearsalService from './rehearsal-service';
 
 import DiagnosticAutofixPlugin from './plugins/diagnostics-autofix.plugin';
-import LintPlugin from './plugins/lint.plugin';
 import EmptyLinesPreservePlugin from './plugins/empty-lines-preserve.plugin';
 import EmptyLinesRestorePlugin from './plugins/empty-lines-restore.plugin';
+import LintPlugin from './plugins/lint.plugin';
+import Reporter from './reporter/reporter';
 
 export type MigrateInput = {
   basePath: string;
   configName?: string;
   reportName?: string;
-  modifySourceFiles?: boolean;
+  reporter?: Reporter;
   logger?: winston.Logger;
 };
 
@@ -23,7 +24,6 @@ export type MigrateOutput = {
   configFile: string;
   reportFile: string;
   sourceFiles: string[];
-  sourceFilesModified: boolean;
 };
 
 /**
@@ -32,8 +32,8 @@ export type MigrateOutput = {
 export default async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
-  const reportName = input.reportName || '.rehearsal-diagnostics.json';
-  const modifySourceFiles = input.modifySourceFiles !== undefined ? input.modifySourceFiles : true;
+  const reportName = input.reportName || '.rehearsal-report.json';
+  const reporter = input.reporter;
   const logger = input.logger;
 
   const plugins = [
@@ -66,7 +66,7 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
     logger?.info(`Processing file: ${fileName}`);
 
     for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, logger, undefined);
+      const plugin = new pluginClass(service, logger, reporter);
       const updatedText = await plugin.run({ fileName });
       service.setFileText(fileName, updatedText);
     }
@@ -77,8 +77,8 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
 
   logger?.info(`Migration finished.`);
 
-  // TODO: Save report using configured printers
   const reportFile = resolve(parse(configFile).dir, reportName);
+  reporter?.save(reportFile);
   logger?.info(`Report saved to ${reportFile}`);
 
   return {
@@ -86,6 +86,5 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
     configFile,
     reportFile,
     sourceFiles: fileNames,
-    sourceFilesModified: modifySourceFiles,
   };
 }

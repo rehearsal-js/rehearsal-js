@@ -1,0 +1,234 @@
+{
+  "summary": {
+    "projectName": "@rehearsal/test",
+    "tsVersion": "",
+    "timestamp": "",
+    "basePath": ""
+  },
+  "items": [
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'fs' is declared but its value is never read.",
+      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportDeclaration",
+      "nodeText": "import fs from 'fs';",
+      "location": {
+        "start": 0,
+        "length": 20,
+        "line": 0,
+        "character": 0
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'parse' is declared but its value is never read.",
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportSpecifier",
+      "nodeText": "parse",
+      "location": {
+        "start": 18,
+        "length": 5,
+        "line": 0,
+        "character": 18
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 2307,
+      "category": "Error",
+      "message": "Cannot find module 'path' or its corresponding type declarations.",
+      "hint": "Cannot find module 'path' or its corresponding type declarations.",
+      "fixed": false,
+      "nodeKind": "StringLiteral",
+      "nodeText": "'path'",
+      "location": {
+        "start": 24,
+        "length": 6,
+        "line": 0,
+        "character": 24
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'sleep' is declared but its value is never read.",
+      "hint": "The declaration 'sleep' is never read or used. Remove the declaration or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "sleep",
+      "location": {
+        "start": 159,
+        "length": 5,
+        "line": 3,
+        "character": 9
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'inSeconds' is declared but its value is never read.",
+      "hint": "The declaration 'inSeconds' is never read or used. Remove the declaration or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "inSeconds",
+      "location": {
+        "start": 448,
+        "length": 9,
+        "line": 11,
+        "character": 19
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'timestamp' is declared but its value is never read.",
+      "hint": "The declaration 'timestamp' is never read or used. Remove the declaration or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "timestamp",
+      "location": {
+        "start": 675,
+        "length": 9,
+        "line": 15,
+        "character": 13
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'b' is declared but its value is never read.",
+      "hint": "The declaration 'b' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "b",
+      "location": {
+        "start": 852,
+        "length": 1,
+        "line": 17,
+        "character": 14
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'b' is declared but its value is never read.",
+      "hint": "The declaration 'b' is never read or used. Remove the declaration or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "b",
+      "location": {
+        "start": 856,
+        "length": 1,
+        "line": 17,
+        "character": 14
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'void'.",
+      "hint": "Type 'string' is not assignable to type 'void'.",
+      "fixed": false,
+      "nodeKind": "ReturnStatement",
+      "nodeText": "return a;",
+      "location": {
+        "start": 992,
+        "length": 9,
+        "line": 19,
+        "character": 8
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'DoesNotExist'.",
+      "hint": "Cannot find name 'DoesNotExist'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "DoesNotExist",
+      "location": {
+        "start": 80,
+        "length": 12,
+        "line": 5,
+        "character": 7
+      }
+    },
+    {
+      "file": "second.ts",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'readFileSync'.",
+      "hint": "Cannot find name 'readFileSync'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "readFileSync",
+      "location": {
+        "start": 63,
+        "length": 12,
+        "line": 1,
+        "character": 9
+      }
+    },
+    {
+      "file": "second.ts",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'doesNotExist'.",
+      "hint": "Cannot find name 'doesNotExist'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doesNotExist",
+      "location": {
+        "start": 339,
+        "length": 12,
+        "line": 12,
+        "character": 21
+      }
+    },
+    {
+      "file": "second.ts",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'doesNotExist'.",
+      "hint": "Cannot find name 'doesNotExist'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doesNotExist",
+      "location": {
+        "start": 538,
+        "length": 12,
+        "line": 20,
+        "character": 6
+      }
+    },
+    {
+      "file": "second.ts",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "hint": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "location": {
+        "start": 631,
+        "length": 92,
+        "line": 22,
+        "character": 6
+      }
+    }
+  ]
+}
