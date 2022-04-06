@@ -4,17 +4,17 @@ import winston from 'winston';
 import { parse, resolve } from 'path';
 
 import RehearsalService from './rehearsal-service';
-import PipeTransform from './interfaces/pipe-transform';
 
-import { addHintComment, getFixForDiagnostic } from './plugins/diagnostics-autofix';
+import DiagnosticAutofixPlugin from './plugins/diagnostics-autofix.plugin';
+import LintPlugin from './plugins/lint.plugin';
+import EmptyLinesPreservePlugin from './plugins/empty-lines-preserve.plugin';
+import EmptyLinesRestorePlugin from './plugins/empty-lines-restore.plugin';
 
 export type MigrateInput = {
   basePath: string;
   configName?: string;
   reportName?: string;
   modifySourceFiles?: boolean;
-  pipesBefore?: PipeTransform[];
-  pipesAfter?: PipeTransform[];
   logger?: winston.Logger;
 };
 
@@ -35,8 +35,14 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   const reportName = input.reportName || '.rehearsal-diagnostics.json';
   const modifySourceFiles = input.modifySourceFiles !== undefined ? input.modifySourceFiles : true;
   const logger = input.logger;
-  const pipesBefore = input.pipesBefore || [];
-  const pipesAfter = input.pipesAfter || [];
+
+  const plugins = [
+    LintPlugin,
+    EmptyLinesPreservePlugin,
+    DiagnosticAutofixPlugin,
+    EmptyLinesRestorePlugin,
+    LintPlugin,
+  ];
 
   logger?.info('Migration started.');
   logger?.info(`Base path: ${basePath}`);
@@ -54,43 +60,16 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
   const { options, fileNames } = ts.parseJsonConfigFileContent(config, ts.sys, basePath);
 
-  const reportFile = resolve(parse(configFile).dir, reportName);
-
   const service = new RehearsalService(options, fileNames);
 
   for (const fileName of fileNames) {
     logger?.info(`Processing file: ${fileName}`);
 
-    // Pre-processing
-    await runPipes(pipesBefore, fileName, service, logger);
-
-    // Migration
-    // TODO: Convert migration part and pipes to "plugins"?..
-    let diagnostics = service.getSemanticDiagnosticsWithLocation(fileName);
-    let tries = diagnostics.length + 1;
-
-    while (diagnostics.length > 0 && tries-- > 0) {
-      const diagnostic = diagnostics.shift()!;
-
-      const fix = getFixForDiagnostic(diagnostic);
-
-      let text = fix.run(diagnostic, service.getLanguageService());
-
-      if (diagnostic.file.getFullText() === text) {
-        text = addHintComment(diagnostic, fix);
-        logger?.info(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
-      } else {
-        logger?.info(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
-      }
-
-      service.setFileText(fileName, text);
-
-      // Get updated list of diagnostics
-      diagnostics = service.getSemanticDiagnosticsWithLocation(fileName);
+    for (const pluginClass of plugins) {
+      const plugin = new pluginClass(service, logger, undefined);
+      const updatedText = await plugin.run({ fileName });
+      service.setFileText(fileName, updatedText);
     }
-
-    // Post-processing
-    await runPipes(pipesAfter, fileName, service, logger);
 
     // Save file to the filesystem
     service.saveFile(fileName);
@@ -99,7 +78,7 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   logger?.info(`Migration finished.`);
 
   // TODO: Save report using configured printers
-
+  const reportFile = resolve(parse(configFile).dir, reportName);
   logger?.info(`Report saved to ${reportFile}`);
 
   return {
@@ -109,20 +88,4 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
     sourceFiles: fileNames,
     sourceFilesModified: modifySourceFiles,
   };
-}
-
-async function runPipes(
-  pipes: PipeTransform[],
-  fileName: string,
-  service: RehearsalService,
-  logger?: winston.Logger
-): Promise<string> {
-  let text = service.getFileText(fileName);
-  for (const transformer of pipes) {
-    text = await transformer({ text, fileName, logger });
-    logger?.info(` - pipe applied: ${transformer.name}`);
-  }
-  service.setFileText(fileName, text);
-
-  return text;
 }

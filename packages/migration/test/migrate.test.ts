@@ -5,11 +5,6 @@ import { resolve } from 'path';
 
 import migrate from '../src/migrate';
 
-import PipeTransform from '../src/interfaces/pipe-transform';
-
-import { lint } from '../src/plugins/lint';
-import { preserveEmptyLines, restoreEmptyLines } from '../src/plugins/empty-lines';
-
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 
@@ -20,17 +15,14 @@ const filesNames = ['first.ts', 'react.tsx', 'second.ts'];
 const files = filesNames.map((file) => resolve(basePath, file));
 
 const logger = winston.createLogger({
-  transports: [new winston.transports.Console({ format: winston.format.cli() })],
+  transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
 });
 
 describe('Test migration', function () {
   it('run with correct params', async () => {
     createTsFilesFromInputs(files);
 
-    const pipesBefore: PipeTransform[] = [lint, preserveEmptyLines];
-    const pipesAfter: PipeTransform[] = [restoreEmptyLines, lint];
-
-    const result = await migrate({ basePath, logger, pipesBefore, pipesAfter });
+    const result = await migrate({ basePath, logger });
 
     assert.exists(result);
 
