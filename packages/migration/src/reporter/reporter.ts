@@ -1,22 +1,7 @@
 import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
-import json from './formatters/json';
-
-export type ReportDiagnosticInfo = {
-  file: string;
-  code: number;
-  message: string;
-  start: number;
-  length: number;
-  nodeKind?: string;
-  nodeText?: string;
-};
-
-export type Report = {
-  version: string;
-  diagnostics: ReportDiagnosticInfo[];
-};
+import { Report, ReportItem } from './types';
 
 /**
  * Representation of diagnostic and migration report.
@@ -27,42 +12,46 @@ export default class Reporter {
   private report: Report;
   private logger?: winston.Logger;
 
-  constructor(basePath = '', logger?: winston.Logger) {
+  constructor(projectName = '', basePath = '', logger?: winston.Logger) {
     this.basePath = basePath;
     this.logger = logger?.child({ service: 'rehearsal-reporter' });
     this.report = {
-      version: ts.version,
-      diagnostics: [],
+      summary: {
+        projectName: projectName,
+        tsVersion: ts.version,
+        timestamp: Date.now().toString(),
+        basePath: basePath,
+      },
+      items: [],
     };
   }
 
   getFileNames(): string[] {
-    const fileNames: string[] = [];
-    for (const diagnostic of this.report.diagnostics) {
-      if (!fileNames.includes(diagnostic.file)) {
-        fileNames.push(diagnostic.file);
-      }
-    }
-
-    return fileNames;
+    return [...new Set(this.report.items.map((item) => item.file))];
   }
 
-  getDiagnostics(fileName: string): ReportDiagnosticInfo[] {
-    return this.report.diagnostics.filter((diagnostic) => diagnostic.file === fileName);
+  getItemsByFile(fileName: string): ReportItem[] {
+    return this.report.items.filter((item) => item.file === fileName);
   }
 
   /**
    * Appends am information about provided diagnostic and related node to the report
    */
-  addDiagnostic(diagnostic: ts.DiagnosticWithLocation, node?: ts.Node): void {
-    this.report.diagnostics.push({
-      file: diagnostic.file.fileName.replace(this.basePath, ''),
+  addItem(diagnostic: ts.DiagnosticWithLocation, node?: ts.Node, hint = '', fixed = false): void {
+    this.report.items.push({
+      file: diagnostic.file.fileName,
       code: diagnostic.code,
+      category: ts.DiagnosticCategory[diagnostic.category],
       message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
-      start: diagnostic.start,
-      length: diagnostic.length,
+      hint: hint,
+      fixed: fixed,
       nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
+      location: {
+        start: diagnostic.start,
+        length: diagnostic.length,
+        ...diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start),
+      },
     });
   }
 
@@ -80,13 +69,18 @@ export default class Reporter {
   }
 
   /**
-   * Saves the current report information to the file in JSON format
+   * Saves the current report information to the file in simple JSON format
+   * to be able to load it later with 'load' function
    */
   save(file: string): void {
-    this.print(file, json);
+    const formatter = (report: Report): string => JSON.stringify(report, null, 2);
+    this.print(file, formatter);
     this.logger?.info(`Report saved to: ${file}.`);
   }
 
+  /**
+   * Loads the report exported by function 'save' from the file
+   */
   load(file: string): Reporter {
     if (!fs.existsSync(file)) {
       this.logger?.error(`Report file not found: ${file}.`);
@@ -100,7 +94,7 @@ export default class Reporter {
       this.logger?.error(`Report not loaded: wrong file format`);
     }
 
-    this.report = report;
+    this.report = report as Report;
     this.logger?.info(`Report loaded from file.`);
 
     return this;

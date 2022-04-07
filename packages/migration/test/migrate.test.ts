@@ -1,17 +1,16 @@
 import fs from 'fs';
+import ts from 'typescript';
 import winston from 'winston';
 
+import { assert } from 'chai';
+import { describe, it } from 'mocha';
 import { resolve } from 'path';
 
 import migrate from '../src/migrate';
 
-import PipeTransform from '../src/interfaces/pipe-transform';
-
-import { lint } from '../src/plugins/lint';
-import { preserveEmptyLines, restoreEmptyLines } from '../src/plugins/empty-lines';
-
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { Report } from '../src/reporter/types';
+import Reporter from '../src/reporter/reporter';
+import pullRequestMd from '../src/reporter/formatters/pull-request-md';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
 const filesNames = ['first.ts', 'react.tsx', 'second.ts'];
@@ -20,17 +19,16 @@ const filesNames = ['first.ts', 'react.tsx', 'second.ts'];
 const files = filesNames.map((file) => resolve(basePath, file));
 
 const logger = winston.createLogger({
-  transports: [new winston.transports.Console({ format: winston.format.cli() })],
+  transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
 });
+
+const reporter = new Reporter('@rehearsal/test', basePath, logger);
 
 describe('Test migration', function () {
   it('run with correct params', async () => {
     createTsFilesFromInputs(files);
 
-    const pipesBefore: PipeTransform[] = [lint, preserveEmptyLines];
-    const pipesAfter: PipeTransform[] = [restoreEmptyLines, lint];
-
-    const result = await migrate({ basePath, logger, pipesBefore, pipesAfter });
+    const result = await migrate({ basePath, logger, reporter });
 
     assert.exists(result);
 
@@ -39,9 +37,48 @@ describe('Test migration', function () {
       assert.equal(fs.readFileSync(`${file}.output`).toString(), fs.readFileSync(file).toString());
     }
 
+    // Test the json report
+    assert.isTrue(fs.existsSync(result.reportFile));
+
+    const report = JSON.parse(fs.readFileSync(result.reportFile).toString());
+
+    assert.isNotEmpty(report.summary.basePath);
+    assert.isNotEmpty(report.summary.timestamp);
+    assert.deepEqual(report, expectedReport(report.summary.basePath, report.summary.timestamp));
+
+    fs.rmSync(result.reportFile);
+
+    // Test the pull-request-md report
+    // TODO: Move to @rehearsal/report
+    const mdReport = resolve(basePath, '.rehearsal-report.md');
+    reporter.print(mdReport, pullRequestMd);
+
+    assert.equal(
+      fs.readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString(),
+      fs.readFileSync(mdReport).toString()
+    );
+
+    fs.rmSync(mdReport);
+
     cleanupTsFiles(files);
   });
 });
+
+/**
+ * Prepares the report to compare with.
+ */
+function expectedReport(basePath: string, timestamp: string): Report {
+  const content = fs.readFileSync(resolve(basePath, '.rehearsal-report.output.json')).toString();
+
+  const report = JSON.parse(content) as Report;
+
+  report.summary.basePath = basePath;
+  report.summary.timestamp = timestamp;
+  report.summary.tsVersion = ts.version;
+  report.items.map((v) => (v.file = resolve(basePath, v.file)));
+
+  return report;
+}
 
 /**
  * Creates .ts files from .ts.input files
