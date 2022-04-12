@@ -1,6 +1,6 @@
 import { Report } from '../types';
 
-export default function pullRequestMd(report: Report): string {
+export function pullRequestMd(report: Report): string {
   const fileNames = [...new Set(report.items.map((item) => item.file))];
 
   let text = ``;

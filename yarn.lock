@@ -2343,6 +2343,18 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
+"@rehearsal/plugin-ts-migrate@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@rehearsal/plugin-ts-migrate/-/plugin-ts-migrate-0.0.14.tgz#09019b3c4f0575351ea8b1b2b3727a824b18a796"
+  integrity sha512-W0l06cGO7vzMn4qLjeCjQVUbUsh4OTBKfpA0Qxx7w3j2vqO3r3CBm85zDqpFBxSAb7P4OTpCUaDwnx26FWYAvQ==
+  dependencies:
+    "@rehearsal/reporter" "^0.0.14"
+    "@rehearsal/tsc-transforms" "^0.0.14"
+    "@ts-morph/bootstrap" "^0.12.2"
+    debug "^4.3.3"
+    recast "^0.20.5"
+    ts-migrate-server "^0.1.27"
+
 "@rushstack/node-core-library@3.45.0":
   version "3.45.0"
   resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.45.0.tgz#8c86b39271b6d84260b1e70db87e1e265b54f620"

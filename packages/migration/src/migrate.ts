@@ -9,7 +9,7 @@ import DiagnosticAutofixPlugin from './plugins/diagnostics-autofix.plugin';
 import EmptyLinesPreservePlugin from './plugins/empty-lines-preserve.plugin';
 import EmptyLinesRestorePlugin from './plugins/empty-lines-restore.plugin';
 import LintPlugin from './plugins/lint.plugin';
-import Reporter from './reporter/reporter';
+import Reporter from '@rehearsal/reporter';
 
 export type MigrateInput = {
   basePath: string;

@@ -15,7 +15,7 @@ const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
-const TEST_TSC_VERSION = '4.2.4';
+const TEST_TSC_VERSION = '4.5.5';
 
 const beforeSetup = async (): Promise<void> => {
   // install the test version of tsc
@@ -45,29 +45,31 @@ describe('ts:command against fixture', async () => {
     // default is beta unless otherwise specified
     const latestPublishedTSVersion = await getLatestTSVersion();
 
+    console.log(latestPublishedTSVersion);
+
     expect(ctx.stdout).to.contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
     expect(ctx.stdout).to.contain(`Autofix successful: code changes applied`);
     assert.ok(existsSync(RESULTS_FILEPATH), `result file ${RESULTS_FILEPATH} should exists`);
     const report: Report = readJSONSync(RESULTS_FILEPATH);
-    const firstFileReportError = report.tscLog[0].errors[0];
-    assert.equal(report.projectName, '@rehearsal/cli');
-    assert.equal(report.fileCount, 3);
-    assert.equal(report.cumulativeErrors, 21);
-    assert.equal(report.uniqueErrors, 1);
-    assert.equal(report.autofixedErrors, 21);
-    assert.equal(report.autofixedUniqueErrorList[0], '6133');
-    assert.equal(report.uniqueErrorList[0], '6133');
-    assert.equal(report.tscLog.length, 3);
+
+    assert.isNotEmpty(report);
+
+    assert.equal(report.summary.projectName, '@rehearsal/cli');
+    assert.equal(report.summary.tsVersion, '4.5.5');
+    assert.equal(report.items.length, 24);
+
+    const firstFileReportError = report.items[0];
+
+    assert.equal(firstFileReportError.code, 6133);
+    assert.equal(firstFileReportError.category, 'Error');
+    assert.equal(firstFileReportError.fixed, true);
+    assert.equal(firstFileReportError.nodeKind, 'Identifier');
+    assert.equal(firstFileReportError.nodeText, 'git');
+    assert.equal(firstFileReportError.message, `'git' is declared but its value is never read.`);
     assert.equal(
-      firstFileReportError.errorMessage,
-      " @ts-expect-error ts-migrate(6133) FIXED: 'git' is declared but its value is never read."
+      firstFileReportError.hint,
+      "The declaration 'git' is never read or used. Remove the declaration or use it."
     );
-    assert.equal(
-      firstFileReportError.helpMessage,
-      "The declaration 'git' is never read. Remove the declaration or use it."
-    );
-    assert.equal(firstFileReportError.errorCode, '6133');
-    assert.equal(firstFileReportError.isAutofixed, true);
   });
 
   test.stdout().it('NO autofix', async (ctx) => {

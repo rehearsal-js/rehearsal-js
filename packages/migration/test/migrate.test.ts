@@ -8,9 +8,7 @@ import { resolve } from 'path';
 
 import migrate from '../src/migrate';
 
-import { Report } from '../src/reporter/types';
-import Reporter from '../src/reporter/reporter';
-import pullRequestMd from '../src/reporter/formatters/pull-request-md';
+import Reporter, { Report, pullRequestMd } from '@rehearsal/reporter';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
 const filesNames = ['first.ts', 'react.tsx', 'second.ts'];

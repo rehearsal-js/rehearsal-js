@@ -1,3 +1,6 @@
-export { default as Reporter } from './reporter';
+export { default } from './reporter';
 
-export type { ReporterOptions, Report, TSCLog, ReporterSummary, TSCLogError } from './interfaces';
+export { json } from './formatters/json';
+export { pullRequestMd } from './formatters/pull-request-md';
+
+export type { Report, ReportItem, ReportSummary } from './types';

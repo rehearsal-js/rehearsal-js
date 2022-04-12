@@ -1,5 +1,5 @@
 import winston from 'winston';
-import Reporter from '../reporter/reporter';
+import Reporter from '@rehearsal/reporter';
 import RehearsalService from '../rehearsal-service';
 
 export type PluginOptions = Record<string, unknown> | undefined;
