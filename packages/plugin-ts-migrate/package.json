@@ -31,7 +31,7 @@
   "dependencies": {
     "@rehearsal/reporter": "^0.0.14",
     "@rehearsal/tsc-transforms": "^0.0.14",
-    "@ts-morph/bootstrap": "^0.12.2",
+    "@ts-morph/bootstrap": "^0.13.0",
     "debug": "^4.3.3",
     "recast": "^0.20.5",
     "ts-migrate-server": "^0.1.27"
