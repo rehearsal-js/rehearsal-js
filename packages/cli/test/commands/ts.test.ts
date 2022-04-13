@@ -55,8 +55,20 @@ describe('ts:command against fixture', async () => {
     assert.isNotEmpty(report);
 
     assert.equal(report.summary.projectName, '@rehearsal/cli');
-    assert.equal(report.summary.tsVersion, '4.5.5');
-    assert.equal(report.items.length, 24);
+    assert.equal(report.summary.tsVersion, latestPublishedTSVersion);
+    assert.equal(report.summary.cumulativeErrors, 26);
+    assert.equal(report.summary.uniqueErrors, 2);
+    assert.deepEqual(report.summary.uniqueErrorsList, [6133, 2322]);
+    assert.equal(report.summary.autofixedErrors, 1);
+    assert.deepEqual(report.summary.autofixedErrorsList, [6133]);
+    assert.equal(report.summary.files, 3);
+    assert.deepEqual(report.summary.filesList, [
+      '/foo/foo.ts',
+      '/foo_2/foo_2a.ts',
+      '/foo_2/foo_2b.ts',
+    ]);
+
+    assert.equal(report.items.length, 26);
 
     const firstFileReportError = report.items[0];
 

@@ -1,4 +1,4 @@
-export type ReportSummary = {
+export type ReportSummary = Record<string, unknown> & {
   projectName: string;
   basePath: string;
   tsVersion: string;

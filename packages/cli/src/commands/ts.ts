@@ -10,6 +10,7 @@ import { resolve } from 'path';
 import Reporter from '@rehearsal/reporter';
 
 import { migrate } from '@rehearsal/migration';
+import { reportFormatter } from '../helpers/report';
 
 import {
   build,
@@ -20,6 +21,7 @@ import {
   tsc_version,
   report_output,
 } from '../helpers/flags';
+
 import {
   git,
   determineProjectName,
@@ -29,6 +31,7 @@ import {
   bumpDevDep,
   isYarnManager,
   getLatestTSVersion,
+  timestamp,
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
@@ -129,7 +132,7 @@ export default class TS extends Command {
                   if (compareVersions.compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestELRdBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
-                    //reporter.tscVersion = ctx.tsVersion;
+                    reporter.addSummary('tsVersion', ctx.tsVersion);
                   } else {
                     parent.title = `This application is already on the latest version of TypeScript@${ctx.currentTSVersion}. Exiting.`;
                     // this is a master skip that will skip the remainder of the tasks
@@ -252,12 +255,14 @@ export default class TS extends Command {
     );
 
     try {
+      const startTime = timestamp(true);
       await tasks.run().then(async (ctx) => {
         DEBUG_CALLBACK('ctx %O', ctx);
       });
+      console.log(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
       if (flags.report_output || flags.is_test) {
-        reporter.save(resolve(resolvedSrcDir, '.rehearsal-report.json'));
+        reporter.print(resolve(flags.report_output || src_dir, '.rehearsal.json'), reportFormatter);
       }
 
       // after the reporter closes the stream reset git to the original state

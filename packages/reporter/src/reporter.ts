@@ -35,6 +35,13 @@ export default class Reporter {
   }
 
   /**
+   * Appends an element to the summary
+   */
+  addSummary(key: string, value: unknown): void {
+    this.report.summary[key] = value;
+  }
+
+  /**
    * Appends am information about provided diagnostic and related node to the report
    */
   addItem(diagnostic: ts.DiagnosticWithLocation, node?: ts.Node, hint = '', fixed = false): void {
