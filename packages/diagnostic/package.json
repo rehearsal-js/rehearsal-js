@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/diagnostic",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "Rehearsal Diagnostic Tool",
   "keywords": [
     "diagnose",
