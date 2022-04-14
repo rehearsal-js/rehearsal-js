@@ -1,9 +1,8 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
+    "rootDir": "../",
     "outDir": "../dist/test/"
   },
-  "references": [
-    {"path": ".."}
-  ]
+  "include": [".", "../src"]
 }

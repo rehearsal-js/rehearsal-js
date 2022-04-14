@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "projectName": "@rehearsal/test",
+    "tsVersion": "4.10",
+    "timestamp": "123",
+    "basePath": "/base/path"
+  },
+  "items": [
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'fs' is declared but its value is never read.",
+      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportDeclaration",
+      "nodeText": "import fs from 'fs';",
+      "location": {
+        "start": 0,
+        "length": 20,
+        "line": 0,
+        "character": 0
+      }
+    },
+    {
+      "file": "second.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'parse' is declared but its value is never read.",
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportSpecifier",
+      "nodeText": "parse",
+      "location": {
+        "start": 18,
+        "length": 5,
+        "line": 0,
+        "character": 18
+      }
+    }
+  ]
+}

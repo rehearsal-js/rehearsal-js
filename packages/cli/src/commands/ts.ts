@@ -1,12 +1,17 @@
-import { Command } from '@oclif/command';
 import * as compareVersions from 'compare-versions';
-import { Listr } from 'listr2';
-import { resolve } from 'path';
-import { Reporter } from '@rehearsal/reporter';
 import debug from 'debug';
 import execa = require('execa');
+import winston from 'winston';
 
-import { tsMigrateAutofix } from '../ts-migrate';
+import { Command } from '@oclif/command';
+import { Listr } from 'listr2';
+import { resolve } from 'path';
+
+import Reporter from '@rehearsal/reporter';
+
+import { migrate } from '@rehearsal/migration';
+import { reportFormatter } from '../helpers/report';
+
 import {
   build,
   src_dir,
@@ -16,9 +21,9 @@ import {
   tsc_version,
   report_output,
 } from '../helpers/flags';
+
 import {
   git,
-  timestamp,
   determineProjectName,
   getPathToBinary,
   gitCommit,
@@ -26,6 +31,7 @@ import {
   bumpDevDep,
   isYarnManager,
   getLatestTSVersion,
+  timestamp,
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
@@ -82,15 +88,15 @@ export default class TS extends Command {
     DEBUG_CALLBACK('flags %O', flags);
 
     // grab the consuming apps project name
-    const projectName = await determineProjectName();
+    const projectName = (await determineProjectName()) || '';
 
-    const reporter = new Reporter({ cwd: process.cwd() });
+    const logger = winston.createLogger({
+      transports: [
+        new winston.transports.Console({ format: winston.format.cli(), level: 'debug' }),
+      ],
+    });
 
-    reporter.projectName = projectName ? projectName : '';
-
-    if (flags.report_output || flags.is_test) {
-      reporter.setCWD(resolvedSrcDir);
-    }
+    const reporter = new Reporter(projectName, resolvedSrcDir, logger);
 
     const tasks = new Listr<Context>(
       [
@@ -126,7 +132,7 @@ export default class TS extends Command {
                   if (compareVersions.compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestELRdBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
-                    reporter.tscVersion = ctx.tsVersion;
+                    reporter.addSummary('tsVersion', ctx.tsVersion);
                   } else {
                     parent.title = `This application is already on the latest version of TypeScript@${ctx.currentTSVersion}. Exiting.`;
                     // this is a master skip that will skip the remainder of the tasks
@@ -219,9 +225,15 @@ export default class TS extends Command {
           task: async (ctx, task) => {
             const runTransforms = flags.autofix ?? false;
 
-            const exitCode = await tsMigrateAutofix(resolvedSrcDir, reporter, runTransforms);
+            const result = await migrate({
+              basePath: resolvedSrcDir,
+              configName: 'tsconfig.json', // TODO: Add to command options
+              reportName: '.rehearsal.json', // TODO: Add to command options
+              reporter: reporter,
+              logger: logger,
+            });
 
-            if (exitCode === 0) {
+            if (result) {
               if (runTransforms) {
                 task.title = 'Autofix successful: code changes applied';
               } else {
@@ -247,12 +259,11 @@ export default class TS extends Command {
       await tasks.run().then(async (ctx) => {
         DEBUG_CALLBACK('ctx %O', ctx);
       });
+      console.log(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
-      // end the reporter stream
-      // and parse the results into a json file
-      await reporter.end(() => {
-        console.log(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
-      });
+      if (flags.report_output || flags.is_test) {
+        reporter.print(resolve(flags.report_output || src_dir, '.rehearsal.json'), reportFormatter);
+      }
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost

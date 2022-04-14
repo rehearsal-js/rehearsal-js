@@ -1,194 +1,114 @@
-import { dirSync, setGracefulCleanup } from 'tmp';
-import { join } from 'path';
-import { createLogger, transports, format } from 'winston';
-import { writeJSON } from 'fs-extra';
-import { readJSONString, sleep } from './utils';
-import debug from 'debug';
-
-import type { Logger } from 'winston';
-import type { TSCLog, ReporterOptions, Report } from './interfaces';
-
-const DEBUG_CALLBACK = debug('rehearsal:reporter');
+import fs from 'fs';
+import ts from 'typescript';
+import winston from 'winston';
+import { Report, ReportItem } from './types';
 
 /**
- * Reporter class which handles the stdout/file report for Rehearsal
- *
- *
- * @param options - ReporterOptions
+ * Representation of diagnostic and migration report.
  */
 export default class Reporter {
-  public cwd: ReporterOptions['cwd'];
-  public streamFile: string;
-  private filepath: string;
-  public filename: string;
-  public report: Report;
-  public terminalLogger: Logger;
-  public fileLogger: Logger;
+  readonly basePath: string;
 
-  constructor(options: ReporterOptions = {}) {
-    const tmpDir = dirSync().name;
-    // this is the private file that will be malformed json from the stream
-    this.streamFile = join(tmpDir, '.rehearsal');
-    this.cwd = options.cwd || tmpDir;
-    // this is the public file that the user will see
-    this.filename = options.filename || '.rehearsal.json';
-    this.filepath = join(this.cwd, this.filename);
+  private report: Report;
+  private logger?: winston.Logger;
 
-    this.terminalLogger = createLogger({
-      defaultMeta: {
-        service: 'rehearsal',
-      },
-      transports: [new transports.Console({})],
-    });
-
-    this.fileLogger = createLogger({
-      defaultMeta: {
-        service: 'rehearsal',
-      },
-      transports: [new transports.File({ filename: this.streamFile })],
-      format: format.combine(format.json()),
-    });
-
+  constructor(projectName = '', basePath = '', logger?: winston.Logger) {
+    this.basePath = basePath;
+    this.logger = logger?.child({ service: 'rehearsal-reporter' });
     this.report = {
-      projectName: options.projectName || '',
-      timestamp: new Date().toISOString(),
-      tscVersion: options.tscVersion || '',
-      tscLog: [],
-
-      // the number of files that were parsed
-      fileCount: 0,
-      // the total number of tsc errors found before fixing
-      cumulativeErrors: 0,
-      // the total number of unique tsc errors found before fixing
-      uniqueErrors: 0,
-      // the unique tsc diagnostic lookup id's found
-      uniqueErrorList: [],
-      // the fixed total number of tsc errors fixed
-      autofixedErrors: 0,
-      // the fixed and unique tsc diagnostic lookup id's found
-      autofixedUniqueErrorList: [],
+      summary: {
+        projectName: projectName,
+        tsVersion: ts.version,
+        timestamp: Date.now().toString(),
+        basePath: basePath,
+      },
+      items: [],
     };
   }
 
-  // happends after the stream has finished
-  private async parseLog(): Promise<void> {
-    // build a JSON representation of the log
-    this.report.tscLog = readJSONString<TSCLog>(this.streamFile);
-    DEBUG_CALLBACK('parseLog()', 'log parsed');
-
-    // set all cumulative properties
-    this.report.fileCount = this.report.tscLog.length;
-
-    this.report.cumulativeErrors = this.getCumulativeErrors(this.report.tscLog);
-
-    this.report.uniqueErrors = this.uniqueErrors;
-    this.report.uniqueErrorList = Array.from(this.getUniqueErrorsList(this.report.tscLog));
-
-    const { uniqueErrors } = this.getAutofixedUniqueErrorList(this.report.tscLog);
-    this.report.autofixedUniqueErrorList = Array.from(uniqueErrors);
-    this.report.autofixedErrors = this.autofixedErrors;
-
-    await writeJSON(this.filepath, this.report);
-    DEBUG_CALLBACK('parseLog()', 'report written to file');
+  getFileNames(): string[] {
+    return [...new Set(this.report.items.map((item) => item.file))];
   }
 
-  // get the total number of tsc errors found before fixing
-  private getCumulativeErrors(tscLog: TSCLog[]): number {
-    return tscLog.reduce((acc, curr) => {
-      return acc + curr.errors.length;
-    }, 0);
+  getItemsByFile(fileName: string): ReportItem[] {
+    return this.report.items.filter((item) => item.file === fileName);
   }
 
-  private getAutofixedUniqueErrorList(tscLog: TSCLog[]): {
-    uniqueErrors: Set<string>;
-    errorCount: number;
-  } {
-    const uniqueErrors = new Set<string>();
-    let errorCount = 0;
+  /**
+   * Appends an element to the summary
+   */
+  addSummary(key: string, value: unknown): void {
+    this.report.summary[key] = value;
+  }
 
-    tscLog.forEach((log) => {
-      log.errors.forEach((error) => {
-        // if the tsc error was autofixed by rehearsal then add it to the unique errors
-        if (error.isAutofixed) {
-          uniqueErrors.add(error.errorCode);
-          errorCount++;
-        }
-      });
+  /**
+   * Appends am information about provided diagnostic and related node to the report
+   */
+  addItem(diagnostic: ts.DiagnosticWithLocation, node?: ts.Node, hint = '', fixed = false): void {
+    this.report.items.push({
+      file: diagnostic.file.fileName,
+      code: diagnostic.code,
+      category: ts.DiagnosticCategory[diagnostic.category],
+      message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
+      hint: hint,
+      fixed: fixed,
+      nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
+      nodeText: node?.getText(),
+      location: {
+        start: diagnostic.start,
+        length: diagnostic.length,
+        ...diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start),
+      },
     });
-
-    return { uniqueErrors, errorCount };
   }
 
-  private get autofixedErrors(): number {
-    const { errorCount } = this.getAutofixedUniqueErrorList(this.report.tscLog);
-    return errorCount;
+  /**
+   * Prints the current report using provided formatter (ex. json, pull-request etc.)
+   */
+  print(file: string, formatter: (report: Report) => string): string {
+    const report = formatter(this.report);
+
+    if (file) {
+      fs.writeFileSync(file, report);
+    }
+
+    return report;
   }
 
-  private getUniqueErrorsList(tscLog: TSCLog[]): Set<string> {
-    const uniqueErrors = new Set<string>();
-    tscLog.forEach((log) => {
-      log.errors.forEach((error) => {
-        uniqueErrors.add(error.errorCode);
-      });
-    });
-    return uniqueErrors;
+  /**
+   * Saves the current report information to the file in simple JSON format
+   * to be able to load it later with 'load' function
+   */
+  save(file: string): void {
+    const formatter = (report: Report): string => JSON.stringify(report, null, 2);
+    this.print(file, formatter);
+    this.logger?.info(`Report saved to: ${file}.`);
   }
 
-  private get uniqueErrors(): number {
-    return this.getUniqueErrorsList(this.report.tscLog).size;
+  /**
+   * Loads the report exported by function 'save' from the file
+   */
+  load(file: string): Reporter {
+    if (!fs.existsSync(file)) {
+      this.logger?.error(`Report file not found: ${file}.`);
+    }
+
+    this.logger?.info(`Report file found: ${file}.`);
+    const content = fs.readFileSync(file, 'utf-8');
+    const report = JSON.parse(content);
+
+    if (!Reporter.isReport(report)) {
+      this.logger?.error(`Report not loaded: wrong file format`);
+      return this;
+    }
+
+    this.report = report as Report;
+    this.logger?.info(`Report loaded from file.`);
+
+    return this;
   }
 
-  public set tscVersion(version: string) {
-    this.report.tscVersion = version;
-  }
-
-  public set projectName(name: string) {
-    this.report.projectName = name;
-  }
-
-  public setCWD(cwd: string): void {
-    this.cwd = cwd;
-    this.filepath = join(this.cwd, this.filename);
-  }
-
-  public logSummary(): void {
-    console.log(`\n`);
-    console.log(`Files Parsed:          ${this.report.fileCount} total`);
-    console.log(`TSC Errors:            ${this.report.cumulativeErrors} total`);
-    console.log(`TSC Errors Autofixed:  ${this.report.autofixedErrors} total`);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public async end(_cb = () => {}): Promise<void> {
-    await sleep(1000);
-
-    DEBUG_CALLBACK('end()', 'end called');
-
-    this.fileLogger.on('finish', async () => {
-      DEBUG_CALLBACK('end()', 'fileLogger on finish event subscribed');
-
-      await this.parseLog();
-      setGracefulCleanup();
-
-      DEBUG_CALLBACK('setGracefulCleanup()', 'cleanup finsished');
-    });
-
-    this.fileLogger.on('error', (err) => {
-      throw new Error(`${err}`);
-    });
-
-    this.terminalLogger.end();
-    DEBUG_CALLBACK('end()', 'terminalLogger ended');
-
-    this.fileLogger.end();
-    DEBUG_CALLBACK('end()', 'fileLogger ended');
-
-    // winston is racing a promise to finish, so we need to wait for it to finish
-    // 2 seconds is more than enough
-    await sleep(1000);
-    this.logSummary();
-
-    // optional callback to be called after the reporter has finished
-    _cb();
+  private static isReport(report: any): report is Report {
+    return report && report.summary !== undefined && report.items !== undefined;
   }
 }

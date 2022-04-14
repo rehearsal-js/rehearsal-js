@@ -20,7 +20,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 function msToSeconds(ms: number): number {
-  return Math.round(ms / 1000);
+  return 'oops';
 }
 
 function readJSON<TJson = unknown>(file: string): TJson | undefined {

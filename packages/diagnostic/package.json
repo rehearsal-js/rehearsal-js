@@ -29,8 +29,7 @@
     "lint:eslint": "yarn eslint . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
-    "test": "yarn mocha",
-    "test:coverage": "yarn nyc mocha"
+    "test": "yarn nyc mocha"
   },
   "dependencies": {
     "commander": "^9.1.0",
