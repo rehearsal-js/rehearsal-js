@@ -9,7 +9,7 @@ import { resolve } from 'path';
 
 import Reporter from '@rehearsal/reporter';
 
-import { migrate } from '@rehearsal/migration';
+import { migrate } from '@rehearsal/migrate';
 import { reportFormatter } from '../helpers/report';
 
 import {

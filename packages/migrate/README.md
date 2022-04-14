@@ -1,3 +1,3 @@
-# @rehearsal/migration
+# @rehearsal/migrate
 
 Rehearsal Migration tool
