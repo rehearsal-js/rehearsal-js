@@ -6,7 +6,6 @@
     "rehearsal",
     "ast",
     "transforms",
-    "ts-migrate",
     "typescript"
   ],
   "repository": {
