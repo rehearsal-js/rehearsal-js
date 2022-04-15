@@ -38,7 +38,6 @@ const DEBUG_CALLBACK = debug('rehearsal:ts');
 const DEFAULT_TS_BUILD = 'beta';
 
 let TSC_PATH = '';
-let TS_MIGRATE_PATH = '';
 
 type Context = {
   tsVersion: string;
@@ -80,11 +79,9 @@ export default class TS extends Command {
       }
     }
 
-    TS_MIGRATE_PATH = await getPathToBinary('ts-migrate');
     TSC_PATH = await getPathToBinary('tsc');
 
     DEBUG_CALLBACK('TSC_PATH', TSC_PATH);
-    DEBUG_CALLBACK('TS_MIGRATE_PATH', TS_MIGRATE_PATH);
     DEBUG_CALLBACK('flags %O', flags);
 
     // grab the consuming apps project name
