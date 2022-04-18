@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migrate",
-  "version": "0.0.14",
+  "version": "0.0.18",
   "description": "Rehearsal Migration Tool",
   "keywords": [
     "migrate",
@@ -28,7 +28,7 @@
     "test": "yarn nyc mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.14",
+    "@rehearsal/reporter": "^0.0.18",
     "eslint": "^8.11.0",
     "winston": "^3.6.0"
   },
