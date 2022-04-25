@@ -17,8 +17,8 @@ function timestamp(inSeconds = false): number {
   function timestamp(inMinutes = false): void {
     /* @ts-ignore @rehearsal({"code":6133,"message":"'b' is declared but its value is never read.","start":315,"length":1,"nodeKind":"79","nodeText":"b"}) */
     const b = null;
-    /* @ts-ignore @rehearsal({"code":2322,"message":"Type 'string' is not assignable to type 'void'.","start":329,"length":9,"nodeKind":"246","nodeText":"return a;"}) */
-    return a;
+    /* @ts-ignore @rehearsal({"code":2322,"message":"Type 'string' is not assignable to type 'void'.","start":329,"length":11,"nodeKind":"246","nodeText":"return 'a';"}) */
+    return 'a';
   }
 
   return 1;

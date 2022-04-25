@@ -6,6 +6,9 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/* @ts-ignore @rehearsal TODO TS6133: The declaration 'foo' is never read or used. Remove the declaration or use it. */
+let foo: number;
+
 /**
  * Existing multiline comment
  */
@@ -13,12 +16,14 @@ function sleep(ms: number): Promise<void> {
 function timestamp(inSeconds = false): string {
   // Existing comment
   const resolved = resolve('a');
+  /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is being returned or assigned, but type 'number' is expected. Please convert type 'string' to type 'number', or return or assign a variable of type 'number' */
+  foo = '6';
   /* @ts-ignore @rehearsal TODO TS6133: The declaration 'timestamp' is never read or used. Remove the declaration or use it. */
   function timestamp(inMinutes = false): void {
     /* @ts-ignore @rehearsal TODO TS6133: The declaration 'b' is never read or used. Remove the declaration or use it. */
     const b = null;
-    /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is not assignable to type 'void'. */
-    return a;
+    /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is being returned or assigned, but type 'void' is expected. Please convert type 'string' to type 'void', or return or assign a variable of type 'void' */
+    return 'a';
   }
 
   return resolved;

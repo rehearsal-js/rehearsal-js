@@ -5,7 +5,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
+let foo: number;
 
    /**
     * Existing multiline comment
@@ -13,10 +13,11 @@ function sleep(ms: number): Promise<void> {
    function timestamp(  inSeconds = false):   string { 
       // Existing comment
       const resolved = resolve('a');
-      function timestamp(  inMinutes = false): void { const b = null; return a; }
+      foo = '6';
+      function timestamp(  inMinutes = false): void { const b = null; return 'a'; }
    
    return resolved; }
 
-
 // Existing Comment
 timestamp(   );
+

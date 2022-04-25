@@ -11,7 +11,7 @@ function sleep(ms: number): Promise<void> {
     */
    function timestamp(  inSeconds = false):   number { 
       // Existing comment
-      function timestamp(  inMinutes = false): void { const b = null; return a; }
+      function timestamp(  inMinutes = false): void { const b = null; return 'a'; }
    
    return 1; }
 
