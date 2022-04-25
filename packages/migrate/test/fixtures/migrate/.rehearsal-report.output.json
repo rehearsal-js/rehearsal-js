@@ -74,16 +74,64 @@
       "file": "first.ts",
       "code": 6133,
       "category": "Error",
+      "message": "'foo' is declared but its value is never read.",
+      "hint": "The declaration 'foo' is never read or used. Remove the declaration or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "foo",
+      "location": {
+        "start": 395,
+        "length": 3,
+        "line": 8,
+        "character": 4
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
       "message": "'inSeconds' is declared but its value is never read.",
       "hint": "The declaration 'inSeconds' is never read or used. Remove the declaration or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "inSeconds",
       "location": {
-        "start": 448,
+        "start": 596,
         "length": 9,
-        "line": 11,
+        "line": 14,
         "character": 19
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'number'.",
+      "hint": "Type 'string' is being returned or assigned, but type 'number' is expected. Please convert type 'string' to type 'number', or return or assign a variable of type 'number'",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "foo",
+      "location": {
+        "start": 814,
+        "length": 3,
+        "line": 18,
+        "character": 4
+      }
+    },
+    {
+      "file": "first.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'timestamp' is declared but its value is never read.",
+      "hint": "The declaration 'timestamp' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "timestamp",
+      "location": {
+        "start": 1050,
+        "length": 9,
+        "line": 20,
+        "character": 13
       }
     },
     {
@@ -96,9 +144,9 @@
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "location": {
-        "start": 675,
+        "start": 1054,
         "length": 9,
-        "line": 15,
+        "line": 20,
         "character": 13
       }
     },
@@ -112,9 +160,9 @@
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 852,
+        "start": 1231,
         "length": 1,
-        "line": 17,
+        "line": 22,
         "character": 14
       }
     },
@@ -128,9 +176,9 @@
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 856,
+        "start": 1235,
         "length": 1,
-        "line": 17,
+        "line": 22,
         "character": 14
       }
     },
@@ -139,14 +187,14 @@
       "code": 2322,
       "category": "Error",
       "message": "Type 'string' is not assignable to type 'void'.",
-      "hint": "Type 'string' is not assignable to type 'void'.",
+      "hint": "Type 'string' is being returned or assigned, but type 'void' is expected. Please convert type 'string' to type 'void', or return or assign a variable of type 'void'",
       "fixed": false,
       "nodeKind": "ReturnStatement",
-      "nodeText": "return a;",
+      "nodeText": "return 'a';",
       "location": {
-        "start": 992,
-        "length": 9,
-        "line": 19,
+        "start": 1371,
+        "length": 11,
+        "line": 24,
         "character": 8
       }
     },

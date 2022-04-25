@@ -88,7 +88,7 @@ function createTsFilesFromInputs(files: string[]): void {
 }
 
 /**
- * Removes .ts files after test is competed
+ * Removes .ts files after test is completed
  */
 function cleanupTsFiles(files: string[]): void {
   for (const file of files) {
