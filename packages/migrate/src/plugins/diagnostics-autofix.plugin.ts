@@ -25,8 +25,8 @@ export default class DiagnosticAutofixPlugin extends Plugin {
 
       let text = fix.run(diagnostic, this.service.getLanguageService());
 
+      const fixed = this.isSourceCodeChanged(diagnostic.file.getFullText(), text);
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
-      const fixed = diagnostic.file.getFullText() !== text;
 
       if (fixed) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
@@ -45,6 +45,14 @@ export default class DiagnosticAutofixPlugin extends Plugin {
     }
 
     return this.service.getFileText(params.fileName);
+  }
+
+  /**
+   * Determines if update source code is different from original one
+   */
+  isSourceCodeChanged(originalText: string, updateText: string): boolean {
+    // Compares source codes without spaces.
+    return originalText.replace(/\s+/g, ' ') !== updateText.replace(/\s+/g, ' ');
   }
 
   /**
