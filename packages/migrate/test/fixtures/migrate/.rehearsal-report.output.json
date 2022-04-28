@@ -284,7 +284,7 @@
       "category": "Error",
       "message": "'timestamp' is declared but its value is never read.",
       "hint": "The function 'timestamp' is never called. Remove the function or use it.",
-      "fixed": true,
+      "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "location": {
@@ -298,45 +298,13 @@
       "file": "first.ts",
       "code": 6133,
       "category": "Error",
-      "message": "'timestamp' is declared but its value is never read.",
-      "hint": "The function 'timestamp' is never called. Remove the function or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "timestamp",
-      "location": {
-        "start": 1005,
-        "length": 9,
-        "line": 20,
-        "character": 13
-      }
-    },
-    {
-      "file": "first.ts",
-      "code": 6133,
-      "category": "Error",
-      "message": "'b' is declared but its value is never read.",
-      "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
-      "fixed": true,
-      "nodeKind": "Identifier",
-      "nodeText": "b",
-      "location": {
-        "start": 1170,
-        "length": 1,
-        "line": 22,
-        "character": 14
-      }
-    },
-    {
-      "file": "first.ts",
-      "code": 6133,
-      "category": "Error",
       "message": "'b' is declared but its value is never read.",
       "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 1174,
+        "start": 1166,
         "length": 1,
         "line": 22,
         "character": 14
@@ -352,7 +320,7 @@
       "nodeKind": "ReturnStatement",
       "nodeText": "return 'a';",
       "location": {
-        "start": 1304,
+        "start": 1296,
         "length": 11,
         "line": 24,
         "character": 8
