@@ -1,0 +1,17 @@
+// Test cases for TS2322
+
+/* @ts-ignore @rehearsal TODO TS2322: The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
+const dummy_const: number = 'string';
+
+let dummy_var = 0;
+/* @ts-ignore @rehearsal TODO TS2322: The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
+dummy_var = 'string';
+
+console.log(dummy_const, dummy_var);
+
+function demo(): void {
+  /* @ts-ignore @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
+  return 'dummy-string';
+}
+
+demo();

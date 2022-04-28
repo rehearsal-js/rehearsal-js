@@ -80,7 +80,7 @@ describe('ts:command against fixture', async () => {
     assert.equal(firstFileReportError.message, `'git' is declared but its value is never read.`);
     assert.equal(
       firstFileReportError.hint,
-      "The declaration 'git' is never read or used. Remove the declaration or use it."
+      "The function 'git' is never called. Remove the function or use it."
     );
   });
 

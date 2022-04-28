@@ -7,6 +7,166 @@
   },
   "items": [
     {
+      "file": "2322.ts",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'number'.",
+      "hint": "The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "dummy_const",
+      "location": {
+        "start": 42,
+        "length": 11,
+        "line": 2,
+        "character": 6
+      }
+    },
+    {
+      "file": "2322.ts",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'number'.",
+      "hint": "The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "dummy_var",
+      "location": {
+        "start": 280,
+        "length": 9,
+        "line": 6,
+        "character": 0
+      }
+    },
+    {
+      "file": "2322.ts",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'void'.",
+      "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+      "fixed": false,
+      "nodeKind": "ReturnStatement",
+      "nodeText": "return 'dummy-string';",
+      "location": {
+        "start": 561,
+        "length": 22,
+        "line": 12,
+        "character": 2
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'fs' is declared but its value is never read.",
+      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportDeclaration",
+      "nodeText": "import fs from 'fs';",
+      "location": {
+        "start": 0,
+        "length": 20,
+        "line": 0,
+        "character": 0
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'parse' is declared but its value is never read.",
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportSpecifier",
+      "nodeText": "parse",
+      "location": {
+        "start": 20,
+        "length": 5,
+        "line": 1,
+        "character": 9
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 2307,
+      "category": "Error",
+      "message": "Cannot find module 'path' or its corresponding type declarations.",
+      "hint": "Cannot find module 'path' or its corresponding type declarations.",
+      "fixed": false,
+      "nodeKind": "StringLiteral",
+      "nodeText": "'path'",
+      "location": {
+        "start": 31,
+        "length": 6,
+        "line": 1,
+        "character": 20
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'defined_var' is declared but its value is never read.",
+      "hint": "The variable 'defined_var' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "defined_var",
+      "location": {
+        "start": 179,
+        "length": 11,
+        "line": 6,
+        "character": 6
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'defined_const' is declared but its value is never read.",
+      "hint": "The variable 'defined_const' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "defined_const",
+      "location": {
+        "start": 338,
+        "length": 13,
+        "line": 9,
+        "character": 6
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'defined_function' is declared but its value is never read.",
+      "hint": "The function 'defined_function' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "defined_function",
+      "location": {
+        "start": 504,
+        "length": 16,
+        "line": 12,
+        "character": 9
+      }
+    },
+    {
+      "file": "6133.ts",
+      "code": 6133,
+      "category": "Error",
+      "message": "'defined_param' is declared but its value is never read.",
+      "hint": "The parameter 'defined_param' is never used. Remove the parameter from function definition or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "defined_param",
+      "location": {
+        "start": 715,
+        "length": 13,
+        "line": 17,
+        "character": 38
+      }
+    },
+    {
       "file": "first.ts",
       "code": 6133,
       "category": "Error",
@@ -59,7 +219,7 @@
       "code": 6133,
       "category": "Error",
       "message": "'sleep' is declared but its value is never read.",
-      "hint": "The declaration 'sleep' is never read or used. Remove the declaration or use it.",
+      "hint": "The function 'sleep' is never called. Remove the function or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "sleep",
@@ -75,12 +235,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'foo' is declared but its value is never read.",
-      "hint": "The declaration 'foo' is never read or used. Remove the declaration or use it.",
+      "hint": "The variable 'foo' is never read or used. Remove the variable or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "location": {
-        "start": 395,
+        "start": 383,
         "length": 3,
         "line": 8,
         "character": 4
@@ -91,12 +251,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'inSeconds' is declared but its value is never read.",
-      "hint": "The declaration 'inSeconds' is never read or used. Remove the declaration or use it.",
+      "hint": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "inSeconds",
       "location": {
-        "start": 596,
+        "start": 578,
         "length": 9,
         "line": 14,
         "character": 19
@@ -107,12 +267,12 @@
       "code": 2322,
       "category": "Error",
       "message": "Type 'string' is not assignable to type 'number'.",
-      "hint": "Type 'string' is being returned or assigned, but type 'number' is expected. Please convert type 'string' to type 'number', or return or assign a variable of type 'number'",
+      "hint": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "location": {
-        "start": 814,
+        "start": 809,
         "length": 3,
         "line": 18,
         "character": 4
@@ -123,12 +283,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'timestamp' is declared but its value is never read.",
-      "hint": "The declaration 'timestamp' is never read or used. Remove the declaration or use it.",
+      "hint": "The function 'timestamp' is never called. Remove the function or use it.",
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "location": {
-        "start": 1050,
+        "start": 1001,
         "length": 9,
         "line": 20,
         "character": 13
@@ -139,12 +299,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'timestamp' is declared but its value is never read.",
-      "hint": "The declaration 'timestamp' is never read or used. Remove the declaration or use it.",
+      "hint": "The function 'timestamp' is never called. Remove the function or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "location": {
-        "start": 1054,
+        "start": 1005,
         "length": 9,
         "line": 20,
         "character": 13
@@ -155,12 +315,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'b' is declared but its value is never read.",
-      "hint": "The declaration 'b' is never read or used. Remove the declaration or use it.",
+      "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 1231,
+        "start": 1170,
         "length": 1,
         "line": 22,
         "character": 14
@@ -171,12 +331,12 @@
       "code": 6133,
       "category": "Error",
       "message": "'b' is declared but its value is never read.",
-      "hint": "The declaration 'b' is never read or used. Remove the declaration or use it.",
+      "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 1235,
+        "start": 1174,
         "length": 1,
         "line": 22,
         "character": 14
@@ -187,12 +347,12 @@
       "code": 2322,
       "category": "Error",
       "message": "Type 'string' is not assignable to type 'void'.",
-      "hint": "Type 'string' is being returned or assigned, but type 'void' is expected. Please convert type 'string' to type 'void', or return or assign a variable of type 'void'",
+      "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
       "fixed": false,
       "nodeKind": "ReturnStatement",
       "nodeText": "return 'a';",
       "location": {
-        "start": 1371,
+        "start": 1304,
         "length": 11,
         "line": 24,
         "character": 8
