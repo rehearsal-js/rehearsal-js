@@ -1,28 +1,28 @@
 /* @ts-ignore @rehearsal TODO TS2307: Cannot find module 'path' or its corresponding type declarations. */
 import { resolve } from 'path';
 
-/* @ts-ignore @rehearsal TODO TS6133: The declaration 'sleep' is never read or used. Remove the declaration or use it. */
+/* @ts-ignore @rehearsal TODO TS6133: The function 'sleep' is never called. Remove the function or use it. */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/* @ts-ignore @rehearsal TODO TS6133: The declaration 'foo' is never read or used. Remove the declaration or use it. */
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'foo' is never read or used. Remove the variable or use it. */
 let foo: number;
 
 /**
  * Existing multiline comment
  */
-/* @ts-ignore @rehearsal TODO TS6133: The declaration 'inSeconds' is never read or used. Remove the declaration or use it. */
+/* @ts-ignore @rehearsal TODO TS6133: The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it. */
 function timestamp(inSeconds = false): string {
   // Existing comment
   const resolved = resolve('a');
-  /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is being returned or assigned, but type 'number' is expected. Please convert type 'string' to type 'number', or return or assign a variable of type 'number' */
+  /* @ts-ignore @rehearsal TODO TS2322: The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
   foo = '6';
-  /* @ts-ignore @rehearsal TODO TS6133: The declaration 'timestamp' is never read or used. Remove the declaration or use it. */
+  /* @ts-ignore @rehearsal TODO TS6133: The function 'timestamp' is never called. Remove the function or use it. */
   function timestamp(inMinutes = false): void {
-    /* @ts-ignore @rehearsal TODO TS6133: The declaration 'b' is never read or used. Remove the declaration or use it. */
+    /* @ts-ignore @rehearsal TODO TS6133: The variable 'b' is never read or used. Remove the variable or use it. */
     const b = null;
-    /* @ts-ignore @rehearsal TODO TS2322: Type 'string' is being returned or assigned, but type 'void' is expected. Please convert type 'string' to type 'void', or return or assign a variable of type 'void' */
+    /* @ts-ignore @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
     return 'a';
   }
 

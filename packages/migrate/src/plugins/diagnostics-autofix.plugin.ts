@@ -22,10 +22,10 @@ export default class DiagnosticAutofixPlugin extends Plugin {
 
       const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-      const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
 
       let text = fix.run(diagnostic, this.service.getLanguageService());
 
+      const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
       const fixed = diagnostic.file.getFullText() !== text;
 
       if (fixed) {
