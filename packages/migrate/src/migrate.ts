@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import winston from 'winston';
 
-import { parse, resolve } from 'path';
+import { dirname, parse, resolve } from 'path';
 
 import RehearsalService from './rehearsal-service';
 
@@ -58,7 +58,7 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   logger?.info(`Config file found: ${configFile}`);
 
   const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
-  const { options, fileNames } = ts.parseJsonConfigFileContent(config, ts.sys, basePath);
+  const { options, fileNames } = ts.parseJsonConfigFileContent(config, ts.sys, dirname(configFile));
 
   const service = new RehearsalService(options, fileNames);
 
