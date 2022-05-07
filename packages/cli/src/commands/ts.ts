@@ -225,7 +225,6 @@ export default class TS extends Command {
             const result = await migrate({
               basePath: resolvedSrcDir,
               configName: 'tsconfig.json', // TODO: Add to command options
-              reportName: '.rehearsal.json', // TODO: Add to command options
               reporter: reporter,
               logger: logger,
             });
