@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import winston from 'winston';
 
-import { parse, resolve } from 'path';
+import { resolve } from 'path';
 
 import RehearsalService from './rehearsal-service';
 
@@ -14,7 +14,6 @@ import Reporter from '@rehearsal/reporter';
 export type MigrateInput = {
   basePath: string;
   configName?: string;
-  reportName?: string;
   reporter?: Reporter;
   logger?: winston.Logger;
 };
@@ -22,7 +21,6 @@ export type MigrateInput = {
 export type MigrateOutput = {
   basePath: string;
   configFile: string;
-  reportFile: string;
   sourceFiles: string[];
 };
 
@@ -32,7 +30,6 @@ export type MigrateOutput = {
 export default async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
-  const reportName = input.reportName || '.rehearsal-report.json';
   const reporter = input.reporter;
   const logger = input.logger;
 
@@ -77,14 +74,9 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
 
   logger?.info(`Migration finished.`);
 
-  const reportFile = resolve(parse(configFile).dir, reportName);
-  reporter?.save(reportFile);
-  logger?.info(`Report saved to ${reportFile}`);
-
   return {
     basePath,
     configFile,
-    reportFile,
     sourceFiles: fileNames,
   };
 }
