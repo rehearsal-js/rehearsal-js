@@ -35,19 +35,20 @@ describe('Test migration', function () {
       assert.equal(fs.readFileSync(`${file}.output`).toString(), fs.readFileSync(file).toString());
     }
 
+    // TODO: Move to @rehearsal/report
     // Test the json report
-    assert.isTrue(fs.existsSync(result.reportFile));
+    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    reporter.save(jsonReport);
 
-    const report = JSON.parse(fs.readFileSync(result.reportFile).toString());
+    const report = JSON.parse(fs.readFileSync(jsonReport).toString());
 
     assert.isNotEmpty(report.summary.basePath);
     assert.isNotEmpty(report.summary.timestamp);
     assert.deepEqual(report, expectedReport(report.summary.basePath, report.summary.timestamp));
 
-    fs.rmSync(result.reportFile);
+    fs.rmSync(jsonReport);
 
     // Test the pull-request-md report
-    // TODO: Move to @rehearsal/report
     const mdReport = resolve(basePath, '.rehearsal-report.md');
     reporter.print(mdReport, pullRequestMd);
 
