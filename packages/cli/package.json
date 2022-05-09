@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -48,8 +48,8 @@
     "@oclif/errors": "^1.3.4",
     "@oclif/parser": "^3.8.5",
     "@oclif/plugin-help": "^5.1.11",
-    "@rehearsal/migrate": "^0.0.20",
-    "@rehearsal/reporter": "^0.0.20",
+    "@rehearsal/migrate": "^0.0.21",
+    "@rehearsal/reporter": "^0.0.21",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "enquirer": "^2.3.6",
