@@ -9,7 +9,7 @@ export type PluginParams<PluginOptions> = {
   options?: PluginOptions;
 };
 
-export type PluginResult = Promise<string>;
+export type PluginResult = Promise<string[]>;
 
 export class Plugin {
   protected readonly logger?: winston.Logger;
@@ -23,6 +23,6 @@ export class Plugin {
   }
 
   async run(params: PluginParams<PluginOptions>): PluginResult {
-    return this.service.getFileText(params.fileName);
+    return [params.fileName];
   }
 }

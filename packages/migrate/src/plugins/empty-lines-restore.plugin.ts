@@ -5,10 +5,14 @@ import { Plugin, PluginParams, PluginResult } from '../interfaces/plugin';
  */
 export default class EmptyLinesRestorePlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
-    const text = this.service.getFileText(params.fileName);
+    const { fileName } = params;
+    const text = this.service.getFileText(fileName);
 
-    this.logger?.debug(`Plugin 'EmptyLinesRestore' run on ${params.fileName}`);
+    this.logger?.debug(`Plugin 'EmptyLinesRestore' run on ${fileName}`);
 
-    return text.replace(/\/\*:line:\*\//g, '');
+    const newText = text.replace(/\/\*:line:\*\//g, '');
+    this.service.setFileText(fileName, newText);
+
+    return [fileName];
   }
 }
