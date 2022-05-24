@@ -1,13 +1,13 @@
 import ts from 'typescript';
 
-import FixTransform from '../interfaces/fix-transform';
-import { transformDiagnosedNode } from '../helpers/typescript-ast';
+import FixTransform, { FixedFile } from '../interfaces/fix-transform';
+import { transformDiagnosedNode, isSourceCodeChanged } from '../helpers/typescript-ast';
 
 export default class FixTransform6133 extends FixTransform {
   hint = `The declaration '{0}' is never read or used. Remove the declaration or use it.`;
 
-  fix = (diagnostic: ts.DiagnosticWithLocation): string => {
-    return transformDiagnosedNode(diagnostic, (node: ts.Node) => {
+  fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
+    const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
       if (ts.isImportDeclaration(node) || ts.isImportSpecifier(node)) {
         // Remove all export declarations and undefined imported functions
         return undefined;
@@ -21,5 +21,11 @@ export default class FixTransform6133 extends FixTransform {
 
       return node;
     });
+
+    const hasChanged = isSourceCodeChanged(diagnostic.file.getFullText(), text);
+    if (hasChanged) {
+      return [{ fileName: diagnostic.file.fileName, text }];
+    }
+    return [];
   };
 }

@@ -17,26 +17,35 @@ export default class DiagnosticAutofixPlugin extends Plugin {
 
     this.logger?.debug(`Plugin 'DiagnosticAutofix' run on ${params.fileName}`);
 
+    const allFixedFiles: Set<string> = new Set();
+
     while (diagnostics.length > 0 && tries-- > 0) {
       const diagnostic = diagnostics.shift()!;
 
       const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
-      let text = fix.run(diagnostic, this.service.getLanguageService());
+      const fixedFiles = fix.run(diagnostic, this.service.getLanguageService());
 
-      const fixed = this.isSourceCodeChanged(diagnostic.file.getFullText(), text);
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
+
+      const fixed = fixedFiles.length > 0;
 
       if (fixed) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
+
+        for (const fixedFile of fixedFiles) {
+          this.service.setFileText(fixedFile.fileName, fixedFile.text);
+          allFixedFiles.add(fixedFile.fileName);
+        }
       } else {
         // Add a hint comment if fix was not applied
-        text = this.addHintComment(diagnostic, hint);
+        const text = this.addHintComment(diagnostic, hint);
+        this.service.setFileText(params.fileName, text);
+        allFixedFiles.add(params.fileName);
+
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
-
-      this.service.setFileText(params.fileName, text);
 
       this.reporter?.addItem(diagnostic, node, hint, fixed);
 
@@ -44,15 +53,7 @@ export default class DiagnosticAutofixPlugin extends Plugin {
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
     }
 
-    return this.service.getFileText(params.fileName);
-  }
-
-  /**
-   * Determines if update source code is different from original one
-   */
-  isSourceCodeChanged(originalText: string, updateText: string): boolean {
-    // Compares source codes without spaces.
-    return originalText.replace(/\s+/g, ' ') !== updateText.replace(/\s+/g, ' ');
+    return Array.from(allFixedFiles);
   }
 
   /**

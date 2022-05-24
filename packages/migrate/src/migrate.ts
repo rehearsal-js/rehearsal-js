@@ -62,14 +62,16 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   for (const fileName of fileNames) {
     logger?.info(`Processing file: ${fileName}`);
 
+    let allChangedFiles: Set<string> = new Set();
+
     for (const pluginClass of plugins) {
       const plugin = new pluginClass(service, logger, reporter);
-      const updatedText = await plugin.run({ fileName });
-      service.setFileText(fileName, updatedText);
+      const changedFiles = await plugin.run({ fileName });
+      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 
     // Save file to the filesystem
-    service.saveFile(fileName);
+    allChangedFiles.forEach((file) => service.saveFile(file));
   }
 
   logger?.info(`Migration finished.`);

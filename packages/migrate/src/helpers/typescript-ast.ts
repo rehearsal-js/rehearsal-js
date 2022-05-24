@@ -87,3 +87,8 @@ export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
 
   return visit(node);
 }
+
+export function isSourceCodeChanged(originalText: string, updateText: string): boolean {
+  // Compares source codes without spaces.
+  return originalText.replace(/\s+/g, ' ') !== updateText.replace(/\s+/g, ' ');
+}
