@@ -88,7 +88,21 @@ export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
   return visit(node);
 }
 
-export function isSourceCodeChanged(originalText: string, updateText: string): boolean {
-  // Compares source codes without spaces.
-  return originalText.replace(/\s+/g, ' ') !== updateText.replace(/\s+/g, ' ');
+/**
+ * Checks if the node is the part of JSX Text (Element or Fragment)
+ */
+export function isJsxTextNode(node: ts.Node): boolean {
+  const visit = (node: ts.Node): boolean => {
+    if (ts.isSourceFile(node)) {
+      return false;
+    }
+
+    if (ts.isJsxElement(node) || ts.isJsxFragment(node)) {
+      return true;
+    }
+
+    return visit(node.parent);
+  };
+
+  return visit(node);
 }

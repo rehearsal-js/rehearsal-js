@@ -32,7 +32,7 @@ describe('Test migration', function () {
 
     // Compare each updated .ts file with expected .ts.output
     for (const file of files) {
-      assert.equal(fs.readFileSync(`${file}.output`).toString(), fs.readFileSync(file).toString());
+      assert.equal(fs.readFileSync(file).toString(), fs.readFileSync(`${file}.output`).toString());
     }
 
     // TODO: Move to @rehearsal/report
@@ -53,8 +53,8 @@ describe('Test migration', function () {
     reporter.print(mdReport, pullRequestMd);
 
     assert.equal(
-      fs.readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString(),
-      fs.readFileSync(mdReport).toString()
+      fs.readFileSync(mdReport).toString(),
+      fs.readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString()
     );
 
     fs.rmSync(mdReport);

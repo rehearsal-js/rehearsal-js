@@ -5,7 +5,7 @@ import FixTransform6133 from '../transforms/6133-fix-transform';
 import FixTransform2322 from '../transforms/2322-fix-transform';
 
 import { Plugin, PluginParams, PluginResult } from '../interfaces/plugin';
-import { findNodeAtPosition } from '../helpers/typescript-ast';
+import { findNodeAtPosition, isJsxTextNode } from '../helpers/typescript-ast';
 
 /**
  * Diagnose issues in the file and applied transforms to fix them
@@ -87,10 +87,11 @@ export default class DiagnosticAutofixPlugin extends Plugin {
     const line = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
     const positionToAddComment = ts.getPositionOfLineAndCharacter(diagnostic.file, line, 0);
 
+    const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
+
     // TODO: Pass a comment template in config
     let comment = `@ts-ignore @rehearsal TODO TS${diagnostic.code}: ${hint}`;
-
-    comment = diagnostic.file.fileName.includes('tsx') ? `{/* ${comment} */}` : `/* ${comment} */`;
+    comment = isJsxTextNode(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
 
     const text = diagnostic.file.getFullText();
 
