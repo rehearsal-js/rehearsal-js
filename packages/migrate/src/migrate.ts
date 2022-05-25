@@ -55,7 +55,13 @@ export default async function migrate(input: MigrateInput): Promise<MigrateOutpu
   logger?.info(`Config file found: ${configFile}`);
 
   const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
-  const { options, fileNames } = ts.parseJsonConfigFileContent(config, ts.sys, dirname(configFile));
+  const { options, fileNames } = ts.parseJsonConfigFileContent(
+    config,
+    ts.sys,
+    dirname(configFile),
+    {},
+    configFile
+  );
 
   const service = new RehearsalService(options, fileNames);
 

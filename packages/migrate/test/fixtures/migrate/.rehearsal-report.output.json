@@ -88,22 +88,6 @@
     },
     {
       "file": "6133.ts",
-      "code": 2307,
-      "category": "Error",
-      "message": "Cannot find module 'path' or its corresponding type declarations.",
-      "hint": "Cannot find module 'path' or its corresponding type declarations.",
-      "fixed": false,
-      "nodeKind": "StringLiteral",
-      "nodeText": "'path'",
-      "location": {
-        "start": 31,
-        "length": 6,
-        "line": 1,
-        "character": 20
-      }
-    },
-    {
-      "file": "6133.ts",
       "code": 6133,
       "category": "Error",
       "message": "'defined_var' is declared but its value is never read.",
@@ -112,9 +96,9 @@
       "nodeKind": "Identifier",
       "nodeText": "defined_var",
       "location": {
-        "start": 179,
+        "start": 72,
         "length": 11,
-        "line": 6,
+        "line": 5,
         "character": 6
       }
     },
@@ -128,9 +112,9 @@
       "nodeKind": "Identifier",
       "nodeText": "defined_const",
       "location": {
-        "start": 338,
+        "start": 231,
         "length": 13,
-        "line": 9,
+        "line": 8,
         "character": 6
       }
     },
@@ -144,9 +128,9 @@
       "nodeKind": "Identifier",
       "nodeText": "defined_function",
       "location": {
-        "start": 504,
+        "start": 397,
         "length": 16,
-        "line": 12,
+        "line": 11,
         "character": 9
       }
     },
@@ -160,9 +144,9 @@
       "nodeKind": "Identifier",
       "nodeText": "defined_param",
       "location": {
-        "start": 715,
+        "start": 608,
         "length": 13,
-        "line": 17,
+        "line": 16,
         "character": 38
       }
     },
@@ -200,22 +184,6 @@
     },
     {
       "file": "first.ts",
-      "code": 2307,
-      "category": "Error",
-      "message": "Cannot find module 'path' or its corresponding type declarations.",
-      "hint": "Cannot find module 'path' or its corresponding type declarations.",
-      "fixed": false,
-      "nodeKind": "StringLiteral",
-      "nodeText": "'path'",
-      "location": {
-        "start": 24,
-        "length": 6,
-        "line": 0,
-        "character": 24
-      }
-    },
-    {
-      "file": "first.ts",
       "code": 6133,
       "category": "Error",
       "message": "'sleep' is declared but its value is never read.",
@@ -224,9 +192,9 @@
       "nodeKind": "Identifier",
       "nodeText": "sleep",
       "location": {
-        "start": 159,
+        "start": 52,
         "length": 5,
-        "line": 3,
+        "line": 2,
         "character": 9
       }
     },
@@ -240,9 +208,9 @@
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "location": {
-        "start": 383,
+        "start": 276,
         "length": 3,
-        "line": 8,
+        "line": 7,
         "character": 4
       }
     },
@@ -256,9 +224,9 @@
       "nodeKind": "Identifier",
       "nodeText": "inSeconds",
       "location": {
-        "start": 578,
+        "start": 471,
         "length": 9,
-        "line": 14,
+        "line": 13,
         "character": 19
       }
     },
@@ -272,9 +240,9 @@
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "location": {
-        "start": 809,
+        "start": 702,
         "length": 3,
-        "line": 18,
+        "line": 17,
         "character": 4
       }
     },
@@ -288,9 +256,9 @@
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "location": {
-        "start": 1001,
+        "start": 894,
         "length": 9,
-        "line": 20,
+        "line": 19,
         "character": 13
       }
     },
@@ -304,9 +272,9 @@
       "nodeKind": "Identifier",
       "nodeText": "b",
       "location": {
-        "start": 1166,
+        "start": 1059,
         "length": 1,
-        "line": 22,
+        "line": 21,
         "character": 14
       }
     },
@@ -320,26 +288,122 @@
       "nodeKind": "ReturnStatement",
       "nodeText": "return 'a';",
       "location": {
-        "start": 1296,
+        "start": 1189,
         "length": 11,
-        "line": 24,
+        "line": 23,
         "character": 8
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 6133,
+      "category": "Error",
+      "message": "'unused' is declared but its value is never read.",
+      "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "unused",
+      "location": {
+        "start": 71,
+        "length": 6,
+        "line": 3,
+        "character": 8
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 6133,
+      "category": "Error",
+      "message": "'unused' is declared but its value is never read.",
+      "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unused",
+      "location": {
+        "start": 73,
+        "length": 6,
+        "line": 3,
+        "character": 10
       }
     },
     {
       "file": "react.tsx",
       "code": 2304,
       "category": "Error",
-      "message": "Cannot find name 'DoesNotExist'.",
-      "hint": "Cannot find name 'DoesNotExist'.",
+      "message": "Cannot find name 'NonExistingElement'.",
+      "hint": "Cannot find name 'NonExistingElement'.",
       "fixed": false,
       "nodeKind": "Identifier",
-      "nodeText": "DoesNotExist",
+      "nodeText": "NonExistingElement",
       "location": {
-        "start": 80,
-        "length": 12,
-        "line": 5,
+        "start": 277,
+        "length": 18,
+        "line": 8,
+        "character": 22
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'NonExistingElement'.",
+      "hint": "Cannot find name 'NonExistingElement'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "NonExistingElement",
+      "location": {
+        "start": 529,
+        "length": 18,
+        "line": 13,
         "character": 7
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
+      "hint": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'",
+      "fixed": false,
+      "nodeKind": "ShorthandPropertyAssignment",
+      "nodeText": "$notExistingVariable",
+      "location": {
+        "start": 667,
+        "length": 20,
+        "line": 15,
+        "character": 12
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'NonExistingFragment'.",
+      "hint": "Cannot find name 'NonExistingFragment'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "NonExistingFragment",
+      "location": {
+        "start": 1045,
+        "length": 19,
+        "line": 21,
+        "character": 12
+      }
+    },
+    {
+      "file": "react.tsx",
+      "code": 2322,
+      "category": "Error",
+      "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
+      "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doesNotExist",
+      "location": {
+        "start": 1263,
+        "length": 12,
+        "line": 28,
+        "character": 29
       }
     },
     {
