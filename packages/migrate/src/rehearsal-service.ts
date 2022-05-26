@@ -118,4 +118,17 @@ export default class RehearsalService {
 
     return this.service.getSemanticDiagnostics(fileName).filter(withLocation);
   }
+
+  /**
+   * Provides a path to a module file by its name
+   */
+  resolveModuleName(moduleName: string, containingFile: string): string | undefined {
+    const result = ts.resolveModuleName(
+      moduleName,
+      containingFile,
+      this.host.getCompilationSettings(),
+      ts.sys
+    );
+    return result?.resolvedModule?.resolvedFileName;
+  }
 }

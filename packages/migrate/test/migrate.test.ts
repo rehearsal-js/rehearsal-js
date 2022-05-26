@@ -11,7 +11,16 @@ import migrate from '../src/migrate';
 import Reporter, { Report, pullRequestMd } from '@rehearsal/reporter';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
-const filesNames = ['first.ts', 'react.tsx', 'second.ts', '2322.ts', '6133.ts'];
+const filesNames = [
+  'first.ts',
+  'react.tsx',
+  'second.ts',
+  '2322.ts',
+  '6133.ts',
+  '2790.ts',
+  '2790-import-1.ts',
+  '2790-import-2.ts',
+];
 
 // Append basePath to file names
 const files = filesNames.map((file) => resolve(basePath, file));

@@ -55,6 +55,86 @@
       }
     },
     {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "animal.weight",
+      "location": {
+        "start": 180,
+        "length": 13,
+        "line": 8,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "car.color",
+      "location": {
+        "start": 296,
+        "length": 9,
+        "line": 16,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "employee.badgeNumber",
+      "location": {
+        "start": 398,
+        "length": 20,
+        "line": 19,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "person.address",
+      "location": {
+        "start": 621,
+        "length": 14,
+        "line": 33,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "student.gender",
+      "location": {
+        "start": 971,
+        "length": 14,
+        "line": 47,
+        "character": 7
+      }
+    },
+    {
       "file": "6133.ts",
       "code": 6133,
       "category": "Error",
