@@ -13,6 +13,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   rules: {
+    'curly': 'error',
     'sort-imports': 'off',
     'import/order': 'off',
     'import/no-extraneous-dependencies': 'error',

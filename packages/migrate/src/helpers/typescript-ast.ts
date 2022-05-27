@@ -106,3 +106,8 @@ export function isJsxTextNode(node: ts.Node): boolean {
 
   return visit(node);
 }
+
+export function insertIntoText(text: string, insertAt: number, strToInsert: string): string {
+  const newText = `${text.substring(0, insertAt)}${strToInsert}${text.substring(insertAt)}`;
+  return newText;
+}

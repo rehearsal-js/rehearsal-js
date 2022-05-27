@@ -1,0 +1,48 @@
+import { Animal, Car } from './2790-import-1';
+import { Employee } from './2790-import-2';
+
+const animal: Animal = {
+    species: 'dog',
+    weight: 90,
+};
+
+delete animal.weight;
+
+const car: Car = {
+    make: 'Ford',
+    model: 'Focus',
+    color: 'red',
+};
+
+delete car.color;
+
+const employee = new Employee({name: 'Victor', badgeNumber: '12345'});
+delete employee.badgeNumber;
+
+interface Person {
+    name: string;
+    age?: number;
+    address: string | null;
+}
+
+const person:Person = {
+    name: 'Jane',
+    age: 10,
+    address: '123 Happy St'
+};
+
+delete person.address;
+
+class Student{
+    name: string;
+    grade: number;
+    gender: string;
+
+    constructor({name, grade, gender}: { name: string; grade: number; gender: string }) {
+        this.name = name;
+        this.grade = grade;
+        this.gender = gender;
+    }
+}
+const student = new Student({name: '', grade: 3, gender: 'male'});
+delete student.gender;
