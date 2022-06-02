@@ -12,16 +12,31 @@ export function getInterfaceByName(
   return matched as ts.InterfaceDeclaration;
 }
 
+export function hasNameInImportClause(
+  importClause: ts.ImportClause | undefined,
+  importName: string
+): boolean {
+  if (importClause?.name?.getFullText().trim() === importName) {
+    return true;
+  }
+  if (
+    importClause?.namedBindings &&
+    (importClause?.namedBindings as ts.NamedImports).elements.find(
+      (e) => e.name.getFullText().trim() === importName
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 export function getImportByName(
   sourceFile: ts.SourceFile,
   typeName: string
 ): ts.ImportDeclaration | undefined {
   const matched = sourceFile.statements.find(
-    (s) =>
-      ts.isImportDeclaration(s) &&
-      (s.importClause?.namedBindings as ts.NamedImports).elements.find(
-        (e) => e.name.getFullText().trim() === typeName
-      )
+    (s) => ts.isImportDeclaration(s) && hasNameInImportClause(s.importClause, typeName)
   );
   return matched as ts.ImportDeclaration;
 }
