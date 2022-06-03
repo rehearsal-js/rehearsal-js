@@ -11,19 +11,8 @@ import migrate from '../src/migrate';
 import Reporter, { Report, pullRequestMd } from '@rehearsal/reporter';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
-const filesNames = [
-  'first.ts',
-  'react.tsx',
-  'second.ts',
-  '2322.ts',
-  '6133.ts',
-  '2790.ts',
-  '2790-import-1.ts',
-  '2790-import-2.ts',
-];
 
-// Append basePath to file names
-const files = filesNames.map((file) => resolve(basePath, file));
+const files = prepareListOfTestFiles(basePath);
 
 const logger = winston.createLogger({
   transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
@@ -86,6 +75,17 @@ function expectedReport(basePath: string, timestamp: string): Report {
   report.items.map((v) => (v.file = resolve(basePath, v.file)));
 
   return report;
+}
+
+/**
+ * Prepare ts files in the folder by using sources from .input
+ */
+function prepareListOfTestFiles(basePath: string): string[] {
+  return fs
+    .readdirSync(basePath) // Takes all files from fixtures/migrate
+    .filter((file) => file.endsWith('.input')) // Filter only .input ones
+    .map((file) => file.slice(0, -6)) // Remove .input suffix from filenames
+    .map((file) => resolve(basePath, file)); //  Append basePath to file names
 }
 
 /**

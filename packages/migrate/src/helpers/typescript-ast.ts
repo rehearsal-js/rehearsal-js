@@ -111,3 +111,24 @@ export function insertIntoText(text: string, insertAt: number, strToInsert: stri
   const newText = `${text.substring(0, insertAt)}${strToInsert}${text.substring(insertAt)}`;
   return newText;
 }
+
+/**
+ * Checks if node is a variable passed in catch clause.
+ * This function returns `true` for the variable `e` node (identifier),
+ * and returns `false` for `b` node (identifier) in the code below:
+ * try { ... } catch(e) { e.message; const b = 'dummy'; };
+ */
+export function isVariableOfCatchClause(node: ts.Node): boolean {
+  // Check if node is a variable (not fully correct)
+  if (!ts.isIdentifier(node)) {
+    return false;
+  }
+
+  // Check if the variable defined in catch clause
+  const catchClauseNode = ts.findAncestor(node, ts.isCatchClause);
+  if (!catchClauseNode || !catchClauseNode.variableDeclaration) {
+    return false;
+  }
+
+  return node.getText() === catchClauseNode.variableDeclaration!.getText();
+}

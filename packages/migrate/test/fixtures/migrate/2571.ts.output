@@ -1,0 +1,20 @@
+// Case #1: try ... catch
+
+try {
+  console.log('success');
+} catch (e) {
+  console.log((e as Error).message);
+  console.log((e as any).notErrorMember);
+}
+
+// Case #2: not a try catch
+
+function getObject<T>(): T {
+  const object = ['dummy'];
+  return object as unknown as T;
+}
+
+const dummy = getObject();
+
+/* @ts-ignore @rehearsal TODO TS2571: Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }` */
+dummy.key;
