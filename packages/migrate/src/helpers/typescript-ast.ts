@@ -51,7 +51,7 @@ export function isNodeDiagnosed(node: ts.Node, diagnostic: ts.DiagnosticWithLoca
  * e.g. for the node `revert` of `function revert(...)` the `function` is the first in the line.
  */
 export function isTheFirstParentNodeInTheLIne(node: ts.Node): boolean {
-  if (node.parent.kind === ts.SyntaxKind.SourceFile) {
+  if (node.parent === undefined || ts.isSourceFile(node.parent)) {
     return true;
   }
 
@@ -93,7 +93,7 @@ export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
  */
 export function isJsxTextNode(node: ts.Node): boolean {
   const visit = (node: ts.Node): boolean => {
-    if (ts.isSourceFile(node)) {
+    if (node === undefined || ts.isSourceFile(node)) {
       return false;
     }
 
