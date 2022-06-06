@@ -56,11 +56,17 @@ describe('ts:command against fixture', async () => {
 
     assert.equal(report.summary.projectName, '@rehearsal/cli');
     assert.equal(report.summary.tsVersion, latestPublishedTSVersion);
-    assert.equal(report.summary.cumulativeErrors, 25);
     assert.equal(report.summary.uniqueErrors, 2);
-    assert.deepEqual(report.summary.uniqueErrorsList, [6133, 2322]);
-    assert.equal(report.summary.autofixedErrors, 1);
-    assert.deepEqual(report.summary.autofixedErrorsList, [6133]);
+    assert.equal(report.summary.totalErrors, 25);
+    assert.deepEqual(report.summary.totalErrorsList, {
+      '2322': 1,
+      '6133': 24,
+    });
+    assert.equal(report.summary.fixedErrors, 3);
+    assert.deepEqual(report.summary.fixedErrorsList, {
+      '2322': 0,
+      '6133': 3,
+    });
     assert.equal(report.summary.files, 3);
     assert.deepEqual(report.summary.filesList, [
       '/foo/foo.ts',
@@ -96,7 +102,7 @@ describe('ts:command against fixture', async () => {
 
     expect(ctx.stdout).to.contain(`Autofix successful: ts-expect-error comments added`);
   });
-}).afterEach(afterEachCleanup);
+});
 
 describe('ts:command tsc version check', async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
