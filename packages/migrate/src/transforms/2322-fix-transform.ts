@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import FixTransform, { FixedFile } from '../interfaces/fix-transform';
+import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
 
 import { transformDiagnosedNode } from '../helpers/typescript-ast';
 

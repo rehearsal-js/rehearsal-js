@@ -1,4 +1,4 @@
-import { Plugin, PluginParams, PluginResult } from '../interfaces/plugin';
+import Plugin, { type PluginParams, type PluginResult } from '../interfaces/plugin';
 /**
  * Preserves empty line in a multiline string to restore them in EmptyLinesRestorePlugin
  * by using comments with placeholders (:line: comments)

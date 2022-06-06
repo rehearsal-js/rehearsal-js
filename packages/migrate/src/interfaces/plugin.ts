@@ -11,7 +11,7 @@ export type PluginParams<PluginOptions> = {
 
 export type PluginResult = Promise<string[]>;
 
-export class Plugin {
+export default class Plugin {
   protected readonly logger?: winston.Logger;
   protected readonly reporter?: Reporter;
   protected readonly service: RehearsalService;
