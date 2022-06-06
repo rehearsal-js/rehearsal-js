@@ -1,9 +1,9 @@
 {
   "summary": {
     "projectName": "@rehearsal/test",
-    "tsVersion": "",
-    "timestamp": "",
-    "basePath": ""
+    "tsVersion": "4.7.0-beta",
+    "timestamp": "1654225200241",
+    "basePath": "/Users/everbits/Sites/rehearsal-js/packages/migrate/test/fixtures/migrate"
   },
   "items": [
     {
@@ -52,6 +52,54 @@
         "length": 22,
         "line": 12,
         "character": 2
+      }
+    },
+    {
+      "file": "2571.ts",
+      "code": 2571,
+      "category": "Error",
+      "message": "Object is of type 'unknown'.",
+      "hint": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "e",
+      "location": {
+        "start": 97,
+        "length": 1,
+        "line": 5,
+        "character": 14
+      }
+    },
+    {
+      "file": "2571.ts",
+      "code": 2571,
+      "category": "Error",
+      "message": "Object is of type 'unknown'.",
+      "hint": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "e",
+      "location": {
+        "start": 140,
+        "length": 1,
+        "line": 7,
+        "character": 16
+      }
+    },
+    {
+      "file": "2571.ts",
+      "code": 2571,
+      "category": "Error",
+      "message": "Object is of type 'unknown'.",
+      "hint": "Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }`",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "dummy",
+      "location": {
+        "start": 365,
+        "length": 5,
+        "line": 19,
+        "character": 0
       }
     },
     {

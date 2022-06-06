@@ -1,9 +1,12 @@
 import ts from 'typescript';
 
 import FixTransform from '../interfaces/fix-transform';
-import FixTransform6133 from '../transforms/6133-fix-transform';
+
+// TODO: Use dynamic import inside getFixForDiagnostic function
 import FixTransform2322 from '../transforms/2322-fix-transform';
+import FixTransform2571 from '../transforms/2571-fix-transform';
 import FixTransform2790 from '../transforms/2790-fix-transform';
+import FixTransform6133 from '../transforms/6133-fix-transform';
 
 import { Plugin, PluginParams, PluginResult } from '../interfaces/plugin';
 import { findNodeAtPosition, isJsxTextNode } from '../helpers/typescript-ast';
@@ -106,9 +109,10 @@ export default class DiagnosticAutofixPlugin extends Plugin {
  */
 export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
   const availableFixes: { [index: number]: typeof FixTransform } = {
-    6133: FixTransform6133,
     2322: FixTransform2322,
+    2571: FixTransform2571,
     2790: FixTransform2790,
+    6133: FixTransform6133,
   };
 
   return diagnostic.code in availableFixes
