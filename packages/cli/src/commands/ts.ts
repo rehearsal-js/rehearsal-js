@@ -2,14 +2,13 @@ import * as compareVersions from 'compare-versions';
 import debug from 'debug';
 import execa = require('execa');
 import winston from 'winston';
-
 import { Command } from '@oclif/command';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 
 import Reporter from '@rehearsal/reporter';
-
 import { migrate } from '@rehearsal/migrate';
+
 import { reportFormatter } from '../helpers/report';
 
 import {

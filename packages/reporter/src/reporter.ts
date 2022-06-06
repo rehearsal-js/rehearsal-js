@@ -95,7 +95,7 @@ export default class Reporter {
 
     this.logger?.info(`Report file found: ${file}.`);
     const content = fs.readFileSync(file, 'utf-8');
-    const report = JSON.parse(content);
+    const report: Report = JSON.parse(content);
 
     if (!Reporter.isReport(report)) {
       this.logger?.error(`Report not loaded: wrong file format`);
@@ -108,7 +108,7 @@ export default class Reporter {
     return this;
   }
 
-  private static isReport(report: any): report is Report {
+  private static isReport(report: Report): report is Report {
     return report && report.summary !== undefined && report.items !== undefined;
   }
 }

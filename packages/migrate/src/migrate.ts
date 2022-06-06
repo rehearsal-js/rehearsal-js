@@ -1,15 +1,15 @@
 import ts from 'typescript';
 import winston from 'winston';
-
 import { dirname, resolve } from 'path';
+import Reporter from '@rehearsal/reporter';
 
 import RehearsalService from './rehearsal-service';
-
-import DiagnosticAutofixPlugin from './plugins/diagnostics-autofix.plugin';
-import EmptyLinesPreservePlugin from './plugins/empty-lines-preserve.plugin';
-import EmptyLinesRestorePlugin from './plugins/empty-lines-restore.plugin';
-import LintPlugin from './plugins/lint.plugin';
-import Reporter from '@rehearsal/reporter';
+import {
+  DiagnosticAutofixPlugin,
+  EmptyLinesPreservePlugin,
+  EmptyLinesRestorePlugin,
+  LintPlugin,
+} from './plugins';
 
 export type MigrateInput = {
   basePath: string;
