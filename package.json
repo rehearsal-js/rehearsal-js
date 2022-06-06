@@ -21,7 +21,8 @@
     "@microsoft/api-extractor": "^7.18.19",
     "conventional-changelog-cli": "^2.1.1",
     "husky": "^8.0.1",
-    "lerna": "^5.0.0"
+    "lerna": "^5.0.0",
+    "typescript": "^4.7.3"
   },
   "repository": {
     "type": "git",

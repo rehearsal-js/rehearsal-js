@@ -45,8 +45,6 @@ describe('ts:command against fixture', async () => {
     // default is beta unless otherwise specified
     const latestPublishedTSVersion = await getLatestTSVersion();
 
-    console.log(latestPublishedTSVersion);
-
     expect(ctx.stdout).to.contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
     expect(ctx.stdout).to.contain(`Autofix successful: code changes applied`);
     assert.ok(existsSync(RESULTS_FILEPATH), `result file ${RESULTS_FILEPATH} should exists`);
