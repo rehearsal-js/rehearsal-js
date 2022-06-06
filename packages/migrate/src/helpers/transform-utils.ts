@@ -1,7 +1,5 @@
 import ts from 'typescript';
 
-import type RehearsalService from '../rehearsal-service';
-
 export function getInterfaceByName(
   sourceFile: ts.SourceFile,
   typeName: string
@@ -12,33 +10,14 @@ export function getInterfaceByName(
   return matched as ts.InterfaceDeclaration;
 }
 
-export function hasNameInImportClause(
-  importClause: ts.ImportClause | undefined,
-  importName: string
-): boolean {
-  if (importClause?.name?.getFullText().trim() === importName) {
-    return true;
-  }
-  if (
-    importClause?.namedBindings &&
-    (importClause?.namedBindings as ts.NamedImports).elements.find(
-      (e) => e.name.getFullText().trim() === importName
-    )
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-export function getImportByName(
+export function getTypeAliasByName(
   sourceFile: ts.SourceFile,
   typeName: string
-): ts.ImportDeclaration | undefined {
+): ts.TypeAliasDeclaration | undefined {
   const matched = sourceFile.statements.find(
-    (s) => ts.isImportDeclaration(s) && hasNameInImportClause(s.importClause, typeName)
+    (s) => ts.isTypeAliasDeclaration(s) && s.name.getFullText().trim() === typeName
   );
-  return matched as ts.ImportDeclaration;
+  return matched as ts.TypeAliasDeclaration;
 }
 
 export function getClassByName(
@@ -51,24 +30,20 @@ export function getClassByName(
   return matched as ts.ClassDeclaration;
 }
 
-export function getSourceFileFromImport(
-  declaration: ts.ImportDeclaration,
-  importingFile: string,
-  service: RehearsalService
-): ts.SourceFile | undefined {
-  const module = declaration.moduleSpecifier.getFullText().trim().replace(/^'|'$/g, '');
-  const fileName = service.resolveModuleName(module, importingFile);
-  if (fileName) {
-    const sourceFile = service.getSourceFile(fileName);
-    return sourceFile;
-  }
-}
-
 export function getInterfaceMemberByName(
   declaration: ts.InterfaceDeclaration,
   typeMemberName: string
 ): ts.TypeElement | undefined {
   return declaration.members.find((member) => member.name?.getFullText().trim() === typeMemberName);
+}
+
+export function getTypeAliasMemberByName(
+  declaration: ts.TypeAliasDeclaration,
+  typeMemberName: string
+): ts.TypeElement | undefined {
+  return (declaration.type as ts.TypeLiteralNode).members.find(
+    (member) => member.name?.getFullText().trim() === typeMemberName
+  );
 }
 
 export function getClassMemberByName(
@@ -78,4 +53,26 @@ export function getClassMemberByName(
   return declaration.members.find(
     (member) => member.name?.getFullText().trim() === classMemberName
   );
+}
+
+export function getTypeNameFromType(
+  type: ts.Type,
+  fullyQualifiedNameOfType: string
+): string | undefined {
+  let typeName: string | undefined = type.getSymbol()?.getName().trim();
+  if (typeName === 'default') {
+    //"import Student from './student'";
+    const parts = fullyQualifiedNameOfType.split('.');
+    typeName = parts.pop();
+  } else if (typeName === '__type') {
+    // "type Student = {name: string}"
+    typeName = type.aliasSymbol?.getName().trim();
+  }
+  return typeName;
+}
+
+export function isTypeImported(fullyQualifiedNameOfType: string): boolean {
+  const parts = fullyQualifiedNameOfType.split('.');
+  const isTypeImported = parts.length > 1;
+  return isTypeImported;
 }

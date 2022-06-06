@@ -5,10 +5,12 @@ import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
 import {
   getClassByName,
   getInterfaceByName,
-  getImportByName,
-  getSourceFileFromImport,
   getClassMemberByName,
   getInterfaceMemberByName,
+  getTypeAliasByName,
+  getTypeAliasMemberByName,
+  getTypeNameFromType,
+  isTypeImported,
 } from '../helpers/transform-utils';
 import type RehearsalService from '../rehearsal-service';
 
@@ -31,26 +33,46 @@ export default class FixTransform2790 extends FixTransform {
     const checker = program.getTypeChecker();
 
     const type = checker.getTypeAtLocation(errorNode.expression);
-    const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
-    const typeName = type.getSymbol()?.getName().trim(); // 'Person' as in "interface Person" or 'Car' as in 'class Car'
+    const symbol = type.getSymbol();
+    if (!symbol) {
+      return [];
+    }
 
-    if (!typeMemberName || !typeName || !type.isClassOrInterface()) {
+    let fileToImportFrom: string | undefined;
+
+    const fullyQualifiedName = checker.getFullyQualifiedName(symbol).trim();
+    const isImported = isTypeImported(fullyQualifiedName);
+    if (isImported) {
+      fileToImportFrom = symbol.declarations?.map((d) => d.getSourceFile())[0].fileName;
+    }
+
+    const sourceFile =
+      isImported && fileToImportFrom ? service.getSourceFile(fileToImportFrom) : diagnostic.file;
+    const typeName = getTypeNameFromType(type, fullyQualifiedName); //'Person' as in 'Interface Person' or 'Car' as in 'class Car'
+    const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
+
+    if (!typeMemberName || !typeName || !sourceFile) {
       return [];
     }
 
     if (type.isClass()) {
-      return updateTextWithOptionalClassMember(diagnostic.file, service, typeMemberName, typeName);
+      return updateTextWithOptionalClassMember(sourceFile, typeMemberName, typeName);
     }
-    return updateTextWithOptionalTypeMember(diagnostic.file, service, typeMemberName, typeName);
+    return updateTextWithOptionalTypeMember(sourceFile, typeMemberName, typeName);
   };
 }
 
 function optionalTypeMember(
   sourceFile: ts.SourceFile,
-  declaration: ts.InterfaceDeclaration,
+  declaration: ts.InterfaceDeclaration | ts.TypeAliasDeclaration,
   typeMemberName: string
 ): FixedFile[] {
-  const matchedMember = getInterfaceMemberByName(declaration, typeMemberName);
+  let matchedMember;
+  if (ts.isInterfaceDeclaration(declaration)) {
+    matchedMember = getInterfaceMemberByName(declaration, typeMemberName);
+  } else {
+    matchedMember = getTypeAliasMemberByName(declaration, typeMemberName);
+  }
 
   if (!matchedMember) {
     return [];
@@ -68,7 +90,6 @@ function optionalTypeMember(
 
 function updateTextWithOptionalTypeMember(
   sourceFile: ts.SourceFile,
-  service: RehearsalService,
   typeMemberName: string,
   typeName: string
 ): FixedFile[] {
@@ -76,18 +97,15 @@ function updateTextWithOptionalTypeMember(
     sourceFile,
     typeName
   );
-  const matchedImport: ts.ImportDeclaration | undefined = getImportByName(sourceFile, typeName);
+  const matchedTypeAlias: ts.TypeAliasDeclaration | undefined = getTypeAliasByName(
+    sourceFile,
+    typeName
+  );
 
   if (matchedInterface) {
     return optionalTypeMember(sourceFile, matchedInterface, typeMemberName);
-  } else if (matchedImport) {
-    const importedSourceFile = getSourceFileFromImport(matchedImport, sourceFile.fileName, service);
-
-    if (!importedSourceFile || !ts.isSourceFile(importedSourceFile)) {
-      return [];
-    }
-
-    return updateTextWithOptionalTypeMember(importedSourceFile, service, typeMemberName, typeName);
+  } else if (matchedTypeAlias) {
+    return optionalTypeMember(sourceFile, matchedTypeAlias, typeMemberName);
   } else {
     return [];
   }
@@ -115,22 +133,13 @@ function optionalClassMember(
 
 function updateTextWithOptionalClassMember(
   sourceFile: ts.SourceFile,
-  service: RehearsalService,
   memberName: string,
   typeName: string
 ): FixedFile[] {
   const matchedClass: ts.ClassDeclaration | undefined = getClassByName(sourceFile, typeName);
-  const matchedImport: ts.ImportDeclaration | undefined = getImportByName(sourceFile, typeName);
 
   if (matchedClass) {
     return optionalClassMember(sourceFile, matchedClass, memberName);
-  } else if (matchedImport) {
-    const importedSourceFile = getSourceFileFromImport(matchedImport, sourceFile.fileName, service);
-
-    if (!importedSourceFile || !ts.isSourceFile(importedSourceFile)) {
-      return [];
-    }
-    return updateTextWithOptionalClassMember(importedSourceFile, service, memberName, typeName);
   } else {
     return [];
   }

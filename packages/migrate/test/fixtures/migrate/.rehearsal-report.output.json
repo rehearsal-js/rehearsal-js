@@ -112,9 +112,9 @@
       "nodeKind": "PropertyAccessExpression",
       "nodeText": "animal.weight",
       "location": {
-        "start": 180,
+        "start": 265,
         "length": 13,
-        "line": 8,
+        "line": 10,
         "character": 7
       }
     },
@@ -128,9 +128,9 @@
       "nodeKind": "PropertyAccessExpression",
       "nodeText": "car.color",
       "location": {
-        "start": 296,
+        "start": 381,
         "length": 9,
-        "line": 16,
+        "line": 18,
         "character": 7
       }
     },
@@ -144,9 +144,41 @@
       "nodeKind": "PropertyAccessExpression",
       "nodeText": "employee.badgeNumber",
       "location": {
-        "start": 398,
+        "start": 483,
         "length": 20,
-        "line": 19,
+        "line": 21,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "human.height",
+      "location": {
+        "start": 579,
+        "length": 12,
+        "line": 27,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "rabbit.color",
+      "location": {
+        "start": 718,
+        "length": 12,
+        "line": 34,
         "character": 7
       }
     },
@@ -160,9 +192,9 @@
       "nodeKind": "PropertyAccessExpression",
       "nodeText": "person.address",
       "location": {
-        "start": 621,
+        "start": 933,
         "length": 14,
-        "line": 33,
+        "line": 48,
         "character": 7
       }
     },
@@ -176,9 +208,25 @@
       "nodeKind": "PropertyAccessExpression",
       "nodeText": "student.gender",
       "location": {
-        "start": 971,
+        "start": 1283,
         "length": 14,
-        "line": 47,
+        "line": 62,
+        "character": 7
+      }
+    },
+    {
+      "file": "2790.ts",
+      "code": 2790,
+      "category": "Error",
+      "message": "The operand of a 'delete' operator must be optional.",
+      "hint": "The operand of a 'delete' operator must be optional.",
+      "fixed": true,
+      "nodeKind": "PropertyAccessExpression",
+      "nodeText": "oak.height",
+      "location": {
+        "start": 1465,
+        "length": 10,
+        "line": 75,
         "character": 7
       }
     },
