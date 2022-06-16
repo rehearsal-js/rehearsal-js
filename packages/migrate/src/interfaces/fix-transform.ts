@@ -8,7 +8,10 @@ export interface FixedFile {
 
 export default class FixTransform {
   /** Engineer friendly message describes steps needs to be done to fix the related issue */
-  hint?: string;
+  getHint?: (
+    replacements: { [key: string]: string },
+    diagnostic: ts.DiagnosticWithLocation
+  ) => string | undefined;
 
   /** Function to fix the diagnostic issue */
   fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixedFile[];

@@ -4,7 +4,15 @@ import { isVariableOfCatchClause, transformDiagnosedNode } from '../helpers/type
 import { isSourceCodeChanged } from '../helpers/strings';
 
 export default class FixTransform2571 extends FixTransform {
-  hint = `Object is of type '{0}'. Specify a type of variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``;
+  getHint = (replacements: { [key: string]: string }) => {
+    if (Object.values(replacements).length < 1) {
+      return undefined;
+    }
+
+    const { '{0}': actualType } = replacements;
+    const hint = `Object is of type '${actualType}'. Specify a type for variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``;
+    return hint;
+  };
 
   fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
     const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
@@ -14,10 +22,7 @@ export default class FixTransform2571 extends FixTransform {
         } else {
           return ts.factory.createAsExpression(node, ts.factory.createTypeReferenceNode('any'));
         }
-      } else {
-        this.hint = `Object is of type '{0}'. Specify a type of ${node.getText()}, use type assertion: \`(${node.getText()} as DesiredType)\` or type guard: \`if (${node.getText()} instanceof DesiredType) { ... }\``;
       }
-
       return node;
     });
 

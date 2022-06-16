@@ -8,6 +8,7 @@ import {
   FixTransform2571,
   FixTransform2790,
   FixTransform6133,
+  FixTransform2345,
 } from '../transforms';
 
 import Plugin, { type PluginParams, type PluginResult } from '../interfaces/plugin';
@@ -33,7 +34,7 @@ export default class DiagnosticAutofixPlugin extends Plugin {
 
       const fixedFiles = fix.run(diagnostic, this.service);
 
-      const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
+      const hint = this.prepareHint(diagnostic.messageText, diagnostic, fix?.getHint);
 
       const fixed = fixedFiles.length > 0;
 
@@ -65,24 +66,30 @@ export default class DiagnosticAutofixPlugin extends Plugin {
   /**
    * Prepares a hint message for engineer based on original diagnostic message and `this.hint`
    */
-  prepareHint(message: string | ts.DiagnosticMessageChain, hint?: string): string {
+  prepareHint(
+    message: string | ts.DiagnosticMessageChain,
+    diagnostic: ts.DiagnosticWithLocation,
+    getHint?: (
+      replacements: { [key: string]: string },
+      tsDiagnostic: ts.DiagnosticWithLocation
+    ) => string | undefined
+  ): string {
     message = ts.flattenDiagnosticMessageText(message, '. ');
+    let hint: string | undefined;
+    // Prepare a replacement dictionary
+    // e.g. {'{0}': 'p', '{1}': 'any'} for message "Parameter 'p' implicitly has an 'any' type."
+    const replacements: { [key: string]: string } =
+      message
+        // return ["'p'", "'any'"]
+        .match(/'[^']+'/gm)
+        // converts ["'p'", "'any'"] to {'{0}': 'p', '{1}': 'any'}
+        ?.reduce((a, v, i) => ({ ...a, [`{${i}}`]: v.replace(/^\W+|\W+$/g, '') }), {}) || {};
 
-    if (hint) {
-      // Prepare a replacement dictionary
-      // e.g. {'{0}': 'p', '{1}': 'any'} for message "Parameter 'p' implicitly has an 'any' type."
-      const replacements: { [key: string]: string } =
-        message
-          // return ["'p'", "'any'"]
-          .match(/'[^']+'/gm)
-          // converts ["'p'", "'any'"] to {'{0}': 'p', '{1}': 'any'}
-          ?.reduce((a, v, i) => ({ ...a, [`{${i}}`]: v.replace(/^\W+|\W+$/g, '') }), {}) || {};
-
-      // Replaces {0}, {1}, ... placeholders with corresponding values from the original message
-      message = hint.replace(/{\d+}/gm, (key) => replacements[key] || key);
+    if (getHint) {
+      hint = getHint(replacements, diagnostic);
     }
 
-    return message;
+    return hint ? hint : message;
   }
 
   /**
@@ -115,6 +122,7 @@ export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
     2571: FixTransform2571,
     2790: FixTransform2790,
     6133: FixTransform6133,
+    2345: FixTransform2345,
   };
 
   return diagnostic.code in availableFixes

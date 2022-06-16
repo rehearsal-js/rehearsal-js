@@ -17,7 +17,14 @@ import type RehearsalService from '../rehearsal-service';
 const OPTIONAL_TOKEN = '?';
 
 export default class FixTransform2790 extends FixTransform {
-  hint = `The operand of a 'delete' operator must be optional.`;
+  getHint = (replacements: { [key: string]: string }) => {
+    if (Object.values(replacements).length < 1) {
+      return undefined;
+    }
+    const { '{0}': operatorName } = replacements;
+    const hint = `The operand of a '${operatorName}' operator must be optional.`;
+    return hint;
+  };
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
