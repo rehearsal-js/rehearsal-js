@@ -1,0 +1,13 @@
+function removeFirstChar(str: string): string | undefined {
+  return str.substring(1);
+}
+
+let changeable: unknown;
+changeable = 'yes';
+
+/* @ts-ignore @rehearsal TODO TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'. Consider specifying type of argument to be 'string', using type assertion: '(changeable as string)', or using type guard: 'if (changeable instanceof string) { ... }'. */
+console.log(removeFirstChar(changeable));
+
+const num = 7;
+/* @ts-ignore @rehearsal TODO TS2345: Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(num as string)', or using type guard: 'if (num instanceof string) { ... }'. */
+console.log(removeFirstChar(num));

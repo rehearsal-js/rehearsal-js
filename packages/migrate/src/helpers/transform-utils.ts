@@ -71,6 +71,21 @@ export function getTypeNameFromType(
   return typeName;
 }
 
+export function getTypeNameFromVariable(node: ts.Node, program: ts.Program): string | undefined {
+  const checker = program.getTypeChecker();
+  const type = checker.getTypeAtLocation(node);
+  if (!type) {
+    return undefined;
+  }
+  if (type.isNumberLiteral()) {
+    return 'number';
+  }
+  if (type.isStringLiteral()) {
+    return 'string';
+  }
+  return checker.typeToString(type);
+}
+
 export function isTypeImported(fullyQualifiedNameOfType: string): boolean {
   const parts = fullyQualifiedNameOfType.split('.');
   const isTypeImported = parts.length > 1;
