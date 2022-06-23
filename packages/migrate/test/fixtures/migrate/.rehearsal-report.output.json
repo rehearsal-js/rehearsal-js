@@ -55,6 +55,38 @@
       }
     },
     {
+      "file": "2345.ts",
+      "code": 2345,
+      "category": "Error",
+      "message": "Argument of type 'unknown' is not assignable to parameter of type 'string'.",
+      "hint": "Argument of type 'unknown' is not assignable to parameter of type 'string'. Consider specifying type of argument to be 'string', using type assertion: '(changeable as string)', or using type guard: 'if (changeable instanceof string) { ... }'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "changeable",
+      "location": {
+        "start": 184,
+        "length": 10,
+        "line": 7,
+        "character": 28
+      }
+    },
+    {
+      "file": "2345.ts",
+      "code": 2345,
+      "category": "Error",
+      "message": "Argument of type 'number' is not assignable to parameter of type 'string'.",
+      "hint": "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(num as string)', or using type guard: 'if (num instanceof string) { ... }'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "num",
+      "location": {
+        "start": 536,
+        "length": 3,
+        "line": 11,
+        "character": 28
+      }
+    },
+    {
       "file": "2571.ts",
       "code": 2571,
       "category": "Error",
