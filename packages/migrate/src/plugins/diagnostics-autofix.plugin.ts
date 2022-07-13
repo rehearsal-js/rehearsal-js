@@ -9,6 +9,7 @@ import {
   FixTransform2790,
   FixTransform6133,
   FixTransform2345,
+  FixTransform4082,
 } from '../transforms';
 
 import Plugin, { type PluginParams, type PluginResult } from '../interfaces/plugin';
@@ -117,6 +118,7 @@ export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
     2790: FixTransform2790,
     6133: FixTransform6133,
     2345: FixTransform2345,
+    4082: FixTransform4082,
   };
 
   return diagnostic.code in availableFixes

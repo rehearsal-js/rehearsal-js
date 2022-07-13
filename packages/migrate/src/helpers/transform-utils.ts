@@ -91,3 +91,36 @@ export function isTypeImported(fullyQualifiedNameOfType: string): boolean {
   const isTypeImported = parts.length > 1;
   return isTypeImported;
 }
+
+export function isSubtypeOf(
+  childTypeStr: string,
+  parentType: ts.Type,
+  checker: ts.TypeChecker
+): boolean {
+  const parentTypeStr = checker.typeToString(parentType);
+  return parentTypeStr.includes(childTypeStr);
+}
+
+export function getTypeDeclarationFromTypeSymbol(type: ts.Type): ts.Node | undefined {
+  const declarations = type.getSymbol()?.getDeclarations();
+  return declarations ? declarations[0] : undefined;
+}
+
+export function findNodeByText(node: ts.Node, text: string): ts.Node | undefined {
+  const children = Array.from(node.getChildren());
+  for (const child of children) {
+    if (child.getFullText().trim() === text) {
+      return child;
+    } else if (child.getFullText().trim().includes(text)) {
+      return findNodeByText(child, text);
+    }
+  }
+  return undefined;
+}
+
+export function isTypeMatched(typeString: string, type: ts.Type): boolean {
+  if (type.getSymbol()?.getName().trim() === typeString.trim()) {
+    return true;
+  }
+  return false;
+}
