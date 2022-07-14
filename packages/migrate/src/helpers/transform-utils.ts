@@ -55,14 +55,17 @@ export function getClassMemberByName(
   );
 }
 
-export function getTypeNameFromType(
-  type: ts.Type,
-  fullyQualifiedNameOfType: string
-): string | undefined {
-  let typeName: string | undefined = type.getSymbol()?.getName().trim();
+export function getTypeNameFromType(type: ts.Type, checker: ts.TypeChecker): string | undefined {
+  const symbol = type.getSymbol();
+  if (!symbol) {
+    return undefined;
+  }
+  let typeName: string | undefined = symbol.getName().trim();
+
   if (typeName === 'default') {
     //"import Student from './student'";
-    const parts = fullyQualifiedNameOfType.split('.');
+    const fullyQualifiedName = checker.getFullyQualifiedName(symbol).trim();
+    const parts = fullyQualifiedName.split('.');
     typeName = parts.pop();
   } else if (typeName === '__type') {
     // "type Student = {name: string}"
@@ -84,12 +87,6 @@ export function getTypeNameFromVariable(node: ts.Node, program: ts.Program): str
     return 'string';
   }
   return checker.typeToString(type);
-}
-
-export function isTypeImported(fullyQualifiedNameOfType: string): boolean {
-  const parts = fullyQualifiedNameOfType.split('.');
-  const isTypeImported = parts.length > 1;
-  return isTypeImported;
 }
 
 export function isSubtypeOf(
