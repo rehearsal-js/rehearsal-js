@@ -22,7 +22,7 @@
   "scripts": {
     "build": "yarn tsc -b",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "yarn eslint . --ext .ts",
+    "lint:eslint": "yarn eslint --fix . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
     "test": "yarn nyc mocha"
