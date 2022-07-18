@@ -10,7 +10,7 @@ import {
   getTypeAliasByName,
   getTypeAliasMemberByName,
   getTypeNameFromType,
-  isTypeImported,
+  getTypeDeclarationFromTypeSymbol,
 } from '../helpers/transform-utils';
 import type RehearsalService from '../rehearsal-service';
 
@@ -33,22 +33,15 @@ export default class FixTransform2790 extends FixTransform {
     const checker = program.getTypeChecker();
 
     const type = checker.getTypeAtLocation(errorNode.expression);
-    const symbol = type.getSymbol();
-    if (!symbol) {
+
+    const typeDeclaration = getTypeDeclarationFromTypeSymbol(type);
+    if (!typeDeclaration) {
       return [];
     }
 
-    let fileToImportFrom: string | undefined;
+    const sourceFile = typeDeclaration.getSourceFile();
 
-    const fullyQualifiedName = checker.getFullyQualifiedName(symbol).trim();
-    const isImported = isTypeImported(fullyQualifiedName);
-    if (isImported) {
-      fileToImportFrom = symbol.declarations?.map((d) => d.getSourceFile())[0].fileName;
-    }
-
-    const sourceFile =
-      isImported && fileToImportFrom ? service.getSourceFile(fileToImportFrom) : diagnostic.file;
-    const typeName = getTypeNameFromType(type, fullyQualifiedName); //'Person' as in 'Interface Person' or 'Car' as in 'class Car'
+    const typeName = getTypeNameFromType(type, checker); //'Person' as in 'Interface Person' or 'Car' as in 'class Car'
     const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
 
     if (!typeMemberName || !typeName || !sourceFile) {
