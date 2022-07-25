@@ -1,8 +1,9 @@
 import ts from 'typescript';
 
+import { getTypeNameFromVariable } from '@rehearsal/tsc-utils';
+
 import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition } from '../helpers/typescript-ast';
-import { getTypeNameFromVariable } from '../helpers/transform-utils';
 import type RehearsalService from '../rehearsal-service';
 
 export default class FixTransform2345 extends FixTransform {
@@ -16,7 +17,8 @@ export default class FixTransform2345 extends FixTransform {
     const variableName = errorNode.getFullText();
 
     const program = service.getLanguageService().getProgram()!;
-    const typeName = getTypeNameFromVariable(errorNode, program);
+    const checker = program.getTypeChecker();
+    const typeName = getTypeNameFromVariable(errorNode, checker);
 
     if (typeName === 'unknown') {
       this.hint =

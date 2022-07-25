@@ -1,12 +1,8 @@
 import ts from 'typescript';
 
+import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/tsc-utils';
+
 import FixTransform, { FixedFile } from '../interfaces/fix-transform';
-import {
-  isSubtypeOf,
-  getTypeDeclarationFromTypeSymbol,
-  findNodeByText,
-  isTypeMatched,
-} from '../helpers/transform-utils';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
 import type RehearsalService from '../rehearsal-service';
 
@@ -99,6 +95,18 @@ function findTypeInObjectLiteralExpression(
     const type = checker.getTypeAtLocation((prop as ts.PropertyAssignment).initializer);
     if (isSubtypeOf(targetTypeStr, type, checker)) {
       return type;
+    }
+  }
+  return undefined;
+}
+
+function findNodeByText(node: ts.Node, text: string): ts.Node | undefined {
+  const children = Array.from(node.getChildren());
+  for (const child of children) {
+    if (child.getFullText().trim() === text) {
+      return child;
+    } else if (child.getFullText().trim().includes(text)) {
+      return findNodeByText(child, text);
     }
   }
   return undefined;
