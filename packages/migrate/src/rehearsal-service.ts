@@ -56,6 +56,11 @@ export class RehearsalServiceHost implements ts.LanguageServiceHost {
   fileExists = ts.sys.fileExists;
   readFile = ts.sys.readFile;
   writeFile = ts.sys.writeFile;
+
+  directoryExists = ts.sys.directoryExists;
+  getDirectories = ts.sys.getDirectories;
+  readDirectory = ts.sys.readDirectory;
+  realpath = ts.sys.realpath;
 }
 
 /**
