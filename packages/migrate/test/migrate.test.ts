@@ -21,8 +21,6 @@ const logger = winston.createLogger({
 const reporter = new Reporter('@rehearsal/test', basePath, logger);
 
 describe('Test migration', function () {
-  this.timeout(20000);
-
   it('run with correct params', async () => {
     createTsFilesFromInputs(files);
 
