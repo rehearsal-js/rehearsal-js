@@ -1,7 +1,7 @@
 {
-  "name": "@rehearsal/tsc-utils",
+  "name": "@rehearsal/utils",
   "version": "0.0.25",
-  "description": "Rehearsal TSC utils",
+  "description": "Rehearsal Utils",
   "keywords": [
     "rehearsal",
     "ast",

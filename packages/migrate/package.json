@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@rehearsal/reporter": "^0.0.25",
-    "@rehearsal/tsc-utils": "^0.0.25",
+    "@rehearsal/utils": "^0.0.25",
     "eslint": "^8.11.0",
     "winston": "^3.6.0"
   },
