@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { getTypeNameFromVariable } from '@rehearsal/tsc-utils';
+import { getTypeNameFromVariable } from '@rehearsal/utils';
 
 import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition } from '../helpers/typescript-ast';

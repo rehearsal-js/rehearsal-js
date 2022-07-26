@@ -9,7 +9,7 @@ import {
   getTypeAliasMemberByName,
   getTypeNameFromType,
   getTypeDeclarationFromTypeSymbol,
-} from '@rehearsal/tsc-utils';
+} from '@rehearsal/utils';
 
 import FixTransform, { FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';

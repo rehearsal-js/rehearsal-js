@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/tsc-utils';
+import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
 
 import FixTransform, { FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
