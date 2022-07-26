@@ -103,9 +103,10 @@ function findTypeInObjectLiteralExpression(
 function findNodeByText(node: ts.Node, text: string): ts.Node | undefined {
   const children = Array.from(node.getChildren());
   for (const child of children) {
-    if (child.getFullText().trim() === text) {
+    const childText = child.getFullText().trim();
+    if (childText === text) {
       return child;
-    } else if (child.getFullText().trim().includes(text)) {
+    } else if (childText.match(new RegExp('\\b' + text + '\\b'))) {
       return findNodeByText(child, text);
     }
   }

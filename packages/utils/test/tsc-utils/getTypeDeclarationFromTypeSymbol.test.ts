@@ -14,7 +14,6 @@ describe('Test getTypeDeclarationFromSymbol', () => {
     if (statements && statements[0]) {
       const type = checker.getTypeAtLocation(statements[0]);
       declaration = getTypeDeclarationFromTypeSymbol(type);
-      console.log('kind', declaration?.kind);
     }
     assert.equal((declaration as ts.InterfaceDeclaration)?.name.escapedText.toString(), 'T6');
   });
