@@ -1,6 +1,4 @@
-import DiagnosticAutofixPlugin from './diagnostics-autofix.plugin';
-import EmptyLinesPreservePlugin from './empty-lines-preserve.plugin';
-import EmptyLinesRestorePlugin from './empty-lines-restore.plugin';
-import LintPlugin from './lint.plugin';
-
-export { DiagnosticAutofixPlugin, EmptyLinesPreservePlugin, EmptyLinesRestorePlugin, LintPlugin };
+export { DiagnosticAutofixPlugin } from './diagnostics-autofix.plugin';
+export { EmptyLinesPreservePlugin } from './empty-lines-preserve.plugin';
+export { EmptyLinesRestorePlugin } from './empty-lines-restore.plugin';
+export { LintPlugin } from './lint.plugin';

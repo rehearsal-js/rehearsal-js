@@ -6,7 +6,7 @@ import { Command } from '@oclif/command';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 
-import Reporter from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
 
 import { reportFormatter } from '../helpers/report';
@@ -45,7 +45,7 @@ type Context = {
   skip: boolean;
 };
 
-export default class TS extends Command {
+export class TS extends Command {
   static aliases = ['typescript'];
   static description =
     'bump typescript dev-dependency with compilation insights and auto-fix options';

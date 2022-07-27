@@ -1,10 +1,10 @@
 import ts from 'typescript';
 
-import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
 
 import { transformDiagnosedNode } from '../helpers/typescript-ast';
 
-export default class FixTransform2322 extends FixTransform {
+export class FixTransform2322 extends FixTransform {
   hint = `Type '{0}' is being returned or assigned, but type '{1}' is expected. Please convert type '{0}' to type '{1}', or return or assign a variable of type '{1}'`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {

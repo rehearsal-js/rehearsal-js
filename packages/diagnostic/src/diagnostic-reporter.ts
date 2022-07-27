@@ -16,7 +16,7 @@ export type DiagnosticReport = {
   diagnostics: DiagnosticInfo[];
 };
 
-export default class DiagnosticReporter {
+export class DiagnosticReporter {
   readonly basePath: string;
   readonly reportFile: string;
   readonly report: DiagnosticReport;

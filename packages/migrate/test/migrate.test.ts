@@ -6,9 +6,9 @@ import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { resolve } from 'path';
 
-import migrate from '../src/migrate';
+import { Reporter, Report, mdFormatter } from '@rehearsal/reporter';
 
-import Reporter, { Report, mdFormatter } from '@rehearsal/reporter';
+import { migrate } from '../src';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
 

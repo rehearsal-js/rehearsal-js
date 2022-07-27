@@ -2,8 +2,8 @@ import ts from 'typescript';
 import winston from 'winston';
 import { dirname, resolve } from 'path';
 
-import Reporter from '@rehearsal/reporter';
-import RehearsalService from '@rehearsal/service';
+import { Reporter } from '@rehearsal/reporter';
+import { RehearsalService } from '@rehearsal/service';
 
 import {
   DiagnosticAutofixPlugin,
@@ -28,7 +28,7 @@ export type MigrateOutput = {
 /**
  * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
  */
-export default async function migrate(input: MigrateInput): Promise<MigrateOutput> {
+export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
   const reporter = input.reporter;

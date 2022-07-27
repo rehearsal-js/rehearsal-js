@@ -5,7 +5,7 @@ import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service
 /**
  * Lint the text
  */
-export default class LintPlugin extends Plugin {
+export class LintPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
     const text = this.service.getFileText(fileName);

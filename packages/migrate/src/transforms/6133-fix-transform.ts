@@ -1,11 +1,11 @@
 import ts from 'typescript';
 
-import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
 
 import { isSourceCodeChanged } from '../helpers/strings';
 import { transformDiagnosedNode } from '../helpers/typescript-ast';
 
-export default class FixTransform6133 extends FixTransform {
+export class FixTransform6133 extends FixTransform {
   hint = `The declaration '{0}' is never read or used. Remove the declaration or use it.`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {

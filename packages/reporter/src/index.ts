@@ -1,5 +1,3 @@
-export { Reporter as default } from './reporter';
-
 export { Reporter } from './reporter';
 export { jsonFormatter } from './formatters/json-formatter';
 export { mdFormatter } from './formatters/md-formatter';

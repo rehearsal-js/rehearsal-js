@@ -4,8 +4,8 @@ import winston from 'winston';
 
 import { parse, resolve } from 'path';
 
-import DiagnosticReporter from './diagnostic-reporter';
-import DiagnosticService from './diagnostic-service';
+import { DiagnosticReporter } from './diagnostic-reporter';
+import { DiagnosticService } from './diagnostic-service';
 
 import { lint } from './helpers/lint';
 import { preserveEmptyLines, restoreEmptyLines } from './helpers/empty-lines';
@@ -29,7 +29,7 @@ export type DiagnoseOutput = {
 /**
  * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
  */
-export default async function diagnose(input: DiagnoseInput): Promise<DiagnoseOutput> {
+export async function diagnose(input: DiagnoseInput): Promise<DiagnoseOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
   const reportName = input.reportName || '.rehearsal-diagnostics.json';

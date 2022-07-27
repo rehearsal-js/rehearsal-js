@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 
-import FixTransform from '../interfaces/fix-transform';
+import { FixTransform } from '../interfaces/fix-transform';
 
 // TODO: Use dynamic import inside getFixForDiagnostic function
 import {
@@ -19,7 +19,7 @@ import { findNodeAtPosition, isJsxTextNode } from '../helpers/typescript-ast';
 /**
  * Diagnose issues in the file and applied transforms to fix them
  */
-export default class DiagnosticAutofixPlugin extends Plugin {
+export class DiagnosticAutofixPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
     let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
