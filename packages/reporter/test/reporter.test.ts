@@ -4,9 +4,7 @@ import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { resolve } from 'path';
 
-import Reporter from '../src/reporter';
-
-import { Report } from '../src';
+import { Reporter, Report } from '../src';
 
 const basePath = resolve(__dirname, 'fixtures');
 

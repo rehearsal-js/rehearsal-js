@@ -8,7 +8,7 @@ import { resolve } from 'path';
 
 import migrate from '../src/migrate';
 
-import Reporter, { Report, pullRequestMd } from '@rehearsal/reporter';
+import Reporter, { Report, mdFormatter } from '@rehearsal/reporter';
 
 const basePath = resolve(__dirname, 'fixtures', 'migrate');
 
@@ -48,7 +48,7 @@ describe('Test migration', function () {
 
     // Test the pull-request-md report
     const mdReport = resolve(basePath, '.rehearsal-report.md');
-    reporter.print(mdReport, pullRequestMd);
+    reporter.print(mdReport, mdFormatter);
 
     assert.equal(
       fs.readFileSync(mdReport).toString(),
