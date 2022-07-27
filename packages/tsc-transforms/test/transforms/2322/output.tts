@@ -1,5 +1,0 @@
-let a: string = 'a';
-let b: number = 1;
-
-// @ts-expect-error ts-migrate(2322) FIXED: Type 'number' is not assignable to type 'string'.
-a = b;

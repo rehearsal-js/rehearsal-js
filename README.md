@@ -10,13 +10,13 @@ provides additional information to help engineers to migrate project to desired 
 
 # Packages
 
-| Folder                                                      | Version                                                                                                                                | Package                                                                                    |
-|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| [packages/cli](./packages/cli/)                             | [![npm version](https://badge.fury.io/js/@rehearsal%2Fcli.svg)](https://badge.fury.io/js/@rehearsal%2Fcli)                             | [@rehearsal/cli](https://www.npmjs.com/package/@rehearsal/cli)                             |
-| [packages/migrate](./packages/migrate/) | [![npm version](https://badge.fury.io/js/@rehearsal%2Fmigrate.svg)](https://badge.fury.io/js/@rehearsal%2Fmigrate) | [@rehearsal/migrate](https://www.npmjs.com/package/@rehearsal/migrate) |
-| [packages/reporter](./packages/reporter/)                   | [![npm version](https://badge.fury.io/js/@rehearsal%2Freporter.svg)](https://badge.fury.io/js/@rehearsal%2Freporter)                   | [@rehearsal/reporter](https://www.npmjs.com/package/@rehearsal/reporter)                   |
-| [packages/tsc-transforms](./packages/tsc-transforms/)       | [![npm version](https://badge.fury.io/js/@rehearsal%2Ftsc-transforms.svg)](https://badge.fury.io/js/@rehearsal%2Ftsc-transforms)       | [@rehearsal/tsc-transforms](https://www.npmjs.com/package/@rehearsal/tsc-transforms)       |
-| [packages/diagnostic](./packages/diagnostic/)       | [![npm version](https://badge.fury.io/js/@rehearsal%2Fdiagnostic.svg)](https://badge.fury.io/js/@rehearsal%2Fdiagnostic)       | [@rehearsal/diagnostic](https://www.npmjs.com/package/@rehearsal/diagnostic)       |
+| Folder                                    | Version                                                                                                              | Package                                                                  |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [packages/cli](./packages/cli/)           | [![npm version](https://badge.fury.io/js/@rehearsal%2Fcli.svg)](https://badge.fury.io/js/@rehearsal%2Fcli)           | [@rehearsal/cli](https://www.npmjs.com/package/@rehearsal/cli)           |
+| [packages/migrate](./packages/migrate/)   | [![npm version](https://badge.fury.io/js/@rehearsal%2Fmigrate.svg)](https://badge.fury.io/js/@rehearsal%2Fmigrate)   | [@rehearsal/migrate](https://www.npmjs.com/package/@rehearsal/migrate)   |
+| [packages/reporter](./packages/reporter/) | [![npm version](https://badge.fury.io/js/@rehearsal%2Freporter.svg)](https://badge.fury.io/js/@rehearsal%2Freporter) | [@rehearsal/reporter](https://www.npmjs.com/package/@rehearsal/reporter) |
+| [packages/service](./packages/service/)   | [![npm version](https://badge.fury.io/js/@rehearsal%2Fservice.svg)](https://badge.fury.io/js/@rehearsal%2Fservice)   | [@rehearsal/service](https://www.npmjs.com/package/@rehearsal/service)   |
+| [packages/utils](./packages/utils/)       | [![npm version](https://badge.fury.io/js/@rehearsal%2Futils.svg)](https://badge.fury.io/js/@rehearsal%2Futils)       | [@rehearsal/utils](https://www.npmjs.com/package/@rehearsal/utils)       |
 
 
 # License
