@@ -1,12 +1,13 @@
 import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
-import { Report, ReportItem } from './types';
+
+import { type Report, type ReportItem } from './types';
 
 /**
  * Representation of diagnostic and migration report.
  */
-export default class Reporter {
+export class Reporter {
   readonly basePath: string;
 
   private report: Report;

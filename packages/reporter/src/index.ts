@@ -1,6 +1,7 @@
-export { default } from './reporter';
+export { Reporter as default } from './reporter';
 
-export { json } from './formatters/json';
-export { pullRequestMd } from './formatters/pull-request-md';
+export { Reporter } from './reporter';
+export { jsonFormatter } from './formatters/json-formatter';
+export { mdFormatter } from './formatters/md-formatter';
 
 export type { Report, ReportItem, ReportSummary } from './types';
