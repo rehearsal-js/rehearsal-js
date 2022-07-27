@@ -2,9 +2,10 @@ import { readFileSync } from 'fs';
 import { parse } from 'json5';
 import { resolve } from 'path';
 import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
-import { execa } from 'execa';
-import { findUp } from 'find-up';
 import { valid } from 'semver';
+
+import findup = require('findup-sync');
+import execa = require('execa');
 
 import type { GitDescribe } from './interfaces';
 
@@ -129,7 +130,7 @@ export function normalizeVersionString(versionString: string): string {
 }
 
 export async function determineProjectName(directory = process.cwd()): Promise<string | null> {
-  const packageJSONPath = await findUp('package.json', {
+  const packageJSONPath = await findup('package.json', {
     cwd: directory,
   });
 
@@ -141,7 +142,7 @@ export async function determineProjectName(directory = process.cwd()): Promise<s
 }
 
 export async function isYarnManager(): Promise<boolean> {
-  const yarnPath = await findUp('yarn.lock', {
+  const yarnPath = await findup('yarn.lock', {
     cwd: process.cwd(),
   });
 

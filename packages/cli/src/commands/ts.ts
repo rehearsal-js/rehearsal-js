@@ -4,9 +4,10 @@ import winston from 'winston';
 import { Command } from '@oclif/core';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
-
 import Reporter from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
+
+import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
 
@@ -32,8 +33,6 @@ import {
   getLatestTSVersion,
   timestamp,
 } from '../utils';
-
-const { execa } = await import('execa');
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
 const DEFAULT_TS_BUILD = 'beta';
