@@ -41,4 +41,4 @@ class TestService {
   getBasePath = () => this.basePath;
 }
 const testService = TestService.getInstance(__dirname);
-export default testService;
+export { testService };
