@@ -1,9 +1,10 @@
 import { inspect } from 'util';
 import { test } from 'mocha';
-import { join, resolve } from 'path';
-import { remove } from 'fs-extra';
+import { resolve } from 'path';
 
 import { git } from '../src';
+
+import { gitIsRepoDirty } from '../src/utils';
 
 type ArgsOf<T extends (...args: readonly unknown[]) => unknown> = T extends (
   // tslint:disable-next-line: no-unused
@@ -38,10 +39,17 @@ export function eachCase<
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 export const YARN_PATH = resolve(VOLTA_HOME, 'bin/yarn');
 
-export async function gitDeleteLocalBranch(): Promise<void> {
-  // get the current branch name
+export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<void> {
+  // this should be the rehearsal-bot branch
   const { current } = await git.branchLocal();
-  await git.checkout('master');
+  // grab the current working branch which should not be the rehearsal-bot branch
+  const branch = checkoutBranch || 'master';
+
+  if ((await gitIsRepoDirty()) && current !== 'master') {
+    await git.reset(['--hard']);
+  }
+
+  await git.checkout(branch);
 
   // only delete if a branch rehearsal-bot created
   if (current !== 'master' && current.includes('rehearsal-bot')) {

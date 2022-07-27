@@ -1,7 +1,7 @@
 import { assert, expect } from 'chai';
 import { suite } from 'mocha';
 
-import { execa } from 'execa';
+import execa = require('execa');
 
 import {
   normalizeVersionString,
