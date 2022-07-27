@@ -1,13 +1,13 @@
-import { test } from '@oclif/test';
+import { test } from '@oclif/core';
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
-import execa = require('execa');
+import { execa } from 'execa';
 import { existsSync, readJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import type { Report } from '@rehearsal/reporter';
 
-import { restoreLocalGit, YARN_PATH } from '../test-helpers';
+import { gitDeleteLocalBranch, YARN_PATH } from '../test-helpers';
 import { TS } from '../../src';
 import { getLatestTSVersion } from '../../src/utils';
 
@@ -23,7 +23,7 @@ const beforeSetup = async (): Promise<void> => {
 };
 
 const afterEachCleanup = async (): Promise<void> => {
-  await restoreLocalGit(FIXTURE_APP_PATH);
+  await gitDeleteLocalBranch();
   await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
   await execa(YARN_PATH, ['install']);
 };

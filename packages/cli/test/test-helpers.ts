@@ -38,7 +38,13 @@ export function eachCase<
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 export const YARN_PATH = resolve(VOLTA_HOME, 'bin/yarn');
 
-export async function restoreLocalGit(fixtureAppPath: string): Promise<void> {
-  await git(['restore', 'package.json', '../../yarn.lock', fixtureAppPath], process.cwd());
-  await remove(join(fixtureAppPath, '.rehearsal.json'));
+export async function gitDeleteLocalBranch(): Promise<void> {
+  // get the current branch name
+  const { current } = await git.branchLocal();
+  await git.checkout('master');
+
+  // only delete if a branch rehearsal-bot created
+  if (current !== 'master' && current.includes('rehearsal-bot')) {
+    await git.deleteLocalBranch(current);
+  }
 }
