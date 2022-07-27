@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import ts from 'typescript';
-import testService from './test-service';
+import { testService } from './test-service';
 
 interface SetupResult {
   sourceFile: ts.SourceFile | undefined;
