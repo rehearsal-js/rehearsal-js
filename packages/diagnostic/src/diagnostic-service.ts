@@ -1,7 +1,7 @@
 import fs from 'fs';
 import ts from 'typescript';
 
-export default class DiagnosticService {
+export class DiagnosticService {
   readonly files: ts.MapLike<{ version: string }>;
   readonly service: ts.LanguageService;
 

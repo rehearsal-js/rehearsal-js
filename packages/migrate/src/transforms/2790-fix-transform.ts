@@ -1,8 +1,8 @@
 import ts from 'typescript';
 
-import type RehearsalService from '@rehearsal/service';
+import { type RehearsalService } from '@rehearsal/service';
 
-import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
 
 import {
   getClassByName,
@@ -19,7 +19,7 @@ import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
 
 const OPTIONAL_TOKEN = '?';
 
-export default class FixTransform2790 extends FixTransform {
+export class FixTransform2790 extends FixTransform {
   hint = `The operand of a 'delete' operator must be optional.`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {

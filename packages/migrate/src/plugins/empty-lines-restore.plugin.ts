@@ -3,7 +3,7 @@ import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service
 /**
  * Replaces empty line placeholders set by EmptyLinesPreservePlugin with real empty lines
  */
-export default class EmptyLinesRestorePlugin extends Plugin {
+export class EmptyLinesRestorePlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
     const text = this.service.getFileText(fileName);

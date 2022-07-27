@@ -1,1 +1,1 @@
-export { default as migrate } from './migrate';
+export { migrate } from './migrate';

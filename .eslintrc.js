@@ -16,9 +16,10 @@ module.exports = {
     'curly': 'error',
     'sort-imports': 'off',
     'import/order': 'off',
+    'import/no-default-export': 'error',
+    'import/no-duplicates': 'error',
     'import/no-extraneous-dependencies': 'error',
     'import/no-unassigned-import': 'error',
-    'import/no-duplicates': 'error',
     'import/no-unresolved': 'off',
     'prettier/prettier': [
       'error',

@@ -4,7 +4,7 @@ import { assert } from 'chai';
 import { describe } from 'mocha';
 import { resolve } from 'path';
 
-import diagnose from '../src/diagnose';
+import { diagnose } from '../src';
 
 const basePath = resolve(__dirname, 'fixtures', 'diagnose');
 const fileNames = ['first.ts', 'react.tsx', 'second.ts'];

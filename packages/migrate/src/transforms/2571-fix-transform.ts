@@ -1,11 +1,11 @@
 import ts from 'typescript';
 
-import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
 
 import { isVariableOfCatchClause, transformDiagnosedNode } from '../helpers/typescript-ast';
 import { isSourceCodeChanged } from '../helpers/strings';
 
-export default class FixTransform2571 extends FixTransform {
+export class FixTransform2571 extends FixTransform {
   hint = `Object is of type '{0}'. Specify a type of variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``;
 
   fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
