@@ -1,9 +1,10 @@
 import ts from 'typescript';
 import winston from 'winston';
 import { dirname, resolve } from 'path';
-import Reporter from '@rehearsal/reporter';
 
-import RehearsalService from './rehearsal-service';
+import Reporter from '@rehearsal/reporter';
+import RehearsalService from '@rehearsal/service';
+
 import {
   DiagnosticAutofixPlugin,
   EmptyLinesPreservePlugin,

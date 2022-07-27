@@ -1,10 +1,10 @@
 import ts from 'typescript';
 
+import type RehearsalService from '@rehearsal/service';
 import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
 
-import FixTransform, { FixedFile } from '../interfaces/fix-transform';
+import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import type RehearsalService from '../rehearsal-service';
 
 const EXPORT_KEYWORD = 'export';
 export default class FixTransform4082 extends FixTransform {

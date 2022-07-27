@@ -1,11 +1,12 @@
 {
-  "name": "@rehearsal/migrate",
+  "name": "@rehearsal/service",
   "version": "0.0.27",
-  "description": "Rehearsal Migration Tool",
+  "description": "Rehearsal Service",
   "keywords": [
-    "migrate",
-    "migration",
     "rehearsal",
+    "service",
+    "ast",
+    "transforms",
     "typescript"
   ],
   "repository": {
@@ -21,7 +22,7 @@
   ],
   "scripts": {
     "build": "yarn tsc -b",
-    "lint": "npm-run-all lint:*",
+    "lint": "yarn npm-run-all lint:*",
     "lint:eslint": "yarn eslint --fix . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
@@ -29,9 +30,6 @@
   },
   "dependencies": {
     "@rehearsal/reporter": "^0.0.27",
-    "@rehearsal/service": "^0.0.27",
-    "@rehearsal/utils": "^0.0.27",
-    "eslint": "^8.11.0",
     "winston": "^3.6.0"
   },
   "devDependencies": {
@@ -39,7 +37,7 @@
     "@types/eslint": "^8.4.1",
     "@types/mocha": "^9.1.0",
     "@types/node": "^18.0.3",
-    "@types/react": "^18.0.9",
+    "eslint": "^8.11.0",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"

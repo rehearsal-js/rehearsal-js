@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type RehearsalService from '../rehearsal-service';
+import type RehearsalService from '@rehearsal/service';
 
 export interface FixedFile {
   fileName: string;
