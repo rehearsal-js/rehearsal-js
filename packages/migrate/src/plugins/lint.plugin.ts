@@ -1,6 +1,6 @@
 import { ESLint } from 'eslint';
 
-import Plugin, { type PluginParams, type PluginResult } from '../interfaces/plugin';
+import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 
 /**
  * Lint the text

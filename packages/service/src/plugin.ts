@@ -1,17 +1,9 @@
 import winston from 'winston';
 import Reporter from '@rehearsal/reporter';
-import RehearsalService from '../rehearsal-service';
 
-export type PluginOptions = Record<string, unknown> | undefined;
+import { RehearsalService } from './rehearsal-service';
 
-export type PluginParams<PluginOptions> = {
-  fileName: string;
-  options?: PluginOptions;
-};
-
-export type PluginResult = Promise<string[]>;
-
-export default class Plugin {
+export class Plugin {
   protected readonly logger?: winston.Logger;
   protected readonly reporter?: Reporter;
   protected readonly service: RehearsalService;
@@ -26,3 +18,12 @@ export default class Plugin {
     return [params.fileName];
   }
 }
+
+export type PluginOptions = Record<string, unknown> | undefined;
+
+export type PluginParams<PluginOptions> = {
+  fileName: string;
+  options?: PluginOptions;
+};
+
+export type PluginResult = Promise<string[]>;

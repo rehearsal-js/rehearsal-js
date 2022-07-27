@@ -1,5 +1,7 @@
-import FixTransform, { FixedFile } from '../interfaces/fix-transform';
 import ts from 'typescript';
+
+import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+
 import { isVariableOfCatchClause, transformDiagnosedNode } from '../helpers/typescript-ast';
 import { isSourceCodeChanged } from '../helpers/strings';
 

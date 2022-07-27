@@ -1,5 +1,9 @@
 import ts from 'typescript';
 
+import type RehearsalService from '@rehearsal/service';
+
+import FixTransform, { type FixedFile } from '../interfaces/fix-transform';
+
 import {
   getClassByName,
   getInterfaceByName,
@@ -11,9 +15,7 @@ import {
   getTypeDeclarationFromTypeSymbol,
 } from '@rehearsal/utils';
 
-import FixTransform, { FixedFile } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import type RehearsalService from '../rehearsal-service';
 
 const OPTIONAL_TOKEN = '?';
 
