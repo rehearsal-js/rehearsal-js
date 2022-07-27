@@ -4,7 +4,7 @@ import { dirname } from 'path';
 class TestService {
   private static instance: TestService;
   static getInstance(basePath: string): TestService {
-    if (!TestService.instance) {
+    if (!TestService.instance || TestService.instance.getBasePath() !== basePath) {
       TestService.instance = new TestService(basePath);
     }
     return TestService.instance;
