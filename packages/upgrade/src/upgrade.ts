@@ -12,14 +12,14 @@ import {
   LintPlugin,
 } from './plugins';
 
-export type MigrateInput = {
+export type UpgradeInput = {
   basePath: string;
   configName?: string;
   reporter?: Reporter;
   logger?: winston.Logger;
 };
 
-export type MigrateOutput = {
+export type UpgradeOutput = {
   basePath: string;
   configFile: string;
   sourceFiles: string[];
@@ -28,7 +28,7 @@ export type MigrateOutput = {
 /**
  * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
  */
-export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
+export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
   const reporter = input.reporter;
@@ -42,7 +42,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     LintPlugin,
   ];
 
-  logger?.info('Migration started.');
+  logger?.info('Upgrade started.');
   logger?.info(`Base path: ${basePath}`);
 
   const configFile = ts.findConfigFile(basePath, ts.sys.fileExists, configName);
@@ -81,7 +81,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     allChangedFiles.forEach((file) => service.saveFile(file));
   }
 
-  logger?.info(`Migration finished.`);
+  logger?.info(`Upgrade finished.`);
 
   return {
     basePath,

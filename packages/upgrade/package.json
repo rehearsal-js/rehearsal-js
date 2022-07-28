@@ -1,10 +1,11 @@
 {
-  "name": "@rehearsal/diagnostic",
+  "name": "@rehearsal/upgrade",
   "version": "0.0.27",
-  "description": "Rehearsal Diagnostic Tool",
+  "description": "Rehearsal Dependency Upgrade Tool",
   "keywords": [
-    "diagnose",
-    "diagnostic",
+    "upgrade",
+    "dependency",
+    "dependencies",
     "rehearsal",
     "typescript"
   ],
@@ -15,11 +16,7 @@
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "bin": {
-    "diagnose": "./bin/diagnose.sh"
-  },
   "files": [
-    "bin",
     "dist",
     "src"
   ],
@@ -32,18 +29,20 @@
     "test": "yarn nyc mocha"
   },
   "dependencies": {
-    "commander": "^9.1.0",
-    "debug": "^4.3.4",
+    "@rehearsal/reporter": "^0.0.27",
+    "@rehearsal/service": "^0.0.27",
+    "@rehearsal/utils": "^0.0.27",
+    "commander": "^9.4.0",
     "eslint": "^8.11.0",
     "winston": "^3.6.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/commander": "^2.12.2",
-    "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
     "@types/mocha": "^9.1.0",
-    "@types/winston": "^2.4.4",
+    "@types/node": "^18.0.3",
+    "@types/react": "^18.0.9",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"

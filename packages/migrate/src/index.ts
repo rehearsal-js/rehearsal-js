@@ -1,1 +1,0 @@
-export { migrate } from './migrate';
