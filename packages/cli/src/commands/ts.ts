@@ -7,7 +7,7 @@ import { Listr } from 'listr2';
 import { resolve } from 'path';
 
 import { Reporter } from '@rehearsal/reporter';
-import { migrate } from '@rehearsal/migrate';
+import { upgrade } from '@rehearsal/upgrade';
 
 import { reportFormatter } from '../helpers/report';
 
@@ -221,7 +221,7 @@ export class TS extends Command {
           task: async (ctx, task) => {
             const runTransforms = flags.autofix ?? false;
 
-            const result = await migrate({
+            const result = await upgrade({
               basePath: resolvedSrcDir,
               configName: 'tsconfig.json', // TODO: Add to command options
               reporter: reporter,
