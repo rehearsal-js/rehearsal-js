@@ -1,3 +1,3 @@
 # @rehearsal/migrate
 
-Rehearsal Migration tool
+Rehearsal JavaScript to TypeScript Migration Tool

@@ -45,6 +45,7 @@
     "@microsoft/api-documenter": "^7.13.68",
     "@oclif/core": "^1.12.1",
     "@rehearsal/migrate": "^0.0.27",
+    "@rehearsal/upgrade": "^0.0.27",
     "@rehearsal/reporter": "^0.0.27",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",

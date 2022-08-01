@@ -1,12 +1,12 @@
 {
-  "name": "@rehearsal/migrate",
+  "name": "@rehearsal/upgrade",
   "version": "0.0.27",
-  "description": "Rehearsal JavaScript to TypeScript Migration Tool",
+  "description": "Rehearsal Dependency Upgrade Tool",
   "keywords": [
+    "upgrade",
+    "dependency",
+    "dependencies",
     "rehearsal",
-    "migrate",
-    "migration",
-    "javascript",
     "typescript"
   ],
   "repository": {
@@ -22,14 +22,23 @@
   ],
   "scripts": {
     "build": "yarn tsc -b",
-    "lint": "yarn npm-run-all lint:*",
+    "lint": "npm-run-all lint:*",
     "lint:eslint": "yarn eslint --fix . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
     "test": "yarn nyc mocha"
   },
+  "dependencies": {
+    "@rehearsal/reporter": "^0.0.27",
+    "@rehearsal/service": "^0.0.27",
+    "@rehearsal/utils": "^0.0.27",
+    "commander": "^9.4.0",
+    "eslint": "^8.11.0",
+    "winston": "^3.6.0"
+  },
   "devDependencies": {
     "@types/chai": "^4.3.0",
+    "@types/commander": "^2.12.2",
     "@types/eslint": "^8.4.1",
     "@types/mocha": "^9.1.0",
     "@types/node": "^18.0.3",
