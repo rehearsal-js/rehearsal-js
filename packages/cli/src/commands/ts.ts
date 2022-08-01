@@ -225,7 +225,7 @@ export class TS extends Command {
             const runTransforms = flags.autofix ?? false;
 
             // TODO we need to create a PR per diagnostic likely will need to pass git instance to migrate
-            const result = await migrate({
+            const result = await upgrade({
               basePath: resolvedSrcDir,
               configName: 'tsconfig.json', // TODO: Add to command options
               reporter: reporter,
