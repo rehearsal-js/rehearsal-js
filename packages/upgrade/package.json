@@ -43,6 +43,7 @@
     "@types/mocha": "^9.1.0",
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.9",
+    "@types/sarif": "^2.1.4",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0"
