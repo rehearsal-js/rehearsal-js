@@ -2,7 +2,7 @@ import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
 
-import { type Report, type ReportItem } from './types';
+import { type Report, type ReportItem, type FixResult } from './types';
 
 /**
  * Representation of diagnostic and migration report.
@@ -28,11 +28,11 @@ export class Reporter {
   }
 
   getFileNames(): string[] {
-    return [...new Set(this.report.items.map((item) => item.file))];
+    return [...new Set(this.report.items.map((item) => item.analysisTarget))];
   }
 
-  getItemsByFile(fileName: string): ReportItem[] {
-    return this.report.items.filter((item) => item.file === fileName);
+  getItemsByAnalysisTarget(fileName: string): ReportItem[] {
+    return this.report.items.filter((item) => item.analysisTarget === fileName);
   }
 
   /**
@@ -45,17 +45,24 @@ export class Reporter {
   /**
    * Appends am information about provided diagnostic and related node to the report
    */
-  addItem(diagnostic: ts.DiagnosticWithLocation, node?: ts.Node, hint = '', fixed = false): void {
+  addItem(
+    diagnostic: ts.DiagnosticWithLocation,
+    fixResult: FixResult,
+    node?: ts.Node,
+    hint = ''
+  ): void {
     this.report.items.push({
-      file: diagnostic.file.fileName,
+      analysisTarget: diagnostic.file.fileName,
+      fixedFiles: fixResult.fixedFiles,
+      commentedFiles: fixResult.commentedFiles,
       code: diagnostic.code,
       category: ts.DiagnosticCategory[diagnostic.category],
       message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
-      fixed: fixed,
+      fixed: fixResult.fixedFiles.length > 0,
       nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
-      location: {
+      nodeLocation: {
         start: diagnostic.start,
         length: diagnostic.length,
         ...diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start),

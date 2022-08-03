@@ -6,7 +6,9 @@ export type ReportSummary = Record<string, unknown> & {
 };
 
 export type ReportItem = {
-  file: string;
+  analysisTarget: string;
+  fixedFiles: FixedFile[];
+  commentedFiles: FixedFile[];
   code: number;
   category: string;
   message: string;
@@ -14,7 +16,7 @@ export type ReportItem = {
   fixed?: boolean;
   nodeKind?: string;
   nodeText?: string;
-  location: {
+  nodeLocation: {
     start: number;
     length: number;
     line: number;
@@ -26,3 +28,17 @@ export type Report = {
   summary: ReportSummary;
   items: ReportItem[];
 };
+
+interface FixedFile {
+  fileName: string;
+  updatedText?: string;
+  location: {
+    line: number;
+    character: number;
+  };
+}
+
+export interface FixResult {
+  fixedFiles: FixedFile[];
+  commentedFiles: FixedFile[];
+}

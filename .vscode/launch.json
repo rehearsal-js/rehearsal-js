@@ -15,7 +15,7 @@
         "TS_NODE_IGNORE": "false"
       },
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
-      "sourceMaps": true,
+      "sourceMaps": true
     },
     {
       "type": "node",
@@ -23,18 +23,15 @@
       "name": "Only CLI",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": [
-        "--no-timeout",
-        "${workspaceFolder}/packages/cli/test/**/*.test.ts"
-      ],
+      "args": ["--no-timeout", "${workspaceFolder}/packages/cli/test/**/*.test.ts"],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}/packages/cli",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_NODE_IGNORE": "true",
-        "TS_NODE_TRANSPILE_ONLY": "true",
-      },
+        "TS_NODE_TRANSPILE_ONLY": "true"
+      }
     },
     {
       "type": "node",
@@ -42,18 +39,15 @@
       "name": "Only Reporter",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": [
-        "--no-timeout",
-        "${workspaceFolder}/packages/reporter/test/**/*.test.ts"
-      ],
+      "args": ["--no-timeout", "${workspaceFolder}/packages/reporter/test/**/*.test.ts"],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}/packages/reporter",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_NODE_IGNORE": "true",
-        "TS_NODE_TRANSPILE_ONLY": "true",
-      },
+        "TS_NODE_TRANSPILE_ONLY": "true"
+      }
     },
     {
       "type": "node",
@@ -61,18 +55,15 @@
       "name": "Only TSC-Transforms",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": [
-        "--no-timeout",
-        "${workspaceFolder}/packages/tsc-transforms/test/**/*.test.ts"
-      ],
+      "args": ["--no-timeout", "${workspaceFolder}/packages/tsc-transforms/test/**/*.test.ts"],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}/packages/tsc-transforms",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_NODE_IGNORE": "true",
-        "TS_NODE_TRANSPILE_ONLY": "true",
-      },
+        "TS_NODE_TRANSPILE_ONLY": "true"
+      }
     },
     {
       "type": "node",
@@ -80,18 +71,31 @@
       "name": "Only Migrate",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": [
-        "--no-timeout",
-        "${workspaceFolder}/packages/migrate/test/*.test.ts"
-      ],
+      "args": ["--no-timeout", "${workspaceFolder}/packages/migrate/test/*.test.ts"],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}/packages/migrate",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "TS_NODE_IGNORE": "true",
-        "TS_NODE_TRANSPILE_ONLY": "true",
-      },
+        "TS_NODE_TRANSPILE_ONLY": "true"
+      }
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Only Upgrade",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "args": ["--no-timeout", "${workspaceFolder}/packages/upgrade/test/*.test.ts"],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/packages/upgrade",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "TS_NODE_IGNORE": "true",
+        "TS_NODE_TRANSPILE_ONLY": "true"
+      }
+    }
   ]
 }

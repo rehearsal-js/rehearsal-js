@@ -1,7 +1,7 @@
 import { Report } from '../types';
 
 export function mdFormatter(report: Report): string {
-  const fileNames = [...new Set(report.items.map((item) => item.file))];
+  const fileNames = [...new Set(report.items.map((item) => item.analysisTarget))];
 
   let text = ``;
 
@@ -12,7 +12,7 @@ export function mdFormatter(report: Report): string {
   text += `### Results:\n`;
 
   for (const fileName of fileNames) {
-    const items = report.items.filter((item) => item.file === fileName);
+    const items = report.items.filter((item) => item.analysisTarget === fileName);
     const relativeFileName = fileName.replace(report.summary.basePath, '');
 
     text += `\n`;
