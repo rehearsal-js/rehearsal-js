@@ -1,5 +1,5 @@
-import { TS } from './commands/ts';
+import { Upgrade } from './commands/upgrade';
 
 export { run } from '@oclif/core';
-export { TS };
+export { Upgrade };
 export * from './utils';

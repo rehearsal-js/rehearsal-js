@@ -7,7 +7,7 @@ import { join, resolve } from 'path';
 import type { Report } from '@rehearsal/reporter';
 
 import { gitDeleteLocalBranch, YARN_PATH } from '../test-helpers';
-import { TS } from '../../src';
+import { Upgrade } from '../../src';
 import { getLatestTSVersion, git } from '../../src/utils';
 
 import execa = require('execa');
@@ -32,11 +32,11 @@ const afterEachCleanup = async (): Promise<void> => {
   await execa(YARN_PATH, ['install']);
 };
 
-describe('ts:command against fixture', async () => {
+describe('upgrade:command against fixture', async () => {
   before(beforeSetup);
 
   test.stdout().it('WITH autofix', async (ctx) => {
-    await TS.run([
+    await Upgrade.run([
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
@@ -98,7 +98,7 @@ describe('ts:command against fixture', async () => {
   });
 
   test.stdout().it('NO autofix', async (ctx) => {
-    await TS.run([
+    await Upgrade.run([
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
@@ -111,10 +111,10 @@ describe('ts:command against fixture', async () => {
   });
 });
 
-describe('ts:command tsc version check', async () => {
+describe('upgrade:command tsc version check', async () => {
   test.stderr().it(`on typescript invalid tsc_version`, async () => {
     try {
-      await TS.run(['--tsc_version', '']);
+      await Upgrade.run(['--tsc_version', '']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -122,7 +122,7 @@ describe('ts:command tsc version check', async () => {
     }
 
     try {
-      await TS.run(['--tsc_version', '0']);
+      await Upgrade.run(['--tsc_version', '0']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -134,7 +134,7 @@ describe('ts:command tsc version check', async () => {
     // this will test the version already installed
     // the test sandbox should have an older version of tsc installed
     // during the afterEachCleanup() phase
-    await TS.run([
+    await Upgrade.run([
       '--src_dir',
       FIXTURE_APP_PATH,
       '--tsc_version',
