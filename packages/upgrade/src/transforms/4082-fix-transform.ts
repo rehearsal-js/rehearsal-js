@@ -3,20 +3,21 @@ import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
 import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
 
-import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixResult } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
+import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {
   hint = `Default export of the module has or is using private name {0}`;
 
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
+  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
     const program = service.getLanguageService().getProgram()!;
     const checker = program.getTypeChecker();
 
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode) {
-      return [];
+      return getCommentsOnlyResult(diagnostic);
     }
 
     /**
@@ -27,21 +28,21 @@ export class FixTransform4082 extends FixTransform {
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
     const targetTypeString = getTargetTypeName(message);
     if (!targetTypeString) {
-      return [];
+      return getCommentsOnlyResult(diagnostic);
     }
 
     if (ts.isExportAssignment(errorNode)) {
       const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
 
       if (!parentType) {
-        return [];
+        return getCommentsOnlyResult(diagnostic);
       }
 
       const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
 
       const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
       if (!targetTypeDeclaration) {
-        return [];
+        return getCommentsOnlyResult(diagnostic);
       }
 
       const sourceFile = targetTypeDeclaration.getSourceFile();
@@ -51,14 +52,9 @@ export class FixTransform4082 extends FixTransform {
         `${EXPORT_KEYWORD} `
       );
 
-      return [
-        {
-          fileName: sourceFile.fileName,
-          text: updatedText,
-        },
-      ];
+      return getCodemodResult(sourceFile, updatedText, targetTypeDeclaration.getStart());
     }
-    return [];
+    return getCommentsOnlyResult(diagnostic);
   };
 }
 

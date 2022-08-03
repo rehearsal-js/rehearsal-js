@@ -7,36 +7,56 @@
   },
   "items": [
     {
-      "file": "first.ts",
-      "code": 6133,
       "category": "Error",
-      "message": "'fs' is declared but its value is never read.",
-      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "fixedFiles": [
+        {
+          "fileName": "first.ts",
+          "location": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      ],
+      "commentedFiles": [],
+      "code": 6133,
+      "analysisTarget": "first.ts",
       "fixed": true,
-      "nodeKind": "ImportDeclaration",
-      "nodeText": "import fs from 'fs';",
-      "location": {
-        "start": 0,
+      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "nodeLocation": {
+        "character": 0,
         "length": 20,
         "line": 0,
-        "character": 0
-      }
+        "start": 0
+      },
+      "message": "'fs' is declared but its value is never read.",
+      "nodeKind": "ImportDeclaration",
+      "nodeText": "import fs from 'fs';"
     },
     {
-      "file": "second.ts",
-      "code": 6133,
       "category": "Error",
-      "message": "'parse' is declared but its value is never read.",
-      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "fixedFiles": [
+        {
+          "fileName": "second.ts",
+          "location": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      ],
+      "commentedFiles": [],
+      "code": 6133,
+      "analysisTarget": "second.ts",
       "fixed": true,
-      "nodeKind": "ImportSpecifier",
-      "nodeText": "parse",
-      "location": {
-        "start": 18,
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "nodeLocation": {
+        "character": 18,
         "length": 5,
         "line": 0,
-        "character": 18
-      }
+        "start": 18
+      },
+      "message": "'parse' is declared but its value is never read.",
+      "nodeKind": "ImportSpecifier",
+      "nodeText": "parse"
     }
   ]
 }

@@ -3,16 +3,17 @@ import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
 import { getTypeNameFromVariable } from '@rehearsal/utils';
 
-import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixResult } from '../interfaces/fix-transform';
+import { getCommentsOnlyResult } from '../helpers/transform-utils';
 import { findNodeAtPosition } from '../helpers/typescript-ast';
 
 export class FixTransform2345 extends FixTransform {
   hint = `Argument of type '{0}' is not assignable to parameter of type '{1}'.`;
 
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
+  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !ts.isIdentifier(errorNode)) {
-      return [];
+      return getCommentsOnlyResult(diagnostic);
     }
     const variableName = errorNode.getFullText();
 
@@ -30,6 +31,6 @@ export class FixTransform2345 extends FixTransform {
         ` Consider verifying both types, using type assertion: '(${variableName} as string)', or using type guard: 'if (${variableName} instanceof string) { ... }'.`;
     }
 
-    return [];
+    return getCommentsOnlyResult(diagnostic);
   };
 }

@@ -1,13 +1,14 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixedFile } from '../interfaces/fix-transform';
+import { FixTransform, type FixResult } from '../interfaces/fix-transform';
+import { getCommentsOnlyResult } from '../helpers/transform-utils';
 
 import { transformDiagnosedNode } from '../helpers/typescript-ast';
 
 export class FixTransform2322 extends FixTransform {
   hint = `Type '{0}' is being returned or assigned, but type '{1}' is expected. Please convert type '{0}' to type '{1}', or return or assign a variable of type '{1}'`;
 
-  fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
+  fix = (diagnostic: ts.DiagnosticWithLocation): FixResult => {
     transformDiagnosedNode(diagnostic, (node: ts.Node) => {
       if (ts.isReturnStatement(node)) {
         this.hint = `The function expects to return '{1}', but '{0}' is returned. Please convert '{0}' value to '{1}' or update the function's return type.`;
@@ -16,7 +17,6 @@ export class FixTransform2322 extends FixTransform {
       }
       return node;
     });
-
-    return [];
+    return getCommentsOnlyResult(diagnostic);
   };
 }

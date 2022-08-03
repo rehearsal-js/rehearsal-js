@@ -50,14 +50,24 @@ describe('Test reporter', function () {
       resolve(basePath, '.rehearsal-report.input.json')
     );
 
-    assert.deepEqual(reporter.getItemsByFile('first.ts'), [
+    assert.deepEqual(reporter.getItemsByAnalysisTarget('first.ts'), [
       {
         category: 'Error',
+        fixedFiles: [
+          {
+            fileName: 'first.ts',
+            location: {
+              line: 0,
+              character: 0,
+            },
+          },
+        ],
+        commentedFiles: [],
         code: 6133,
-        file: 'first.ts',
+        analysisTarget: 'first.ts',
         fixed: true,
         hint: "The declaration 'fs' is never read or used. Remove the declaration or use it.",
-        location: {
+        nodeLocation: {
           character: 0,
           length: 20,
           line: 0,
@@ -69,14 +79,24 @@ describe('Test reporter', function () {
       },
     ]);
 
-    assert.deepEqual(reporter.getItemsByFile('second.ts'), [
+    assert.deepEqual(reporter.getItemsByAnalysisTarget('second.ts'), [
       {
         category: 'Error',
+        fixedFiles: [
+          {
+            fileName: 'second.ts',
+            location: {
+              line: 0,
+              character: 0,
+            },
+          },
+        ],
+        commentedFiles: [],
         code: 6133,
-        file: 'second.ts',
+        analysisTarget: 'second.ts',
         fixed: true,
         hint: "The declaration 'parse' is never read or used. Remove the declaration or use it.",
-        location: {
+        nodeLocation: {
           character: 18,
           length: 5,
           line: 0,

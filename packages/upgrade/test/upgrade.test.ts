@@ -72,7 +72,15 @@ function expectedReport(basePath: string, timestamp: string): Report {
   report.summary.basePath = basePath;
   report.summary.timestamp = timestamp;
   report.summary.tsVersion = ts.version;
-  report.items.map((v) => (v.file = resolve(basePath, v.file)));
+  report.items.forEach((item) => {
+    item.analysisTarget = resolve(basePath, item.analysisTarget);
+    if (item.fixedFiles?.length > 0) {
+      item.fixedFiles.forEach((file) => (file.fileName = resolve(basePath, file.fileName)));
+    }
+    if (item.commentedFiles?.length > 0) {
+      item.commentedFiles.forEach((file) => (file.fileName = resolve(basePath, file.fileName)));
+    }
+  });
 
   return report;
 }
