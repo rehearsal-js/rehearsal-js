@@ -5,17 +5,28 @@ export function getCommentsOnlyResult(diagnostic: ts.DiagnosticWithLocation): Fi
   const { file, start } = diagnostic;
   const { line, character } = ts.getLineAndCharacterOfPosition(file, start);
   return {
-    fixedFiles: [],
-    commentedFiles: [
-      {
-        fileName: file.fileName,
-        location: {
-          line,
-          character,
-        },
+    files: [{
+      fileName: file.fileName,
+      location: {
+        line,
+        character
       },
-    ],
-  };
+      codemod: false,
+      commentAdded: true,
+      comment: 'here',
+      roles: ['analysisTarget', 'unmodified']
+    }]
+  //   fixedFiles: [],
+  //   commentedFiles: [
+  //     {
+  //       fileName: file.fileName,
+  //       location: {
+  //         line,
+  //         character,
+  //       },
+  //     },
+  //   ],
+  // };
 }
 
 export function getCodemodResult(

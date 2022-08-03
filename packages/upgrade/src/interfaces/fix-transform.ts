@@ -1,19 +1,29 @@
 import ts from 'typescript';
+import { Artifact } from 'sarif';
 import { type RehearsalService } from '@rehearsal/service';
 import { getCommentsOnlyResult } from '../helpers/transform-utils';
 
-export interface FixedFile {
+type FileRole = Extract<
+  Artifact.roles,
+  'analysisTarget' | 'tracedFile' | 'unmodified' | 'added' | 'deleted' | 'renamed'
+>;
+
+export interface ProcessedFile {
   fileName: string;
   updatedText?: string;
-  location: {
+  location?: {
     line: number;
     character: number;
   };
+  codemod: boolean;
+  code?: string;
+  commentAdded: boolean;
+  comment?: string;
+  roles: FileRole[];
 }
 
 export interface FixResult {
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
+  files: ProcessedFile[];
 }
 
 export class FixTransform {
