@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { parse } from "json5";
-import execa = require("execa");
+import { execa } from 'execa';
 
 interface GitDescribe {
   tag: string;

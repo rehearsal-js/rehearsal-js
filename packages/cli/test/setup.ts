@@ -1,11 +1,12 @@
 import { setGracefulCleanup } from 'tmp';
 import { after } from 'mocha';
-import { resolve } from 'path';
-import { restoreLocalGit } from './test-helpers';
-
-const FIXTURE_APP_PATH = resolve(__dirname, './fixtures/app');
+import { git } from '../src';
+import { gitDeleteLocalBranch } from './test-helpers';
 
 after(async () => {
-  await restoreLocalGit(FIXTURE_APP_PATH);
+  const { current } = await git.branchLocal();
+
+  // delete the branch created by rehearsal for future tests
+  await gitDeleteLocalBranch(current);
   setGracefulCleanup();
 });

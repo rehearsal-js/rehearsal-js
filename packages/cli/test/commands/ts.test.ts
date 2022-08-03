@@ -1,29 +1,33 @@
 import { test } from '@oclif/test';
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
-import execa = require('execa');
 import { existsSync, readJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
 
 import type { Report } from '@rehearsal/reporter';
 
-import { restoreLocalGit, YARN_PATH } from '../test-helpers';
+import { gitDeleteLocalBranch, YARN_PATH } from '../test-helpers';
 import { TS } from '../../src';
-import { getLatestTSVersion } from '../../src/utils';
+import { getLatestTSVersion, git } from '../../src/utils';
+
+import execa = require('execa');
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
+let WORKING_BRANCH = '';
 
 const beforeSetup = async (): Promise<void> => {
+  const { current } = await git.branchLocal();
+  WORKING_BRANCH = current;
   // install the test version of tsc
   await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
 };
 
 const afterEachCleanup = async (): Promise<void> => {
-  await restoreLocalGit(FIXTURE_APP_PATH);
+  await gitDeleteLocalBranch(WORKING_BRANCH);
   await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
   await execa(YARN_PATH, ['install']);
 };
@@ -54,15 +58,17 @@ describe('ts:command against fixture', async () => {
 
     assert.equal(report.summary.projectName, '@rehearsal/cli');
     assert.equal(report.summary.tsVersion, latestPublishedTSVersion);
-    assert.equal(report.summary.uniqueErrors, 2);
-    assert.equal(report.summary.totalErrors, 25);
+    assert.equal(report.summary.uniqueErrors, 3);
+    assert.equal(report.summary.totalErrors, 28);
     assert.deepEqual(report.summary.totalErrorsList, {
       '2322': 1,
+      '2616': 3,
       '6133': 24,
     });
     assert.equal(report.summary.fixedErrors, 3);
     assert.deepEqual(report.summary.fixedErrorsList, {
       '2322': 0,
+      '2616': 0,
       '6133': 3,
     });
     assert.equal(report.summary.files, 3);
@@ -72,19 +78,22 @@ describe('ts:command against fixture', async () => {
       '/foo_2/foo_2b.ts',
     ]);
 
-    assert.equal(report.items.length, 25);
+    assert.equal(report.items.length, 28);
 
     const firstFileReportError = report.items[0];
 
-    assert.equal(firstFileReportError.code, 6133);
+    assert.equal(firstFileReportError.code, 2616);
     assert.equal(firstFileReportError.category, 'Error');
-    assert.equal(firstFileReportError.fixed, true);
-    assert.equal(firstFileReportError.nodeKind, 'Identifier');
-    assert.equal(firstFileReportError.nodeText, 'git');
-    assert.equal(firstFileReportError.message, `'git' is declared but its value is never read.`);
+    assert.equal(firstFileReportError.fixed, false);
+    assert.equal(firstFileReportError.nodeKind, 'ImportSpecifier');
+    assert.equal(firstFileReportError.nodeText, 'execa');
+    assert.equal(
+      firstFileReportError.message,
+      `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
+    );
     assert.equal(
       firstFileReportError.hint,
-      "The function 'git' is never called. Remove the function or use it."
+      `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
     );
   });
 

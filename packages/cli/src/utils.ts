@@ -1,23 +1,43 @@
 import { readFileSync } from 'fs';
 import { parse } from 'json5';
-import findUp from 'find-up';
 import { resolve } from 'path';
+import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
+import { valid } from 'semver';
+
+import findup = require('findup-sync');
 import execa = require('execa');
+
 import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
-export async function git(args: string[], cwd: string): Promise<string> {
-  const { stdout } = await execa('git', args, { cwd });
-  return stdout;
+export const git: SimpleGit = simpleGit({
+  baseDir: process.cwd(),
+  binary: 'git',
+  maxConcurrentProcesses: 6,
+} as Partial<SimpleGitOptions>);
+
+// we might need to check if commitlint is being used and lint against it for msgTypes
+export async function gitCommit(msg: string, msgType = 'chore(deps-dev)'): Promise<void> {
+  await git.commit(`${msgType.trim()}: [REHEARSAL-BOT] ${msg.trim()}`, '--no-verify');
 }
 
-export async function gitCommit(msg: string): Promise<string> {
-  const stdout = await git(
-    ['commit', '-m', `chore(deps-dev): [REHEARSAL-BOT] ${msg}`],
-    process.cwd()
-  );
-  return stdout;
+// we want a seperate branch & PR for each diagnostic
+// eg. await gitCheckoutNewBranch('4.8.0-beta', 'typescript', 'diagnostic-4082')
+export async function gitCheckoutNewLocalBranch(
+  depSemVersion: string,
+  depName = 'typescript',
+  addPathID?: string
+): Promise<string> {
+  const branchName = `rehearsal-bot/${depName}-${depSemVersion}${addPathID ? `/${addPathID}` : ''}`;
+  await git.checkout(['-b', branchName]);
+
+  return branchName;
+}
+
+export async function gitIsRepoDirty(): Promise<boolean> {
+  const status = await git.status();
+  return status.isClean() === false;
 }
 
 /**
@@ -110,7 +130,7 @@ export function normalizeVersionString(versionString: string): string {
 }
 
 export async function determineProjectName(directory = process.cwd()): Promise<string | null> {
-  const packageJSONPath = await findUp('package.json', {
+  const packageJSONPath = await findup('package.json', {
     cwd: directory,
   });
 
@@ -122,7 +142,7 @@ export async function determineProjectName(directory = process.cwd()): Promise<s
 }
 
 export async function isYarnManager(): Promise<boolean> {
-  const yarnPath = await findUp('yarn.lock', {
+  const yarnPath = await findup('yarn.lock', {
     cwd: process.cwd(),
   });
 
@@ -173,19 +193,13 @@ export async function getPathToBinary(binaryName: string): Promise<string> {
   }
 }
 
-export async function isRepoDirty(
-  path: string
-): Promise<{ hasUncommittedFiles: boolean; uncommittedFilesMessage: string }> {
-  const desc = await git(['describe', '--tags', '--long', '--dirty'], path);
-  return {
-    hasUncommittedFiles: parseLongDescribe(desc).dirty,
-    uncommittedFilesMessage: `You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.`,
-  };
-}
-
 // defaults to beta unless other
 export async function getLatestTSVersion(build = 'beta'): Promise<string> {
   const { stdout } = await execa('npm', ['show', `typescript@${build}`, 'version']);
 
   return stdout;
+}
+
+export async function isValidSemver(input: string): Promise<boolean> {
+  return !valid(input);
 }

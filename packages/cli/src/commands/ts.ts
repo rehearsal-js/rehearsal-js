@@ -1,13 +1,13 @@
-import * as compareVersions from 'compare-versions';
+import { compare } from 'compare-versions';
 import debug from 'debug';
-import execa = require('execa');
 import winston from 'winston';
-import { Command } from '@oclif/command';
+import { Command } from '@oclif/core';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
-
 import { Reporter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
+
+import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
 
@@ -26,7 +26,8 @@ import {
   determineProjectName,
   getPathToBinary,
   gitCommit,
-  isRepoDirty,
+  gitCheckoutNewLocalBranch,
+  gitIsRepoDirty,
   bumpDevDep,
   isYarnManager,
   getLatestTSVersion,
@@ -65,15 +66,17 @@ export class TS extends Command {
   };
 
   async run(): Promise<void> {
-    const { flags } = this.parse(TS);
+    const { flags } = await this.parse(TS);
     const { build, src_dir } = flags;
     const resolvedSrcDir = resolve(src_dir);
 
     // WARN: is git dirty check and exit if dirty
     if (!flags.is_test) {
-      const { hasUncommittedFiles, uncommittedFilesMessage } = await isRepoDirty(process.cwd());
+      const hasUncommittedFiles = await gitIsRepoDirty();
       if (hasUncommittedFiles) {
-        this.warn(uncommittedFilesMessage);
+        this.warn(
+          'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+        );
         process.exit(0);
       }
     }
@@ -125,7 +128,7 @@ export class TS extends Command {
               {
                 title: 'Comparing TypeScript versions',
                 task: async (ctx) => {
-                  if (compareVersions.compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
+                  if (compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestELRdBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                     reporter.addSummary('tsVersion', ctx.tsVersion);
@@ -146,20 +149,20 @@ export class TS extends Command {
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
                 task: async (ctx: Context) => {
+                  // there will be a diff so branch is created
+                  await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   await bumpDevDep(`typescript@${ctx.tsVersion}`);
                 },
               },
               {
                 title: `Committing Changes`,
-                skip: true,
                 task: async (ctx: Context) => {
                   if (flags.dry_run || flags.is_test) {
                     task.skip('Skipping task because dry_run flag is set');
                   } else {
                     // eventually commit change
                     const lockFile = (await isYarnManager()) ? 'yarn.lock' : 'package-lock.json';
-                    await git(['add', 'package.json', lockFile], process.cwd());
-
+                    await git.add(['package.json', lockFile]);
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
                     );
@@ -189,9 +192,9 @@ export class TS extends Command {
                               ctx.skip = true;
                               task.skip('Skipping task because dry_run flag is set');
                             }
-
-                            // do PR work here
-                            task.title = `Pull Request Link "https://github.com/foo/foo/pull/00000"`;
+                            // the diff has been added and commited to the branch
+                            // do PR work here and push branch upstream
+                            task.title = `Pull-Request Link "https://github.com/foo/foo/pull/00000"`;
                             // on success skip the rest of the tasks
                             ctx.skip = true;
                           },
@@ -221,6 +224,7 @@ export class TS extends Command {
           task: async (ctx, task) => {
             const runTransforms = flags.autofix ?? false;
 
+            // TODO we need to create a PR per diagnostic likely will need to pass git instance to migrate
             const result = await upgrade({
               basePath: resolvedSrcDir,
               configName: 'tsconfig.json', // TODO: Add to command options
@@ -237,7 +241,8 @@ export class TS extends Command {
 
               // commit changes if its not a dry_run and not a test
               if (!flags.dry_run && !flags.is_test) {
-                await git(['add', `${flags.src_dir}`], process.cwd());
+                // add everything to the git repo within the specified src_dir
+                await git.add([`${flags.src_dir}`]);
                 await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
               }
             } else {
@@ -265,7 +270,8 @@ export class TS extends Command {
       // be sure to check for is_test flag and only reset within the fixture app and package.json
       // this is reset within the afterEach hook for testing
       if (flags.dry_run && !flags.is_test) {
-        await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
+        // await git.reset(['--hard', '--', 'package.json', 'yarn.lock', `${flags.src_dir}`]);
+        // await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
       }
     } catch (e) {
       this.error(`${e}`);
