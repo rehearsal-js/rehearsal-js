@@ -1,7 +1,6 @@
 import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
-
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { resolve } from 'path';
@@ -30,7 +29,10 @@ describe('Test upgrade', function () {
 
     // Compare each updated .ts file with expected .ts.output
     for (const file of files) {
-      assert.equal(fs.readFileSync(file).toString(), fs.readFileSync(`${file}.output`).toString());
+      const input = fs.readFileSync(file).toString();
+      const output = fs.readFileSync(`${file}.output`).toString();
+
+      assert.equal(input, output);
     }
 
     // TODO: Move to @rehearsal/report
