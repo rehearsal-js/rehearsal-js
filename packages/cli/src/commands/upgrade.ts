@@ -46,10 +46,10 @@ type Context = {
   skip: boolean;
 };
 
-export class TS extends Command {
-  static aliases = ['typescript'];
+export class Upgrade extends Command {
+  static aliases = ['typescript', 'ts'];
   static description =
-    'bump typescript dev-dependency with compilation insights and auto-fix options';
+    'upgrade typescript dev-dependency with compilation insights and auto-fix options';
   static flags = {
     build: build({
       default: DEFAULT_TS_BUILD,
@@ -66,7 +66,7 @@ export class TS extends Command {
   };
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(TS);
+    const { flags } = await this.parse(Upgrade);
     const { build, src_dir } = flags;
     const resolvedSrcDir = resolve(src_dir);
 
