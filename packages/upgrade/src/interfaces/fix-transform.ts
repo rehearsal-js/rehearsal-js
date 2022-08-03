@@ -1,9 +1,19 @@
 import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
+import { getCommentsOnlyResult } from '../helpers/transform-utils';
 
 export interface FixedFile {
   fileName: string;
-  text: string;
+  updatedText?: string;
+  location: {
+    line: number;
+    character: number;
+  };
+}
+
+export interface FixResult {
+  fixedFiles: FixedFile[];
+  commentedFiles: FixedFile[];
 }
 
 export class FixTransform {
@@ -11,9 +21,9 @@ export class FixTransform {
   hint?: string;
 
   /** Function to fix the diagnostic issue */
-  fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
+  fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixResult;
 
-  run(diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] {
-    return this.fix ? this.fix(diagnostic, service) : [];
+  run(diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult {
+    return this.fix ? this.fix(diagnostic, service) : getCommentsOnlyResult(diagnostic);
   }
 }

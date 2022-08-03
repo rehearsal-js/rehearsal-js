@@ -34,17 +34,18 @@ export class DiagnosticAutofixPlugin extends Plugin {
       const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
-      const fixedFiles = fix.run(diagnostic, this.service);
+      const result = fix.run(diagnostic, this.service);
 
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
 
-      const fixed = fixedFiles.length > 0;
+      const fixed = result.fixedFiles.length > 0;
 
       if (fixed) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
 
-        for (const fixedFile of fixedFiles) {
-          this.service.setFileText(fixedFile.fileName, fixedFile.text);
+        for (const fixedFile of result.fixedFiles) {
+          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
+          delete fixedFile.updatedText;
           allFixedFiles.add(fixedFile.fileName);
         }
       } else {
@@ -56,7 +57,7 @@ export class DiagnosticAutofixPlugin extends Plugin {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
 
-      this.reporter?.addItem(diagnostic, node, hint, fixed);
+      this.reporter?.addItem(diagnostic, result, node, hint);
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);

@@ -5,7 +5,7 @@ import { Report } from '@rehearsal/reporter';
  */
 export function reportFormatter(report: Report): string {
   const fileNames = [
-    ...new Set(report.items.map((item) => item.file.replace(report.summary.basePath, ''))),
+    ...new Set(report.items.map((item) => item.analysisTarget.replace(report.summary.basePath, ''))),
   ];
 
   const fixedErrors: { [key: string]: number } = {};
