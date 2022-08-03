@@ -1573,13 +1573,6 @@
     node-addon-api "^3.2.1"
     node-gyp-build "^4.3.0"
 
-"@rehearsal/reporter@^0.0.25":
-  version "0.0.25"
-  resolved "https://registry.yarnpkg.com/@rehearsal/reporter/-/reporter-0.0.25.tgz#441dc18f04f562948ca28025c5418fd3220d4aad"
-  integrity sha512-pqX+K1xeUtBc+VAlt4yQDbLZuVZhRhseUXGuMeEyXtFMJ5T8oQHo+SihTMg2la85pZcOAMC7eosel5my5bEmUA==
-  dependencies:
-    winston "^3.6.0"
-
 "@rushstack/node-core-library@3.50.1":
   version "3.50.1"
   resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.50.1.tgz#d4aa4602460f29bbf0662052969b65129384da23"

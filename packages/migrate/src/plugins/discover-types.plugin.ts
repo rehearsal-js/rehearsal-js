@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-import { FixTransform } from '@rehearsal/shared';
+import { FixResult, FixTransform } from '@rehearsal/shared';
 import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/shared';
 import { FixTransform7006 } from '../transforms';
 
@@ -25,16 +25,14 @@ export class DiscoverTypesPlugin extends Plugin {
 
       const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-      const fixedFiles = fix.run(diagnostic, this.service);
+      const fixResult: FixResult = fix.run(diagnostic, this.service);
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
 
-      const fixed = fixedFiles.length > 0;
-
-      if (fixed) {
+      if (fixResult.fixedFiles.length > 0) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
 
-        for (const fixedFile of fixedFiles) {
-          this.service.setFileText(fixedFile.fileName, fixedFile.text);
+        for (const fixedFile of fixResult.fixedFiles) {
+          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText || 'ERROR');
           allFixedFiles.add(fixedFile.fileName);
         }
       } else {
@@ -49,7 +47,7 @@ export class DiscoverTypesPlugin extends Plugin {
         // this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
 
-      this.reporter?.addItem(diagnostic, node, hint, fixed);
+      this.reporter?.addItem(diagnostic, fixResult, node, hint);
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);

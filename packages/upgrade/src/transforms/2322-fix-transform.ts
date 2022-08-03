@@ -1,8 +1,7 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixedFile } from '@rehearsal/shared';
+import { FixTransform, type FixResult } from '@rehearsal/shared';
 import { getCommentsOnlyResult } from '@rehearsal/shared';
-
 import { transformDiagnosedNode } from '@rehearsal/shared';
 
 export class FixTransform2322 extends FixTransform {
