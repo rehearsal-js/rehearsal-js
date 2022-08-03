@@ -1,4 +1,4 @@
-export { Reporter } from './reporter';
+export { Reporter as Reporter } from './reporter';
 export { jsonFormatter } from './formatters/json-formatter';
 export { mdFormatter } from './formatters/md-formatter';
 

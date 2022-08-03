@@ -2,10 +2,10 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 import { getTypeNameFromVariable } from '@rehearsal/utils';
+import { FixTransform, type FixResult } from '@rehearsal/shared';
+import { getCommentsOnlyResult } from '@rehearsal/shared';
+import { findNodeAtPosition } from '@rehearsal/shared';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult } from '../helpers/transform-utils';
-import { findNodeAtPosition } from '../helpers/typescript-ast';
 
 export class FixTransform2345 extends FixTransform {
   hint = `Argument of type '{0}' is not assignable to parameter of type '{1}'.`;

@@ -3,9 +3,10 @@ import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
 import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import { FixTransform, type FixResult } from '@rehearsal/shared';
+import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
+import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/shared';
+
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {

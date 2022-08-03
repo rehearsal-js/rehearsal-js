@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import path from 'path';
 import winston from 'winston';
-import Reporter from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import fs from 'fs';
 import migrate, { MigrateInput } from '../src/migrate';
 
@@ -31,9 +31,9 @@ describe('renameFile', () => {
   }
 
   beforeEach(() => {
-    basePath = path.resolve(__dirname, 'fixtures', 'convert');
-    expectedDir = path.resolve(__dirname, 'fixtures', 'convert', 'output');
-    actualDir = path.resolve(__dirname, 'fixtures', 'convert', 'tmp');
+    basePath = path.resolve(__dirname, 'fixtures', 'migrate');
+    expectedDir = path.resolve(__dirname, 'fixtures', 'migrate', 'output');
+    actualDir = path.resolve(__dirname, 'fixtures', 'migrate', 'tmp');
 
     clean(actualDir);
 

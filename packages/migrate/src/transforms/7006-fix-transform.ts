@@ -1,12 +1,12 @@
 import ts, { getDefaultFormatCodeSettings } from 'typescript';
 
-import FixTransform, { FixedFile } from '../interfaces/fix-transform';
-import { getTypeNameFromVariable } from '../helpers/transform-utils';
-import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import type RehearsalService from '../rehearsal-service';
+import { FixTransform, type FixedFile } from '@rehearsal/shared';
+import { getTypeNameFromVariable } from '@rehearsal/utils';
+import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
+import { type RehearsalService }  from '@rehearsal/service';
 
 export default class FixTransform7006 extends FixTransform {
-  hint = `TBD Parameter '{0}' implicitly has an '{1}' type.`;
+  hint = `TBD Parameter '{0}' implicitly has an '{1}' type.`; // TODO this is not final
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
@@ -18,7 +18,7 @@ export default class FixTransform7006 extends FixTransform {
     const languageService = service.getLanguageService();
     const variableName = node.getFullText();
     const program = languageService.getProgram()!;
-    const typeName = getTypeNameFromVariable(node, program);
+    const typeName = getTypeNameFromVariable(node, program.getTypeChecker());
 
     console.log(variableName, typeName);
 

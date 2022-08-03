@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 
-import { FixTransform } from '../interfaces/fix-transform';
+import { FixTransform } from '@rehearsal/shared';
 
 // TODO: Use dynamic import inside getFixForDiagnostic function
 import {
@@ -14,7 +14,7 @@ import {
   FixTransform4082,
 } from '../transforms';
 
-import { findNodeAtPosition, isJsxTextNode } from '../helpers/typescript-ast';
+import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/shared';
 
 /**
  * Diagnose issues in the file and applied transforms to fix them

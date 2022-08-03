@@ -1,10 +1,10 @@
 import ts from 'typescript';
 import winston from 'winston';
-import { dirname, resolve, extname } from 'path';
-import Reporter from '@rehearsal/reporter';
+import { type Reporter }  from '@rehearsal/reporter';
+import { RehearsalService } from '@rehearsal/service';
 import fs from 'fs';
+import { dirname, resolve, extname } from 'path';
 
-import RehearsalService from './rehearsal-service';
 
 import {
   DiscoverTypesPlugin,
@@ -17,7 +17,7 @@ export type MigrateInput = {
   basePath: string;
   sourceFiles: Array<string>;
   configName?: string;
-  reporter?: Reporter;
+  reporter?: Reporter; // Reporter
   logger?: winston.Logger;
 };
 

@@ -2,8 +2,9 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import { FixTransform, type FixResult } from '@rehearsal/shared';
+import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/shared';
+import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
 
 import {
   getClassByName,
@@ -16,7 +17,7 @@ import {
   getTypeDeclarationFromTypeSymbol,
 } from '@rehearsal/utils';
 
-import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
+
 
 const OPTIONAL_TOKEN = '?';
 

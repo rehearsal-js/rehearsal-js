@@ -1,13 +1,14 @@
 import ts from 'typescript';
 
-import Plugin, { type PluginParams, type PluginResult } from '../interfaces/plugin';
-import { default as FixTransform } from '../interfaces/fix-transform';
-import { findNodeAtPosition, isJsxTextNode } from '../helpers/typescript-ast';
+import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
+import { FixTransform } from '@rehearsal/shared';
+import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/shared';
 import { FixTransform7006 } from '../transforms';
+
 /**
- * Diagnose issues in the file and applied transforms to fix them
+ * Apply transforms to add types to files
  */
-export default class DiscoverTypesPlugin extends Plugin {
+export class DiscoverTypesPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
     this.logger?.debug(`Plugin 'DiscoverTypes' run on ${fileName}`);
