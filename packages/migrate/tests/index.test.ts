@@ -90,7 +90,7 @@ describe('migrate', () => {
   test.only('should infer argument type (complex)', async () => {
     const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
-    // console.log(sourceFiles);
+
     const input: MigrateInput = {
       basePath: path.join(basePath, 'tmp'),
       sourceFiles,

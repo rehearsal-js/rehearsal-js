@@ -1,7 +1,6 @@
-import ts, { getDefaultFormatCodeSettings, TextChange } from 'typescript';
+import ts from 'typescript';
 
 import { FixTransform, type FixResult, type FixedFile } from '@rehearsal/shared';
-import { getTypeNameFromVariable } from '@rehearsal/utils';
 import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
 import { type RehearsalService }  from '@rehearsal/service';
 
@@ -15,14 +14,8 @@ export default class FixTransform7006 extends FixTransform {
       return { fixedFiles: new Array<FixedFile>(), commentedFiles: new Array<FixedFile>()};
     }
 
-    const languageService = service.getLanguageService();
-    const variableName = node.getFullText();
-    const program = languageService.getProgram()!;
-    const typeName = getTypeNameFromVariable(node, program.getTypeChecker());
-
-    console.log(variableName, typeName);
-
-    const formatOptions = getDefaultFormatCodeSettings();
+    const languageService = service.getLanguageService();    
+    const formatOptions = ts.getDefaultFormatCodeSettings();
     const sourceFile = diagnostic.file;
     
     const fileName = sourceFile.fileName;
@@ -62,7 +55,6 @@ export default class FixTransform7006 extends FixTransform {
         
         // If we revese through the changes we don't have to worry about an augmented position.
         textChanges.forEach((change) => {
-          console.log(change);
           const content = service.getFileText(fileName);
           const updatedText = insertIntoText(content, change.span.start, change.newText);
           service.setFileText(fileName, updatedText)
