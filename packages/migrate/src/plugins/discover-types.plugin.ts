@@ -37,7 +37,7 @@ export class DiscoverTypesPlugin extends Plugin {
         }
       } else {
         this.logger?.debug(
-          ` - TS${diagnostic.code} at ${diagnostic.start}:\t !!! no comment added !!!`
+          ` - TS${diagnostic.code} at ${diagnostic.start}:\t !!! Unhandled diagnostic !!!`
         );
         // // Add a hint comment if fix was not applied
         // const text = this.addHintComment(diagnostic, hint);

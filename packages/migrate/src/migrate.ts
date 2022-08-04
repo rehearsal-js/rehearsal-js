@@ -21,13 +21,13 @@ export type MigrateInput = {
   logger?: winston.Logger;
 };
 
-export type ConvertOutput = {
+export type MigrateOutput = {
   basePath: string;
   configFile: string;
-  convertedFiles: Array<string>;
+  migratedFiles: Array<string>;
 };
 
-export default async function migrate(input: MigrateInput): Promise<ConvertOutput> {
+export default async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || ['index.js'];
   const configName = input.configName || 'tsconfig.json';
@@ -119,6 +119,6 @@ export default async function migrate(input: MigrateInput): Promise<ConvertOutpu
   return {
     basePath,
     configFile,
-    convertedFiles: fileNames,
+    migratedFiles: fileNames,
   };
 }

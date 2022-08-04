@@ -5,9 +5,9 @@ import { Reporter } from '@rehearsal/reporter';
 import fs from 'fs';
 import migrate, { MigrateInput } from '../src/migrate';
 
-describe('renameFile', () => {
+describe('migrate', () => {
   let sourceFiles: Array<string> = [];
-  let convertedFiles: Array<string> = [];
+  let migratedFiles: Array<string> = [];
   let basePath: string;
   let expectedDir: string;
   let actualDir: string; // our tmp directory
@@ -62,9 +62,8 @@ describe('renameFile', () => {
     };
 
     const output = await migrate(input);
-    convertedFiles = output.convertedFiles;
-    // console.log(convertedFiles);
-    expect(convertedFiles).includes(`${actualDir}/index.ts`);
+    migratedFiles = output.migratedFiles;
+    expect(migratedFiles).includes(`${actualDir}/index.ts`);
   });
 
   test('should infer argument type (basic)', async () => {
@@ -77,21 +76,19 @@ describe('renameFile', () => {
 
     const output = await migrate(input);
 
-    convertedFiles = output.convertedFiles;
+    migratedFiles = output.migratedFiles;
 
-    const file = convertedFiles.find((file) => file.includes('index.ts')) || '';
+    const file = migratedFiles.find((file) => file.includes('index.ts')) || '';
 
     expect(fs.existsSync(file)).toBeTruthy();
 
     const actual: string = fs.readFileSync(file, 'utf-8');
-    console.log(`${expectedDir}/index.ts.output`);
     const expected = fs.readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
     expect(actual).toBe(expected);
   });
 
-  test.skip('should infer argument type (complex)', async () => {
-    // const files = ['complex.js', 'some-util.js', 'some-util.d.ts'];
-    const files = ['complex.js', 'some-util.js', 'some-util.d.ts'];
+  test.only('should infer argument type (complex)', async () => {
+    const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
     // console.log(sourceFiles);
     const input: MigrateInput = {
@@ -103,15 +100,14 @@ describe('renameFile', () => {
 
     const output = await migrate(input);
 
-    convertedFiles = output.convertedFiles;
+    migratedFiles = output.migratedFiles;
 
-    const file = convertedFiles.find((file) => file.includes('complex.ts')) || '';
+    const file = migratedFiles.find((file) => file.includes('complex.ts')) || '';
 
     expect(fs.existsSync(file)).toBeTruthy();
 
     const actual: string = fs.readFileSync(file, 'utf-8');
-    console.log(`${expectedDir}/index.ts.output`);
-    const expected = fs.readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
+    const expected = fs.readFileSync(`${expectedDir}/complex.ts.output`, 'utf-8');
     expect(actual).toBe(expected);
   });
 });

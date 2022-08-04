@@ -1,10 +1,10 @@
-import { salutations, DEFAULT_GREETING } from './salutations';
+import { salutations, DEFAULT_GREETING, Greeting } from './salutations';
 
-export function hasGreeting(g) {
+export function hasGreeting(g: Greeting) {
   return salutations.find((s) => s == g) || DEFAULT_GREETING;
 }
 
-export function find(someGreeting) {
+export function find(someGreeting: Greeting) {
   const greeting = salutations.find((g) => {
     return g == someGreeting;
   });
