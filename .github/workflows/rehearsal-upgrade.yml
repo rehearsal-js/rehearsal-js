@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  rehearsal_update:
+    name: Runs Rehearsal Update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn -v
+      - run: yarn install
+      - run: ls $GITHUB_WORKSPACE
