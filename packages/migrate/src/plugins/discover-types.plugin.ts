@@ -31,7 +31,7 @@ export class DiscoverTypesPlugin extends Plugin {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
 
         for (const fixedFile of fixResult.fixedFiles) {
-          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText || 'ERROR');
+          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText || 'ERROR'); // TODO: Handle the case where updatedText does not exist.
           allFixedFiles.add(fixedFile.fileName);
         }
       } else {

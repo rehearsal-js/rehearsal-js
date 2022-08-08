@@ -10,7 +10,8 @@ export class FixTransform7006 extends FixTransform {
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
-    if (!node /* || !ts.isIdentifier(errorNode) */) { // TODO: Does this need to be uncommented?
+    if (!node /* || !ts.isIdentifier(errorNode) */) {
+      // TODO: Does this need to be uncommented?
       return { fixedFiles: new Array<FixedFile>(), commentedFiles: new Array<FixedFile>() };
     }
 
@@ -74,14 +75,13 @@ export class FixTransform7006 extends FixTransform {
         });
 
         results.push({ fileName, updatedText: content, location: stubLocation });
-      }
-      else {
+      } else {
         // Otherwise, we don't have a combined fix, let's just try and apply all text changes in reverse order.
         fix.changes.forEach(({ fileName, textChanges }) => {
           const content = sourceFile.getFullText();
           const changes = Array.from(textChanges).reverse();
           changes.forEach((change) => {
-            let updatedText = insertIntoText(content, change.span.start, change.newText);
+            const updatedText = insertIntoText(content, change.span.start, change.newText);
             results.push({ fileName, updatedText, location: stubLocation });
           });
         });

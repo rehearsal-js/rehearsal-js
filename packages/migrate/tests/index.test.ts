@@ -3,7 +3,7 @@ import path from 'path';
 import winston from 'winston';
 import { Reporter } from '@rehearsal/reporter';
 import fs from 'fs';
-import { migrate,  MigrateInput } from '../src/migrate';
+import { migrate, MigrateInput } from '../src/migrate';
 
 describe('migrate', () => {
   let sourceFiles: Array<string> = [];
