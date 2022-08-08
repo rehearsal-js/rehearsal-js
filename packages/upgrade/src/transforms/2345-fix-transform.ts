@@ -1,10 +1,8 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import { getTypeNameFromVariable } from '@rehearsal/utils';
-import { FixTransform, type FixResult } from '@rehearsal/shared';
-import { getCommentsOnlyResult } from '@rehearsal/shared';
-import { findNodeAtPosition } from '@rehearsal/shared';
+import { findNodeAtPosition, getTypeNameFromVariable } from '@rehearsal/utils';
+import { FixTransform, type FixResult, getCommentsOnlyResult } from '@rehearsal/plugins';
 
 
 export class FixTransform2345 extends FixTransform {

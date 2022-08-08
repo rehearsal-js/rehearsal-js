@@ -1,8 +1,8 @@
 import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-import { FixResult, FixTransform } from '@rehearsal/shared';
-import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/shared';
+import { FixResult, FixTransform } from '@rehearsal/plugins';
+import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
 import { FixTransform7006 } from '../transforms';
 
 /**
@@ -12,7 +12,6 @@ export class DiscoverTypesPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
     this.logger?.debug(`Plugin 'DiscoverTypes' run on ${fileName}`);
-    console.log(`Plugin 'DiscoverTypes' run on ${fileName}`);
 
     let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
 

@@ -1,2 +1,2 @@
-export { EmptyLinesPreservePlugin, EmptyLinesRestorePlugin, LintPlugin } from '@rehearsal/shared';
+export { EmptyLinesPreservePlugin, EmptyLinesRestorePlugin, LintPlugin } from '@rehearsal/plugins';
 export { DiscoverTypesPlugin } from './discover-types.plugin';

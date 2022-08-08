@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { type FixResult } from '../interfaces/fix-transform';
+import { type FixResult } from '.';
 
 export function getCommentsOnlyResult(diagnostic: ts.DiagnosticWithLocation): FixResult {
   const { file, start } = diagnostic;

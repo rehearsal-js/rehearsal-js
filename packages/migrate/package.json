@@ -31,7 +31,7 @@
   "dependencies": {
     "@rehearsal/reporter": "^0.0.27",
     "@rehearsal/service": "^0.0.27",
-    "@rehearsal/shared": "^0.0.27",
+    "@rehearsal/plugins": "^0.0.27",
     "@rehearsal/utils": "^0.0.27",
     "winston": "^3.6.0"
   },

@@ -11,3 +11,5 @@ export {
   getTypeDeclarationFromTypeSymbol,
   isTypeMatched,
 } from './tsc-utils';
+
+export * from "./helpers";

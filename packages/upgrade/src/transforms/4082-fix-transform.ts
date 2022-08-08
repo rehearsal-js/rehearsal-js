@@ -1,11 +1,15 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
-
-import { FixTransform, type FixResult } from '@rehearsal/shared';
-import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
-import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/shared';
+import { FixTransform, type FixResult } from '@rehearsal/plugins';
+import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/plugins';
+import { 
+  findNodeAtPosition,
+  getTypeDeclarationFromTypeSymbol,
+  insertIntoText,
+  isSubtypeOf,
+  isTypeMatched
+} from '@rehearsal/utils';
 
 
 const EXPORT_KEYWORD = 'export';

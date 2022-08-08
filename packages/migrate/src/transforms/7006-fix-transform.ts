@@ -1,8 +1,8 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixResult, type FixedFile } from '@rehearsal/shared';
-import { findNodeAtPosition, insertIntoText } from '@rehearsal/shared';
+import { FixTransform, type FixResult, type FixedFile } from '@rehearsal/plugins';
 import { type RehearsalService }  from '@rehearsal/service';
+import { findNodeAtPosition, insertIntoText } from '@rehearsal/utils';
 
 export default class FixTransform7006 extends FixTransform {
   hint = `TBD Parameter '{0}' implicitly has an '{1}' type.`; // TODO this is not final
