@@ -2,11 +2,15 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 
-import { FixTransform, type FixResult } from '@rehearsal/plugins';
-import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/plugins';
-import { findNodeAtPosition, insertIntoText } from '@rehearsal/utils';
-
 import {
+  FixTransform,
+  type FixResult,
+  getCommentsOnlyResult,
+  getCodemodResult,
+} from '@rehearsal/plugins';
+import {
+  findNodeAtPosition,
+  insertIntoText,
   getClassByName,
   getInterfaceByName,
   getClassMemberByName,
@@ -16,8 +20,6 @@ import {
   getTypeNameFromType,
   getTypeDeclarationFromTypeSymbol,
 } from '@rehearsal/utils';
-
-
 
 const OPTIONAL_TOKEN = '?';
 

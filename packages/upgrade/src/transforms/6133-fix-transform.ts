@@ -1,9 +1,12 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixResult } from '@rehearsal/plugins';
-import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/plugins';
-import { isSourceCodeChanged } from '@rehearsal/utils';
-import { transformDiagnosedNode } from '@rehearsal/utils';
+import {
+  FixTransform,
+  type FixResult,
+  getCommentsOnlyResult,
+  getCodemodResult,
+} from '@rehearsal/plugins';
+import { isSourceCodeChanged, transformDiagnosedNode } from '@rehearsal/utils';
 
 export class FixTransform6133 extends FixTransform {
   hint = `The declaration '{0}' is never read or used. Remove the declaration or use it.`;

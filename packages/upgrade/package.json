@@ -34,7 +34,6 @@
     "@rehearsal/plugins": "^0.0.27",
     "@rehearsal/utils": "^0.0.27",
     "commander": "^9.4.0",
-    "eslint": "^8.11.0",
     "winston": "^3.6.0"
   },
   "devDependencies": {

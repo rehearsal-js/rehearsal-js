@@ -12,4 +12,4 @@ export {
   isTypeMatched,
 } from './tsc-utils';
 
-export * from "./helpers";
+export * from './helpers';

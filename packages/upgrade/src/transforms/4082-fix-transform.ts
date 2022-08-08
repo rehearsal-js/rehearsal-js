@@ -1,16 +1,19 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import { FixTransform, type FixResult } from '@rehearsal/plugins';
-import { getCommentsOnlyResult, getCodemodResult } from '@rehearsal/plugins';
-import { 
+import {
+  FixTransform,
+  type FixResult,
+  getCommentsOnlyResult,
+  getCodemodResult,
+} from '@rehearsal/plugins';
+import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
   insertIntoText,
   isSubtypeOf,
-  isTypeMatched
+  isTypeMatched,
 } from '@rehearsal/utils';
-
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {

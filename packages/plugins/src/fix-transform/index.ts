@@ -3,7 +3,6 @@ import { type RehearsalService } from '@rehearsal/service';
 import { getCodemodResult, getCommentsOnlyResult } from './utils';
 import { type FixResult, type FixedFile, FixTransform as FixTransformI } from './interfaces';
 
-
 export { getCodemodResult, getCommentsOnlyResult };
 export { FixResult, FixedFile };
 
@@ -18,4 +17,3 @@ export class FixTransform implements FixTransformI {
     return this.fix ? this.fix(diagnostic, service) : getCommentsOnlyResult(diagnostic);
   }
 }
-

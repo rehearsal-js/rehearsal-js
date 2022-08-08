@@ -1,10 +1,9 @@
 import ts from 'typescript';
 import winston from 'winston';
-import { type Reporter }  from '@rehearsal/reporter';
+import { type Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
 import fs from 'fs';
 import { dirname, resolve, extname } from 'path';
-
 
 import {
   DiscoverTypesPlugin,
@@ -27,7 +26,7 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
-export default async function migrate(input: MigrateInput): Promise<MigrateOutput> {
+export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || ['index.js'];
   const configName = input.configName || 'tsconfig.json';
