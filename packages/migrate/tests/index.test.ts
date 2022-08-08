@@ -3,7 +3,7 @@ import path from 'path';
 import winston from 'winston';
 import { Reporter } from '@rehearsal/reporter';
 import fs from 'fs';
-import migrate, { MigrateInput } from '../src/migrate';
+import { migrate,  MigrateInput } from '../src/migrate';
 
 describe('migrate', () => {
   let sourceFiles: Array<string> = [];
@@ -87,7 +87,7 @@ describe('migrate', () => {
     expect(actual).toBe(expected);
   });
 
-  test.only('should infer argument type (complex)', async () => {
+  test('should infer argument type (complex)', async () => {
     const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
 
