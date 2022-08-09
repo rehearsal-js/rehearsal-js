@@ -1,25 +1,18 @@
+#!/usr/bin/env node
+
+import { Command, InvalidArgumentError } from 'commander';
 import { compare } from 'compare-versions';
 import debug from 'debug';
-import winston from 'winston';
-import { Command } from '@oclif/core';
 import { Listr } from 'listr2';
-import { resolve } from 'path';
 import { Reporter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
+import winston from 'winston';
+
+import { resolve } from 'path';
 
 import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
-
-import {
-  build,
-  src_dir,
-  is_test,
-  autofix,
-  dry_run,
-  tsc_version,
-  report_output,
-} from '../helpers/flags';
 
 import {
   git,
@@ -32,10 +25,12 @@ import {
   isYarnManager,
   getLatestTSVersion,
   timestamp,
+  isValidSemver,
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
 const DEFAULT_TS_BUILD = 'beta';
+const DEFAULT_SRC_DIR = './app';
 
 let TSC_PATH = '';
 
@@ -46,35 +41,57 @@ type Context = {
   skip: boolean;
 };
 
-export class Upgrade extends Command {
-  static aliases = ['typescript', 'ts'];
-  static description =
-    'upgrade typescript dev-dependency with compilation insights and auto-fix options';
-  static flags = {
-    build: build({
-      default: DEFAULT_TS_BUILD,
-    }),
-    src_dir: src_dir({
-      default: './app',
-    }),
-    tsc_version: tsc_version(),
-    autofix,
-    dry_run,
-    // hidden flags for testing purposes only
-    is_test,
-    report_output: report_output({ hidden: true }),
-  };
+const upgradeCommand = new Command();
 
-  async run(): Promise<void> {
-    const { flags } = await this.parse(Upgrade);
-    const { build, src_dir } = flags;
+async function validateTscVersion(value: string): Promise<string> {
+  if (await isValidSemver(value)) {
+    throw new InvalidArgumentError(
+      'The tsc_version specified is an invalid string. Please specify a valid version as n.n.n'
+    );
+  } else {
+    return value;
+  }
+}
+
+type UpgradeCommandOptions = {
+  build: string;
+  src_dir: string;
+  autofix: boolean | undefined;
+  dry_run: boolean | undefined;
+  tsc_version: string;
+  report_output: string;
+  is_test: boolean | undefined;
+};
+
+upgradeCommand
+  .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
+  .option('-b, --build <beta|next|latest>', 'typescript build variant', DEFAULT_TS_BUILD)
+  .option('-s, --src_dir <src directory>', 'typescript source directory', DEFAULT_SRC_DIR)
+  .option('-a, --autofix', 'autofix tsc errors where available')
+  .option('-d, --dry_run', 'dry run. dont commit any changes. reporting only')
+  .option(
+    '-t, --tsc_version',
+    'override the build variant by specifying the typescript compiler version as n.n.n',
+    validateTscVersion
+  )
+  .option('-o, --report_output <output dir>', 'set the directory for the report output')
+  .option('-i, --is_test', 'hidden flags for testing purposes only')
+
+  .action(async (options: UpgradeCommandOptions) => {
+    const logger = winston.createLogger({
+      transports: [new winston.transports.Console({ format: winston.format.cli() })],
+    });
+    logger.info(options);
+    console.log(options);
+
+    const { build, src_dir, is_test } = options;
     const resolvedSrcDir = resolve(src_dir);
 
     // WARN: is git dirty check and exit if dirty
-    if (!flags.is_test) {
+    if (!is_test) {
       const hasUncommittedFiles = await gitIsRepoDirty();
       if (hasUncommittedFiles) {
-        this.warn(
+        logger.warn(
           'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
         );
         process.exit(0);
@@ -84,16 +101,10 @@ export class Upgrade extends Command {
     TSC_PATH = await getPathToBinary('tsc');
 
     DEBUG_CALLBACK('TSC_PATH', TSC_PATH);
-    DEBUG_CALLBACK('flags %O', flags);
+    DEBUG_CALLBACK('options %O', options);
 
     // grab the consuming apps project name
     const projectName = (await determineProjectName()) || '';
-
-    const logger = winston.createLogger({
-      transports: [
-        new winston.transports.Console({ format: winston.format.cli(), level: 'debug' }),
-      ],
-    });
 
     const reporter = new Reporter(projectName, resolvedSrcDir, logger);
 
@@ -107,11 +118,11 @@ export class Upgrade extends Command {
                 title: `Fetching latest published typescript@${build}`,
                 exitOnError: true,
                 task: async (ctx, task) => {
-                  if (!flags.tsc_version) {
+                  if (!options.tsc_version) {
                     ctx.latestELRdBuild = await getLatestTSVersion(build);
                     task.title = `Latest typescript@${build} version is ${ctx.latestELRdBuild}`;
                   } else {
-                    ctx.latestELRdBuild = flags.tsc_version;
+                    ctx.latestELRdBuild = options.tsc_version;
                     task.title = `Rehearsing with typescript version ${ctx.latestELRdBuild}`;
                   }
                 },
@@ -157,7 +168,7 @@ export class Upgrade extends Command {
               {
                 title: `Committing Changes`,
                 task: async (ctx: Context) => {
-                  if (flags.dry_run || flags.is_test) {
+                  if (options.dry_run || options.is_test) {
                     task.skip('Skipping task because dry_run flag is set');
                   } else {
                     // eventually commit change
@@ -188,7 +199,7 @@ export class Upgrade extends Command {
                         {
                           title: 'Creating Pull Request',
                           task: async (ctx, task) => {
-                            if (flags.dry_run) {
+                            if (options.dry_run) {
                               ctx.skip = true;
                               task.skip('Skipping task because dry_run flag is set');
                             }
@@ -222,7 +233,7 @@ export class Upgrade extends Command {
           title: 'Attempting Autofix',
           skip: (ctx): boolean => ctx.skip,
           task: async (ctx, task) => {
-            const runTransforms = flags.autofix ?? false;
+            const runTransforms = options.autofix ?? false;
 
             // TODO we need to create a PR per diagnostic likely will need to pass git instance to migrate
             const result = await upgrade({
@@ -240,9 +251,9 @@ export class Upgrade extends Command {
               }
 
               // commit changes if its not a dry_run and not a test
-              if (!flags.dry_run && !flags.is_test) {
+              if (!options.dry_run && !options.is_test) {
                 // add everything to the git repo within the specified src_dir
-                await git.add([`${flags.src_dir}`]);
+                await git.add([`${options.src_dir}`]);
                 await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
               }
             } else {
@@ -259,24 +270,28 @@ export class Upgrade extends Command {
       await tasks.run().then(async (ctx) => {
         DEBUG_CALLBACK('ctx %O', ctx);
       });
-      console.log(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
+      logger.info(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
-      if (flags.report_output || flags.is_test) {
-        reporter.print(resolve(flags.report_output || src_dir, '.rehearsal.json'), reportFormatter);
+      if (options.report_output || options.is_test) {
+        reporter.print(
+          resolve(options.report_output || src_dir, '.rehearsal.json'),
+          reportFormatter
+        );
       }
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost
       // be sure to check for is_test flag and only reset within the fixture app and package.json
       // this is reset within the afterEach hook for testing
-      if (flags.dry_run && !flags.is_test) {
+      if (options.dry_run && !options.is_test) {
         // await git.reset(['--hard', '--', 'package.json', 'yarn.lock', `${flags.src_dir}`]);
         // await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
       }
     } catch (e) {
-      this.error(`${e}`);
+      logger.error(`${e}`);
     }
 
     return;
-  }
-}
+  });
+
+export { upgradeCommand };
