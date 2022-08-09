@@ -107,6 +107,11 @@ export function isJsxTextNode(node: ts.Node): boolean {
   return visit(node);
 }
 
+export function replaceStrInText(text: string, position: number, lengthOfStrToReplace: number, replaceStr: string):string {
+  const newText = `${text.substring(0, position)}${replaceStr}${text.substring(position + lengthOfStrToReplace)}`;
+  return newText;
+}
+
 export function insertIntoText(text: string, insertAt: number, strToInsert: string): string {
   const newText = `${text.substring(0, insertAt)}${strToInsert}${text.substring(insertAt)}`;
   return newText;
