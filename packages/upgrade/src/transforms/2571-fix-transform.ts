@@ -1,10 +1,16 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-
-import { isVariableOfCatchClause, transformDiagnosedNode } from '../helpers/typescript-ast';
-import { isSourceCodeChanged } from '../helpers/strings';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import {
+  FixTransform,
+  type FixResult,
+  getCommentsOnlyResult,
+  getCodemodResult,
+} from '@rehearsal/plugins';
+import {
+  isSourceCodeChanged,
+  isVariableOfCatchClause,
+  transformDiagnosedNode,
+} from '@rehearsal/utils';
 
 export class FixTransform2571 extends FixTransform {
   hint = `Object is of type '{0}'. Specify a type of variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``;

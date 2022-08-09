@@ -1,9 +1,7 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult } from '../helpers/transform-utils';
-
-import { transformDiagnosedNode } from '../helpers/typescript-ast';
+import { FixTransform, type FixResult, getCommentsOnlyResult } from '@rehearsal/plugins';
+import { transformDiagnosedNode } from '@rehearsal/utils';
 
 export class FixTransform2322 extends FixTransform {
   hint = `Type '{0}' is being returned or assigned, but type '{1}' is expected. Please convert type '{0}' to type '{1}', or return or assign a variable of type '{1}'`;

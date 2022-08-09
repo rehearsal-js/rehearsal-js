@@ -1,11 +1,11 @@
 {
-  "name": "@rehearsal/migrate",
+  "name": "@rehearsal/plugins",
   "version": "0.0.27",
-  "description": "Rehearsal JavaScript to TypeScript Migration Tool",
+  "description": "Rehearsal JavaScript to TypeScript Shared Libraries",
   "keywords": [
     "rehearsal",
-    "migrate",
-    "migration",
+    "plugins",
+    "transforms",
     "javascript",
     "typescript"
   ],
@@ -26,20 +26,14 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
-    "test": "vitest --run"
+    "test": "echo TODO;"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.27",
     "@rehearsal/service": "^0.0.27",
-    "@rehearsal/plugins": "^0.0.27",
-    "@rehearsal/utils": "^0.0.27",
-    "winston": "^3.6.0"
+    "eslint": "^8.11.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.4.1",
-    "@types/node": "^18.0.3",
-    "@types/react": "^18.0.9",
-    "vitest": "^0.16.0"
+    "@types/eslint": "^8.4.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

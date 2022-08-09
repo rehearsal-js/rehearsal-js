@@ -1,2 +1,2 @@
 export { EmptyLinesPreservePlugin, EmptyLinesRestorePlugin, LintPlugin } from '@rehearsal/plugins';
-export { DiagnosticAutofixPlugin } from './diagnostics-autofix.plugin';
+export { DiscoverTypesPlugin } from './discover-types.plugin';

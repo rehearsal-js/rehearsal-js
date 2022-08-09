@@ -1,67 +1,65 @@
 import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-
-import { FixTransform } from '@rehearsal/plugins';
-
-// TODO: Use dynamic import inside getFixForDiagnostic function
-import {
-  FixTransform2322,
-  FixTransform2571,
-  FixTransform2790,
-  FixTransform6133,
-  FixTransform2345,
-  FixTransform4082,
-} from '../transforms';
-
+import { FixResult, FixTransform } from '@rehearsal/plugins';
 import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
+import { FixTransform7006 } from '../transforms';
 
 /**
- * Diagnose issues in the file and applied transforms to fix them
+ * Apply transforms to add types to files
  */
-export class DiagnosticAutofixPlugin extends Plugin {
+export class DiscoverTypesPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
+    this.logger?.debug(`Plugin 'DiscoverTypes' run on ${fileName}`);
+
     let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
+
     let tries = diagnostics.length + 1;
 
-    this.logger?.debug(`Plugin 'DiagnosticAutofix' run on ${fileName}`);
-
     const allFixedFiles: Set<string> = new Set();
+
     while (diagnostics.length > 0 && tries-- > 0) {
       const diagnostic = diagnostics.shift()!;
 
       const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-
-      const result = fix.run(diagnostic, this.service);
-
+      const fixResult: FixResult = fix.run(diagnostic, this.service);
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
 
-      const fixed = result.fixedFiles.length > 0;
-
-      if (fixed) {
+      if (fixResult.fixedFiles.length > 0) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
 
-        for (const fixedFile of result.fixedFiles) {
-          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
-          delete fixedFile.updatedText;
+        for (const fixedFile of fixResult.fixedFiles) {
+          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText || 'ERROR'); // TODO: Handle the case where updatedText does not exist.
           allFixedFiles.add(fixedFile.fileName);
         }
       } else {
-        // Add a hint comment if fix was not applied
-        const text = this.addHintComment(diagnostic, hint);
-        this.service.setFileText(params.fileName, text);
-        allFixedFiles.add(params.fileName);
+        this.logger?.debug(
+          ` - TS${diagnostic.code} at ${diagnostic.start}:\t !!! Unhandled diagnostic !!!`
+        );
+        // // Add a hint comment if fix was not applied
+        // const text = this.addHintComment(diagnostic, hint);
+        // this.service.setFileText(params.fileName, text);
+        // allFixedFiles.add(params.fileName);
 
-        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
+        // this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
 
-      this.reporter?.addItem(diagnostic, result, node, hint);
+      this.reporter?.addItem(diagnostic, fixResult, node, hint);
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
     }
+
+    // const moreDiagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
+
+    // this.logger?.debug(`>>>>> MORE DIAGNOSTICS`);
+    // moreDiagnostics.forEach((diagnostic) => {
+    //   this.logger?.debug(
+    //     ` - TS${diagnostic.code} at ${diagnostic.start}:\t !!! no comment added !!!`
+    //   );
+    // });
 
     return Array.from(allFixedFiles);
   }
@@ -115,12 +113,7 @@ export class DiagnosticAutofixPlugin extends Plugin {
  */
 export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
   const availableFixes: { [index: number]: typeof FixTransform } = {
-    2322: FixTransform2322,
-    2571: FixTransform2571,
-    2790: FixTransform2790,
-    6133: FixTransform6133,
-    2345: FixTransform2345,
-    4082: FixTransform4082,
+    7006: FixTransform7006,
   };
 
   return diagnostic.code in availableFixes

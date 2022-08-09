@@ -1,11 +1,19 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
-
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import {
+  FixTransform,
+  type FixResult,
+  getCommentsOnlyResult,
+  getCodemodResult,
+} from '@rehearsal/plugins';
+import {
+  findNodeAtPosition,
+  getTypeDeclarationFromTypeSymbol,
+  insertIntoText,
+  isSubtypeOf,
+  isTypeMatched,
+} from '@rehearsal/utils';
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {

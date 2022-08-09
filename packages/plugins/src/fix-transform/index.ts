@@ -1,22 +1,12 @@
 import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
-import { getCommentsOnlyResult } from '../helpers/transform-utils';
+import { getCodemodResult, getCommentsOnlyResult } from './utils';
+import { type FixResult, type FixedFile, FixTransform as FixTransformI } from './interfaces';
 
-export interface FixedFile {
-  fileName: string;
-  updatedText?: string;
-  location: {
-    line: number;
-    character: number;
-  };
-}
+export { getCodemodResult, getCommentsOnlyResult };
+export { FixResult, FixedFile };
 
-export interface FixResult {
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
-}
-
-export class FixTransform {
+export class FixTransform implements FixTransformI {
   /** Engineer friendly message describes steps needs to be done to fix the related issue */
   hint?: string;
 
