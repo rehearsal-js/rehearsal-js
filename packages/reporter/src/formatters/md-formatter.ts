@@ -20,7 +20,7 @@ export function mdFormatter(report: Report): string {
 
     for (const item of items) {
       text += `\n`;
-      text += `**${item.category} TS${item.code}**: ${
+      text += `**${item.category} TS${item.errorCode}**: ${
         item.fixed ? 'FIXED' : 'NEED TO BE FIXED MANUALLY'
       }\n`;
       text += `${item.hint}\n`;

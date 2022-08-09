@@ -4,16 +4,18 @@ import { type RehearsalService } from '@rehearsal/service';
 import { getTypeNameFromVariable } from '@rehearsal/utils';
 
 import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult } from '../helpers/transform-utils';
+import { getInitialResult, addCommentDataToResult } from '../helpers/transform-utils';
 import { findNodeAtPosition } from '../helpers/typescript-ast';
 
 export class FixTransform2345 extends FixTransform {
   hint = `Argument of type '{0}' is not assignable to parameter of type '{1}'.`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
+    let result = getInitialResult(diagnostic);
+
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !ts.isIdentifier(errorNode)) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
     const variableName = errorNode.getFullText();
 
@@ -31,6 +33,8 @@ export class FixTransform2345 extends FixTransform {
         ` Consider verifying both types, using type assertion: '(${variableName} as string)', or using type guard: 'if (${variableName} instanceof string) { ... }'.`;
     }
 
-    return getCommentsOnlyResult(diagnostic);
+    result = addCommentDataToResult(result, diagnostic.file.fileName, this.hint);
+
+    return result;
   };
 }

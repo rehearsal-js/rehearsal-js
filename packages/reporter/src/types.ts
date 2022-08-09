@@ -1,3 +1,5 @@
+import { Artifact } from 'sarif';
+
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
   basePath: string;
@@ -7,9 +9,8 @@ export type ReportSummary = Record<string, unknown> & {
 
 export type ReportItem = {
   analysisTarget: string;
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
-  code: number;
+  files: FileCollection;
+  errorCode: number;
   category: string;
   message: string;
   hint?: string;
@@ -29,16 +30,30 @@ export type Report = {
   items: ReportItem[];
 };
 
-interface FixedFile {
+export type FileRole = Extract<
+  Artifact.roles,
+  'analysisTarget' | 'tracedFile' | 'unmodified' | 'added' | 'deleted' | 'renamed' | 'modified'
+>;
+
+export interface ProcessedFile {
   fileName: string;
   updatedText?: string;
   location: {
-    line: number;
-    character: number;
+    line: number | undefined;
+    character: number | undefined;
   };
+  fixed: boolean;
+  code?: string;
+  hintAdded: boolean;
+  hint?: string;
+  roles: FileRole[];
 }
 
+export type FileCollection = { [fileName: string]: ProcessedFile };
+
 export interface FixResult {
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
+  analysisTarget: string;
+  files: FileCollection;
+  fixed: boolean;
+  hintAdded: boolean;
 }

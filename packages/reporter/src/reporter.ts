@@ -53,13 +53,14 @@ export class Reporter {
   ): void {
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
-      fixedFiles: fixResult.fixedFiles,
-      commentedFiles: fixResult.commentedFiles,
-      code: diagnostic.code,
+      files: fixResult.files,
+      // fixedFiles: fixResult.fixedFiles,
+      // commentedFiles: fixResult.commentedFiles,
+      errorCode: diagnostic.code,
       category: ts.DiagnosticCategory[diagnostic.category],
       message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
-      fixed: fixResult.fixedFiles.length > 0,
+      fixed: fixResult.fixed,
       nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
       nodeLocation: {

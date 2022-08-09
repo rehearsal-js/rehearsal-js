@@ -3,7 +3,7 @@ import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
 
 import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import { addCodemodDataToResult, getInitialResult, getLocation } from '../helpers/transform-utils';
 
 import {
   getClassByName,
@@ -24,13 +24,15 @@ export class FixTransform2790 extends FixTransform {
   hint = `The operand of a 'delete' operator must be optional.`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
+    const result = getInitialResult(diagnostic);
+
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (
       !errorNode ||
       !ts.isPropertyAccessExpression(errorNode) ||
       !ts.isDeleteExpression(errorNode.parent)
     ) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
 
     const program = service.getLanguageService().getProgram()!;
@@ -40,7 +42,7 @@ export class FixTransform2790 extends FixTransform {
 
     const typeDeclaration = getTypeDeclarationFromTypeSymbol(type);
     if (!typeDeclaration) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
 
     const sourceFile = typeDeclaration.getSourceFile();
@@ -49,21 +51,32 @@ export class FixTransform2790 extends FixTransform {
     const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
 
     if (!typeMemberName || !typeName || !sourceFile) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
 
     if (type.isClass()) {
-      return updateTextWithOptionalClassMember(diagnostic, sourceFile, typeMemberName, typeName);
+      return updateTextWithOptionalClassMember(
+        sourceFile,
+        typeMemberName,
+        typeName,
+        result
+      );
     }
-    return updateTextWithOptionalTypeMember(diagnostic, sourceFile, typeMemberName, typeName);
+    return updateTextWithOptionalTypeMember(
+      sourceFile,
+      typeMemberName,
+      typeName,
+      result
+    );
   };
 }
 
 function optionalTypeMember(
-  diagnostic: ts.DiagnosticWithLocation,
+  // diagnostic: ts.DiagnosticWithLocation,
   sourceFile: ts.SourceFile,
   declaration: ts.InterfaceDeclaration | ts.TypeAliasDeclaration,
-  typeMemberName: string
+  typeMemberName: string,
+  result: FixResult
 ): FixResult {
   let matchedMember;
   if (ts.isInterfaceDeclaration(declaration)) {
@@ -73,19 +86,22 @@ function optionalTypeMember(
   }
 
   if (!matchedMember) {
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   }
 
   const nameEnd = (matchedMember as ts.PropertySignature).name.getEnd();
   const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
-  return getCodemodResult(sourceFile, updatedText, nameEnd);
+  // const { line, character } = ts.getLineAndCharacterOfPosition(sourceFile, nameEnd);
+  const location = getLocation(sourceFile, nameEnd);
+  return addCodemodDataToResult(result, sourceFile.fileName, updatedText, OPTIONAL_TOKEN, ['tracedFile', 'added'], location);
 }
 
 function updateTextWithOptionalTypeMember(
-  diagnostic: ts.DiagnosticWithLocation,
+  // diagnostic: ts.DiagnosticWithLocation,
   sourceFile: ts.SourceFile,
   typeMemberName: string,
-  typeName: string
+  typeName: string,
+  result: FixResult,
 ): FixResult {
   const matchedInterface: ts.InterfaceDeclaration | undefined = getInterfaceByName(
     sourceFile,
@@ -97,41 +113,42 @@ function updateTextWithOptionalTypeMember(
   );
 
   if (matchedInterface) {
-    return optionalTypeMember(diagnostic, sourceFile, matchedInterface, typeMemberName);
+    return optionalTypeMember(sourceFile, matchedInterface, typeMemberName, result);
   } else if (matchedTypeAlias) {
-    return optionalTypeMember(diagnostic, sourceFile, matchedTypeAlias, typeMemberName);
+    return optionalTypeMember(sourceFile, matchedTypeAlias, typeMemberName, result);
   } else {
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   }
 }
 
 function optionalClassMember(
-  diagnostic: ts.DiagnosticWithLocation,
   sourceFile: ts.SourceFile,
   matchedClass: ts.ClassDeclaration,
-  typeMemberName: string
+  typeMemberName: string,
+  result: FixResult
 ): FixResult {
   const matchedMember = getClassMemberByName(matchedClass, typeMemberName);
   if (!matchedMember) {
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   }
 
   const nameEnd = (matchedMember as ts.PropertyDeclaration).name.getEnd();
   const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
-  return getCodemodResult(sourceFile, updatedText, nameEnd);
+  const location = getLocation(sourceFile, nameEnd);
+  return addCodemodDataToResult(result, sourceFile.fileName, updatedText, OPTIONAL_TOKEN, ['tracedFile', 'added'], location);
 }
 
 function updateTextWithOptionalClassMember(
-  diagnostic: ts.DiagnosticWithLocation,
   sourceFile: ts.SourceFile,
   memberName: string,
-  typeName: string
+  typeName: string,
+  result: FixResult
 ): FixResult {
   const matchedClass: ts.ClassDeclaration | undefined = getClassByName(sourceFile, typeName);
 
   if (matchedClass) {
-    return optionalClassMember(diagnostic, sourceFile, matchedClass, memberName);
+    return optionalClassMember(sourceFile, matchedClass, memberName, result);
   } else {
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   }
 }

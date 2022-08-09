@@ -5,20 +5,22 @@ import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@r
 
 import { FixTransform, type FixResult } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import { getInitialResult, addCodemodDataToResult, getLocation } from '../helpers/transform-utils';
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {
   hint = `Default export of the module has or is using private name {0}`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
-    const program = service.getLanguageService().getProgram()!;
-    const checker = program.getTypeChecker();
+    let result = getInitialResult(diagnostic);
 
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
+
+    const program = service.getLanguageService().getProgram()!;
+    const checker = program.getTypeChecker();
 
     /**
      * For example, targetTypeString is 'Props'
@@ -28,33 +30,36 @@ export class FixTransform4082 extends FixTransform {
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
     const targetTypeString = getTargetTypeName(message);
     if (!targetTypeString) {
-      return getCommentsOnlyResult(diagnostic);
+      return result;
     }
 
     if (ts.isExportAssignment(errorNode)) {
       const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
 
       if (!parentType) {
-        return getCommentsOnlyResult(diagnostic);
+        return result;
       }
 
       const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
 
       const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
       if (!targetTypeDeclaration) {
-        return getCommentsOnlyResult(diagnostic);
+        return result;
       }
 
       const sourceFile = targetTypeDeclaration.getSourceFile();
+      const start = targetTypeDeclaration.getStart();
       const updatedText = insertIntoText(
         sourceFile.getFullText(),
-        targetTypeDeclaration.getStart(),
+        start,
         `${EXPORT_KEYWORD} `
       );
 
-      return getCodemodResult(sourceFile, updatedText, targetTypeDeclaration.getStart());
+      const location = getLocation(sourceFile, start);
+
+      return addCodemodDataToResult(result, sourceFile.fileName, updatedText, EXPORT_KEYWORD, ['added', 'tracedFile'], location);
     }
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   };
 }
 

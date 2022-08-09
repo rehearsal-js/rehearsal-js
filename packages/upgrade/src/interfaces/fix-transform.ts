@@ -1,29 +1,34 @@
 import ts from 'typescript';
 import { Artifact } from 'sarif';
 import { type RehearsalService } from '@rehearsal/service';
-import { getCommentsOnlyResult } from '../helpers/transform-utils';
+import { getInitialResult } from '../helpers/transform-utils';
 
-type FileRole = Extract<
+export type FileRole = Extract<
   Artifact.roles,
-  'analysisTarget' | 'tracedFile' | 'unmodified' | 'added' | 'deleted' | 'renamed'
+  'analysisTarget' | 'tracedFile' | 'unmodified' | 'added' | 'deleted' | 'renamed' | 'modified'
 >;
 
 export interface ProcessedFile {
   fileName: string;
   updatedText?: string;
-  location?: {
-    line: number;
-    character: number;
+  location: {
+    line: number | undefined;
+    character: number | undefined;
   };
-  codemod: boolean;
+  fixed: boolean;
   code?: string;
-  commentAdded: boolean;
-  comment?: string;
+  hintAdded: boolean;
+  hint?: string;
   roles: FileRole[];
 }
 
+type FileCollection = { [fileName: string]: ProcessedFile };
+
 export interface FixResult {
-  files: ProcessedFile[];
+  analysisTarget: string;
+  files: FileCollection;
+  fixed: boolean;
+  hintAdded: boolean;
 }
 
 export class FixTransform {
@@ -34,6 +39,6 @@ export class FixTransform {
   fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixResult;
 
   run(diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult {
-    return this.fix ? this.fix(diagnostic, service) : getCommentsOnlyResult(diagnostic);
+    return this.fix ? this.fix(diagnostic, service) : getInitialResult(diagnostic);
   }
 }

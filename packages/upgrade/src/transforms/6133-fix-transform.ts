@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { FixTransform, type FixResult } from '../interfaces/fix-transform';
-import { getCommentsOnlyResult, getCodemodResult } from '../helpers/transform-utils';
+import { getInitialResult, addCodemodDataToResult, getLocation } from '../helpers/transform-utils';
 
 import { isSourceCodeChanged } from '../helpers/strings';
 import { transformDiagnosedNode } from '../helpers/typescript-ast';
@@ -10,6 +10,8 @@ export class FixTransform6133 extends FixTransform {
   hint = `The declaration '{0}' is never read or used. Remove the declaration or use it.`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation): FixResult => {
+    let result = getInitialResult(diagnostic);
+
     const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
       if (ts.isImportDeclaration(node) || ts.isImportSpecifier(node)) {
         // Remove all export declarations and undefined imported functions
@@ -27,8 +29,10 @@ export class FixTransform6133 extends FixTransform {
 
     const hasChanged = isSourceCodeChanged(diagnostic.file.getFullText(), text);
     if (hasChanged) {
-      return getCodemodResult(diagnostic.file, text, diagnostic.start);
+      const location = getLocation(diagnostic.file, diagnostic.start);
+      result =  addCodemodDataToResult(result, diagnostic.file.fileName, text, '', ['deleted'], location);
+      return result;
     }
-    return getCommentsOnlyResult(diagnostic);
+    return result;
   };
 }

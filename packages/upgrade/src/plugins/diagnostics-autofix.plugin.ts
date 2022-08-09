@@ -38,12 +38,12 @@ export class DiagnosticAutofixPlugin extends Plugin {
 
       const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
 
-      const fixed = result.fixedFiles.length > 0;
+      // const fixed = result.codemod;
 
-      if (fixed) {
+      if (result.fixed) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
-
-        for (const fixedFile of result.fixedFiles) {
+        const fixedFiles = Object.values(result.files).filter((file) => file.fixed);
+        for (const fixedFile of fixedFiles) {
           this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
           delete fixedFile.updatedText;
           allFixedFiles.add(fixedFile.fileName);
