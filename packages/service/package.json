@@ -29,7 +29,7 @@
     "test": "yarn nyc mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.27",
+    "@rehearsal/reporter": "^0.0.28",
     "winston": "^3.6.0"
   },
   "devDependencies": {

@@ -1573,6 +1573,46 @@
     node-addon-api "^3.2.1"
     node-gyp-build "^4.3.0"
 
+"@rehearsal/plugins@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@rehearsal/plugins/-/plugins-0.0.28.tgz#91f1e809196448d0d88104177cfc3f5639ea246b"
+  integrity sha512-fCbosBSueyx3dVw0v9sMSnMrq9P+3GuqSMcF6PLiSe2w6eYunhrP3oWl0kzsgruo/zz0MHaOz65tMV5rFprtTQ==
+  dependencies:
+    "@rehearsal/service" "^0.0.28"
+    eslint "^8.11.0"
+
+"@rehearsal/reporter@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@rehearsal/reporter/-/reporter-0.0.28.tgz#50f3f52d5ee5815e4e5695b99913a397de1b8383"
+  integrity sha512-LGtL6hhVPk8ErxQvoHAHWLtwk5J/+lBj/MM31Ek+/LSpzkldV2aqJNaq4v6dagAb7VSoa8RTv1tul5o9ensOEg==
+  dependencies:
+    winston "^3.6.0"
+
+"@rehearsal/service@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@rehearsal/service/-/service-0.0.28.tgz#0fc39fe007f548cdb343baa320a22295b35df572"
+  integrity sha512-ZZYBaPy5tYL/T+F2ggZxSzI0fL+8FjQwBCOccvPvF4OsDZGUjBD5xmgOww2tBFlJGii7VohkIr6bCnp4CatYGA==
+  dependencies:
+    "@rehearsal/reporter" "^0.0.28"
+    winston "^3.6.0"
+
+"@rehearsal/upgrade@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@rehearsal/upgrade/-/upgrade-0.0.28.tgz#8e915476d5f969f3f3046e9695a20eae0c5f91b4"
+  integrity sha512-E1GCi1ZWdKh0IfmrNuTdbm4uYzpKWh4mxEmhpg8vjmWFRgAreS3H3nUkvJhxBPBf1e8e1Nr6C3p5o9q6A7VslA==
+  dependencies:
+    "@rehearsal/plugins" "^0.0.28"
+    "@rehearsal/reporter" "^0.0.28"
+    "@rehearsal/service" "^0.0.28"
+    "@rehearsal/utils" "^0.0.28"
+    commander "^9.4.0"
+    winston "^3.6.0"
+
+"@rehearsal/utils@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@rehearsal/utils/-/utils-0.0.28.tgz#c296ba04603aac332e862a7d8a59877fcccb7b95"
+  integrity sha512-0YQG3pQvdLdcehLOgXWhKFG2MAPg/wTKTMc+C4dClzArZlCviTkatTMRopqWTirATs3ufebm2qKlXNLN7IabyQ==
+
 "@rushstack/node-core-library@3.50.1":
   version "3.50.1"
   resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.50.1.tgz#d4aa4602460f29bbf0662052969b65129384da23"
