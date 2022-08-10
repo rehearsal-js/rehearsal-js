@@ -2,21 +2,23 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 import { isSubtypeOf, getTypeDeclarationFromTypeSymbol, isTypeMatched } from '@rehearsal/utils';
+import { DataAggregator, FixResult } from '@rehearsal/reporter';
 
-import { FixTransform, type FixResult } from '../interfaces/fix-transform';
+import { FixTransform } from '../interfaces/fix-transform';
 import { findNodeAtPosition, insertIntoText } from '../helpers/typescript-ast';
-import { getInitialResult, addCodemodDataToResult, getLocation } from '../helpers/transform-utils';
+import { getLocation } from '../helpers/transform-utils';
 
 const EXPORT_KEYWORD = 'export';
 export class FixTransform4082 extends FixTransform {
   hint = `Default export of the module has or is using private name {0}`;
 
   fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
-    let result = getInitialResult(diagnostic);
+    this.dataAggregator = DataAggregator.getInstance(diagnostic);
+    // let result = getInitialResult(diagnostic);
 
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode) {
-      return result;
+      return this.dataAggregator.getResult();
     }
 
     const program = service.getLanguageService().getProgram()!;
@@ -30,21 +32,21 @@ export class FixTransform4082 extends FixTransform {
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
     const targetTypeString = getTargetTypeName(message);
     if (!targetTypeString) {
-      return result;
+      return this.dataAggregator.getResult();
     }
 
     if (ts.isExportAssignment(errorNode)) {
       const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
 
       if (!parentType) {
-        return result;
+        return this.dataAggregator.getResult();
       }
 
       const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
 
       const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
       if (!targetTypeDeclaration) {
-        return result;
+        return this.dataAggregator.getResult();
       }
 
       const sourceFile = targetTypeDeclaration.getSourceFile();
@@ -57,9 +59,9 @@ export class FixTransform4082 extends FixTransform {
 
       const location = getLocation(sourceFile, start);
 
-      return addCodemodDataToResult(result, sourceFile.fileName, updatedText, EXPORT_KEYWORD, ['added', 'tracedFile'], location);
+      this.dataAggregator.addCodemodDataToResult(sourceFile.fileName, updatedText, EXPORT_KEYWORD, ['added', 'tracedFile'], location);
     }
-    return result;
+    return this.dataAggregator.getResult();
   };
 }
 
