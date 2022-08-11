@@ -1,5 +1,5 @@
 // @ts-nocheck
-import T4 from './getTypeNameFromType-import';
+import T4 from './get-type-name-from-type-import';
 
 type T1 = { name: string };
 interface T2 extends T1 {

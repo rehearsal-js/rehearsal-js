@@ -1,43 +1,43 @@
 import fs from 'fs';
 
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { assert, describe, expect, test } from 'vitest';
 import { resolve } from 'path';
 
 import { Reporter, Report } from '../src';
 
-const basePath = resolve(__dirname, 'fixtures');
-
 describe('Test reporter', function () {
-  it('load', async () => {
+  const basePath = resolve(__dirname, 'fixtures');
+
+  test('load', async () => {
     const reporter = new Reporter('test', basePath).load(
       resolve(basePath, '.rehearsal-report.input.json')
     );
 
     const report = (reporter as any).report as Report;
 
-    assert.isNotEmpty(report.summary.basePath);
-    assert.isNotEmpty(report.summary.timestamp);
+    expect(report.summary.basePath).toMatch(/base/);
+    expect(report.summary.timestamp).toMatch(/\d+/);
+
     assert.deepEqual(report, expectedReport(basePath, '.rehearsal-report.output.json'));
   });
 
-  it('save', async () => {
+  test('save', async () => {
     // TODO: Implement test case
   });
 
-  it('print, json', async () => {
+  test('print, json', async () => {
     // TODO: Implement test case
   });
 
-  it('print, pull-request-md', async () => {
+  test('print, pull-request-md', async () => {
     // TODO: Implement test case
   });
 
-  it('addItem', async () => {
+  test('addItem', async () => {
     // TODO: Implement test case
   });
 
-  it('getFileNames', async () => {
+  test('getFileNames', async () => {
     const reporter = new Reporter('test', basePath).load(
       resolve(basePath, '.rehearsal-report.input.json')
     );
@@ -45,7 +45,7 @@ describe('Test reporter', function () {
     assert.deepEqual(reporter.getFileNames(), ['first.ts', 'second.ts']);
   });
 
-  it('getItemsByFile', async () => {
+  test('getItemsByFile', async () => {
     const reporter = new Reporter('test', basePath).load(
       resolve(basePath, '.rehearsal-report.input.json')
     );

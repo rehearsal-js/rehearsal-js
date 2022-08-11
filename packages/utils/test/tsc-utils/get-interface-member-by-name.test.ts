@@ -1,6 +1,5 @@
 import ts from 'typescript';
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { getInterfaceMemberByName } from '../../src/tsc-utils';
@@ -20,8 +19,9 @@ describe('Test getInterfaceMemberByName', () => {
       statement = statements[indexOfStatement];
       memberObj = getInterfaceMemberByName(statement as ts.InterfaceDeclaration, memberName);
     }
-    assert.exists(memberObj);
-    assert.equal(memberObj, (statement as ts.InterfaceDeclaration).members[indexOfMember]);
+
+    expect(memberObj).toBeDefined();
+    expect(memberObj).toEqual((statement as ts.InterfaceDeclaration).members[indexOfMember]);
   }
 
   function interfaceMemberUndefined(indexOfStatement: number, memberName: string): void {
@@ -31,22 +31,23 @@ describe('Test getInterfaceMemberByName', () => {
       statement = statements[indexOfStatement];
       memberObj = getInterfaceMemberByName(statement as ts.InterfaceDeclaration, memberName);
     }
-    assert.equal(memberObj, undefined);
+
+    expect(memberObj).toBeUndefined();
   }
 
-  it('should return interface member', () => {
+  test('should return interface member', () => {
     interfaceMemberReturned(0, 'name', 0);
   });
 
-  it('should return interface member for an interface that is exported', () => {
+  test('should return interface member for an interface that is exported', () => {
     interfaceMemberReturned(1, 'model', 0);
   });
 
-  it('should return interface member for an interface that is exported', () => {
+  test('should return interface member for an interface that is exported', () => {
     interfaceMemberReturned(2, 'color', 1);
   });
 
-  it('should return undefined for interface member that does not exist', () => {
+  test('should return undefined for interface member that does not exist', () => {
     interfaceMemberUndefined(0, 'age');
   });
 });

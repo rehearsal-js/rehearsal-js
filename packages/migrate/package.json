@@ -26,7 +26,8 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
     "@rehearsal/reporter": "^0.0.28",
@@ -39,7 +40,7 @@
     "@types/eslint": "^8.4.1",
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.9",
-    "vitest": "^0.16.0"
+    "vitest": "^0.21.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

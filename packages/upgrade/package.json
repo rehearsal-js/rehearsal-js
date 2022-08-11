@@ -21,12 +21,13 @@
     "src"
   ],
   "scripts": {
-    "build": "yarn tsc -b",
+    "build": "tsc -b",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "yarn eslint --fix . --ext .ts",
-    "lint:tsc-src": "yarn tsc --noEmit",
+    "lint:eslint": "eslint --fix . --ext .ts",
+    "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
-    "test": "yarn nyc mocha"
+    "test": "vitest --run",
+    "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
     "@rehearsal/reporter": "^0.0.28",
@@ -37,15 +38,11 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.0",
     "@types/commander": "^2.12.2",
     "@types/eslint": "^8.4.1",
-    "@types/mocha": "^9.1.0",
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.9",
-    "chai": "^4.3.6",
-    "mocha": "^10.0.0",
-    "nyc": "^15.1.0"
+    "vitest": "^0.21.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

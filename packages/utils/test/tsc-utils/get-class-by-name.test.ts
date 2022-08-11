@@ -1,5 +1,4 @@
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { getClassByName } from '../../src/tsc-utils';
@@ -9,28 +8,30 @@ describe('Test getClassByName', () => {
 
   function classReturned(targetTypeName: string, indexOfStatement: number): void {
     const declaration = sourceFile && getClassByName(sourceFile, targetTypeName);
-    assert.exists(declaration);
-    assert.equal(declaration, sourceFile?.statements[indexOfStatement]);
+
+    expect(declaration).toBeDefined();
+    expect(declaration).toEqual(sourceFile?.statements[indexOfStatement]);
   }
 
   function classUndefined(targetTypeName: string): void {
     const declaration = sourceFile && getClassByName(sourceFile, targetTypeName);
-    assert.equal(declaration, undefined);
+
+    expect(declaration).toBeUndefined();
   }
 
-  it('should return class', () => {
+  test('should return class', () => {
     classReturned('Class1', 0);
   });
 
-  it('should return class that is being exported', () => {
+  test('should return class that is being exported', () => {
     classReturned('Class2', 1);
   });
 
-  it('should return class exported as default', () => {
+  test('should return class exported as default', () => {
     classReturned('Class3', 2);
   });
 
-  it('should return undefined for a class that does not exist', () => {
+  test('should return undefined for a class that does not exist', () => {
     classUndefined('Class4');
   });
 });
