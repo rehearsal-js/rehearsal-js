@@ -1,8 +1,9 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+
 import { Reporter } from '@rehearsal/reporter';
-import fs from 'fs';
 import { migrate, MigrateInput } from '../src/migrate';
 
 describe('migrate', () => {

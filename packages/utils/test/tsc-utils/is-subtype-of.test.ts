@@ -1,6 +1,5 @@
 import ts from 'typescript';
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { isSubtypeOf } from '../../src/tsc-utils';
@@ -16,7 +15,8 @@ describe('Test isSubtypeOf', () => {
         .declarations[0].name;
       parentType = checker.getTypeAtLocation(variable);
     }
-    assert.equal(parentType && isSubtypeOf(targetTypeName, parentType, checker), true);
+
+    expect(parentType && isSubtypeOf(targetTypeName, parentType, checker)).toBeTruthy();
   }
 
   function hasNotSubtype(indexOfStatement: number, targetTypeName: string): void {
@@ -26,26 +26,27 @@ describe('Test isSubtypeOf', () => {
         .declarations[0].name;
       parentType = checker.getTypeAtLocation(variable);
     }
-    assert.equal(parentType && isSubtypeOf(targetTypeName, parentType, checker), false);
+
+    expect(parentType && isSubtypeOf(targetTypeName, parentType, checker)).toBeFalsy();
   }
 
-  it('should return type being its own subtype', () => {
+  test('should return type being its own subtype', () => {
     hasSubtype(1, 'T1');
   });
 
-  it('should return type argument being a subtype', () => {
+  test('should return type argument being a subtype', () => {
     hasSubtype(4, 'Age');
   });
 
-  it('should not return component type of a union type being a subtype', () => {
+  test('should not return component type of a union type being a subtype', () => {
     hasNotSubtype(6, 'number');
   });
 
-  it('should return component type of a intersection type being a subtype', () => {
+  test('should return component type of a intersection type being a subtype', () => {
     hasSubtype(9, 'Student');
   });
 
-  it('should return false when empty string is passed in as the subttype string', () => {
+  test('should return false when empty string is passed in as the subttype string', () => {
     hasNotSubtype(1, '');
   });
 });

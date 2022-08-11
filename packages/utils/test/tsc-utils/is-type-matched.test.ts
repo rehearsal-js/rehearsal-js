@@ -1,6 +1,4 @@
-// import ts from 'typescript';
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { isTypeMatched } from '../../src/tsc-utils';
@@ -15,7 +13,8 @@ describe('Test isTypeMatched', () => {
       const typeObj = checker.getTypeAtLocation(statements[indexOfStatement]);
       isMatched = isTypeMatched(typeString, typeObj);
     }
-    assert.equal(isMatched, true);
+
+    expect(isMatched).toBeTruthy();
   }
 
   function notMatched(indexOfStatement: number, typeString: string): void {
@@ -24,26 +23,26 @@ describe('Test isTypeMatched', () => {
       const typeObj = checker.getTypeAtLocation(statements[indexOfStatement]);
       isMatched = isTypeMatched(typeString, typeObj);
     }
-    assert.equal(isMatched, false);
+    expect(isMatched).toBeFalsy();
   }
 
-  it('should return true if type name matches an interface', () => {
+  test('should return true if type name matches an interface', () => {
     matched(0, 'T10');
   });
 
-  it('should return true if type name matches a type alias', () => {
+  test('should return true if type name matches a type alias', () => {
     matched(1, 'T11');
   });
 
-  it('should return true if type name matches an interface with constraint', () => {
+  test('should return true if type name matches an interface with constraint', () => {
     matched(2, 'T12');
   });
 
-  it('should return false if type name is empty string', () => {
+  test('should return false if type name is empty string', () => {
     notMatched(3, '');
   });
 
-  it('should return false if type name does not match', () => {
+  test('should return false if type name does not match', () => {
     matched(4, 'T14');
   });
 });

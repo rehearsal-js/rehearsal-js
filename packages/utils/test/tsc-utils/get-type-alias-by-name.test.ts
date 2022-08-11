@@ -1,5 +1,4 @@
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { getTypeAliasByName } from '../../src/tsc-utils';
@@ -9,40 +8,42 @@ describe('Test getTypeAliasByName', () => {
 
   function typeAliasReturned(targetTypeName: string, indexOfStatement: number): void {
     const declaration = sourceFile && getTypeAliasByName(sourceFile, targetTypeName);
-    assert.exists(declaration);
-    assert.equal(declaration, sourceFile?.statements[indexOfStatement]);
+
+    expect(declaration).toBeDefined();
+    expect(declaration).toEqual(sourceFile?.statements[indexOfStatement]);
   }
 
   function typeAliasUndefined(targetTypeName: string): void {
     const declaration = sourceFile && getTypeAliasByName(sourceFile, targetTypeName);
-    assert.equal(declaration, undefined);
+
+    expect(declaration).toBeUndefined();
   }
 
-  it('should return type Alias with union of string literal', () => {
+  test('should return type Alias with union of string literal', () => {
     typeAliasReturned('Car', 0);
   });
 
-  it('should return type Alias with union of types', () => {
+  test('should return type Alias with union of types', () => {
     typeAliasReturned('StringOrNumber', 1);
   });
 
-  it('should return type Alias for function signature', () => {
+  test('should return type Alias for function signature', () => {
     typeAliasReturned('StringRepeater', 2);
   });
 
-  it('should return type Alias with generics', () => {
+  test('should return type Alias with generics', () => {
     typeAliasReturned('List', 3);
   });
 
-  it('should return type Alias exported', () => {
+  test('should return type Alias exported', () => {
     typeAliasReturned('Decrementor', 4);
   });
 
-  it('should return type Alias ', () => {
+  test('should return type Alias ', () => {
     typeAliasReturned('Tree', 5);
   });
 
-  it('should return undefined for a type alias that does not exist', () => {
+  test('should return undefined for a type alias that does not exist', () => {
     typeAliasUndefined('Child');
   });
 });

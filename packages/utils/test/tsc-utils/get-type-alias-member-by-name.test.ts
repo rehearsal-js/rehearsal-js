@@ -1,6 +1,5 @@
 import ts from 'typescript';
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { describe, expect, test } from 'vitest';
 
 import { setupTest } from '../helpers';
 import { getTypeAliasMemberByName } from '../../src/tsc-utils';
@@ -20,9 +19,9 @@ describe('Test getTypeAliasMemberByName', () => {
       statement = statements[indexOfStatement];
       memberObj = getTypeAliasMemberByName(statement as ts.TypeAliasDeclaration, memberName);
     }
-    assert.exists(memberObj);
-    assert.equal(
-      memberObj,
+
+    expect(memberObj).toBeDefined();
+    expect(memberObj).toEqual(
       ((statement as ts.TypeAliasDeclaration).type as ts.TypeLiteralNode).members[indexOfMember]
     );
   }
@@ -34,22 +33,23 @@ describe('Test getTypeAliasMemberByName', () => {
       statement = statements[indexOfStatement];
       memberObj = getTypeAliasMemberByName(statement as ts.TypeAliasDeclaration, memberName);
     }
-    assert.equal(memberObj, undefined);
+
+    expect(memberObj).toBeUndefined();
   }
 
-  it('should return type alias member', () => {
+  test('should return type alias member', () => {
     typeAliasMemberReturned(0, 'make', 3);
   });
 
-  it('should return type alias member for a type alias with generics ', () => {
+  test('should return type alias member for a type alias with generics ', () => {
     typeAliasMemberReturned(1, 'items', 0);
   });
 
-  it('should return type alias member for an type alias that is exported', () => {
+  test('should return type alias member for an type alias that is exported', () => {
     typeAliasMemberReturned(2, 'year', 1);
   });
 
-  it('should return undefined for interface member that does not exist', () => {
+  test('should return undefined for interface member that does not exist', () => {
     typeAliasMemberUndefined(0, 'age');
   });
 });

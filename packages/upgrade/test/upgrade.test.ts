@@ -1,38 +1,37 @@
 import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
-import { assert } from 'chai';
-import { describe, it } from 'mocha';
+import { assert, describe, expect, test } from 'vitest';
 import { resolve } from 'path';
 
 import { Reporter, Report, mdFormatter } from '@rehearsal/reporter';
 
 import { upgrade } from '../src';
 
-const basePath = resolve(__dirname, 'fixtures', 'upgrade');
-
-const files = prepareListOfTestFiles(basePath);
-
-const logger = winston.createLogger({
-  transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
-});
-
-const reporter = new Reporter('@rehearsal/test', basePath, logger);
-
 describe('Test upgrade', function () {
-  it('run', async () => {
+  const basePath = resolve(__dirname, 'fixtures', 'upgrade');
+
+  const files = prepareListOfTestFiles(basePath);
+
+  const logger = winston.createLogger({
+    transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
+  });
+
+  const reporter = new Reporter('@rehearsal/test', basePath, logger);
+
+  test('run', async () => {
     createTsFilesFromInputs(files);
 
     const result = await upgrade({ basePath, logger, reporter });
 
-    assert.exists(result);
+    expect(result).toBeDefined();
 
     // Compare each updated .ts file with expected .ts.output
     for (const file of files) {
       const input = fs.readFileSync(file).toString();
       const output = fs.readFileSync(`${file}.output`).toString();
 
-      assert.equal(input, output);
+      expect(input).toEqual(output);
     }
 
     // TODO: Move to @rehearsal/report
@@ -42,8 +41,9 @@ describe('Test upgrade', function () {
 
     const report = JSON.parse(fs.readFileSync(jsonReport).toString());
 
-    assert.isNotEmpty(report.summary.basePath);
-    assert.isNotEmpty(report.summary.timestamp);
+    expect(report.summary.basePath).toMatch(/upgrade/);
+    expect(report.summary.timestamp).toMatch(/\d+/);
+
     assert.deepEqual(report, expectedReport(report.summary.basePath, report.summary.timestamp));
 
     fs.rmSync(jsonReport);
@@ -52,8 +52,7 @@ describe('Test upgrade', function () {
     const mdReport = resolve(basePath, '.rehearsal-report.md');
     reporter.print(mdReport, mdFormatter);
 
-    assert.equal(
-      fs.readFileSync(mdReport).toString(),
+    expect(fs.readFileSync(mdReport).toString()).toEqual(
       fs.readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString()
     );
 
