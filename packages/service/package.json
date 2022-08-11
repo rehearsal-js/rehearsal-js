@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/service",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "Rehearsal Service",
   "keywords": [
     "rehearsal",
@@ -29,7 +29,7 @@
     "test": "yarn nyc mocha"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.27",
+    "@rehearsal/reporter": "^0.0.28",
     "winston": "^3.6.0"
   },
   "devDependencies": {
