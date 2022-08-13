@@ -29,7 +29,7 @@
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
     "test": "vitest --run",
-    "test:watch": "vitest --coverage --waatch"
+    "test:watch": "vitest --coverage --watch"
   },
   "devDependencies": {
     "@types/eslint": "^8.4.1",
