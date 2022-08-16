@@ -5,7 +5,7 @@ import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { resolve } from 'path';
 
-import { Reporter } from '@rehearsal/reporter';
+import { Reporter, mdFormatter, sarifFormatter } from '@rehearsal/reporter';
 
 import { upgrade } from '../src';
 
@@ -49,8 +49,8 @@ describe('Test upgrade', function () {
     // fs.rmSync(jsonReport);
 
     // Test the pull-request-md report
-    // const mdReport = resolve(basePath, '.rehearsal-report.md');
-    // reporter.print(mdReport, mdFormatter);
+    const mdReport = resolve(basePath, '.rehearsal-report.md');
+    reporter.print(mdReport, mdFormatter);
 
     // assert.equal(
     //   fs.readFileSync(mdReport).toString(),
@@ -58,6 +58,9 @@ describe('Test upgrade', function () {
     // );
 
     // fs.rmSync(mdReport);
+
+    const sarifReport = resolve(basePath, '.rehearsal-report.sarif');
+    reporter.print(sarifReport, sarifFormatter);
 
     cleanupTsFiles(files);
   });

@@ -49,7 +49,7 @@ export interface ProcessedFile {
   roles: FileRole[];
 }
 
-export type FileCollection = { [fileName: string]: ProcessedFile };
+export type FileCollection = { [fileName: string]: ProcessedFile };//{fileName1: {}}
 
 export interface FixResult {
   analysisTarget: string;

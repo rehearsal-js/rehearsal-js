@@ -1,0 +1,1472 @@
+{
+  "version": "2.1.0",
+  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.4",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "@rehearsal/migrate",
+          "informationUri": "https://github.com/rehearsal-js/rehearsal-js",
+          "rules": [
+            {
+              "id": "TS2322",
+              "shortDescription": {
+                "text": "Type 'string' is not assignable to type 'number'."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS2345",
+              "shortDescription": {
+                "text": "Argument of type 'unknown' is not assignable to parameter of type 'string'."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS2571",
+              "shortDescription": {
+                "text": "Object is of type 'unknown'."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS2790",
+              "shortDescription": {
+                "text": "The operand of a 'delete' operator must be optional."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS6133",
+              "shortDescription": {
+                "text": "'React' is declared but its value is never read."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS4082",
+              "shortDescription": {
+                "text": "Default export of the module has or is using private name 'Props'."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS2304",
+              "shortDescription": {
+                "text": "Cannot find name 'NonExistingElement'."
+              },
+              "helpUri": ""
+            }
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2345.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "unmodified",
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-1.ts"
+          },
+          "roles": [
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-2.ts"
+          },
+          "roles": [
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-4.ts"
+          },
+          "roles": [
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-3.ts"
+          },
+          "roles": [
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1.tsx"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1-import.tsx"
+          },
+          "roles": [
+            "added",
+            "tracedFile",
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2.tsx"
+          },
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2-import.tsx"
+          },
+          "roles": [
+            "added",
+            "tracedFile",
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": false
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ],
+          "properties": {
+            "fixed": false,
+            "hintAdded": false
+          }
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type."
+          },
+          "analysisTarget": {
+            "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type."
+          },
+          "analysisTarget": {
+            "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type."
+          },
+          "analysisTarget": {
+            "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2322.ts"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2345",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Argument of type 'unknown' is not assignable to parameter of type 'string'. Consider specifying type of argument to be 'string', using type assertion: '(changeable as string)', or using type guard: 'if (changeable instanceof string) { ... }'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2345.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2345.ts"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 28
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2345",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(num as string)', or using type guard: 'if (num instanceof string) { ... }'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2345.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2345.ts"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 28
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2571",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 14
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2571",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 14
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2571",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }`"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2571.ts"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 7
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-1.ts"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 7
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-1.ts"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 7
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-2.ts"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 13
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 7
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-4.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 7
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790-import-3.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 53,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2790",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "The operand of a 'delete' operator must be optional."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/2790.ts"
+                },
+                "region": {
+                  "startLine": 67,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The declaration 'React' is never read or used. Remove the declaration or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1.tsx"
+                },
+                "region": {
+                  "startLine": 0,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS4082",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Default export of the module has or is using private name Props"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1.tsx"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 0
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-1-import.tsx"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS4082",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Default export of the module has or is using private name InjectedProps"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2.tsx"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 0
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2-import.tsx"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS4082",
+          "ruleIndex": 5,
+          "level": "error",
+          "message": {
+            "text": "Default export of the module has or is using private name ToDoState"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2.tsx"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 0
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/4082-2-import.tsx"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The declaration 'fs' is never read or used. Remove the declaration or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 0,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The declaration 'parse' is never read or used. Remove the declaration or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'defined_var' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'defined_const' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The function 'defined_function' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The parameter 'defined_param' is never used. Remove the parameter from function definition or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/6133.ts"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 38
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The declaration 'fs' is never read or used. Remove the declaration or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 0,
+                  "startColumn": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The declaration 'parse' is never read or used. Remove the declaration or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 0,
+                  "startColumn": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The function 'sleep' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'foo' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 19
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The function 'timestamp' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 13
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'b' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 14
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/first.ts"
+                },
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'unused' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 8
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "The variable 'unused' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 10
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'NonExistingElement'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 22
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'NonExistingElement'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 7
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'"
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 12
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'NonExistingFragment'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 12
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/react.tsx"
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 29
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'readFileSync'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'doesNotExist'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 21
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'doesNotExist'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+                },
+                "region": {
+                  "startLine": 20,
+                  "startColumn": 6
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 6,
+          "level": "error",
+          "message": {
+            "text": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'."
+          },
+          "analysisTarget": {
+            "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/Users/brehuang/dev/rehearsal-js/packages/upgrade/test/fixtures/upgrade/second.ts"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 6
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
