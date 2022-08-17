@@ -1,9 +1,10 @@
-import { describe, test, expect, afterEach, beforeAll } from 'vitest';
+import { describe, test, expect, afterAll, beforeAll } from 'vitest';
 import { gitDeleteLocalBranch, YARN_PATH, run } from '../test-helpers';
 import { existsSync, readJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
 import type { Report } from '@rehearsal/reporter';
 import { getLatestTSVersion, git } from '../../src/utils';
+import packageJson from '../../package.json';
 
 import execa from 'execa';
 
@@ -12,6 +13,7 @@ const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
+const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeSetup = async (): Promise<void> => {
@@ -23,13 +25,20 @@ const beforeSetup = async (): Promise<void> => {
 
 const afterEachCleanup = async (): Promise<void> => {
   await gitDeleteLocalBranch(WORKING_BRANCH);
-  await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
+};
+
+// Revert to previous TSC version from TEST_TSC_VERSION
+const revertTSCVersion = async (): Promise<void> => {
+  await execa(YARN_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`, '--ignore-scripts']);
   await execa(YARN_PATH, ['install']);
 };
 
-beforeAll(beforeSetup);
+afterAll(revertTSCVersion);
 
 describe('upgrade:command against fixture', async () => {
+  beforeAll(beforeSetup);
+  afterAll(afterEachCleanup);
+
   test('WITH autofix', async () => {
     const result = await run('upgrade', [
       '--src_dir',
@@ -98,7 +107,6 @@ describe('upgrade:command against fixture', async () => {
       '--is_test',
       '--report_output',
       FIXTURE_APP_PATH,
-      '--autofix',
     ]);
 
     expect(result.stdout).toContain(`Autofix successful: ts-expect-error comments added`);
@@ -106,7 +114,8 @@ describe('upgrade:command against fixture', async () => {
 });
 
 describe('upgrade:command tsc version check', async () => {
-  afterEach(afterEachCleanup);
+  beforeAll(beforeSetup);
+  afterAll(afterEachCleanup);
 
   test(`it is on typescript invalid tsc_version`, async () => {
     try {
@@ -128,8 +137,9 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript version already tested`, async () => {
     // this will test the version already installed
-    // the test sandbox should have an older version of tsc installed
-    // during the afterEachCleanup() phase
+    await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
+    await execa(YARN_PATH, ['install']);
+
     const result = await run('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,

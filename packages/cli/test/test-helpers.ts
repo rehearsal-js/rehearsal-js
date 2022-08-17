@@ -11,8 +11,9 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
   // grab the current working branch which should not be the rehearsal-bot branch
   const branch = checkoutBranch || 'master';
 
-  if ((await gitIsRepoDirty()) && current.includes('rehearsal-bot')) {
-    await git.reset(['--hard']);
+  // only restore files in fixtures
+  if (await gitIsRepoDirty()) {
+    await execa('git', ['restore', '--', resolve(__dirname, './fixtures/app')]);
   }
 
   await git.checkout(branch);
@@ -31,5 +32,8 @@ export function run(
   options: execa.Options = {}
 ): execa.ExecaChildProcess {
   const cliPath = resolve(__dirname, `../src/commands/${command}`);
+  // why use ts-node instead of calling bin/rehearsal.js directly?
+  // during the test process there would be yarn install typescript
+  // we need to run build after every install to make sure dist dir is ready to use
   return execa(YARN_PATH, ['ts-node', cliPath, ...args], options);
 }
