@@ -2,7 +2,7 @@ import fs from 'fs';
 import ts from 'typescript';
 import winston from 'winston';
 
-import { type Report, type ReportItem, type FixResult } from './types';
+import { type FixedFile, type Report, type ReportItem } from './types';
 
 /**
  * Representation of diagnostic and migration report.
@@ -47,19 +47,20 @@ export class Reporter {
    */
   addItem(
     diagnostic: ts.DiagnosticWithLocation,
-    fixResult: FixResult,
+    fixedFiles: FixedFile[],
+    commentedFiles: FixedFile[],
     node?: ts.Node,
     hint = ''
   ): void {
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
-      fixedFiles: fixResult.fixedFiles,
-      commentedFiles: fixResult.commentedFiles,
+      fixedFiles: fixedFiles,
+      commentedFiles: commentedFiles,
       code: diagnostic.code,
       category: ts.DiagnosticCategory[diagnostic.category],
       message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
-      fixed: fixResult.fixedFiles.length > 0,
+      fixed: fixedFiles.length > 0,
       nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
       nodeLocation: {

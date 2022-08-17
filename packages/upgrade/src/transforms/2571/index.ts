@@ -1,11 +1,6 @@
 import ts from 'typescript';
 
-import {
-  FixTransform,
-  type FixResult,
-  getCommentsOnlyResult,
-  getCodemodResult,
-} from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
 import {
   isSourceCodeChanged,
   isVariableOfCatchClause,
@@ -13,9 +8,7 @@ import {
 } from '@rehearsal/utils';
 
 export class FixTransform2571 extends FixTransform {
-  hint = `Object is of type '{0}'. Specify a type of variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``;
-
-  fix = (diagnostic: ts.DiagnosticWithLocation): FixResult => {
+  fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
     const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
       if (ts.isIdentifier(node) && isVariableOfCatchClause(node)) {
         if (isPropertyOfErrorInterface(node.parent)) {
@@ -23,8 +16,6 @@ export class FixTransform2571 extends FixTransform {
         } else {
           return ts.factory.createAsExpression(node, ts.factory.createTypeReferenceNode('any'));
         }
-      } else {
-        this.hint = `Object is of type '{0}'. Specify a type of ${node.getText()}, use type assertion: \`(${node.getText()} as DesiredType)\` or type guard: \`if (${node.getText()} instanceof DesiredType) { ... }\``;
       }
 
       return node;
@@ -34,7 +25,8 @@ export class FixTransform2571 extends FixTransform {
     if (hasChanged) {
       return getCodemodResult(diagnostic.file, text, diagnostic.start);
     }
-    return getCommentsOnlyResult(diagnostic);
+
+    return [];
   };
 }
 
