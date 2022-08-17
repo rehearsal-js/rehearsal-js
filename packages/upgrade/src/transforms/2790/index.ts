@@ -2,12 +2,7 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 
-import {
-  FixTransform,
-  type FixResult,
-  getCommentsOnlyResult,
-  getCodemodResult,
-} from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   insertIntoText,
@@ -24,16 +19,14 @@ import {
 const OPTIONAL_TOKEN = '?';
 
 export class FixTransform2790 extends FixTransform {
-  hint = `The operand of a 'delete' operator must be optional.`;
-
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
+  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (
       !errorNode ||
       !ts.isPropertyAccessExpression(errorNode) ||
       !ts.isDeleteExpression(errorNode.parent)
     ) {
-      return getCommentsOnlyResult(diagnostic);
+      return [];
     }
 
     const program = service.getLanguageService().getProgram()!;
@@ -43,7 +36,7 @@ export class FixTransform2790 extends FixTransform {
 
     const typeDeclaration = getTypeDeclarationFromTypeSymbol(type);
     if (!typeDeclaration) {
-      return getCommentsOnlyResult(diagnostic);
+      return [];
     }
 
     const sourceFile = typeDeclaration.getSourceFile();
@@ -52,7 +45,7 @@ export class FixTransform2790 extends FixTransform {
     const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
 
     if (!typeMemberName || !typeName || !sourceFile) {
-      return getCommentsOnlyResult(diagnostic);
+      return [];
     }
 
     let nameEnd;
@@ -71,10 +64,11 @@ export class FixTransform2790 extends FixTransform {
     }
 
     if (!nameEnd) {
-      return getCommentsOnlyResult(diagnostic);
+      return [];
     }
 
     const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
+
     return getCodemodResult(sourceFile, updatedText, nameEnd);
   };
 }

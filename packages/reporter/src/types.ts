@@ -29,16 +29,11 @@ export type Report = {
   items: ReportItem[];
 };
 
-interface FixedFile {
+export type FixedFile = {
   fileName: string;
   updatedText?: string;
   location: {
     line: number;
     character: number;
   };
-}
-
-export interface FixResult {
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
-}
+};

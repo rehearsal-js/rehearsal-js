@@ -1,12 +1,7 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import {
-  FixTransform,
-  type FixResult,
-  getCommentsOnlyResult,
-  getCodemodResult,
-} from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
@@ -16,16 +11,15 @@ import {
 } from '@rehearsal/utils';
 
 const EXPORT_KEYWORD = 'export';
-export class FixTransform4082 extends FixTransform {
-  hint = `Default export of the module has or is using private name {0}`;
 
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
+export class FixTransform4082 extends FixTransform {
+  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const program = service.getLanguageService().getProgram()!;
     const checker = program.getTypeChecker();
 
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-    if (!errorNode) {
-      return getCommentsOnlyResult(diagnostic);
+    if (!errorNode || !ts.isExportAssignment(errorNode)) {
+      return [];
     }
 
     /**
@@ -36,33 +30,29 @@ export class FixTransform4082 extends FixTransform {
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
     const targetTypeString = getTargetTypeName(message);
     if (!targetTypeString) {
-      return getCommentsOnlyResult(diagnostic);
+      return [];
     }
 
-    if (ts.isExportAssignment(errorNode)) {
-      const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
-
-      if (!parentType) {
-        return getCommentsOnlyResult(diagnostic);
-      }
-
-      const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
-
-      const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
-      if (!targetTypeDeclaration) {
-        return getCommentsOnlyResult(diagnostic);
-      }
-
-      const sourceFile = targetTypeDeclaration.getSourceFile();
-      const updatedText = insertIntoText(
-        sourceFile.getFullText(),
-        targetTypeDeclaration.getStart(),
-        `${EXPORT_KEYWORD} `
-      );
-
-      return getCodemodResult(sourceFile, updatedText, targetTypeDeclaration.getStart());
+    const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
+    if (!parentType) {
+      return [];
     }
-    return getCommentsOnlyResult(diagnostic);
+
+    const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
+
+    const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
+    if (!targetTypeDeclaration) {
+      return [];
+    }
+
+    const sourceFile = targetTypeDeclaration.getSourceFile();
+    const updatedText = insertIntoText(
+      sourceFile.getFullText(),
+      targetTypeDeclaration.getStart(),
+      `${EXPORT_KEYWORD} `
+    );
+
+    return getCodemodResult(sourceFile, updatedText, targetTypeDeclaration.getStart());
   };
 }
 

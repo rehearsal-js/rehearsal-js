@@ -9,7 +9,9 @@
     "prepare": "lerna run prepare --stream",
     "test": "lerna run test --stream",
     "prepack": "lerna run prepack --stream",
-    "changelog": "yarn conventional-changelog -i CHANGELOG.md -s"
+    "changelog": "yarn conventional-changelog -i CHANGELOG.md -s",
+    "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
+    "reset": "yarn clean && yarn install"
   },
   "dependencies": {
     "debug": "^4.3.4"

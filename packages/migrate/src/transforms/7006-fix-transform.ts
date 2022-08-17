@@ -1,18 +1,15 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixResult, type FixedFile } from '@rehearsal/plugins';
+import { FixTransform, type FixedFile } from '@rehearsal/plugins';
 import { type RehearsalService } from '@rehearsal/service';
 import { findNodeAtPosition, insertIntoText } from '@rehearsal/utils';
 
 export class FixTransform7006 extends FixTransform {
-  hint = `TBD Parameter '{0}' implicitly has an '{1}' type.`; // TODO: this is not final
-
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixResult => {
+  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
-    if (!node /* || !ts.isIdentifier(errorNode) */) {
-      // TODO: Does this need to be uncommented?
-      return { fixedFiles: new Array<FixedFile>(), commentedFiles: new Array<FixedFile>() };
+    if (!node) {
+      return [];
     }
 
     const languageService = service.getLanguageService();
@@ -21,7 +18,7 @@ export class FixTransform7006 extends FixTransform {
 
     const fileName = sourceFile.fileName;
 
-    const results: Array<FixedFile> = new Array<FixedFile>();
+    const fixedFiles: FixedFile[] = [];
 
     const fixes = languageService.getCodeFixesAtPosition(
       sourceFile.fileName,
@@ -48,7 +45,7 @@ export class FixTransform7006 extends FixTransform {
         // Dedupe changes
         // In some cases we may have duplicate changes.
         // Also ...
-        // If we revese the order of textChanges we don't have to worry about an
+        // If we reverse the order of textChanges we don't have to worry about an
         // augmented position. `reduceRight` will build a new array of changes by pushing
         // elements on to the end.
         const textChanges = allChanges.reduceRight((accumulator, currentValue) => {
@@ -74,7 +71,7 @@ export class FixTransform7006 extends FixTransform {
           content = insertIntoText(content, change.span.start, change.newText);
         });
 
-        results.push({ fileName, updatedText: content, location: stubLocation });
+        fixedFiles.push({ fileName, updatedText: content, location: stubLocation });
       } else {
         // Otherwise, we don't have a combined fix, let's just try and apply all text changes in reverse order.
         fix.changes.forEach(({ fileName, textChanges }) => {
@@ -82,12 +79,12 @@ export class FixTransform7006 extends FixTransform {
           const changes = Array.from(textChanges).reverse();
           changes.forEach((change) => {
             const updatedText = insertIntoText(content, change.span.start, change.newText);
-            results.push({ fileName, updatedText, location: stubLocation });
+            fixedFiles.push({ fileName, updatedText, location: stubLocation });
           });
         });
       }
     });
 
-    return { fixedFiles: results, commentedFiles: [] };
+    return fixedFiles;
   };
 }

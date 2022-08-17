@@ -2,17 +2,9 @@ import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 
-import { FixTransform } from '@rehearsal/plugins';
+import { FixedFile } from '@rehearsal/plugins';
 
-// TODO: Use dynamic import inside getFixForDiagnostic function
-import {
-  FixTransform2322,
-  FixTransform2571,
-  FixTransform2790,
-  FixTransform6133,
-  FixTransform2345,
-  FixTransform4082,
-} from '../transforms';
+import { codefixes } from '../transforms';
 
 import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
 
@@ -29,64 +21,47 @@ export class DiagnosticAutofixPlugin extends Plugin {
 
     const allFixedFiles: Set<string> = new Set();
     while (diagnostics.length > 0 && tries-- > 0) {
+      // TODO: Wrap the next 4 const into DiagnosticContext
       const diagnostic = diagnostics.shift()!;
-
-      const fix = getFixForDiagnostic(diagnostic);
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
+      const program = this.service.getLanguageService().getProgram()!;
+      const checker = program.getTypeChecker();
 
-      const result = fix.run(diagnostic, this.service);
+      const fix = codefixes.getFixForError(diagnostic.code);
 
-      const hint = this.prepareHint(diagnostic.messageText, fix?.hint);
+      const fixedFiles: FixedFile[] = fix?.run(diagnostic, this.service) || [];
+      const commentedFiles: FixedFile[] = [];
+      const hint = codefixes.getHint(diagnostic, program, checker, node);
 
-      const fixed = result.fixedFiles.length > 0;
-
-      if (fixed) {
-        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
-
-        for (const fixedFile of result.fixedFiles) {
+      if (fixedFiles && fixedFiles.length > 0) {
+        for (const fixedFile of fixedFiles) {
           this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
-          delete fixedFile.updatedText;
+          delete fixedFile.updatedText; // ???
           allFixedFiles.add(fixedFile.fileName);
         }
+
+        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
       } else {
-        // Add a hint comment if fix was not applied
+        // Get a hint message in case we didn't modify any files (codefix was not applied)
         const text = this.addHintComment(diagnostic, hint);
         this.service.setFileText(params.fileName, text);
         allFixedFiles.add(params.fileName);
 
+        commentedFiles.push({
+          fileName: params.fileName,
+          location: ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start),
+        });
+
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
 
-      this.reporter?.addItem(diagnostic, result, node, hint);
+      this.reporter?.addItem(diagnostic, fixedFiles, commentedFiles, node, hint);
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
     }
 
     return Array.from(allFixedFiles);
-  }
-
-  /**
-   * Prepares a hint message for engineer based on original diagnostic message and `this.hint`
-   */
-  prepareHint(message: string | ts.DiagnosticMessageChain, hint?: string): string {
-    message = ts.flattenDiagnosticMessageText(message, '. ');
-
-    if (hint) {
-      // Prepare a replacement dictionary
-      // e.g. {'{0}': 'p', '{1}': 'any'} for message "Parameter 'p' implicitly has an 'any' type."
-      const replacements: { [key: string]: string } =
-        message
-          // return ["'p'", "'any'"]
-          .match(/'[^']+'/gm)
-          // converts ["'p'", "'any'"] to {'{0}': 'p', '{1}': 'any'}
-          ?.reduce((a, v, i) => ({ ...a, [`{${i}}`]: v.replace(/^\W+|\W+$/g, '') }), {}) || {};
-
-      // Replaces {0}, {1}, ... placeholders with corresponding values from the original message
-      message = hint.replace(/{\d+}/gm, (key) => replacements[key] || key);
-    }
-
-    return message;
   }
 
   /**
@@ -107,23 +82,4 @@ export class DiagnosticAutofixPlugin extends Plugin {
 
     return text.slice(0, positionToAddComment) + comment + '\n' + text.slice(positionToAddComment);
   }
-}
-
-/**
- * Creates a `FixTransform` for provided diagnostic
- * @param diagnostic
- */
-export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
-  const availableFixes: { [index: number]: typeof FixTransform } = {
-    2322: FixTransform2322,
-    2571: FixTransform2571,
-    2790: FixTransform2790,
-    6133: FixTransform6133,
-    2345: FixTransform2345,
-    4082: FixTransform4082,
-  };
-
-  return diagnostic.code in availableFixes
-    ? new availableFixes[diagnostic.code]()
-    : new FixTransform();
 }
