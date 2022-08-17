@@ -8,7 +8,7 @@ import { getLatestTSVersion, git } from '../../src/utils';
 import execa from 'execa';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
-// const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
+const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
