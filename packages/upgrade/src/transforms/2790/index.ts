@@ -55,41 +55,48 @@ export class FixTransform2790 extends FixTransform {
       return getCommentsOnlyResult(diagnostic);
     }
 
+    let nameEnd;
     if (type.isClass()) {
-      return updateTextWithOptionalClassMember(diagnostic, sourceFile, typeMemberName, typeName);
+      const classMemberDeclaration = findClassMemberDeclaration(
+        sourceFile,
+        typeName,
+        typeMemberName
+      );
+      nameEnd =
+        classMemberDeclaration && (classMemberDeclaration as ts.PropertyDeclaration).name.getEnd();
+    } else {
+      const typeMemberDeclaration = findTypeMemberDeclaration(sourceFile, typeName, typeMemberName);
+      nameEnd =
+        typeMemberDeclaration && (typeMemberDeclaration as ts.PropertySignature).name.getEnd();
     }
-    return updateTextWithOptionalTypeMember(diagnostic, sourceFile, typeMemberName, typeName);
+
+    if (!nameEnd) {
+      return getCommentsOnlyResult(diagnostic);
+    }
+
+    const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
+    return getCodemodResult(sourceFile, updatedText, nameEnd);
   };
 }
 
-function optionalTypeMember(
-  diagnostic: ts.DiagnosticWithLocation,
+function findClassMemberDeclaration(
   sourceFile: ts.SourceFile,
-  declaration: ts.InterfaceDeclaration | ts.TypeAliasDeclaration,
-  typeMemberName: string
-): FixResult {
+  typeName: string,
+  memberName: string
+): ts.PropertyDeclaration | undefined {
   let matchedMember;
-  if (ts.isInterfaceDeclaration(declaration)) {
-    matchedMember = getInterfaceMemberByName(declaration, typeMemberName);
-  } else {
-    matchedMember = getTypeAliasMemberByName(declaration, typeMemberName);
+  const matchedClass = getClassByName(sourceFile, typeName);
+  if (matchedClass) {
+    matchedMember = getClassMemberByName(matchedClass, memberName);
   }
-
-  if (!matchedMember) {
-    return getCommentsOnlyResult(diagnostic);
-  }
-
-  const nameEnd = (matchedMember as ts.PropertySignature).name.getEnd();
-  const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
-  return getCodemodResult(sourceFile, updatedText, nameEnd);
+  return matchedMember as ts.PropertyDeclaration;
 }
 
-function updateTextWithOptionalTypeMember(
-  diagnostic: ts.DiagnosticWithLocation,
+function findTypeMemberDeclaration(
   sourceFile: ts.SourceFile,
-  typeMemberName: string,
-  typeName: string
-): FixResult {
+  typeName: string,
+  memberName: string
+): ts.TypeElement | undefined {
   const matchedInterface: ts.InterfaceDeclaration | undefined = getInterfaceByName(
     sourceFile,
     typeName
@@ -99,42 +106,12 @@ function updateTextWithOptionalTypeMember(
     typeName
   );
 
-  if (matchedInterface) {
-    return optionalTypeMember(diagnostic, sourceFile, matchedInterface, typeMemberName);
-  } else if (matchedTypeAlias) {
-    return optionalTypeMember(diagnostic, sourceFile, matchedTypeAlias, typeMemberName);
-  } else {
-    return getCommentsOnlyResult(diagnostic);
+  const matchedType = matchedInterface || matchedTypeAlias;
+  let matchedMember;
+  if (matchedType && ts.isInterfaceDeclaration(matchedType)) {
+    matchedMember = getInterfaceMemberByName(matchedType, memberName);
+  } else if (matchedType) {
+    matchedMember = getTypeAliasMemberByName(matchedType, memberName);
   }
-}
-
-function optionalClassMember(
-  diagnostic: ts.DiagnosticWithLocation,
-  sourceFile: ts.SourceFile,
-  matchedClass: ts.ClassDeclaration,
-  typeMemberName: string
-): FixResult {
-  const matchedMember = getClassMemberByName(matchedClass, typeMemberName);
-  if (!matchedMember) {
-    return getCommentsOnlyResult(diagnostic);
-  }
-
-  const nameEnd = (matchedMember as ts.PropertyDeclaration).name.getEnd();
-  const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
-  return getCodemodResult(sourceFile, updatedText, nameEnd);
-}
-
-function updateTextWithOptionalClassMember(
-  diagnostic: ts.DiagnosticWithLocation,
-  sourceFile: ts.SourceFile,
-  memberName: string,
-  typeName: string
-): FixResult {
-  const matchedClass: ts.ClassDeclaration | undefined = getClassByName(sourceFile, typeName);
-
-  if (matchedClass) {
-    return optionalClassMember(diagnostic, sourceFile, matchedClass, memberName);
-  } else {
-    return getCommentsOnlyResult(diagnostic);
-  }
+  return matchedMember;
 }
