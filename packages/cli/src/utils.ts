@@ -200,6 +200,6 @@ export async function getLatestTSVersion(build = 'beta'): Promise<string> {
   return stdout;
 }
 
-export async function isValidSemver(input: string): Promise<boolean> {
-  return !valid(input);
+export function isValidSemver(input: string): boolean {
+  return !!valid(input);
 }

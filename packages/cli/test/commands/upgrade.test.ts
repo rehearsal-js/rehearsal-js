@@ -1,22 +1,19 @@
-import { test } from '@oclif/test';
-import { describe } from 'mocha';
-import { expect, assert } from 'chai';
+import { describe, test, expect, afterAll, beforeAll } from 'vitest';
+import { gitDeleteLocalBranch, YARN_PATH, run } from '../test-helpers';
 import { existsSync, readJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
-
 import type { Report } from '@rehearsal/reporter';
-
-import { gitDeleteLocalBranch, YARN_PATH } from '../test-helpers';
-import { Upgrade } from '../../src';
 import { getLatestTSVersion, git } from '../../src/utils';
+import packageJson from '../../package.json';
 
-import execa = require('execa');
+import execa from 'execa';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
+const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeSetup = async (): Promise<void> => {
@@ -28,15 +25,22 @@ const beforeSetup = async (): Promise<void> => {
 
 const afterEachCleanup = async (): Promise<void> => {
   await gitDeleteLocalBranch(WORKING_BRANCH);
-  await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
+};
+
+// Revert to previous TSC version from TEST_TSC_VERSION
+const revertTSCVersion = async (): Promise<void> => {
+  await execa(YARN_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`, '--ignore-scripts']);
   await execa(YARN_PATH, ['install']);
 };
 
-describe('upgrade:command against fixture', async () => {
-  before(beforeSetup);
+afterAll(revertTSCVersion);
 
-  test.stdout().it('WITH autofix', async (ctx) => {
-    await Upgrade.run([
+describe('upgrade:command against fixture', async () => {
+  beforeAll(beforeSetup);
+  afterAll(afterEachCleanup);
+
+  test('WITH autofix', async () => {
+    const result = await run('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
@@ -49,56 +53,54 @@ describe('upgrade:command against fixture', async () => {
     // default is beta unless otherwise specified
     const latestPublishedTSVersion = await getLatestTSVersion();
 
-    expect(ctx.stdout).to.contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(ctx.stdout).to.contain(`Autofix successful: code changes applied`);
-    assert.ok(existsSync(RESULTS_FILEPATH), `result file ${RESULTS_FILEPATH} should exists`);
+    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
+    expect(result.stdout).to.contain(`Autofix successful: code changes applied`);
+    expect(existsSync(RESULTS_FILEPATH)).toBeTruthy;
+
     const report: Report = readJSONSync(RESULTS_FILEPATH);
 
-    assert.isNotEmpty(report);
+    expect(report).toHaveProperty('summary');
 
-    assert.equal(report.summary.projectName, '@rehearsal/cli');
-    assert.equal(report.summary.tsVersion, latestPublishedTSVersion);
-    assert.equal(report.summary.uniqueErrors, 3);
-    assert.equal(report.summary.totalErrors, 28);
-    assert.deepEqual(report.summary.totalErrorsList, {
+    expect(report.summary.projectName).toBe('@rehearsal/cli');
+    expect(report.summary.tsVersion).toBe(latestPublishedTSVersion);
+    expect(report.summary.uniqueErrors).toBe(3);
+    expect(report.summary.totalErrors).toBe(28);
+    expect(report.summary.totalErrorsList).toStrictEqual({
       '2322': 1,
       '2616': 3,
       '6133': 24,
     });
-    assert.equal(report.summary.fixedErrors, 3);
-    assert.deepEqual(report.summary.fixedErrorsList, {
+    expect(report.summary.fixedErrors).toBe(3);
+    expect(report.summary.fixedErrorsList).toStrictEqual({
       '2322': 0,
       '2616': 0,
       '6133': 3,
     });
-    assert.equal(report.summary.files, 3);
-    assert.deepEqual(report.summary.filesList, [
+    expect(report.summary.files).toBe(3);
+    expect(report.summary.filesList).toStrictEqual([
       '/foo/foo.ts',
       '/foo_2/foo_2a.ts',
       '/foo_2/foo_2b.ts',
     ]);
-
-    assert.equal(report.items.length, 28);
+    expect(report.items.length).toBe(28);
 
     const firstFileReportError = report.items[0];
 
-    assert.equal(firstFileReportError.code, 2616);
-    assert.equal(firstFileReportError.category, 'Error');
-    assert.equal(firstFileReportError.fixed, false);
-    assert.equal(firstFileReportError.nodeKind, 'ImportSpecifier');
-    assert.equal(firstFileReportError.nodeText, 'execa');
-    assert.equal(
-      firstFileReportError.message,
+    expect(firstFileReportError.code).toEqual(2616);
+    expect(firstFileReportError.category).toEqual('Error');
+    expect(firstFileReportError.fixed).toEqual(false);
+    expect(firstFileReportError.nodeKind).toEqual('ImportSpecifier');
+    expect(firstFileReportError.nodeText).toEqual('execa');
+    expect(firstFileReportError.message).toEqual(
       `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
     );
-    assert.equal(
-      firstFileReportError.hint,
+    expect(firstFileReportError.hint).toEqual(
       `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
     );
   });
 
-  test.stdout().it('NO autofix', async (ctx) => {
-    await Upgrade.run([
+  test('WITHOUT autofix', async () => {
+    const result = await run('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
@@ -107,14 +109,17 @@ describe('upgrade:command against fixture', async () => {
       FIXTURE_APP_PATH,
     ]);
 
-    expect(ctx.stdout).to.contain(`Autofix successful: ts-expect-error comments added`);
+    expect(result.stdout).toContain(`Autofix successful: ts-expect-error comments added`);
   });
 });
 
 describe('upgrade:command tsc version check', async () => {
-  test.stderr().it(`on typescript invalid tsc_version`, async () => {
+  beforeAll(beforeSetup);
+  afterAll(afterEachCleanup);
+
+  test(`it is on typescript invalid tsc_version`, async () => {
     try {
-      await Upgrade.run(['--tsc_version', '']);
+      await run('upgrade', ['--tsc_version', '']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -122,7 +127,7 @@ describe('upgrade:command tsc version check', async () => {
     }
 
     try {
-      await Upgrade.run(['--tsc_version', '0']);
+      await run('upgrade', ['--tsc_version', '0']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -130,11 +135,12 @@ describe('upgrade:command tsc version check', async () => {
     }
   });
 
-  test.stdout().it(`on typescript version already tested`, async (ctx) => {
+  test(`it is on typescript version already tested`, async () => {
     // this will test the version already installed
-    // the test sandbox should have an older version of tsc installed
-    // during the afterEachCleanup() phase
-    await Upgrade.run([
+    await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
+    await execa(YARN_PATH, ['install']);
+
+    const result = await run('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--tsc_version',
@@ -144,8 +150,8 @@ describe('upgrade:command tsc version check', async () => {
     ]);
 
     // TODO: Fix CLI or this test
-    expect(ctx.stdout).to.contain(
+    expect(result.stdout).toContain(
       `This application is already on the latest version of TypeScript@`
     );
   });
-}).afterEach(afterEachCleanup);
+});

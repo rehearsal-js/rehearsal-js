@@ -1,5 +1,0 @@
-{
-  "extends": "../../.mocharc.json",
-  "file": ["test/setup.ts"],
-  "timeout": 60000
-}

@@ -1,40 +1,6 @@
-import { inspect } from 'util';
-import { test } from 'mocha';
 import { resolve } from 'path';
-
-import { git } from '../src';
-
-import { gitIsRepoDirty } from '../src/utils';
-
-type ArgsOf<T extends (...args: readonly unknown[]) => unknown> = T extends (
-  // tslint:disable-next-line: no-unused
-  ...args: infer Args
-) => unknown
-  ? Readonly<Args>
-  : never;
-
-type TestCaseCallback<Args extends readonly unknown[], Result> = (
-  args: Args,
-  expected: Result
-) => void;
-
-interface TestCase<Args, Result> {
-  args: Args;
-  expected: Result;
-}
-
-export function eachCase<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  T extends (...args: readonly any[]) => any,
-  Args extends readonly unknown[] = ArgsOf<T>,
-  Result = ReturnType<T>
->(cases: TestCase<Args, Result>[], callback: TestCaseCallback<Args, Result>): void {
-  cases.forEach(({ args, expected }) => {
-    test(inspect(args, { compact: true }), () => {
-      callback(args, expected);
-    });
-  });
-}
+import execa from 'execa';
+import { git, gitIsRepoDirty } from '../src/utils';
 
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
 export const YARN_PATH = resolve(VOLTA_HOME, 'bin/yarn');
@@ -45,8 +11,9 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
   // grab the current working branch which should not be the rehearsal-bot branch
   const branch = checkoutBranch || 'master';
 
-  if ((await gitIsRepoDirty()) && current !== 'master') {
-    await git.reset(['--hard']);
+  // only restore files in fixtures
+  if (await gitIsRepoDirty()) {
+    await execa('git', ['restore', '--', resolve(__dirname, './fixtures/app')]);
   }
 
   await git.checkout(branch);
@@ -55,4 +22,18 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
   if (current !== 'master' && current.includes('rehearsal-bot')) {
     await git.deleteLocalBranch(current);
   }
+}
+
+// helper funcion to run a command via ts-node
+// stdout of commands available via ExecaChildProcess.stdout
+export function run(
+  command: string,
+  args: string[],
+  options: execa.Options = {}
+): execa.ExecaChildProcess {
+  const cliPath = resolve(__dirname, `../src/commands/${command}`);
+  // why use ts-node instead of calling bin/rehearsal.js directly?
+  // during the test process there would be yarn install typescript
+  // we need to run build after every install to make sure dist dir is ready to use
+  return execa(YARN_PATH, ['ts-node', cliPath, ...args], options);
 }

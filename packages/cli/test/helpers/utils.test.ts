@@ -1,5 +1,4 @@
-import { assert, expect } from 'chai';
-import { suite } from 'mocha';
+import { describe, test, expect } from 'vitest';
 
 import execa = require('execa');
 
@@ -11,55 +10,51 @@ import {
   isYarnManager,
   sleep,
 } from '../../src/utils';
-import { eachCase } from '../test-helpers';
 
-suite('utils', () => {
-  it('normalizeVersionString', async () => {
-    eachCase<typeof normalizeVersionString>(
-      [
-        {
-          args: ['foo-web_10.2.3'] as const,
-          expected: '10.2.3',
-        },
-        {
-          args: ['foo-web_10.20.30'] as const,
-          expected: '10.20.30',
-        },
-        {
-          args: ['1.2.3'] as const,
-          expected: '1.2.3',
-        },
-      ],
-      (args, expected) => {
-        assert.deepEqual(normalizeVersionString(...args), expected);
-      }
-    );
+describe('utils', () => {
+  describe.each([
+    {
+      args: ['foo-web_10.2.3'] as const,
+      expected: '10.2.3',
+    },
+    {
+      args: ['foo-web_10.20.30'] as const,
+      expected: '10.20.30',
+    },
+    {
+      args: ['1.2.3'] as const,
+      expected: '1.2.3',
+    },
+  ])('normalizeVersionString', ({ args, expected }) => {
+    test('args should be converted to expected version', () => {
+      expect(normalizeVersionString(...args)).toBe(expected);
+    });
   });
 
-  it('determineProjectName()', async () => {
+  test('determineProjectName()', async () => {
     const projectName = await determineProjectName();
-    assert.equal(projectName, '@rehearsal/cli');
+    expect(projectName).toEqual('@rehearsal/cli');
   });
 
-  it('timestamp(true)', async () => {
+  test('timestamp(true)', async () => {
     const start = timestamp(true);
     await sleep(1000);
     const end = timestamp(true);
-    assert.equal(`${start}`.split('.').length, 2);
-    expect(end).to.be.greaterThan(start);
+    expect(`${start}`.split('.').length).equal(2);
+    expect(end).toBeGreaterThan(start);
   });
 
-  it('getPathToBinary()', async () => {
+  test('getPathToBinary()', async () => {
     const tscPath = await getPathToBinary('tsc');
     const { stdout } = await execa(tscPath, ['--version']);
 
-    expect(stdout).to.contain(`Version`);
+    expect(stdout).toContain(`Version`);
   });
 
   // @rehearsal/cli uses yarn
-  it('isYarnManager()', async () => {
+  test('isYarnManager()', async () => {
     const isYarn = await isYarnManager();
 
-    assert.equal(isYarn, true);
+    expect(isYarn).equal(true);
   });
 });
