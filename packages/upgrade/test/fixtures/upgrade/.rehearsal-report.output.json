@@ -78,7 +78,7 @@
       "nodeKind": "Identifier",
       "nodeText": "sleep",
       "nodeLocation": {
-        "start": 52,
+        "start": 50,
         "length": 5,
         "line": 2,
         "character": 9
@@ -104,7 +104,7 @@
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "nodeLocation": {
-        "start": 276,
+        "start": 272,
         "length": 3,
         "line": 7,
         "character": 4
@@ -130,7 +130,7 @@
       "nodeKind": "Identifier",
       "nodeText": "inSeconds",
       "nodeLocation": {
-        "start": 471,
+        "start": 465,
         "length": 9,
         "line": 13,
         "character": 19
@@ -156,7 +156,7 @@
       "nodeKind": "Identifier",
       "nodeText": "foo",
       "nodeLocation": {
-        "start": 702,
+        "start": 696,
         "length": 3,
         "line": 17,
         "character": 4
@@ -182,7 +182,7 @@
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
       "nodeLocation": {
-        "start": 894,
+        "start": 888,
         "length": 9,
         "line": 19,
         "character": 13
@@ -208,7 +208,7 @@
       "nodeKind": "Identifier",
       "nodeText": "b",
       "nodeLocation": {
-        "start": 1059,
+        "start": 1053,
         "length": 1,
         "line": 21,
         "character": 14
@@ -234,7 +234,7 @@
       "nodeKind": "ReturnStatement",
       "nodeText": "return 'a';",
       "nodeLocation": {
-        "start": 1189,
+        "start": 1183,
         "length": 11,
         "line": 23,
         "character": 8
@@ -260,7 +260,7 @@
       "nodeKind": "Identifier",
       "nodeText": "unused",
       "nodeLocation": {
-        "start": 71,
+        "start": 69,
         "length": 6,
         "line": 3,
         "character": 8
@@ -286,7 +286,7 @@
       "nodeKind": "Identifier",
       "nodeText": "unused",
       "nodeLocation": {
-        "start": 73,
+        "start": 71,
         "length": 6,
         "line": 3,
         "character": 10
@@ -312,7 +312,7 @@
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
       "nodeLocation": {
-        "start": 277,
+        "start": 273,
         "length": 18,
         "line": 8,
         "character": 22
@@ -338,7 +338,7 @@
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
       "nodeLocation": {
-        "start": 529,
+        "start": 523,
         "length": 18,
         "line": 13,
         "character": 7
@@ -364,7 +364,7 @@
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeText": "$notExistingVariable",
       "nodeLocation": {
-        "start": 667,
+        "start": 661,
         "length": 20,
         "line": 15,
         "character": 12
@@ -390,7 +390,7 @@
       "nodeKind": "Identifier",
       "nodeText": "NonExistingFragment",
       "nodeLocation": {
-        "start": 1045,
+        "start": 1035,
         "length": 19,
         "line": 21,
         "character": 12
@@ -416,7 +416,7 @@
       "nodeKind": "Identifier",
       "nodeText": "doesNotExist",
       "nodeLocation": {
-        "start": 1263,
+        "start": 1249,
         "length": 12,
         "line": 28,
         "character": 29
@@ -468,7 +468,7 @@
       "nodeKind": "Identifier",
       "nodeText": "doesNotExist",
       "nodeLocation": {
-        "start": 339,
+        "start": 333,
         "length": 12,
         "line": 12,
         "character": 21
@@ -494,7 +494,7 @@
       "nodeKind": "Identifier",
       "nodeText": "doesNotExist",
       "nodeLocation": {
-        "start": 538,
+        "start": 528,
         "length": 12,
         "line": 20,
         "character": 6
@@ -520,7 +520,7 @@
       "nodeKind": "Identifier",
       "nodeText": "doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
       "nodeLocation": {
-        "start": 631,
+        "start": 621,
         "length": 92,
         "line": 22,
         "character": 6

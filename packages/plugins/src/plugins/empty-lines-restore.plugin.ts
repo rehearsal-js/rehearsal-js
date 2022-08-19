@@ -10,7 +10,8 @@ export class EmptyLinesRestorePlugin extends Plugin {
 
     this.logger?.debug(`Plugin 'EmptyLinesRestore' run on ${fileName}`);
 
-    const newText = text.replace(/\/\*:line:\*\//g, '');
+    const newText = text.replace(/^(( |\t)*)\/\/:line:$/gm, '$1');
+
     this.service.setFileText(fileName, newText);
 
     return [fileName];

@@ -10,8 +10,10 @@ export class EmptyLinesPreservePlugin extends Plugin {
 
     this.logger?.debug(`Plugin 'EmptyLinesPreserve' run on ${fileName}`);
 
-    const newText = text.replace(/^( |\t)*$/gm, `/*:line:*/`);
+    const newText = text.replace(/^(( |\t)*)$/gm, `$1//:line:`);
+
     this.service.setFileText(fileName, newText);
+
     return [fileName];
   }
 }
