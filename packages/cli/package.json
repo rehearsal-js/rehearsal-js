@@ -37,6 +37,7 @@
     "@microsoft/api-documenter": "^7.13.68",
     "@rehearsal/reporter": "^0.0.28",
     "@rehearsal/upgrade": "^0.0.28",
+    "@rehearsal/migrate": "^0.0.28",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "execa": "^5.1.1",

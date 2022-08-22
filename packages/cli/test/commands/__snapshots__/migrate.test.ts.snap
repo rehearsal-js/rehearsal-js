@@ -1,0 +1,7 @@
+// Vitest Snapshot v1
+
+exports[`migrate command > single file JS -> TS 1`] = `
+"export function power(foo: number, bar: number) {
+  return Math.pow(foo, bar);
+}"
+`;
