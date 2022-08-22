@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "editorconfig.editorconfig",
+      "esbenp.prettier-vscode"
+    ]
+  },
+  "settings": {
+    "files.exclude": {
+      "**/node_modules/**": true,
+      "**/lib/**": true,
+      "**/dist/**": true
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.formatOnSave": true
+  },
+  "files.associations": {}
+}
