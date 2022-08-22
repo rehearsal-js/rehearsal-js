@@ -35,7 +35,7 @@
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "volta": {
-    "node": "16.13.2",
+    "node": "16.17.0",
     "yarn": "1.22.17"
   }
 }
