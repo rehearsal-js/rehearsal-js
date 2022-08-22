@@ -26,14 +26,17 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
-    "test": "echo TODO;"
+    "test": "vitest --run",
+    "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
     "@rehearsal/service": "^0.0.28",
     "eslint": "^8.11.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.4.1"
+    "@rehearsal/utils": "^0.0.28",
+    "@types/eslint": "^8.4.1",
+    "vitest": "^0.22.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"
