@@ -1,67 +1,182 @@
-import { describe, test, expect, afterAll, beforeAll } from 'vitest';
-import { join, resolve } from 'path';
-import { copySync, rmSync, readdirSync, readFileSync } from 'fs-extra';
+import { describe, test, expect, afterAll, beforeEach } from 'vitest';
+import { resolve } from 'path';
+import fs from 'fs-extra';
 import { run } from '../test-helpers';
 
-import execa from 'execa';
-
 const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
-const SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
-const TMP_DIR = resolve(FIXTURE_APP_DIR, 'tmp');
+const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
+const TEST_TMP_DIR = resolve(FIXTURE_APP_DIR, 'tmp');
 // const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 
-function prepareTmpDir(filename: string): string {
-  rmSync(TMP_DIR, { recursive: true, force: true });
-  copySync(resolve(SRC_DIR, filename), resolve(TMP_DIR, filename));
-  return TMP_DIR;
+function prepareTmpDir(dir: string): string {
+  const srcDir = resolve(TEST_SRC_DIR, dir);
+  const targetDir = resolve(TEST_TMP_DIR, dir);
+  fs.rmSync(TEST_TMP_DIR, { recursive: true, force: true });
+  fs.copySync(srcDir, targetDir);
+  return targetDir;
 }
 
-describe('migrate command', async () => {
-  test('should not do anything for TS file', async () => {
-    const src_dir = prepareTmpDir('no_ops.ts');
-    const result = await run('migrate', [
-      '--src_dir',
-      TMP_DIR,
-      '--file',
-      resolve(TMP_DIR, 'no_ops.ts'),
-      '--report_output',
-      TMP_DIR,
-    ]);
+afterAll(async () => {
+  fs.rmSync(TEST_TMP_DIR, { recursive: true, force: true });
+});
+
+describe('migrate command - tsconfig', async () => {
+  let root = '';
+
+  beforeEach(() => {
+    root = prepareTmpDir('basic');
+  });
+
+  test('Create tsconfig.json if there is nothing', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'index.js']);
+
+    expect(result.stdout).toContain('[SUCCESS] Creating tsconfig.json');
+    expect(fs.readdirSync(root)).toContain('tsconfig.json');
+  });
+
+  test('Error out if tsconfig.json exsits', async () => {
+    // copy a dummy tsconfig to the TMP dir
+    fs.copySync(resolve(FIXTURE_APP_DIR, 'tsconfig.json'), resolve(root, 'tsconfig.json'));
+    const result = await run('migrate', ['--root', root, '--files', 'index.js']);
+
+    expect(result.stderr).toContain(
+      `Please re-run the command with "--skip-config" to use existing tsconfig.json`
+    );
+  });
+
+  test('Do not create tsconfig with --skip-config flag', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'index.js', '-s']);
+
+    expect(result.stdout).toContain(`[SKIPPED] skipping creating tsconfig.json`);
+  });
+});
+
+describe('migrate command - basic', async () => {
+  let root = '';
+
+  beforeEach(() => {
+    root = prepareTmpDir('basic');
+  });
+
+  test('Do nothing for TS file', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'no_ops.ts']);
 
     expect(result.stdout).toContain(`is a .ts file`);
   });
 
-  test('should print additional messages with --verbose', async () => {
-    const src_dir = prepareTmpDir('index.js');
-    const result = await run('migrate', [
-      '--src_dir',
-      TMP_DIR,
-      '--file',
-      resolve(TMP_DIR, 'index.js'),
-      '--report_output',
-      TMP_DIR,
-      '--verbose',
-    ]);
+  test('Print debug messages with verbose', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'index.js', '--verbose']);
 
     expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
   });
 
-  test('single file JS -> TS', async () => {
-    const src_dir = prepareTmpDir('index.js');
-    const result = await run('migrate', [
-      '--src_dir',
-      TMP_DIR,
-      '--file',
-      resolve(TMP_DIR, 'index.js'),
-      '--report_output',
-      TMP_DIR,
-    ]);
-    console.log(result);
+  test('able to migrate single JS file', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'index.js']);
 
     expect(result.stdout).toContain(`Conversion finished.`);
-    expect(readdirSync(TMP_DIR)).toContain('index.ts');
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+    expect(fs.readdirSync(root)).toContain('index.ts');
 
-    const content = readFileSync(resolve(TMP_DIR, 'index.ts'), 'utf-8');
+    const content = fs.readFileSync(resolve(root, 'index.ts'), 'utf-8');
     expect(content).toMatchSnapshot();
+
+    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    expect(config.include).toEqual(['index.ts']);
+  });
+
+  test('able to migrate multiple JS file', async () => {
+    const result = await run('migrate', ['--root', root, '--files', 'index.js,foo.js,bar.js']);
+
+    expect(result.stdout).toContain(`Conversion finished.`);
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+    expect(fs.readdirSync(root)).toContain('index.ts');
+    expect(fs.readdirSync(root)).toContain('foo.ts');
+    expect(fs.readdirSync(root)).toContain('bar.ts');
+
+    const index = fs.readFileSync(resolve(root, 'index.ts'), 'utf-8');
+    const foo = fs.readFileSync(resolve(root, 'index.ts'), 'utf-8');
+    const bar = fs.readFileSync(resolve(root, 'index.ts'), 'utf-8');
+
+    expect(index).toMatchSnapshot();
+    expect(foo).toMatchSnapshot();
+    expect(bar).toMatchSnapshot();
+
+    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    expect(config.include).toEqual(['index.ts', 'foo.ts', 'bar.ts']);
   });
 });
+
+describe('migrate command - glob matching', async () => {
+  let root = '';
+
+  beforeEach(() => {
+    root = prepareTmpDir('glob');
+  });
+
+  test('glob/*.js', async () => {
+    const result = await run('migrate', ['--root', root, '--globs', '*.js']);
+
+    expect(result.stdout).toContain(`Conversion finished.`);
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+
+    // only do migration in top level of glob/
+    expect(fs.readdirSync(root)).toContain('foo.ts');
+    expect(fs.readdirSync(root)).toContain('bar.ts');
+
+    // do nothing in glob/sub_bar
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).not.toContain('sub_bar_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).not.toContain('sub_bar_foo.ts');
+
+    // do nothing in glob/sub_foo
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).not.toContain('sub_foo_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).not.toContain('sub_foo_foo.ts');
+
+    // check tsconfig -> include
+    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    expect(config.include).toEqual(['*.ts']);
+  });
+
+  test('glob/sub_foo/*.js and glob/sub_bar/*.js', async () => {
+    const result = await run('migrate', ['--root', root, '--globs', 'sub_foo/*.js,sub_bar/*.js']);
+
+    expect(result.stdout).toContain(`Conversion finished.`);
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+
+    // do nothing in top level of glob/
+    expect(fs.readdirSync(root)).not.toContain('foo.ts');
+    expect(fs.readdirSync(root)).not.toContain('bar.ts');
+
+    // migarte all js files in glob/sub_bar
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).toContain('sub_bar_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).toContain('sub_bar_foo.ts');
+
+    // migarte all js files in glob/sub_foo
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).toContain('sub_foo_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).toContain('sub_foo_foo.ts');
+
+    // check tsconfig -> include
+    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    expect(config.include).toEqual(['sub_foo/*.ts', 'sub_bar/*.ts']);
+  });
+
+  test('glob/**/*.js', async () => {
+    const result = await run('migrate', ['--root', root, '--globs', '**/*.js']);
+
+    // do migration for all js files in glob/
+    expect(result.stdout).toContain(`Conversion finished.`);
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+
+    expect(fs.readdirSync(root)).toContain('foo.ts');
+    expect(fs.readdirSync(root)).toContain('bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).toContain('sub_bar_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_bar'))).toContain('sub_bar_foo.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).toContain('sub_foo_bar.ts');
+    expect(fs.readdirSync(resolve(root, 'sub_foo'))).toContain('sub_foo_foo.ts');
+
+    // check tsconfig -> include
+    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    expect(config.include).toEqual(['**/*.ts']);
+  });
+});
+
+// TODO: add test for --clean option
