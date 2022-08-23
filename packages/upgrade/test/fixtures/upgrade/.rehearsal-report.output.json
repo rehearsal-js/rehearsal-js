@@ -8,17 +8,24 @@
   "items": [
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 0,
-            "character": 0
-          }
+            "line": 1,
+            "character": 1
+          },
+          "fixed": true,
+          "code": "import fs from 'fs';",
+          "codeFixAction": "delete",
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
         }
-      ],
-      "commentedFiles": [],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'fs' is declared but its value is never read.",
       "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
@@ -34,17 +41,24 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 0,
-            "character": 18
-          }
+            "line": 1,
+            "character": 19
+          },
+          "fixed": true,
+          "code": " parse",
+          "codeFixAction": "delete",
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
         }
-      ],
-      "commentedFiles": [],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'parse' is declared but its value is never read.",
       "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
@@ -60,17 +74,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 2,
-            "character": 9
-          }
+            "line": 3,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "The function 'sleep' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'sleep' is declared but its value is never read.",
       "hint": "The function 'sleep' is never called. Remove the function or use it.",
@@ -86,17 +106,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 7,
-            "character": 4
-          }
+            "line": 8,
+            "character": 5
+          },
+          "fixed": false,
+          "hint": "The variable 'foo' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'foo' is declared but its value is never read.",
       "hint": "The variable 'foo' is never read or used. Remove the variable or use it.",
@@ -112,17 +138,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 13,
-            "character": 19
-          }
+            "line": 14,
+            "character": 20
+          },
+          "fixed": false,
+          "hint": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'inSeconds' is declared but its value is never read.",
       "hint": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it.",
@@ -138,17 +170,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 17,
-            "character": 4
-          }
+            "line": 18,
+            "character": 5
+          },
+          "fixed": false,
+          "hint": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2322,
+      },
+      "errorCode": 2322,
       "category": "Error",
       "message": "Type 'string' is not assignable to type 'number'.",
       "hint": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
@@ -164,17 +202,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 19,
-            "character": 13
-          }
+            "line": 20,
+            "character": 14
+          },
+          "fixed": false,
+          "hint": "The function 'timestamp' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'timestamp' is declared but its value is never read.",
       "hint": "The function 'timestamp' is never called. Remove the function or use it.",
@@ -190,17 +234,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 21,
-            "character": 14
-          }
+            "line": 22,
+            "character": 15
+          },
+          "fixed": false,
+          "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'b' is declared but its value is never read.",
       "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
@@ -216,17 +266,23 @@
     },
     {
       "analysisTarget": "first.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "first.ts": {
           "fileName": "first.ts",
           "location": {
-            "line": 23,
-            "character": 8
-          }
+            "line": 24,
+            "character": 9
+          },
+          "fixed": false,
+          "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2322,
+      },
+      "errorCode": 2322,
       "category": "Error",
       "message": "Type 'string' is not assignable to type 'void'.",
       "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
@@ -242,17 +298,24 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 3,
-            "character": 8
-          }
+            "line": 4,
+            "character": 9
+          },
+          "fixed": true,
+          "code": " unused",
+          "codeFixAction": "delete",
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
         }
-      ],
-      "commentedFiles": [],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'unused' is declared but its value is never read.",
       "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
@@ -268,17 +331,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 3,
-            "character": 10
-          }
+            "line": 4,
+            "character": 11
+          },
+          "fixed": false,
+          "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 6133,
+      },
+      "errorCode": 6133,
       "category": "Error",
       "message": "'unused' is declared but its value is never read.",
       "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
@@ -294,17 +363,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 8,
-            "character": 22
-          }
+            "line": 9,
+            "character": 23
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingElement'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'NonExistingElement'.",
       "hint": "Cannot find name 'NonExistingElement'.",
@@ -320,17 +395,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 13,
-            "character": 7
-          }
+            "line": 14,
+            "character": 8
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingElement'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'NonExistingElement'.",
       "hint": "Cannot find name 'NonExistingElement'.",
@@ -346,17 +427,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 15,
-            "character": 12
-          }
+            "line": 16,
+            "character": 13
+          },
+          "fixed": false,
+          "hint": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2322,
+      },
+      "errorCode": 2322,
       "category": "Error",
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "hint": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'",
@@ -372,17 +459,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 21,
-            "character": 12
-          }
+            "line": 22,
+            "character": 13
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingFragment'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'NonExistingFragment'.",
       "hint": "Cannot find name 'NonExistingFragment'.",
@@ -398,17 +491,23 @@
     },
     {
       "analysisTarget": "react.tsx",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "react.tsx": {
           "fileName": "react.tsx",
           "location": {
-            "line": 28,
-            "character": 29
-          }
+            "line": 29,
+            "character": 30
+          },
+          "fixed": false,
+          "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2322,
+      },
+      "errorCode": 2322,
       "category": "Error",
       "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
       "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
@@ -424,17 +523,23 @@
     },
     {
       "analysisTarget": "second.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "second.ts": {
           "fileName": "second.ts",
           "location": {
-            "line": 1,
-            "character": 9
-          }
+            "line": 2,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'readFileSync'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'readFileSync'.",
       "hint": "Cannot find name 'readFileSync'.",
@@ -450,17 +555,23 @@
     },
     {
       "analysisTarget": "second.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "second.ts": {
           "fileName": "second.ts",
           "location": {
-            "line": 12,
-            "character": 21
-          }
+            "line": 13,
+            "character": 22
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'doesNotExist'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'doesNotExist'.",
       "hint": "Cannot find name 'doesNotExist'.",
@@ -476,17 +587,23 @@
     },
     {
       "analysisTarget": "second.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "second.ts": {
           "fileName": "second.ts",
           "location": {
-            "line": 20,
-            "character": 6
-          }
+            "line": 21,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'doesNotExist'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'doesNotExist'.",
       "hint": "Cannot find name 'doesNotExist'.",
@@ -502,17 +619,23 @@
     },
     {
       "analysisTarget": "second.ts",
-      "fixedFiles": [],
-      "commentedFiles": [
-        {
+      "files": {
+        "second.ts": {
           "fileName": "second.ts",
           "location": {
-            "line": 22,
-            "character": 6
-          }
+            "line": 23,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
         }
-      ],
-      "code": 2304,
+      },
+      "errorCode": 2304,
       "category": "Error",
       "message": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
       "hint": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",

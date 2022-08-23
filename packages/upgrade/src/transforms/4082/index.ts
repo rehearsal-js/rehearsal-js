@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
-import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
@@ -52,7 +52,13 @@ export class FixTransform4082 extends FixTransform {
       `${EXPORT_KEYWORD} `
     );
 
-    return getCodemodResult(sourceFile, updatedText, targetTypeDeclaration.getStart());
+    return getCodemodData(
+      sourceFile,
+      updatedText,
+      targetTypeDeclaration.getStart(),
+      EXPORT_KEYWORD,
+      'add'
+    );
   };
 }
 

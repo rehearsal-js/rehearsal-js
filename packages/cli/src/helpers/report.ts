@@ -18,9 +18,9 @@ export function reportFormatter(report: Report): string {
 
   report.items.forEach((item) => {
     const fixed = item.fixed ? 1 : 0;
-    fixedErrors[item.code] = (fixedErrors[item.code] || 0) + fixed;
+    fixedErrors[item.errorCode] = (fixedErrors[item.errorCode] || 0) + fixed;
     fixedErrorsCounter += fixed;
-    totalErrors[item.code] = (totalErrors[item.code] || 0) + 1;
+    totalErrors[item.errorCode] = (totalErrors[item.errorCode] || 0) + 1;
     totalErrorsCounter += 1;
   });
 

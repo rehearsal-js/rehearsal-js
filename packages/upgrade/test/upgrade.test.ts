@@ -3,8 +3,9 @@ import ts from 'typescript';
 import winston from 'winston';
 import { assert, describe, expect, test } from 'vitest';
 import { resolve } from 'path';
+import { type Location } from 'sarif';
 
-import { Reporter, Report, mdFormatter } from '@rehearsal/reporter';
+import { Reporter, Report, mdFormatter, sarifFormatter } from '@rehearsal/reporter';
 
 import { upgrade } from '../src';
 
@@ -43,7 +44,6 @@ describe('Test upgrade', function () {
 
     expect(report.summary.basePath).toMatch(/upgrade/);
     expect(report.summary.timestamp).toMatch(/\d+/);
-
     assert.deepEqual(report, expectedReport(report.summary.basePath, report.summary.timestamp));
 
     fs.rmSync(jsonReport);
@@ -57,6 +57,14 @@ describe('Test upgrade', function () {
     );
 
     fs.rmSync(mdReport);
+
+    const sarifReport = resolve(basePath, '.rehearsal-report.sarif');
+    reporter.print(sarifReport, sarifFormatter);
+
+    const sarif = JSON.parse(fs.readFileSync(sarifReport).toString());
+    assert.deepEqual(sarif, expectedSarif(basePath));
+
+    fs.rmSync(sarifReport);
 
     cleanupTsFiles(files);
   });
@@ -75,15 +83,51 @@ function expectedReport(basePath: string, timestamp: string): Report {
   report.summary.tsVersion = ts.version;
   report.items.forEach((item) => {
     item.analysisTarget = resolve(basePath, item.analysisTarget);
-    if (item.fixedFiles?.length > 0) {
-      item.fixedFiles.forEach((file) => (file.fileName = resolve(basePath, file.fileName)));
-    }
-    if (item.commentedFiles?.length > 0) {
-      item.commentedFiles.forEach((file) => (file.fileName = resolve(basePath, file.fileName)));
+    if (item.files) {
+      for (const fileKey in item.files) {
+        item.files[fileKey].fileName = resolve(basePath, item.files[fileKey].fileName);
+
+        const newFileKey = resolve(basePath, fileKey);
+        item.files[newFileKey] = item.files[fileKey];
+        delete item.files[fileKey];
+      }
     }
   });
 
   return report;
+}
+
+function expectedSarif(basePath: string): string {
+  const content = fs.readFileSync(resolve(basePath, '.rehearsal-report.output.sarif')).toString();
+  const log = JSON.parse(content);
+
+  const run = log.runs[0];
+  const { artifacts, results } = run;
+
+  for (const artifact of artifacts) {
+    artifact.location.uri = resolve(basePath, artifact.location.uri);
+  }
+
+  for (const result of results) {
+    const { analysisTarget, locations, properties } = result;
+    analysisTarget.uri = resolve(basePath, analysisTarget.uri);
+
+    if (locations.length > 0) {
+      locations.forEach((location: Location) => {
+        location.physicalLocation!.artifactLocation!.uri = resolve(
+          basePath,
+          location!.physicalLocation!.artifactLocation!.uri!
+        );
+      });
+    }
+
+    if (properties.fixes.length > 0) {
+      properties.fixes.forEach((fix: { fileName: string; code: string; codeFixAction: string }) => {
+        fix.fileName = resolve(basePath, fix.fileName);
+      });
+    }
+  }
+  return log;
 }
 
 /**

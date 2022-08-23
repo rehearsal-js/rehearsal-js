@@ -1,0 +1,1 @@
+export { getFilesData } from './utils';
