@@ -23,8 +23,8 @@ type migrateCommandOptions = {
 };
 
 migrateCommand
-  .description('Typescript migration from Javascript')
-  .option('-r, --root <project root>', 'Base dir (root) of your project.')
+  .description('Migrate Javascript project to Typescript')
+  .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
   // TODO: do we still need dirs option, since we alteady have globs?
   // .option(
   //   '-d, --dirs <source directory>',
