@@ -30,9 +30,9 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
+    "@rehearsal/plugins": "^0.0.28",
     "@rehearsal/reporter": "^0.0.28",
     "@rehearsal/service": "^0.0.28",
-    "@rehearsal/plugins": "^0.0.28",
     "@rehearsal/utils": "^0.0.28",
     "commander": "^9.4.0",
     "winston": "^3.6.0"
@@ -42,6 +42,7 @@
     "@types/eslint": "^8.4.1",
     "@types/node": "^18.0.3",
     "@types/react": "^18.0.9",
+    "@types/sarif": "^2.1.4",
     "vitest": "^0.22.1"
   },
   "peerDependencies": {

@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 import { type RehearsalService } from '@rehearsal/service';
 
-import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   insertIntoText,
@@ -69,7 +69,7 @@ export class FixTransform2790 extends FixTransform {
 
     const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
 
-    return getCodemodResult(sourceFile, updatedText, nameEnd);
+    return getCodemodData(sourceFile, updatedText, nameEnd, OPTIONAL_TOKEN, 'add');
   };
 }
 

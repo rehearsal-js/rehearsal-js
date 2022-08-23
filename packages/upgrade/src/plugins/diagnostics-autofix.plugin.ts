@@ -1,12 +1,10 @@
 import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-
-import { FixedFile } from '@rehearsal/plugins';
+import { FixedFile, getFilesData } from '@rehearsal/plugins';
+import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
 
 import { codefixes } from '../transforms';
-
-import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
 
 /**
  * Diagnose issues in the file and applied transforms to fix them
@@ -30,13 +28,15 @@ export class DiagnosticAutofixPlugin extends Plugin {
       const fix = codefixes.getFixForError(diagnostic.code);
 
       const fixedFiles: FixedFile[] = fix?.run(diagnostic, this.service) || [];
-      const commentedFiles: FixedFile[] = [];
       const hint = codefixes.getHint(diagnostic, program, checker, node);
 
-      if (fixedFiles && fixedFiles.length > 0) {
+      let fixed = false;
+
+      if (fixedFiles.length > 0) {
+        fixed = true;
+
         for (const fixedFile of fixedFiles) {
           this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
-          delete fixedFile.updatedText; // ???
           allFixedFiles.add(fixedFile.fileName);
         }
 
@@ -47,15 +47,12 @@ export class DiagnosticAutofixPlugin extends Plugin {
         this.service.setFileText(params.fileName, text);
         allFixedFiles.add(params.fileName);
 
-        commentedFiles.push({
-          fileName: params.fileName,
-          location: ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start),
-        });
-
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       }
 
-      this.reporter?.addItem(diagnostic, fixedFiles, commentedFiles, node, hint);
+      const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
+
+      this.reporter?.addItem(diagnostic, processedFiles, fixed, node, hint);
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);

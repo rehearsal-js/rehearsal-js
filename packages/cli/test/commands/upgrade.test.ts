@@ -86,7 +86,7 @@ describe('upgrade:command against fixture', async () => {
 
     const firstFileReportError = report.items[0];
 
-    expect(firstFileReportError.code).toEqual(2616);
+    expect(firstFileReportError.errorCode).toEqual(2616);
     expect(firstFileReportError.category).toEqual('Error');
     expect(firstFileReportError.fixed).toEqual(false);
     expect(firstFileReportError.nodeKind).toEqual('ImportSpecifier');

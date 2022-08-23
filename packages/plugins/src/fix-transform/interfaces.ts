@@ -1,9 +1,12 @@
 import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
 
+export type CodeFixAction = 'add' | 'delete';
 export interface FixedFile {
   fileName: string;
-  updatedText?: string;
+  updatedText: string;
+  code?: string;
+  codeFixAction?: CodeFixAction;
   location: {
     line: number;
     character: number;

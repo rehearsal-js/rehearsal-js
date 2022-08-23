@@ -33,6 +33,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
+    "@types/sarif": "^2.1.4",
     "vitest": "^0.22.1"
   },
   "peerDependencies": {

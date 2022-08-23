@@ -5,11 +5,31 @@ export type ReportSummary = Record<string, unknown> & {
   timestamp: string;
 };
 
+export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
+export type CodeFixAction = 'add' | 'delete';
+
+export interface Location {
+  line: number;
+  character: number;
+}
+
+export interface ProcessedFile {
+  fileName: string;
+  location: Location;
+  fixed: boolean;
+  code: string | undefined;
+  codeFixAction: CodeFixAction | undefined;
+  hintAdded: boolean;
+  hint: string | undefined;
+  roles: FileRole[];
+}
+
+export type FileCollection = { [fileName: string]: ProcessedFile };
+
 export type ReportItem = {
   analysisTarget: string;
-  fixedFiles: FixedFile[];
-  commentedFiles: FixedFile[];
-  code: number;
+  files: FileCollection;
+  errorCode: number;
   category: string;
   message: string;
   hint?: string;
@@ -29,11 +49,13 @@ export type Report = {
   items: ReportItem[];
 };
 
-export type FixedFile = {
+export interface FixedFile {
   fileName: string;
-  updatedText?: string;
+  updatedText: string;
+  code?: string;
+  codeFixAction?: CodeFixAction;
   location: {
     line: number;
     character: number;
   };
-};
+}

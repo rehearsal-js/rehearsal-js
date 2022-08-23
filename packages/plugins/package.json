@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@rehearsal/utils": "^0.0.28",
+    "@rehearsal/reporter": "^0.0.28",
     "@types/eslint": "^8.4.1",
     "vitest": "^0.22.1"
   },
