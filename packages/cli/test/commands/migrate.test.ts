@@ -6,7 +6,6 @@ import { run } from '../test-helpers';
 const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
 const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
 const TEST_TMP_DIR = resolve(FIXTURE_APP_DIR, 'tmp');
-// const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 
 function prepareTmpDir(dir: string): string {
   const srcDir = resolve(TEST_SRC_DIR, dir);
@@ -103,6 +102,25 @@ describe('migrate command - basic', async () => {
 
     const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
     expect(config.include).toEqual(['index.ts', 'foo.ts', 'bar.ts']);
+  });
+
+  test('able to cleanup old JS filse', async () => {
+    const result = await run('migrate', [
+      '--root',
+      root,
+      '--files',
+      'index.js,foo.js,bar.js',
+      '--clean',
+    ]);
+
+    expect(result.stdout).toContain(`Conversion finished.`);
+    expect(result.stdout).toContain(`[SUCCESS] Migrating JS to TS`);
+    expect(fs.readdirSync(root)).toContain('index.ts');
+    expect(fs.readdirSync(root)).toContain('foo.ts');
+    expect(fs.readdirSync(root)).toContain('bar.ts');
+    expect(fs.readdirSync(root)).not.toContain('index.js');
+    expect(fs.readdirSync(root)).not.toContain('bar.js');
+    expect(fs.readdirSync(root)).not.toContain('foo.js');
   });
 });
 

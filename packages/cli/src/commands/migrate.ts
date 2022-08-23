@@ -107,8 +107,12 @@ migrateCommand
       {
         title: 'Clean up old JS files',
         skip: (ctx): boolean => ctx.skip,
-        task: async () => {
-          // TODO: remove all old js files with --clean
+        task: async (_ctx, task) => {
+          if (options.clean) {
+            cleanJSFiles([...srcFileList, ...srcGlobsFileList]);
+          } else {
+            task.skip('skipping cleanup old JS files.');
+          }
         },
       },
     ]);
@@ -169,4 +173,12 @@ function getMatchedFileList(pattern: string): Promise<Array<string>> {
       resolve(files);
     });
   });
+}
+
+/**
+ * Remove files
+ * @param fileList Array of file paths
+ */
+function cleanJSFiles(fileList: Array<string>): void {
+  fileList.forEach((f) => fs.rmSync(f));
 }
