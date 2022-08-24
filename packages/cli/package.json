@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -35,9 +35,9 @@
   },
   "dependencies": {
     "@microsoft/api-documenter": "^7.13.68",
-    "@rehearsal/migrate": "^0.0.28",
-    "@rehearsal/reporter": "^0.0.28",
-    "@rehearsal/upgrade": "^0.0.28",
+    "@rehearsal/migrate": "^0.0.29",
+    "@rehearsal/reporter": "^0.0.29",
+    "@rehearsal/upgrade": "^0.0.29",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "execa": "^5.1.1",

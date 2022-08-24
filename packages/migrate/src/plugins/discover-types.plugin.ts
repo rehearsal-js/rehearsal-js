@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-import { FixTransform } from '@rehearsal/plugins';
+import { FixTransform, getFilesData } from '@rehearsal/plugins';
 import { findNodeAtPosition } from '@rehearsal/utils';
 import { FixTransform7006 } from '../transforms';
 
@@ -26,8 +26,12 @@ export class DiscoverTypesPlugin extends Plugin {
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
       const fixedFiles = fix.run(diagnostic, this.service);
 
+      let fixed = false;
+
       if (fixedFiles.length > 0) {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
+
+        fixed = true;
 
         for (const fixedFile of fixedFiles) {
           this.service.setFileText(fixedFile.fileName, fixedFile.updatedText || 'ERROR'); // TODO: Handle the case where updatedText does not exist.
@@ -39,7 +43,9 @@ export class DiscoverTypesPlugin extends Plugin {
         );
       }
 
-      this.reporter?.addItem(diagnostic, fixedFiles, [], node);
+      const processedFiles = getFilesData(fixedFiles, diagnostic, '');
+
+      this.reporter?.addItem(diagnostic, processedFiles, fixed, node, '');
 
       // Get updated list of diagnostics
       diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);

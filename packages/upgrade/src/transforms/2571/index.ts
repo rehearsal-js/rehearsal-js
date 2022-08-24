@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixedFile, getCodemodResult } from '@rehearsal/plugins';
+import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   isSourceCodeChanged,
   isVariableOfCatchClause,
@@ -23,7 +23,7 @@ export class FixTransform2571 extends FixTransform {
 
     const hasChanged = isSourceCodeChanged(diagnostic.file.getFullText(), text);
     if (hasChanged) {
-      return getCodemodResult(diagnostic.file, text, diagnostic.start);
+      return getCodemodData(diagnostic.file, text, diagnostic.start);
     }
 
     return [];

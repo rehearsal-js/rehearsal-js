@@ -1,10 +1,10 @@
 import ts from 'typescript';
 import { type RehearsalService } from '@rehearsal/service';
-import { getCodemodResult } from './utils';
-import { type FixedFile, FixTransform as FixTransformI } from './interfaces';
+import { getCodemodData } from './utils';
+import { type FixedFile, FixTransform as FixTransformI, type CodeFixAction } from './interfaces';
 
-export { getCodemodResult };
-export { FixedFile };
+export { getCodemodData };
+export { type FixedFile, CodeFixAction };
 
 export class FixTransform implements FixTransformI {
   /** Function to fix the diagnostic issue */
