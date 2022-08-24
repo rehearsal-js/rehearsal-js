@@ -5,7 +5,7 @@
     {
       "tool": {
         "driver": {
-          "name": "@rehearsal/migrate",
+          "name": "@rehearsal/upgrade",
           "informationUri": "https://github.com/rehearsal-js/rehearsal-js",
           "rules": [
             {
@@ -81,6 +81,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
             "text": "The declaration 'fs' is never read or used. Remove the declaration or use it."
           },
@@ -91,7 +93,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 1,
@@ -108,6 +111,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": true,
             "fixes": [
@@ -123,6 +127,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
             "text": "The declaration 'parse' is never read or used. Remove the declaration or use it."
           },
@@ -133,7 +139,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 1,
@@ -150,6 +157,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": true,
             "fixes": [
@@ -165,6 +173,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The function 'sleep' is never called. Remove the function or use it."
           },
@@ -175,7 +185,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 3,
@@ -190,6 +201,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -199,6 +211,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'foo' is never read or used. Remove the variable or use it."
           },
@@ -209,7 +223,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 8,
@@ -224,6 +239,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -233,6 +249,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it."
           },
@@ -243,7 +261,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 14,
@@ -258,6 +277,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -267,6 +287,8 @@
           "ruleId": "TS2322",
           "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type."
           },
@@ -277,7 +299,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 18,
@@ -292,6 +315,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -301,6 +325,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The function 'timestamp' is never called. Remove the function or use it."
           },
@@ -311,7 +337,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 20,
@@ -326,6 +353,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -335,6 +363,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'b' is never read or used. Remove the variable or use it."
           },
@@ -345,7 +375,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 22,
@@ -360,6 +391,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -369,6 +401,8 @@
           "ruleId": "TS2322",
           "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type."
           },
@@ -379,7 +413,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "first.ts"
+                  "uri": "first.ts",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 24,
@@ -394,6 +429,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -403,6 +439,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
             "text": "The variable 'unused' is never read or used. Remove the variable or use it."
           },
@@ -413,7 +451,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 4,
@@ -430,6 +469,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": true,
             "fixes": [
@@ -445,6 +485,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'unused' is never read or used. Remove the variable or use it."
           },
@@ -455,7 +497,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 4,
@@ -470,6 +513,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -479,6 +523,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingElement'."
           },
@@ -489,7 +535,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 9,
@@ -504,6 +551,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -513,6 +561,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingElement'."
           },
@@ -523,7 +573,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 14,
@@ -538,6 +589,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -547,6 +599,8 @@
           "ruleId": "TS2322",
           "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'"
           },
@@ -557,7 +611,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 16,
@@ -572,6 +627,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -581,6 +637,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingFragment'."
           },
@@ -591,7 +649,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 22,
@@ -606,6 +665,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -615,6 +675,8 @@
           "ruleId": "TS2322",
           "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type."
           },
@@ -625,7 +687,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 29,
@@ -640,6 +703,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -649,6 +713,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'readFileSync'."
           },
@@ -659,7 +725,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "second.ts",
+                  "index": 2
                 },
                 "region": {
                   "startLine": 2,
@@ -674,6 +741,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -683,6 +751,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'doesNotExist'."
           },
@@ -693,7 +763,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "second.ts",
+                  "index": 2
                 },
                 "region": {
                   "startLine": 13,
@@ -708,6 +779,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -717,6 +789,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'doesNotExist'."
           },
@@ -727,7 +801,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "second.ts",
+                  "index": 2
                 },
                 "region": {
                   "startLine": 21,
@@ -742,6 +817,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -751,6 +827,8 @@
           "ruleId": "TS2304",
           "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'."
           },
@@ -761,7 +839,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "second.ts",
+                  "index": 2
                 },
                 "region": {
                   "startLine": 23,
@@ -776,12 +855,18 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
           }
         }
-      ]
+      ],
+      "automationDetails": {
+        "description": {
+          "text": "This is the run of @rehearsal/upgrade on your product against TypeScript 4.7.4 at 8/24/2022, 13:27:17"
+        }
+      }
     }
   ]
 }
