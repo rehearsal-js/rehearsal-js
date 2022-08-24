@@ -1,8 +1,8 @@
-# package-util
+# migration-graph-ember
 
 ## What is this?
 
-A tool for reading and manipulating packages in a project.
+A tool for reading and manipulating packages in an ember.js project.
 
 ## Usage
 

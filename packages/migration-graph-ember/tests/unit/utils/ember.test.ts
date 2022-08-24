@@ -9,7 +9,7 @@ import {
   registerInternalAddonTestFixtures,
   setupTestEnvironment,
   resetInternalAddonTestFixtures,
-} from '../../../src/utils/test-environment';
+} from '../../../src/-private/utils/test-environment';
 
 import {
   isAddon,

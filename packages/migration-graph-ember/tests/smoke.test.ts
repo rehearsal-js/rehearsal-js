@@ -13,7 +13,7 @@ import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,
   setupTestEnvironment,
-} from '../src/utils/test-environment';
+} from '../src/-private/utils/test-environment';
 
 tmp.setGracefulCleanup();
 

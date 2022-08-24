@@ -8,7 +8,7 @@ import {
   registerInternalAddonTestFixtures,
   setupTestEnvironment,
   resetInternalAddonTestFixtures,
-} from '../../../src/utils/test-environment';
+} from '../../../src/-private/utils/test-environment';
 
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
 
