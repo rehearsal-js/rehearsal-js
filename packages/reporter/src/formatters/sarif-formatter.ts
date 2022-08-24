@@ -10,7 +10,7 @@ let artifacts: Artifact[] = [];
 let results: Result[] = [];
 
 export function sarifFormatter(report: Report): string {
-  const run = buildRun(report.items);
+  const run = buildRun(report);
   const log = {
     ...initLog(),
     runs: [run],
@@ -27,10 +27,10 @@ function initLog(): Log {
   };
 }
 
-function buildRun(items: ReportItem[]): Run {
-  const run = initRun();
+function buildRun(report: Report): Run {
+  const run = initRun(report);
 
-  for (const item of items) {
+  for (const item of report.items) {
     const ruleId = `TS${item.errorCode}`;
     rules = addRule(ruleId, item.message, rules);
 
@@ -137,11 +137,15 @@ function addResult(item: ReportItem, results: Result[]): Result[] {
 }
 
 function buildResult(item: ReportItem): Result {
-  const { locations, fixes } = getFilesData(item.files);
+  const { locations, relatedLocations, fixes } = getFilesData(item.files, item.analysisTarget);
+  const baselineState = item.fixed ? 'updated' : 'unchanged';
+  const kind = item.fixed ? 'review' : 'informational';
   return {
     ruleId: `TS${item.errorCode}`,
     ruleIndex: ruleIndexMap && ruleIndexMap[`TS${item.errorCode}`],
     level: levelConverter(item.category),
+    baselineState,
+    kind,
     message: {
       text: item.hint,
     },
@@ -149,6 +153,7 @@ function buildResult(item: ReportItem): Result {
       uri: item.analysisTarget,
     },
     locations,
+    relatedLocations,
     properties: {
       fixed: item.fixed || false,
       fixes,
@@ -156,11 +161,17 @@ function buildResult(item: ReportItem): Result {
   };
 }
 
-function getFilesData(files: FileCollection): PropertyBag {
+function getFilesData(files: FileCollection, entryFileName: string): PropertyBag {
   let locations: Location[] = [];
+  let relatedLocations: Location[] = [];
+
   let fixes: { [key: string]: string | undefined }[] = [];
   Object.values(files).forEach((file) => {
-    locations = [...locations, buildLocation(file)];
+    if (file.fileName === entryFileName) {
+      locations = [...locations, buildLocation(file)];
+    } else {
+      relatedLocations = [...relatedLocations, buildLocation(file)];
+    }
     if (file.fixed) {
       fixes = [
         ...fixes,
@@ -175,15 +186,18 @@ function getFilesData(files: FileCollection): PropertyBag {
 
   return {
     locations,
+    relatedLocations,
     fixes,
   };
 }
 
 function buildLocation(file: ProcessedFile): Location {
+  const index = artifactIndexMap && artifactIndexMap[file.fileName];
   return {
     physicalLocation: {
       artifactLocation: {
         uri: file.fileName,
+        index,
       },
       region: {
         startLine: file.location?.line,
@@ -213,17 +227,26 @@ function levelConverter(category: string): Result.level {
   }
 }
 
-function initRun(): Run {
+function initRun(report: Report): Run {
   return {
     tool: {
       driver: {
-        name: '@rehearsal/migrate',
+        name: '@rehearsal/upgrade',
         informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
         rules: [],
       },
     },
     artifacts: [],
     results: [],
+    automationDetails: {
+      description: {
+        text:
+          'This is the run of @rehearsal/upgrade on your product against TypeScript ' +
+          report.summary.tsVersion +
+          ' at ' +
+          report.summary.timestamp,
+      },
+    },
   };
 }
 
