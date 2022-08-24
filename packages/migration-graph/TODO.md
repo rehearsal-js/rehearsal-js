@@ -11,3 +11,21 @@ Tasks:
 - [ ] Move gernate-tsconfig-paths logic for ember specific packages to `migration-graph-ember`
 - [ ] Setup auto ELR on all ember @types/ember\*
 - [x] In `entrypoint.ts` ensure that resolution algorithm follows:https://www.typescriptlang.org/docs/handbook/module-resolution.html
+
+
+/**
+// milestones
+// 1. baseline
+//  a. fetch internal modules √
+//  b. setup yargs √
+//  c. find all the deps:
+//   1. dependencies √
+//   2. devDependencies √
+//   3. ember-addon.paths √
+//   4. services
+//  d. determine if each has been converted to typescript
+//   1. has a tsconfig √
+//   2. doesn't have any .js files √
+//  e. output
+// 2. tweak input and output
+// 3. csv

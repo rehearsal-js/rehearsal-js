@@ -21,7 +21,8 @@
     "enquirer": "^2",
     "fast-glob": "^3",
     "fs-extra": "^10.1.0",
-    "yargs": "^13"
+    "yargs": "^13",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "fixturify": "^2",
