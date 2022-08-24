@@ -1,0 +1,43 @@
+{
+  "name": "@rehearsal/migration-graph-ember",
+  "version": "0.0.1",
+  "license": "BSD-2-Clause",
+  "scripts": {
+    "prepare": "tsc",
+    "test": "vitest --run"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "@babel/generator": "^7.18.12",
+    "@babel/parser": "^7.18.11",
+    "@babel/traverse": "^7.18.11",
+    "@babel/types": "^7.18.10",
+    "fast-glob": "^3",
+    "find-up": "^5.0.0",
+    "fs-extra": "^10.1.0",
+    "micromatch": "^4",
+    "prettier": "^2.7.0",
+    "resolve-package-path": "^4.0.3",
+    "sort-package-json": "^1"
+  },
+  "devDependencies": {
+    "@types/babel__generator": "^7.6.4",
+    "@types/babel__traverse": "^7.18.0",
+    "@types/micromatch": "^4.0.2",
+    "@types/prettier": "^2.6.3",
+    "@types/tmp": "^0.2.3",
+    "fixturify": "^2",
+    "tmp": "^0.2.1",
+    "typescript": "4.7.2",
+    "vitest": "^0.22.0",
+    "walk-sync": "^2"
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}
