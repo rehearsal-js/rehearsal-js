@@ -6,7 +6,7 @@ import { readJsonSync, existsSync } from 'fs-extra';
  * @param moduleName
  * @returns true if the moduleName is a relative path, otherwise false
  */
-export function isModuleRelative(moduleName: string) {
+export function isModuleRelative(moduleName: string): boolean {
   // moduleName is relative e.g '.', '../', '/'
   return moduleName.startsWith('.') || moduleName.startsWith('../') || moduleName.startsWith('/');
 }
@@ -15,11 +15,11 @@ export function isModuleRelative(moduleName: string) {
  * @param moduleName a string for the module name
  * @returns true if it's a external package e.g. non-relative path
  */
-export function isModuleNonRelative(moduleName: string) {
+export function isModuleNonRelative(moduleName: string): boolean {
   return moduleName.startsWith('@') || !isModuleRelative(moduleName);
 }
 
-export function isDirectoryPackage(someDir: string) {
+export function isDirectoryPackage(someDir: string): boolean {
   return existsSync(join(someDir, 'package.json'));
 }
 
@@ -40,7 +40,7 @@ export function getMainEntrypoint(baseUrl: string): string {
  * @see {@link https://www.typescriptlang.org/docs/handbook/module-resolution.html#node}
  */
 export function resolveRelativeModule(
-  moduleName: string = './index',
+  moduleName = './index',
   { currentDir = '.' }: { currentDir: string }
 ): string {
   // If it's from a package or non-relative, then skip
@@ -50,10 +50,7 @@ export function resolveRelativeModule(
 
   // Ask the file named /root/src/moduleB.js, if it exists.
 
-  let modulePath = join(
-    currentDir,
-    moduleName.includes('.js') ? moduleName : moduleName + '.js'
-  );
+  let modulePath = join(currentDir, moduleName.includes('.js') ? moduleName : moduleName + '.js');
 
   if (existsSync(modulePath)) {
     return modulePath;

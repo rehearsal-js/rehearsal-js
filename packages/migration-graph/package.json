@@ -22,7 +22,8 @@
     "@swc/core": "^1.2.233",
     "fast-glob": "^3",
     "fs-extra": "^10.1.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "debug": "^4.3.4"
   },
   "devDependencies": {
     "fixturify": "^2",

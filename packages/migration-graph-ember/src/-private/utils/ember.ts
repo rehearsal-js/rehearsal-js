@@ -86,13 +86,19 @@ export type ConfigurationObject = any;
  *  module.exports = function('string', [Class].extend({})
  * ```
  */
+
 export function getPackageMainExportConfigFromASTNode(
   node: t.AssignmentExpression
 ): ConfigurationObject | undefined {
   let configurationObject: ConfigurationObject | undefined;
 
-  // !! TODO: Only MemberExpression & ObjectPattern have a property key
-  if (node?.left?.property?.name === 'exports') {
+  // TODO FIX THESE TYPINGS
+  // based on babel parser this node AddignmentExpression should have left.property.name
+  // however the typings from @babel/types show they do not
+  const memberExpression = node.left as t.MemberExpression;
+  const memberIdentifier = memberExpression.property as t.Identifier;
+
+  if (memberIdentifier.name === 'exports') {
     // object case
     // simple object as second param
     if (node.right.type === 'ObjectExpression') {

@@ -1,6 +1,6 @@
 import { PackageNode } from '../src/types';
 
-export function createNodeContent(name: string = 'some-name'): PackageNode {
+export function createNodeContent(name = 'some-name'): PackageNode {
   return {
     key: './',
     pkg: {

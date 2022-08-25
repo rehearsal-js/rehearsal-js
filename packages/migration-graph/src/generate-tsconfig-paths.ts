@@ -18,7 +18,7 @@ const BASE_TS_CONFIG = fs.readFileSync(BASE_TS_CONFIG_PATH);
  * @returns Paths object which maps a package name to a path that the ember ecosystem understands
  */
 function buildPaths(): Paths {
-  let paths: { [key: string]: [string] } = {};
+  const paths: { [key: string]: [string] } = {};
 
   const directoryNames = fs.readdirSync(SOURCE);
   directoryNames.forEach((directoryName: string) => {
@@ -49,10 +49,7 @@ function patchBaseTSConfig(): void {
     {}
   );
 
-  const patchedTSConfig = jsoncParser.applyEdits(
-    BASE_TS_CONFIG.toString(),
-    edits
-  );
+  const patchedTSConfig = jsoncParser.applyEdits(BASE_TS_CONFIG.toString(), edits);
   fs.writeFile(BASE_TS_CONFIG_PATH, patchedTSConfig, 'utf8', (err) => {
     if (err) {
       console.log(err);

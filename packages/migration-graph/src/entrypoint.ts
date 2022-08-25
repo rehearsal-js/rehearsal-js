@@ -1,15 +1,16 @@
-import path from 'path';
+import { dirname } from 'path';
 import swc from '@swc/core';
-import { FileNode } from './types';
-import Graph from './utils/graph';
-import GraphNode from './utils/graph-node';
+
+import type { FileNode } from './types';
+import { Graph } from './utils/graph';
+import { GraphNode } from './utils/graph-node';
 
 import { resolveRelativeModule } from './module-resolution';
 
-export async function createImportGraph(
+export function createImportGraph(
   baseUrl: string,
   entrypoint?: string | undefined
-): Promise<Graph<FileNode>> {
+): Graph<FileNode> {
   const g = new Graph<FileNode>();
 
   let entryFilePath;
@@ -20,7 +21,7 @@ export async function createImportGraph(
     throw new Error(`Unknown error occured: ${e} in file ${baseUrl}.`);
   }
 
-  let queue: GraphNode<FileNode>[] = [];
+  const queue: GraphNode<FileNode>[] = [];
 
   queue.push(g.addNode({ key: entryFilePath, path: entryFilePath, parsed: false }));
 
@@ -37,49 +38,39 @@ export async function createImportGraph(
     }
 
     const source = sourceNode.content.path;
+    const currentDir = dirname(source);
+    const module = swc.parseFileSync(source, { syntax: 'ecmascript' });
 
-    const currentDir = path.dirname(source);
-
-    // parse file contents
-    await swc
-      .parseFile(source, {
-        syntax: 'ecmascript',
-      })
-      .then((module) => {
-        module.body.forEach((m: swc.ModuleItem) => {
-          // console.log(m);
-
-          switch (m.type) {
-            case 'ExportAllDeclaration':
-            case 'ExportNamedDeclaration':
-            case 'ImportDeclaration':
-              if (!m.source) {
-                break;
-              }
-
-              const moduleName = m.source.value;
-
-              let pathToModule;
-
-              try {
-                pathToModule = resolveRelativeModule(moduleName, {
-                  currentDir,
-                });
-              } catch (e) {
-                console.log(`Skip: ${e} in file ${source}.`);
-                break;
-              }
-
-              const destNode = g.addNode({ key: pathToModule, path: pathToModule, parsed: false });
-
-              g.addEdge(sourceNode, destNode);
-
-              queue.push(destNode);
-              break;
+    module.body.forEach((m: swc.ModuleItem) => {
+      switch (m.type) {
+        case 'ExportAllDeclaration':
+        case 'ExportNamedDeclaration':
+        case 'ImportDeclaration':
+          if (!m.source) {
+            break;
           }
-        });
-        sourceNode.content.parsed = true;
-      });
+
+          try {
+            const pathToModule = resolveRelativeModule(m.source.value, {
+              currentDir,
+            });
+            const destNode = g.addNode({
+              key: pathToModule,
+              path: pathToModule,
+              parsed: false,
+            });
+            g.addEdge(sourceNode, destNode);
+            queue.push(destNode);
+          } catch (e) {
+            console.log(`Skip: ${e} in file ${source}.`);
+            break;
+          }
+
+          break;
+      }
+    });
+
+    sourceNode.content.parsed = true;
   }
 
   return g;

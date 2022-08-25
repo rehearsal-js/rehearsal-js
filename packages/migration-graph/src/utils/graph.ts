@@ -1,9 +1,9 @@
 import { UniqueGraphNode } from 'src/types';
-import GraphNode from './graph-node';
+import { GraphNode } from './graph-node';
 
-export default class Graph<Type extends UniqueGraphNode> {
+export class Graph<Type extends UniqueGraphNode> {
   #nodes: Set<GraphNode<Type>>;
-  #registry: Map<String, GraphNode<Type>>;
+  #registry: Map<string, GraphNode<Type>>;
 
   constructor() {
     this.#nodes = new Set();
@@ -36,8 +36,8 @@ export default class Graph<Type extends UniqueGraphNode> {
   }
 
   topSort(): GraphNode<Type>[] {
-    let visited = new Set<GraphNode<Type>>();
-    let stack = new Array<GraphNode<Type>>();
+    const visited = new Set<GraphNode<Type>>();
+    const stack = new Array<GraphNode<Type>>();
 
     Array.from(this.#nodes).forEach((node: GraphNode<Type>) => {
       if (!visited.has(node)) {
@@ -53,7 +53,7 @@ export default class Graph<Type extends UniqueGraphNode> {
     node: GraphNode<Type>,
     visited = new Set<GraphNode<Type>>(),
     stack = new Array<GraphNode<Type>>()
-  ) {
+  ): void {
     visited.add(node);
 
     node.adjacent.forEach((adj) => {

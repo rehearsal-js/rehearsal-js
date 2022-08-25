@@ -1,4 +1,4 @@
-export default class GraphNode<Type> {
+export class GraphNode<Type> {
   // eslint-disable-next-line no-use-before-define
   #parent: GraphNode<Type> | null = null;
 

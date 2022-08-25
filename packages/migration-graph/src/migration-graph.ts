@@ -1,10 +1,10 @@
-import  { relative, resolve } from 'path';
+import { relative, resolve } from 'path';
 import { sync } from 'fast-glob';
 import { getInternalPackages } from '@rehearsal/migration-graph-ember';
 import debug from 'debug';
 
-import Graph from './utils/graph';
-import GraphNode from './utils/graph-node';
+import { Graph } from './utils/graph';
+import { GraphNode } from './utils/graph-node';
 import type { Arguments, Package, PackageNode } from './types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph');
@@ -12,46 +12,44 @@ const ROOT_PATH = process.cwd(); // getMpLocation();
 const EXCLUDED_PACKAGES = ['test-harness'];
 let ARGV: Arguments;
 
+const parser = yargs.options({
+  addons: {
+    describe: 'Comma separated string of the addons to parse (ie. --addons global-utils, ...)',
+    type: 'string',
+  },
+  interactive: {
+    describe: 'Uses interactive mode',
+    alias: 'i',
+    type: 'boolean',
+  },
+  conversionLevel: {
+    describe: "How much of a conversion are we talkin' here?",
+    choices: ['full', 'source-only', 'source-and-tests'],
+    default: 'source-only',
+  },
+  conversionExclusions: {
+    describe:
+      'A comma separated list of glob patterns for things that should NOT be considered for conversion',
+    type: 'string',
+  },
+  includeDupes: {
+    describe: 'Include duplicate entries in the output',
+    type: 'boolean',
+    default: false,
+  },
+  maxDepth: {
+    describe: 'The maximum depth to traverse the dependency graph',
+    type: 'number',
+    default: 100,
+  },
+  output: {
+    describe: 'the format of the output, JSON or DEBUG',
+    type: 'string',
+    default: 'DEBUG',
+  },
+});
 
-const parser = yargs
-  .options({
-    addons: {
-      describe: 'Comma separated string of the addons to parse (ie. --addons global-utils, ...)',
-      type: 'string',
-    },
-    interactive: {
-      describe: 'Uses interactive mode',
-      alias: 'i',
-      type: 'boolean',
-    },
-    conversionLevel: {
-      describe: "How much of a conversion are we talkin' here?",
-      choices: ['full', 'source-only', 'source-and-tests'],
-      default: 'source-only',
-    },
-    conversionExclusions: {
-      describe:
-        'A comma separated list of glob patterns for things that should NOT be considered for conversion',
-      type: 'string',
-    },
-    includeDupes: {
-      describe: 'Include duplicate entries in the output',
-      type: 'boolean',
-      default: false,
-    },
-    maxDepth: {
-      describe: 'The maximum depth to traverse the dependency graph',
-      type: 'number',
-      default: 100,
-    },
-    output: {
-      describe: 'the format of the output, JSON or DEBUG',
-      type: 'string',
-      default: 'DEBUG',
-    },
-  })
-
-function getChoices(addons: { [name: string]: Package }) {
+function getChoices(addons: { [name: string]: Package }): string[] {
   const keys = Object.keys(addons);
   return keys.map((name: string) => {
     const addon: Package = addons[name];
@@ -100,8 +98,6 @@ function createPromptModule() {
     },
   });
 }
-
-
 
 function getExplicitPackageDependencies(pkg: Package): Package[] {
   const { mappingsByAddonName, mappingsByLocation } = getInternalPackages(ROOT_PATH);
@@ -195,8 +191,8 @@ function reportAnalysis(entry: GraphNode<PackageNode>, graph: Graph<PackageNode>
   // debug
 
   if (ARGV.output === 'DEBUG') {
-    let sortedNodes: GraphNode<PackageNode>[] = graph.topSort();
-    let pkgName: string = entry?.content?.pkg.name ?? '';
+    const sortedNodes: GraphNode<PackageNode>[] = graph.topSort();
+    const pkgName: string = entry?.content?.pkg.name ?? '';
 
     console.log(
       `Order of conversion for ${chalk.bold(pkgName)}. ${chalk.red(
@@ -257,7 +253,6 @@ async function getPaths(): Promise<Package[]> {
 
   return Promise.reject(new Error('No paths selected'));
 }
-
 
 export async function getMigrationGraph() {
   const packages = await getPaths();

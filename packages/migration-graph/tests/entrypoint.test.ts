@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { createImportGraph } from '../src/entrypoint';
-import Graph from '../src/utils/graph';
-import GraphNode from '../src/utils/graph-node';
+import { Graph } from '../src/utils/graph';
+import { GraphNode } from '../src/utils/graph-node';
 import tmp from 'tmp';
 import path from 'path';
 import fixturify from 'fixturify';
@@ -9,11 +9,11 @@ import { FileNode } from 'src/types';
 
 tmp.setGracefulCleanup();
 
-function flatten(arr: GraphNode<FileNode>[]) {
+function flatten(arr: GraphNode<FileNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.path);
 }
 
-function stripBaseUrl(arr: string[], baseUrl: string) {
+function stripBaseUrl(arr: string[], baseUrl: string): string[] {
   return arr.map((str: string) => path.relative(baseUrl, str));
 }
 
@@ -231,5 +231,14 @@ describe('createImportGraph', () => {
     const actual = stripBaseUrl(flatten(output.topSort()), tmpDir);
 
     expect(actual).toStrictEqual(['some-dir/not-obvious.js', 'index.js']);
+  });
+
+  test.skip('provide graph for a complex library', async () => {
+    const baseUrl = '/path/to/library'; // replace to
+    const output: Graph<FileNode> = await createImportGraph(baseUrl, './src/index.js');
+
+    console.log(stripBaseUrl(flatten(output.topSort()), baseUrl));
+
+    expect(true).toBe(false);
   });
 });

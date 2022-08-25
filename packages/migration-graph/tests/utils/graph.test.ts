@@ -2,7 +2,7 @@ import { UniqueGraphNode } from 'src/types';
 import { describe, test, expect } from 'vitest';
 import Graph from '../../src/utils/graph';
 
-export function createNode(key: string = 'some-name'): UniqueGraphNode {
+export function createNode(key = 'some-name'): UniqueGraphNode {
   return {
     key,
   };
@@ -30,7 +30,7 @@ describe('graph', () => {
 
   test('should produce a topologicalSort iterator', async () => {
     // Reference https://www.geeksforgeeks.org/topological-sorting/
-    let graph = new Graph<UniqueGraphNode>();
+    const graph = new Graph<UniqueGraphNode>();
 
     const a = graph.addNode(createNode('0'));
     const b = graph.addNode(createNode('1'));

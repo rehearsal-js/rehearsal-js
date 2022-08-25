@@ -1,3 +1,1 @@
-export {
-  getMigrationGraph
-} from './migration-graph';
+export { getMigrationGraph } from './migration-graph';
