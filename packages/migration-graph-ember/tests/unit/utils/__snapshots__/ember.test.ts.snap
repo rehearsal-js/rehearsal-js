@@ -1,5 +1,18 @@
 // Vitest Snapshot v1
 
+exports[`Unit | ember > update and write package data > writePackageAST > should replace double quotes with single-quotes 1`] = `
+"'use strict';
+
+const { name } = require('./package');
+
+module.exports = {
+  name,
+  isDevelopingAddon: () => true,
+  includeTestsInHost: true,
+};
+"
+`;
+
 exports[`Unit | ember > update and write package data > writePackageAST > should replace quotes with single-quotes 1`] = `
 "\\"use strict\\";
 

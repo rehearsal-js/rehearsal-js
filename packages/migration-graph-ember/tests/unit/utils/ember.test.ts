@@ -149,7 +149,7 @@ describe('Unit | ember', () => {
       // Should read the file and validate it exists.
       const modified = readFileSync(packageMainPath, 'utf-8');
       expect(modified).not.toEqual(original);
-      expect(modified).toMatchSnapshot('should replace quotes with single-quotes');
+      expect(modified).toMatchSnapshot('should replace double quotes with single-quotes');
     });
   });
 });

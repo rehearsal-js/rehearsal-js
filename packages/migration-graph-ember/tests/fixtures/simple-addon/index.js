@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const { name } = require('./package');
+const { name } = require("./package");
 
 module.exports = {
   name,

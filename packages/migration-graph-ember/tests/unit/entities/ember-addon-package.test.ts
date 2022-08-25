@@ -118,9 +118,10 @@ describe('Unit | EmberAddonPackage', () => {
       );
       expect(simpleAddon.moduleName, undefined);
       simpleAddon.setModuleName('taco');
-      expect(simpleAddon.moduleName, undefined).to.be('name is unchanged until write happens');
+      expect(simpleAddon.moduleName, undefined);
+
       simpleAddon.writePackageMainToDisk();
-      expect(simpleAddon.moduleName, 'taco').to.be('name is changed after the main is written');
+      expect(simpleAddon.moduleName, 'taco');
     });
 
     test('setModuleName - complex', async () => {
