@@ -1,11 +1,6 @@
-import path from 'path';
-import { Package, PackageOptions } from './package';
+import { resolve, relative } from 'path';
 
-// interface EmberAddonPackageJsonEntry {
-//   configPath?: string;
-//   paths?: Array<string>;
-// }
-
+import { Package, type PackageOptions } from './package';
 import { InternalState } from '../entities/InternalState';
 
 export class EmberPackage extends Package {
@@ -20,9 +15,9 @@ export class EmberPackage extends Package {
     return this.packageJson['ember-addon']?.paths;
   }
 
-  hasAddonPath(packageInstance: Package) {
+  hasAddonPath(packageInstance: Package): string | undefined {
     return this.addonPaths?.find(
-      (addonPath: string) => packageInstance.location === path.resolve(this.path, addonPath)
+      (addonPath: string) => packageInstance.location === resolve(this.path, addonPath)
     );
   }
 
@@ -34,7 +29,7 @@ export class EmberPackage extends Package {
    * @param {EmberAddonPackage} packageInstance The `EmberAddonPackage` instance
    * @return instance of EmberPackage
    */
-  addAddonPath(packageInstance: Package) {
+  addAddonPath(packageInstance: Package): this {
     if (!packageInstance) {
       throw new Error('`packageInstance` must be provided as an argument to `addAddonPath`');
     }
@@ -44,7 +39,7 @@ export class EmberPackage extends Package {
     }
 
     if (!this.hasAddonPath(packageInstance)) {
-      this.addonPaths.push(path.relative(this.path, packageInstance.path));
+      this.addonPaths.push(relative(this.path, packageInstance.path));
     }
 
     return this;
@@ -58,7 +53,7 @@ export class EmberPackage extends Package {
    * @param {EmberAddonPackage} packageInstance The `EmberAddonPackage` instance
    * @return instance of EmberPackage
    */
-  removeAddonPath(packageInstance: Package) {
+  removeAddonPath(packageInstance: Package): this {
     if (!packageInstance) {
       throw new Error('`packageInstance` must be provided as an argument to `removeAddonPath`');
     }
@@ -73,8 +68,8 @@ export class EmberPackage extends Package {
       this.addonPaths.findIndex(
         (addonPath) =>
           // get absolute path of desired package (desiredPackage.location)
-          // /some/path/to/your-app/lib/msg-data === path.resolve('/some/path/to/your-app/lib/msg-overlay', '../lib/msg-data'))
-          packageInstance.location === path.resolve(this.path, addonPath)
+          // /some/path/to/your-app/lib/msg-data === resolve('/some/path/to/your-app/lib/msg-overlay', '../lib/msg-data'))
+          packageInstance.location === resolve(this.path, addonPath)
       ),
       1
     );

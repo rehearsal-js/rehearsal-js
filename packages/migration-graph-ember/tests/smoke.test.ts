@@ -1,33 +1,31 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import fixturify from 'fixturify';
-import path from 'path';
-import tmp from 'tmp';
-import fs from 'fs';
+import { writeSync } from 'fixturify';
+import { resolve, join } from 'path';
+import { setGracefulCleanup, dirSync } from 'tmp';
+import { readFileSync, realpathSync } from 'fs';
 import walkSync from 'walk-sync';
 
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from './fixtures/package-fixtures';
-
 import { getInternalModuleMappings, getExternalModuleMappings } from '../src/index';
-
 import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,
   setupTestEnvironment,
 } from '../src/-private/utils/test-environment';
 
-tmp.setGracefulCleanup();
+setGracefulCleanup();
 
 describe('Smoke Test', () => {
   describe('getInternalModuleMappings', () => {
     let pathToRoot: string;
 
-    function setupInternalAddonFixtures(someTmpDir: string) {
-      fixturify.writeSync(someTmpDir, PACKAGE_FIXTURES);
+    function setupInternalAddonFixtures(someTmpDir: string): void {
+      writeSync(someTmpDir, PACKAGE_FIXTURES);
     }
 
     beforeEach(() => {
       setupTestEnvironment();
-      const { name: someTmpDir } = tmp.dirSync();
+      const { name: someTmpDir } = dirSync();
       pathToRoot = someTmpDir;
       setupInternalAddonFixtures(pathToRoot);
 
@@ -63,11 +61,11 @@ describe('Smoke Test', () => {
       );
 
       expect(simpleAddon.location, `${simpleAddon.name}'s location is correct`).toBe(
-        path.resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
+        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
       );
 
       expect(simpleEngine.location, `${simpleEngine.name}'s location is correct`).toBe(
-        path.resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)
+        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)
       );
     });
 
@@ -86,7 +84,7 @@ describe('Smoke Test', () => {
 
     test('it works correctly workspace packages', () => {
       const { mappingsByAddonName } = getInternalModuleMappings(
-        path.resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER)
+        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER)
       );
 
       const simpleWorkspace =
@@ -107,12 +105,12 @@ describe('Smoke Test', () => {
   });
 
   describe('`getExternalModuleMappings`', () => {
-    function json(jsonObj = {}) {
+    function json(jsonObj = {}): string {
       return JSON.stringify(jsonObj, null, 2);
     }
 
-    function setupExternalAddonFixtures(someDirPath: string) {
-      fixturify.writeSync(someDirPath, {
+    function setupExternalAddonFixtures(someDirPath: string): void {
+      writeSync(someDirPath, {
         'package.json': json({
           name: 'root-package',
           private: true,
@@ -123,8 +121,8 @@ describe('Smoke Test', () => {
         }),
         node_modules: {
           'foo-external-addon': {
-            'index.js': fs.readFileSync(
-              path.join(__dirname, 'fixtures', 'simple-addon', 'index.js'),
+            'index.js': readFileSync(
+              join(__dirname, 'fixtures', 'simple-addon', 'index.js'),
               'utf-8'
             ),
             'package.json': json({
@@ -144,7 +142,7 @@ describe('Smoke Test', () => {
 
     beforeEach(function () {
       setupTestEnvironment();
-      const { name: pathToTmpDir } = tmp.dirSync();
+      const { name: pathToTmpDir } = dirSync();
       pathToRoot = pathToTmpDir;
       setupExternalAddonFixtures(pathToRoot);
 
@@ -174,9 +172,9 @@ describe('Smoke Test', () => {
       ).toEqual(mappingsByLocation[fooExternalAddon.location]);
 
       expect(
-        fs.realpathSync(fooExternalAddon.location),
+        realpathSync(fooExternalAddon.location),
         "`foo-external-addon`'s location is correct"
-      ).toEqual(fs.realpathSync(path.resolve(pathToRoot, 'node_modules', 'foo-external-addon')));
+      ).toEqual(realpathSync(resolve(pathToRoot, 'node_modules', 'foo-external-addon')));
     });
   });
 });

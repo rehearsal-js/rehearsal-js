@@ -6,5 +6,5 @@ export {
   getInternalAddonPackages,
   getModuleMappings,
   getInternalModuleMappings,
-  getExternalModuleMappings
-} from './mappings-container'
+  getExternalModuleMappings,
+} from './mappings-container';

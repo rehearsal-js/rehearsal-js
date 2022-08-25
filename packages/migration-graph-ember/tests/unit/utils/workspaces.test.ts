@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import tmp from 'tmp';
-import fixturify from 'fixturify';
-import path from 'path';
+import { setGracefulCleanup, dirSync } from 'tmp';
+import { writeSync } from 'fixturify';
+import { resolve } from 'path';
 import walkSync from 'walk-sync';
 
 import {
@@ -13,18 +13,18 @@ import {
 import { getWorkspaceGlobs, isWorkspace } from '../../../src/-private/utils/workspace';
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
 
-tmp.setGracefulCleanup();
+setGracefulCleanup();
 
-describe('Unit | workspaces', function (hooks) {
-  function setupAddonFixtures(tmpLocation) {
-    fixturify.writeSync(tmpLocation, PACKAGE_FIXTURES);
+describe('Unit | workspaces', function () {
+  function setupAddonFixtures(tmpLocation): void {
+    writeSync(tmpLocation, PACKAGE_FIXTURES);
   }
 
   let pathToPackage: string;
 
   beforeEach(function () {
     setupTestEnvironment();
-    const { name: tmpLocation } = tmp.dirSync();
+    const { name: tmpLocation } = dirSync();
     pathToPackage = tmpLocation;
     setupAddonFixtures(pathToPackage);
 
@@ -41,27 +41,27 @@ describe('Unit | workspaces', function (hooks) {
     resetInternalAddonTestFixtures();
   });
 
-  test('getWorkspaceGlobs', function (assert) {
+  test('getWorkspaceGlobs', function () {
     expect(
-      getWorkspaceGlobs(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER)
-      ).filter((glob) => glob.includes('packages/*'))
+      getWorkspaceGlobs(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER)).filter(
+        (glob) => glob.includes('packages/*')
+      )
     ).toBeTruthy();
   });
 
-  test('isWorkspace', function (assert) {
+  test('isWorkspace', function () {
     expect(
       isWorkspace(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER),
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER),
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER)
       ),
       `${PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER} is NOT a workspace`
     ).toBe(false);
 
     expect(
       isWorkspace(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER),
-        path.resolve(
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER),
+        resolve(
           pathToPackage,
           PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER,
           'packages',

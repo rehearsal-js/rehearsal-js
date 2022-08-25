@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type PackageContainer = {
-  getInternalPackages?: Function;
-  getExternalPackages?: Function;
-  getExternalAddonPackages?: Function;
-  getInternalAddonPackages?: Function;
-  getAddonPackages?: Function;
-  isWorkspace?: Function;
-  addWorkspaceGlob?: Function;
-  getRootPackage?: Function;
+  getInternalPackages?: (...args: any) => unknown;
+  getExternalPackages?: (...args: any) => unknown;
+  getExternalAddonPackages?: (...args: any) => unknown;
+  getInternalAddonPackages?: (...args: any) => unknown;
+  getAddonPackages?: (...args: any) => unknown;
+  isWorkspace?: (...args: any) => unknown;
+  addWorkspaceGlob?: (...args: any) => unknown;
+  getRootPackage?: (...args: any) => unknown;
 };

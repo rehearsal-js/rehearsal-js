@@ -1,6 +1,7 @@
-import * as t from '@babel/types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import traverse from '@babel/traverse';
 import { EmberPackage } from './ember-package';
+import * as t from '@babel/types';
 
 import {
   getEmberAddonName,
@@ -24,7 +25,7 @@ export class EmberAddonPackage extends EmberPackage {
     this.isAddon = true;
   }
 
-  get isEngine() {
+  get isEngine(): boolean {
     return isEngine(this.path);
   }
 
@@ -32,7 +33,7 @@ export class EmberAddonPackage extends EmberPackage {
    * The name should be the value from packageJson,
    * which is retrieved by Package.name
    */
-  get name() {
+  get name(): any {
     if (!this.internalState.name) {
       this.internalState.name = getNameFromMain(this.path);
     }
@@ -40,28 +41,28 @@ export class EmberAddonPackage extends EmberPackage {
   }
 
   // return the value of the field in the main
-  get moduleName() {
+  get moduleName(): any {
     if (!this.internalState.moduleName) {
       this.internalState.moduleName = getModuleNameFromMain(this.path);
     }
     return this.internalState.moduleName;
   }
 
-  get emberAddonName() {
+  get emberAddonName(): any {
     if (!this.internalState.emberAddonName) {
       this.internalState.emberAddonName = getEmberAddonName(this.path);
     }
     return this.internalState.emberAddonName;
   }
 
-  get packageMain() {
+  get packageMain(): any {
     if (!this.internalState.packageMain) {
       this.internalState.packageMain = getPackageMainFileName(this.path);
     }
     return this.internalState.packageMain;
   }
 
-  getPackageMainAST() {
+  getPackageMainAST(): any {
     if (!this.internalState.packageMainAST) {
       this.internalState.packageMainAST = getPackageMainAST(this.path, this.packageMain);
     }
@@ -71,7 +72,7 @@ export class EmberAddonPackage extends EmberPackage {
   /**
    * Set the name property for the addon in the package main.
    */
-  setAddonName(addonName: string) {
+  setAddonName(addonName: string): this {
     traverse(this.getPackageMainAST(), {
       AssignmentExpression: function ({ node }) {
         const configurationObject = getPackageMainExportConfigFromASTNode(node);
@@ -105,22 +106,10 @@ export class EmberAddonPackage extends EmberPackage {
    * @param moduleName string for generating thie moduleName function
    * @return instance of EmberAddon
    */
-  setModuleName(moduleName: string) {
+  setModuleName(moduleName: string): this {
     traverse(this.getPackageMainAST(), {
       AssignmentExpression({ node }) {
         const configurationObject = getPackageMainExportConfigFromASTNode(node);
-        // const moduleNameFunc = parser.parse(`() => '${moduleName}'`);
-        // const expressionStatment = (moduleNameFunc.program.body[0]) as ExpressionStatement;
-        // const someExpression = expressionStatment.expression;
-        // configurationObject?.properties?.push(
-        //   t.objectProperty(
-        //     t.identifier('moduleName'),
-        //     someExpression
-        //   )
-        // );
-
-        // // TODO: Need to validate this
-
         const moduleNameArrowFunctionExpression = t.arrowFunctionExpression(
           [],
           t.stringLiteral(moduleName)
@@ -136,7 +125,7 @@ export class EmberAddonPackage extends EmberPackage {
   /**
    * Remove the moduleName function from the package main.
    */
-  removeModuleName() {
+  removeModuleName(): this {
     traverse(this.getPackageMainAST(), {
       AssignmentExpression({ node }) {
         const configurationObject = getPackageMainExportConfigFromASTNode(node);
@@ -148,7 +137,7 @@ export class EmberAddonPackage extends EmberPackage {
     return this;
   }
 
-  writePackageMainToDisk() {
+  writePackageMainToDisk(): void {
     writePackageMain(this.path, this.getPackageMainAST(), this.packageMain);
 
     // reset the internal state

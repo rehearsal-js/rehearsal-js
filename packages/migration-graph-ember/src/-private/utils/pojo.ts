@@ -1,4 +1,5 @@
-export function setNestedPropertyValue(obj: any, fields: any, val: any) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function setNestedPropertyValue(obj: any, fields: any, val: any): any {
   let cur = obj;
   const last = fields.pop();
 
@@ -12,7 +13,7 @@ export function setNestedPropertyValue(obj: any, fields: any, val: any) {
   return obj;
 }
 
-export function removeNestedPropertyValue(obj: any, fields: any) {
+export function removeNestedPropertyValue(obj: any, fields: any): any {
   let cur = obj;
   const last = fields.pop();
 

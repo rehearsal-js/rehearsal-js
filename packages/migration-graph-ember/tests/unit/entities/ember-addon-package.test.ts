@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import tmp from 'tmp';
-import fixturify from 'fixturify';
-import path from 'path';
+import { setGracefulCleanup, dirSync } from 'tmp';
+import { writeSync } from 'fixturify';
+import { resolve } from 'path';
 import walkSync from 'walk-sync';
 
 import {
@@ -9,15 +9,13 @@ import {
   setupTestEnvironment,
   resetInternalAddonTestFixtures,
 } from '../../../src/-private/utils/test-environment';
-
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
-
 import { EmberAddonPackage } from '../../../src/-private/entities/ember-addon-package';
 
-tmp.setGracefulCleanup();
+setGracefulCleanup();
 
-function setupAddonFixtures(tmpLocation: string) {
-  fixturify.writeSync(tmpLocation, PACKAGE_FIXTURES);
+function setupAddonFixtures(tmpLocation: string): void {
+  writeSync(tmpLocation, PACKAGE_FIXTURES);
 }
 
 describe('Unit | EmberAddonPackage', () => {
@@ -25,7 +23,7 @@ describe('Unit | EmberAddonPackage', () => {
 
   beforeEach(() => {
     setupTestEnvironment();
-    const { name: tmpLocation } = tmp.dirSync();
+    const { name: tmpLocation } = dirSync();
     pathToPackage = tmpLocation;
     setupAddonFixtures(pathToPackage);
 
@@ -45,46 +43,42 @@ describe('Unit | EmberAddonPackage', () => {
   describe('simple properties', () => {
     test('isEngine', () => {
       expect(
-        new EmberAddonPackage(path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE))
-          .isEngine
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)).isEngine
       ).toBe(true);
       expect(
-        new EmberAddonPackage(path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON))
-          .isEngine,
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)).isEngine,
         'foo is NOT engine'
       ).toBe(false);
     });
 
     test('name', () => {
       expect(
-        new EmberAddonPackage(path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)).name
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)).name
       ).toBe(PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON);
       expect(
-        new EmberAddonPackage(
-          path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME)
-        ).packageName,
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME))
+          .packageName,
         'fetch the name property even if module name is defined'
       ).toBe(PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME);
     });
 
     test('moduleName', () => {
       expect(
-        new EmberAddonPackage(
-          path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME)
-        ).moduleName
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME))
+          .moduleName
       ).toBe(`${PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME`);
     });
 
     test('packageMain', () => {
       expect(
-        new EmberAddonPackage(path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON))
+        new EmberAddonPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON))
           .packageMain,
         'fetch the name of the main file'
       ).toBe('index.js');
 
       expect(
         new EmberAddonPackage(
-          path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
+          resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
         ).packageMain,
         'fetch the name of the main file'
       ).toBe('ember-addon-main.js');
@@ -94,7 +88,7 @@ describe('Unit | EmberAddonPackage', () => {
   describe('package main updates', function () {
     test('setAddonName', async () => {
       const simpleAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
       );
       expect(simpleAddon.name, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON);
       simpleAddon.setAddonName('taco');
@@ -107,7 +101,7 @@ describe('Unit | EmberAddonPackage', () => {
 
     test('setAddonName - more complex packageMain', async () => {
       const simpleAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN)
       );
       expect(simpleAddon.name).toBe(PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN);
       simpleAddon.setAddonName('taco');
@@ -120,18 +114,18 @@ describe('Unit | EmberAddonPackage', () => {
 
     test('setModuleName - simple', async () => {
       const simpleAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
       );
       expect(simpleAddon.moduleName, undefined);
       simpleAddon.setModuleName('taco');
-      expect(simpleAddon.moduleName, undefined, 'name is unchanged until write happens');
+      expect(simpleAddon.moduleName, undefined).to.be('name is unchanged until write happens');
       simpleAddon.writePackageMainToDisk();
-      expect(simpleAddon.moduleName, 'taco', 'name is changed after the main is written');
+      expect(simpleAddon.moduleName, 'taco').to.be('name is changed after the main is written');
     });
 
     test('setModuleName - complex', async () => {
       const complexAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN)
       );
       expect(complexAddon.moduleName).toBe(
         PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN
@@ -146,7 +140,7 @@ describe('Unit | EmberAddonPackage', () => {
 
     test('removeModuleName - simple', async () => {
       const complexAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
       );
       expect(complexAddon.moduleName, PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN);
       complexAddon.removeModuleName();
@@ -159,7 +153,7 @@ describe('Unit | EmberAddonPackage', () => {
 
     test('removeModuleName - complex', async () => {
       const simpleAddon = new EmberAddonPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN)
+        resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN)
       );
       expect(simpleAddon.moduleName, PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN);
       simpleAddon.removeModuleName();

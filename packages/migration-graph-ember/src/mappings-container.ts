@@ -1,4 +1,5 @@
-import path from 'path';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { resolve, dirname } from 'path';
 import fastglob from 'fast-glob';
 import resolvePackagePath from 'resolve-package-path';
 import { readJsonSync } from 'fs-extra';
@@ -11,14 +12,20 @@ import {
   type MappingsByAddonName,
   type MappingsByLocation,
   RootInternalState,
+  MappingsLookup,
 } from './-private/entities/InternalState';
 import type { PackageContainer } from './-private/types/package-container';
 import { isTesting, getInternalAddonTestFixtures } from './-private/utils/test-environment';
 
-function entityFactory(pathToPackage: string, options: {}) {
+type EntityFactoryOptions = {
+  packageContainer: PackageContainer;
+  type?: string;
+};
+
+function entityFactory(pathToPackage: string, options: EntityFactoryOptions): Package {
   let Klass = Package;
   try {
-    const packageData = readJsonSync(path.resolve(pathToPackage, 'package.json'));
+    const packageData = readJsonSync(resolve(pathToPackage, 'package.json'));
     if (packageData?.keywords?.includes('ember-addon')) {
       Klass = EmberAddonPackage;
     } else if (packageData['ember-addon']) {
@@ -63,16 +70,16 @@ class MappingsContainer {
     };
   }
 
-  private clearCache() {
+  private clearCache(): void {
     this.internalState.reset();
   }
 
-  public getRootPackage(pathToRoot: string) {
+  public getRootPackage(pathToRoot: string): Package {
     this.setRootPackage(pathToRoot);
     return this.internalState?.rootPackage;
   }
 
-  public isWorkspace(pathToPackage: string) {
+  public isWorkspace(pathToPackage: string): boolean {
     if (!this.internalState?.rootPackage) {
       throw new Error('Unable check isWorkspace; rootPackage is not defined');
     }
@@ -87,11 +94,11 @@ class MappingsContainer {
     return this;
   }
 
-  private resetInternalState(rootPackage: Package) {
+  private resetInternalState(rootPackage: Package): void {
     this.internalState = new RootInternalState(rootPackage);
   }
 
-  private setRootPackage(pathToRoot: string) {
+  private setRootPackage(pathToRoot: string): void {
     // If the current rootPackage path differs from pathToRoot re-initialize
     if (isTesting() || !this.internalState || this.internalState?.rootPackage.path !== pathToRoot) {
       const rootPackage = entityFactory(pathToRoot, {
@@ -108,7 +115,7 @@ class MappingsContainer {
    * @param {string} pathToRoot - defaults to current working directory
    * @return {object} object with mappingsByName and mappingsByLocation
    */
-  public getExternalPackages(pathToRoot = process.cwd(), clearCache = false) {
+  public getExternalPackages(pathToRoot = process.cwd(), clearCache = false): MappingsLookup {
     if (clearCache) {
       this.clearCache();
     }
@@ -131,7 +138,7 @@ class MappingsContainer {
         })
         .map((pathToPackage) => {
           if (pathToPackage) {
-            return entityFactory(path.dirname(pathToPackage), {
+            return entityFactory(dirname(pathToPackage), {
               type: 'node_modules',
               packageContainer: this.packageContainerInterface,
             });
@@ -160,7 +167,7 @@ class MappingsContainer {
    * @param {string} pathToRoot - defaults to current working directory
    * @return {object} object with mappingsByName and mappingsByLocation
    */
-  public getExternalAddonPackages(pathToRoot = process.cwd(), clearCache = false) {
+  public getExternalAddonPackages(pathToRoot = process.cwd(), clearCache = false): MappingsLookup {
     if (clearCache) {
       this.clearCache();
     }
@@ -182,7 +189,7 @@ class MappingsContainer {
         .filter((maybePathToPackage) => !!maybePathToPackage)
         .map((pathToPackage) => {
           if (pathToPackage) {
-            return entityFactory(path.dirname(pathToPackage), {
+            return entityFactory(dirname(pathToPackage), {
               type: 'node_modules',
               packageContainer: this.packageContainerInterface,
             });
@@ -205,7 +212,7 @@ class MappingsContainer {
     return this.internalState.externalAddonPackages;
   }
 
-  private globInternalPackages(pathToRoot: string) {
+  private globInternalPackages(pathToRoot: string): Package[] {
     const appPackages = fastglob
       .sync(
         [
@@ -222,7 +229,7 @@ class MappingsContainer {
           cwd: pathToRoot,
         }
       )
-      .map((pathToPackage) => path.dirname(pathToPackage))
+      .map((pathToPackage) => dirname(pathToPackage))
       .map((pathToPackage) =>
         entityFactory(pathToPackage, {
           type: 'in-repo',
@@ -240,7 +247,7 @@ class MappingsContainer {
     return [...appPackages, ...fixturePackages];
   }
 
-  public getInternalPackages(pathToRoot = process.cwd(), clearCache = false) {
+  public getInternalPackages(pathToRoot = process.cwd(), clearCache = false): any {
     if (clearCache) {
       this.clearCache();
     }
@@ -275,7 +282,7 @@ class MappingsContainer {
    * @param {string} pathToRoot - defaults to current working directory
    * @return {object} object with mappingsByName and mappingsByLocation
    */
-  public getInternalAddonPackages(pathToRoot = process.cwd(), clearCache = false) {
+  public getInternalAddonPackages(pathToRoot = process.cwd(), clearCache = false): any {
     if (clearCache) {
       this.clearCache();
     }
@@ -309,7 +316,7 @@ class MappingsContainer {
    * @param {string} pathToRoot - defaults to current working directory
    * @return {object} contains internalMappings and externalMappings
    */
-  public getAddonPackages(pathToRoot = process.cwd(), clearCache = false) {
+  public getAddonPackages(pathToRoot = process.cwd(), clearCache = false): any {
     if (clearCache) {
       this.clearCache();
     }
@@ -333,38 +340,38 @@ class MappingsContainer {
   }
 }
 
-export function getRootPackage(pathToRoot: string) {
+export function getRootPackage(pathToRoot: string): Package {
   return MappingsContainer.getInstance(pathToRoot).getRootPackage(pathToRoot);
 }
 
-export function getInternalPackages(pathToRoot: string, clearCache: boolean = false) {
+export function getInternalPackages(pathToRoot: string, clearCache = false): any {
   return MappingsContainer.getInstance(pathToRoot).getInternalPackages(pathToRoot, clearCache);
 }
 
-export function getExternalPackages(pathToRoot: string, clearCache: boolean = false) {
+export function getExternalPackages(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getExternalPackages(pathToRoot, clearCache);
 }
 
-export function getAddonPackages(pathToRoot: string, clearCache: boolean = false) {
+export function getAddonPackages(pathToRoot: string, clearCache = false): any {
   return MappingsContainer.getInstance(pathToRoot).getAddonPackages(pathToRoot, clearCache);
 }
 
-export function getInternalAddonPackages(pathToRoot: string, clearCache: boolean = false) {
+export function getInternalAddonPackages(pathToRoot: string, clearCache = false): any {
   return MappingsContainer.getInstance(pathToRoot).getInternalAddonPackages(pathToRoot, clearCache);
 }
 
-export function getExternalAddonPackages(pathToRoot: string, clearCache: boolean = false) {
+export function getExternalAddonPackages(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getExternalAddonPackages(pathToRoot, clearCache);
 }
 
-export function getModuleMappings(pathToRoot: string, clearCache: boolean = false) {
+export function getModuleMappings(pathToRoot: string, clearCache = false): any {
   return MappingsContainer.getInstance(pathToRoot).getAddonPackages(pathToRoot, clearCache);
 }
 
-export function getInternalModuleMappings(pathToRoot: string, clearCache: boolean = false) {
+export function getInternalModuleMappings(pathToRoot: string, clearCache = false): any {
   return MappingsContainer.getInstance(pathToRoot).getInternalAddonPackages(pathToRoot, clearCache);
 }
 
-export function getExternalModuleMappings(pathToRoot: string, clearCache: boolean = false) {
+export function getExternalModuleMappings(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getExternalAddonPackages(pathToRoot, clearCache);
 }

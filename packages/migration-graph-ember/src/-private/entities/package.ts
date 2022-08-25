@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { readJsonSync } from 'fs-extra';
 import { resolve } from 'path';
+
 import { getWorkspaceGlobs } from '../utils/workspace';
 import { setNestedPropertyValue, removeNestedPropertyValue } from '../utils/pojo';
 import { type PackageContainer } from '../types/package-container';
+import { writePackageJsonSync } from '../utils/ember';
 
 export type PackageJson = Record<string, any>;
 
@@ -55,27 +58,31 @@ export class Package {
     this.#type = _type;
   }
 
+  get type(): string {
+    return this.#type;
+  }
+
   set path(_path) {
     this.#path = _path;
+  }
+
+  get path(): string {
+    return this.#path;
   }
 
   set packageContainer(container) {
     this.#packageContainer = container;
   }
 
-  get type() {
-    return this.#type;
+  get packageContainer(): PackageContainer {
+    return this.#packageContainer;
   }
 
-  get path() {
+  get location(): string {
     return this.#path;
   }
 
-  get location() {
-    return this.#path;
-  }
-
-  get packagePath() {
+  get packagePath(): string {
     return this.#path;
   }
 
@@ -83,11 +90,7 @@ export class Package {
     return this.packageJson?.name;
   }
 
-  get packageContainer() {
-    return this.#packageContainer;
-  }
-
-  get isWorkspace() {
+  get isWorkspace(): any {
     if (!this.#packageContainer || !this.#packageContainer.isWorkspace) {
       throw new Error(
         'Unable to determine if Package.isWorkspace; packageContainer is not defined.'
@@ -100,7 +103,7 @@ export class Package {
   get packageJson(): PackageJson {
     if (this.#pkg == undefined) {
       const packageJsonPath = resolve(this.path, 'package.json');
-      this.#pkg = readJsonSync(packageJsonPath);    
+      this.#pkg = readJsonSync(packageJsonPath);
     }
 
     return this.#pkg;
@@ -141,7 +144,7 @@ export class Package {
     return getWorkspaceGlobs(this.path);
   }
 
-  addWorkspaceGlob(glob: string) {
+  addWorkspaceGlob(glob: string): this {
     const pkg = this.packageJson;
     if (!pkg.workspaces) {
       pkg.workspaces = [];
@@ -150,7 +153,7 @@ export class Package {
     return this;
   }
 
-  setPackageName(name: string) {
+  setPackageName(name: string): this {
     this.packageJson.name = name;
     return this;
   }
@@ -159,19 +162,19 @@ export class Package {
    * ex, addPackageJsonKey('foo.bar.baz', 5) ->
    *  { foo: {bar: {baz: 5}}}
    */
-  addPackageJsonKey(key: string, value = {}) {
+  addPackageJsonKey(key: string, value = {}): this {
     // update the package to add the thing
     setNestedPropertyValue(this.packageJson, key.split('.'), value);
     return this;
   }
 
-  removePackageJsonKey(key: string) {
+  removePackageJsonKey(key: string): this {
     // update the package to remove the thing
     removeNestedPropertyValue(this.packageJson, key.split('.'));
     return this;
   }
 
-  addDependency(packageName: string, version: string) {
+  addDependency(packageName: string, version: string): this {
     // add to dependencies
     let _dependencies = this.dependencies;
     if (!_dependencies) {
@@ -182,13 +185,13 @@ export class Package {
     return this;
   }
 
-  removeDependency(packageName: string) {
+  removeDependency(packageName: string): this {
     // remove from dependencies
     delete this.packageJson?.dependencies?.[packageName];
     return this;
   }
 
-  addDevDependency(packageName: string, version: string) {
+  addDevDependency(packageName: string, version: string): this {
     let _devDependencies = this.devDependencies;
     if (!_devDependencies) {
       this.#pkg.devDependencies = {};
@@ -198,7 +201,7 @@ export class Package {
     return this;
   }
 
-  removeDevDependency(packageName: string) {
+  removeDevDependency(packageName: string): this {
     delete this.devDependencies?.[packageName];
     return this;
   }
@@ -207,9 +210,8 @@ export class Package {
    * Write the packageJson data to disk.
    * Writes a async, unlikes reads which are sync, so consumers of this could write
    * multiple packages at once.
-   * @returns Promise
    */
-  writePackageJsonToDisk() {
-    return writePackageJsonSync(this.path, this.packageJson);
+  writePackageJsonToDisk(): void {
+    writePackageJsonSync(this.path, this.packageJson);
   }
 }

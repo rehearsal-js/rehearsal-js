@@ -1,13 +1,12 @@
-import path from 'path';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import path, { resolve } from 'path';
 import * as t from '@babel/types';
 import * as parser from '@babel/parser';
-import { runPrettier } from './run-prettier';
 import { default as generate } from '@babel/generator';
-import fs from 'fs-extra';
+import { writeJsonSync, readJsonSync, writeFileSync, readFileSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
-import { writeJsonSync, readJsonSync } from 'fs-extra';
-import { resolve } from 'path';
 
+import { runPrettier } from './run-prettier';
 
 /**
  * A package is an addon if the keywords property exists and contains "ember-addon"
@@ -32,7 +31,9 @@ export function isEngine(pathToPackage: string): boolean {
 }
 
 export function getPackageMainFileName(pathToPackage: string): string {
-  const { main, 'ember-addon': emberAddon = {} } = readJsonSync(resolve(pathToPackage, 'package.json'));
+  const { main, 'ember-addon': emberAddon = {} } = readJsonSync(
+    resolve(pathToPackage, 'package.json')
+  );
 
   return emberAddon?.main ?? main ?? 'index.js';
 }
@@ -44,13 +45,13 @@ export function getPackageMainFileName(pathToPackage: string): string {
  * @param {string} pathToPackage - the path to the addon directory
  * @param {string} packageMain - the actual main file (index.js)
  * @param {boolean} clearCache - clear the cache before requiring
- * @returns {string} - the contents of the required file
+ * @returns {any} - the contents of the required file
  */
 export function requirePackageMain(
   pathToPackage: string,
   packageMain: string = getPackageMainFileName(pathToPackage),
   clearCache = true
-) {
+): any {
   // clear the node require cache to make sure the latest version on disk is required (i.e. after new data has been written)
   if (clearCache) {
     delete require.cache[require.resolve(path.resolve(pathToPackage, packageMain))];
@@ -63,14 +64,18 @@ export function getPackageMainAST(
   packageMain = getPackageMainFileName(pathToPackage)
 ): parser.ParseResult<t.File> {
   const somePath = path.resolve(pathToPackage, packageMain);
-  const content = fs.readFileSync(somePath, 'utf-8');
+  const content = readFileSync(somePath, 'utf-8');
   return parser.parse(content, {
     sourceFilename: packageMain,
   });
 }
 
-// export type ConfigurationObject =  Expression | SpreadElement | JSXNamespacedName | ArgumentPlaceholder;
-export type ConfigurationObject = any; // TODO: Fix this
+// export type ConfigurationObject =
+//   | Expression
+//   | SpreadElement
+//   | JSXNamespacedName
+//   | ArgumentPlaceholder;
+export type ConfigurationObject = any;
 
 /**
  * The variations will be hardcoded as they come up, so far there are:
@@ -86,7 +91,7 @@ export function getPackageMainExportConfigFromASTNode(
 ): ConfigurationObject | undefined {
   let configurationObject: ConfigurationObject | undefined;
 
-  /* @ts-ignore */
+  // !! TODO: Only MemberExpression & ObjectPattern have a property key
   if (node?.left?.property?.name === 'exports') {
     // object case
     // simple object as second param
@@ -117,23 +122,22 @@ export function writePackageMain(
   pathToPackage: string,
   packageMainAST: t.Node,
   packageMain = getPackageMainFileName(pathToPackage)
-) {
+): void {
   const somePath = path.resolve(pathToPackage, packageMain);
 
   // if prettier is required, run it on the generated string from generate: ex. prettier(generate())
   const content = runPrettier(generate(packageMainAST).code, packageMain);
 
-  return fs.writeFileSync(somePath, content, {
+  writeFileSync(somePath, content, {
     encoding: 'utf8',
   });
 }
 
-export function getNameFromMain(pathToPackage: string) {
+export function getNameFromMain(pathToPackage: string): any {
   const addonEntryPoint = requirePackageMain(pathToPackage);
-
   const isFunction = typeof addonEntryPoint === 'function';
-
   let name;
+
   if (isFunction) {
     ({ name } = addonEntryPoint.prototype);
   } else {
@@ -142,7 +146,7 @@ export function getNameFromMain(pathToPackage: string) {
   return name;
 }
 
-export function getModuleNameFromMain(pathToPackage: string) {
+export function getModuleNameFromMain(pathToPackage: string): any {
   const addonEntryPoint = requirePackageMain(pathToPackage);
 
   const isFunction = typeof addonEntryPoint === 'function';
@@ -166,13 +170,13 @@ export function getModuleNameFromMain(pathToPackage: string) {
  * @param {string} pathToPackage - the path to the addon directory
  * @returns {string} - the name of the addon
  */
-export function getEmberAddonName(pathToPackage: string) {
+export function getEmberAddonName(pathToPackage: string): any {
   const name = getNameFromMain(pathToPackage);
   const moduleName = getModuleNameFromMain(pathToPackage);
   return moduleName ?? name;
 }
 
-export function writePackageJsonSync(pathToPackage: string, data: {}) {
+export function writePackageJsonSync(pathToPackage: string, data: Record<string, any>): void {
   const sorted: Record<any, any> = sortPackageJson(data);
 
   if ('ember-addon' in sorted) {
@@ -186,5 +190,5 @@ export function writePackageJsonSync(pathToPackage: string, data: {}) {
 
   const pathToPackageJson = path.join(pathToPackage, 'package.json');
 
-  return writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
+  writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
 }

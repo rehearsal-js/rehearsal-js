@@ -1,4 +1,4 @@
-import path from 'path';
+import { dirname, join, sep } from 'path';
 
 type TestFixturePath = string;
 type TestFixturesPaths = TestFixturePath[];
@@ -22,7 +22,7 @@ export function isTesting(): boolean {
  * to improve performance.
  *
  */
-export function setupTestEnvironment() {
+export function setupTestEnvironment(): void {
   process.env.PACKAGE_UTILS_TESTING = 'true';
 }
 
@@ -33,14 +33,14 @@ export function setupTestEnvironment() {
  * @param {Array} testFixtures
  * @returns {Array}
  */
-export function registerInternalAddonTestFixtures(testFixtures: string[] = []) {
+export function registerInternalAddonTestFixtures(testFixtures: string[] = []): void {
   const internalAddonFixtureSet = new Set(INTERNAL_ADDON_TEST_FIXTURES);
 
   INTERNAL_ADDON_TEST_FIXTURES.push(
     ...testFixtures
       .map((pathToFixture: string) => {
-        if (pathToFixture.endsWith(path.join(path.sep, 'package.json'))) {
-          return path.dirname(pathToFixture);
+        if (pathToFixture.endsWith(join(sep, 'package.json'))) {
+          return dirname(pathToFixture);
         }
 
         return pathToFixture;
@@ -52,7 +52,7 @@ export function registerInternalAddonTestFixtures(testFixtures: string[] = []) {
 /**
  * Resets all internal addon test fixtures
  */
-export function resetInternalAddonTestFixtures() {
+export function resetInternalAddonTestFixtures(): void {
   INTERNAL_ADDON_TEST_FIXTURES = [];
 }
 

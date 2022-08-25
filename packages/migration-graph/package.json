@@ -7,7 +7,11 @@
     "migration-graph": "./bin/cli.js"
   },
   "scripts": {
-    "prepare": "tsc",
+    "build": "tsc -b",
+    "lint": "npm-run-all lint:*",
+    "lint:eslint": "eslint --fix . --ext .ts",
+    "lint:tsc-src": "tsc --noEmit",
+    "prepare": "yarn build",
     "test": "vitest --run"
   },
   "dependencies": {
@@ -16,20 +20,18 @@
     "@babel/traverse": "^7.18.2",
     "@rehearsal/migration-graph-ember": "*",
     "@swc/core": "^1.2.233",
-    "@types/yargs": "^17.0.10",
-    "chalk": "^2.4.2",
-    "enquirer": "^2",
     "fast-glob": "^3",
     "fs-extra": "^10.1.0",
-    "yargs": "^13",
     "path": "^0.12.7"
   },
   "devDependencies": {
     "fixturify": "^2",
     "micromatch": "^4",
     "tmp": "^0.2.1",
-    "typescript": "4.7.2",
     "vitest": "^0.22.0"
+  },
+  "peerDependencies": {
+    "typescript": ">4.7"
   },
   "volta": {
     "extends": "../../package.json"

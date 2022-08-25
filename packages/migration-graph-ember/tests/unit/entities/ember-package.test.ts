@@ -1,15 +1,14 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-
-import tmp from 'tmp';
-import fixturify from 'fixturify';
-import path from 'path';
+import { setGracefulCleanup, dirSync } from 'tmp';
+import { writeSync } from 'fixturify';
+import { resolve, relative } from 'path';
 import walkSync from 'walk-sync';
 
 import {
   registerInternalAddonTestFixtures,
   setupTestEnvironment,
   resetInternalAddonTestFixtures,
-} from '../../../dist/src/utils/test-environment';
+} from '../../../src/-private/utils/test-environment';
 
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
 
@@ -19,10 +18,10 @@ import { EmberPackage } from '../../../src/-private/entities/ember-package';
 import { getInternalAddonPackages } from '../../../src/index';
 import { type PackageContainer } from '../../../src/-private/types/package-container';
 
-tmp.setGracefulCleanup();
+setGracefulCleanup();
 
-function setupAddonFixtures(tmpLocation: string) {
-  fixturify.writeSync(tmpLocation, PACKAGE_FIXTURES);
+function setupAddonFixtures(tmpLocation: string): void {
+  writeSync(tmpLocation, PACKAGE_FIXTURES);
 }
 
 describe('Unit | EmberPackage', () => {
@@ -30,7 +29,7 @@ describe('Unit | EmberPackage', () => {
 
   beforeEach(() => {
     setupTestEnvironment();
-    const { name: tmpLocation } = tmp.dirSync();
+    const { name: tmpLocation } = dirSync();
     pathToPackage = tmpLocation;
     setupAddonFixtures(pathToPackage);
 
@@ -48,7 +47,7 @@ describe('Unit | EmberPackage', () => {
   });
 
   describe('addonPaths updates', () => {
-    test('add an addonPath to a local dependency', function (assert) {
+    test('add an addonPath to a local dependency', function () {
       const pathToRoot = pathToPackage;
 
       const addonPackages = getInternalAddonPackages(pathToRoot);
@@ -57,12 +56,9 @@ describe('Unit | EmberPackage', () => {
         getInternalAddonPackages: () => addonPackages,
       };
 
-      const addon = new EmberPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON),
-        {
-          packageContainer,
-        }
-      );
+      const addon = new EmberPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON), {
+        packageContainer,
+      });
 
       expect(addon.addonPaths.length).toBe(0);
 
@@ -71,25 +67,22 @@ describe('Unit | EmberPackage', () => {
       expect(addon.addonPaths.length).toBe(1);
 
       expect(addon.addonPaths[0]).toBe(
-        path.relative(
-          path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON),
-          path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)
+        relative(
+          resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON),
+          resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)
         )
       );
     });
 
-    test('remove an addonPath to a local dependency', function (assert) {
+    test('remove an addonPath to a local dependency', function () {
       const addonPackages = getInternalAddonPackages(pathToPackage);
 
       const packageContainer: PackageContainer = {
         getInternalAddonPackages: () => addonPackages,
       };
-      const addon = new EmberPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE),
-        {
-          packageContainer,
-        }
-      );
+      const addon = new EmberPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE), {
+        packageContainer,
+      });
 
       expect(addon.addonPaths.length).toBe(1);
 
@@ -98,18 +91,15 @@ describe('Unit | EmberPackage', () => {
       expect(addon.addonPaths.length).toBe(0);
     });
 
-    test('does nothing if the desired addon is not part of `ember-addon.paths`', function (assert) {
+    test('does nothing if the desired addon is not part of `ember-addon.paths`', function () {
       const addonPackages = getInternalAddonPackages(pathToPackage);
 
       const packageContainer = {
         getInternalAddonPackages: () => addonPackages,
       };
-      const addon = new EmberPackage(
-        path.resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE),
-        {
-          packageContainer,
-        }
-      );
+      const addon = new EmberPackage(resolve(pathToPackage, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE), {
+        packageContainer,
+      });
 
       expect(addon.addonPaths.length).toBe(1);
 

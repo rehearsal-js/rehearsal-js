@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Package } from './package';
 
 export type AddonName = string;
@@ -21,15 +22,12 @@ export interface InternalState {
 export class InternalState implements InternalState {
   name: any;
   moduleName: any;
-
   emberAddonName: any;
-
   packageMain: any;
   packageMainAST: any;
-  
   externalAddonPackages: ExternalAddonPackages;
   internalAddonPackages: any | undefined;
-  
+
   constructor() {
     this.addonPackages = {};
     this.externalAddonPackages = {
@@ -38,7 +36,7 @@ export class InternalState implements InternalState {
     };
   }
 
-  reset() {
+  reset(): void {
     this.name = undefined;
     this.moduleName = undefined;
     this.emberAddonName = undefined;
@@ -54,7 +52,7 @@ export class InternalState implements InternalState {
 
 export class RootInternalState extends InternalState {
   rootPackage: Package;
-  
+
   constructor(rootPackage: Package) {
     super();
     this.rootPackage = rootPackage;
