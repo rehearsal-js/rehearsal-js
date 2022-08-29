@@ -1,0 +1,43 @@
+/**
+ * This is a file with some comments added in a previous run of rehearsal
+ */
+import fs from 'fs';
+
+/* @ts-ignore @rehearsal TODO TS6133: The function 'unusedFunction' is never called. Remove the function or use it. */
+function unusedFunction(): boolean {
+  return fs.existsSync('.');
+}
+
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'unusedVariable' is never read or used. Remove the variable or use it. */
+let unusedVariable: number;
+
+/* This is just a second comment that should not be touch */
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'unusedConst1' is never read or used. Remove the variable or use it. */
+const unusedConst1 = null;
+
+fs.existsSync('.');
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'unusedConst2' is never read or used. Remove the variable or use it. */
+const unusedConst2 = null;
+
+fs.existsSync('.');
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'unusedConst3' is never read or used. Remove the variable or use it. */
+const unusedConst3 = null;
+
+fs.existsSync('@rehearsal');
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'unusedConstWithoutCommentButWithRehearsalTagAbove' is never read or used. Remove the variable or use it. */
+const unusedConstWithoutCommentButWithRehearsalTagAbove = null;
+
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'resultValue' is never read or used. Remove the variable or use it. */
+const resultValue = something
+  ? /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+    missingVar
+  : /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
+    missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
+
+// The next two cases has to be fixed
+try {
+  console.log('success');
+} catch (e) {
+  console.log((e as Error).message);
+  console.log((e as any).notErrorMember);
+}
