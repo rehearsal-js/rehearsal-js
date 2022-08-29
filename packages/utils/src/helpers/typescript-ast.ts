@@ -91,7 +91,7 @@ export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
 /**
  * Checks if the node is the part of JSX Text (Element or Fragment)
  */
-export function isJsxTextNode(node: ts.Node): boolean {
+export function isNodeInsideJsx(node: ts.Node): boolean {
   const visit = (node: ts.Node): boolean => {
     if (node === undefined || ts.isSourceFile(node)) {
       return false;

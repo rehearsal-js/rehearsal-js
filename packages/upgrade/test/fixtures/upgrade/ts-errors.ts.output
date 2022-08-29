@@ -1,0 +1,66 @@
+import { resolve } from 'path';
+
+/* Existing comment */
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'thisConstant' is never read or used. Remove the variable or use it. */
+const thisConstant = 'is never read';
+
+/* @ts-ignore @rehearsal TODO TS6133: The variable 'thisVariable' is never read or used. Remove the variable or use it. */
+let thisVariable: number; // is never read
+
+/* @ts-ignore @rehearsal TODO TS6133: The function 'thisFunctionIsNeverRead' is never called. Remove the function or use it. */
+function thisFunctionIsNeverRead(): void {
+  return;
+}
+
+export function usesMissingFunction(): void {
+  /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingFunction'. */
+  return missingFunction();
+}
+
+export function usesMissingVariable(): boolean {
+  const something = true;
+  const existingVar = true;
+
+  /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+  return something ? missingVar : existingVar;
+}
+
+export function usesMissingVarWithLongName(): boolean {
+  const something = true;
+
+  return something
+    ? /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+      missingVar
+    : /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
+      missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
+}
+
+/* @ts-ignore @rehearsal TODO TS6133: The function 'notProperlyFormatted' is never called. Remove the function or use it. */
+function notProperlyFormatted(file: string): string {
+  /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'doSomething'. */
+  return doSomething(file);
+}
+
+/**
+ * Existing multiline comment
+ */
+/* @ts-ignore @rehearsal TODO TS6133: The function 'thisFunctionIsACompleteMess' is never called. Remove the function or use it. */
+function thisFunctionIsACompleteMess(inSeconds = false): string {
+  // Existing comment
+  const resolved = resolve('a');
+  /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'foo'. */
+  foo = '6';
+  /* @ts-ignore @rehearsal TODO TS6133: The function 'timestamp' is never called. Remove the function or use it. */
+  function timestamp(inMinutes = false): void {
+    /* @ts-ignore @rehearsal TODO TS6133: The variable 'b' is never read or used. Remove the variable or use it. */
+    const b = null;
+    /* @ts-ignore @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
+    return 'a';
+  }
+
+  return resolved;
+}
+
+// The next function call is not properly formatted
+/* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'timestamp'. */
+timestamp();

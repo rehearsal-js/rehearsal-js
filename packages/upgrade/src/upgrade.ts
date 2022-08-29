@@ -4,13 +4,14 @@ import { dirname, resolve } from 'path';
 
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
-
 import {
-  DiagnosticAutofixPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
-} from './plugins';
+  ReRehearsePlugin,
+} from '@rehearsal/plugins';
+
+import { DiagnosticAutofixPlugin } from './plugins';
 
 export type UpgradeInput = {
   basePath: string;
@@ -35,6 +36,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const logger = input.logger;
 
   const plugins = [
+    ReRehearsePlugin,
     LintPlugin,
     EmptyLinesPreservePlugin,
     DiagnosticAutofixPlugin,

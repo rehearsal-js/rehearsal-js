@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 import { FixedFile, getFilesData } from '@rehearsal/plugins';
-import { findNodeAtPosition, isJsxTextNode } from '@rehearsal/utils';
+import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
 
 import { codefixes } from '../transforms';
 
@@ -11,30 +11,35 @@ import { codefixes } from '../transforms';
  */
 export class DiagnosticAutofixPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
+    const commentTag = '@rehearsal';
+
     const { fileName } = params;
-    let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
+    let diagnostics = this.getDiagnostics(fileName, commentTag);
     let tries = diagnostics.length + 1;
 
     this.logger?.debug(`Plugin 'DiagnosticAutofix' run on ${fileName}`);
 
     const allFixedFiles: Set<string> = new Set();
     while (diagnostics.length > 0 && tries-- > 0) {
-      // TODO: Wrap the next 4 const into DiagnosticContext
+      // TODO: Wrap the next 5 const into DiagnosticContext
       const diagnostic = diagnostics.shift()!;
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-      const program = this.service.getLanguageService().getProgram()!;
+      const service = this.service.getLanguageService();
+      const program = service.getProgram()!;
       const checker = program.getTypeChecker();
+
+      if (!node) {
+        continue;
+      }
 
       const fix = codefixes.getFixForError(diagnostic.code);
 
       const fixedFiles: FixedFile[] = fix?.run(diagnostic, this.service) || [];
       const hint = codefixes.getHint(diagnostic, program, checker, node);
 
-      let fixed = false;
+      const fixed = fixedFiles.length > 0;
 
-      if (fixedFiles.length > 0) {
-        fixed = true;
-
+      if (fixed) {
         for (const fixedFile of fixedFiles) {
           this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
           allFixedFiles.add(fixedFile.fileName);
@@ -43,7 +48,7 @@ export class DiagnosticAutofixPlugin extends Plugin {
         this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
       } else {
         // Get a hint message in case we didn't modify any files (codefix was not applied)
-        const text = this.addHintComment(diagnostic, hint);
+        const text = this.addHintComment(diagnostic, hint, commentTag);
         this.service.setFileText(params.fileName, text);
         allFixedFiles.add(params.fileName);
 
@@ -55,16 +60,77 @@ export class DiagnosticAutofixPlugin extends Plugin {
       this.reporter?.addItem(diagnostic, processedFiles, fixed, node, hint);
 
       // Get updated list of diagnostics
-      diagnostics = this.service.getSemanticDiagnosticsWithLocation(params.fileName);
+      diagnostics = this.getDiagnostics(params.fileName, commentTag);
     }
 
     return Array.from(allFixedFiles);
   }
 
+  getDiagnostics(fileName: string, tag: string): ts.DiagnosticWithLocation[] {
+    return this.service
+      .getSemanticDiagnosticsWithLocation(fileName)
+      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)); // Except diagnostics with comment
+  }
+
   /**
-   * Builds and adds a hint @ts-ignore comment above the affected node
+   * Tries to find a `@rehearsal` on the first non-empty line above the affected node
+   * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
    */
-  addHintComment(diagnostic: ts.DiagnosticWithLocation, hint: string): string {
+  getHintComment(diagnostic: ts.DiagnosticWithLocation, tag: string): string | undefined {
+    // Search for a position to add comment - the first element at the line with affected node
+    const sourceFile = diagnostic.file;
+    const lineWithNode = ts.getLineAndCharacterOfPosition(sourceFile, diagnostic.start).line;
+
+    if (lineWithNode === 0) {
+      return undefined;
+    }
+
+    // Search for the first non-empty line above the node
+    let lineAbove = lineWithNode - 1;
+    let lineAboveText = '';
+    let lineAboveStart = 0;
+
+    do {
+      lineAboveStart = sourceFile.getPositionOfLineAndCharacter(lineAbove, 0);
+      const lineAboveEnd = sourceFile.getLineEndOfPosition(lineAboveStart);
+
+      lineAboveText = sourceFile.getFullText().substring(lineAboveStart, lineAboveEnd).trim();
+      // Trim all empty spaces including `//:line:` hack
+      lineAboveText = lineAboveText.replace(/^\s*(\/\/:line:)?$/gm, '');
+
+      lineAbove -= 1;
+    } while (lineAbove > 0 && lineAboveText === '');
+
+    // Check if line contains `@rehearsal` tag
+    const tagIndex = lineAboveText.indexOf(tag);
+
+    if (tagIndex === -1) {
+      return undefined;
+    }
+
+    const tagStart = lineAboveStart + tagIndex;
+
+    // Make sure the tag within a comment (not a part of string value)
+    const commentSpan = this.service
+      .getLanguageService()
+      .getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
+
+    if (commentSpan === undefined) {
+      return undefined;
+    }
+
+    // Get a text after tag till the end of comment
+    return sourceFile
+      .getFullText()
+      .substring(tagStart + tag.length, commentSpan.start + commentSpan.length) // grab `@rehearsal ... */`
+      .replace(/\*\/(})?$/gm, '') // remove */ or */} from the end
+      .trim();
+  }
+
+  /**
+   * Builds and adds a `@rehearsal` comment above the affected node
+   */
+  addHintComment(diagnostic: ts.DiagnosticWithLocation, hint: string, tag: string): string {
     // Search for a position to add comment - the first element at the line with affected node
     const line = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
     const positionToAddComment = ts.getPositionOfLineAndCharacter(diagnostic.file, line, 0);
@@ -72,8 +138,8 @@ export class DiagnosticAutofixPlugin extends Plugin {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
 
     // TODO: Pass a comment template in config
-    let comment = `@ts-ignore @rehearsal TODO TS${diagnostic.code}: ${hint}`;
-    comment = isJsxTextNode(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
+    let comment = `@ts-ignore ${tag} TODO TS${diagnostic.code}: ${hint}`;
+    comment = isNodeInsideJsx(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
 
     const text = diagnostic.file.getFullText();
 

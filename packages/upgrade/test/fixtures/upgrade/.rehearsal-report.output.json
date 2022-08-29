@@ -7,274 +7,145 @@
   },
   "items": [
     {
-      "analysisTarget": "first.ts",
+      "analysisTarget": "react-processed.tsx",
       "files": {
-        "first.ts": {
-          "fileName": "first.ts",
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
           "location": {
-            "line": 1,
-            "character": 1
-          },
-          "fixed": true,
-          "code": "import fs from 'fs';",
-          "codeFixAction": "delete",
-          "hintAdded": false,
-          "roles": [
-            "analysisTarget",
-            "modified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'fs' is declared but its value is never read.",
-      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
-      "fixed": true,
-      "nodeKind": "ImportDeclaration",
-      "nodeText": "import fs from 'fs';",
-      "nodeLocation": {
-        "start": 0,
-        "length": 20,
-        "line": 0,
-        "character": 0
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 1,
-            "character": 19
-          },
-          "fixed": true,
-          "code": " parse",
-          "codeFixAction": "delete",
-          "hintAdded": false,
-          "roles": [
-            "analysisTarget",
-            "modified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'parse' is declared but its value is never read.",
-      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
-      "fixed": true,
-      "nodeKind": "ImportSpecifier",
-      "nodeText": "parse",
-      "nodeLocation": {
-        "start": 18,
-        "length": 5,
-        "line": 0,
-        "character": 18
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 3,
-            "character": 10
-          },
-          "fixed": false,
-          "hint": "The function 'sleep' is never called. Remove the function or use it.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'sleep' is declared but its value is never read.",
-      "hint": "The function 'sleep' is never called. Remove the function or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "sleep",
-      "nodeLocation": {
-        "start": 50,
-        "length": 5,
-        "line": 2,
-        "character": 9
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 8,
-            "character": 5
-          },
-          "fixed": false,
-          "hint": "The variable 'foo' is never read or used. Remove the variable or use it.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'foo' is declared but its value is never read.",
-      "hint": "The variable 'foo' is never read or used. Remove the variable or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "foo",
-      "nodeLocation": {
-        "start": 272,
-        "length": 3,
-        "line": 7,
-        "character": 4
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 14,
-            "character": 20
-          },
-          "fixed": false,
-          "hint": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'inSeconds' is declared but its value is never read.",
-      "hint": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "inSeconds",
-      "nodeLocation": {
-        "start": 465,
-        "length": 9,
-        "line": 13,
-        "character": 19
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 18,
-            "character": 5
-          },
-          "fixed": false,
-          "hint": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 2322,
-      "category": "Error",
-      "message": "Type 'string' is not assignable to type 'number'.",
-      "hint": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "foo",
-      "nodeLocation": {
-        "start": 696,
-        "length": 3,
-        "line": 17,
-        "character": 4
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 20,
-            "character": 14
-          },
-          "fixed": false,
-          "hint": "The function 'timestamp' is never called. Remove the function or use it.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'timestamp' is declared but its value is never read.",
-      "hint": "The function 'timestamp' is never called. Remove the function or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "timestamp",
-      "nodeLocation": {
-        "start": 888,
-        "length": 9,
-        "line": 19,
-        "character": 13
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 22,
-            "character": 15
-          },
-          "fixed": false,
-          "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
-          "hintAdded": true,
-          "roles": [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
-      "errorCode": 6133,
-      "category": "Error",
-      "message": "'b' is declared but its value is never read.",
-      "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "b",
-      "nodeLocation": {
-        "start": 1053,
-        "length": 1,
-        "line": 21,
-        "character": 14
-      }
-    },
-    {
-      "analysisTarget": "first.ts",
-      "files": {
-        "first.ts": {
-          "fileName": "first.ts",
-          "location": {
-            "line": 24,
+            "line": 4,
             "character": 9
           },
+          "fixed": true,
+          "code": " unused",
+          "codeFixAction": "delete",
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unused' is declared but its value is never read.",
+      "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "unused",
+      "nodeLocation": {
+        "start": 69,
+        "length": 6,
+        "line": 3,
+        "character": 8
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 4,
+            "character": 11
+          },
           "fixed": false,
-          "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+          "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unused' is declared but its value is never read.",
+      "hint": "The variable 'unused' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unused",
+      "nodeLocation": {
+        "start": 71,
+        "length": 6,
+        "line": 3,
+        "character": 10
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 9,
+            "character": 23
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingElement'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'NonExistingElement'.",
+      "hint": "Cannot find name 'NonExistingElement'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "NonExistingElement",
+      "nodeLocation": {
+        "start": 273,
+        "length": 18,
+        "line": 8,
+        "character": 22
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 15,
+            "character": 8
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingElement'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'NonExistingElement'.",
+      "hint": "Cannot find name 'NonExistingElement'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "NonExistingElement",
+      "nodeLocation": {
+        "start": 530,
+        "length": 18,
+        "line": 14,
+        "character": 7
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 18,
+            "character": 13
+          },
+          "fixed": false,
+          "hint": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'",
           "hintAdded": true,
           "roles": [
             "analysisTarget",
@@ -284,16 +155,80 @@
       },
       "errorCode": 2322,
       "category": "Error",
-      "message": "Type 'string' is not assignable to type 'void'.",
-      "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+      "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
+      "hint": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'",
       "fixed": false,
-      "nodeKind": "ReturnStatement",
-      "nodeText": "return 'a';",
+      "nodeKind": "ShorthandPropertyAssignment",
+      "nodeText": "$notExistingVariable",
       "nodeLocation": {
-        "start": 1183,
-        "length": 11,
+        "start": 675,
+        "length": 20,
+        "line": 17,
+        "character": 12
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 24,
+            "character": 13
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'NonExistingFragment'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'NonExistingFragment'.",
+      "hint": "Cannot find name 'NonExistingFragment'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "NonExistingFragment",
+      "nodeLocation": {
+        "start": 1049,
+        "length": 19,
         "line": 23,
-        "character": 8
+        "character": 12
+      }
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "files": {
+        "react-processed.tsx": {
+          "fileName": "react-processed.tsx",
+          "location": {
+            "line": 31,
+            "character": 30
+          },
+          "fixed": false,
+          "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2322,
+      "category": "Error",
+      "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
+      "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doesNotExist",
+      "nodeLocation": {
+        "start": 1263,
+        "length": 12,
+        "line": 30,
+        "character": 29
       }
     },
     {
@@ -522,80 +457,82 @@
       }
     },
     {
-      "analysisTarget": "second.ts",
+      "analysisTarget": "ts-errors.ts",
       "files": {
-        "second.ts": {
-          "fileName": "second.ts",
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
           "location": {
-            "line": 2,
-            "character": 10
+            "line": 1,
+            "character": 1
           },
-          "fixed": false,
-          "hint": "Cannot find name 'readFileSync'.",
-          "hintAdded": true,
+          "fixed": true,
+          "code": "import fs from 'fs';",
+          "codeFixAction": "delete",
+          "hintAdded": false,
           "roles": [
             "analysisTarget",
-            "unmodified"
+            "modified"
           ]
         }
       },
-      "errorCode": 2304,
+      "errorCode": 6133,
       "category": "Error",
-      "message": "Cannot find name 'readFileSync'.",
-      "hint": "Cannot find name 'readFileSync'.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "readFileSync",
+      "message": "'fs' is declared but its value is never read.",
+      "hint": "The declaration 'fs' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportDeclaration",
+      "nodeText": "import fs from 'fs';",
       "nodeLocation": {
-        "start": 63,
-        "length": 12,
-        "line": 1,
-        "character": 9
+        "start": 0,
+        "length": 20,
+        "line": 0,
+        "character": 0
       }
     },
     {
-      "analysisTarget": "second.ts",
+      "analysisTarget": "ts-errors.ts",
       "files": {
-        "second.ts": {
-          "fileName": "second.ts",
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
           "location": {
-            "line": 13,
-            "character": 22
+            "line": 1,
+            "character": 19
           },
-          "fixed": false,
-          "hint": "Cannot find name 'doesNotExist'.",
-          "hintAdded": true,
+          "fixed": true,
+          "code": " parse",
+          "codeFixAction": "delete",
+          "hintAdded": false,
           "roles": [
             "analysisTarget",
-            "unmodified"
+            "modified"
           ]
         }
       },
-      "errorCode": 2304,
+      "errorCode": 6133,
       "category": "Error",
-      "message": "Cannot find name 'doesNotExist'.",
-      "hint": "Cannot find name 'doesNotExist'.",
-      "fixed": false,
-      "nodeKind": "Identifier",
-      "nodeText": "doesNotExist",
+      "message": "'parse' is declared but its value is never read.",
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "fixed": true,
+      "nodeKind": "ImportSpecifier",
+      "nodeText": "parse",
       "nodeLocation": {
-        "start": 333,
-        "length": 12,
-        "line": 12,
-        "character": 21
+        "start": 18,
+        "length": 5,
+        "line": 0,
+        "character": 18
       }
     },
     {
-      "analysisTarget": "second.ts",
+      "analysisTarget": "ts-errors.ts",
       "files": {
-        "second.ts": {
-          "fileName": "second.ts",
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
           "location": {
-            "line": 21,
+            "line": 4,
             "character": 7
           },
           "fixed": false,
-          "hint": "Cannot find name 'doesNotExist'.",
+          "hint": "The variable 'thisConstant' is never read or used. Remove the variable or use it.",
           "hintAdded": true,
           "roles": [
             "analysisTarget",
@@ -603,31 +540,736 @@
           ]
         }
       },
-      "errorCode": 2304,
+      "errorCode": 6133,
       "category": "Error",
-      "message": "Cannot find name 'doesNotExist'.",
-      "hint": "Cannot find name 'doesNotExist'.",
+      "message": "'thisConstant' is declared but its value is never read.",
+      "hint": "The variable 'thisConstant' is never read or used. Remove the variable or use it.",
       "fixed": false,
       "nodeKind": "Identifier",
-      "nodeText": "doesNotExist",
+      "nodeText": "thisConstant",
       "nodeLocation": {
-        "start": 528,
+        "start": 70,
         "length": 12,
-        "line": 20,
+        "line": 3,
         "character": 6
       }
     },
     {
-      "analysisTarget": "second.ts",
+      "analysisTarget": "ts-errors.ts",
       "files": {
-        "second.ts": {
-          "fileName": "second.ts",
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 7,
+            "character": 5
+          },
+          "fixed": false,
+          "hint": "The variable 'thisVariable' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'thisVariable' is declared but its value is never read.",
+      "hint": "The variable 'thisVariable' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "thisVariable",
+      "nodeLocation": {
+        "start": 238,
+        "length": 12,
+        "line": 6,
+        "character": 4
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 10,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "The function 'thisFunctionIsNeverRead' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'thisFunctionIsNeverRead' is declared but its value is never read.",
+      "hint": "The function 'thisFunctionIsNeverRead' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "thisFunctionIsNeverRead",
+      "nodeLocation": {
+        "start": 418,
+        "length": 23,
+        "line": 9,
+        "character": 9
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 16,
+            "character": 12
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingFunction'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'missingFunction'.",
+      "hint": "Cannot find name 'missingFunction'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "missingFunction",
+      "nodeLocation": {
+        "start": 660,
+        "length": 15,
+        "line": 15,
+        "character": 11
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 24,
+            "character": 24
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingVar'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'missingVar'.",
+      "hint": "Cannot find name 'missingVar'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "missingVar",
+      "nodeLocation": {
+        "start": 910,
+        "length": 10,
+        "line": 23,
+        "character": 23
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 32,
+            "character": 11
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingVar'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'missingVar'.",
+      "hint": "Cannot find name 'missingVar'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "missingVar",
+      "nodeLocation": {
+        "start": 1147,
+        "length": 10,
+        "line": 31,
+        "character": 10
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 34,
+            "character": 11
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "hint": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "nodeLocation": {
+        "start": 1240,
+        "length": 90,
+        "line": 33,
+        "character": 10
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 38,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "The function 'notProperlyFormatted' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'notProperlyFormatted' is declared but its value is never read.",
+      "hint": "The function 'notProperlyFormatted' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "notProperlyFormatted",
+      "nodeLocation": {
+        "start": 1504,
+        "length": 20,
+        "line": 37,
+        "character": 9
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 40,
+            "character": 12
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'doSomething'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'doSomething'.",
+      "hint": "Cannot find name 'doSomething'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "doSomething",
+      "nodeLocation": {
+        "start": 1685,
+        "length": 11,
+        "line": 39,
+        "character": 11
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 47,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "The function 'thisFunctionIsACompleteMess' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'thisFunctionIsACompleteMess' is declared but its value is never read.",
+      "hint": "The function 'thisFunctionIsACompleteMess' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "thisFunctionIsACompleteMess",
+      "nodeLocation": {
+        "start": 1835,
+        "length": 27,
+        "line": 46,
+        "character": 9
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 51,
+            "character": 5
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'foo'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'foo'.",
+      "hint": "Cannot find name 'foo'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "foo",
+      "nodeLocation": {
+        "start": 2087,
+        "length": 3,
+        "line": 50,
+        "character": 4
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 53,
+            "character": 14
+          },
+          "fixed": false,
+          "hint": "The function 'timestamp' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'timestamp' is declared but its value is never read.",
+      "hint": "The function 'timestamp' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "timestamp",
+      "nodeLocation": {
+        "start": 2176,
+        "length": 9,
+        "line": 52,
+        "character": 13
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 55,
+            "character": 15
+          },
+          "fixed": false,
+          "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'b' is declared but its value is never read.",
+      "hint": "The variable 'b' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "b",
+      "nodeLocation": {
+        "start": 2341,
+        "length": 1,
+        "line": 54,
+        "character": 14
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 57,
+            "character": 9
+          },
+          "fixed": false,
+          "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2322,
+      "category": "Error",
+      "message": "Type 'string' is not assignable to type 'void'.",
+      "hint": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type.",
+      "fixed": false,
+      "nodeKind": "ReturnStatement",
+      "nodeText": "return 'a';",
+      "nodeLocation": {
+        "start": 2471,
+        "length": 11,
+        "line": 56,
+        "character": 8
+      }
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "files": {
+        "ts-errors.ts": {
+          "fileName": "ts-errors.ts",
+          "location": {
+            "line": 65,
+            "character": 1
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'timestamp'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'timestamp'.",
+      "hint": "Cannot find name 'timestamp'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "timestamp",
+      "nodeLocation": {
+        "start": 2770,
+        "length": 9,
+        "line": 64,
+        "character": 0
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 6,
+            "character": 10
+          },
+          "fixed": true,
+          "code": " unusedFunction",
+          "codeFixAction": "delete",
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedFunction' is declared but its value is never read.",
+      "hint": "The function 'unusedFunction' is never called. Remove the function or use it.",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedFunction",
+      "nodeLocation": {
+        "start": 121,
+        "length": 14,
+        "line": 5,
+        "character": 9
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 6,
+            "character": 10
+          },
+          "fixed": false,
+          "hint": "The function 'unusedFunction' is never called. Remove the function or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedFunction' is declared but its value is never read.",
+      "hint": "The function 'unusedFunction' is never called. Remove the function or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedFunction",
+      "nodeLocation": {
+        "start": 121,
+        "length": 14,
+        "line": 5,
+        "character": 9
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 11,
+            "character": 5
+          },
+          "fixed": false,
+          "hint": "The variable 'unusedVariable' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedVariable' is declared but its value is never read.",
+      "hint": "The variable 'unusedVariable' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedVariable",
+      "nodeLocation": {
+        "start": 314,
+        "length": 14,
+        "line": 10,
+        "character": 4
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 15,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "The variable 'unusedConst1' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedConst1' is declared but its value is never read.",
+      "hint": "The variable 'unusedConst1' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedConst1",
+      "nodeLocation": {
+        "start": 539,
+        "length": 12,
+        "line": 14,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 19,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "The variable 'unusedConst2' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedConst2' is declared but its value is never read.",
+      "hint": "The variable 'unusedConst2' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedConst2",
+      "nodeLocation": {
+        "start": 718,
+        "length": 12,
+        "line": 18,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
           "location": {
             "line": 23,
             "character": 7
           },
           "fixed": false,
-          "hint": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+          "hint": "The variable 'unusedConst3' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedConst3' is declared but its value is never read.",
+      "hint": "The variable 'unusedConst3' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedConst3",
+      "nodeLocation": {
+        "start": 897,
+        "length": 12,
+        "line": 22,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 27,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "The variable 'unusedConstWithoutCommentButWithRehearsalTagAbove' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'unusedConstWithoutCommentButWithRehearsalTagAbove' is declared but its value is never read.",
+      "hint": "The variable 'unusedConstWithoutCommentButWithRehearsalTagAbove' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "unusedConstWithoutCommentButWithRehearsalTagAbove",
+      "nodeLocation": {
+        "start": 1085,
+        "length": 49,
+        "line": 26,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 30,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "The variable 'resultValue' is never read or used. Remove the variable or use it.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 6133,
+      "category": "Error",
+      "message": "'resultValue' is declared but its value is never read.",
+      "hint": "The variable 'resultValue' is never read or used. Remove the variable or use it.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "resultValue",
+      "nodeLocation": {
+        "start": 1318,
+        "length": 11,
+        "line": 29,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 32,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingVar'.",
           "hintAdded": true,
           "roles": [
             "analysisTarget",
@@ -637,16 +1279,110 @@
       },
       "errorCode": 2304,
       "category": "Error",
-      "message": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
-      "hint": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "message": "Cannot find name 'missingVar'.",
+      "hint": "Cannot find name 'missingVar'.",
       "fixed": false,
       "nodeKind": "Identifier",
-      "nodeText": "doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "nodeText": "missingVar",
       "nodeLocation": {
-        "start": 621,
-        "length": 92,
-        "line": 22,
+        "start": 1470,
+        "length": 10,
+        "line": 31,
         "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 34,
+            "character": 7
+          },
+          "fixed": false,
+          "hint": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+          "hintAdded": true,
+          "roles": [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+      "errorCode": 2304,
+      "category": "Error",
+      "message": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "hint": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
+      "fixed": false,
+      "nodeKind": "Identifier",
+      "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "nodeLocation": {
+        "start": 1559,
+        "length": 90,
+        "line": 33,
+        "character": 6
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 42,
+            "character": 17
+          },
+          "fixed": true,
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+      "errorCode": 2571,
+      "category": "Error",
+      "message": "Object is of type 'unknown'.",
+      "hint": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "e",
+      "nodeLocation": {
+        "start": 1914,
+        "length": 1,
+        "line": 41,
+        "character": 16
+      }
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "files": {
+        "ts-processed.ts": {
+          "fileName": "ts-processed.ts",
+          "location": {
+            "line": 43,
+            "character": 17
+          },
+          "fixed": true,
+          "hintAdded": false,
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+      "errorCode": 2571,
+      "category": "Error",
+      "message": "Object is of type 'unknown'.",
+      "hint": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
+      "fixed": true,
+      "nodeKind": "Identifier",
+      "nodeText": "e",
+      "nodeLocation": {
+        "start": 1961,
+        "length": 1,
+        "line": 42,
+        "character": 16
       }
     }
   ]
