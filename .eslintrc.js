@@ -13,7 +13,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   rules: {
-    'curly': 'error',
+    curly: 'error',
     'sort-imports': 'off',
     'import/order': 'off',
     'import/no-default-export': 'error',
@@ -49,5 +49,5 @@ module.exports = {
     ],
     '@typescript-eslint/no-non-null-assertion': ['off'],
   },
-  ignorePatterns: ['dist', 'node_modules', 'fixtures'],
+  ignorePatterns: ['dist', 'node_modules', 'fixtures', '*.config.*'],
 };

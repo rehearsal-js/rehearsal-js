@@ -1,0 +1,40 @@
+{
+  "name": "@rehearsal/migration-graph",
+  "version": "0.0.0",
+  "description": "Tool for generating a typescript conversion graph",
+  "license": "BSD-2-Clause",
+  "bin": {
+    "migration-graph": "./bin/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "npm-run-all lint:*",
+    "lint:eslint": "eslint --fix . --ext .ts",
+    "lint:tsc-src": "tsc --noEmit",
+    "prepare": "yarn build",
+    "test": "vitest --run"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3",
+    "@babel/parser": "^7.18.4",
+    "@babel/traverse": "^7.18.2",
+    "@rehearsal/migration-graph-ember": "*",
+    "@swc/core": "^1.2.233",
+    "fast-glob": "^3",
+    "fs-extra": "^10.1.0",
+    "path": "^0.12.7",
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "fixturify": "^2",
+    "micromatch": "^4",
+    "tmp": "^0.2.1",
+    "vitest": "^0.22.0"
+  },
+  "peerDependencies": {
+    "typescript": ">4.7"
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}

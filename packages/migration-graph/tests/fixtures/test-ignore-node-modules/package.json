@@ -1,0 +1,8 @@
+{
+  "name": "my-package",
+  "main": "index.js",
+  "dependencies": {
+    "chalk": "*",
+    "@babel/parser": "*"
+  }
+}
