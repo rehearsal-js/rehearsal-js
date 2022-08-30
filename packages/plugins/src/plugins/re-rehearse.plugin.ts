@@ -37,7 +37,7 @@ export class ReRehearsePlugin extends Plugin {
 
     this.service.setFileText(fileName, text);
 
-    this.logger?.debug(`Plugin 'Re-Rehearsal' run on ${params.fileName}`);
+    this.logger?.debug(`Plugin 'Re-Rehearse' run on ${params.fileName}`);
 
     return [fileName];
   }
