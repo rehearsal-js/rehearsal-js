@@ -38,6 +38,7 @@
     "@rehearsal/migrate": "^0.0.29",
     "@rehearsal/reporter": "^0.0.29",
     "@rehearsal/upgrade": "^0.0.29",
+    "@rehearsal/migration-graph": "^0.0.29",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "dependency-cruiser": "^11.15.0",

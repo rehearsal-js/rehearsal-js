@@ -10,9 +10,9 @@ import fs from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 import toposort from 'toposort';
-import { addDevDep, determineProjectName, isYarnManager } from '../utils';
+import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
-import execa = require('execa');
+import {createImportGraph} from '@rehearsal/migration-graph';
 
 function ifHasTypescriptInDevdep(root: string): boolean {
   const packageJSONPath = resolve(root, 'package.json');
@@ -32,6 +32,7 @@ type migrateCommandOptions = {
   report_output: string;
   verbose: boolean | undefined;
   clean: boolean | undefined;
+  strict: boolean | undefined;
 };
 
 type Context = {
@@ -44,6 +45,7 @@ migrateCommand
   .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option('-r, --report_output <report output dir>', 'Target directory for the report output')
+  .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
   .option('-v, --verbose', 'Print more logs to debug.')
   .action(async (options: migrateCommandOptions) => {
@@ -58,24 +60,34 @@ migrateCommand
       [
         {
           title: 'Installing dependencies',
-          task: async (_, task) => {
+          task: async (ctx, task) => {
+            const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+            console.log('sourcefile: ', sourceFiles);
+            // store sourceFiles for future clean up task
+            ctx.sourceFiles = sourceFiles;
+
             if (ifHasTypescriptInDevdep(options.root)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
-              await addDevDep('typescript');
+              await addDevDep('typescript', { cwd: options.root });
             }
           },
         },
         {
           title: 'Creating tsconfig.json', // TODO: use a simple one
-          task: async (_, task) => {
+          task: async (ctx, task) => {
             const configPath = resolve(options.root, 'tsconfig.json');
 
             if (fs.existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
             } else {
-              task.title = `No tsconfig.json found, creating ${configPath}.`;
-              createTSConfig(options.root);
+              if (options.strict) {
+                task.title = `Creating strict tsconfig.`;
+                createTSConfig(options.root, ctx.sourceFiles);
+              } else {
+                task.title = `Creating basic tsconfig`;
+                await runYarnOrNpmCommand(['tsc', '--init'], { cwd: options.root });
+              }
             }
           },
         },
@@ -88,14 +100,15 @@ migrateCommand
               options.report_output ? options.report_output : options.root,
               logger
             );
-            const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
-            // store sourceFiles for future clean up task
-            ctx.sourceFiles = sourceFiles;
-            if (sourceFiles.length) {
+
+            console.log(options);
+            console.log(ctx);
+
+            if (ctx.sourceFiles.length) {
               const input = {
                 basePath: options.root,
-                sourceFiles,
-                logger: undefined, // TODO: do we need the logger inside migrate package?
+                sourceFiles: ctx.sourceFiles,
+                logger: options.verbose ? logger : undefined,
                 reporter,
               };
 
@@ -120,20 +133,13 @@ migrateCommand
         {
           title: 'Run Typescript compiler to check errors',
           task: async () => {
-            const isYarn = await isYarnManager();
-            // check if npm or yarn
-            const binAndArgs = {
-              bin: isYarn ? 'yarn' : 'npm',
-              args: ['tsc'],
-            };
-
-            await execa(binAndArgs.bin, binAndArgs.args);
+            await runYarnOrNpmCommand(['tsc'], { cwd: options.root });
             // TODO: what to do with those ts errors?
             // Adding ts-ignore with error details in comment?
           },
         },
       ],
-      { concurrent: false, exitOnError: true }
+      { concurrent: false, exitOnError: false }
     );
     try {
       await tasks.run();
@@ -148,7 +154,7 @@ migrateCommand.parse(process.argv);
  * Generate tsconfig
  * @param root Project root to run migration
  */
-function createTSConfig(root: string): void {
+function createTSConfig(root: string, fileList: Array<string>): void {
   // TODO: this is from internal node-14 ts-base config
   const config = {
     $schema: 'http://json.schemastore.org/tsconfig',
@@ -170,7 +176,7 @@ function createTSConfig(root: string): void {
       declarationMap: true,
     },
     // TODO: add files in include
-    include: [],
+    include: [...fileList],
   };
   fs.writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
 }
@@ -183,14 +189,16 @@ function cleanJSFiles(fileList: Array<string>): void {
   fileList.filter((f) => f.match(/\.js$/)).forEach((f) => fs.rmSync(f));
 }
 
-function getDependencyOrder(globs: string): Array<string> {
+function getDependencyOrder(entrypoint: string): Array<string> {
   const cruiseOptions: ICruiseOptions = {
     exclude: {
       path: 'node_modules',
     },
   };
-  const entry = globs.split(',');
-  const output = cruise(entry, cruiseOptions).output as ICruiseResult;
+
+  const output = cruise([entrypoint], cruiseOptions).output as ICruiseResult;
+
+  console.log('output', output);
 
   const edgeList = createDirectEdgeList(output.modules);
   const coreDependencies = getCoreDependencies(output.modules);
