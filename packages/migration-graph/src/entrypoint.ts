@@ -7,10 +7,7 @@ import { GraphNode } from './utils/graph-node';
 
 import { resolveRelativeModule } from './module-resolution';
 
-export function createImportGraph(
-  baseUrl: string,
-  entrypoint?: string | undefined
-): Graph<FileNode> {
+export function createImportGraph(baseUrl: string, entrypoint = './index'): Graph<FileNode> {
   const g = new Graph<FileNode>();
 
   let entryFilePath;

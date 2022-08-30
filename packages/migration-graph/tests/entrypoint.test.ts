@@ -235,12 +235,15 @@ describe('createImportGraph', () => {
     expect(actual).toStrictEqual(['some-dir/not-obvious.js', 'index.js']);
   });
 
-  test.skip('provide graph for a complex library', async () => {
-    const baseUrl = '/path/to/library'; // replace to
-    const output: Graph<FileNode> = createImportGraph(baseUrl, './src/index.js');
+  test('provide graph for a complex library', async () => {
+    const baseUrl = resolve(__dirname, '../tests/fixtures/test-ignore-node-modules');
+    const output: Graph<FileNode> = createImportGraph(baseUrl, './index.js');
+    const paths: string[] = [];
+    output.topSort().forEach((n) => {
+      paths.push(n.content.path);
+    });
 
-    console.log(stripBaseUrl(flatten(output.topSort()), baseUrl));
-
-    expect(true).toBe(false);
+    expect(stripBaseUrl(flatten(output.topSort()), baseUrl)).length(2);
+    expect(paths).length(2);
   });
 });
