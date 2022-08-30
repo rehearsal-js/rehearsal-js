@@ -1,20 +1,20 @@
 import { UniqueGraphNode } from 'src/types';
 import { GraphNode } from './graph-node';
 
-export class Graph<Type extends UniqueGraphNode> {
-  #nodes: Set<GraphNode<Type>>;
-  #registry: Map<string, GraphNode<Type>>;
+export class Graph<T extends UniqueGraphNode> {
+  #nodes: Set<GraphNode<T>>;
+  #registry: Map<string, GraphNode<T>>;
 
   constructor() {
     this.#nodes = new Set();
     this.#registry = new Map();
   }
 
-  get nodes(): Set<GraphNode<Type>> {
+  get nodes(): Set<GraphNode<T>> {
     return this.#nodes;
   }
 
-  addNode(content: Type): GraphNode<Type> {
+  addNode(content: T): GraphNode<T> {
     const { key } = content;
     if (key && this.#registry.has(key)) {
       const node = this.#registry.get(key);
@@ -30,16 +30,16 @@ export class Graph<Type extends UniqueGraphNode> {
     return newNode;
   }
 
-  addEdge(source: GraphNode<Type>, destination: GraphNode<Type>): Graph<Type> {
+  addEdge(source: GraphNode<T>, destination: GraphNode<T>): Graph<T> {
     source.addAdjacent(destination);
     return this;
   }
 
-  topSort(): GraphNode<Type>[] {
-    const visited = new Set<GraphNode<Type>>();
-    const stack = new Array<GraphNode<Type>>();
+  topSort(): GraphNode<T>[] {
+    const visited = new Set<GraphNode<T>>();
+    const stack = new Array<GraphNode<T>>();
 
-    Array.from(this.#nodes).forEach((node: GraphNode<Type>) => {
+    Array.from(this.#nodes).forEach((node: GraphNode<T>) => {
       if (!visited.has(node)) {
         // const iterator = topSort(node, visited);
         this.topSortUtil(node, visited, stack);
@@ -50,9 +50,9 @@ export class Graph<Type extends UniqueGraphNode> {
   }
 
   private topSortUtil(
-    node: GraphNode<Type>,
-    visited = new Set<GraphNode<Type>>(),
-    stack = new Array<GraphNode<Type>>()
+    node: GraphNode<T>,
+    visited = new Set<GraphNode<T>>(),
+    stack = new Array<GraphNode<T>>()
   ): void {
     visited.add(node);
 

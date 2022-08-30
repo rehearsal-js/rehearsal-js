@@ -40,7 +40,7 @@ export function getMainEntrypoint(baseUrl: string): string {
  * @see {@link https://www.typescriptlang.org/docs/handbook/module-resolution.html#node}
  */
 export function resolveRelativeModule(
-  moduleName = './index',
+  moduleName: string,
   { currentDir = '.' }: { currentDir: string }
 ): string {
   // If it's from a package or non-relative, then skip
