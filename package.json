@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "lerna run lint --stream",
     "prepare": "lerna run prepare --stream",
-    "test": "lerna run test --stream",
+    "test": "lerna run test",
     "prepack": "lerna run prepack --stream",
     "changelog": "yarn conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
