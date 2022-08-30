@@ -88,6 +88,6 @@ describe('Test service', function () {
 
     const path = service.resolveModuleName('path', fileName);
 
-    expect(path).toBeUndefined();
+    expect(path).toContain('node_modules/path');
   });
 });
