@@ -12,7 +12,6 @@ import { resolve } from 'path';
 import toposort from 'toposort';
 import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
-import {createImportGraph} from '@rehearsal/migration-graph';
 
 function ifHasTypescriptInDevdep(root: string): boolean {
   const packageJSONPath = resolve(root, 'package.json');
@@ -40,6 +39,11 @@ type Context = {
   sourceFiles: Array<string>;
 };
 
+type ParsedModuleResult = {
+  edgeList: Array<[string, string | undefined]>;
+  coreDepList: Array<string>;
+};
+
 migrateCommand
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
@@ -60,12 +64,7 @@ migrateCommand
       [
         {
           title: 'Installing dependencies',
-          task: async (ctx, task) => {
-            const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
-            console.log('sourcefile: ', sourceFiles);
-            // store sourceFiles for future clean up task
-            ctx.sourceFiles = sourceFiles;
-
+          task: async (_ctx, task) => {
             if (ifHasTypescriptInDevdep(options.root)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
@@ -75,19 +74,15 @@ migrateCommand
         },
         {
           title: 'Creating tsconfig.json', // TODO: use a simple one
-          task: async (ctx, task) => {
+          task: async (_ctx, task) => {
             const configPath = resolve(options.root, 'tsconfig.json');
 
             if (fs.existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
             } else {
-              if (options.strict) {
-                task.title = `Creating strict tsconfig.`;
-                createTSConfig(options.root, ctx.sourceFiles);
-              } else {
-                task.title = `Creating basic tsconfig`;
-                await runYarnOrNpmCommand(['tsc', '--init'], { cwd: options.root });
-              }
+              task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
+              const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+              createTSConfig(options.root, sourceFiles, !!options.strict);
             }
           },
         },
@@ -101,13 +96,12 @@ migrateCommand
               logger
             );
 
-            console.log(options);
-            console.log(ctx);
-
-            if (ctx.sourceFiles.length) {
+            const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+            ctx.sourceFiles = sourceFiles;
+            if (sourceFiles) {
               const input = {
                 basePath: options.root,
-                sourceFiles: ctx.sourceFiles,
+                sourceFiles,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
@@ -134,10 +128,9 @@ migrateCommand
           title: 'Run Typescript compiler to check errors',
           task: async () => {
             await runYarnOrNpmCommand(['tsc'], { cwd: options.root });
-            // TODO: what to do with those ts errors?
-            // Adding ts-ignore with error details in comment?
           },
         },
+        // TODO: what to do with those ts errors?
       ],
       { concurrent: false, exitOnError: false }
     );
@@ -154,30 +147,43 @@ migrateCommand.parse(process.argv);
  * Generate tsconfig
  * @param root Project root to run migration
  */
-function createTSConfig(root: string, fileList: Array<string>): void {
-  // TODO: this is from internal node-14 ts-base config
-  const config = {
-    $schema: 'http://json.schemastore.org/tsconfig',
-    compilerOptions: {
-      baseUrl: '.',
-      outDir: 'dist',
-      strict: true,
-      noUncheckedIndexedAccess: true,
-      module: 'es2020',
-      moduleResolution: 'node',
-      newLine: 'lf',
-      forceConsistentCasingInFileNames: true,
-      noFallthroughCasesInSwitch: true,
-      target: 'es2020',
-      lib: ['es2020'],
-      esModuleInterop: true,
-      declaration: true,
-      sourceMap: true,
-      declarationMap: true,
-    },
-    // TODO: add files in include
-    include: [...fileList],
-  };
+function createTSConfig(root: string, fileList: Array<string>, strict: boolean): void {
+  const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
+  const config = strict
+    ? {
+        $schema: 'http://json.schemastore.org/tsconfig',
+        compilerOptions: {
+          baseUrl: '.',
+          outDir: 'dist',
+          strict: true,
+          noUncheckedIndexedAccess: true,
+          module: 'es2020',
+          moduleResolution: 'node',
+          newLine: 'lf',
+          forceConsistentCasingInFileNames: true,
+          noFallthroughCasesInSwitch: true,
+          target: 'es2020',
+          lib: ['es2020'],
+          esModuleInterop: true,
+          declaration: true,
+          sourceMap: true,
+          declarationMap: true,
+        },
+        include,
+      }
+    : {
+        $schema: 'http://json.schemastore.org/tsconfig',
+        compilerOptions: {
+          baseUrl: '.',
+          outDir: 'dist',
+          emitDeclarationOnly: true,
+          allowJs: true,
+          target: 'es2016',
+          module: 'commonjs',
+          moduleResolution: 'node',
+        },
+        include,
+      };
   fs.writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
 }
 
@@ -189,6 +195,7 @@ function cleanJSFiles(fileList: Array<string>): void {
   fileList.filter((f) => f.match(/\.js$/)).forEach((f) => fs.rmSync(f));
 }
 
+// Feed entrypoint to dependency-cruise to get an array or file list with migration order
 function getDependencyOrder(entrypoint: string): Array<string> {
   const cruiseOptions: ICruiseOptions = {
     exclude: {
@@ -198,45 +205,32 @@ function getDependencyOrder(entrypoint: string): Array<string> {
 
   const output = cruise([entrypoint], cruiseOptions).output as ICruiseResult;
 
-  console.log('output', output);
-
-  const edgeList = createDirectEdgeList(output.modules);
-  const coreDependencies = getCoreDependencies(output.modules);
+  const { edgeList, coreDepList } = parseModuleList(output.modules);
 
   const dependencyList = toposort(edgeList).reverse(); // leaf frist
 
   // remove core deps (fs, path, os, etc) from depList
   return dependencyList.filter((d) => {
-    return !coreDependencies.includes(d);
+    return !coreDepList.includes(d);
   });
 }
 
-// prepare array of directional edges for tsort
-// [module, dependency]
-function createDirectEdgeList(moduleList: IModule[]): Array<[string, string | undefined]> {
-  const graph: Array<[string, string | undefined]> = [];
+// Process IModule[] from dependency-cruise to create
+// 1. directional edges (graph) -> [module, dependency]
+// 2. List of core deps which should be exclude in migration files
+function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
+  const edgeList: Array<[string, string | undefined]> = [];
+  const coreDepList: Array<string> = [];
 
   moduleList.forEach((m: IModule) => {
     if (m.dependencies.length > 0) {
       m.dependencies.forEach((d: IDependency) => {
-        graph.push([m.source, d.resolved]);
-      });
-    }
-  });
-
-  return graph;
-}
-
-function getCoreDependencies(moduleList: IModule[]): Array<string> {
-  const cores: Array<string> = [];
-  moduleList.forEach((m: IModule) => {
-    if (m.dependencies.length > 0) {
-      m.dependencies.forEach((d: IDependency) => {
-        if (d.dependencyTypes.includes('core') && !cores.includes(d.resolved)) {
-          cores.push(d.resolved);
+        if (d.dependencyTypes.includes('core') && !coreDepList.includes(d.resolved)) {
+          coreDepList.push(d.resolved);
         }
+        edgeList.push([m.source, d.resolved]);
       });
     }
   });
-  return cores;
+  return { edgeList, coreDepList };
 }

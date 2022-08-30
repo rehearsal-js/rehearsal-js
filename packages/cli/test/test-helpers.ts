@@ -37,3 +37,12 @@ export function run(
   // we need to run build after every install to make sure dist dir is ready to use
   return execa(YARN_PATH, ['ts-node', cliPath, ...args], options);
 }
+
+// Run linked rehearsal bin directly
+export function runLinkedBin(
+  command: string,
+  args: string[],
+  options: execa.Options = {}
+): execa.ExecaChildProcess {
+  return execa('rehearsal', [command, ...args], options);
+}

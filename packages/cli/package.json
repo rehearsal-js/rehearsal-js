@@ -24,7 +24,7 @@
     "lint:eslint": "yarn eslint --fix . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
-    "test": "vitest --run",
+    "test": "yarn && vitest --run",
     "test:watch": "vitest --coverage --watch",
     "dev:clean": "rm test/fixtures/app/.rehearsal.json && git restore test/fixtures/app/foo test/fixtures/app/foo_2 package.json ../../yarn.lock"
   },
@@ -38,7 +38,6 @@
     "@rehearsal/migrate": "^0.0.29",
     "@rehearsal/reporter": "^0.0.29",
     "@rehearsal/upgrade": "^0.0.29",
-    "@rehearsal/migration-graph": "^0.0.29",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
     "dependency-cruiser": "^11.15.0",
