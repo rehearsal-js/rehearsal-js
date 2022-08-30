@@ -1,34 +1,34 @@
-export class GraphNode<Type> {
+export class GraphNode<T> {
   // eslint-disable-next-line no-use-before-define
-  #parent: GraphNode<Type> | null = null;
+  #parent: GraphNode<T> | null = null;
 
   // eslint-disable-next-line no-use-before-define
-  #adjacent: Set<GraphNode<Type>>;
+  #adjacent: Set<GraphNode<T>>;
 
-  #content: Type;
+  #content: T;
 
-  constructor(content: Type) {
+  constructor(content: T) {
     this.#content = content;
     this.#adjacent = new Set();
   }
 
-  get content(): Type {
+  get content(): T {
     return this.#content;
   }
 
-  get adjacent(): Set<GraphNode<Type>> {
+  get adjacent(): Set<GraphNode<T>> {
     return this.#adjacent;
   }
 
-  get parent(): GraphNode<Type> | null {
+  get parent(): GraphNode<T> | null {
     return this.#parent;
   }
 
-  setParent(node: GraphNode<Type>): void {
+  setParent(node: GraphNode<T>): void {
     this.#parent = node;
   }
 
-  addAdjacent(node: GraphNode<Type>): void {
+  addAdjacent(node: GraphNode<T>): void {
     if (!this.#adjacent.has(node)) {
       node.setParent(this);
       this.#adjacent.add(node);

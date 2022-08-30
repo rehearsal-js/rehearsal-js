@@ -22,15 +22,3 @@ export type FileNode = UniqueGraphNode & {
   path: string;
   parsed?: boolean;
 };
-
-export interface Arguments {
-  help: string;
-  // paths: string;
-  addons: string;
-  interactive: boolean;
-  output: string;
-  maxDepth: number;
-  includeDupes: boolean;
-  conversionLevel: string;
-  conversionExclusions?: string;
-}
