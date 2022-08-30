@@ -1,5 +1,4 @@
-import { UniqueGraphNode } from 'src/types';
-
+import { UniqueGraphNode } from '../types';
 import { GraphNode } from './graph-node';
 
 export class Graph<T extends UniqueGraphNode> {
@@ -15,17 +14,26 @@ export class Graph<T extends UniqueGraphNode> {
     return this.#nodes;
   }
 
+  hasNode(key: string): boolean {
+    return this.#registry.has(key);
+  }
+
+  getNode(key: string): GraphNode<T> | undefined {
+    return this.#registry.get(key);
+  }
+
   addNode(content: T): GraphNode<T> {
     const { key } = content;
-    if (key && this.#registry.has(key)) {
-      const node = this.#registry.get(key);
+    if (this.hasNode(key)) {
+      const node = this.getNode(key);
       if (!node) {
         throw new Error(`Registry populated with undefined graph node at ${key}`);
       }
+
       return node;
     }
 
-    const newNode = new GraphNode(content);
+    const newNode = new GraphNode<T>(content);
     this.#nodes.add(newNode);
     this.#registry.set(key, newNode);
     return newNode;

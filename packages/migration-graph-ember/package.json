@@ -1,7 +1,7 @@
 {
   "name": "@rehearsal/migration-graph-ember",
   "version": "0.0.36",
-  "description": "Tool for generating a typescript conversion graph for a ember.js",
+  "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
   "scripts": {
     "build": "tsc -b",
@@ -18,10 +18,11 @@
     "src"
   ],
   "dependencies": {
+    "@rehearsal/migration-graph-shared": "^0.0.36",
     "@babel/generator": "^7.18.13",
     "@babel/parser": "^7.18.13",
     "@babel/traverse": "^7.18.13",
-    "fast-glob": "^3",
+    "fast-glob": "^3.2.12",
     "find-up": "^5.0.0",
     "fs-extra": "^10.1.0",
     "micromatch": "^4",
@@ -38,7 +39,7 @@
     "@types/tmp": "^0.2.3",
     "fixturify": "^2",
     "tmp": "^0.2.1",
-    "vitest": "^0.22.0",
+    "vitest": "^0.22.1",
     "walk-sync": "^3"
   },
   "peerDependencies": {

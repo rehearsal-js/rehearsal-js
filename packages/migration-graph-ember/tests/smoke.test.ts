@@ -1,3 +1,4 @@
+import { setupTestEnvironment } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { readFileSync, realpathSync } from 'fs';
 import { join, resolve } from 'path';
@@ -5,13 +6,12 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
-import { getExternalModuleMappings, getInternalModuleMappings } from '../src';
+import { getExternalModuleMappings, getInternalModuleMappings } from '../src/index';
 import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,
-  setupTestEnvironment,
-} from '../src/-private/utils/test-environment';
-import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from './fixtures/package-fixtures';
+} from '../src/utils/environment';
+import { FIXTURE_NAMES, FIXTURES } from './fixtures/package-fixtures';
 
 setGracefulCleanup();
 
@@ -20,7 +20,7 @@ describe('Smoke Test', () => {
     let pathToRoot: string;
 
     function setupInternalAddonFixtures(someTmpDir: string): void {
-      writeSync(someTmpDir, PACKAGE_FIXTURES);
+      writeSync(someTmpDir, FIXTURES);
     }
 
     beforeEach(() => {
@@ -45,12 +45,12 @@ describe('Smoke Test', () => {
     test('the correct internal module-mappings exist for simple mappings', function () {
       const { mappingsByAddonName, mappingsByLocation } = getInternalModuleMappings(pathToRoot);
 
-      const simpleAddon = mappingsByAddonName[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON];
-      const simpleEngine = mappingsByAddonName[PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE];
+      const simpleAddon = mappingsByAddonName[FIXTURE_NAMES.SIMPLE_ADDON];
+      const simpleEngine = mappingsByAddonName[FIXTURE_NAMES.SIMPLE_ENGINE];
 
-      expect(simpleAddon, `module mappings '${PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE}'`).toBeTruthy();
+      expect(simpleAddon, `module mappings '${FIXTURE_NAMES.SIMPLE_ENGINE}'`).toBeTruthy();
 
-      expect(simpleEngine, `module mappings '${PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE}'`).toBeTruthy();
+      expect(simpleEngine, `module mappings '${FIXTURE_NAMES.SIMPLE_ENGINE}'`).toBeTruthy();
 
       expect(simpleAddon, 'to have an associated mapping by location for `foo`').toBe(
         mappingsByLocation[simpleAddon.location]
@@ -61,34 +61,34 @@ describe('Smoke Test', () => {
       );
 
       expect(simpleAddon.location, `${simpleAddon.name}'s location is correct`).toBe(
-        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON)
+        resolve(pathToRoot, FIXTURE_NAMES.SIMPLE_ADDON)
       );
 
       expect(simpleEngine.location, `${simpleEngine.name}'s location is correct`).toBe(
-        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE)
+        resolve(pathToRoot, FIXTURE_NAMES.SIMPLE_ENGINE)
       );
     });
 
     test('it works correctly for addons that specify a custom `moduleName`', () => {
       const { mappingsByAddonName } = getInternalModuleMappings(pathToRoot);
 
-      const customAddonName = mappingsByAddonName[PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME];
+      const customAddonName = mappingsByAddonName[FIXTURE_NAMES.ADDON_WITH_MODULE_NAME];
 
       expect(customAddonName, 'module mappings exists for `addon-with-module-name`').toBeTruthy();
 
       expect(customAddonName.moduleName).toEqual(
-        `${PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME`
+        `${FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME`
       );
       expect(customAddonName.packageName).toEqual('addon-with-module-name');
     });
 
     test('it works correctly workspace packages', () => {
       const { mappingsByAddonName } = getInternalModuleMappings(
-        resolve(pathToRoot, PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER)
+        resolve(pathToRoot, FIXTURE_NAMES.WORKSPACE_CONTAINER)
       );
 
       const simpleWorkspace =
-        mappingsByAddonName[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER];
+        mappingsByAddonName[FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER];
 
       expect(simpleWorkspace, 'module mappings exists for `foo-workspace`').toBeTruthy();
       expect(simpleWorkspace.isWorkspace).toBe(true);
@@ -98,7 +98,7 @@ describe('Smoke Test', () => {
       const { mappingsByAddonName } = getInternalModuleMappings(pathToRoot);
 
       expect(
-        mappingsByAddonName[PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN],
+        mappingsByAddonName[FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN],
         'an internal module mapping exists for `addon-with-custom-main`'
       ).toBeTruthy();
     });

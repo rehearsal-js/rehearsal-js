@@ -1,38 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sync } from 'fast-glob';
-import { readJsonSync } from 'fs-extra';
+import {
+  isTesting,
+  isWorkspace,
+  Package,
+  readPackageJson,
+} from '@rehearsal/migration-graph-shared';
+import { sync as fastGlobSync } from 'fast-glob';
 import { dirname, resolve } from 'path';
 import resolvePackagePath from 'resolve-package-path';
 
-import { EmberAddonPackage } from './-private/entities/ember-addon-package';
-import { EmberPackage } from './-private/entities/ember-package';
+import { EmberAddonPackage } from './entities/ember-addon-package';
+import { EmberPackage } from './entities/ember-package';
 import {
   type MappingsByAddonName,
   type MappingsByLocation,
+  ExternalAddonPackages,
+  ExternalPackages,
+  InternalAddonPackages,
+  InternalPackages,
   MappingsLookup,
   RootInternalState,
-} from './-private/entities/InternalState';
-import { Package } from './-private/entities/package';
-import type { PackageContainer } from './-private/types/package-container';
-import { getInternalAddonTestFixtures, isTesting } from './-private/utils/test-environment';
-import { isWorkspace } from './-private/utils/workspace';
+} from './entities/InternalState';
+import type { EmberPackageContainer as PackageContainer } from './types/package-container';
+import { isAddon, isApp } from './utils/ember';
+import { getInternalAddonTestFixtures } from './utils/environment';
 
 type EntityFactoryOptions = {
   packageContainer: PackageContainer;
   type?: string;
 };
 
-function entityFactory(pathToPackage: string, options: EntityFactoryOptions): Package {
-  let Klass = Package;
+// TODO rename mappingsByLocation to mappingsByPath
+
+export function entityFactory(
+  pathToPackage: string,
+  options: EntityFactoryOptions
+): EmberPackage | EmberAddonPackage | Package {
+  let Klass;
   try {
-    const packageData = readJsonSync(resolve(pathToPackage, 'package.json'));
-    if (packageData?.keywords?.includes('ember-addon')) {
+    const packageJson = readPackageJson(pathToPackage);
+    if (isAddon(packageJson)) {
       Klass = EmberAddonPackage;
-    } else if (packageData['ember-addon']) {
+    } else if (isApp(packageJson)) {
       Klass = EmberPackage;
+    } else {
+      Klass = Package;
     }
   } catch (e) {
-    console.log(`Failed to read pathToPackage: ${pathToPackage}`);
+    throw new Error(`Failed to read pathToPackage: ${pathToPackage}`);
   }
 
   return new Klass(pathToPackage, options);
@@ -48,6 +63,14 @@ class MappingsContainer {
       packageContainer: this.packageContainerInterface,
     });
     this.internalState = new RootInternalState(rootPackage);
+  }
+
+  public isEmberApp(): boolean {
+    return isApp(this.internalState.rootPackage.packageJson);
+  }
+
+  public isEmberAddon(): boolean {
+    return isAddon(this.internalState.rootPackage.packageJson);
   }
 
   public static getInstance(pathToRoot: string): MappingsContainer {
@@ -148,7 +171,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.location] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
         }
       }
 
@@ -200,7 +223,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.location] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
         }
       }
 
@@ -213,19 +236,35 @@ class MappingsContainer {
   }
 
   private globInternalPackages(pathToRoot: string): Package[] {
-    const appPackages = sync(
+    const cwd = resolve(pathToRoot);
+
+    // There is a bug (feature?) in fast glob where the exclude patterns include the `cwd`
+    // when applying the exclude patterns.
+    //
+    // For example if we have our code checkout out to some directory called:
+    // > `~/Code/tmp`
+    //
+    // The fastglob exclude pattern ``!**/tmp/**` will exclude anything in this directory
+    // because the parent directory contains tmp
+    //
+    // So we must prefix our ignore glob patterns with our `pathToRoot`.
+    //
+    // This issue was discovered during a migration-graph.test.ts because we have a fixtures
+    // directory.
+
+    const internalPackages = fastGlobSync(
       [
-        '**/package.json',
-        '!**/build/**',
-        '!**/dist/**',
-        '!**/blueprints/**',
-        '!**/fixtures/**',
-        '!**/node_modules/**',
-        '!**/tmp/**',
+        `**/package.json`,
+        `!${pathToRoot}/**/build/**`,
+        `!${pathToRoot}/**/dist/**`,
+        `!${pathToRoot}/**/blueprints/**`,
+        `!${pathToRoot}/**/fixtures/**`,
+        `!${pathToRoot}/**/node_modules/**`,
+        `!${pathToRoot}/**/tmp/**`,
       ],
       {
         absolute: true,
-        cwd: pathToRoot,
+        cwd,
       }
     )
       .map((pathToPackage) => dirname(pathToPackage))
@@ -243,10 +282,10 @@ class MappingsContainer {
       })
     );
 
-    return [...appPackages, ...fixturePackages];
+    return [...internalPackages, ...fixturePackages];
   }
 
-  public getInternalPackages(pathToRoot = process.cwd(), clearCache = false): any {
+  public getInternalPackages(pathToRoot = process.cwd(), clearCache = false): InternalPackages {
     if (clearCache) {
       this.clearCache();
     }
@@ -261,7 +300,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.location] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
       }
 
       this.internalState.internalAddonPackages = {
@@ -281,7 +320,10 @@ class MappingsContainer {
    * @param {string} pathToRoot - defaults to current working directory
    * @return {object} object with mappingsByName and mappingsByLocation
    */
-  public getInternalAddonPackages(pathToRoot = process.cwd(), clearCache = false): any {
+  public getInternalAddonPackages(
+    pathToRoot = process.cwd(),
+    clearCache = false
+  ): InternalAddonPackages {
     if (clearCache) {
       this.clearCache();
     }
@@ -297,7 +339,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.location] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
       }
       this.internalState.internalAddonPackages = {
         mappingsByAddonName,
@@ -339,35 +381,45 @@ class MappingsContainer {
   }
 }
 
+// TODO Remove setRootPackage, and instead re-create the singleton instance similar to setRootPackage if the path differs,
+// TODO Remove pathToRoot arugment to exposed API methods below
+// TODO Inside methods, get the current root from an internal private method.
+
 export function getRootPackage(pathToRoot: string): Package {
   return MappingsContainer.getInstance(pathToRoot).getRootPackage(pathToRoot);
 }
 
-export function getInternalPackages(pathToRoot: string, clearCache = false): any {
+export function getInternalPackages(pathToRoot: string, clearCache = false): InternalPackages {
   return MappingsContainer.getInstance(pathToRoot).getInternalPackages(pathToRoot, clearCache);
 }
 
-export function getExternalPackages(pathToRoot: string, clearCache = false): MappingsLookup {
+export function getExternalPackages(pathToRoot: string, clearCache = false): ExternalPackages {
   return MappingsContainer.getInstance(pathToRoot).getExternalPackages(pathToRoot, clearCache);
 }
 
-export function getAddonPackages(pathToRoot: string, clearCache = false): any {
+export function getAddonPackages(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getAddonPackages(pathToRoot, clearCache);
 }
 
-export function getInternalAddonPackages(pathToRoot: string, clearCache = false): any {
+export function getInternalAddonPackages(
+  pathToRoot: string,
+  clearCache = false
+): InternalAddonPackages {
   return MappingsContainer.getInstance(pathToRoot).getInternalAddonPackages(pathToRoot, clearCache);
 }
 
-export function getExternalAddonPackages(pathToRoot: string, clearCache = false): MappingsLookup {
+export function getExternalAddonPackages(
+  pathToRoot: string,
+  clearCache = false
+): ExternalAddonPackages {
   return MappingsContainer.getInstance(pathToRoot).getExternalAddonPackages(pathToRoot, clearCache);
 }
 
-export function getModuleMappings(pathToRoot: string, clearCache = false): any {
+export function getModuleMappings(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getAddonPackages(pathToRoot, clearCache);
 }
 
-export function getInternalModuleMappings(pathToRoot: string, clearCache = false): any {
+export function getInternalModuleMappings(pathToRoot: string, clearCache = false): MappingsLookup {
   return MappingsContainer.getInstance(pathToRoot).getInternalAddonPackages(pathToRoot, clearCache);
 }
 

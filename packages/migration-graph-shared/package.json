@@ -1,0 +1,40 @@
+{
+  "name": "@rehearsal/migration-graph-shared",
+  "version": "0.0.36",
+  "description": "Tool for generating a typescript migration graph",
+  "license": "BSD-2-Clause",
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "npm-run-all lint:*",
+    "lint:eslint": "eslint --fix . --ext .ts",
+    "lint:tsc-src": "tsc --noEmit",
+    "prepare": "yarn build",
+    "test": "vitest --run"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "findup-sync": "^5.0.0",
+    "fs-extra": "^10.1.0",
+    "micromatch": "^4",
+    "prettier": "^2.7.1",
+    "sort-package-json": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/findup-sync": "^4.0.2",
+    "fixturify": "^2.1.1",
+    "rimraf": "^3.0.2",
+    "tmp": "^0.2.1",
+    "vitest": "^0.22.1"
+  },
+  "peerDependencies": {
+    "typescript": ">4.7"
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}
