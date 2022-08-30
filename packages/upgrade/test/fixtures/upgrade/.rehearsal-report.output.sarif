@@ -5,22 +5,14 @@
     {
       "tool": {
         "driver": {
-          "name": "@rehearsal/migrate",
+          "name": "@rehearsal/upgrade",
           "informationUri": "https://github.com/rehearsal-js/rehearsal-js",
           "rules": [
             {
               "id": "TS6133",
               "name": "TS6133",
               "shortDescription": {
-                "text": "'fs' is declared but its value is never read."
-              },
-              "helpUri": ""
-            },
-            {
-              "id": "TS2322",
-              "name": "TS2322",
-              "shortDescription": {
-                "text": "Type 'string' is not assignable to type 'number'."
+                "text": "'unused' is declared but its value is never read."
               },
               "helpUri": ""
             },
@@ -31,6 +23,22 @@
                 "text": "Cannot find name 'NonExistingElement'."
               },
               "helpUri": ""
+            },
+            {
+              "id": "TS2322",
+              "name": "TS2322",
+              "shortDescription": {
+                "text": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'."
+              },
+              "helpUri": ""
+            },
+            {
+              "id": "TS2571",
+              "name": "TS2571",
+              "shortDescription": {
+                "text": "Object is of type 'unknown'."
+              },
+              "helpUri": ""
             }
           ]
         }
@@ -38,7 +46,7 @@
       "artifacts": [
         {
           "location": {
-            "uri": "first.ts"
+            "uri": "react-processed.tsx"
           },
           "roles": [
             "analysisTarget",
@@ -64,14 +72,27 @@
         },
         {
           "location": {
-            "uri": "second.ts"
+            "uri": "ts-errors.ts"
           },
           "roles": [
             "analysisTarget",
-            "unmodified"
+            "modified"
           ],
           "properties": {
-            "fixed": false,
+            "fixed": true,
+            "hintAdded": true
+          }
+        },
+        {
+          "location": {
+            "uri": "ts-processed.ts"
+          },
+          "roles": [
+            "analysisTarget",
+            "modified"
+          ],
+          "properties": {
+            "fixed": true,
             "hintAdded": true
           }
         }
@@ -81,339 +102,20 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
-          "message": {
-            "text": "The declaration 'fs' is never read or used. Remove the declaration or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 1
-                },
-                "properties": {
-                  "code": "import fs from 'fs';",
-                  "codeFixAction": "delete",
-                  "roles": [
-                    "analysisTarget",
-                    "modified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": true,
-            "fixes": [
-              {
-                "fileName": "first.ts",
-                "code": "import fs from 'fs';",
-                "codeFixAction": "delete"
-              }
-            ]
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The declaration 'parse' is never read or used. Remove the declaration or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 1,
-                  "startColumn": 19
-                },
-                "properties": {
-                  "code": " parse",
-                  "codeFixAction": "delete",
-                  "roles": [
-                    "analysisTarget",
-                    "modified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": true,
-            "fixes": [
-              {
-                "fileName": "first.ts",
-                "code": " parse",
-                "codeFixAction": "delete"
-              }
-            ]
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The function 'sleep' is never called. Remove the function or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 3,
-                  "startColumn": 10
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The variable 'foo' is never read or used. Remove the variable or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 8,
-                  "startColumn": 5
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The parameter 'inSeconds' is never used. Remove the parameter from function definition or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 14,
-                  "startColumn": 20
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS2322",
-          "ruleIndex": 1,
-          "level": "error",
-          "message": {
-            "text": "The variable 'foo' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 18,
-                  "startColumn": 5
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The function 'timestamp' is never called. Remove the function or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 20,
-                  "startColumn": 14
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
-          "message": {
-            "text": "The variable 'b' is never read or used. Remove the variable or use it."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 22,
-                  "startColumn": 15
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS2322",
-          "ruleIndex": 1,
-          "level": "error",
-          "message": {
-            "text": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type."
-          },
-          "analysisTarget": {
-            "uri": "first.ts"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "first.ts"
-                },
-                "region": {
-                  "startLine": 24,
-                  "startColumn": 9
-                },
-                "properties": {
-                  "roles": [
-                    "analysisTarget",
-                    "unmodified"
-                  ]
-                }
-              }
-            }
-          ],
-          "properties": {
-            "fixed": false,
-            "fixes": []
-          }
-        },
-        {
-          "ruleId": "TS6133",
-          "ruleIndex": 0,
-          "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
             "text": "The variable 'unused' is never read or used. Remove the variable or use it."
           },
           "analysisTarget": {
-            "uri": "react.tsx"
+            "uri": "react-processed.tsx"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react-processed.tsx",
+                  "index": 0
                 },
                 "region": {
                   "startLine": 4,
@@ -430,6 +132,281 @@
               }
             }
           ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "react-processed.tsx",
+                "code": " unused",
+                "codeFixAction": "delete"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unused' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 11
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'NonExistingElement'."
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 23
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'NonExistingElement'."
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 8
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 2,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'"
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 13
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'NonExistingFragment'."
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 13
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 2,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type."
+          },
+          "analysisTarget": {
+            "uri": "react-processed.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react-processed.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 31,
+                  "startColumn": 30
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
+          "message": {
+            "text": "The variable 'unused' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "react.tsx"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "react.tsx",
+                  "index": 1
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 9
+                },
+                "properties": {
+                  "code": " unused",
+                  "codeFixAction": "delete",
+                  "roles": [
+                    "analysisTarget",
+                    "modified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
           "properties": {
             "fixed": true,
             "fixes": [
@@ -445,6 +422,8 @@
           "ruleId": "TS6133",
           "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'unused' is never read or used. Remove the variable or use it."
           },
@@ -455,7 +434,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 4,
@@ -470,6 +450,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -477,8 +458,10 @@
         },
         {
           "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingElement'."
           },
@@ -489,7 +472,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 9,
@@ -504,6 +488,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -511,8 +496,10 @@
         },
         {
           "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingElement'."
           },
@@ -523,7 +510,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 14,
@@ -538,6 +526,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -545,8 +534,10 @@
         },
         {
           "ruleId": "TS2322",
-          "ruleIndex": 1,
+          "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode'"
           },
@@ -557,7 +548,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 16,
@@ -572,6 +564,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -579,8 +572,10 @@
         },
         {
           "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "Cannot find name 'NonExistingFragment'."
           },
@@ -591,7 +586,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 22,
@@ -606,6 +602,7 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -613,8 +610,10 @@
         },
         {
           "ruleId": "TS2322",
-          "ruleIndex": 1,
+          "ruleIndex": 2,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
             "text": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type."
           },
@@ -625,7 +624,8 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "react.tsx"
+                  "uri": "react.tsx",
+                  "index": 1
                 },
                 "region": {
                   "startLine": 29,
@@ -640,97 +640,125 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
           }
         },
         {
-          "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
           "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
-            "text": "Cannot find name 'readFileSync'."
+            "text": "The declaration 'fs' is never read or used. Remove the declaration or use it."
           },
           "analysisTarget": {
-            "uri": "second.ts"
+            "uri": "ts-errors.ts"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "ts-errors.ts",
+                  "index": 2
                 },
                 "region": {
-                  "startLine": 2,
-                  "startColumn": 10
+                  "startLine": 1,
+                  "startColumn": 1
                 },
                 "properties": {
+                  "code": "import fs from 'fs';",
+                  "codeFixAction": "delete",
                   "roles": [
                     "analysisTarget",
-                    "unmodified"
+                    "modified"
                   ]
                 }
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
-            "fixed": false,
-            "fixes": []
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "ts-errors.ts",
+                "code": "import fs from 'fs';",
+                "codeFixAction": "delete"
+              }
+            ]
           }
         },
         {
-          "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
           "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
           "message": {
-            "text": "Cannot find name 'doesNotExist'."
+            "text": "The declaration 'parse' is never read or used. Remove the declaration or use it."
           },
           "analysisTarget": {
-            "uri": "second.ts"
+            "uri": "ts-errors.ts"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "ts-errors.ts",
+                  "index": 2
                 },
                 "region": {
-                  "startLine": 13,
-                  "startColumn": 22
+                  "startLine": 1,
+                  "startColumn": 19
                 },
                 "properties": {
+                  "code": " parse",
+                  "codeFixAction": "delete",
                   "roles": [
                     "analysisTarget",
-                    "unmodified"
+                    "modified"
                   ]
                 }
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
-            "fixed": false,
-            "fixes": []
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "ts-errors.ts",
+                "code": " parse",
+                "codeFixAction": "delete"
+              }
+            ]
           }
         },
         {
-          "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
-            "text": "Cannot find name 'doesNotExist'."
+            "text": "The variable 'thisConstant' is never read or used. Remove the variable or use it."
           },
           "analysisTarget": {
-            "uri": "second.ts"
+            "uri": "ts-errors.ts"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "ts-errors.ts",
+                  "index": 2
                 },
                 "region": {
-                  "startLine": 21,
+                  "startLine": 4,
                   "startColumn": 7
                 },
                 "properties": {
@@ -742,6 +770,83 @@
               }
             }
           ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'thisVariable' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function 'thisFunctionIsNeverRead' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 10,
+                  "startColumn": 10
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
@@ -749,19 +854,676 @@
         },
         {
           "ruleId": "TS2304",
-          "ruleIndex": 2,
+          "ruleIndex": 1,
           "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
           "message": {
-            "text": "Cannot find name 'doesNotExistAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'."
+            "text": "Cannot find name 'missingFunction'."
           },
           "analysisTarget": {
-            "uri": "second.ts"
+            "uri": "ts-errors.ts"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "second.ts"
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 12
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'missingVar'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 24
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'missingVar'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 11
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 11
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function 'notProperlyFormatted' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 10
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'doSomething'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 12
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function 'thisFunctionIsACompleteMess' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 10
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'foo'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 5
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function 'timestamp' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 53,
+                  "startColumn": 14
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'b' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 55,
+                  "startColumn": 15
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2322",
+          "ruleIndex": 2,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 9
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'timestamp'."
+          },
+          "analysisTarget": {
+            "uri": "ts-errors.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-errors.ts",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 65,
+                  "startColumn": 1
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
+          "message": {
+            "text": "The function 'unusedFunction' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 10
+                },
+                "properties": {
+                  "code": " unusedFunction",
+                  "codeFixAction": "delete",
+                  "roles": [
+                    "analysisTarget",
+                    "modified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "ts-processed.ts",
+                "code": " unusedFunction",
+                "codeFixAction": "delete"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The function 'unusedFunction' is never called. Remove the function or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 10
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unusedVariable' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 11,
+                  "startColumn": 5
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unusedConst1' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unusedConst2' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unusedConst3' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
                 },
                 "region": {
                   "startLine": 23,
@@ -776,12 +1538,254 @@
               }
             }
           ],
+          "relatedLocations": [],
           "properties": {
             "fixed": false,
             "fixes": []
           }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'unusedConstWithoutCommentButWithRehearsalTagAbove' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS6133",
+          "ruleIndex": 0,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "The variable 'resultValue' is never read or used. Remove the variable or use it."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'missingVar'."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2304",
+          "ruleIndex": 1,
+          "level": "error",
+          "baselineState": "unchanged",
+          "kind": "informational",
+          "message": {
+            "text": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'."
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 7
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "unmodified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": false,
+            "fixes": []
+          }
+        },
+        {
+          "ruleId": "TS2571",
+          "ruleIndex": 3,
+          "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
+          "message": {
+            "text": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`"
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 17
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "modified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "ts-processed.ts"
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "TS2571",
+          "ruleIndex": 3,
+          "level": "error",
+          "baselineState": "updated",
+          "kind": "review",
+          "message": {
+            "text": "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`"
+          },
+          "analysisTarget": {
+            "uri": "ts-processed.ts"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "ts-processed.ts",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 17
+                },
+                "properties": {
+                  "roles": [
+                    "analysisTarget",
+                    "modified"
+                  ]
+                }
+              }
+            }
+          ],
+          "relatedLocations": [],
+          "properties": {
+            "fixed": true,
+            "fixes": [
+              {
+                "fileName": "ts-processed.ts"
+              }
+            ]
+          }
         }
-      ]
+      ],
+      "automationDetails": {
+        "description": {
+          "text": "This is the run of @rehearsal/upgrade on your product against TypeScript 4.7.4 at 8/29/2022, 10:07:52"
+        }
+      }
     }
   ]
 }

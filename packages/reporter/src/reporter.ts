@@ -20,7 +20,15 @@ export class Reporter {
       summary: {
         projectName: projectName,
         tsVersion: ts.version,
-        timestamp: Date.now().toString(),
+        timestamp: new Date().toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hourCycle: 'h24',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }),
         basePath: basePath,
       },
       items: [],

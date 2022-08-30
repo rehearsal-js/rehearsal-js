@@ -62,7 +62,7 @@ describe('Test upgrade', function () {
     reporter.print(sarifReport, sarifFormatter);
 
     const sarif = JSON.parse(fs.readFileSync(sarifReport).toString());
-    assert.deepEqual(sarif, expectedSarif(basePath));
+    assert.deepEqual(sarif, expectedSarif(basePath, report.summary.timestamp));
 
     fs.rmSync(sarifReport);
 
@@ -97,12 +97,12 @@ function expectedReport(basePath: string, timestamp: string): Report {
   return report;
 }
 
-function expectedSarif(basePath: string): string {
+function expectedSarif(basePath: string, dateToLocaleString: string): string {
   const content = fs.readFileSync(resolve(basePath, '.rehearsal-report.output.sarif')).toString();
   const log = JSON.parse(content);
 
   const run = log.runs[0];
-  const { artifacts, results } = run;
+  const { artifacts, results, automationDetails } = run;
 
   for (const artifact of artifacts) {
     artifact.location.uri = resolve(basePath, artifact.location.uri);
@@ -127,6 +127,9 @@ function expectedSarif(basePath: string): string {
       });
     }
   }
+  automationDetails.description.text =
+    'This is the run of @rehearsal/upgrade on your product against TypeScript 4.7.4 at ' +
+    dateToLocaleString;
   return log;
 }
 

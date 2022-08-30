@@ -13,6 +13,7 @@ describe('Test reporter', function () {
       resolve(basePath, '.rehearsal-report.input.json')
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const report = (reporter as any).report as Report;
 
     expect(report.summary.basePath).toMatch(/base/);

@@ -83,10 +83,18 @@ describe('Test service', function () {
     expect(diagnostics[0].messageText).toEqual(`Cannot find name 'oops'.`);
   });
 
-  test('resolveModuleName', async () => {
+  test('resolveModuleName, existing module', async () => {
     const service = new RehearsalService(options, fileNames);
 
-    const path = service.resolveModuleName('path', fileName);
+    const path = service.resolveModuleName('typescript', fileName);
+
+    expect(path).toContain('node_modules/typescript');
+  });
+
+  test('resolveModuleName, non-existing module', async () => {
+    const service = new RehearsalService(options, fileNames);
+
+    const path = service.resolveModuleName('this-module-is-not-exists', fileName);
 
     expect(path).toBeUndefined();
   });

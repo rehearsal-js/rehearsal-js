@@ -1,66 +1,180 @@
 import { Log, Run, ReportingDescriptor, Result, Artifact, Location, PropertyBag } from 'sarif';
 import { Report, ReportItem, ProcessedFile, FileCollection } from '../types';
 
-let ruleIndexMap: { [ruleId: string]: number } | undefined;
-let rules: ReportingDescriptor[] = [];
+class SarifFormatter {
+  private report: Report;
+  private rules: ReportingDescriptor[] = [];
+  private ruleIndexMap: { [ruleId: string]: number } = {};
+  private artifactIndexMap: { [fileName: string]: number } = {};
+  private artifacts: Artifact[] = [];
+  private results: Result[] = [];
 
-let artifactIndexMap: { [fileName: string]: number } | undefined;
-let artifacts: Artifact[] = [];
+  constructor(report: Report) {
+    this.report = report;
+  }
 
-let results: Result[] = [];
+  format(): string {
+    return JSON.stringify(buildLog(this.buildRun()), null, 2);
+  }
 
-export function sarifFormatter(report: Report): string {
-  const run = buildRun(report.items);
-  const log = {
-    ...initLog(),
-    runs: [run],
-  };
-  cleanUp();
-  return JSON.stringify(log, null, 2);
+  private buildRun(): Run {
+    const run = createRun(this.report);
+
+    for (const item of this.report.items) {
+      const ruleId = `TS${item.errorCode}`;
+      this.addRule(ruleId, item.message);
+      this.addArtifact(item.files);
+      this.addResult(item);
+    }
+
+    const { rules, artifacts, results } = this;
+
+    const tool = {
+      ...run.tool,
+      driver: {
+        ...run.tool.driver,
+        rules,
+      },
+    };
+
+    return {
+      ...run,
+      tool,
+      artifacts,
+      results,
+    };
+  }
+
+  private addRule(ruleId: string, message: string): void {
+    if (!this.ruleExists(ruleId)) {
+      const rule = {
+        id: ruleId,
+        name: ruleId,
+        shortDescription: {
+          text: message,
+        },
+        helpUri: '',
+      };
+
+      this.rules.push(rule);
+
+      this.ruleIndexMap[ruleId] = this.rules.length - 1;
+    }
+  }
+
+  private addArtifact(files: FileCollection): void {
+    for (const file in files) {
+      if (!this.artifactExists(file)) {
+        const newArtifact = buildArtifact(files[file]);
+        this.artifacts.push(newArtifact);
+
+        this.artifactIndexMap[file] = this.artifacts.length - 1;
+      } else {
+        const index = this.artifactIndexMap![file];
+        const existingArtifact = this.artifacts[index];
+        this.artifacts[index] = updateArtifact(existingArtifact, files[file]);
+      }
+    }
+  }
+
+  private addResult(item: ReportItem): void {
+    this.results.push(this.buildResult(item));
+  }
+
+  private buildResult(item: ReportItem): Result {
+    const { locations, relatedLocations, fixes } = this.getFilesData(
+      item.files,
+      item.analysisTarget
+    );
+    const baselineState = item.fixed ? 'updated' : 'unchanged';
+    const kind = item.fixed ? 'review' : 'informational';
+    return {
+      ruleId: `TS${item.errorCode}`,
+      ruleIndex: this.ruleIndexMap[`TS${item.errorCode}`],
+      level: levelConverter(item.category),
+      baselineState,
+      kind,
+      message: {
+        text: item.hint,
+      },
+      analysisTarget: {
+        uri: item.analysisTarget,
+      },
+      locations,
+      relatedLocations,
+      properties: {
+        fixed: item.fixed || false,
+        fixes,
+      },
+    };
+  }
+
+  private getFilesData(files: FileCollection, entryFileName: string): PropertyBag {
+    let locations: Location[] = [];
+    let relatedLocations: Location[] = [];
+
+    let fixes: { [key: string]: string | undefined }[] = [];
+    Object.values(files).forEach((file) => {
+      if (file.fileName === entryFileName) {
+        locations = [...locations, this.buildLocation(file)];
+      } else {
+        relatedLocations = [...relatedLocations, this.buildLocation(file)];
+      }
+      if (file.fixed) {
+        fixes = [
+          ...fixes,
+          {
+            fileName: file.fileName,
+            code: file.code || undefined,
+            codeFixAction: file.codeFixAction || undefined,
+          },
+        ];
+      }
+    });
+
+    return {
+      locations,
+      relatedLocations,
+      fixes,
+    };
+  }
+
+  private buildLocation(file: ProcessedFile): Location {
+    const index = this.artifactIndexMap[file.fileName];
+    return {
+      physicalLocation: {
+        artifactLocation: {
+          uri: file.fileName,
+          index,
+        },
+        region: {
+          startLine: file.location?.line,
+          startColumn: file.location?.character,
+        },
+        properties: {
+          code: file.code,
+          codeFixAction: file.codeFixAction,
+          roles: file.roles,
+        },
+      },
+    };
+  }
+
+  private ruleExists(ruleId: string): boolean {
+    return this.ruleIndexMap[ruleId] !== undefined;
+  }
+
+  private artifactExists(artifactName: string): boolean {
+    return this.artifactIndexMap[artifactName] !== undefined;
+  }
 }
 
-function initLog(): Log {
+function buildLog(runs: Run | Run[]): Log {
   return {
     version: '2.1.0' as const,
     $schema: 'http://json.schemastore.org/sarif-2.1.0-rtm.4',
-    runs: [],
+    runs: Array.isArray(runs) ? runs : [runs],
   };
-}
-
-function buildRun(items: ReportItem[]): Run {
-  const run = initRun();
-
-  for (const item of items) {
-    const ruleId = `TS${item.errorCode}`;
-    rules = addRule(ruleId, item.message, rules);
-
-    artifacts = addArtifact(item.files, artifacts);
-
-    results = addResult(item, results);
-  }
-
-  const tool = {
-    ...run.tool,
-    driver: {
-      ...run.tool.driver,
-      rules,
-    },
-  };
-
-  return {
-    ...run,
-    tool,
-    artifacts,
-    results,
-  };
-}
-
-function ruleExists(ruleId: string): boolean {
-  return !!(ruleIndexMap && Object.getOwnPropertyDescriptor(ruleIndexMap, ruleId));
-}
-
-function artifactExists(artifactName: string): boolean {
-  return !!(artifactIndexMap && Object.getOwnPropertyDescriptor(artifactIndexMap, artifactName));
 }
 
 function updateArtifact(artifact: Artifact, file: ProcessedFile): Artifact {
@@ -74,50 +188,6 @@ function updateArtifact(artifact: Artifact, file: ProcessedFile): Artifact {
   return artifact;
 }
 
-function addRule(
-  ruleId: string,
-  message: string,
-  rules: ReportingDescriptor[]
-): ReportingDescriptor[] {
-  if (!ruleExists(ruleId)) {
-    const rule = {
-      id: ruleId,
-      name: ruleId,
-      shortDescription: {
-        text: message,
-      },
-      helpUri: '',
-    };
-
-    rules = [...rules, rule];
-
-    ruleIndexMap = {
-      ...(ruleIndexMap || {}),
-      [ruleId]: rules.length - 1,
-    };
-  }
-  return rules;
-}
-
-function addArtifact(files: FileCollection, artifacts: Artifact[]): Artifact[] {
-  for (const file in files) {
-    if (!artifactExists(file)) {
-      const newArtifact = buildArtifact(files[file]);
-      artifacts = [...artifacts, newArtifact];
-
-      artifactIndexMap = {
-        ...(artifactIndexMap || {}),
-        [file]: artifacts.length - 1,
-      };
-    } else {
-      const index = artifactIndexMap![file];
-      const existingArtifact = artifacts[index];
-      artifacts[index] = updateArtifact(existingArtifact, files[file]);
-    }
-  }
-  return artifacts;
-}
-
 function buildArtifact(file: ProcessedFile): Artifact {
   return {
     location: {
@@ -127,73 +197,6 @@ function buildArtifact(file: ProcessedFile): Artifact {
     properties: {
       fixed: file.fixed,
       hintAdded: file.hintAdded,
-    },
-  };
-}
-
-function addResult(item: ReportItem, results: Result[]): Result[] {
-  const result = buildResult(item);
-  return [...results, result];
-}
-
-function buildResult(item: ReportItem): Result {
-  const { locations, fixes } = getFilesData(item.files);
-  return {
-    ruleId: `TS${item.errorCode}`,
-    ruleIndex: ruleIndexMap && ruleIndexMap[`TS${item.errorCode}`],
-    level: levelConverter(item.category),
-    message: {
-      text: item.hint,
-    },
-    analysisTarget: {
-      uri: item.analysisTarget,
-    },
-    locations,
-    properties: {
-      fixed: item.fixed || false,
-      fixes,
-    },
-  };
-}
-
-function getFilesData(files: FileCollection): PropertyBag {
-  let locations: Location[] = [];
-  let fixes: { [key: string]: string | undefined }[] = [];
-  Object.values(files).forEach((file) => {
-    locations = [...locations, buildLocation(file)];
-    if (file.fixed) {
-      fixes = [
-        ...fixes,
-        {
-          fileName: file.fileName,
-          code: file.code || undefined,
-          codeFixAction: file.codeFixAction || undefined,
-        },
-      ];
-    }
-  });
-
-  return {
-    locations,
-    fixes,
-  };
-}
-
-function buildLocation(file: ProcessedFile): Location {
-  return {
-    physicalLocation: {
-      artifactLocation: {
-        uri: file.fileName,
-      },
-      region: {
-        startLine: file.location?.line,
-        startColumn: file.location?.character,
-      },
-      properties: {
-        code: file.code,
-        codeFixAction: file.codeFixAction,
-        roles: file.roles,
-      },
     },
   };
 }
@@ -213,26 +216,30 @@ function levelConverter(category: string): Result.level {
   }
 }
 
-function initRun(): Run {
+function createRun(report: Report): Run {
   return {
     tool: {
       driver: {
-        name: '@rehearsal/migrate',
+        name: '@rehearsal/upgrade',
         informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
         rules: [],
       },
     },
     artifacts: [],
     results: [],
+    automationDetails: {
+      description: {
+        text:
+          'This is the run of @rehearsal/upgrade on your product against TypeScript ' +
+          report.summary.tsVersion +
+          ' at ' +
+          report.summary.timestamp,
+      },
+    },
   };
 }
 
-function cleanUp(): void {
-  ruleIndexMap = undefined;
-  rules = [];
-
-  artifactIndexMap = undefined;
-  artifacts = [];
-
-  results = [];
+export function sarifFormatter(report: Report): string {
+  const formatter = new SarifFormatter(report);
+  return formatter.format();
 }
