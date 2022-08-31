@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph",
-  "version": "0.0.0",
+  "version": "0.0.30",
   "description": "Tool for generating a typescript conversion graph",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
@@ -14,15 +14,15 @@
     "test": "vitest --run"
   },
   "dependencies": {
-    "jsonc-parser": "^3",
     "@babel/parser": "^7.18.4",
     "@babel/traverse": "^7.18.2",
-    "@rehearsal/migration-graph-ember": "*",
+    "@rehearsal/migration-graph-ember": "^0.0.30",
     "@swc/core": "^1.2.233",
+    "debug": "^4.3.4",
     "fast-glob": "^3",
     "fs-extra": "^10.1.0",
-    "path": "^0.12.7",
-    "debug": "^4.3.4"
+    "jsonc-parser": "^3",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "fixturify": "^2",

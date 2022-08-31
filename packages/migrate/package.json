@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migrate",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "Rehearsal JavaScript to TypeScript Migration Tool",
   "keywords": [
     "rehearsal",
@@ -30,10 +30,10 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/plugins": "^0.0.29",
-    "@rehearsal/reporter": "^0.0.29",
-    "@rehearsal/service": "^0.0.29",
-    "@rehearsal/utils": "^0.0.29",
+    "@rehearsal/plugins": "^0.0.30",
+    "@rehearsal/reporter": "^0.0.30",
+    "@rehearsal/service": "^0.0.30",
+    "@rehearsal/utils": "^0.0.30",
     "winston": "^3.6.0"
   },
   "devDependencies": {
