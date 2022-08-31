@@ -10,7 +10,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "bin": {
-    "rehearsal": "./bin/run"
+    "rehearsal": "./bin/rehearsal.js"
   },
   "files": [
     "bin",
@@ -24,7 +24,7 @@
     "lint:eslint": "yarn eslint --fix . --ext .ts",
     "lint:tsc-src": "yarn tsc --noEmit",
     "prepare": "yarn build",
-    "test": "vitest --run",
+    "test": "yarn && vitest --run",
     "test:watch": "vitest --coverage --watch",
     "dev:clean": "rm test/fixtures/app/.rehearsal.json && git restore test/fixtures/app/foo test/fixtures/app/foo_2 package.json ../../yarn.lock"
   },
@@ -35,18 +35,22 @@
   },
   "dependencies": {
     "@microsoft/api-documenter": "^7.13.68",
+    "@rehearsal/migrate": "^0.0.29",
     "@rehearsal/reporter": "^0.0.29",
     "@rehearsal/upgrade": "^0.0.29",
     "compare-versions": "^4.1.1",
     "debug": "^4.3.2",
+    "dependency-cruiser": "^11.15.0",
     "execa": "^5.1.1",
     "findup-sync": "^5.0.0",
     "fs-extra": "^10.0.0",
+    "glob": "^8.0.3",
     "json5": "^2.2.0",
     "listr2": "^5.0.1",
     "semver": "^7.3.5",
     "simple-git": "^3.10.0",
     "tmp": "^0.2.1",
+    "toposort": "^2.0.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -57,10 +61,12 @@
     "@types/debug": "^4.1.7",
     "@types/findup-sync": "^4.0.2",
     "@types/fs-extra": "^9.0.13",
+    "@types/glob": "^7.2.0",
     "@types/json5": "*",
     "@types/node": "^18.0.3",
     "@types/semver": "^7.3.9",
     "@types/tmp": "^0.2.0",
+    "@types/toposort": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^4.22.1",
     "commander": "^9.4.0",

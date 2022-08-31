@@ -163,6 +163,30 @@ export async function bumpDevDep(devDep: string): Promise<void> {
   await execa(binAndArgs.bin, binAndArgs.args);
 }
 
+export async function addDevDep(devDep: string, options: execa.Options = {}): Promise<void> {
+  const isYarn = await isYarnManager();
+  // check if npm or yarn
+  const binAndArgs = {
+    bin: isYarn ? 'yarn' : 'npm',
+    args: isYarn ? ['add', '-D', `${devDep}`] : ['install', `${devDep}`, '--save-dev'],
+  };
+
+  await execa(binAndArgs.bin, binAndArgs.args, options);
+}
+
+export async function runYarnOrNpmCommand(
+  args: Array<string>,
+  option: execa.Options = {}
+): Promise<void> {
+  const isYarn = await isYarnManager();
+  // check if npm or yarn
+  const binAndArgs = {
+    bin: isYarn ? 'yarn' : 'npm',
+    args,
+  };
+  await execa(binAndArgs.bin, binAndArgs.args, option);
+}
+
 // rather than explicity setting from node_modules dir we need to handle workspaces use case
 // we need to handle volta use case and check for npm or yarn
 export async function getPathToBinary(binaryName: string): Promise<string> {

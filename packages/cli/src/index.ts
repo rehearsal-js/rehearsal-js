@@ -14,7 +14,7 @@ program
       executableFile: join(__dirname, './commands/upgrade'),
     }
   )
-  .command('migrate', 'migrate', {
+  .command('migrate', 'Migrate Javascript project to Typescript', {
     executableFile: join(__dirname, './commands/migrate'),
   });
 
