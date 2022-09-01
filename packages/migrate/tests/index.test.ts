@@ -7,8 +7,8 @@ import { Reporter } from '@rehearsal/reporter';
 import { migrate, MigrateInput } from '../src/migrate';
 
 describe('migrate', () => {
-  let sourceFiles: Array<string> = [];
-  let migratedFiles: Array<string> = [];
+  let sourceFiles: string[] = [];
+  let migratedFiles: string[] = [];
   let basePath: string;
   let expectedDir: string;
   let actualDir: string; // our tmp directory
@@ -22,11 +22,12 @@ describe('migrate', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 
-  function prepareInputFiles(files: Array<string> = ['index.js']): Array<string> {
+  function prepareInputFiles(files: string[] = ['index.js']): string[] {
     return files.map((file) => {
       const inputDir = path.resolve(basePath, 'src', file);
       const dest = path.resolve(actualDir, file);
       fs.copyFileSync(inputDir, dest);
+
       return dest;
     });
   }
@@ -47,6 +48,7 @@ describe('migrate', () => {
         new winston.transports.Console({ format: winston.format.cli(), level: 'debug' }),
       ],
     });
+
     reporter = new Reporter('@rehearsal/test', basePath, logger);
   });
 
@@ -83,12 +85,12 @@ describe('migrate', () => {
 
     expect(fs.existsSync(file)).toBeTruthy();
 
-    const actual: string = fs.readFileSync(file, 'utf-8');
+    const actual = fs.readFileSync(file, 'utf-8');
     const expected = fs.readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
     expect(actual).toBe(expected);
   });
 
-  test('should infer argument type (complex)', async () => {
+  test('should infer argument type (complex) mixed extensions js and ts', async () => {
     const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
 
@@ -107,8 +109,9 @@ describe('migrate', () => {
 
     expect(fs.existsSync(file)).toBeTruthy();
 
-    const actual: string = fs.readFileSync(file, 'utf-8');
+    const actual = fs.readFileSync(file, 'utf-8');
     const expected = fs.readFileSync(`${expectedDir}/complex.ts.output`, 'utf-8');
+
     expect(actual).toBe(expected);
   });
 });
