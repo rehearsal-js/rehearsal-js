@@ -15,17 +15,8 @@ export interface FixedFile {
   };
 }
 
-export interface FixTransformI {
-  /** Engineer friendly message describes steps needs to be done to fix the related issue */
+export class FixTransform {
   hint?: string;
-
-  /** Function to fix the diagnostic issue */
-  fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
-
-  run(diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[];
-}
-
-export class FixTransform implements FixTransformI {
   /** Function to fix the diagnostic issue */
   fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
 

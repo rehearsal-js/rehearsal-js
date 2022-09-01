@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { codefixes, type FixedFile } from '@rehearsal/transforms';
+import { codefixes, type FixedFile } from '@rehearsal/codefixes';
 
 import { getFilesData } from '../data';
 

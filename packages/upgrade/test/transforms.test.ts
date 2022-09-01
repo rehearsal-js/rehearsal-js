@@ -5,7 +5,7 @@ import { upgrade } from '../src';
 
 describe('Test transform', function () {
   const basePath = resolve(__dirname, 'fixtures', 'transforms');
-  const transformsPath = resolve(__dirname, '../../transforms/src');
+  const transformsPath = resolve(__dirname, '../../codefixes/src');
   const transforms = fs
     .readdirSync(transformsPath, { withFileTypes: true })
     .filter((file) => file.isDirectory())

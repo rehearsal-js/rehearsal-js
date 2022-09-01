@@ -34,7 +34,7 @@
     "@rehearsal/reporter": "^0.0.30",
     "@rehearsal/service": "^0.0.30",
     "@rehearsal/utils": "^0.0.30",
-    "@rehearsal/transforms": "^0.0.30",
+    "@rehearsal/codefixes": "^0.0.30",
     "commander": "^9.4.0",
     "winston": "^3.6.0"
   },

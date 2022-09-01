@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@rehearsal/service": "^0.0.30",
-    "@rehearsal/transforms": "^0.0.30",
+    "@rehearsal/codefixes": "^0.0.30",
     "eslint": "^8.11.0"
   },
   "devDependencies": {
