@@ -7,6 +7,7 @@ import { FixTransform2571 } from './2571';
 import { FixTransform2790 } from './2790';
 import { FixTransform4082 } from './4082';
 import { FixTransform6133 } from './6133';
+import { FixTransform7006 } from './7006';
 
 export const codefixes = new CodeFixCollection({
   2322: {
@@ -72,5 +73,9 @@ export const codefixes = new CodeFixCollection({
         hint: `The variable '{0}' is never read or used. Remove the variable or use it.`,
       },
     ],
+  },
+  7006: {
+    codefix: new FixTransform7006(),
+    hint: `Parameter '{0}' implicitly has an '{1}' type.`,
   },
 });
