@@ -1,6 +1,7 @@
-import { type ProcessedFile, type Location, type FileRole } from '@rehearsal/reporter';
 import ts from 'typescript';
-import { type FixedFile } from '../fix-transform/interfaces';
+
+import type { ProcessedFile, Location, FileRole } from '@rehearsal/reporter';
+import type { FixedFile } from '@rehearsal/codefixes';
 
 export function getFilesData(
   fixedFiles: FixedFile[],

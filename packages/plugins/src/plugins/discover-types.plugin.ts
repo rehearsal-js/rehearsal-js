@@ -1,9 +1,8 @@
-import ts from 'typescript';
-
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-import { FixTransform, getFilesData } from '@rehearsal/plugins';
 import { findNodeAtPosition } from '@rehearsal/utils';
-import { FixTransform7006 } from '../transforms';
+import { codefixes, FixTransform } from '@rehearsal/codefixes';
+
+import { getFilesData } from '../data';
 
 /**
  * Apply transforms to add types to files
@@ -11,6 +10,7 @@ import { FixTransform7006 } from '../transforms';
 export class DiscoverTypesPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
+
     this.logger?.debug(`Plugin 'DiscoverTypes' run on ${fileName}`);
 
     let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
@@ -22,7 +22,7 @@ export class DiscoverTypesPlugin extends Plugin {
     while (diagnostics.length > 0 && tries-- > 0) {
       const diagnostic = diagnostics.shift()!;
 
-      const fix = getFixForDiagnostic(diagnostic);
+      const fix = codefixes.getFixForError(diagnostic.code) || new FixTransform();
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
       const fixedFiles = fix.run(diagnostic, this.service);
 
@@ -62,18 +62,4 @@ export class DiscoverTypesPlugin extends Plugin {
 
     return Array.from(allFixedFiles);
   }
-}
-
-/**
- * Creates a `FixTransform` for provided diagnostic
- * @param diagnostic
- */
-export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
-  const availableFixes: { [index: number]: typeof FixTransform } = {
-    7006: FixTransform7006,
-  };
-
-  return diagnostic.code in availableFixes
-    ? new availableFixes[diagnostic.code]()
-    : new FixTransform();
 }

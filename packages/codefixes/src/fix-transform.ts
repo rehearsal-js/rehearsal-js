@@ -1,5 +1,29 @@
 import ts from 'typescript';
-import { type FixedFile, type CodeFixAction } from '.';
+
+import type { RehearsalService } from '@rehearsal/service';
+
+export type CodeFixAction = 'add' | 'delete';
+
+export interface FixedFile {
+  fileName: string;
+  updatedText: string;
+  code?: string;
+  codeFixAction?: CodeFixAction;
+  location: {
+    line: number;
+    character: number;
+  };
+}
+
+export class FixTransform {
+  hint?: string;
+  /** Function to fix the diagnostic issue */
+  fix?: (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
+
+  run(diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] {
+    return this.fix ? this.fix(diagnostic, service) : [];
+  }
+}
 
 export function getCodemodData(
   modifiedSourceFile: ts.SourceFile,

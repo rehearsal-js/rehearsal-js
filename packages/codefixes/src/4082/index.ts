@@ -1,7 +1,5 @@
 import ts from 'typescript';
 
-import { type RehearsalService } from '@rehearsal/service';
-import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
@@ -9,6 +7,9 @@ import {
   isSubtypeOf,
   isTypeMatched,
 } from '@rehearsal/utils';
+
+import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
+import { type RehearsalService } from '@rehearsal/service';
 
 const EXPORT_KEYWORD = 'export';
 

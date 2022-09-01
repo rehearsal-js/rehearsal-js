@@ -1,11 +1,12 @@
 import ts from 'typescript';
 
-import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   isSourceCodeChanged,
   isVariableOfCatchClause,
   transformDiagnosedNode,
 } from '@rehearsal/utils';
+
+import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
 
 export class FixTransform2571 extends FixTransform {
   fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {

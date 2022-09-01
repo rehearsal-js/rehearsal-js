@@ -48,14 +48,3 @@ export type Report = {
   summary: ReportSummary;
   items: ReportItem[];
 };
-
-export interface FixedFile {
-  fileName: string;
-  updatedText: string;
-  code?: string;
-  codeFixAction?: CodeFixAction;
-  location: {
-    line: number;
-    character: number;
-  };
-}
