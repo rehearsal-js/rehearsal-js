@@ -1,5 +1,6 @@
-import { FixTransform } from '@rehearsal/plugins';
 import ts from 'typescript';
+
+import { FixTransform } from './fix-transform';
 
 export type CodefixList = { [key: number]: CodefixListElement };
 

@@ -1,16 +1,15 @@
 import ts from 'typescript';
 import winston from 'winston';
-import { type Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from '@rehearsal/service';
 import fs from 'fs';
 import { dirname, resolve, extname } from 'path';
-
+import { type Reporter } from '@rehearsal/reporter';
+import { RehearsalService } from '@rehearsal/service';
 import {
   DiscoverTypesPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
-} from './plugins';
+} from '@rehearsal/plugins';
 
 export type MigrateInput = {
   basePath: string;

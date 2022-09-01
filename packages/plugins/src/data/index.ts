@@ -1,1 +1,1 @@
-export { getFilesData } from './utils';
+export * from './utils';

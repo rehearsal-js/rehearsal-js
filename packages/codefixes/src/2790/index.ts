@@ -1,8 +1,4 @@
 import ts from 'typescript';
-
-import { type RehearsalService } from '@rehearsal/service';
-
-import { FixTransform, type FixedFile, getCodemodData } from '@rehearsal/plugins';
 import {
   findNodeAtPosition,
   insertIntoText,
@@ -15,6 +11,10 @@ import {
   getTypeNameFromType,
   getTypeDeclarationFromTypeSymbol,
 } from '@rehearsal/utils';
+
+import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
+
+import { type RehearsalService } from '@rehearsal/service';
 
 const OPTIONAL_TOKEN = '?';
 
