@@ -38,7 +38,7 @@
     "@rehearsal/migrate": "^0.0.30",
     "@rehearsal/reporter": "^0.0.30",
     "@rehearsal/upgrade": "^0.0.30",
-    "compare-versions": "^4.1.1",
+    "compare-versions": "^5.0.1",
     "debug": "^4.3.2",
     "dependency-cruiser": "^11.15.0",
     "execa": "^5.1.1",
