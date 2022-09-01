@@ -3,4 +3,4 @@ description: 'Run Rehearsal to update your project to support the latest version
 
 runs:
   using: 'node16'
-  main: 'dist/index.js'
+  main: 'packages/action/dist/index.js'
