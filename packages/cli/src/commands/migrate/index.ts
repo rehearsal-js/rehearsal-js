@@ -10,17 +10,13 @@ import fs from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 import toposort from 'toposort';
-import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
+import {
+  addDevDeps,
+  determineProjectName,
+  runYarnOrNpmCommand,
+  requiredEslintDeps,
+} from '../../utils';
 import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
-
-function ifHasTypescriptInDevdep(root: string): boolean {
-  const packageJSONPath = resolve(root, 'package.json');
-  const packageJSON = fs.readJSONSync(packageJSONPath);
-  return (
-    (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
-    (packageJSON.dependencies && packageJSON.dependencies.typescript)
-  );
-}
 
 const migrateCommand = new Command();
 
@@ -65,10 +61,10 @@ migrateCommand
         {
           title: 'Installing dependencies',
           task: async (_ctx, task) => {
-            if (ifHasTypescriptInDevdep(options.root)) {
+            if (ifHasDependency(options.root, 'typescript')) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
-              await addDevDep('typescript', { cwd: options.root });
+              await addDevDeps(['typescript'], { cwd: options.root });
             }
           },
         },
@@ -83,6 +79,29 @@ migrateCommand
               task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
               const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
               createTSConfig(options.root, sourceFiles, !!options.strict);
+            }
+          },
+        },
+        {
+          title: 'Configuring ESLINT',
+          task: async (_ctx, task) => {
+            const configPath = resolve(options.root, '.eslintrc.js');
+            if (fs.existsSync(configPath)) {
+              task.skip(`${configPath} already exists, skipping creating .eslintrc.js`);
+            } else {
+              const configTemplate = fs.readFileSync(
+                resolve(__dirname, 'eslintrc-template.js'),
+                'utf-8'
+              );
+
+              fs.writeFileSync(resolve(options.root, '.eslintrc.js'), configTemplate, 'utf-8');
+
+              await addDevDeps(
+                requiredEslintDeps.map((d) => `${d.name}@${d.version}`),
+                {
+                  cwd: options.root,
+                }
+              );
             }
           },
         },
@@ -115,7 +134,7 @@ migrateCommand
           },
         },
         {
-          title: 'Clean up old JS files', // TODO: flag
+          title: 'Clean up old JS files',
           task: async (ctx, task) => {
             if (ctx.sourceFiles.length && options.clean) {
               cleanJSFiles(ctx.sourceFiles);
@@ -127,10 +146,10 @@ migrateCommand
         {
           title: 'Run Typescript compiler to check errors',
           task: async () => {
+            // TODO: what to do with those ts errors?
             await runYarnOrNpmCommand(['tsc'], { cwd: options.root });
           },
         },
-        // TODO: what to do with those ts errors?
       ],
       { concurrent: false, exitOnError: false }
     );
@@ -233,4 +252,14 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
     }
   });
   return { edgeList, coreDepList };
+}
+
+// check if a project has a specific dependency
+function ifHasDependency(root: string, name: string): boolean {
+  const packageJSONPath = resolve(root, 'package.json');
+  const packageJSON = fs.readJSONSync(packageJSONPath);
+  return (
+    (packageJSON.devDependencies && packageJSON.devDependencies[name]) ||
+    (packageJSON.dependencies && packageJSON.dependencies[name])
+  );
 }

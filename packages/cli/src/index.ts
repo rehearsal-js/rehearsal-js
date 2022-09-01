@@ -15,7 +15,7 @@ program
     }
   )
   .command('migrate', 'Migrate Javascript project to Typescript', {
-    executableFile: join(__dirname, './commands/migrate'),
+    executableFile: join(__dirname, './commands/migrate/index'),
   });
 
 export { program as cli };

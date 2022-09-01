@@ -101,6 +101,29 @@ describe('migrate - generate tsconfig', async () => {
   });
 });
 
+describe('migrate - configuing eslint', async () => {
+  let root = '';
+
+  beforeAll(() => {
+    root = prepareTmpDir('initialization');
+  });
+
+  test('Create .eslintrc.js and install required dependencies', async () => {
+    const result = await runLinkedBin('migrate', ['--root', root, '--entrypoint', 'index.js'], {
+      cwd: root,
+    });
+
+    expect(result.stdout).toContain('[SUCCESS] Configuring ESLINT');
+    expect(fs.readdirSync(root)).toContain('.eslintrc.js');
+
+    const content = fs.readFileSync(resolve(root, '.eslintrc.js'), 'utf-8');
+    const packageJson = fs.readJSONSync(resolve(root, 'package.json'));
+
+    expect(content).matchSnapshot();
+    expect(packageJson).matchSnapshot();
+  });
+});
+
 describe('migrate - JS to TS conversion', async () => {
   let root = '';
 

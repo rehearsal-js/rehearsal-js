@@ -11,6 +11,61 @@ import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
+export const requiredEslintDeps = [
+  {
+    name: 'eslint',
+    version: '^8.0.0',
+  },
+  {
+    name: 'prettier',
+    version: '^2.4.0',
+  },
+  {
+    name: '@typescript-eslint/eslint-plugin',
+    version: '^5.0.0',
+  },
+  {
+    name: '@typescript-eslint/parser',
+    version: '^5.0.0',
+  },
+  {
+    name: 'eslint-plugin-prettier',
+    version: '^4.0.0',
+  },
+  {
+    name: 'eslint-config-prettier',
+    version: '^8.2.0',
+  },
+  {
+    name: 'eslint-plugin-filename',
+    version: '^1.0.3',
+  },
+  {
+    name: 'eslint-plugin-import',
+    version: '^2.25.2',
+  },
+  {
+    name: 'eslint-plugin-node',
+    version: '^11.1.0',
+  },
+  {
+    name: 'eslint-plugin-simple-import-sort',
+    version: '^7.0.0',
+  },
+  {
+    name: 'eslint-plugin-tsdoc',
+    version: '^0.2.14',
+  },
+  {
+    name: 'eslint-plugin-unicorn',
+    version: '^39.0.0',
+  },
+  {
+    name: 'eslint-import-resolver-typescript',
+    version: '^2.5.0',
+  },
+];
+
 export const git: SimpleGit = simpleGit({
   baseDir: process.cwd(),
   binary: 'git',
@@ -163,13 +218,18 @@ export async function bumpDevDep(devDep: string): Promise<void> {
   await execa(binAndArgs.bin, binAndArgs.args);
 }
 
-export async function addDevDep(devDep: string, options: execa.Options = {}): Promise<void> {
+export async function addDevDeps(
+  devDep: Array<string>,
+  options: execa.Options = {}
+): Promise<void> {
   const isYarn = await isYarnManager();
   // check if npm or yarn
   const binAndArgs = {
     bin: isYarn ? 'yarn' : 'npm',
-    args: isYarn ? ['add', '-D', `${devDep}`] : ['install', `${devDep}`, '--save-dev'],
+    args: isYarn ? ['add', '-D', ...devDep] : ['install', `${devDep}`, '--save-dev'],
   };
+
+  console.log(binAndArgs.bin, binAndArgs.args);
 
   await execa(binAndArgs.bin, binAndArgs.args, options);
 }
