@@ -30,7 +30,6 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/plugins": "^0.0.30",
     "@rehearsal/service": "^0.0.30",
     "@rehearsal/utils": "^0.0.30"
   },

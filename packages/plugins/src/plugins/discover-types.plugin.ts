@@ -1,10 +1,7 @@
-import ts from 'typescript';
-
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/utils';
-import { codefixes } from '@rehearsal/upgrade';
+import { codefixes, FixTransform } from '@rehearsal/transforms';
 
-import { FixTransform } from '../fix-transform';
 import { getFilesData } from '../data';
 
 /**
@@ -25,7 +22,7 @@ export class DiscoverTypesPlugin extends Plugin {
     while (diagnostics.length > 0 && tries-- > 0) {
       const diagnostic = diagnostics.shift()!;
 
-      const fix = getFixForDiagnostic(diagnostic);
+      const fix = codefixes.getFixForError(diagnostic.code) || new FixTransform();
       const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
       const fixedFiles = fix.run(diagnostic, this.service);
 
@@ -65,19 +62,4 @@ export class DiscoverTypesPlugin extends Plugin {
 
     return Array.from(allFixedFiles);
   }
-}
-
-/**
- * Creates a `FixTransform` for provided diagnostic
- * @param diagnostic
- */
-export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
-  // currently hardcoded as 7006 which covers 'any' type
-  const availableFixes: { [index: number]: typeof FixTransform } = {
-    7006: codefixes.getFixForError(7006),
-  };
-
-  return diagnostic.code in availableFixes
-    ? new availableFixes[diagnostic.code]()
-    : new FixTransform();
 }

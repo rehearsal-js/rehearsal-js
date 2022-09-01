@@ -5,11 +5,11 @@ import { dirname, resolve } from 'path';
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
 import {
+  DiagnosticAutofixPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
   ReRehearsePlugin,
-  DiagnosticAutofixPlugin,
 } from '@rehearsal/plugins';
 
 export type UpgradeInput = {

@@ -4,5 +4,5 @@
     "baseUrl": ".",
     "outDir": "dist"
   },
-  "include": ["src", "../plugins/src/plugins/diagnostics-autofix.plugin.ts"]
+  "include": ["src"]
 }

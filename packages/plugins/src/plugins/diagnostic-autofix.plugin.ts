@@ -1,10 +1,9 @@
 import ts from 'typescript';
-
-import { FixedFile, getFilesData } from '../index';
-
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { codefixes } from '@rehearsal/transforms';
+import { codefixes, type FixedFile } from '@rehearsal/transforms';
+
+import { getFilesData } from '../data';
 
 /**
  * Diagnose issues in the file and applied transforms to fix them
