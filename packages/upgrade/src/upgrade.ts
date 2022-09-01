@@ -9,9 +9,8 @@ import {
   EmptyLinesRestorePlugin,
   LintPlugin,
   ReRehearsePlugin,
+  DiagnosticAutofixPlugin,
 } from '@rehearsal/plugins';
-
-import { DiagnosticAutofixPlugin } from './plugins';
 
 export type UpgradeInput = {
   basePath: string;

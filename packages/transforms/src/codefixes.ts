@@ -2,7 +2,6 @@ import ts from 'typescript';
 import { getTypeNameFromVariable, isVariableOfCatchClause } from '@rehearsal/utils';
 
 import { CodeFixCollection } from './codefix-collection';
-
 import { FixTransform2571 } from './2571';
 import { FixTransform2790 } from './2790';
 import { FixTransform4082 } from './4082';

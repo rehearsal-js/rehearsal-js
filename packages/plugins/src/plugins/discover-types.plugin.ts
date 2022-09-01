@@ -2,10 +2,10 @@ import ts from 'typescript';
 
 import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/utils';
+import { codefixes } from '@rehearsal/upgrade';
 
 import { FixTransform } from '../fix-transform';
 import { getFilesData } from '../data';
-import { FixTransform7006 } from '../transforms';
 
 /**
  * Apply transforms to add types to files
@@ -13,6 +13,7 @@ import { FixTransform7006 } from '../transforms';
 export class DiscoverTypesPlugin extends Plugin {
   async run(params: PluginParams<undefined>): PluginResult {
     const { fileName } = params;
+
     this.logger?.debug(`Plugin 'DiscoverTypes' run on ${fileName}`);
 
     let diagnostics = this.service.getSemanticDiagnosticsWithLocation(fileName);
@@ -71,8 +72,9 @@ export class DiscoverTypesPlugin extends Plugin {
  * @param diagnostic
  */
 export function getFixForDiagnostic(diagnostic: ts.Diagnostic): FixTransform {
+  // currently hardcoded as 7006 which covers 'any' type
   const availableFixes: { [index: number]: typeof FixTransform } = {
-    7006: FixTransform7006,
+    7006: codefixes.getFixForError(7006),
   };
 
   return diagnostic.code in availableFixes
