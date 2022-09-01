@@ -1,6 +1,0 @@
-name: 'Rehearsal Upgrade Action'
-description: 'Run Rehearsal to update your project to support the latest version of TypeScript'
-
-runs:
-  using: 'node16'
-  main: 'packages/action/dist/index.js'
