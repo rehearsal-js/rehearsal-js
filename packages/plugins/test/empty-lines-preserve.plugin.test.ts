@@ -54,7 +54,7 @@ function someFunction(): void {
     const plugin = new EmptyLinesPreservePlugin(service);
 
     for (const fileName of files) {
-      const result = await plugin.run({ fileName });
+      const result = await plugin.run(fileName);
       const resultText = service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);

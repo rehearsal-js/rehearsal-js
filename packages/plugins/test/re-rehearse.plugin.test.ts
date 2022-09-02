@@ -61,7 +61,7 @@ const resultValue = something
     const plugin = new ReRehearsePlugin(service);
 
     for (const fileName of fileNames) {
-      const result = await plugin.run({ fileName });
+      const result = await plugin.run(fileName);
       const resultText = service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);

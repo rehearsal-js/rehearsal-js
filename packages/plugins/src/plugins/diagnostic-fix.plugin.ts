@@ -1,19 +1,24 @@
-import { type FixedFile, codefixes } from '@rehearsal/codefixes';
-import { type PluginParams, type PluginResult, Plugin } from '@rehearsal/service';
+import {
+  getLineAndCharacterOfPosition,
+  getPositionOfLineAndCharacter,
+  type DiagnosticWithLocation,
+} from 'typescript';
+
+import { Plugin, type PluginResult } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import type { DiagnosticWithLocation } from 'typescript';
-import { getLineAndCharacterOfPosition, getPositionOfLineAndCharacter } from 'typescript';
+import { codefixes, type DiagnosticWithContext, type FixedFile } from '@rehearsal/codefixes';
 
 import { getFilesData } from '../data';
 
 /**
  * Diagnose issues in the file and applied transforms to fix them
  */
-export class DiagnosticAutofixPlugin extends Plugin {
-  async run(params: PluginParams<undefined>): PluginResult {
+export class DiagnosticFixPlugin extends Plugin {
+  async run(fileName: string): PluginResult {
+    // TODO: Move next 2 lines to constructor options
+    const addHints = true;
     const commentTag = '@rehearsal';
 
-    const { fileName } = params;
     let diagnostics = this.getDiagnostics(fileName, commentTag);
     let tries = diagnostics.length + 1;
 
@@ -21,23 +26,19 @@ export class DiagnosticAutofixPlugin extends Plugin {
 
     const allFixedFiles: Set<string> = new Set();
     while (diagnostics.length > 0 && tries-- > 0) {
-      // TODO: Wrap the next 5 const into DiagnosticContext
       const diagnostic = diagnostics.shift()!;
-      const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-      const service = this.service.getLanguageService();
-      const program = service.getProgram()!;
-      const checker = program.getTypeChecker();
 
-      if (!node) {
+      if (!diagnostic.node) {
+        this.logger?.warning(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
         continue;
       }
 
-      const fix = codefixes.getFixForError(diagnostic.code);
-
+      const fix = codefixes.getFixForDiagnostic(diagnostic);
       const fixedFiles: FixedFile[] = fix?.run(diagnostic, this.service) || [];
-      const hint = codefixes.getHint(diagnostic, program, checker, node);
-
       const fixed = fixedFiles.length > 0;
+
+      // TODO: Seems like a good candidate to be moved to `if (addHints)`
+      let hint = codefixes.getHint(diagnostic);
 
       if (fixed) {
         for (const fixedFile of fixedFiles) {
@@ -45,31 +46,52 @@ export class DiagnosticAutofixPlugin extends Plugin {
           allFixedFiles.add(fixedFile.fileName);
         }
 
-        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t fix applied`);
+        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       } else {
-        // Get a hint message in case we didn't modify any files (codefix was not applied)
-        const text = this.addHintComment(diagnostic, hint, commentTag);
-        this.service.setFileText(params.fileName, text);
-        allFixedFiles.add(params.fileName);
+        if (addHints) {
+          // Add a hint message in case we didn't modify any files (codefix was not applied)
+          const text = this.addHintComment(diagnostic, hint, commentTag);
+          this.service.setFileText(fileName, text);
+          allFixedFiles.add(fileName);
 
-        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
+          this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
+        } else {
+          hint = '';
+          this.logger?.warning(` - TS${diagnostic.code} at ${diagnostic.start}:\t not handled`);
+        }
       }
 
       const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
 
-      this.reporter?.addItem(diagnostic, processedFiles, fixed, node, hint);
+      this.reporter?.addItem(diagnostic, processedFiles, fixed, diagnostic.node, hint);
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(params.fileName, commentTag);
+      diagnostics = this.getDiagnostics(fileName, commentTag);
     }
 
     return Array.from(allFixedFiles);
   }
 
-  getDiagnostics(fileName: string, tag: string): DiagnosticWithLocation[] {
+  /**
+   * Returns the list of diagnostics with location and additional context of the application
+   */
+  getDiagnostics(fileName: string, tag: string): DiagnosticWithContext[] {
+    const service = this.service.getLanguageService();
+    const program = service.getProgram()!;
+    const checker = program.getTypeChecker();
+
     return this.service
       .getSemanticDiagnosticsWithLocation(fileName)
-      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)); // Except diagnostics with comment
+      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)) // Except diagnostics with comment
+      .map<DiagnosticWithContext>((diagnostic) => ({
+        ...diagnostic,
+        ...{
+          service,
+          program,
+          checker,
+          node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+        },
+      }));
   }
 
   /**

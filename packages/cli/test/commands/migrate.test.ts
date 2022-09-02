@@ -137,7 +137,8 @@ describe('migrate - JS to TS conversion', async () => {
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
     expect(readdirSync(basePath)).toContain('index.ts');
 
-    const content = readFileSync(resolve(basePath, 'index.ts'), 'utf-8');
+    const content = readFileSync(resolve(basePath, 'index.ts'), 'utf-8').trim();
+
     expect(content).toMatchSnapshot();
 
     // keep old JS files without --clean flag

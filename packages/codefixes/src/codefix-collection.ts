@@ -1,7 +1,21 @@
-import type { Diagnostic, DiagnosticWithLocation, Node, Program, TypeChecker } from 'typescript';
-import { flattenDiagnosticMessageText, isIdentifier } from 'typescript';
+import {
+  flattenDiagnosticMessageText,
+  isIdentifier,
+  type DiagnosticWithLocation,
+  type LanguageService,
+  type Node,
+  type Program,
+  type TypeChecker,
+} from 'typescript';
 
 import { FixTransform } from './fix-transform';
+
+export interface DiagnosticWithContext extends DiagnosticWithLocation {
+  service: LanguageService;
+  program: Program;
+  checker: TypeChecker;
+  node?: Node;
+}
 
 export type CodefixList = { [key: number]: CodefixListElement };
 
@@ -27,28 +41,23 @@ export class CodeFixCollection {
     this.list = list;
   }
 
-  getFixForError(code: number): FixTransform | undefined {
+  getFixForDiagnostic(diagnostic: DiagnosticWithContext): FixTransform | undefined {
     // TODO: Import dynamically if codefix module for provided code exists
 
-    if (this.list[code]?.codefix !== undefined) {
-      return this.list[code].codefix!;
+    if (this.list[diagnostic.code]?.codefix !== undefined) {
+      return this.list[diagnostic.code].codefix!;
     }
 
     return undefined;
   }
 
-  getHint(
-    diagnostic: DiagnosticWithLocation,
-    program: Program,
-    checker: TypeChecker,
-    node?: Node
-  ): string {
+  getHint(diagnostic: DiagnosticWithContext): string {
     const conditionalHints = this.list[diagnostic.code]?.hints;
 
-    if (conditionalHints !== undefined && node !== undefined) {
+    if (conditionalHints !== undefined && diagnostic.node !== undefined) {
       for (const conditionalHint of conditionalHints) {
-        if (conditionalHint.when(node, program, checker)) {
-          return this.prepareHint(conditionalHint.hint, diagnostic, node);
+        if (conditionalHint.when(diagnostic.node, diagnostic.program, diagnostic.checker)) {
+          return this.prepareHint(conditionalHint.hint, diagnostic);
         }
       }
     }
@@ -56,7 +65,7 @@ export class CodeFixCollection {
     const defaultHint =
       this.list[diagnostic.code]?.hint || flattenDiagnosticMessageText(diagnostic.messageText, '.');
 
-    return this.prepareHint(defaultHint, diagnostic, node);
+    return this.prepareHint(defaultHint, diagnostic);
   }
 
   getHelpUrl(diagnostic: DiagnosticWithLocation): string {
@@ -68,7 +77,7 @@ export class CodeFixCollection {
   /**
    * Prepares a hint message for engineer based on original diagnostic message and `this.hint`
    */
-  protected prepareHint(hint: string, diagnostic: Diagnostic, node?: Node): string {
+  protected prepareHint(hint: string, diagnostic: DiagnosticWithContext): string {
     const message = flattenDiagnosticMessageText(diagnostic.messageText, '. ');
 
     // Prepare a replacement dictionary
@@ -79,6 +88,8 @@ export class CodeFixCollection {
         .match(/'[^']+'/gm)
         // converts ["'p'", "'any'"] to {'{0}': 'p', '{1}': 'any'}
         ?.reduce((a, v, i) => ({ ...a, [`{${i}}`]: v.replace(/^\W+|\W+$/g, '') }), {}) || {};
+
+    const node = diagnostic.node;
 
     // Node related replacements
     if (node !== undefined) {

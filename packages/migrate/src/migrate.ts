@@ -1,5 +1,5 @@
 import {
-  DiscoverTypesPlugin,
+  DiagnosticFixPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
@@ -35,7 +35,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const plugins = [
     LintPlugin,
     EmptyLinesPreservePlugin,
-    DiscoverTypesPlugin,
+    DiagnosticFixPlugin,
     EmptyLinesRestorePlugin,
     LintPlugin,
   ];
@@ -104,7 +104,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
     for (const pluginClass of plugins) {
       const plugin = new pluginClass(service, logger, reporter);
-      const changedFiles = await plugin.run({ fileName });
+      const changedFiles = await plugin.run(fileName);
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 

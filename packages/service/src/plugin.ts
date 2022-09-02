@@ -14,16 +14,9 @@ export class Plugin {
     this.reporter = reporter;
   }
 
-  async run(params: PluginParams<PluginOptions>): PluginResult {
-    return [params.fileName];
+  async run(fileName: string): PluginResult {
+    return [fileName];
   }
 }
-
-export type PluginOptions = Record<string, unknown> | undefined;
-
-export type PluginParams<PluginOptions> = {
-  fileName: string;
-  options?: PluginOptions;
-};
 
 export type PluginResult = Promise<string[]>;
