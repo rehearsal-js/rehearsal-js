@@ -14,7 +14,7 @@ import {
   addDevDeps,
   determineProjectName,
   runYarnOrNpmCommand,
-  requiredEslintDeps,
+  installCustomDeps,
 } from '../../utils';
 import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
 
@@ -85,6 +85,11 @@ migrateCommand
         {
           title: 'Configuring ESLINT',
           task: async (_ctx, task) => {
+            // install custom dependencies
+            await installCustomDeps(options.root, 'migrate');
+
+            // TODO: How to update config with internal stuff while not exposing to public?
+
             const configPath = resolve(options.root, '.eslintrc.js');
             if (fs.existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating .eslintrc.js`);
@@ -95,13 +100,6 @@ migrateCommand
               );
 
               fs.writeFileSync(resolve(options.root, '.eslintrc.js'), configTemplate, 'utf-8');
-
-              await addDevDeps(
-                requiredEslintDeps.map((d) => `${d.name}@${d.version}`),
-                {
-                  cwd: options.root,
-                }
-              );
             }
           },
         },

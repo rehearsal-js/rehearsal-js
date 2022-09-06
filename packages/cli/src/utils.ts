@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync, readJSONSync } from 'fs-extra';
 import { parse } from 'json5';
 import { resolve } from 'path';
 import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
@@ -10,61 +10,6 @@ import execa = require('execa');
 import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
-
-export const requiredEslintDeps = [
-  {
-    name: 'eslint',
-    version: '^8.0.0',
-  },
-  {
-    name: 'prettier',
-    version: '^2.4.0',
-  },
-  {
-    name: '@typescript-eslint/eslint-plugin',
-    version: '^5.0.0',
-  },
-  {
-    name: '@typescript-eslint/parser',
-    version: '^5.0.0',
-  },
-  {
-    name: 'eslint-plugin-prettier',
-    version: '^4.0.0',
-  },
-  {
-    name: 'eslint-config-prettier',
-    version: '^8.2.0',
-  },
-  {
-    name: 'eslint-plugin-filename',
-    version: '^1.0.3',
-  },
-  {
-    name: 'eslint-plugin-import',
-    version: '^2.25.2',
-  },
-  {
-    name: 'eslint-plugin-node',
-    version: '^11.1.0',
-  },
-  {
-    name: 'eslint-plugin-simple-import-sort',
-    version: '^7.0.0',
-  },
-  {
-    name: 'eslint-plugin-tsdoc',
-    version: '^0.2.14',
-  },
-  {
-    name: 'eslint-plugin-unicorn',
-    version: '^39.0.0',
-  },
-  {
-    name: 'eslint-import-resolver-typescript',
-    version: '^2.5.0',
-  },
-];
 
 export const git: SimpleGit = simpleGit({
   baseDir: process.cwd(),
@@ -286,4 +231,27 @@ export async function getLatestTSVersion(build = 'beta'): Promise<string> {
 
 export function isValidSemver(input: string): boolean {
   return !!valid(input);
+}
+
+/* 
+Install custom dependencies based on different commands which is defined in package.json
+"rehearsal": {
+  "upgrade: {},
+  "migration": {
+    "devDependencies": [
+      "custom-dep"
+    ]
+  }
+} 
+*/
+export async function installCustomDeps(root: string, command: string): Promise<void> {
+  const packageJsonPath = await resolve(root, 'package.json');
+
+  if (existsSync(packageJsonPath)) {
+    const packageJson = readJSONSync(packageJsonPath, 'uft-8');
+    const deps: Array<string> = packageJson.rehearsal?.[command]?.devDependencies;
+    if (deps.length) {
+      addDevDeps(deps);
+    }
+  }
 }
