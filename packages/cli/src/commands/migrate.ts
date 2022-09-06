@@ -13,8 +13,8 @@ import toposort from 'toposort';
 import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
 
-function ifHasTypescriptInDevdep(root: string): boolean {
-  const packageJSONPath = resolve(root, 'package.json');
+function ifHasTypescriptInDevdep(basePath: string): boolean {
+  const packageJSONPath = resolve(basePath, 'package.json');
   const packageJSON = fs.readJSONSync(packageJSONPath);
   return (
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
@@ -25,10 +25,10 @@ function ifHasTypescriptInDevdep(root: string): boolean {
 const migrateCommand = new Command();
 
 type migrateCommandOptions = {
-  root: string;
+  basePath: string;
   entrypoint: string;
   files: string;
-  report_output: string;
+  report: boolean | undefined;
   verbose: boolean | undefined;
   clean: boolean | undefined;
   strict: boolean | undefined;
@@ -46,9 +46,9 @@ type ParsedModuleResult = {
 
 migrateCommand
   .description('Migrate Javascript project to Typescript')
-  .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
+  .requiredOption('-b, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
-  .option('-r, --report_output <report output dir>', 'Target directory for the report output')
+  .option('-r, --report', 'create report for migration result')
   .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
   .option('-v, --verbose', 'Print more logs to debug.')
@@ -65,24 +65,24 @@ migrateCommand
         {
           title: 'Installing dependencies',
           task: async (_ctx, task) => {
-            if (ifHasTypescriptInDevdep(options.root)) {
+            if (ifHasTypescriptInDevdep(options.basePath)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
-              await addDevDep('typescript', { cwd: options.root });
+              await addDevDep('typescript', { cwd: options.basePath });
             }
           },
         },
         {
           title: 'Creating tsconfig.json', // TODO: use a simple one
           task: async (_ctx, task) => {
-            const configPath = resolve(options.root, 'tsconfig.json');
+            const configPath = resolve(options.basePath, 'tsconfig.json');
 
             if (fs.existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
             } else {
               task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
               const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
-              createTSConfig(options.root, sourceFiles, !!options.strict);
+              createTSConfig(options.basePath, sourceFiles, !!options.strict);
             }
           },
         },
@@ -90,23 +90,24 @@ migrateCommand
           title: 'Converting JS files to TS',
           task: async (ctx, task) => {
             const projectName = (await determineProjectName()) || '';
-            const reporter = new Reporter(
-              projectName,
-              options.report_output ? options.report_output : options.root,
-              logger
-            );
+            const reporter = new Reporter(projectName, options.basePath, logger);
 
             const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
             ctx.sourceFiles = sourceFiles;
             if (sourceFiles) {
               const input = {
-                basePath: options.root,
+                basePath: options.basePath,
                 sourceFiles,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
 
               await migrate(input);
+
+              if (options.report) {
+                const jsonReport = resolve(options.basePath, '.rehearsal-report.json');
+                reporter.save(jsonReport);
+              }
             } else {
               task.skip(
                 `Skipping JS -> TS convertion task, since there is no JS file to be converted to TS.`
@@ -127,7 +128,7 @@ migrateCommand
         {
           title: 'Run Typescript compiler to check errors',
           task: async () => {
-            await runYarnOrNpmCommand(['tsc'], { cwd: options.root });
+            await runYarnOrNpmCommand(['tsc'], { cwd: options.basePath });
           },
         },
         // TODO: what to do with those ts errors?
@@ -145,9 +146,9 @@ migrateCommand.parse(process.argv);
 
 /**
  * Generate tsconfig
- * @param root Project root to run migration
+ * @param basePath Project root to run migration
  */
-function createTSConfig(root: string, fileList: Array<string>, strict: boolean): void {
+function createTSConfig(basePath: string, fileList: Array<string>, strict: boolean): void {
   const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
   const config = strict
     ? {
@@ -184,7 +185,7 @@ function createTSConfig(root: string, fileList: Array<string>, strict: boolean):
         },
         include,
       };
-  fs.writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
+  fs.writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
 }
 
 /**
