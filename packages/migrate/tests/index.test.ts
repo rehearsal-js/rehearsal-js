@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path from 'path';
+import { resolve, join } from 'path';
 import winston from 'winston';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
@@ -21,11 +21,11 @@ describe('migrate', () => {
   function clean(dir: string): void {
     fs.rmSync(dir, { recursive: true, force: true });
   }
-
+  // copy the fixture files to a tmp directory
   function prepareInputFiles(files: string[] = ['index.js']): string[] {
     return files.map((file) => {
-      const inputDir = path.resolve(basePath, 'src', file);
-      const dest = path.resolve(actualDir, file);
+      const inputDir = resolve(basePath, 'src', file);
+      const dest = resolve(actualDir, file);
       fs.copyFileSync(inputDir, dest);
 
       return dest;
@@ -33,9 +33,9 @@ describe('migrate', () => {
   }
 
   beforeEach(() => {
-    basePath = path.resolve(__dirname, 'fixtures', 'migrate');
-    expectedDir = path.resolve(__dirname, 'fixtures', 'migrate', 'output');
-    actualDir = path.resolve(__dirname, 'fixtures', 'migrate', 'tmp');
+    basePath = resolve(__dirname, 'fixtures', 'migrate');
+    expectedDir = resolve(__dirname, 'fixtures', 'migrate', 'output');
+    actualDir = resolve(__dirname, 'fixtures', 'migrate', 'tmp');
 
     clean(actualDir);
 
@@ -66,7 +66,13 @@ describe('migrate', () => {
 
     const output = await migrate(input);
     migratedFiles = output.migratedFiles;
+    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    reporter.save(jsonReport);
+    const report = JSON.parse(fs.readFileSync(jsonReport).toString());
+
+    expect(report.summary.basePath).toMatch(/migrate/);
     expect(migratedFiles).includes(`${actualDir}/index.ts`);
+    fs.rmSync(jsonReport);
   });
 
   test('should infer argument type (basic)', async () => {
@@ -88,6 +94,12 @@ describe('migrate', () => {
     const actual = fs.readFileSync(file, 'utf-8');
     const expected = fs.readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
     expect(actual).toBe(expected);
+    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    reporter.save(jsonReport);
+    const report = JSON.parse(fs.readFileSync(jsonReport).toString());
+
+    expect(report.summary.basePath).toMatch(/migrate/);
+    fs.rmSync(jsonReport);
   });
 
   test('should infer argument type (complex) mixed extensions js and ts', async () => {
@@ -95,7 +107,7 @@ describe('migrate', () => {
     const sourceFiles = prepareInputFiles(files);
 
     const input: MigrateInput = {
-      basePath: path.join(basePath, 'tmp'),
+      basePath: join(basePath, 'tmp'),
       sourceFiles,
       logger,
       reporter,
@@ -113,5 +125,11 @@ describe('migrate', () => {
     const expected = fs.readFileSync(`${expectedDir}/complex.ts.output`, 'utf-8');
 
     expect(actual).toBe(expected);
+    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    reporter.save(jsonReport);
+    const report = JSON.parse(fs.readFileSync(jsonReport).toString());
+
+    expect(report.summary.basePath).toMatch(/migrate/);
+    fs.rmSync(jsonReport);
   });
 });
