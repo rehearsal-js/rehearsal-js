@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/upgrade",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "Rehearsal Dependency Upgrade Tool",
   "keywords": [
     "upgrade",
@@ -30,11 +30,11 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/plugins": "^0.0.30",
-    "@rehearsal/reporter": "^0.0.30",
-    "@rehearsal/service": "^0.0.30",
-    "@rehearsal/utils": "^0.0.30",
-    "@rehearsal/codefixes": "^0.0.30",
+    "@rehearsal/codefixes": "^0.0.31",
+    "@rehearsal/plugins": "^0.0.31",
+    "@rehearsal/reporter": "^0.0.31",
+    "@rehearsal/service": "^0.0.31",
+    "@rehearsal/utils": "^0.0.31",
     "commander": "^9.4.0",
     "winston": "^3.6.0"
   },
