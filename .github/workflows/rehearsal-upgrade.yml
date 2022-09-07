@@ -14,6 +14,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: yarn -v
-      - run: yarn install
-      - run: ls $GITHUB_WORKSPACE
+      - name: Rehearsal Upgrade Action
+        uses: rehearsal-js/action@v0.0.1
