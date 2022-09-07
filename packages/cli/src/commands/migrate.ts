@@ -22,7 +22,7 @@ function ifHasTypescriptInDevdep(root: string): boolean {
   );
 }
 
-const migrateCommand = new Command();
+export const migrateCommand = new Command('migrate');
 
 type migrateCommandOptions = {
   root: string;
@@ -140,8 +140,6 @@ migrateCommand
       logger.error(`${e}`);
     }
   });
-
-migrateCommand.parse(process.argv);
 
 /**
  * Generate tsconfig

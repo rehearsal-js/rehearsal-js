@@ -41,7 +41,7 @@ type Context = {
   skip: boolean;
 };
 
-const upgradeCommand = new Command();
+export const upgradeCommand = new Command('upgrade');
 
 function validateTscVersion(value: string): string {
   if (isValidSemver(value)) {
@@ -291,5 +291,3 @@ upgradeCommand
 
     return;
   });
-
-upgradeCommand.parse(process.argv);
