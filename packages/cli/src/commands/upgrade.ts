@@ -41,7 +41,7 @@ type Context = {
   skip: boolean;
 };
 
-export const upgradeCommand = new Command('upgrade');
+export const upgradeCommand = new Command();
 
 function validateTscVersion(value: string): string {
   if (isValidSemver(value)) {
@@ -64,6 +64,7 @@ type UpgradeCommandOptions = {
 };
 
 upgradeCommand
+  .name('upgrade')
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
   .option('-b, --build <beta|next|latest>', 'typescript build variant', DEFAULT_TS_BUILD)
   .option('-s, --src_dir <src directory>', 'typescript source directory', DEFAULT_SRC_DIR)

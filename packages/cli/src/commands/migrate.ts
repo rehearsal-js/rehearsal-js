@@ -22,7 +22,7 @@ function ifHasTypescriptInDevdep(root: string): boolean {
   );
 }
 
-export const migrateCommand = new Command('migrate');
+export const migrateCommand = new Command();
 
 type migrateCommandOptions = {
   root: string;
@@ -45,6 +45,7 @@ type ParsedModuleResult = {
 };
 
 migrateCommand
+  .name('migrate')
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
