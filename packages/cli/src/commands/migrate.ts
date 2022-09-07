@@ -5,7 +5,7 @@
 import { Command } from 'commander';
 import winston from 'winston';
 import { migrate } from '@rehearsal/migrate';
-import { Reporter } from '@rehearsal/reporter';
+import { Reporter, jsonFormatter, mdFormatter, sarifFormatter, Report } from '@rehearsal/reporter';
 import fs from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
@@ -28,7 +28,8 @@ type migrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  report: boolean | undefined;
+  report: string | undefined;
+  outputPath: string | undefined;
   verbose: boolean | undefined;
   clean: boolean | undefined;
   strict: boolean | undefined;
@@ -44,11 +45,18 @@ type ParsedModuleResult = {
   coreDepList: Array<string>;
 };
 
+type FormatterFunction = (report: Report) => string;
+
+type FormatterMap = {
+  [format: string]: FormatterFunction;
+};
+
 migrateCommand
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-b, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
-  .option('-r, --report', 'create report for migration result')
+  .option('-r, --report <reportFormat>', 'Report formats separated by comma, e.g. -r json,sarif,md')
+  .option('-o, --outputPath <outputPath>', 'Reports output path')
   .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
   .option('-v, --verbose', 'Print more logs to debug.')
@@ -104,9 +112,22 @@ migrateCommand
 
               await migrate(input);
 
+              // Generate reports
               if (options.report) {
-                const jsonReport = resolve(options.basePath, '.rehearsal-report.json');
-                reporter.save(jsonReport);
+                const reportBaseName = '.rehearsal-report';
+                const outputPath = options.outputPath ? options.outputPath : options.basePath;
+                const formatters: FormatterMap = {
+                  json: jsonFormatter,
+                  sarif: sarifFormatter,
+                  md: mdFormatter,
+                };
+                options.report.split(',').forEach((format) => {
+                  if (formatters[format]) {
+                    // only generate report for supported formatter
+                    const report = resolve(outputPath, `${reportBaseName}.${format}`);
+                    reporter.print(report, formatters[format]);
+                  }
+                });
               }
             } else {
               task.skip(

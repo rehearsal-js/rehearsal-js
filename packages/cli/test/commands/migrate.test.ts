@@ -159,11 +159,18 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('Generate report with -r flag', async () => {
-    await runLinkedBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js', '-r'], {
-      cwd: basePath,
-    });
+    await runLinkedBin(
+      'migrate',
+      ['--basePath', basePath, '--entrypoint', 'index.js', '-r', 'json,md,sarif,foo'],
+      {
+        cwd: basePath,
+      }
+    );
 
     expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.json');
+    expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.md');
+    expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.sarif');
+    expect(fs.readdirSync(basePath)).not.toContain('.rehearsal-report.foo');
   });
 
   test('able to migrate multiple JS file from an entrypoint', async () => {
