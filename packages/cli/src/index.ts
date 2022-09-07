@@ -1,16 +1,11 @@
 import { Command } from 'commander';
 import { version } from '../package.json';
 
-import { upgradeCommand } from "./commands/upgrade";
-import { migrateCommand } from "./commands/migrate";
+import { migrateCommand } from './commands/migrate';
+import { upgradeCommand } from './commands/upgrade';
 
 const program = new Command();
 
-program
-  .name('rehearsal')
-  .version(version)
-  .addCommand(upgradeCommand)
-  .addCommand(migrateCommand)
-  .parse(process.argv);
+program.name('rehearsal').version(version).addCommand(migrateCommand).addCommand(upgradeCommand);
 
-export { program as cli };
+export { program as rehearsal, migrateCommand, upgradeCommand };
