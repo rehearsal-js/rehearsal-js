@@ -3,7 +3,7 @@
 // TODO: handle ctrl + c
 
 import { migrate } from '@rehearsal/migrate';
-import { Reporter } from '@rehearsal/reporter';
+import { jsonFormatter, mdFormatter, Report, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { cruise, ICruiseOptions, ICruiseResult, IDependency, IModule } from 'dependency-cruiser';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
@@ -14,8 +14,8 @@ import { createLogger, format, transports } from 'winston';
 
 import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 
-function ifHasTypescriptInDevdep(root: string): boolean {
-  const packageJSONPath = resolve(root, 'package.json');
+function ifHasTypescriptInDevdep(basePath: string): boolean {
+  const packageJSONPath = resolve(basePath, 'package.json');
   const packageJSON = readJSONSync(packageJSONPath);
   return (
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
@@ -29,7 +29,7 @@ type migrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  report: string | undefined;
+  report: Array<string> | undefined;
   outputPath: string | undefined;
   verbose: boolean | undefined;
   clean: boolean | undefined;
@@ -57,7 +57,11 @@ migrateCommand
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-b, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
-  .option('-r, --report <reportFormat>', 'Report formats separated by comma, e.g. -r json,sarif,md')
+  .option(
+    '-r, --report <reportTypes>',
+    'Report type separated by comma, e.g. -r json,sarif,md',
+    commaSeparatedArgs
+  )
   .option('-o, --outputPath <outputPath>', 'Reports output path')
   .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
@@ -121,7 +125,7 @@ migrateCommand
                   sarif: sarifFormatter,
                   md: mdFormatter,
                 };
-                options.report.split(',').forEach((format) => {
+                options.report.forEach((format) => {
                   if (formatters[format]) {
                     // only generate report for supported formatter
                     const report = resolve(outputPath, `${reportBaseName}.${format}`);
@@ -204,7 +208,7 @@ function createTSConfig(basePath: string, fileList: Array<string>, strict: boole
         },
         include,
       };
-  writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
+  writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
 }
 
 /**
@@ -253,4 +257,9 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
     }
   });
   return { edgeList, coreDepList };
+}
+
+// helper function to parse a,b,c to [a, b, c]
+function commaSeparatedArgs(input: string): Array<string> {
+  return input.split(',');
 }

@@ -82,7 +82,7 @@ describe('migrate - generate tsconfig', async () => {
     );
 
     expect(result.stdout).toContain('Creating basic tsconfig');
-    expect(readdirSync(root)).toContain('tsconfig.json');
+    expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
   test('Do not create tsconfig if there is an existed one', async () => {
@@ -96,7 +96,7 @@ describe('migrate - generate tsconfig', async () => {
     );
 
     expect(result.stdout).toContain('skipping creating tsconfig.json');
-    expect(readdirSync(root)).toContain('tsconfig.json');
+    expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
   test('Create strict tsconfig', async () => {
@@ -112,8 +112,8 @@ describe('migrate - generate tsconfig', async () => {
     );
 
     expect(result.stdout).toContain('Creating strict tsconfig');
-    expect(readdirSync(root)).toContain('tsconfig.json');
-    const content = readFileSync(resolve(root, 'tsconfig.json'), 'utf-8');
+    expect(readdirSync(basePath)).toContain('tsconfig.json');
+    const content = readFileSync(resolve(basePath, 'tsconfig.json'), 'utf-8');
     expect(content).toMatchSnapshot();
   });
 });
@@ -135,15 +135,15 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
-    expect(readdirSync(root)).toContain('index.ts');
+    expect(readdirSync(basePath)).toContain('index.ts');
 
-    const content = readFileSync(resolve(root, 'index.ts'), 'utf-8');
+    const content = readFileSync(resolve(basePath, 'index.ts'), 'utf-8');
     expect(content).toMatchSnapshot();
 
     // keep old JS files without --clean flag
-    expect(readdirSync(root)).toContain('index.js');
+    expect(readdirSync(basePath)).toContain('index.js');
 
-    const config = readJSONSync(resolve(root, 'tsconfig.json'));
+    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
     expect(config.include).toEqual(['index.ts']);
   });
 
@@ -168,10 +168,10 @@ describe('migrate - JS to TS conversion', async () => {
       }
     );
 
-    expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.json');
-    expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.md');
-    expect(fs.readdirSync(basePath)).toContain('.rehearsal-report.sarif');
-    expect(fs.readdirSync(basePath)).not.toContain('.rehearsal-report.foo');
+    expect(readdirSync(basePath)).toContain('.rehearsal-report.json');
+    expect(readdirSync(basePath)).toContain('.rehearsal-report.md');
+    expect(readdirSync(basePath)).toContain('.rehearsal-report.sarif');
+    expect(readdirSync(basePath)).not.toContain('.rehearsal-report.foo');
   });
 
   test('able to migrate multiple JS file from an entrypoint', async () => {
@@ -184,20 +184,20 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
-    expect(readdirSync(root)).toContain('foo.ts');
-    expect(readdirSync(root)).toContain('depends-on-foo.ts');
+    expect(readdirSync(basePath)).toContain('foo.ts');
+    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
 
-    const foo = readFileSync(resolve(root, 'foo.ts'), 'utf-8');
-    const depends_on_foo = readFileSync(resolve(root, 'depends-on-foo.ts'), 'utf-8');
+    const foo = readFileSync(resolve(basePath, 'foo.ts'), 'utf-8');
+    const depends_on_foo = readFileSync(resolve(basePath, 'depends-on-foo.ts'), 'utf-8');
 
     expect(foo).toMatchSnapshot();
     expect(depends_on_foo).toMatchSnapshot();
 
     // keep old JS files without --clean flag
-    expect(readdirSync(root)).toContain('depends-on-foo.js');
-    expect(readdirSync(root)).toContain('foo.js');
+    expect(readdirSync(basePath)).toContain('depends-on-foo.js');
+    expect(readdirSync(basePath)).toContain('foo.js');
 
-    const config = readJSONSync(resolve(root, 'tsconfig.json'));
+    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
     expect(config.include).toEqual(['foo.ts', 'depends-on-foo.ts']);
   });
 
@@ -209,9 +209,9 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Clean up old JS files`);
-    expect(readdirSync(root)).toContain('foo.ts');
-    expect(readdirSync(root)).toContain('depends-on-foo.ts');
-    expect(readdirSync(root)).not.toContain('bar.js');
-    expect(readdirSync(root)).not.toContain('depends-on-foo.js');
+    expect(readdirSync(basePath)).toContain('foo.ts');
+    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
+    expect(readdirSync(basePath)).not.toContain('bar.js');
+    expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
   });
 });
