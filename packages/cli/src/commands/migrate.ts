@@ -2,27 +2,28 @@
 
 // TODO: handle ctrl + c
 
-import { Command } from 'commander';
-import winston from 'winston';
 import { migrate } from '@rehearsal/migrate';
-import { Reporter, jsonFormatter, mdFormatter, sarifFormatter, Report } from '@rehearsal/reporter';
-import fs from 'fs-extra';
+import { Reporter } from '@rehearsal/reporter';
+import { Command } from 'commander';
+import { cruise, ICruiseOptions, ICruiseResult, IDependency, IModule } from 'dependency-cruiser';
+import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 import toposort from 'toposort';
-import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
-import { cruise, ICruiseResult, ICruiseOptions, IModule, IDependency } from 'dependency-cruiser';
+import { createLogger, format, transports } from 'winston';
 
-function ifHasTypescriptInDevdep(basePath: string): boolean {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = fs.readJSONSync(packageJSONPath);
+import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
+
+function ifHasTypescriptInDevdep(root: string): boolean {
+  const packageJSONPath = resolve(root, 'package.json');
+  const packageJSON = readJSONSync(packageJSONPath);
   return (
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
     (packageJSON.dependencies && packageJSON.dependencies.typescript)
   );
 }
 
-const migrateCommand = new Command();
+export const migrateCommand = new Command();
 
 type migrateCommandOptions = {
   basePath: string;
@@ -52,6 +53,7 @@ type FormatterMap = {
 };
 
 migrateCommand
+  .name('migrate')
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-b, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
@@ -62,10 +64,8 @@ migrateCommand
   .option('-v, --verbose', 'Print more logs to debug.')
   .action(async (options: migrateCommandOptions) => {
     const loggerLevel = options.verbose ? 'debug' : 'info';
-    const logger = winston.createLogger({
-      transports: [
-        new winston.transports.Console({ format: winston.format.cli(), level: loggerLevel }),
-      ],
+    const logger = createLogger({
+      transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
 
     const tasks = new Listr<Context>(
@@ -85,7 +85,7 @@ migrateCommand
           task: async (_ctx, task) => {
             const configPath = resolve(options.basePath, 'tsconfig.json');
 
-            if (fs.existsSync(configPath)) {
+            if (existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
             } else {
               task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
@@ -163,8 +163,6 @@ migrateCommand
     }
   });
 
-migrateCommand.parse(process.argv);
-
 /**
  * Generate tsconfig
  * @param basePath Project root to run migration
@@ -206,7 +204,7 @@ function createTSConfig(basePath: string, fileList: Array<string>, strict: boole
         },
         include,
       };
-  fs.writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
+  writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
 }
 
 /**
@@ -214,7 +212,7 @@ function createTSConfig(basePath: string, fileList: Array<string>, strict: boole
  * @param fileList Array of file paths
  */
 function cleanJSFiles(fileList: Array<string>): void {
-  fileList.filter((f) => f.match(/\.js$/)).forEach((f) => fs.rmSync(f));
+  fileList.filter((f) => f.match(/\.js$/)).forEach((f) => rmSync(f));
 }
 
 // Feed entrypoint to dependency-cruise to get an array or file list with migration order

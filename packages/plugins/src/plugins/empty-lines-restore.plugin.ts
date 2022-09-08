@@ -1,4 +1,4 @@
-import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
+import { type PluginParams, type PluginResult, Plugin } from '@rehearsal/service';
 
 /**
  * Replaces empty line placeholders set by EmptyLinesPreservePlugin with real empty lines

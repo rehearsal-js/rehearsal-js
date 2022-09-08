@@ -1,7 +1,8 @@
-import ts from 'typescript';
-import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
+import { type FixedFile, codefixes } from '@rehearsal/codefixes';
+import { type PluginParams, type PluginResult, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { codefixes, type FixedFile } from '@rehearsal/codefixes';
+import type { DiagnosticWithLocation } from 'typescript';
+import { getLineAndCharacterOfPosition, getPositionOfLineAndCharacter } from 'typescript';
 
 import { getFilesData } from '../data';
 
@@ -65,7 +66,7 @@ export class DiagnosticAutofixPlugin extends Plugin {
     return Array.from(allFixedFiles);
   }
 
-  getDiagnostics(fileName: string, tag: string): ts.DiagnosticWithLocation[] {
+  getDiagnostics(fileName: string, tag: string): DiagnosticWithLocation[] {
     return this.service
       .getSemanticDiagnosticsWithLocation(fileName)
       .filter((diagnostic) => !this.getHintComment(diagnostic, tag)); // Except diagnostics with comment
@@ -75,10 +76,10 @@ export class DiagnosticAutofixPlugin extends Plugin {
    * Tries to find a `@rehearsal` on the first non-empty line above the affected node
    * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
    */
-  getHintComment(diagnostic: ts.DiagnosticWithLocation, tag: string): string | undefined {
+  getHintComment(diagnostic: DiagnosticWithLocation, tag: string): string | undefined {
     // Search for a position to add comment - the first element at the line with affected node
     const sourceFile = diagnostic.file;
-    const lineWithNode = ts.getLineAndCharacterOfPosition(sourceFile, diagnostic.start).line;
+    const lineWithNode = getLineAndCharacterOfPosition(sourceFile, diagnostic.start).line;
 
     if (lineWithNode === 0) {
       return undefined;
@@ -129,10 +130,10 @@ export class DiagnosticAutofixPlugin extends Plugin {
   /**
    * Builds and adds a `@rehearsal` comment above the affected node
    */
-  addHintComment(diagnostic: ts.DiagnosticWithLocation, hint: string, tag: string): string {
+  addHintComment(diagnostic: DiagnosticWithLocation, hint: string, tag: string): string {
     // Search for a position to add comment - the first element at the line with affected node
-    const line = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
-    const positionToAddComment = ts.getPositionOfLineAndCharacter(diagnostic.file, line, 0);
+    const line = getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
+    const positionToAddComment = getPositionOfLineAndCharacter(diagnostic.file, line, 0);
 
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
 

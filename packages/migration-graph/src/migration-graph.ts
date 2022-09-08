@@ -1,12 +1,11 @@
-import { relative, resolve } from 'path';
-import { sync } from 'fast-glob';
 import { getInternalPackages } from '@rehearsal/migration-graph-ember';
 import debug from 'debug';
-
-import { Graph } from './utils/graph';
-import { GraphNode } from './utils/graph-node';
+import { sync } from 'fast-glob';
+import { relative, resolve } from 'path';
 
 import type { Package, PackageNode } from './types';
+import { Graph } from './utils/graph';
+import { GraphNode } from './utils/graph-node';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph');
 const ROOT_PATH = process.cwd();

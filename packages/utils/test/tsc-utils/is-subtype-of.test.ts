@@ -1,8 +1,8 @@
-import ts from 'typescript';
+import type { VariableStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { isSubtypeOf } from '../../src';
 import { setupTest } from '../helpers';
-import { isSubtypeOf } from '../../src/tsc-utils';
 
 describe('Test isSubtypeOf', () => {
   const { sourceFile, checker } = setupTest(__filename);
@@ -11,7 +11,7 @@ describe('Test isSubtypeOf', () => {
   function hasSubtype(indexOfStatement: number, targetTypeName: string): void {
     let parentType;
     if (statements && statements[indexOfStatement]) {
-      const variable = (statements[indexOfStatement] as ts.VariableStatement).declarationList
+      const variable = (statements[indexOfStatement] as VariableStatement).declarationList
         .declarations[0].name;
       parentType = checker.getTypeAtLocation(variable);
     }
@@ -22,7 +22,7 @@ describe('Test isSubtypeOf', () => {
   function hasNotSubtype(indexOfStatement: number, targetTypeName: string): void {
     let parentType;
     if (statements && statements[indexOfStatement]) {
-      const variable = (statements[indexOfStatement] as ts.VariableStatement).declarationList
+      const variable = (statements[indexOfStatement] as VariableStatement).declarationList
         .declarations[0].name;
       parentType = checker.getTypeAtLocation(variable);
     }

@@ -1,5 +1,12 @@
-import ts from 'typescript';
 import { dirname } from 'path';
+import type { Program, SourceFile, TypeChecker } from 'typescript';
+import {
+  createProgram,
+  findConfigFile,
+  parseJsonConfigFileContent,
+  readConfigFile,
+  sys,
+} from 'typescript';
 
 class TestService {
   private static instance: TestService;
@@ -11,34 +18,35 @@ class TestService {
   }
 
   private readonly basePath: string;
-  private readonly program: ts.Program;
+  private readonly program: Program;
 
   private constructor(basePath: string) {
     this.basePath = basePath;
     this.program = this.createProgram();
   }
 
-  private createProgram = () => {
-    const configFile = ts.findConfigFile(this.basePath, ts.sys.fileExists, 'tsconfig.json');
+  private createProgram = (): Program => {
+    const configFile = findConfigFile(this.basePath, sys.fileExists, 'tsconfig.json');
     if (!configFile) {
       throw Error('configFile not found');
     }
-    const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
-    const { options: compilerOptions, fileNames } = ts.parseJsonConfigFileContent(
+    const { config } = readConfigFile(configFile, sys.readFile);
+    const { options: compilerOptions, fileNames } = parseJsonConfigFileContent(
       config,
-      ts.sys,
+      sys,
       dirname(configFile),
       {},
       configFile
     );
 
-    const program = ts.createProgram(fileNames, compilerOptions);
+    const program = createProgram(fileNames, compilerOptions);
     return program;
   };
 
-  getTypeChecker = () => this.program.getTypeChecker();
-  getSourceFile = (fileName: string) => this.program.getSourceFile(fileName);
-  getBasePath = () => this.basePath;
+  getTypeChecker = (): TypeChecker => this.program.getTypeChecker();
+  getSourceFile = (fileName: string): SourceFile | undefined =>
+    this.program.getSourceFile(fileName);
+  getBasePath = (): string => this.basePath;
 }
 const testService = TestService.getInstance(__dirname);
 export { testService };

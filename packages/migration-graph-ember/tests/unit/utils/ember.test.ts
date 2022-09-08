@@ -1,27 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import { readFileSync } from 'fs-extra';
-import { setGracefulCleanup, dirSync } from 'tmp';
 import { writeSync } from 'fixturify';
+import { readFileSync } from 'fs-extra';
 import { resolve } from 'path';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
 import {
-  registerInternalAddonTestFixtures,
-  setupTestEnvironment,
-  resetInternalAddonTestFixtures,
-} from '../../../src/-private/utils/test-environment';
-
-import {
+  getEmberAddonName,
+  getPackageMainAST,
+  getPackageMainFileName,
   isAddon,
   isEngine,
-  getEmberAddonName,
-  getPackageMainFileName,
   requirePackageMain,
-  getPackageMainAST,
   writePackageMain,
 } from '../../../src/-private/utils/ember';
-
+import {
+  registerInternalAddonTestFixtures,
+  resetInternalAddonTestFixtures,
+  setupTestEnvironment,
+} from '../../../src/-private/utils/test-environment';
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
 
 setGracefulCleanup();

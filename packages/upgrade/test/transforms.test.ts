@@ -1,13 +1,13 @@
-import fs from 'fs';
-import { afterEach, describe, expect, test } from 'vitest';
+import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { parse, resolve } from 'path';
+import { afterEach, describe, expect, test } from 'vitest';
+
 import { upgrade } from '../src';
 
 describe('Test transform', function () {
   const basePath = resolve(__dirname, 'fixtures', 'transforms');
   const transformsPath = resolve(__dirname, '../../codefixes/src');
-  const transforms = fs
-    .readdirSync(transformsPath, { withFileTypes: true })
+  const transforms = readdirSync(transformsPath, { withFileTypes: true })
     .filter((file) => file.isDirectory())
     .map((file) => file.name);
   const originalFixturesFiles = ['tsconfig.json']; // Can be done with readdirSync
@@ -27,8 +27,8 @@ describe('Test transform', function () {
     // Compare each updated .ts file with expected .ts.output
     const files = getListOfProcessedFileNames(basePath, originalFixturesFiles);
     for (const file of files) {
-      const input = fs.readFileSync(resolve(basePath, file)).toString();
-      const output = fs.readFileSync(resolve(transformPath, `${file}.output`)).toString();
+      const input = readFileSync(resolve(basePath, file)).toString();
+      const output = readFileSync(resolve(transformPath, `${file}.output`)).toString();
 
       expect(input).toEqual(output);
     }
@@ -39,8 +39,7 @@ describe('Test transform', function () {
  * Prepare ts files in the folder by using sources from .input
  */
 function prepareListOfTestFiles(path: string): string[] {
-  return fs
-    .readdirSync(path) // Takes all files from fixtures/upgrade
+  return readdirSync(path) // Takes all files from fixtures/upgrade
     .filter((file) => file.endsWith('.input')) // Filter only .input ones
     .map((file) => file.slice(0, -6)) // Remove .input suffix from filenames
     .map((file) => resolve(path, file)); //  Append basePath to file names
@@ -60,7 +59,7 @@ async function runAutofixOnTestApp(basePath: string): Promise<void> {
  */
 function createTsFilesFromInputs(files: string[], basePath: string): void {
   files.forEach((file) => {
-    fs.copyFileSync(`${file}.input`, resolve(basePath, parse(file).base));
+    copyFileSync(`${file}.input`, resolve(basePath, parse(file).base));
   });
 }
 
@@ -69,7 +68,7 @@ function createTsFilesFromInputs(files: string[], basePath: string): void {
  */
 function getListOfProcessedFileNames(path: string, exceptFiles: string[]): string[] {
   // All files in the folder, except the mention in the exceptFiles
-  return fs.readdirSync(path).filter((file) => !exceptFiles.includes(file));
+  return readdirSync(path).filter((file) => !exceptFiles.includes(file));
 }
 
 /**
@@ -78,6 +77,6 @@ function getListOfProcessedFileNames(path: string, exceptFiles: string[]): strin
 function cleanupTsFiles(path: string, exceptFiles: string[]): void {
   const files = getListOfProcessedFileNames(path, exceptFiles);
   for (const file of files) {
-    fs.rmSync(resolve(path, file));
+    rmSync(resolve(path, file));
   }
 }

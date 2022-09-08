@@ -2,47 +2,60 @@
  * This file contains helper functions to work with Typescript AST nodes and diagnostics
  */
 
-import ts from 'typescript';
+import type { DiagnosticWithLocation, Node, SourceFile, Visitor } from 'typescript';
+import {
+  createPrinter,
+  findAncestor,
+  forEachChild,
+  getLineAndCharacterOfPosition,
+  isCatchClause,
+  isIdentifier,
+  isJsxElement,
+  isJsxFragment,
+  isSourceFile,
+  NewLineKind,
+  transform,
+  visitEachChild,
+  visitNode,
+} from 'typescript';
 
 /**
  * Find the diagnosed node and passes it to `transformer` function.
  * The `transform` function have to return modified node or `undefined` to remove node from AST.
  */
 export function transformDiagnosedNode(
-  diagnostic: ts.DiagnosticWithLocation,
-  transformer: (node: ts.Node) => ts.Node | undefined
+  diagnostic: DiagnosticWithLocation,
+  transformer: (node: Node) => Node | undefined
 ): string {
-  const result = ts.transform(diagnostic.file, [
+  const result = transform(diagnostic.file, [
     (context) => {
-      const visit: ts.Visitor = (node) => {
+      const visit: Visitor = (node) => {
         return isNodeDiagnosed(node, diagnostic)
           ? transformer(node)
-          : ts.visitEachChild(node, visit, context);
+          : visitEachChild(node, visit, context);
       };
 
-      return (node) => ts.visitNode(node, visit);
+      return (node) => visitNode(node, visit);
     },
   ]);
 
-  return ts
-    .createPrinter({
-      newLine: ts.NewLineKind.LineFeed,
-      removeComments: false,
-    })
-    .printFile(result.transformed[0]);
+  return createPrinter({
+    newLine: NewLineKind.LineFeed,
+    removeComments: false,
+  }).printFile(result.transformed[0]);
 }
 
 /**
  * Checks if node starts with `start` position and its length equals to `length`.
  */
-export function isNodeAtPosition(node: ts.Node, start: number, length: number): boolean {
+export function isNodeAtPosition(node: Node, start: number, length: number): boolean {
   return node.getStart() === start && node.getEnd() === start + length;
 }
 
 /**
  * Checks if node is the node related to diagnostic.
  */
-export function isNodeDiagnosed(node: ts.Node, diagnostic: ts.DiagnosticWithLocation): boolean {
+export function isNodeDiagnosed(node: Node, diagnostic: DiagnosticWithLocation): boolean {
   return isNodeAtPosition(node, diagnostic.start, diagnostic.length);
 }
 
@@ -50,14 +63,14 @@ export function isNodeDiagnosed(node: ts.Node, diagnostic: ts.DiagnosticWithLoca
  * Checks if node is the first in the line.
  * e.g. for the node `revert` of `function revert(...)` the `function` is the first in the line.
  */
-export function isTheFirstParentNodeInTheLIne(node: ts.Node): boolean {
-  if (node.parent === undefined || ts.isSourceFile(node.parent)) {
+export function isTheFirstParentNodeInTheLIne(node: Node): boolean {
+  if (node.parent === undefined || isSourceFile(node.parent)) {
     return true;
   }
 
   const sourceFile = node.getSourceFile();
-  const currentPosition = ts.getLineAndCharacterOfPosition(sourceFile, node.getStart());
-  const parentPosition = ts.getLineAndCharacterOfPosition(sourceFile, node.parent.getStart());
+  const currentPosition = getLineAndCharacterOfPosition(sourceFile, node.getStart());
+  const parentPosition = getLineAndCharacterOfPosition(sourceFile, node.parent.getStart());
 
   return currentPosition.line > parentPosition.line;
 }
@@ -67,12 +80,12 @@ export function isTheFirstParentNodeInTheLIne(node: ts.Node): boolean {
  * e.g. for (`function revert(...)`, 9, 6) the `revert` is the node starts at 9 with length 6.
  */
 export function findNodeAtPosition(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   start: number,
   length: number
-): ts.Node | undefined {
-  const visitor = (node: ts.Node): ts.Node | undefined =>
-    isNodeAtPosition(node, start, length) ? node : ts.forEachChild(node, visitor);
+): Node | undefined {
+  const visitor = (node: Node): Node | undefined =>
+    isNodeAtPosition(node, start, length) ? node : forEachChild(node, visitor);
 
   return visitor(sourceFile);
 }
@@ -81,8 +94,8 @@ export function findNodeAtPosition(
  * Finds the first node in the line.
  * e.g. in `function revert(...)` the `revert` node has `function` node is the first in the line.
  */
-export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
-  const visit = (node: ts.Node): ts.Node =>
+export function findTheFirstParentNodeInTheLine(node: Node): Node {
+  const visit = (node: Node): Node =>
     isTheFirstParentNodeInTheLIne(node) ? node : visit(node.parent);
 
   return visit(node);
@@ -91,13 +104,13 @@ export function findTheFirstParentNodeInTheLine(node: ts.Node): ts.Node {
 /**
  * Checks if the node is the part of JSX Text (Element or Fragment)
  */
-export function isNodeInsideJsx(node: ts.Node): boolean {
-  const visit = (node: ts.Node): boolean => {
-    if (node === undefined || ts.isSourceFile(node)) {
+export function isNodeInsideJsx(node: Node): boolean {
+  const visit = (node: Node): boolean => {
+    if (node === undefined || isSourceFile(node)) {
       return false;
     }
 
-    if (ts.isJsxElement(node) || ts.isJsxFragment(node)) {
+    if (isJsxElement(node) || isJsxFragment(node)) {
       return true;
     }
 
@@ -118,14 +131,14 @@ export function insertIntoText(text: string, insertAt: number, strToInsert: stri
  * and returns `false` for `b` node (identifier) in the code below:
  * try { ... } catch(e) { e.message; const b = 'dummy'; };
  */
-export function isVariableOfCatchClause(node: ts.Node): boolean {
+export function isVariableOfCatchClause(node: Node): boolean {
   // Check if node is a variable (not fully correct)
-  if (!ts.isIdentifier(node)) {
+  if (!isIdentifier(node)) {
     return false;
   }
 
   // Check if the variable defined in catch clause
-  const catchClauseNode = ts.findAncestor(node, ts.isCatchClause);
+  const catchClauseNode = findAncestor(node, isCatchClause);
   if (!catchClauseNode || !catchClauseNode.variableDeclaration) {
     return false;
   }

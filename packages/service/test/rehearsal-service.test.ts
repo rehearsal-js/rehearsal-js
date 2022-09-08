@@ -1,8 +1,7 @@
-import ts from 'typescript';
-import fs from 'fs';
-
-import { describe, expect, test } from 'vitest';
+import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
+import type { CompilerOptions, DiagnosticWithLocation } from 'typescript';
+import { describe, expect, test } from 'vitest';
 
 import { RehearsalService } from '../src';
 
@@ -10,9 +9,9 @@ describe('Test service', function () {
   const basePath = resolve(__dirname, 'fixtures');
   const fileName = resolve(basePath, 'dummy.ts');
   const fileNames = [fileName];
-  const originalFileContent = fs.readFileSync(fileName).toString();
+  const originalFileContent = readFileSync(fileName).toString();
 
-  const options: ts.CompilerOptions = {};
+  const options: CompilerOptions = {};
 
   test('construct', async () => {
     const service = new RehearsalService(options, fileNames);
@@ -41,19 +40,19 @@ describe('Test service', function () {
 
   test('setFileText', async () => {
     const service = new RehearsalService(options, fileNames);
-    const originalContent = fs.readFileSync(fileName).toString();
+    const originalContent = readFileSync(fileName).toString();
 
     service.setFileText(fileName, 'class Real {\n  \n}\n');
 
-    expect(fs.readFileSync(fileName).toString()).toEqual(originalFileContent);
+    expect(readFileSync(fileName).toString()).toEqual(originalFileContent);
 
     service.saveFile(fileName);
 
-    expect(fs.readFileSync(fileName).toString()).toEqual('class Real {\n  \n}\n');
+    expect(readFileSync(fileName).toString()).toEqual('class Real {\n  \n}\n');
 
-    fs.writeFileSync(fileName, originalContent);
+    writeFileSync(fileName, originalContent);
 
-    expect(fs.readFileSync(fileName).toString()).toEqual(originalFileContent);
+    expect(readFileSync(fileName).toString()).toEqual(originalFileContent);
   });
 
   test('getSourceFile', async () => {
@@ -68,7 +67,7 @@ describe('Test service', function () {
   test('getSemanticDiagnosticsWithLocation', async () => {
     const service = new RehearsalService(options, fileNames);
 
-    let diagnostics: ts.DiagnosticWithLocation[];
+    let diagnostics: DiagnosticWithLocation[];
 
     diagnostics = service.getSemanticDiagnosticsWithLocation(fileName);
 

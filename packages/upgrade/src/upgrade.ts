@@ -1,9 +1,3 @@
-import ts from 'typescript';
-import winston from 'winston';
-import { dirname, resolve } from 'path';
-
-import { Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from '@rehearsal/service';
 import {
   DiagnosticAutofixPlugin,
   EmptyLinesPreservePlugin,
@@ -11,12 +5,17 @@ import {
   LintPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
+import { Reporter } from '@rehearsal/reporter';
+import { RehearsalService } from '@rehearsal/service';
+import { dirname, resolve } from 'path';
+import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import type { Logger } from 'winston';
 
 export type UpgradeInput = {
   basePath: string;
   configName?: string;
   reporter?: Reporter;
-  logger?: winston.Logger;
+  logger?: Logger;
 };
 
 export type UpgradeOutput = {
@@ -46,7 +45,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   logger?.info('Upgrade started.');
   logger?.info(`Base path: ${basePath}`);
 
-  const configFile = ts.findConfigFile(basePath, ts.sys.fileExists, configName);
+  const configFile = findConfigFile(basePath, sys.fileExists, configName);
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -56,10 +55,10 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   logger?.info(`Config file found: ${configFile}`);
 
-  const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
-  const { options, fileNames } = ts.parseJsonConfigFileContent(
+  const { config } = readConfigFile(configFile, sys.readFile);
+  const { options, fileNames } = parseJsonConfigFileContent(
     config,
-    ts.sys,
+    sys,
     dirname(configFile),
     {},
     configFile

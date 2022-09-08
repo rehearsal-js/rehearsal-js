@@ -1,8 +1,8 @@
+import type { VariableStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getTypeNameFromVariable } from '../../src';
 import { setupTest } from '../helpers';
-import { getTypeNameFromVariable } from '../../src/tsc-utils';
-import ts from 'typescript';
 
 describe('Test getTypeNameFromVariable', () => {
   const { sourceFile, checker } = setupTest(__filename);
@@ -11,7 +11,7 @@ describe('Test getTypeNameFromVariable', () => {
   function typeNameReturned(indexOfStatement: number, targetTypeName: string): void {
     let typeName;
     if (statements && statements[indexOfStatement]) {
-      const variable = (statements[indexOfStatement] as ts.VariableStatement).declarationList
+      const variable = (statements[indexOfStatement] as VariableStatement).declarationList
         .declarations[0].name;
       typeName = getTypeNameFromVariable(variable, checker);
     }

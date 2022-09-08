@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { copyFileSync, existsSync, readdirSync, rmSync } from 'fs';
 import { basename, extname, resolve } from 'path';
 
 /**
@@ -14,12 +14,11 @@ export function createFixturesFromTemplateFiles(
   fixturesDirectory: string,
   templateExtension = '.input'
 ): string[] {
-  return fs
-    .readdirSync(templateDirectory) // Takes all files from sourceDirectory
+  return readdirSync(templateDirectory) // Takes all files from sourceDirectory
     .filter((file) => extname(file).toLowerCase() === templateExtension) // Filter inputFilesExtension files
     .map((file) => {
       const targetFileName = basename(file, templateExtension);
-      fs.copyFileSync(resolve(templateDirectory, file), resolve(fixturesDirectory, targetFileName));
+      copyFileSync(resolve(templateDirectory, file), resolve(fixturesDirectory, targetFileName));
 
       return targetFileName;
     });
@@ -40,14 +39,13 @@ export function cleanFixturesFiles(
   additionalFileNames: string[] = [],
   templateExtension = '.output'
 ): string[] {
-  return fs
-    .readdirSync(templateDirectory) // Takes all files from `templateDirectory
+  return readdirSync(templateDirectory) // Takes all files from `templateDirectory
     .filter((file) => extname(file).toLowerCase() === templateExtension) // Filter `templateExtension` files
     .map((file) => basename(file, templateExtension)) // Remove `templateExtension` from file names
     .concat(additionalFileNames) // Include `additionalFileNames` to the list of files to be removed
-    .filter((file) => fs.existsSync(resolve(fixturesDirectory, file))) // Filter out non-existing files
+    .filter((file) => existsSync(resolve(fixturesDirectory, file))) // Filter out non-existing files
     .map((file) => {
-      fs.rmSync(resolve(fixturesDirectory, file));
+      rmSync(resolve(fixturesDirectory, file));
 
       return file;
     });

@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/codefixes",
-  "version": "0.0.31",
+  "version": "0.0.33",
   "description": "Rehearsal Dependency Codefixes Collection",
   "keywords": [
     "transforms",
@@ -31,8 +31,8 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/service": "^0.0.31",
-    "@rehearsal/utils": "^0.0.31"
+    "@rehearsal/service": "^0.0.33",
+    "@rehearsal/utils": "^0.0.33"
   },
   "devDependencies": {
     "vitest": "^0.22.1"

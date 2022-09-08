@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/service",
-  "version": "0.0.31",
+  "version": "0.0.33",
   "description": "Rehearsal Service",
   "keywords": [
     "rehearsal",
@@ -30,13 +30,12 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.31",
+    "@rehearsal/reporter": "^0.0.33",
     "winston": "^3.6.0"
   },
   "devDependencies": {
     "@types/eslint": "^8.4.1",
     "@types/node": "^18.0.3",
-    "eslint": "^8.11.0",
     "vitest": "^0.22.1"
   },
   "peerDependencies": {

@@ -1,9 +1,8 @@
-import fs from 'fs';
-
-import { assert, describe, expect, test } from 'vitest';
+import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { assert, describe, expect, test } from 'vitest';
 
-import { Reporter, Report } from '../src';
+import { Report, Reporter } from '../src';
 
 describe('Test reporter', function () {
   const basePath = resolve(__dirname, 'fixtures');
@@ -115,7 +114,7 @@ describe('Test reporter', function () {
  * Prepares the report to compare with.
  */
 function expectedReport(basePath: string, fileName: string): Report {
-  const content = fs.readFileSync(resolve(basePath, fileName)).toString();
+  const content = readFileSync(resolve(basePath, fileName)).toString();
 
   return JSON.parse(content) as Report;
 }

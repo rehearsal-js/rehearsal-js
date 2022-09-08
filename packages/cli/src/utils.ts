@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import { parse } from 'json5';
 import { resolve } from 'path';
-import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
 import { valid } from 'semver';
+import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
 
 import findup = require('findup-sync');
 import execa = require('execa');

@@ -1,8 +1,9 @@
-import ts from 'typescript';
+import type { InterfaceDeclaration } from 'typescript';
+import { isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getInterfaceMemberByName } from '../../src';
 import { setupTest } from '../helpers';
-import { getInterfaceMemberByName } from '../../src/tsc-utils';
 
 describe('Test getInterfaceMemberByName', () => {
   const { sourceFile } = setupTest(__filename);
@@ -15,21 +16,21 @@ describe('Test getInterfaceMemberByName', () => {
   ): void {
     let statement;
     let memberObj;
-    if (statements && ts.isInterfaceDeclaration(statements[indexOfStatement])) {
+    if (statements && isInterfaceDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getInterfaceMemberByName(statement as ts.InterfaceDeclaration, memberName);
+      memberObj = getInterfaceMemberByName(statement as InterfaceDeclaration, memberName);
     }
 
     expect(memberObj).toBeDefined();
-    expect(memberObj).toEqual((statement as ts.InterfaceDeclaration).members[indexOfMember]);
+    expect(memberObj).toEqual((statement as InterfaceDeclaration).members[indexOfMember]);
   }
 
   function interfaceMemberUndefined(indexOfStatement: number, memberName: string): void {
     let statement;
     let memberObj;
-    if (statements && ts.isInterfaceDeclaration(statements[indexOfStatement])) {
+    if (statements && isInterfaceDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getInterfaceMemberByName(statement as ts.InterfaceDeclaration, memberName);
+      memberObj = getInterfaceMemberByName(statement as InterfaceDeclaration, memberName);
     }
 
     expect(memberObj).toBeUndefined();

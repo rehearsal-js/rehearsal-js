@@ -1,12 +1,12 @@
-import { describe, test, expect, afterAll, beforeAll } from 'vitest';
-import { gitDeleteLocalBranch, YARN_PATH, run } from '../test-helpers';
+import { type Report } from '@rehearsal/reporter';
+import execa from 'execa';
 import { existsSync, readJSONSync } from 'fs-extra';
 import { join, resolve } from 'path';
-import type { Report } from '@rehearsal/reporter';
-import { getLatestTSVersion, git } from '../../src/utils';
-import packageJson from '../../package.json';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
-import execa from 'execa';
+import packageJson from '../../package.json';
+import { getLatestTSVersion, git } from '../../src/utils';
+import { gitDeleteLocalBranch, run, YARN_PATH } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');

@@ -1,21 +1,11 @@
 import { Command } from 'commander';
+
 import { version } from '../package.json';
-import { join } from 'path';
+import { migrateCommand } from './commands/migrate';
+import { upgradeCommand } from './commands/upgrade';
 
 const program = new Command();
 
-program
-  .name('rehearsal')
-  .version(version)
-  .command(
-    'upgrade',
-    'Upgrade typescript dev-dependency with compilation insights and auto-fix options',
-    {
-      executableFile: join(__dirname, './commands/upgrade'),
-    }
-  )
-  .command('migrate', 'Migrate Javascript project to Typescript', {
-    executableFile: join(__dirname, './commands/migrate'),
-  });
+program.name('rehearsal').version(version).addCommand(migrateCommand).addCommand(upgradeCommand);
 
-export { program as cli };
+export { program as rehearsal, migrateCommand, upgradeCommand };

@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { resolve, dirname } from 'path';
-import fastglob from 'fast-glob';
-import resolvePackagePath from 'resolve-package-path';
+import { sync } from 'fast-glob';
 import { readJsonSync } from 'fs-extra';
+import { dirname, resolve } from 'path';
+import resolvePackagePath from 'resolve-package-path';
 
 import { EmberAddonPackage } from './-private/entities/ember-addon-package';
-import { Package } from './-private/entities/package';
 import { EmberPackage } from './-private/entities/ember-package';
-import { isWorkspace } from './-private/utils/workspace';
 import {
   type MappingsByAddonName,
   type MappingsByLocation,
-  RootInternalState,
   MappingsLookup,
+  RootInternalState,
 } from './-private/entities/InternalState';
+import { Package } from './-private/entities/package';
 import type { PackageContainer } from './-private/types/package-container';
-import { isTesting, getInternalAddonTestFixtures } from './-private/utils/test-environment';
+import { getInternalAddonTestFixtures, isTesting } from './-private/utils/test-environment';
+import { isWorkspace } from './-private/utils/workspace';
 
 type EntityFactoryOptions = {
   packageContainer: PackageContainer;
@@ -213,22 +213,21 @@ class MappingsContainer {
   }
 
   private globInternalPackages(pathToRoot: string): Package[] {
-    const appPackages = fastglob
-      .sync(
-        [
-          '**/package.json',
-          '!**/build/**',
-          '!**/dist/**',
-          '!**/blueprints/**',
-          '!**/fixtures/**',
-          '!**/node_modules/**',
-          '!**/tmp/**',
-        ],
-        {
-          absolute: true,
-          cwd: pathToRoot,
-        }
-      )
+    const appPackages = sync(
+      [
+        '**/package.json',
+        '!**/build/**',
+        '!**/dist/**',
+        '!**/blueprints/**',
+        '!**/fixtures/**',
+        '!**/node_modules/**',
+        '!**/tmp/**',
+      ],
+      {
+        absolute: true,
+        cwd: pathToRoot,
+      }
+    )
       .map((pathToPackage) => dirname(pathToPackage))
       .map((pathToPackage) =>
         entityFactory(pathToPackage, {

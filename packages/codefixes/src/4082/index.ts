@@ -1,5 +1,4 @@
-import ts from 'typescript';
-
+import type { RehearsalService } from '@rehearsal/service';
 import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
@@ -7,19 +6,33 @@ import {
   isSubtypeOf,
   isTypeMatched,
 } from '@rehearsal/utils';
+import type {
+  DiagnosticWithLocation,
+  ExportAssignment,
+  Node,
+  ObjectLiteralExpression,
+  PropertyAssignment,
+  Type,
+  TypeChecker,
+  TypeReference,
+} from 'typescript';
+import {
+  flattenDiagnosticMessageText,
+  isExportAssignment,
+  isObjectLiteralExpression,
+} from 'typescript';
 
-import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
-import { type RehearsalService } from '@rehearsal/service';
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
 const EXPORT_KEYWORD = 'export';
 
 export class FixTransform4082 extends FixTransform {
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
+  fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const program = service.getLanguageService().getProgram()!;
     const checker = program.getTypeChecker();
 
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-    if (!errorNode || !ts.isExportAssignment(errorNode)) {
+    if (!errorNode || !isExportAssignment(errorNode)) {
       return [];
     }
 
@@ -28,7 +41,7 @@ export class FixTransform4082 extends FixTransform {
      * typeType is the type object that corresponds to targetTypeString
      * parentType is the type object that has the type string of: '({ name: string, age: number} : Props): JXS.Element'
      **/
-    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
+    const message = flattenDiagnosticMessageText(diagnostic.messageText, '. ');
     const targetTypeString = getTargetTypeName(message);
     if (!targetTypeString) {
       return [];
@@ -72,14 +85,14 @@ function getTargetTypeName(message: string): string | undefined {
 }
 
 function findParentTypeInExportAssignment(
-  exportAssignment: ts.ExportAssignment,
+  exportAssignment: ExportAssignment,
   targetTypeString: string,
-  checker: ts.TypeChecker
-): ts.Type | undefined {
+  checker: TypeChecker
+): Type | undefined {
   const expression = exportAssignment.expression;
-  let parentType: ts.Type | undefined;
+  let parentType: Type | undefined;
 
-  if (ts.isObjectLiteralExpression(expression)) {
+  if (isObjectLiteralExpression(expression)) {
     parentType = findTypeInObjectLiteralExpression(expression, targetTypeString, checker);
   } else {
     parentType = checker.getTypeAtLocation(expression);
@@ -88,12 +101,12 @@ function findParentTypeInExportAssignment(
 }
 
 function findTypeInObjectLiteralExpression(
-  expression: ts.ObjectLiteralExpression,
+  expression: ObjectLiteralExpression,
   targetTypeStr: string,
-  checker: ts.TypeChecker
-): ts.Type | undefined {
+  checker: TypeChecker
+): Type | undefined {
   for (const prop of expression.properties) {
-    const type = checker.getTypeAtLocation((prop as ts.PropertyAssignment).initializer);
+    const type = checker.getTypeAtLocation((prop as PropertyAssignment).initializer);
     if (isSubtypeOf(targetTypeStr, type, checker)) {
       return type;
     }
@@ -101,7 +114,7 @@ function findTypeInObjectLiteralExpression(
   return undefined;
 }
 
-function findNodeByText(node: ts.Node, text: string): ts.Node | undefined {
+function findNodeByText(node: Node, text: string): Node | undefined {
   const children = Array.from(node.getChildren());
   for (const child of children) {
     const childText = child.getFullText().trim();
@@ -116,10 +129,10 @@ function findNodeByText(node: ts.Node, text: string): ts.Node | undefined {
 
 function findTargetTypeInParentType(
   targetTypeString: string,
-  parentType: ts.Type,
-  checker: ts.TypeChecker
-): ts.Type | undefined {
-  let targetType: ts.Type | undefined;
+  parentType: Type,
+  checker: TypeChecker
+): Type | undefined {
+  let targetType: Type | undefined;
 
   if (parentType.symbol) {
     const parentTypeDeclaration = getTypeDeclarationFromTypeSymbol(parentType);
@@ -133,10 +146,10 @@ function findTargetTypeInParentType(
 }
 
 function findTypeInCompositeType(
-  type: ts.Type,
+  type: Type,
   subTypeString: string,
-  checker: ts.TypeChecker
-): ts.Type | undefined {
+  checker: TypeChecker
+): Type | undefined {
   if (!isSubtypeOf(subTypeString, type, checker)) {
     return undefined;
   }
@@ -149,7 +162,7 @@ function findTypeInCompositeType(
       }
     }
   } else {
-    const typeArguments = checker.getTypeArguments(type as ts.TypeReference);
+    const typeArguments = checker.getTypeArguments(type as TypeReference);
     if (typeArguments.length > 0) {
       for (const t of typeArguments) {
         if (isTypeMatched(subTypeString, t)) {

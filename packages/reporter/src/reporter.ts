@@ -1,8 +1,9 @@
-import fs from 'fs';
-import ts from 'typescript';
-import winston from 'winston';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import type { DiagnosticWithLocation, Node } from 'typescript';
+import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind, version } from 'typescript';
+import type { Logger } from 'winston';
 
-import { type Report, type ReportItem, type ProcessedFile } from './types';
+import { type ProcessedFile, type Report, type ReportItem } from './types';
 
 /**
  * Representation of diagnostic and migration report.
@@ -11,15 +12,15 @@ export class Reporter {
   readonly basePath: string;
 
   private report: Report;
-  private logger?: winston.Logger;
+  private logger?: Logger;
 
-  constructor(projectName = '', basePath = '', logger?: winston.Logger) {
+  constructor(projectName = '', basePath = '', logger?: Logger) {
     this.basePath = basePath;
     this.logger = logger?.child({ service: 'rehearsal-reporter' });
     this.report = {
       summary: {
         projectName: projectName,
-        tsVersion: ts.version,
+        tsVersion: version,
         timestamp: new Date().toLocaleString('en-US', {
           year: 'numeric',
           month: 'numeric',
@@ -54,21 +55,21 @@ export class Reporter {
    * Appends am information about provided diagnostic and related node to the report
    */
   addItem(
-    diagnostic: ts.DiagnosticWithLocation,
+    diagnostic: DiagnosticWithLocation,
     files: { [fileName: string]: ProcessedFile },
     fixed: boolean,
-    node?: ts.Node,
+    node?: Node,
     hint = ''
   ): void {
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
       files,
       errorCode: diagnostic.code,
-      category: ts.DiagnosticCategory[diagnostic.category],
-      message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '. '),
+      category: DiagnosticCategory[diagnostic.category],
+      message: flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
       fixed,
-      nodeKind: node ? ts.SyntaxKind[node.kind] : undefined,
+      nodeKind: node ? SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
       nodeLocation: {
         start: diagnostic.start,
@@ -85,7 +86,7 @@ export class Reporter {
     const report = formatter(this.report);
 
     if (file) {
-      fs.writeFileSync(file, report);
+      writeFileSync(file, report);
     }
 
     return report;
@@ -105,12 +106,12 @@ export class Reporter {
    * Loads the report exported by function 'save' from the file
    */
   load(file: string): Reporter {
-    if (!fs.existsSync(file)) {
+    if (!existsSync(file)) {
       this.logger?.error(`Report file not found: ${file}.`);
     }
 
     this.logger?.info(`Report file found: ${file}.`);
-    const content = fs.readFileSync(file, 'utf-8');
+    const content = readFileSync(file, 'utf-8');
     const report: Report = JSON.parse(content);
 
     if (!Reporter.isReport(report)) {
