@@ -1,5 +1,5 @@
-import fs from 'fs';
 import { resolve, parse } from 'path';
+import fs from 'fs';
 
 /* Existing comment */
 const thisConstant = 'is never read';

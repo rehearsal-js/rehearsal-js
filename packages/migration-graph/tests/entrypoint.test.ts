@@ -1,9 +1,8 @@
-import { describe, test, expect } from 'vitest';
-import { setGracefulCleanup, dirSync } from 'tmp';
-import { relative, join, resolve } from 'path';
 import { writeSync } from 'fixturify';
-
+import { join, relative, resolve } from 'path';
 import type { FileNode } from 'src/types';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { describe, expect, test } from 'vitest';
 
 import { createImportGraph } from '../src/entrypoint';
 import { Graph } from '../src/utils/graph';

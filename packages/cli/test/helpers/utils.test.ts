@@ -1,14 +1,14 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import execa = require('execa');
 
 import {
-  normalizeVersionString,
   determineProjectName,
-  timestamp,
   getPathToBinary,
   isYarnManager,
+  normalizeVersionString,
   sleep,
+  timestamp,
 } from '../../src/utils';
 
 describe('utils', () => {

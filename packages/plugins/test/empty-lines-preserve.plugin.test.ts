@@ -1,9 +1,8 @@
-import { describe, test, expect, afterEach } from 'vitest';
-import { resolve } from 'path';
-import { readFileSync } from 'fs';
-
-import { cleanFixturesFiles, createFixturesFromTemplateFiles } from '@rehearsal/utils';
 import { RehearsalService } from '@rehearsal/service';
+import { cleanFixturesFiles, createFixturesFromTemplateFiles } from '@rehearsal/utils';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { afterEach, describe, expect, test } from 'vitest';
 
 import { EmptyLinesPreservePlugin } from '../src';
 

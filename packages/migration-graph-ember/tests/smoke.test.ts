@@ -1,17 +1,17 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { writeSync } from 'fixturify';
-import { resolve, join } from 'path';
-import { setGracefulCleanup, dirSync } from 'tmp';
 import { readFileSync, realpathSync } from 'fs';
+import { join, resolve } from 'path';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
-import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from './fixtures/package-fixtures';
-import { getInternalModuleMappings, getExternalModuleMappings } from '../src/index';
+import { getExternalModuleMappings, getInternalModuleMappings } from '../src';
 import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,
   setupTestEnvironment,
 } from '../src/-private/utils/test-environment';
+import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from './fixtures/package-fixtures';
 
 setGracefulCleanup();
 

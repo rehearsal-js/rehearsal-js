@@ -1,11 +1,11 @@
-import ts from 'typescript';
-
-import type { ProcessedFile, Location, FileRole } from '@rehearsal/reporter';
 import type { FixedFile } from '@rehearsal/codefixes';
+import type { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
+import type { DiagnosticWithLocation, SourceFile } from 'typescript';
+import  { getLineAndCharacterOfPosition } from 'typescript';
 
 export function getFilesData(
   fixedFiles: FixedFile[],
-  diagnostic: ts.DiagnosticWithLocation,
+  diagnostic: DiagnosticWithLocation,
   hint = ''
 ): { [fileName: string]: ProcessedFile } {
   const entryFileName = diagnostic.file.fileName;
@@ -45,8 +45,8 @@ function getRoles(fileName: string, entryFileName: string, fixed: boolean): File
   return fixed ? ['tracedFile' as const, 'modified' as const] : ['tracedFile', 'unmodified'];
 }
 
-export function getLocation(sourceFile: ts.SourceFile, start: number): Location {
-  const { line, character } = ts.getLineAndCharacterOfPosition(sourceFile, start);
+export function getLocation(sourceFile: SourceFile, start: number): Location {
+  const { line, character } = getLineAndCharacterOfPosition(sourceFile, start);
 
   return {
     line: line + 1,
@@ -87,7 +87,7 @@ export function getCommentedFileData(
   };
 }
 
-export function getInitialEntryFileData(diagnostic: ts.DiagnosticWithLocation): ProcessedFile {
+export function getInitialEntryFileData(diagnostic: DiagnosticWithLocation): ProcessedFile {
   return {
     fileName: diagnostic.file.fileName,
     location: getLocation(diagnostic.file, diagnostic.start),

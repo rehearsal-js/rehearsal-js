@@ -1,8 +1,8 @@
-import ts from 'typescript';
+import type { InterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getTypeDeclarationFromTypeSymbol } from '../../src';
 import { setupTest } from '../helpers';
-import { getTypeDeclarationFromTypeSymbol } from '../../src/tsc-utils';
 
 describe('Test getTypeDeclarationFromSymbol', () => {
   const { sourceFile, checker } = setupTest(__filename);
@@ -15,7 +15,7 @@ describe('Test getTypeDeclarationFromSymbol', () => {
       declaration = getTypeDeclarationFromTypeSymbol(type);
     }
 
-    expect((declaration as ts.InterfaceDeclaration)?.name.escapedText.toString()).toEqual('T6');
+    expect((declaration as InterfaceDeclaration)?.name.escapedText.toString()).toEqual('T6');
   });
 
   test('should return type literal for type alias declaration', () => {
@@ -25,6 +25,6 @@ describe('Test getTypeDeclarationFromSymbol', () => {
       declaration = getTypeDeclarationFromTypeSymbol(type);
     }
 
-    expect((declaration as ts.InterfaceDeclaration)?.name.escapedText.toString()).toEqual('T7');
+    expect((declaration as InterfaceDeclaration)?.name.escapedText.toString()).toEqual('T7');
   });
 });

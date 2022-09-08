@@ -1,9 +1,10 @@
-import { describe, test, expect, afterAll, beforeEach, beforeAll } from 'vitest';
-import { runYarnOrNpmCommand } from '../../src/utils';
+import { copySync, readdirSync, readFileSync, readJSONSync } from 'fs-extra';
 import { resolve } from 'path';
-import fs from 'fs-extra';
-import { runLinkedBin } from '../test-helpers';
 import { dirSync, setGracefulCleanup } from 'tmp';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+
+import { runYarnOrNpmCommand } from '../../src/utils';
+import { runLinkedBin } from '../test-helpers';
 
 const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
 const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
@@ -11,7 +12,7 @@ const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
 function prepareTmpDir(dir: string): string {
   const srcDir = resolve(TEST_SRC_DIR, dir);
   const { name: targetDir } = dirSync();
-  fs.copySync(srcDir, targetDir);
+  copySync(srcDir, targetDir);
   return targetDir;
 }
 
@@ -69,7 +70,7 @@ describe('migrate - generate tsconfig', async () => {
     });
 
     expect(result.stdout).toContain('Creating basic tsconfig');
-    expect(fs.readdirSync(root)).toContain('tsconfig.json');
+    expect(readdirSync(root)).toContain('tsconfig.json');
   });
 
   test('Do not create tsconfig if there is an existed one', async () => {
@@ -79,7 +80,7 @@ describe('migrate - generate tsconfig', async () => {
     });
 
     expect(result.stdout).toContain('skipping creating tsconfig.json');
-    expect(fs.readdirSync(root)).toContain('tsconfig.json');
+    expect(readdirSync(root)).toContain('tsconfig.json');
   });
 
   test('Create strict tsconfig', async () => {
@@ -95,8 +96,8 @@ describe('migrate - generate tsconfig', async () => {
     );
 
     expect(result.stdout).toContain('Creating strict tsconfig');
-    expect(fs.readdirSync(root)).toContain('tsconfig.json');
-    const content = fs.readFileSync(resolve(root, 'tsconfig.json'), 'utf-8');
+    expect(readdirSync(root)).toContain('tsconfig.json');
+    const content = readFileSync(resolve(root, 'tsconfig.json'), 'utf-8');
     expect(content).toMatchSnapshot();
   });
 });
@@ -118,15 +119,15 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
-    expect(fs.readdirSync(root)).toContain('index.ts');
+    expect(readdirSync(root)).toContain('index.ts');
 
-    const content = fs.readFileSync(resolve(root, 'index.ts'), 'utf-8');
+    const content = readFileSync(resolve(root, 'index.ts'), 'utf-8');
     expect(content).toMatchSnapshot();
 
     // keep old JS files without --clean flag
-    expect(fs.readdirSync(root)).toContain('index.js');
+    expect(readdirSync(root)).toContain('index.js');
 
-    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    const config = readJSONSync(resolve(root, 'tsconfig.json'));
     expect(config.include).toEqual(['index.ts']);
   });
 
@@ -152,20 +153,20 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
-    expect(fs.readdirSync(root)).toContain('foo.ts');
-    expect(fs.readdirSync(root)).toContain('depends-on-foo.ts');
+    expect(readdirSync(root)).toContain('foo.ts');
+    expect(readdirSync(root)).toContain('depends-on-foo.ts');
 
-    const foo = fs.readFileSync(resolve(root, 'foo.ts'), 'utf-8');
-    const depends_on_foo = fs.readFileSync(resolve(root, 'depends-on-foo.ts'), 'utf-8');
+    const foo = readFileSync(resolve(root, 'foo.ts'), 'utf-8');
+    const depends_on_foo = readFileSync(resolve(root, 'depends-on-foo.ts'), 'utf-8');
 
     expect(foo).toMatchSnapshot();
     expect(depends_on_foo).toMatchSnapshot();
 
     // keep old JS files without --clean flag
-    expect(fs.readdirSync(root)).toContain('depends-on-foo.js');
-    expect(fs.readdirSync(root)).toContain('foo.js');
+    expect(readdirSync(root)).toContain('depends-on-foo.js');
+    expect(readdirSync(root)).toContain('foo.js');
 
-    const config = fs.readJSONSync(resolve(root, 'tsconfig.json'));
+    const config = readJSONSync(resolve(root, 'tsconfig.json'));
     expect(config.include).toEqual(['foo.ts', 'depends-on-foo.ts']);
   });
 
@@ -177,9 +178,9 @@ describe('migrate - JS to TS conversion', async () => {
     );
 
     expect(result.stdout).toContain(`[SUCCESS] Clean up old JS files`);
-    expect(fs.readdirSync(root)).toContain('foo.ts');
-    expect(fs.readdirSync(root)).toContain('depends-on-foo.ts');
-    expect(fs.readdirSync(root)).not.toContain('bar.js');
-    expect(fs.readdirSync(root)).not.toContain('depends-on-foo.js');
+    expect(readdirSync(root)).toContain('foo.ts');
+    expect(readdirSync(root)).toContain('depends-on-foo.ts');
+    expect(readdirSync(root)).not.toContain('bar.js');
+    expect(readdirSync(root)).not.toContain('depends-on-foo.js');
   });
 });

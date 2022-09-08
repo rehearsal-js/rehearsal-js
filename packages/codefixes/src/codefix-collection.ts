@@ -1,4 +1,5 @@
-import ts from 'typescript';
+import type { Diagnostic, DiagnosticWithLocation, Node, Program, TypeChecker } from 'typescript';
+import { flattenDiagnosticMessageText, isIdentifier } from 'typescript';
 
 import { FixTransform } from './fix-transform';
 
@@ -12,7 +13,7 @@ export type CodefixListElement = {
 };
 
 export type CodefixHint = {
-  when: (n: ts.Node, p: ts.Program, c: ts.TypeChecker) => boolean;
+  when: (n: Node, p: Program, c: TypeChecker) => boolean;
   hint: string;
 };
 
@@ -37,10 +38,10 @@ export class CodeFixCollection {
   }
 
   getHint(
-    diagnostic: ts.DiagnosticWithLocation,
-    program: ts.Program,
-    checker: ts.TypeChecker,
-    node?: ts.Node
+    diagnostic: DiagnosticWithLocation,
+    program: Program,
+    checker: TypeChecker,
+    node?: Node
   ): string {
     const conditionalHints = this.list[diagnostic.code]?.hints;
 
@@ -53,13 +54,12 @@ export class CodeFixCollection {
     }
 
     const defaultHint =
-      this.list[diagnostic.code]?.hint ||
-      ts.flattenDiagnosticMessageText(diagnostic.messageText, '.');
+      this.list[diagnostic.code]?.hint || flattenDiagnosticMessageText(diagnostic.messageText, '.');
 
     return this.prepareHint(defaultHint, diagnostic, node);
   }
 
-  getHelpUrl(diagnostic: ts.DiagnosticWithLocation): string {
+  getHelpUrl(diagnostic: DiagnosticWithLocation): string {
     const defaultHelpUrl = `https://stackoverflow.com/search?tab=votes&q=ts${diagnostic.code}}`;
 
     return this.list[diagnostic.code]?.helpUrl || defaultHelpUrl;
@@ -68,8 +68,8 @@ export class CodeFixCollection {
   /**
    * Prepares a hint message for engineer based on original diagnostic message and `this.hint`
    */
-  protected prepareHint(hint: string, diagnostic: ts.Diagnostic, node?: ts.Node): string {
-    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '. ');
+  protected prepareHint(hint: string, diagnostic: Diagnostic, node?: Node): string {
+    const message = flattenDiagnosticMessageText(diagnostic.messageText, '. ');
 
     // Prepare a replacement dictionary
     // e.g. {'{0}': 'p', '{1}': 'any'} for message "Parameter 'p' implicitly has an 'any' type."
@@ -84,7 +84,7 @@ export class CodeFixCollection {
     if (node !== undefined) {
       replacements['{node.text}'] = node.getText();
       replacements['{node.fullText}'] = node.getFullText();
-      replacements['{node.escapedText}'] = ts.isIdentifier(node)
+      replacements['{node.escapedText}'] = isIdentifier(node)
         ? node.escapedText.toString()
         : node.getText();
     }

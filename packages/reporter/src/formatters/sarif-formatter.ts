@@ -1,5 +1,6 @@
-import { Log, Run, ReportingDescriptor, Result, Artifact, Location, PropertyBag } from 'sarif';
-import { Report, ReportItem, ProcessedFile, FileCollection } from '../types';
+import { Artifact, Location, Log, PropertyBag, ReportingDescriptor, Result, Run } from 'sarif';
+
+import { FileCollection, ProcessedFile, Report, ReportItem } from '../types';
 
 class SarifFormatter {
   private report: Report;

@@ -1,5 +1,6 @@
-import { resolve } from 'path';
 import execa from 'execa';
+import { resolve } from 'path';
+
 import { git, gitIsRepoDirty } from '../src/utils';
 
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };

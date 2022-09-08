@@ -1,5 +1,5 @@
-import { resolve, join } from 'path';
-import { readJsonSync, existsSync } from 'fs-extra';
+import { existsSync, readJsonSync } from 'fs-extra';
+import { join, resolve } from 'path';
 
 /**
  * Will return true if a module is a relative path (e.g. starts with '.','../', '/')

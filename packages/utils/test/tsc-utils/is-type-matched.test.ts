@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
+import { isTypeMatched } from '../../src';
 import { setupTest } from '../helpers';
-import { isTypeMatched } from '../../src/tsc-utils';
 
 describe('Test isTypeMatched', () => {
   const { sourceFile, checker } = setupTest(__filename);

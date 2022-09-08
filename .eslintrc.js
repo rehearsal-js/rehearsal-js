@@ -4,7 +4,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames'],
+  plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
     'plugin:prettier/recommended',
@@ -14,13 +14,14 @@ module.exports = {
   ],
   rules: {
     curly: 'error',
-    'sort-imports': 'off',
     'import/order': 'off',
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
     'import/no-extraneous-dependencies': 'error',
     'import/no-unassigned-import': 'error',
     'import/no-unresolved': 'off',
+    'simple-import-sort/imports': 'error',
+    'sort-imports': 'off',
     'prettier/prettier': [
       'error',
       {

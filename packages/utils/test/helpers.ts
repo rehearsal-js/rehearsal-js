@@ -1,10 +1,11 @@
 import { resolve } from 'path';
-import ts from 'typescript';
+import type { SourceFile, TypeChecker } from 'typescript';
+
 import { testService } from './test-service';
 
 interface SetupResult {
-  sourceFile: ts.SourceFile | undefined;
-  checker: ts.TypeChecker;
+  sourceFile: SourceFile | undefined;
+  checker: TypeChecker;
 }
 
 export function setupTest(testFileName: string): SetupResult {

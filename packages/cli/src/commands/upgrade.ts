@@ -1,31 +1,29 @@
 #!/usr/bin/env node
 
-import { Command, InvalidArgumentError } from 'commander';
-import { compare } from 'compare-versions';
-import debug from 'debug';
-import { Listr } from 'listr2';
 import { Reporter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
-import winston from 'winston';
-
+import { Command, InvalidArgumentError } from 'commander';
+import { compare } from 'compare-versions';
+import { debug } from 'debug';
+import { Listr } from 'listr2';
 import { resolve } from 'path';
+import { createLogger, format, transports } from 'winston';
 
 import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
-
 import {
-  git,
-  determineProjectName,
-  getPathToBinary,
-  gitCommit,
-  gitCheckoutNewLocalBranch,
-  gitIsRepoDirty,
   bumpDevDep,
-  isYarnManager,
+  determineProjectName,
   getLatestTSVersion,
-  timestamp,
+  getPathToBinary,
+  git,
+  gitCheckoutNewLocalBranch,
+  gitCommit,
+  gitIsRepoDirty,
   isValidSemver,
+  isYarnManager,
+  timestamp,
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
@@ -79,8 +77,8 @@ upgradeCommand
   .option('-i, --is_test', 'hidden flags for testing purposes only')
 
   .action(async (options: UpgradeCommandOptions) => {
-    const logger = winston.createLogger({
-      transports: [new winston.transports.Console({ format: winston.format.cli() })],
+    const logger = createLogger({
+      transports: [new transports.Console({ format: format.cli() })],
     });
 
     const { build, src_dir, is_test } = options;

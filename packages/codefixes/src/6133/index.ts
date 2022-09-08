@@ -1,15 +1,16 @@
-import ts from 'typescript';
+import { findNodeAtPosition, isSourceCodeChanged, transformDiagnosedNode } from '@rehearsal/utils';
+import type { DiagnosticWithLocation, Node } from 'typescript';
+import { isImportDeclaration, isImportSpecifier } from 'typescript';
 
-import { isSourceCodeChanged, transformDiagnosedNode, findNodeAtPosition } from '@rehearsal/utils';
-import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
 export class FixTransform6133 extends FixTransform {
-  fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
+  fix = (diagnostic: DiagnosticWithLocation): FixedFile[] => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     const textRemoved = errorNode && errorNode.getFullText();
 
-    const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
-      if (ts.isImportDeclaration(node) || ts.isImportSpecifier(node)) {
+    const text = transformDiagnosedNode(diagnostic, (node: Node) => {
+      if (isImportDeclaration(node) || isImportSpecifier(node)) {
         // Remove all export declarations and undefined imported functions
         return undefined;
       }

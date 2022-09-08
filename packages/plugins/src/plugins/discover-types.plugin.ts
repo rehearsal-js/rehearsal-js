@@ -1,6 +1,6 @@
-import { Plugin, type PluginParams, type PluginResult } from '@rehearsal/service';
-import { findNodeAtPosition } from '@rehearsal/utils';
 import { codefixes, FixTransform } from '@rehearsal/codefixes';
+import { type PluginParams, type PluginResult, Plugin } from '@rehearsal/service';
+import { findNodeAtPosition } from '@rehearsal/utils';
 
 import { getFilesData } from '../data';
 

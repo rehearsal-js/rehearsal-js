@@ -1,16 +1,16 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import { setGracefulCleanup, dirSync } from 'tmp';
 import { writeSync } from 'fixturify';
 import { resolve } from 'path';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
+import { EmberAddonPackage } from '../../../src/-private/entities/ember-addon-package';
 import {
   registerInternalAddonTestFixtures,
-  setupTestEnvironment,
   resetInternalAddonTestFixtures,
+  setupTestEnvironment,
 } from '../../../src/-private/utils/test-environment';
 import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
-import { EmberAddonPackage } from '../../../src/-private/entities/ember-addon-package';
 
 setGracefulCleanup();
 
