@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import traverse from '@babel/traverse';
-import { EmberPackage } from './ember-package';
 import * as t from '@babel/types';
 
 import {
@@ -13,7 +12,7 @@ import {
   isEngine,
   writePackageMain,
 } from '../utils/ember';
-
+import { EmberPackage } from './ember-package';
 import { InternalState } from './InternalState';
 import { PackageOptions } from './package';
 

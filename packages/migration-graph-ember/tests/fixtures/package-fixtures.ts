@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 function json(jsonObj = {}) {
   return JSON.stringify(jsonObj, null, 2);
@@ -23,8 +23,8 @@ const PACKAGE_FIXTURES: { [key: string]: any; } = {};
 
 // a non-ember package
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
-  'index.js': fs.readFileSync(
-    path.join(__dirname, 'simple-addon', 'index.js'),
+  'index.js': readFileSync(
+    join(__dirname, 'simple-addon', 'index.js'),
     'utf-8'
   ),
   'package.json': json({
@@ -34,8 +34,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
 };
 // a simple addon
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON] = {
-  'index.js': fs.readFileSync(
-    path.join(__dirname, 'simple-addon', 'index.js'),
+  'index.js': readFileSync(
+    join(__dirname, 'simple-addon', 'index.js'),
     'utf-8'
   ),
   'package.json': json({
@@ -49,8 +49,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON] = {
 };
 // a simple engine
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE] = {
-  'index.js': fs.readFileSync(
-    path.join(__dirname, 'simple-addon', 'index.js'),
+  'index.js': readFileSync(
+    join(__dirname, 'simple-addon', 'index.js'),
     'utf-8'
   ),
   'package.json': json({
@@ -116,8 +116,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN] = {
 // an addon with a simple custom package main file
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN] =
   {
-    'index.js': fs.readFileSync(
-      path.join(__dirname, 'simple-addon', 'index.js'),
+    'index.js': readFileSync(
+      join(__dirname, 'simple-addon', 'index.js'),
       'utf-8'
     ),
     'ember-addon-main.js': `'use strict';
@@ -146,8 +146,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN] =
 // an addon with a complex custom package main file
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN] =
   {
-    'index.js': fs.readFileSync(
-      path.join(__dirname, 'simple-addon', 'index.js'),
+    'index.js': readFileSync(
+      join(__dirname, 'simple-addon', 'index.js'),
       'utf-8'
     ),
     'ember-addon-main.js': `'use strict';
@@ -194,8 +194,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
   PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER
 ] = {
-  'index.js': fs.readFileSync(
-    path.join(__dirname, 'simple-addon', 'index.js'),
+  'index.js': readFileSync(
+    join(__dirname, 'simple-addon', 'index.js'),
     'utf-8'
   ),
   'package.json': json({
@@ -211,8 +211,8 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
   PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER
 ] = {
-  'index.js': fs.readFileSync(
-    path.join(__dirname, 'simple-addon', 'index.js'),
+  'index.js': readFileSync(
+    join(__dirname, 'simple-addon', 'index.js'),
     'utf-8'
   ),
   'package.json': json({

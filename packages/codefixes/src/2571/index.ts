@@ -1,21 +1,21 @@
-import ts from 'typescript';
-
 import {
   isSourceCodeChanged,
   isVariableOfCatchClause,
   transformDiagnosedNode,
 } from '@rehearsal/utils';
+import type { DiagnosticWithLocation, Node } from 'typescript';
+import { factory, isIdentifier, isPropertyAccessExpression } from 'typescript';
 
-import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
 export class FixTransform2571 extends FixTransform {
-  fix = (diagnostic: ts.DiagnosticWithLocation): FixedFile[] => {
-    const text = transformDiagnosedNode(diagnostic, (node: ts.Node) => {
-      if (ts.isIdentifier(node) && isVariableOfCatchClause(node)) {
+  fix = (diagnostic: DiagnosticWithLocation): FixedFile[] => {
+    const text = transformDiagnosedNode(diagnostic, (node: Node) => {
+      if (isIdentifier(node) && isVariableOfCatchClause(node)) {
         if (isPropertyOfErrorInterface(node.parent)) {
-          return ts.factory.createAsExpression(node, ts.factory.createTypeReferenceNode('Error'));
+          return factory.createAsExpression(node, factory.createTypeReferenceNode('Error'));
         } else {
-          return ts.factory.createAsExpression(node, ts.factory.createTypeReferenceNode('any'));
+          return factory.createAsExpression(node, factory.createTypeReferenceNode('any'));
         }
       }
 
@@ -34,10 +34,10 @@ export class FixTransform2571 extends FixTransform {
 /**
  * Checks if the `node` is a part of property access expression and is a member of the `Error` interface
  */
-function isPropertyOfErrorInterface(node: ts.Node): boolean {
+function isPropertyOfErrorInterface(node: Node): boolean {
   const errorProps: string[] = ['name', 'message', 'stack'];
 
-  if (ts.isPropertyAccessExpression(node)) {
+  if (isPropertyAccessExpression(node)) {
     return errorProps.includes(node.name.getText());
   }
 

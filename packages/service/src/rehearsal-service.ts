@@ -1,4 +1,11 @@
-import ts from 'typescript';
+import type {
+  CompilerOptions,
+  Diagnostic,
+  DiagnosticWithLocation,
+  LanguageService,
+  SourceFile,
+} from 'typescript';
+import { createLanguageService, resolveModuleName, ScriptSnapshot, sys } from 'typescript';
 
 import { RehearsalServiceHost } from './rehearsal-service-host';
 
@@ -8,11 +15,11 @@ import { RehearsalServiceHost } from './rehearsal-service-host';
  */
 export class RehearsalService {
   protected readonly host: RehearsalServiceHost;
-  protected readonly service: ts.LanguageService;
+  protected readonly service: LanguageService;
 
-  constructor(compilerOptions: ts.CompilerOptions = {}, fileNames: string[]) {
+  constructor(compilerOptions: CompilerOptions = {}, fileNames: string[]) {
     this.host = new RehearsalServiceHost(compilerOptions, fileNames);
-    this.service = ts.createLanguageService(this.host);
+    this.service = createLanguageService(this.host);
   }
 
   /**
@@ -27,7 +34,7 @@ export class RehearsalService {
    * Updates the current state of the file with the new content
    */
   setFileText(fileName: string, text: string): void {
-    this.host.setScriptSnapshot(fileName, ts.ScriptSnapshot.fromString(text));
+    this.host.setScriptSnapshot(fileName, ScriptSnapshot.fromString(text));
   }
 
   /**
@@ -41,23 +48,23 @@ export class RehearsalService {
   /**
    * Gets a SourceFile object from the compiled program
    */
-  getSourceFile(fileName: string): ts.SourceFile {
+  getSourceFile(fileName: string): SourceFile {
     return this.service.getProgram()!.getSourceFile(fileName)!;
   }
 
   /**
    * Gets the LanguageService
    */
-  getLanguageService(): ts.LanguageService {
+  getLanguageService(): LanguageService {
     return this.service;
   }
 
   /**
    * Gets a list of semantic diagnostic objects only with location information (those have related node in the AST)
    */
-  getSemanticDiagnosticsWithLocation(fileName: string): ts.DiagnosticWithLocation[] {
+  getSemanticDiagnosticsWithLocation(fileName: string): DiagnosticWithLocation[] {
     // Type-guard for DiagnosticWithLocation
-    const withLocation = (diagnostic: ts.Diagnostic): diagnostic is ts.DiagnosticWithLocation =>
+    const withLocation = (diagnostic: Diagnostic): diagnostic is DiagnosticWithLocation =>
       diagnostic.start !== undefined && diagnostic.length !== undefined;
 
     return this.service.getSemanticDiagnostics(fileName).filter(withLocation);
@@ -67,11 +74,11 @@ export class RehearsalService {
    * Provides a path to a module file by its name
    */
   resolveModuleName(moduleName: string, containingFile: string): string | undefined {
-    const result = ts.resolveModuleName(
+    const result = resolveModuleName(
       moduleName,
       containingFile,
       this.host.getCompilationSettings(),
-      ts.sys
+      sys
     );
     return result?.resolvedModule?.resolvedFileName;
   }

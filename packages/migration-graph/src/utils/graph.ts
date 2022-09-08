@@ -1,4 +1,5 @@
 import { UniqueGraphNode } from 'src/types';
+
 import { GraphNode } from './graph-node';
 
 export class Graph<T extends UniqueGraphNode> {

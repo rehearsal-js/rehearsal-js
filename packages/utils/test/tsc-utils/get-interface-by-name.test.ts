@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
+import { getInterfaceByName } from '../../src';
 import { setupTest } from '../helpers';
-import { getInterfaceByName } from '../../src/tsc-utils';
 
 describe('Test getInterfaceByName', () => {
   const { sourceFile } = setupTest(__filename);

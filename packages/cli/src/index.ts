@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { version } from '../package.json';
 
+import { version } from '../package.json';
 import { migrateCommand } from './commands/migrate';
 import { upgradeCommand } from './commands/upgrade';
 

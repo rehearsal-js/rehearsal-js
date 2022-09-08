@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
+import { getTypeAliasByName } from '../../src';
 import { setupTest } from '../helpers';
-import { getTypeAliasByName } from '../../src/tsc-utils';
 
 describe('Test getTypeAliasByName', () => {
   const { sourceFile } = setupTest(__filename);

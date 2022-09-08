@@ -1,11 +1,12 @@
-import ts from 'typescript';
-
+import type { RehearsalService } from '@rehearsal/service';
 import { findNodeAtPosition, insertIntoText } from '@rehearsal/utils';
-import { FixTransform, type FixedFile } from '../fix-transform';
-import { type RehearsalService } from '@rehearsal/service';
+import type { DiagnosticWithLocation, TextChange } from 'typescript';
+import { getDefaultFormatCodeSettings } from 'typescript';
+
+import { type FixedFile, FixTransform } from '../fix-transform';
 
 export class FixTransform7006 extends FixTransform {
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
+  fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
     if (!node) {
@@ -13,7 +14,7 @@ export class FixTransform7006 extends FixTransform {
     }
 
     const languageService = service.getLanguageService();
-    const formatOptions = ts.getDefaultFormatCodeSettings();
+    const formatOptions = getDefaultFormatCodeSettings();
     const sourceFile = diagnostic.file;
 
     const fileName = sourceFile.fileName;
@@ -62,7 +63,7 @@ export class FixTransform7006 extends FixTransform {
           }
 
           return accumulator;
-        }, new Array<ts.TextChange>());
+        }, new Array<TextChange>());
 
         let content = service.getFileText(fileName); // Initializes our file content
 

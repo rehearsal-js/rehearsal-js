@@ -2,10 +2,10 @@
 import { readJsonSync } from 'fs-extra';
 import { resolve } from 'path';
 
-import { getWorkspaceGlobs } from '../utils/workspace';
-import { setNestedPropertyValue, removeNestedPropertyValue } from '../utils/pojo';
 import { type PackageContainer } from '../types/package-container';
 import { writePackageJsonSync } from '../utils/ember';
+import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
+import { getWorkspaceGlobs } from '../utils/workspace';
 
 export type PackageJson = Record<string, any>;
 

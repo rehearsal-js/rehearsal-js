@@ -1,5 +1,6 @@
 import { UniqueGraphNode } from 'src/types';
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
+
 import { Graph } from '../../src/utils/graph';
 
 export function createNode(key = 'some-name'): UniqueGraphNode {

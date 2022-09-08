@@ -1,8 +1,9 @@
-import ts from 'typescript';
+import type { TypeAliasDeclaration, TypeLiteralNode } from 'typescript';
+import { isInterfaceDeclaration, isTypeAliasDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getTypeAliasMemberByName } from '../../src';
 import { setupTest } from '../helpers';
-import { getTypeAliasMemberByName } from '../../src/tsc-utils';
 
 describe('Test getTypeAliasMemberByName', () => {
   const { sourceFile } = setupTest(__filename);
@@ -15,23 +16,23 @@ describe('Test getTypeAliasMemberByName', () => {
   ): void {
     let statement;
     let memberObj;
-    if (statements && ts.isTypeAliasDeclaration(statements[indexOfStatement])) {
+    if (statements && isTypeAliasDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getTypeAliasMemberByName(statement as ts.TypeAliasDeclaration, memberName);
+      memberObj = getTypeAliasMemberByName(statement as TypeAliasDeclaration, memberName);
     }
 
     expect(memberObj).toBeDefined();
     expect(memberObj).toEqual(
-      ((statement as ts.TypeAliasDeclaration).type as ts.TypeLiteralNode).members[indexOfMember]
+      ((statement as TypeAliasDeclaration).type as TypeLiteralNode).members[indexOfMember]
     );
   }
 
   function typeAliasMemberUndefined(indexOfStatement: number, memberName: string): void {
     let statement;
     let memberObj;
-    if (statements && ts.isInterfaceDeclaration(statements[indexOfStatement])) {
+    if (statements && isInterfaceDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getTypeAliasMemberByName(statement as ts.TypeAliasDeclaration, memberName);
+      memberObj = getTypeAliasMemberByName(statement as TypeAliasDeclaration, memberName);
     }
 
     expect(memberObj).toBeUndefined();

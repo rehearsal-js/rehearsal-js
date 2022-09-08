@@ -1,84 +1,100 @@
-import ts from 'typescript';
+import type {
+  ClassDeclaration,
+  ClassElement,
+  Identifier,
+  InterfaceDeclaration,
+  Node,
+  SourceFile,
+  Type,
+  TypeAliasDeclaration,
+  TypeChecker,
+  TypeElement,
+  TypeLiteralNode,
+} from 'typescript';
+import {
+  isClassDeclaration,
+  isInterfaceDeclaration,
+  isTypeAliasDeclaration,
+  SyntaxKind,
+} from 'typescript';
 
 export function getInterfaceByName(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   typeName: string
-): ts.InterfaceDeclaration | undefined {
+): InterfaceDeclaration | undefined {
   if (!typeName) {
     return undefined;
   }
   const matched = sourceFile.statements.find(
-    (s) => ts.isInterfaceDeclaration(s) && s.name?.escapedText.toString().trim() === typeName.trim()
+    (s) => isInterfaceDeclaration(s) && s.name?.escapedText.toString().trim() === typeName.trim()
   );
-  return matched as ts.InterfaceDeclaration;
+  return matched as InterfaceDeclaration;
 }
 
 export function getTypeAliasByName(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   typeName: string
-): ts.TypeAliasDeclaration | undefined {
+): TypeAliasDeclaration | undefined {
   if (!typeName) {
     return undefined;
   }
   const matched = sourceFile.statements.find(
-    (s) => ts.isTypeAliasDeclaration(s) && s.name.escapedText.toString().trim() === typeName.trim()
+    (s) => isTypeAliasDeclaration(s) && s.name.escapedText.toString().trim() === typeName.trim()
   );
-  return matched as ts.TypeAliasDeclaration;
+  return matched as TypeAliasDeclaration;
 }
 
 export function getClassByName(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   className: string
-): ts.ClassDeclaration | undefined {
+): ClassDeclaration | undefined {
   if (!className) {
     return undefined;
   }
   const matched = sourceFile.statements.find(
-    (s) => ts.isClassDeclaration(s) && s.name?.escapedText.toString().trim() === className.trim()
+    (s) => isClassDeclaration(s) && s.name?.escapedText.toString().trim() === className.trim()
   );
-  return matched as ts.ClassDeclaration;
+  return matched as ClassDeclaration;
 }
 
 export function getInterfaceMemberByName(
-  declaration: ts.InterfaceDeclaration,
+  declaration: InterfaceDeclaration,
   typeMemberName: string
-): ts.TypeElement | undefined {
+): TypeElement | undefined {
   if (!typeMemberName) {
     return undefined;
   }
   return declaration.members.find(
-    (member) =>
-      (member.name as ts.Identifier)?.escapedText.toString().trim() === typeMemberName.trim()
+    (member) => (member.name as Identifier)?.escapedText.toString().trim() === typeMemberName.trim()
   );
 }
 
 export function getTypeAliasMemberByName(
-  declaration: ts.TypeAliasDeclaration,
+  declaration: TypeAliasDeclaration,
   typeMemberName: string
-): ts.TypeElement | undefined {
+): TypeElement | undefined {
   if (!typeMemberName) {
     return undefined;
   }
-  return (declaration.type as ts.TypeLiteralNode).members.find(
-    (member) =>
-      (member.name as ts.Identifier)?.escapedText.toString().trim() === typeMemberName.trim()
+  return (declaration.type as TypeLiteralNode).members.find(
+    (member) => (member.name as Identifier)?.escapedText.toString().trim() === typeMemberName.trim()
   );
 }
 
 export function getClassMemberByName(
-  declaration: ts.ClassDeclaration,
+  declaration: ClassDeclaration,
   classMemberName: string
-): ts.ClassElement | undefined {
+): ClassElement | undefined {
   if (!classMemberName) {
     return undefined;
   }
   return declaration.members.find(
     (member) =>
-      (member.name as ts.Identifier)?.escapedText.toString().trim() === classMemberName.trim()
+      (member.name as Identifier)?.escapedText.toString().trim() === classMemberName.trim()
   );
 }
 
-export function getTypeNameFromType(type: ts.Type, checker: ts.TypeChecker): string | undefined {
+export function getTypeNameFromType(type: Type, checker: TypeChecker): string | undefined {
   const symbol = type.getSymbol();
   if (!symbol) {
     return undefined;
@@ -97,10 +113,7 @@ export function getTypeNameFromType(type: ts.Type, checker: ts.TypeChecker): str
   return typeName;
 }
 
-export function getTypeNameFromVariable(
-  node: ts.Node,
-  checker: ts.TypeChecker
-): string | undefined {
+export function getTypeNameFromVariable(node: Node, checker: TypeChecker): string | undefined {
   const type = checker.getTypeAtLocation(node);
   if (!type) {
     return undefined;
@@ -114,11 +127,7 @@ export function getTypeNameFromVariable(
   return checker.typeToString(type);
 }
 
-export function isSubtypeOf(
-  childTypeStr: string,
-  parentType: ts.Type,
-  checker: ts.TypeChecker
-): boolean {
+export function isSubtypeOf(childTypeStr: string, parentType: Type, checker: TypeChecker): boolean {
   if (!childTypeStr) {
     return false;
   }
@@ -126,7 +135,7 @@ export function isSubtypeOf(
   return parentTypeStr.includes(childTypeStr);
 }
 
-export function getTypeDeclarationFromTypeSymbol(type: ts.Type): ts.Node | undefined {
+export function getTypeDeclarationFromTypeSymbol(type: Type): Node | undefined {
   const declarations = type.getSymbol()?.getDeclarations();
   let declarationStatement;
   if (declarations && declarations[0]) {
@@ -137,12 +146,12 @@ export function getTypeDeclarationFromTypeSymbol(type: ts.Type): ts.Node | undef
      * So we need to return its parent, which is the entire statement.
      */
     declarationStatement =
-      kind === ts.SyntaxKind.TypeLiteral ? (declaration as ts.TypeLiteralNode).parent : declaration;
+      kind === SyntaxKind.TypeLiteral ? (declaration as TypeLiteralNode).parent : declaration;
   }
   return declarationStatement;
 }
 
-export function isTypeMatched(typeString: string, type: ts.Type): boolean {
+export function isTypeMatched(typeString: string, type: Type): boolean {
   typeString = typeString.trim();
   if (type.symbol?.escapedName.toString().trim() === typeString) {
     return true;

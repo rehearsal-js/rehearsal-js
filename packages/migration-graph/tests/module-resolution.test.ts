@@ -1,7 +1,8 @@
 import fixturify from 'fixturify';
 import path from 'path';
 import tmp from 'tmp';
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
+
 import {
   getMainEntrypoint,
   isDirectoryPackage,

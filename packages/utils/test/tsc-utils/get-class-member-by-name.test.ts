@@ -1,8 +1,9 @@
-import ts from 'typescript';
+import type { ClassDeclaration } from 'typescript';
+import { isClassDeclaration, isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getClassMemberByName } from '../../src';
 import { setupTest } from '../helpers';
-import { getClassMemberByName } from '../../src/tsc-utils';
 
 describe('Test getClassMemberByName', () => {
   const { sourceFile } = setupTest(__filename);
@@ -15,21 +16,21 @@ describe('Test getClassMemberByName', () => {
   ): void {
     let statement;
     let memberObj;
-    if (statements && ts.isClassDeclaration(statements[indexOfStatement])) {
+    if (statements && isClassDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getClassMemberByName(statement as ts.ClassDeclaration, memberName);
+      memberObj = getClassMemberByName(statement as ClassDeclaration, memberName);
     }
 
     expect(memberObj).toBeDefined();
-    expect(memberObj).toEqual((statement as ts.ClassDeclaration).members[indexOfMember]);
+    expect(memberObj).toEqual((statement as ClassDeclaration).members[indexOfMember]);
   }
 
   function classMemberUndefined(indexOfStatement: number, memberName: string): void {
     let statement;
     let memberObj;
-    if (statements && ts.isInterfaceDeclaration(statements[indexOfStatement])) {
+    if (statements && isInterfaceDeclaration(statements[indexOfStatement])) {
       statement = statements[indexOfStatement];
-      memberObj = getClassMemberByName(statement as ts.ClassDeclaration, memberName);
+      memberObj = getClassMemberByName(statement as ClassDeclaration, memberName);
     }
 
     expect(memberObj).toBeUndefined();

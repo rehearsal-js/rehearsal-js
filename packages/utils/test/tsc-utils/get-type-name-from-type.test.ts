@@ -1,8 +1,8 @@
+import type { BinaryExpression, ExpressionStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
+import { getTypeNameFromType } from '../../src';
 import { setupTest } from '../helpers';
-import { getTypeNameFromType } from '../../src/tsc-utils';
-import ts from 'typescript';
 
 describe('Test getTypeNameFromType', () => {
   const { sourceFile, checker } = setupTest(__filename);
@@ -42,8 +42,7 @@ describe('Test getTypeNameFromType', () => {
     let typeName;
 
     if (statements && statements[5]) {
-      const node = ((statements[5] as ts.ExpressionStatement).expression as ts.BinaryExpression)
-        .left;
+      const node = ((statements[5] as ExpressionStatement).expression as BinaryExpression).left;
       const typeObj = checker.getTypeAtLocation(node);
       typeName = getTypeNameFromType(typeObj, checker);
     }

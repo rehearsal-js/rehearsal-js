@@ -1,11 +1,11 @@
+import type { ModuleItem } from '@swc/core';
+import { parseFileSync } from '@swc/core';
 import { dirname } from 'path';
-import swc from '@swc/core';
 
+import { resolveRelativeModule } from './module-resolution';
 import type { FileNode } from './types';
 import { Graph } from './utils/graph';
 import { GraphNode } from './utils/graph-node';
-
-import { resolveRelativeModule } from './module-resolution';
 
 export function createImportGraph(baseUrl: string, entrypoint = './index'): Graph<FileNode> {
   const g = new Graph<FileNode>();
@@ -36,9 +36,9 @@ export function createImportGraph(baseUrl: string, entrypoint = './index'): Grap
 
     const source = sourceNode.content.path;
     const currentDir = dirname(source);
-    const module = swc.parseFileSync(source, { syntax: 'ecmascript' });
+    const module = parseFileSync(source, { syntax: 'ecmascript' });
 
-    module.body.forEach((m: swc.ModuleItem) => {
+    module.body.forEach((m: ModuleItem) => {
       switch (m.type) {
         case 'ExportAllDeclaration':
         case 'ExportNamedDeclaration':

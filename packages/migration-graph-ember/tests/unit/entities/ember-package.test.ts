@@ -1,22 +1,19 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
-import { setGracefulCleanup, dirSync } from 'tmp';
 import { writeSync } from 'fixturify';
-import { resolve, relative } from 'path';
+import { relative, resolve } from 'path';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
+import { EmberPackage } from '../../../src/-private/entities/ember-package';
+import { type PackageContainer } from '../../../src/-private/types/package-container';
 import {
   registerInternalAddonTestFixtures,
-  setupTestEnvironment,
   resetInternalAddonTestFixtures,
+  setupTestEnvironment,
 } from '../../../src/-private/utils/test-environment';
-
-import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
-
-import { EmberPackage } from '../../../src/-private/entities/ember-package';
-
 // import the container so it can be called with the correct root
 import { getInternalAddonPackages } from '../../../src/index';
-import { type PackageContainer } from '../../../src/-private/types/package-container';
+import { PACKAGE_FIXTURE_NAMES, PACKAGE_FIXTURES } from '../../fixtures/package-fixtures';
 
 setGracefulCleanup();
 

@@ -1,13 +1,14 @@
-import winston from 'winston';
-import { Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from './rehearsal-service';
+import type { Reporter } from '@rehearsal/reporter';
+import type { Logger } from 'winston';
+
+import type { RehearsalService } from './rehearsal-service';
 
 export class Plugin {
-  protected readonly logger?: winston.Logger;
+  protected readonly logger?: Logger;
   protected readonly reporter?: Reporter;
   protected readonly service: RehearsalService;
 
-  constructor(service: RehearsalService, logger?: winston.Logger, reporter?: Reporter) {
+  constructor(service: RehearsalService, logger?: Logger, reporter?: Reporter) {
     this.service = service;
     this.logger = logger;
     this.reporter = reporter;

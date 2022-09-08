@@ -1,4 +1,5 @@
-import ts from 'typescript';
+import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
+import { getDefaultLibFilePath, LanguageServiceHost, ScriptSnapshot, sys } from 'typescript';
 
 /**
  * ServiceHost represents the layer between the LanguageServer and the permanent storage.
@@ -8,13 +9,13 @@ import ts from 'typescript';
  *
  * The host keeps snapshots in memory and saves them to filesystem calling saveFile().
  */
-export class RehearsalServiceHost implements ts.LanguageServiceHost {
-  private readonly compilerOptions: ts.CompilerOptions;
+export class RehearsalServiceHost implements LanguageServiceHost {
+  private readonly compilerOptions: CompilerOptions;
   private readonly currentDirectory: string;
   private readonly fileNames: string[];
-  private readonly files: ts.MapLike<{ snapshot: ts.IScriptSnapshot; version: number }> = {};
+  private readonly files: MapLike<{ snapshot: IScriptSnapshot; version: number }> = {};
 
-  constructor(compilerOptions: ts.CompilerOptions, fileNames: string[]) {
+  constructor(compilerOptions: CompilerOptions, fileNames: string[]) {
     this.compilerOptions = compilerOptions;
     this.currentDirectory = process.cwd();
     this.fileNames = fileNames;
@@ -23,7 +24,7 @@ export class RehearsalServiceHost implements ts.LanguageServiceHost {
   /**
    * Updates a snapshot state in memory and increases its version.
    */
-  setScriptSnapshot(fileName: string, snapshot: ts.IScriptSnapshot): ts.IScriptSnapshot {
+  setScriptSnapshot(fileName: string, snapshot: IScriptSnapshot): IScriptSnapshot {
     this.files[fileName] = {
       snapshot: snapshot,
       version: this.files[fileName]?.version + 1 || 0,
@@ -36,29 +37,29 @@ export class RehearsalServiceHost implements ts.LanguageServiceHost {
    * Gets the latest snapshot
    * If a snapshot doesn't exist yet - reads its content from file as the first version
    */
-  getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
+  getScriptSnapshot(fileName: string): IScriptSnapshot | undefined {
     if (!(fileName in this.files) && this.fileExists(fileName)) {
       const text = this.readFile(fileName);
       if (text !== undefined) {
-        this.setScriptSnapshot(fileName, ts.ScriptSnapshot.fromString(text));
+        this.setScriptSnapshot(fileName, ScriptSnapshot.fromString(text));
       }
     }
 
     return this.files[fileName].snapshot;
   }
 
-  getCompilationSettings = (): ts.CompilerOptions => this.compilerOptions;
+  getCompilationSettings = (): CompilerOptions => this.compilerOptions;
   getCurrentDirectory = (): string => this.currentDirectory;
-  getDefaultLibFileName = (o: ts.CompilerOptions): string => ts.getDefaultLibFilePath(o);
+  getDefaultLibFileName = (o: CompilerOptions): string => getDefaultLibFilePath(o);
   getScriptFileNames = (): string[] => this.fileNames;
   getScriptVersion = (fileName: string): string => this.files[fileName]?.version.toString() || '0';
 
-  fileExists = ts.sys.fileExists;
-  readFile = ts.sys.readFile;
-  writeFile = ts.sys.writeFile;
+  fileExists = sys.fileExists;
+  readFile = sys.readFile;
+  writeFile = sys.writeFile;
 
-  directoryExists = ts.sys.directoryExists;
-  getDirectories = ts.sys.getDirectories;
-  readDirectory = ts.sys.readDirectory;
-  realpath = ts.sys.realpath;
+  directoryExists = sys.directoryExists;
+  getDirectories = sys.getDirectories;
+  readDirectory = sys.readDirectory;
+  realpath = sys.realpath;
 }

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import path, { resolve } from 'path';
-import * as t from '@babel/types';
-import * as parser from '@babel/parser';
 import { default as generate } from '@babel/generator';
-import { writeJsonSync, readJsonSync, writeFileSync, readFileSync } from 'fs-extra';
+import * as parser from '@babel/parser';
+import * as t from '@babel/types';
+import { readFileSync, readJsonSync, writeFileSync, writeJsonSync } from 'fs-extra';
+import { join, resolve } from 'path';
 import sortPackageJson from 'sort-package-json';
 
 import { runPrettier } from './run-prettier';
@@ -54,16 +54,16 @@ export function requirePackageMain(
 ): any {
   // clear the node require cache to make sure the latest version on disk is required (i.e. after new data has been written)
   if (clearCache) {
-    delete require.cache[require.resolve(path.resolve(pathToPackage, packageMain))];
+    delete require.cache[require.resolve(resolve(pathToPackage, packageMain))];
   }
-  return require(path.resolve(pathToPackage, packageMain));
+  return require(resolve(pathToPackage, packageMain));
 }
 
 export function getPackageMainAST(
   pathToPackage: string,
   packageMain = getPackageMainFileName(pathToPackage)
 ): parser.ParseResult<t.File> {
-  const somePath = path.resolve(pathToPackage, packageMain);
+  const somePath = resolve(pathToPackage, packageMain);
   const content = readFileSync(somePath, 'utf-8');
   return parser.parse(content, {
     sourceFilename: packageMain,
@@ -129,7 +129,7 @@ export function writePackageMain(
   packageMainAST: t.Node,
   packageMain = getPackageMainFileName(pathToPackage)
 ): void {
-  const somePath = path.resolve(pathToPackage, packageMain);
+  const somePath = resolve(pathToPackage, packageMain);
 
   // if prettier is required, run it on the generated string from generate: ex. prettier(generate())
   const content = runPrettier(generate(packageMainAST).code, packageMain);
@@ -194,7 +194,7 @@ export function writePackageJsonSync(pathToPackage: string, data: Record<string,
     }
   }
 
-  const pathToPackageJson = path.join(pathToPackage, 'package.json');
+  const pathToPackageJson = join(pathToPackage, 'package.json');
 
   writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
 }

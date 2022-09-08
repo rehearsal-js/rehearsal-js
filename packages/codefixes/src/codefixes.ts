@@ -1,12 +1,12 @@
-import ts from 'typescript';
 import { getTypeNameFromVariable, isVariableOfCatchClause } from '@rehearsal/utils';
+import { isFunctionDeclaration, isIdentifier, isParameter, isReturnStatement } from 'typescript';
 
-import { CodeFixCollection } from './codefix-collection';
 import { FixTransform2571 } from './2571';
 import { FixTransform2790 } from './2790';
 import { FixTransform4082 } from './4082';
 import { FixTransform6133 } from './6133';
 import { FixTransform7006 } from './7006';
+import { CodeFixCollection } from './codefix-collection';
 
 export const codefixes = new CodeFixCollection({
   2322: {
@@ -14,11 +14,11 @@ export const codefixes = new CodeFixCollection({
     helpUrl: '...',
     hints: [
       {
-        when: (n) => ts.isReturnStatement(n),
+        when: (n) => isReturnStatement(n),
         hint: `The function expects to return '{1}', but '{0}' is returned. Please convert '{0}' value to '{1}' or update the function's return type.`,
       },
       {
-        when: (n) => ts.isIdentifier(n),
+        when: (n) => isIdentifier(n),
         hint: `The variable '{node.escapedText}' has type '{1}', but '{0}' is assigned. Please convert '{0}' to '{1}' or change variable's type.`,
       },
     ],
@@ -41,7 +41,7 @@ export const codefixes = new CodeFixCollection({
     hint: `Object is of type '{0}'. Specify a type of variable, use type assertion: \`(variable as DesiredType)\` or type guard: \`if (variable instanceof DesiredType) { ... }\``,
     hints: [
       {
-        when: (n) => !ts.isIdentifier(n) || !isVariableOfCatchClause(n),
+        when: (n) => !isIdentifier(n) || !isVariableOfCatchClause(n),
         hint: `Object is of type '{0}'. Specify a type of {node.text}, use type assertion: \`({node.text} as DesiredType)\` or type guard: \`if ({node.text} instanceof DesiredType) { ... }\``,
       },
     ],
@@ -60,15 +60,15 @@ export const codefixes = new CodeFixCollection({
     helpUrl: 'https://stackoverflow.com/search?tab=votes&q=TS6133',
     hints: [
       {
-        when: (n) => ts.isIdentifier(n) && ts.isFunctionDeclaration(n.parent),
+        when: (n) => isIdentifier(n) && isFunctionDeclaration(n.parent),
         hint: `The function '{0}' is never called. Remove the function or use it.`,
       },
       {
-        when: (n) => ts.isIdentifier(n) && ts.isParameter(n.parent),
+        when: (n) => isIdentifier(n) && isParameter(n.parent),
         hint: `The parameter '{0}' is never used. Remove the parameter from function definition or use it.`,
       },
       {
-        when: (n) => ts.isIdentifier(n),
+        when: (n) => isIdentifier(n),
         hint: `The variable '{0}' is never read or used. Remove the variable or use it.`,
       },
     ],

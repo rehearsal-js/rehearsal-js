@@ -32,7 +32,7 @@
   "dependencies": {
     "@rehearsal/codefixes": "^0.0.32",
     "@rehearsal/service": "^0.0.32",
-    "eslint": "^8.11.0"
+    "eslint": "8.22.0"
   },
   "devDependencies": {
     "@rehearsal/reporter": "^0.0.32",

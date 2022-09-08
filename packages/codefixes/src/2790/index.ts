@@ -1,30 +1,38 @@
-import ts from 'typescript';
+import { type RehearsalService } from '@rehearsal/service';
 import {
   findNodeAtPosition,
-  insertIntoText,
   getClassByName,
-  getInterfaceByName,
   getClassMemberByName,
+  getInterfaceByName,
   getInterfaceMemberByName,
   getTypeAliasByName,
   getTypeAliasMemberByName,
-  getTypeNameFromType,
   getTypeDeclarationFromTypeSymbol,
+  getTypeNameFromType,
+  insertIntoText,
 } from '@rehearsal/utils';
+import type {
+  DiagnosticWithLocation,
+  InterfaceDeclaration,
+  PropertyDeclaration,
+  PropertySignature,
+  SourceFile,
+  TypeAliasDeclaration,
+  TypeElement,
+} from 'typescript';
+import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
 
-import { FixTransform, type FixedFile, getCodemodData } from '../fix-transform';
-
-import { type RehearsalService } from '@rehearsal/service';
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
 const OPTIONAL_TOKEN = '?';
 
 export class FixTransform2790 extends FixTransform {
-  fix = (diagnostic: ts.DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
+  fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (
       !errorNode ||
-      !ts.isPropertyAccessExpression(errorNode) ||
-      !ts.isDeleteExpression(errorNode.parent)
+      !isPropertyAccessExpression(errorNode) ||
+      !isDeleteExpression(errorNode.parent)
     ) {
       return [];
     }
@@ -56,11 +64,10 @@ export class FixTransform2790 extends FixTransform {
         typeMemberName
       );
       nameEnd =
-        classMemberDeclaration && (classMemberDeclaration as ts.PropertyDeclaration).name.getEnd();
+        classMemberDeclaration && (classMemberDeclaration as PropertyDeclaration).name.getEnd();
     } else {
       const typeMemberDeclaration = findTypeMemberDeclaration(sourceFile, typeName, typeMemberName);
-      nameEnd =
-        typeMemberDeclaration && (typeMemberDeclaration as ts.PropertySignature).name.getEnd();
+      nameEnd = typeMemberDeclaration && (typeMemberDeclaration as PropertySignature).name.getEnd();
     }
 
     if (!nameEnd) {
@@ -74,35 +81,35 @@ export class FixTransform2790 extends FixTransform {
 }
 
 function findClassMemberDeclaration(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   typeName: string,
   memberName: string
-): ts.PropertyDeclaration | undefined {
+): PropertyDeclaration | undefined {
   let matchedMember;
   const matchedClass = getClassByName(sourceFile, typeName);
   if (matchedClass) {
     matchedMember = getClassMemberByName(matchedClass, memberName);
   }
-  return matchedMember as ts.PropertyDeclaration;
+  return matchedMember as PropertyDeclaration;
 }
 
 function findTypeMemberDeclaration(
-  sourceFile: ts.SourceFile,
+  sourceFile: SourceFile,
   typeName: string,
   memberName: string
-): ts.TypeElement | undefined {
-  const matchedInterface: ts.InterfaceDeclaration | undefined = getInterfaceByName(
+): TypeElement | undefined {
+  const matchedInterface: InterfaceDeclaration | undefined = getInterfaceByName(
     sourceFile,
     typeName
   );
-  const matchedTypeAlias: ts.TypeAliasDeclaration | undefined = getTypeAliasByName(
+  const matchedTypeAlias: TypeAliasDeclaration | undefined = getTypeAliasByName(
     sourceFile,
     typeName
   );
 
   const matchedType = matchedInterface || matchedTypeAlias;
   let matchedMember;
-  if (matchedType && ts.isInterfaceDeclaration(matchedType)) {
+  if (matchedType && isInterfaceDeclaration(matchedType)) {
     matchedMember = getInterfaceMemberByName(matchedType, memberName);
   } else if (matchedType) {
     matchedMember = getTypeAliasMemberByName(matchedType, memberName);

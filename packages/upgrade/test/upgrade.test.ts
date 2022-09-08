@@ -1,11 +1,10 @@
-import fs from 'fs';
-import ts from 'typescript';
-import winston from 'winston';
-import { assert, describe, expect, test } from 'vitest';
+import { mdFormatter, Report, Reporter, sarifFormatter } from '@rehearsal/reporter';
+import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
 import { type Location } from 'sarif';
-
-import { Reporter, Report, mdFormatter, sarifFormatter } from '@rehearsal/reporter';
+import { version } from 'typescript';
+import { assert, describe, expect, test } from 'vitest';
+import { createLogger, format, transports } from 'winston';
 
 import { upgrade } from '../src';
 
@@ -14,8 +13,8 @@ describe('Test upgrade', function () {
 
   const files = prepareListOfTestFiles(basePath);
 
-  const logger = winston.createLogger({
-    transports: [new winston.transports.Console({ format: winston.format.cli(), level: 'debug' })],
+  const logger = createLogger({
+    transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
   });
 
   const reporter = new Reporter('@rehearsal/test', basePath, logger);
@@ -29,8 +28,8 @@ describe('Test upgrade', function () {
 
     // Compare each updated .ts file with expected .ts.output
     for (const file of files) {
-      const input = fs.readFileSync(file).toString();
-      const output = fs.readFileSync(`${file}.output`).toString();
+      const input = readFileSync(file).toString();
+      const output = readFileSync(`${file}.output`).toString();
 
       expect(input).toEqual(output);
     }
@@ -40,31 +39,31 @@ describe('Test upgrade', function () {
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
     reporter.save(jsonReport);
 
-    const report = JSON.parse(fs.readFileSync(jsonReport).toString());
+    const report = JSON.parse(readFileSync(jsonReport).toString());
 
     expect(report.summary.basePath).toMatch(/upgrade/);
     expect(report.summary.timestamp).toMatch(/\d+/);
     assert.deepEqual(report, expectedReport(report.summary.basePath, report.summary.timestamp));
 
-    fs.rmSync(jsonReport);
+    rmSync(jsonReport);
 
     // Test the pull-request-md report
     const mdReport = resolve(basePath, '.rehearsal-report.md');
     reporter.print(mdReport, mdFormatter);
 
-    expect(fs.readFileSync(mdReport).toString()).toEqual(
-      fs.readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString()
+    expect(readFileSync(mdReport).toString()).toEqual(
+      readFileSync(resolve(basePath, '.rehearsal-report.output.md')).toString()
     );
 
-    fs.rmSync(mdReport);
+    rmSync(mdReport);
 
     const sarifReport = resolve(basePath, '.rehearsal-report.sarif');
     reporter.print(sarifReport, sarifFormatter);
 
-    const sarif = JSON.parse(fs.readFileSync(sarifReport).toString());
+    const sarif = JSON.parse(readFileSync(sarifReport).toString());
     assert.deepEqual(sarif, expectedSarif(basePath, report.summary.timestamp));
 
-    fs.rmSync(sarifReport);
+    rmSync(sarifReport);
 
     cleanupTsFiles(files);
   });
@@ -74,13 +73,13 @@ describe('Test upgrade', function () {
  * Prepares the report to compare with.
  */
 function expectedReport(basePath: string, timestamp: string): Report {
-  const content = fs.readFileSync(resolve(basePath, '.rehearsal-report.output.json')).toString();
+  const content = readFileSync(resolve(basePath, '.rehearsal-report.output.json')).toString();
 
   const report = JSON.parse(content) as Report;
 
   report.summary.basePath = basePath;
   report.summary.timestamp = timestamp;
-  report.summary.tsVersion = ts.version;
+  report.summary.tsVersion = version;
   report.items.forEach((item) => {
     item.analysisTarget = resolve(basePath, item.analysisTarget);
     if (item.files) {
@@ -98,7 +97,7 @@ function expectedReport(basePath: string, timestamp: string): Report {
 }
 
 function expectedSarif(basePath: string, dateToLocaleString: string): string {
-  const content = fs.readFileSync(resolve(basePath, '.rehearsal-report.output.sarif')).toString();
+  const content = readFileSync(resolve(basePath, '.rehearsal-report.output.sarif')).toString();
   const log = JSON.parse(content);
 
   const run = log.runs[0];
@@ -137,8 +136,7 @@ function expectedSarif(basePath: string, dateToLocaleString: string): string {
  * Prepare ts files in the folder by using sources from .input
  */
 function prepareListOfTestFiles(basePath: string): string[] {
-  return fs
-    .readdirSync(basePath) // Takes all files from fixtures/upgrade
+  return readdirSync(basePath) // Takes all files from fixtures/upgrade
     .filter((file) => file.endsWith('.input')) // Filter only .input ones
     .map((file) => file.slice(0, -6)) // Remove .input suffix from filenames
     .map((file) => resolve(basePath, file)); //  Append basePath to file names
@@ -149,7 +147,7 @@ function prepareListOfTestFiles(basePath: string): string[] {
  */
 function createTsFilesFromInputs(files: string[]): void {
   files.forEach((file) => {
-    fs.copyFileSync(`${file}.input`, `${file}`);
+    copyFileSync(`${file}.input`, `${file}`);
   });
 }
 
@@ -158,6 +156,6 @@ function createTsFilesFromInputs(files: string[]): void {
  */
 function cleanupTsFiles(files: string[]): void {
   for (const file of files) {
-    fs.rmSync(file);
+    rmSync(file);
   }
 }

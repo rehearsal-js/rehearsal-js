@@ -496,7 +496,7 @@
           "fileName": "ts-errors.ts",
           "location": {
             "line": 1,
-            "character": 19
+            "character": 10
           },
           "fixed": true,
           "code": " parse",
@@ -516,10 +516,10 @@
       "nodeKind": "ImportSpecifier",
       "nodeText": "parse",
       "nodeLocation": {
-        "start": 18,
+        "start": 9,
         "length": 5,
         "line": 0,
-        "character": 18
+        "character": 9
       }
     },
     {

@@ -1,22 +1,22 @@
-import ts from 'typescript';
-import winston from 'winston';
-import fs from 'fs';
-import { dirname, resolve, extname } from 'path';
-import { type Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from '@rehearsal/service';
 import {
   DiscoverTypesPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
 } from '@rehearsal/plugins';
+import type { Reporter } from '@rehearsal/reporter';
+import { RehearsalService } from '@rehearsal/service';
+import { copyFileSync, existsSync } from 'fs';
+import { dirname, extname, resolve } from 'path';
+import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import type { Logger } from 'winston';
 
 export type MigrateInput = {
   basePath: string;
   sourceFiles: Array<string>;
   configName?: string;
   reporter?: Reporter; // Reporter
-  logger?: winston.Logger;
+  logger?: Logger;
 };
 
 export type MigrateOutput = {
@@ -55,14 +55,14 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
     if (sourceFile === tsFile) {
       logger?.info(`no-op ${sourceFile} is a .ts file`);
-    } else if (fs.existsSync(tsFile)) {
+    } else if (existsSync(tsFile)) {
       logger?.info(`Found ${tsFile} ???`);
-    } else if (fs.existsSync(dtsFile)) {
+    } else if (existsSync(dtsFile)) {
       logger?.info(`Found ${dtsFile} ???`);
       // Should prepend d.ts file if it exists to the new ts file.
     } else {
       const destFile = tsFile;
-      fs.copyFileSync(sourceFile, destFile);
+      copyFileSync(sourceFile, destFile);
       logger?.info(
         `Copying ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
       );
@@ -71,7 +71,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     return tsFile;
   });
 
-  const configFile = ts.findConfigFile(basePath, ts.sys.fileExists, configName);
+  const configFile = findConfigFile(basePath, sys.fileExists, configName);
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -81,11 +81,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   logger?.info(`Config file found: ${configFile}`);
 
-  const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
+  const { config } = readConfigFile(configFile, sys.readFile);
 
-  const { options, fileNames: someFiles } = ts.parseJsonConfigFileContent(
+  const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
-    ts.sys,
+    sys,
     dirname(configFile),
     {},
     configFile

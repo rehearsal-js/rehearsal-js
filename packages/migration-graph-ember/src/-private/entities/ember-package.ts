@@ -1,7 +1,7 @@
-import { resolve, relative } from 'path';
+import { relative, resolve } from 'path';
 
-import { Package, type PackageOptions } from './package';
 import { InternalState } from '../entities/InternalState';
+import { type PackageOptions, Package } from './package';
 
 export class EmberPackage extends Package {
   protected internalState: InternalState;
