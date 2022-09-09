@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@rehearsal/migration-graph",
   "version": "0.0.33",
   "description": "Tool for generating a typescript conversion graph",

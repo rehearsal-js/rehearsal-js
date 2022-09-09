@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@rehearsal/plugins",
   "version": "0.0.33",
   "description": "Rehearsal JavaScript to TypeScript Shared Libraries",

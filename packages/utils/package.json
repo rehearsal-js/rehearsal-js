@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@rehearsal/utils",
   "version": "0.0.33",
   "description": "Rehearsal Utils",

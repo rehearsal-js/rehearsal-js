@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@rehearsal/reporter",
   "version": "0.0.33",
   "description": "Rehearsal Reporter",

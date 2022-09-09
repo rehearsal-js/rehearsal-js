@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@rehearsal/service",
   "version": "0.0.33",
   "description": "Rehearsal Service",
