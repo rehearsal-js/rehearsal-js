@@ -38,6 +38,7 @@
     "@rehearsal/reporter": "^0.0.33",
     "@rehearsal/utils": "^0.0.33",
     "@types/eslint": "^8.4.1",
+    "fixturify-project": "^5.0.3",
     "vitest": "^0.22.1"
   },
   "peerDependencies": {
