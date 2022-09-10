@@ -55,7 +55,7 @@ type FormatterMap = {
 migrateCommand
   .name('migrate')
   .description('Migrate Javascript project to Typescript')
-  .requiredOption('-b, --basePath <project base path>', 'Base dir path of your project.')
+  .requiredOption('-p, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-r, --report <reportTypes>',
@@ -260,6 +260,6 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
 }
 
 // helper function to parse a,b,c to [a, b, c]
-function commaSeparatedArgs(input: string): Array<string> {
+function commaSeparatedArgs(input: string): string[] {
   return input.split(',');
 }
