@@ -17,11 +17,6 @@ export type MigrateCommandContext = {
   sourceFiles: string[];
 };
 
-export type ParsedModuleResult = {
-  edgeList: Array<[string, string | undefined]>;
-  coreDepList: string[];
-};
-
 export type UpgradeCommandContext = {
   tsVersion: string;
   latestELRdBuild: string;
