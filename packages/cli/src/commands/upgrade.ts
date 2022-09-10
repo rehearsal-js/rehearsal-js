@@ -12,6 +12,7 @@ import { createLogger, format, transports } from 'winston';
 import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
+import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
   bumpDevDep,
   determineProjectName,
@@ -32,13 +33,6 @@ const DEFAULT_SRC_DIR = './app';
 
 let TSC_PATH = '';
 
-type Context = {
-  tsVersion: string;
-  latestELRdBuild: string;
-  currentTSVersion: string;
-  skip: boolean;
-};
-
 export const upgradeCommand = new Command();
 
 function validateTscVersion(value: string): string {
@@ -50,16 +44,6 @@ function validateTscVersion(value: string): string {
     );
   }
 }
-
-type UpgradeCommandOptions = {
-  build: string;
-  src_dir: string;
-  autofix: boolean | undefined;
-  dry_run: boolean | undefined;
-  tsc_version: string;
-  report_output: string;
-  is_test: boolean | undefined;
-};
 
 upgradeCommand
   .name('upgrade')
@@ -105,11 +89,11 @@ upgradeCommand
 
     const reporter = new Reporter(projectName, resolvedSrcDir, logger);
 
-    const tasks = new Listr<Context>(
+    const tasks = new Listr<UpgradeCommandContext>(
       [
         {
           title: 'Setting TypeScript version for rehearsal',
-          task: (_ctx: Context, task): Listr =>
+          task: (_ctx: UpgradeCommandContext, task): Listr =>
             task.newListr((parent) => [
               {
                 title: `Fetching latest published typescript@${build}`,
@@ -152,11 +136,11 @@ upgradeCommand
         {
           title: `Bumping TypeScript Dev-Dependency`,
           skip: (ctx): boolean => ctx.skip,
-          task: (ctx: Context, task): Listr =>
+          task: (ctx: UpgradeCommandContext, task): Listr =>
             task.newListr(() => [
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
-                task: async (ctx: Context) => {
+                task: async (ctx: UpgradeCommandContext) => {
                   // there will be a diff so branch is created
                   await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   await bumpDevDep(`typescript@${ctx.tsVersion}`);
@@ -164,7 +148,7 @@ upgradeCommand
               },
               {
                 title: `Committing Changes`,
-                task: async (ctx: Context) => {
+                task: async (ctx: UpgradeCommandContext) => {
                   if (options.dry_run || options.is_test) {
                     task.skip('Skipping task because dry_run flag is set');
                   } else {
@@ -182,7 +166,7 @@ upgradeCommand
         {
           title: 'Checking for compilation errors',
           skip: (ctx): boolean => ctx.skip,
-          task: (_ctx: Context, task): Listr =>
+          task: (_ctx: UpgradeCommandContext, task): Listr =>
             task.newListr(
               () => [
                 {
