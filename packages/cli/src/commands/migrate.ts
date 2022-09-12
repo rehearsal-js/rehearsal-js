@@ -3,7 +3,7 @@
 // TODO: handle ctrl + c
 
 import { migrate } from '@rehearsal/migrate';
-import { Reporter } from '@rehearsal/reporter';
+import { jsonFormatter, mdFormatter, Report, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { cruise, ICruiseOptions, ICruiseResult, IDependency, IModule } from 'dependency-cruiser';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
@@ -14,8 +14,8 @@ import { createLogger, format, transports } from 'winston';
 
 import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 
-function ifHasTypescriptInDevdep(root: string): boolean {
-  const packageJSONPath = resolve(root, 'package.json');
+function ifHasTypescriptInDevdep(basePath: string): boolean {
+  const packageJSONPath = resolve(basePath, 'package.json');
   const packageJSON = readJSONSync(packageJSONPath);
   return (
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
@@ -26,10 +26,11 @@ function ifHasTypescriptInDevdep(root: string): boolean {
 export const migrateCommand = new Command();
 
 type migrateCommandOptions = {
-  root: string;
+  basePath: string;
   entrypoint: string;
   files: string;
-  report_output: string;
+  report: Array<string> | undefined;
+  outputPath: string | undefined;
   verbose: boolean | undefined;
   clean: boolean | undefined;
   strict: boolean | undefined;
@@ -45,12 +46,23 @@ type ParsedModuleResult = {
   coreDepList: Array<string>;
 };
 
+type FormatterFunction = (report: Report) => string;
+
+type FormatterMap = {
+  [format: string]: FormatterFunction;
+};
+
 migrateCommand
   .name('migrate')
   .description('Migrate Javascript project to Typescript')
-  .requiredOption('-r, --root <project root>', 'Base dir (root) of your project.')
+  .requiredOption('-p, --basePath <project base path>', 'Base dir path of your project.')
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
-  .option('-r, --report_output <report output dir>', 'Target directory for the report output')
+  .option(
+    '-r, --report <reportTypes>',
+    'Report type separated by comma, e.g. -r json,sarif,md',
+    commaSeparatedArgs
+  )
+  .option('-o, --outputPath <outputPath>', 'Reports output path')
   .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
   .option('-v, --verbose', 'Print more logs to debug.')
@@ -65,24 +77,24 @@ migrateCommand
         {
           title: 'Installing dependencies',
           task: async (_ctx, task) => {
-            if (ifHasTypescriptInDevdep(options.root)) {
+            if (ifHasTypescriptInDevdep(options.basePath)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
-              await addDevDep('typescript', { cwd: options.root });
+              await addDevDep('typescript', { cwd: options.basePath });
             }
           },
         },
         {
           title: 'Creating tsconfig.json', // TODO: use a simple one
           task: async (_ctx, task) => {
-            const configPath = resolve(options.root, 'tsconfig.json');
+            const configPath = resolve(options.basePath, 'tsconfig.json');
 
             if (existsSync(configPath)) {
               task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
             } else {
               task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
               const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
-              createTSConfig(options.root, sourceFiles, !!options.strict);
+              createTSConfig(options.basePath, sourceFiles, !!options.strict);
             }
           },
         },
@@ -90,23 +102,37 @@ migrateCommand
           title: 'Converting JS files to TS',
           task: async (ctx, task) => {
             const projectName = (await determineProjectName()) || '';
-            const reporter = new Reporter(
-              projectName,
-              options.report_output ? options.report_output : options.root,
-              logger
-            );
+            const reporter = new Reporter(projectName, options.basePath, logger);
 
             const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
             ctx.sourceFiles = sourceFiles;
             if (sourceFiles) {
               const input = {
-                basePath: options.root,
+                basePath: options.basePath,
                 sourceFiles,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
 
               await migrate(input);
+
+              // Generate reports
+              if (options.report) {
+                const reportBaseName = '.rehearsal-report';
+                const outputPath = options.outputPath ? options.outputPath : options.basePath;
+                const formatters: FormatterMap = {
+                  json: jsonFormatter,
+                  sarif: sarifFormatter,
+                  md: mdFormatter,
+                };
+                options.report.forEach((format) => {
+                  if (formatters[format]) {
+                    // only generate report for supported formatter
+                    const report = resolve(outputPath, `${reportBaseName}.${format}`);
+                    reporter.print(report, formatters[format]);
+                  }
+                });
+              }
             } else {
               task.skip(
                 `Skipping JS -> TS convertion task, since there is no JS file to be converted to TS.`
@@ -127,7 +153,7 @@ migrateCommand
         {
           title: 'Run Typescript compiler to check errors',
           task: async () => {
-            await runYarnOrNpmCommand(['tsc'], { cwd: options.root });
+            await runYarnOrNpmCommand(['tsc'], { cwd: options.basePath });
           },
         },
         // TODO: what to do with those ts errors?
@@ -143,9 +169,9 @@ migrateCommand
 
 /**
  * Generate tsconfig
- * @param root Project root to run migration
+ * @param basePath Project root to run migration
  */
-function createTSConfig(root: string, fileList: Array<string>, strict: boolean): void {
+function createTSConfig(basePath: string, fileList: Array<string>, strict: boolean): void {
   const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
   const config = strict
     ? {
@@ -182,7 +208,7 @@ function createTSConfig(root: string, fileList: Array<string>, strict: boolean):
         },
         include,
       };
-  writeJsonSync(resolve(root, 'tsconfig.json'), config, { spaces: 2 });
+  writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
 }
 
 /**
@@ -231,4 +257,9 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
     }
   });
   return { edgeList, coreDepList };
+}
+
+// helper function to parse a,b,c to [a, b, c]
+function commaSeparatedArgs(input: string): string[] {
+  return input.split(',');
 }

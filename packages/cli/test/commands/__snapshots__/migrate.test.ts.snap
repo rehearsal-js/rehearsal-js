@@ -1,13 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`migrate - JS to TS conversion > able to cleanup old JS filse 1`] = `
-"import path from 'path';
-
-export function power(foo, bar) {
-  return Math.pow(foo, bar);
-}"
-`;
-
 exports[`migrate - JS to TS conversion > able to migrate multiple JS file from an entrypoint 1`] = `
 "export function say(name = 'World') {
   return \`Hello \${name}\`;
