@@ -1,4 +1,7 @@
-/**
+// Vitest Snapshot v1
+
+exports[`Test ReRehearsalPlugin > run 1`] = `
+"/**
  * This is a file with some comments added in a previous run of rehearsal
  */
 import fs from 'fs';
@@ -23,5 +26,5 @@ const unusedConstWithoutCommentButWithRehearsalTagAbove = null;
 
 const resultValue = something
     ?       missingVar
-    :       missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
-
+    :       missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;"
+`;

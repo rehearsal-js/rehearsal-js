@@ -13,4 +13,3 @@ export {
 } from './tsc-utils';
 
 export * from './helpers';
-export * from './tests.utils';
