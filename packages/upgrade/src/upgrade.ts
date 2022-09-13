@@ -1,5 +1,5 @@
 import {
-  DiagnosticAutofixPlugin,
+  DiagnosticFixPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
@@ -37,7 +37,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     ReRehearsePlugin,
     LintPlugin,
     EmptyLinesPreservePlugin,
-    DiagnosticAutofixPlugin,
+    DiagnosticFixPlugin,
     EmptyLinesRestorePlugin,
     LintPlugin,
   ];
@@ -73,7 +73,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
     for (const pluginClass of plugins) {
       const plugin = new pluginClass(service, logger, reporter);
-      const changedFiles = await plugin.run({ fileName });
+      const changedFiles = await plugin.run(fileName);
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 

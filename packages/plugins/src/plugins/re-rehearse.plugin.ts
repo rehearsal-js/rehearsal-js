@@ -1,13 +1,12 @@
-import { type PluginParams, type PluginResult, Plugin } from '@rehearsal/service';
 import { isLineBreak } from 'typescript';
+
+import { Plugin, type PluginResult } from '@rehearsal/service';
 
 /**
  * Removes all comments with `@rehearsal` tag inside
  */
 export class ReRehearsePlugin extends Plugin {
-  async run(params: PluginParams<undefined>): PluginResult {
-    const { fileName } = params;
-
+  async run(fileName: string): PluginResult {
     const tag = '@rehearsal';
 
     let text = this.service.getFileText(fileName);
@@ -36,7 +35,7 @@ export class ReRehearsePlugin extends Plugin {
 
     this.service.setFileText(fileName, text);
 
-    this.logger?.debug(`Plugin 'Re-Rehearse' run on ${params.fileName}`);
+    this.logger?.debug(`Plugin 'Re-Rehearse' run on ${fileName}`);
 
     return [fileName];
   }
