@@ -4,24 +4,24 @@ exports[`Test EmptyLinesRestorePlugin > run 1`] = `
 "// This is a single line comment
 
 // This is another single line comment
-  const someTrueVariable = true;
+ const someTrueVariable = true;
 
 /*
-  * This is multiline comment
-  *
-    
-    With some empty lines it it
-  */
+ * This is multiline comment
+ *
+   
+   With some empty lines it it
+ */
 const someFalseVariable = false;
 
-
-
+ 
+  
 /**
  * This is a JSDoc comment
  *
-
-  * With some empty lines it it
-  */
+   
+ * With some empty lines it it
+ */
 function someFunction(): void {
   
   return ;

@@ -1,5 +1,6 @@
 import { RehearsalService } from '@rehearsal/service';
 import { Project } from 'fixturify-project';
+import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
@@ -18,33 +19,10 @@ describe('Test EmptyLinesPreservePlugin', function () {
   });
 
   test('run', async () => {
-    project.files['index.ts'] = `
-// This is a single line comment
-
-// This is another single line comment
-const someTrueVariable = true;
-
-/*
-* This is multiline comment
-*
-
-  With some empty lines it it
-*/
-const someFalseVariable = false;
-
-
-
-/**
- * This is a JSDoc comment
- *
-
-* With some empty lines it it
-*/
-function someFunction(): void {
-
-  return ;
-}
-    `;
+    project.files['index.ts'] = await readFile(
+      './test/fixtures/empty-lines-preserve.fixture',
+      'utf-8'
+    );
 
     project.write();
 

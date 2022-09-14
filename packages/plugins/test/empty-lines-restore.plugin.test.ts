@@ -1,5 +1,6 @@
 import { RehearsalService } from '@rehearsal/service';
 import { Project } from 'fixturify-project';
+import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
@@ -18,33 +19,10 @@ describe('Test EmptyLinesRestorePlugin', function () {
   });
 
   test('run', async () => {
-    project.files['index.ts'] = `
-// This is a single line comment
-//:line:
-// This is another single line comment
-  const someTrueVariable = true;
-//:line:
-/*
-  * This is multiline comment
-  *
-    //:line:
-    With some empty lines it it
-  */
-const someFalseVariable = false;
-//:line:
-//:line:
-//:line:
-/**
- * This is a JSDoc comment
- *
-//:line:
-  * With some empty lines it it
-  */
-function someFunction(): void {
-  //:line:
-  return ;
-}
-    `;
+    project.files['index.ts'] = await readFile(
+      './test/fixtures/empty-lines-restore.fixture',
+      'utf-8'
+    );
     project.write();
 
     const fileNames = Object.keys(project.files).map((file) => resolve(project.baseDir, file));

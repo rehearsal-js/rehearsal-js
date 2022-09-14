@@ -1,7 +1,4 @@
-// Vitest Snapshot v1
-
-exports[`Test EmptyLinesPreservePlugin > run 1`] = `
-"// This is a single line comment
+// This is a single line comment
 //:line:
 // This is another single line comment
  const someTrueVariable = true;
@@ -9,21 +6,20 @@ exports[`Test EmptyLinesPreservePlugin > run 1`] = `
 /*
  * This is multiline comment
  *
-//:line:
+   //:line:
    With some empty lines it it
  */
 const someFalseVariable = false;
 //:line:
-//:line:
-//:line:
+ //:line:
+  //:line:
 /**
  * This is a JSDoc comment
  *
-//:line:
+   //:line:
  * With some empty lines it it
  */
 function someFunction(): void {
-//:line:
+  //:line:
   return ;
-}"
-`;
+}
