@@ -141,8 +141,10 @@ upgradeCommand
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
                 task: async (ctx: UpgradeCommandContext) => {
-                  // there will be a diff so branch is created
-                  await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
+                  if (!options.dry_run) {
+                    // there will be a diff so branch is created
+                    await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
+                  }
                   await bumpDevDep(`typescript@${ctx.tsVersion}`);
                 },
               },
