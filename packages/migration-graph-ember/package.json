@@ -5,11 +5,11 @@
   "license": "BSD-2-Clause",
   "scripts": {
     "build": "tsc -b",
-    "lint": "run-p 'lint:*'",
-    "lint:eslint": "eslint --fix . --ext .ts",
+    "lint": "run -T run-p 'lint:*'",
+    "lint:eslint": "run -T eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
-    "test": "vitest --run"
+    "prepack": "yarn build",
+    "test": "run -T vitest --run"
   },
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
