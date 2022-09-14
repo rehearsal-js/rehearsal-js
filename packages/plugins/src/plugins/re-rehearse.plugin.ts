@@ -1,6 +1,5 @@
+import { type PluginResult, Plugin } from '@rehearsal/service';
 import { isLineBreak } from 'typescript';
-
-import { Plugin, type PluginResult } from '@rehearsal/service';
 
 /**
  * Removes all comments with `@rehearsal` tag inside

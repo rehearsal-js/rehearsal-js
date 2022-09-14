@@ -1,11 +1,11 @@
 import {
-  flattenDiagnosticMessageText,
-  isIdentifier,
   type DiagnosticWithLocation,
   type LanguageService,
   type Node,
   type Program,
   type TypeChecker,
+  flattenDiagnosticMessageText,
+  isIdentifier,
 } from 'typescript';
 
 import { FixTransform } from './fix-transform';

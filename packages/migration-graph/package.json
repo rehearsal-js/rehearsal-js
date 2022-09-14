@@ -7,7 +7,7 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc -b",
-    "lint": "npm-run-all lint:*",
+    "lint": "run-p 'lint:*'",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@babel/parser": "^7.18.4",
     "@babel/traverse": "^7.18.2",
-    "@rehearsal/migration-graph-ember": "^0.0.33",
+    "@rehearsal/migration-graph-ember": "workspace:*",
     "@swc/core": "^1.2.233",
     "debug": "^4.3.4",
     "fast-glob": "^3",
@@ -24,14 +24,8 @@
     "jsonc-parser": "^3",
     "path": "^0.12.7"
   },
-  "devDependencies": {
-    "fixturify": "^2",
-    "micromatch": "^4",
-    "tmp": "^0.2.1",
-    "vitest": "^0.22.0"
-  },
   "peerDependencies": {
-    "typescript": ">4.7"
+    "typescript": "*"
   },
   "volta": {
     "extends": "../../package.json"

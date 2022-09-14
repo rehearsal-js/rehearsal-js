@@ -5,7 +5,7 @@
   "license": "BSD-2-Clause",
   "scripts": {
     "build": "tsc -b",
-    "lint": "npm-run-all lint:*",
+    "lint": "run-p 'lint:*'",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
@@ -29,20 +29,8 @@
     "resolve-package-path": "^4.0.3",
     "sort-package-json": "^1"
   },
-  "devDependencies": {
-    "@babel/types": "^7.18.13",
-    "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.18.0",
-    "@types/micromatch": "^4.0.2",
-    "@types/prettier": "^2.6.3",
-    "@types/tmp": "^0.2.3",
-    "fixturify": "^2",
-    "tmp": "^0.2.1",
-    "vitest": "^0.22.0",
-    "walk-sync": "^3"
-  },
   "peerDependencies": {
-    "typescript": ">4.7"
+    "typescript": "*"
   },
   "volta": {
     "extends": "../../package.json"

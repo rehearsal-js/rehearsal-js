@@ -1,12 +1,11 @@
+import { type DiagnosticWithContext, type FixedFile, codefixes } from '@rehearsal/codefixes';
+import { type PluginResult, Plugin } from '@rehearsal/service';
+import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
 import {
+  type DiagnosticWithLocation,
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
-  type DiagnosticWithLocation,
 } from 'typescript';
-
-import { Plugin, type PluginResult } from '@rehearsal/service';
-import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { codefixes, type DiagnosticWithContext, type FixedFile } from '@rehearsal/codefixes';
 
 import { getFilesData } from '../data';
 

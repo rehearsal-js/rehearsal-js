@@ -19,3 +19,11 @@ tmp/
 
 **SCRATCH**
 
+# yarn 3 zero installs
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

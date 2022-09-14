@@ -24,21 +24,15 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "lint": "npm-run-all lint:*",
+    "lint": "run-p 'lint:*'",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
-  "devDependencies": {
-    "@types/eslint": "^8.4.1",
-    "@types/node": "^18.0.3",
-    "@types/react": "^18.0.9",
-    "vitest": "^0.22.1"
-  },
   "peerDependencies": {
-    "typescript": ">4.7"
+    "typescript": "*"
   },
   "engines": {
     "node": ">=14.16.0"
