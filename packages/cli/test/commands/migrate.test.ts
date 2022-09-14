@@ -1,10 +1,13 @@
-import { copySync, readdirSync, readFileSync, readJSONSync } from 'fs-extra';
+import { copySync, readdirSync, readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { resolve } from 'path';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
+import { CustomConfig } from '../../src/types';
 import { runYarnOrNpmCommand } from '../../src/utils';
 import { runLinkedBin } from '../test-helpers';
+
+setGracefulCleanup();
 
 const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
 const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
@@ -14,6 +17,11 @@ function prepareTmpDir(dir: string): string {
   const { name: targetDir } = dirSync();
   copySync(srcDir, targetDir);
   return targetDir;
+}
+
+function createUserConfig(basePath: string, config: CustomConfig): void {
+  const configPath = resolve(basePath, 'rehearsal-config.json');
+  writeJSONSync(configPath, config);
 }
 
 beforeAll(async () => {
@@ -30,7 +38,7 @@ afterAll(async () => {
   }
 });
 
-describe('migrate - install typecript', async () => {
+describe('migrate - install dependencies', async () => {
   let basePath = '';
 
   beforeAll(() => {
@@ -62,6 +70,32 @@ describe('migrate - install typecript', async () => {
     expect(result.stdout).toContain(
       '[SKIPPED] typescript already exists. Skipping installing typescript.'
     );
+  });
+
+  test('Install custom dependencies with user config provided', async () => {
+    basePath = prepareTmpDir('initialization');
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: ['fs-extra'],
+          devDependencies: ['@types/fs-extra'],
+        },
+      },
+    });
+
+    const result = await runLinkedBin(
+      'migrate',
+      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
+      {
+        cwd: basePath,
+      }
+    );
+
+    expect(result.stdout).toContain('Installing custom dependencies');
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    expect(packageJson.dependencies).toHaveProperty('fs-extra');
+    expect(packageJson.devDependencies).toHaveProperty('@types/fs-extra');
   });
 });
 
@@ -115,6 +149,27 @@ describe('migrate - generate tsconfig', async () => {
     expect(readdirSync(basePath)).toContain('tsconfig.json');
     const content = readFileSync(resolve(basePath, 'tsconfig.json'), 'utf-8');
     expect(content).toMatchSnapshot();
+  });
+
+  test('Run custom ts config command with user config provided', async () => {
+    basePath = prepareTmpDir('initialization');
+    createUserConfig(basePath, {
+      migrate: {
+        setup: {
+          ts: { command: 'touch', args: ['custom-ts-config-script'] },
+        },
+      },
+    });
+
+    await runLinkedBin(
+      'migrate',
+      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
+      {
+        cwd: basePath,
+      }
+    );
+
+    expect(readdirSync(basePath)).toContain('custom-ts-config-script');
   });
 });
 
@@ -214,5 +269,35 @@ describe('migrate - JS to TS conversion', async () => {
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).not.toContain('bar.js');
     expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
+  });
+});
+
+describe('migrate - generate eslint config', async () => {
+  let basePath = '';
+
+  beforeAll(() => {
+    basePath = prepareTmpDir('initialization');
+  });
+
+  test('Run custom lint config command with user config provided', async () => {
+    basePath = prepareTmpDir('initialization');
+    createUserConfig(basePath, {
+      migrate: {
+        setup: {
+          lint: { command: 'touch', args: ['custom-lint-config-script'] },
+        },
+      },
+    });
+
+    const result = await runLinkedBin(
+      'migrate',
+      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
+      {
+        cwd: basePath,
+      }
+    );
+
+    expect(result.stdout).toContain('Creating .eslintrc.js from custom config.');
+    expect(readdirSync(basePath)).toContain('custom-lint-config-script');
   });
 });

@@ -3,7 +3,7 @@
 // TODO: handle ctrl + c
 
 import { migrate } from '@rehearsal/migrate';
-import { jsonFormatter, mdFormatter, Report, Reporter, sarifFormatter } from '@rehearsal/reporter';
+import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { cruise, ICruiseOptions, ICruiseResult, IDependency, IModule } from 'dependency-cruiser';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
@@ -12,7 +12,14 @@ import { resolve } from 'path';
 import toposort from 'toposort';
 import { createLogger, format, transports } from 'winston';
 
-import { addDevDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
+import {
+  FormatterMap,
+  migrateCommandContext,
+  migrateCommandOptions,
+  ParsedModuleResult,
+} from '../types';
+import { UserConfig } from '../userConfig';
+import { addDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
@@ -24,33 +31,6 @@ function ifHasTypescriptInDevdep(basePath: string): boolean {
 }
 
 export const migrateCommand = new Command();
-
-type migrateCommandOptions = {
-  basePath: string;
-  entrypoint: string;
-  files: string;
-  report: Array<string> | undefined;
-  outputPath: string | undefined;
-  verbose: boolean | undefined;
-  clean: boolean | undefined;
-  strict: boolean | undefined;
-};
-
-type Context = {
-  skip: boolean;
-  sourceFiles: Array<string>;
-};
-
-type ParsedModuleResult = {
-  edgeList: Array<[string, string | undefined]>;
-  coreDepList: Array<string>;
-};
-
-type FormatterFunction = (report: Report) => string;
-
-type FormatterMap = {
-  [format: string]: FormatterFunction;
-};
 
 migrateCommand
   .name('migrate')
@@ -65,36 +45,57 @@ migrateCommand
   .option('-o, --outputPath <outputPath>', 'Reports output path')
   .option('-s, --strict', 'Use strict tsconfig file')
   .option('-c, --clean', 'Clean up old JS files after TS convertion')
+  .option(
+    '-u, --userConfig <custom json config for migrate command>',
+    'File path for custom config'
+  )
   .option('-v, --verbose', 'Print more logs to debug.')
   .action(async (options: migrateCommandOptions) => {
+    console.log(options);
     const loggerLevel = options.verbose ? 'debug' : 'info';
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
 
-    const tasks = new Listr<Context>(
+    // get custom config
+    const userConfig = options.userConfig
+      ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+      : undefined;
+
+    const tasks = new Listr<migrateCommandContext>(
       [
         {
           title: 'Installing dependencies',
           task: async (_ctx, task) => {
+            // install custom dependencies
+            if (userConfig?.hasDependencies) {
+              task.title = `Installing custom dependencies`;
+              await userConfig.install();
+            }
+
             if (ifHasTypescriptInDevdep(options.basePath)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
-              await addDevDep('typescript', { cwd: options.basePath });
+              await addDep(['typescript'], true, { cwd: options.basePath });
             }
           },
         },
         {
-          title: 'Creating tsconfig.json', // TODO: use a simple one
+          title: 'Creating tsconfig.json',
           task: async (_ctx, task) => {
-            const configPath = resolve(options.basePath, 'tsconfig.json');
-
-            if (existsSync(configPath)) {
-              task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
+            if (userConfig?.hasTsSetup) {
+              task.title = `Creating tsconfig from custom config.`;
+              await userConfig.tsSetup();
             } else {
-              task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
-              const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
-              createTSConfig(options.basePath, sourceFiles, !!options.strict);
+              const configPath = resolve(options.basePath, 'tsconfig.json');
+
+              if (existsSync(configPath)) {
+                task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
+              } else {
+                task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
+                const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+                createTSConfig(options.basePath, sourceFiles, !!options.strict);
+              }
             }
           },
         },
@@ -157,6 +158,18 @@ migrateCommand
           },
         },
         // TODO: what to do with those ts errors?
+
+        {
+          title: 'Creating lint config',
+          task: async (_ctx, task) => {
+            if (userConfig?.hasLintSetup) {
+              task.title = `Creating .eslintrc.js from custom config.`;
+              await userConfig.lintSetup();
+            } else {
+              task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
+            }
+          },
+        },
       ],
       { concurrent: false, exitOnError: false }
     );
