@@ -14,8 +14,8 @@ import { createLogger, format, transports } from 'winston';
 
 import {
   FormatterMap,
-  migrateCommandContext,
-  migrateCommandOptions,
+  MigrateCommandContext,
+  MigrateCommandOptions,
   ParsedModuleResult,
 } from '../types';
 import { UserConfig } from '../userConfig';
@@ -50,7 +50,7 @@ migrateCommand
     'File path for custom config'
   )
   .option('-v, --verbose', 'Print more logs to debug.')
-  .action(async (options: migrateCommandOptions) => {
+  .action(async (options: MigrateCommandOptions) => {
     console.log(options);
     const loggerLevel = options.verbose ? 'debug' : 'info';
     const logger = createLogger({
@@ -62,7 +62,7 @@ migrateCommand
       ? new UserConfig(options.basePath, options.userConfig, 'migrate')
       : undefined;
 
-    const tasks = new Listr<migrateCommandContext>(
+    const tasks = new Listr<MigrateCommandContext>(
       [
         {
           title: 'Installing dependencies',

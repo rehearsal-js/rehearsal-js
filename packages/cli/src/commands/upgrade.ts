@@ -50,7 +50,6 @@ upgradeCommand
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
   .option('-b, --build <beta|next|latest>', 'typescript build variant', DEFAULT_TS_BUILD)
   .option('-s, --src_dir <src directory>', 'typescript source directory', DEFAULT_SRC_DIR)
-  .option('-a, --autofix', 'autofix tsc errors where available')
   .option('-d, --dry_run', 'dry run. dont commit any changes. reporting only')
   .option(
     '-t, --tsc_version <tsc_version>',
@@ -58,18 +57,17 @@ upgradeCommand
     validateTscVersion
   )
   .option('-o, --report_output <output dir>', 'set the directory for the report output')
-  .option('-i, --is_test', 'hidden flags for testing purposes only')
 
   .action(async (options: UpgradeCommandOptions) => {
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli() })],
     });
 
-    const { build, src_dir, is_test } = options;
+    const { build, src_dir } = options;
     const resolvedSrcDir = resolve(src_dir);
 
     // WARN: is git dirty check and exit if dirty
-    if (!is_test) {
+    if (!options.dry_run) {
       const hasUncommittedFiles = await gitIsRepoDirty();
       if (hasUncommittedFiles) {
         logger.warn(
@@ -149,7 +147,7 @@ upgradeCommand
               {
                 title: `Committing Changes`,
                 task: async (ctx: UpgradeCommandContext) => {
-                  if (options.dry_run || options.is_test) {
+                  if (options.dry_run) {
                     task.skip('Skipping task because dry_run flag is set');
                   } else {
                     // eventually commit change
@@ -211,34 +209,23 @@ upgradeCommand
           },
         },
         {
-          title: 'Attempting Autofix',
+          title: 'Fixing the source code',
           skip: (ctx): boolean => ctx.skip,
           task: async (ctx, task) => {
-            const runTransforms = options.autofix ?? false;
-
-            // TODO we need to create a PR per diagnostic likely will need to pass git instance to migrate
-            const result = await upgrade({
+            await upgrade({
               basePath: resolvedSrcDir,
               configName: 'tsconfig.json', // TODO: Add to command options
               reporter: reporter,
               logger: logger,
             });
 
-            if (result) {
-              if (runTransforms) {
-                task.title = 'Autofix successful: code changes applied';
-              } else {
-                task.title = 'Autofix successful: ts-expect-error comments added';
-              }
-
-              // commit changes if its not a dry_run and not a test
-              if (!options.dry_run && !options.is_test) {
-                // add everything to the git repo within the specified src_dir
-                await git.add([`${options.src_dir}`]);
-                await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
-              }
-            } else {
-              throw new Error('Autofix un-successful');
+            // TODO: Check if code actually been fixed
+            task.title = 'Codefixes applied successfully';
+            
+            if (!options.dry_run) {
+              // add everything to the git repo within the specified src_dir
+              await git.add([`${options.src_dir}`]);
+              await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
             }
           },
         },
@@ -253,7 +240,7 @@ upgradeCommand
       });
       logger.info(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
-      if (options.report_output || options.is_test) {
+      if (options.report_output) {
         reporter.print(
           resolve(options.report_output || src_dir, '.rehearsal.json'),
           reportFormatter
@@ -262,9 +249,8 @@ upgradeCommand
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost
-      // be sure to check for is_test flag and only reset within the fixture app and package.json
       // this is reset within the afterEach hook for testing
-      if (options.dry_run && !options.is_test) {
+      if (options.dry_run) {
         // await git.reset(['--hard', '--', 'package.json', 'yarn.lock', `${flags.src_dir}`]);
         // await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
       }

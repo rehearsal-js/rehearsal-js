@@ -2,10 +2,10 @@ import execa from 'execa';
 import { readJSONSync } from 'fs-extra';
 import { resolve } from 'path';
 
-import { CliConmand, CustomCommandConfig, CustomConfig } from './types';
+import { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 import { addDep } from './utils';
 
-// Storage and ruuner for user custom cli config
+// Storage and runner for user custom cli config
 export class UserConfig {
   private basePath: string;
   private config: CustomCommandConfig;
@@ -26,7 +26,7 @@ export class UserConfig {
     return !!this.config?.setup?.lint;
   }
 
-  constructor(basePath: string, configPath: string, command: CliConmand) {
+  constructor(basePath: string, configPath: string, command: CliCommand) {
     const config: CustomConfig = readJSONSync(resolve(basePath, configPath));
     this.config = config[command]!;
     this.basePath = basePath;

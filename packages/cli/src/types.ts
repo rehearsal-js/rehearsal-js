@@ -1,12 +1,12 @@
 import { Report } from '@rehearsal/reporter';
 
-export type CliConmand = `upgrade` | 'migrate';
+export type CliCommand = `upgrade` | 'migrate';
 
-export type migrateCommandOptions = {
+export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  report: Array<string> | undefined;
+  report: string[] | undefined;
   outputPath: string | undefined;
   verbose: boolean | undefined;
   clean: boolean | undefined;
@@ -14,14 +14,14 @@ export type migrateCommandOptions = {
   userConfig: string | undefined;
 };
 
-export type migrateCommandContext = {
+export type MigrateCommandContext = {
   skip: boolean;
-  sourceFiles: Array<string>;
+  sourceFiles: string[];
 };
 
 export type ParsedModuleResult = {
   edgeList: Array<[string, string | undefined]>;
-  coreDepList: Array<string>;
+  coreDepList: string[];
 };
 
 export type FormatterFunction = (report: Report) => string;
@@ -44,27 +44,26 @@ export type UpgradeCommandOptions = {
   dry_run: boolean | undefined;
   tsc_version: string;
   report_output: string;
-  is_test: boolean | undefined;
 };
 
-export type dependencyConfig = {
+export type DependencyConfig = {
   dependencies?: string[];
   devDependencies?: string[];
 };
 
-export type setupConfigCommand = {
+export type SetupConfigCommand = {
   command: string;
   args: string[];
 };
 
-export type setupConfig = {
-  ts?: setupConfigCommand;
-  lint?: setupConfigCommand;
+export type SetupConfig = {
+  ts?: SetupConfigCommand;
+  lint?: SetupConfigCommand;
 };
 
 export type CustomCommandConfig = {
-  install?: dependencyConfig;
-  setup?: setupConfig;
+  install?: DependencyConfig;
+  setup?: SetupConfig;
 };
 
 export type CustomConfig = {
