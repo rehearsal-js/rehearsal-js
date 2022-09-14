@@ -4,10 +4,10 @@
   "description": "Tool for generating a typescript conversion graph for a ember.js",
   "license": "BSD-2-Clause",
   "scripts": {
-    "build": "tsc -b",
+    "build": "run -T tsc -b",
     "lint": "run -T run-p 'lint:*'",
     "lint:eslint": "run -T eslint --fix . --ext .ts",
-    "lint:tsc-src": "tsc --noEmit",
+    "lint:tsc-src": "run -T tsc --noEmit",
     "prepack": "yarn build",
     "test": "run -T vitest --run"
   },

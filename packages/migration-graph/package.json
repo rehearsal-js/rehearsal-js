@@ -6,10 +6,10 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "build": "tsc -b",
+    "build": "run -T tsc -b",
     "lint": "run -T run-p 'lint:*'",
     "lint:eslint": "run -T eslint --fix . --ext .ts",
-    "lint:tsc-src": "tsc --noEmit",
+    "lint:tsc-src": "run -T tsc --noEmit",
     "prepack": "yarn build",
     "test": "run -T vitest --run"
   },
