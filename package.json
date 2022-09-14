@@ -5,7 +5,9 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "yarn workspaces foreach run lint",
+    "build": "tsc --build",
+    "build:watch": "tsc --watch",
+    "lint": "yarn workspaces foreach -p -v run lint",
     "prepare": "yarn prepare --stream",
     "test": "yarn workspaces foreach run test",
     "prepack": "yarn prepack --stream",

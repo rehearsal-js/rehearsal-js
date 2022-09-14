@@ -1,11 +1,10 @@
+import execa from 'execa';
+import findup from 'findup-sync';
 import { readFileSync } from 'fs';
 import { parse } from 'json5';
 import { resolve } from 'path';
 import { valid } from 'semver';
 import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
-
-import findup = require('findup-sync');
-import execa = require('execa');
 
 import type { GitDescribe } from './interfaces';
 

@@ -7,5 +7,6 @@ export default defineConfig({
     hookTimeout: 50_000,
     watchExclude: ['package.json', '**/fixtures/**'],
     threads: false,
+    globals: true,
   },
 });

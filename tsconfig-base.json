@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "es2019",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "newLine": "LF",
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@rehearsal/cli": ["./packages/cli/dist/src/index.d.ts"],
+      "@rehearsal/codefixes": ["./packages/codefixes/dist/src/index.d.ts"],
+      "@rehearsal/migrate": ["./packages/migrate/dist/src/index.d.ts"],
+      "@rehearsal/migration-graph": ["./packages/migration-graph/dist/src/index.d.ts"],
+      "@rehearsal/migration-graph-ember": ["./packages/migration-graph-ember/dist/src/index.d.ts"],
+      "@rehearsal/plugins": ["./packages/plugins/dist/src/index.d.ts"],
+      "@rehearsal/reporter": ["./packages/reporter/dist/src/index.d.ts"],
+      "@rehearsal/service": ["./packages/service/dist/src/index.d.ts"],
+      "@rehearsal/upgrade": ["./packages/upgrade/dist/src/index.d.ts"],
+      "@rehearsal/utils": ["./packages/utils/dist/src/index.d.ts"],
+      "*": ["./types/*"]
+    },
+    "typeRoots": ["node_modules/@types"]
+  },
+  "exclude": ["**/node_modules/**"]
+}

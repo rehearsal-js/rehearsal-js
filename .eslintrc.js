@@ -17,7 +17,6 @@ module.exports = {
     'import/order': 'off',
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
-    'import/no-extraneous-dependencies': 'error',
     'import/no-unassigned-import': 'error',
     'import/no-unresolved': 'off',
     'simple-import-sort/imports': 'error',

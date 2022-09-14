@@ -5,11 +5,10 @@ import { upgrade } from '@rehearsal/upgrade';
 import { Command, InvalidArgumentError } from 'commander';
 import { compare } from 'compare-versions';
 import { debug } from 'debug';
+import execa from 'execa';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 import { createLogger, format, transports } from 'winston';
-
-import execa = require('execa');
 
 import { reportFormatter } from '../helpers/report';
 import {
