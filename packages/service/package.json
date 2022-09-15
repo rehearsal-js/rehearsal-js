@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/service",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "Rehearsal Service",
   "keywords": [
     "rehearsal",
@@ -30,7 +30,7 @@
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/reporter": "^0.0.33",
+    "@rehearsal/reporter": "^0.0.34",
     "winston": "^3.6.0"
   },
   "devDependencies": {
