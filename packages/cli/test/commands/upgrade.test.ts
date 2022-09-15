@@ -35,26 +35,24 @@ const revertTSCVersion = async (): Promise<void> => {
 
 afterAll(revertTSCVersion);
 
-describe('upgrade:command against fixture', async () => {
+describe('upgrade:command', async () => {
   beforeAll(beforeSetup);
   afterAll(afterEachCleanup);
 
-  test('WITH autofix', async () => {
+  test('against fixture', async () => {
     const result = await run('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
-      '--is_test',
       '--report_output',
       FIXTURE_APP_PATH,
-      '--autofix',
     ]);
 
     // default is beta unless otherwise specified
     const latestPublishedTSVersion = await getLatestTSVersion();
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Autofix successful: code changes applied`);
+    expect(result.stdout).to.contain(`Codefixes applied successfully`);
     expect(existsSync(RESULTS_FILEPATH)).toBeTruthy;
 
     const report: Report = readJSONSync(RESULTS_FILEPATH);
@@ -98,19 +96,6 @@ describe('upgrade:command against fixture', async () => {
       `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
     );
   });
-
-  test('WITHOUT autofix', async () => {
-    const result = await run('upgrade', [
-      '--src_dir',
-      FIXTURE_APP_PATH,
-      '--dry_run',
-      '--is_test',
-      '--report_output',
-      FIXTURE_APP_PATH,
-    ]);
-
-    expect(result.stdout).toContain(`Autofix successful: ts-expect-error comments added`);
-  });
 });
 
 describe('upgrade:command tsc version check', async () => {
@@ -146,7 +131,6 @@ describe('upgrade:command tsc version check', async () => {
       '--tsc_version',
       TEST_TSC_VERSION,
       '--dry_run',
-      '--is_test',
     ]);
 
     // TODO: Fix CLI or this test
