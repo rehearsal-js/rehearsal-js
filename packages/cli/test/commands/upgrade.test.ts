@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 import packageJson from '../../package.json';
 import { getLatestTSVersion, git } from '../../src/utils';
-import { gitDeleteLocalBranch, run, YARN_PATH } from '../test-helpers';
+import { gitDeleteLocalBranch, runTSNode, YARN_PATH } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
@@ -40,7 +40,7 @@ describe('upgrade:command', async () => {
   afterAll(afterEachCleanup);
 
   test('against fixture', async () => {
-    const result = await run('upgrade', [
+    const result = await runTSNode('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--dry_run',
@@ -104,7 +104,7 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript invalid tsc_version`, async () => {
     try {
-      await run('upgrade', ['--tsc_version', '']);
+      await runTSNode('upgrade', ['--tsc_version', '']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -112,7 +112,7 @@ describe('upgrade:command tsc version check', async () => {
     }
 
     try {
-      await run('upgrade', ['--tsc_version', '0']);
+      await runTSNode('upgrade', ['--tsc_version', '0']);
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
@@ -125,7 +125,7 @@ describe('upgrade:command tsc version check', async () => {
     await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
     await execa(YARN_PATH, ['install']);
 
-    const result = await run('upgrade', [
+    const result = await runTSNode('upgrade', [
       '--src_dir',
       FIXTURE_APP_PATH,
       '--tsc_version',
