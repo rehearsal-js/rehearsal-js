@@ -36,7 +36,8 @@
     "@types/lodash.get":"^4.4.7",
     "@types/sarif": "^2.1.4",
     "vitest": "^0.22.1",
-    "lodash.get":"^4.4.2"
+    "lodash.get":"^4.4.2",
+    "vitest-mock-extended": "^0.1.15"
   },
   "peerDependencies": {
     "typescript": ">4.7"
