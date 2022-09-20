@@ -11,6 +11,7 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
+    "clean": "rm -rf fixtures/ember/*/node_modules",
     "test": "vitest --run"
   },
   "dependencies": {
