@@ -27,7 +27,7 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
 
 // helper funcion to run a command via ts-node
 // stdout of commands available via ExecaChildProcess.stdout
-export function run(
+export function runTSNode(
   command: string,
   args: string[],
   options: execa.Options = {}
@@ -39,11 +39,13 @@ export function run(
   return execa(YARN_PATH, ['ts-node', cliPath, command, ...args], options);
 }
 
-// Run linked rehearsal bin directly
-export function runLinkedBin(
+// helper funcion to run a command via the actual bin
+// stdout of commands available via ExecaChildProcess.stdout
+export function runBin(
   command: string,
   args: string[],
   options: execa.Options = {}
 ): execa.ExecaChildProcess {
-  return execa('rehearsal', [command, ...args], options);
+  const cliPath = resolve(__dirname, `../bin/rehearsal.js`);
+  return execa(cliPath, [command, ...args], options);
 }

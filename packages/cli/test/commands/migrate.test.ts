@@ -1,11 +1,10 @@
 import { copySync, readdirSync, readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { resolve } from 'path';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 import { CustomConfig } from '../../src/types';
-import { runYarnOrNpmCommand } from '../../src/utils';
-import { runLinkedBin } from '../test-helpers';
+import { runBin } from '../test-helpers';
 
 setGracefulCleanup();
 
@@ -24,20 +23,6 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
-beforeAll(async () => {
-  // Link bin/rehearsal to be able to run the full cli
-  await runYarnOrNpmCommand(['link']);
-  setGracefulCleanup();
-});
-
-afterAll(async () => {
-  try {
-    await runYarnOrNpmCommand(['unlink']);
-  } catch (e) {
-    // no-ops
-  }
-});
-
 describe('migrate - install dependencies', async () => {
   let basePath = '';
 
@@ -46,26 +31,18 @@ describe('migrate - install dependencies', async () => {
   });
 
   test('Do install typescript dependency if project dose not have one', async () => {
-    const result = await runLinkedBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
   });
 
   test('Do not install typescript dependency if project already has one', async () => {
     // at this point project already have typescript installed in previous test
-    const result = await runLinkedBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain(
       '[SKIPPED] typescript already exists. Skipping installing typescript.'
@@ -83,7 +60,7 @@ describe('migrate - install dependencies', async () => {
       },
     });
 
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
       {
@@ -107,13 +84,9 @@ describe('migrate - generate tsconfig', async () => {
   });
 
   test('Create basic tsconfig', async () => {
-    const result = await runLinkedBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain('Creating basic tsconfig');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
@@ -121,13 +94,9 @@ describe('migrate - generate tsconfig', async () => {
 
   test('Do not create tsconfig if there is an existed one', async () => {
     // tsconfig already created from previous test
-    const result = await runLinkedBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain('skipping creating tsconfig.json');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
@@ -137,7 +106,7 @@ describe('migrate - generate tsconfig', async () => {
     // reset the test dir
     basePath = prepareTmpDir('initialization');
 
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-s'],
       {
@@ -151,7 +120,7 @@ describe('migrate - generate tsconfig', async () => {
     expect(content).toMatchSnapshot();
   });
 
-  test('Run custom ts config command with user config provided', async () => {
+  test('runBin custom ts config command with user config provided', async () => {
     basePath = prepareTmpDir('initialization');
     createUserConfig(basePath, {
       migrate: {
@@ -161,7 +130,7 @@ describe('migrate - generate tsconfig', async () => {
       },
     });
 
-    await runLinkedBin(
+    await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
       {
@@ -181,7 +150,7 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate single JS file', async () => {
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-v'],
       {
@@ -204,7 +173,7 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('Print debug messages with verbose', async () => {
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '--verbose'],
       {
@@ -216,7 +185,7 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('Generate report with -r flag', async () => {
-    await runLinkedBin(
+    await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-r', 'json,md,sarif,foo'],
       {
@@ -231,7 +200,7 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate multiple JS file from an entrypoint', async () => {
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'depends-on-foo.js'],
       {
@@ -258,7 +227,7 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to cleanup old JS filse', async () => {
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'depends-on-foo.js', '--clean'],
       { cwd: basePath }
@@ -289,7 +258,7 @@ describe('migrate - generate eslint config', async () => {
       },
     });
 
-    const result = await runLinkedBin(
+    const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
       {
