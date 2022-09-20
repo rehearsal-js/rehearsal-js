@@ -1,0 +1,226 @@
+// Vitest Snapshot v1
+
+exports[`Test sarif-formatter > should add a rule only if the rule does not exist in rules 1`] = `
+"[
+  {
+    \\"id\\": \\"TS6133\\",
+    \\"name\\": \\"TS6133\\",
+    \\"shortDescription\\": {
+      \\"text\\": \\"'resolve' is declared but its value is never read.\\"
+    },
+    \\"helpUri\\": \\"\\"
+  },
+  {
+    \\"id\\": \\"TS2322\\",
+    \\"name\\": \\"TS2322\\",
+    \\"shortDescription\\": {
+      \\"text\\": \\"Type 'string' is not assignable to type 'number'.\\"
+    },
+    \\"helpUri\\": \\"\\"
+  },
+  {
+    \\"id\\": \\"TS2345\\",
+    \\"name\\": \\"TS2345\\",
+    \\"shortDescription\\": {
+      \\"text\\": \\"Argument of type 'number' is not assignable to parameter of type 'string'.\\"
+    },
+    \\"helpUri\\": \\"\\"
+  }
+]"
+`;
+
+exports[`Test sarif-formatter > should add an artifact only if it does not exist, should merge roles and properties correctly 1`] = `
+"[
+  {
+    \\"location\\": {
+      \\"uri\\": \\"add-artifact-2.ts\\"
+    },
+    \\"roles\\": [
+      \\"analysisTarget\\",
+      \\"unmodified\\"
+    ],
+    \\"properties\\": {
+      \\"fixed\\": false,
+      \\"hintAdded\\": true
+    }
+  },
+  {
+    \\"location\\": {
+      \\"uri\\": \\"add-artifact-1.ts\\"
+    },
+    \\"roles\\": [
+      \\"tracedFile\\",
+      \\"modified\\"
+    ],
+    \\"properties\\": {
+      \\"fixed\\": true,
+      \\"hintAdded\\": false
+    }
+  },
+  {
+    \\"location\\": {
+      \\"uri\\": \\"add-artifact-4.ts\\"
+    },
+    \\"roles\\": [
+      \\"analysisTarget\\",
+      \\"modified\\"
+    ],
+    \\"properties\\": {
+      \\"fixed\\": true,
+      \\"hintAdded\\": false
+    }
+  }
+]"
+`;
+
+exports[`Test sarif-formatter > should have the correct number of results in order, and each result should be assigned the correct property values 1`] = `
+"[
+  {
+    \\"ruleId\\": \\"TS6133\\",
+    \\"ruleIndex\\": 0,
+    \\"level\\": \\"error\\",
+    \\"baselineState\\": \\"updated\\",
+    \\"kind\\": \\"review\\",
+    \\"message\\": {
+      \\"text\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\"
+    },
+    \\"analysisTarget\\": {
+      \\"uri\\": \\"add-result-1.ts\\"
+    },
+    \\"locations\\": [
+      {
+        \\"physicalLocation\\": {
+          \\"artifactLocation\\": {
+            \\"uri\\": \\"add-result-1.ts\\",
+            \\"index\\": 0
+          },
+          \\"region\\": {
+            \\"startLine\\": 1,
+            \\"startColumn\\": 1
+          },
+          \\"properties\\": {
+            \\"code\\": \\"import react from 'react';\\",
+            \\"codeFixAction\\": \\"delete\\",
+            \\"roles\\": [
+              \\"analysisTarget\\",
+              \\"modified\\"
+            ]
+          }
+        }
+      }
+    ],
+    \\"relatedLocations\\": [],
+    \\"properties\\": {
+      \\"fixed\\": true,
+      \\"fixes\\": [
+        {
+          \\"fileName\\": \\"add-result-1.ts\\",
+          \\"code\\": \\"import react from 'react';\\",
+          \\"codeFixAction\\": \\"delete\\"
+        }
+      ]
+    }
+  },
+  {
+    \\"ruleId\\": \\"TS2322\\",
+    \\"ruleIndex\\": 1,
+    \\"level\\": \\"error\\",
+    \\"baselineState\\": \\"unchanged\\",
+    \\"kind\\": \\"informational\\",
+    \\"message\\": {
+      \\"text\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\"
+    },
+    \\"analysisTarget\\": {
+      \\"uri\\": \\"add-result-1.ts\\"
+    },
+    \\"locations\\": [
+      {
+        \\"physicalLocation\\": {
+          \\"artifactLocation\\": {
+            \\"uri\\": \\"add-result-1.ts\\",
+            \\"index\\": 0
+          },
+          \\"region\\": {
+            \\"startLine\\": 2,
+            \\"startColumn\\": 7
+          },
+          \\"properties\\": {
+            \\"roles\\": [
+              \\"analysisTarget\\",
+              \\"unmodified\\"
+            ]
+          }
+        }
+      }
+    ],
+    \\"relatedLocations\\": [],
+    \\"properties\\": {
+      \\"fixed\\": false,
+      \\"fixes\\": []
+    }
+  },
+  {
+    \\"ruleId\\": \\"TS2345\\",
+    \\"ruleIndex\\": 2,
+    \\"level\\": \\"error\\",
+    \\"baselineState\\": \\"unchanged\\",
+    \\"kind\\": \\"informational\\",
+    \\"message\\": {
+      \\"text\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\"
+    },
+    \\"analysisTarget\\": {
+      \\"uri\\": \\"add-result-1.ts\\"
+    },
+    \\"locations\\": [
+      {
+        \\"physicalLocation\\": {
+          \\"artifactLocation\\": {
+            \\"uri\\": \\"add-result-1.ts\\",
+            \\"index\\": 0
+          },
+          \\"region\\": {
+            \\"startLine\\": 9,
+            \\"startColumn\\": 6
+          },
+          \\"properties\\": {
+            \\"roles\\": [
+              \\"analysisTarget\\",
+              \\"unmodified\\"
+            ]
+          }
+        }
+      }
+    ],
+    \\"relatedLocations\\": [],
+    \\"properties\\": {
+      \\"fixed\\": false,
+      \\"fixes\\": []
+    }
+  }
+]"
+`;
+
+exports[`Test sarif-formatter > should set the correct version, $schema, and initial data 1`] = `
+"{
+  \\"version\\": \\"2.1.0\\",
+  \\"$schema\\": \\"http://json.schemastore.org/sarif-2.1.0-rtm.4\\",
+  \\"runs\\": [
+    {
+      \\"tool\\": {
+        \\"driver\\": {
+          \\"name\\": \\"@rehearsal/upgrade\\",
+          \\"informationUri\\": \\"https://github.com/rehearsal-js/rehearsal-js\\",
+          \\"rules\\": []
+        }
+      },
+      \\"artifacts\\": [],
+      \\"results\\": [],
+      \\"automationDetails\\": {
+        \\"description\\": {
+          \\"text\\": \\"This is the run of @rehearsal/upgrade on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
+        }
+      }
+    }
+  ]
+}"
+`;
