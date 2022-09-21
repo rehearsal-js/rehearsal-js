@@ -1,16 +1,16 @@
-import { describe, test, expect, beforeEach, beforeAll } from 'vitest';
-import { PreparedApp, Scenario } from 'scenario-tester';
-import { appScenarios, addonScenarios } from './fixtures/scenarios';
 import { execSync } from 'child_process';
-import rimraf from 'rimraf';
 import { join } from 'path';
+import rimraf from 'rimraf';
+import { PreparedApp, Scenario } from 'scenario-tester';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+
+import { addonScenarios, appScenarios } from './fixtures/scenarios';
 const TIMEOUT_FOR_BUILD = 500000;
 
-function nukeNodeModules(dir) {
+function nukeNodeModules(dir: string): void {
   rimraf.sync(join(dir, 'node_modules'));
 }
-
-function setup(cwd: string) {
+function setup(cwd: string): void {
   nukeNodeModules(cwd);
   execSync(`volta run yarn --version && volta run yarn install`, {
     cwd,
