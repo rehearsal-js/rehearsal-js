@@ -1,13 +1,11 @@
-import { Report } from '@rehearsal/reporter';
-
 export type CliCommand = `upgrade` | 'migrate';
 
 export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  report: string[] | undefined;
-  outputPath: string | undefined;
+  report: string[];
+  outputPath: string;
   verbose: boolean | undefined;
   clean: boolean | undefined;
   strict: boolean | undefined;
@@ -24,12 +22,6 @@ export type ParsedModuleResult = {
   coreDepList: string[];
 };
 
-export type FormatterFunction = (report: Report) => string;
-
-export type FormatterMap = {
-  [format: string]: FormatterFunction;
-};
-
 export type UpgradeCommandContext = {
   tsVersion: string;
   latestELRdBuild: string;
@@ -39,11 +31,11 @@ export type UpgradeCommandContext = {
 
 export type UpgradeCommandOptions = {
   build: string;
-  src_dir: string;
-  autofix: boolean | undefined;
-  dry_run: boolean | undefined;
-  tsc_version: string;
-  report_output: string;
+  basePath: string;
+  report: string[];
+  outputPath: string;
+  tsVersion: string;
+  dryRun: boolean;
 };
 
 export type DependencyConfig = {

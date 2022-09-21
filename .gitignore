@@ -1,11 +1,11 @@
 .DS_Store
-.rehearsal*.md
-.rehearsal*.json
 
 .idea/
 .history/
 .nyc_output/
+.rehearsal/
 .vscode/
+
 
 *.log
 *.tgz

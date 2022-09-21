@@ -193,10 +193,12 @@ describe('migrate - JS to TS conversion', async () => {
       }
     );
 
-    expect(readdirSync(basePath)).toContain('.rehearsal-report.json');
-    expect(readdirSync(basePath)).toContain('.rehearsal-report.md');
-    expect(readdirSync(basePath)).toContain('.rehearsal-report.sarif');
-    expect(readdirSync(basePath)).not.toContain('.rehearsal-report.foo');
+    const reportPath = resolve(basePath, '.rehearsal');
+
+    expect(readdirSync(reportPath)).toContain('report.json');
+    expect(readdirSync(reportPath)).toContain('report.md');
+    expect(readdirSync(reportPath)).toContain('report.sarif');
+    expect(readdirSync(reportPath)).not.toContain('report.foo');
   });
 
   test('able to migrate multiple JS file from an entrypoint', async () => {

@@ -48,3 +48,5 @@ export type Report = {
   summary: ReportSummary;
   items: ReportItem[];
 };
+
+export type ReportFormatter = (report: Report) => string;
