@@ -79,6 +79,17 @@ module.exports = async function () {
 
 function app(project: Project) {
   merge(project.files, {
+    'ember-cli-build.js': `
+      const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+      module.exports = function (defaults) {
+        let app = new EmberApp(defaults, {
+          autoImport: {
+            forbidEval: true
+          }
+        });
+        return app.toTree();
+      };
+    `,
     app: {
       components: {
         'salutation.hbs': `Hello {{@name}}`,
@@ -399,4 +410,6 @@ function addonVariants(scenarios: Scenarios) {
   });
 }
 
-export const addonScenarios = addonVariants(Scenarios.fromProject(() => baseAddon('dummy-app')));
+export const addonScenarios = addonVariants(
+  supportMatrix(Scenarios.fromProject(() => baseAddon('dummy-app')))
+);
