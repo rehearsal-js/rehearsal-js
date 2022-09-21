@@ -208,7 +208,8 @@ function appWithInRepoAddon(project: Project, addonName = 'some-addon') {
         ],
         "dependencies": {
           "ember-cli-babel": "*",
-          "ember-cli-htmlbars": "*"
+          "ember-cli-htmlbars": "*",
+          "@glimmer/component": "*"
         }
       }
     `,
