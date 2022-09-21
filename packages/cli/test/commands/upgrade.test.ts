@@ -38,6 +38,8 @@ describe('upgrade:command', async () => {
   beforeAll(beforeSetup);
   afterAll(afterEachCleanup);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
   test('against fixture', async () => {
     const result = await runTSNode('upgrade', [FIXTURE_APP_PATH, '--report', 'json', '--dryRun']);
 
@@ -50,6 +52,41 @@ describe('upgrade:command', async () => {
     expect(existsSync(reportFile)).toBeTruthy;
 
     const report: Report = readJSONSync(reportFile);
+=======
+  test(
+    'against fixture',
+    async () => {
+      const result = await runTSNode('upgrade', [
+        '--src_dir',
+        FIXTURE_APP_PATH,
+        '--dry_run',
+        '--report_output',
+        FIXTURE_APP_PATH,
+      ]);
+=======
+  test('against fixture', async () => {
+    const result = await runTSNode('upgrade', [
+      '--src_dir',
+      FIXTURE_APP_PATH,
+      '--dry_run',
+      '--report_output',
+      FIXTURE_APP_PATH,
+    ]);
+>>>>>>> a6c1922 (Bump test timeout for all tests; Remove local timeout in upgrade command test)
+
+    // default is beta unless otherwise specified
+    const latestPublishedTSVersion = await getLatestTSVersion();
+
+    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
+    expect(result.stdout).to.contain(`Codefixes applied successfully`);
+    expect(existsSync(RESULTS_FILEPATH)).toBeTruthy;
+
+<<<<<<< HEAD
+      const report: Report = readJSONSync(RESULTS_FILEPATH);
+>>>>>>> 5a665e1 (Bump test timeout for cli commands upgrade; due to CI failures)
+=======
+    const report: Report = readJSONSync(RESULTS_FILEPATH);
+>>>>>>> a6c1922 (Bump test timeout for all tests; Remove local timeout in upgrade command test)
 
     expect(report).toHaveProperty('summary');
 
