@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/reporter",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "Rehearsal Reporter",
   "keywords": [
     "rehearsal",
@@ -33,10 +33,10 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
-    "@types/lodash.get":"^4.4.7",
+    "@types/lodash.get": "^4.4.7",
     "@types/sarif": "^2.1.4",
+    "lodash.get": "^4.4.2",
     "vitest": "^0.22.1",
-    "lodash.get":"^4.4.2",
     "vitest-mock-extended": "^0.1.15"
   },
   "peerDependencies": {
