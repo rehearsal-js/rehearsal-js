@@ -12,14 +12,15 @@ import { resolve } from 'path';
 import toposort from 'toposort';
 import { createLogger, format, transports } from 'winston';
 
-import {
-  FormatterMap,
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  ParsedModuleResult,
-} from '../types';
+import { generateReports } from '../helpers/report';
+import { MigrateCommandContext, MigrateCommandOptions, ParsedModuleResult } from '../types';
 import { UserConfig } from '../userConfig';
-import { addDep, determineProjectName, runYarnOrNpmCommand } from '../utils';
+import {
+  addDep,
+  determineProjectName,
+  parseCommaSeparatedList,
+  runYarnOrNpmCommand,
+} from '../utils';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
@@ -39,12 +40,13 @@ migrateCommand
   .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-r, --report <reportTypes>',
-    'Report type separated by comma, e.g. -r json,sarif,md',
-    commaSeparatedArgs
+    'Report types separated by comma, e.g. -r json,sarif,md',
+    parseCommaSeparatedList,
+    []
   )
-  .option('-o, --outputPath <outputPath>', 'Reports output path')
+  .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option('-s, --strict', 'Use strict tsconfig file')
-  .option('-c, --clean', 'Clean up old JS files after TS convertion')
+  .option('-c, --clean', 'Clean up old JS files after TS conversion')
   .option(
     '-u, --userConfig <custom json config for migrate command>',
     'File path for custom config'
@@ -93,7 +95,7 @@ migrateCommand
                 task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
               } else {
                 task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
-                const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+                const sourceFiles: string[] = getDependencyOrder(options.entrypoint);
                 createTSConfig(options.basePath, sourceFiles, !!options.strict);
               }
             }
@@ -105,7 +107,7 @@ migrateCommand
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
 
-            const sourceFiles: Array<string> = getDependencyOrder(options.entrypoint);
+            const sourceFiles: string[] = getDependencyOrder(options.entrypoint);
             ctx.sourceFiles = sourceFiles;
             if (sourceFiles) {
               const input = {
@@ -117,26 +119,15 @@ migrateCommand
 
               await migrate(input);
 
-              // Generate reports
-              if (options.report) {
-                const reportBaseName = '.rehearsal-report';
-                const outputPath = options.outputPath ? options.outputPath : options.basePath;
-                const formatters: FormatterMap = {
-                  json: jsonFormatter,
-                  sarif: sarifFormatter,
-                  md: mdFormatter,
-                };
-                options.report.forEach((format) => {
-                  if (formatters[format]) {
-                    // only generate report for supported formatter
-                    const report = resolve(outputPath, `${reportBaseName}.${format}`);
-                    reporter.print(report, formatters[format]);
-                  }
-                });
-              }
+              const reportOutputPath = resolve(options.basePath, options.outputPath);
+              generateReports(reporter, reportOutputPath, options.report, {
+                json: jsonFormatter,
+                sarif: sarifFormatter,
+                md: mdFormatter,
+              });
             } else {
               task.skip(
-                `Skipping JS -> TS convertion task, since there is no JS file to be converted to TS.`
+                `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
               );
             }
           },
@@ -182,9 +173,8 @@ migrateCommand
 
 /**
  * Generate tsconfig
- * @param basePath Project root to run migration
  */
-function createTSConfig(basePath: string, fileList: Array<string>, strict: boolean): void {
+function createTSConfig(basePath: string, fileList: string[], strict: boolean): void {
   const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
   const config = strict
     ? {
@@ -228,12 +218,12 @@ function createTSConfig(basePath: string, fileList: Array<string>, strict: boole
  * Remove files
  * @param fileList Array of file paths
  */
-function cleanJSFiles(fileList: Array<string>): void {
+function cleanJSFiles(fileList: string[]): void {
   fileList.filter((f) => f.match(/\.js$/)).forEach((f) => rmSync(f));
 }
 
 // Feed entrypoint to dependency-cruise to get an array or file list with migration order
-function getDependencyOrder(entrypoint: string): Array<string> {
+function getDependencyOrder(entrypoint: string): string[] {
   const cruiseOptions: ICruiseOptions = {
     exclude: {
       path: 'node_modules',
@@ -244,7 +234,7 @@ function getDependencyOrder(entrypoint: string): Array<string> {
 
   const { edgeList, coreDepList } = parseModuleList(output.modules);
 
-  const dependencyList = toposort(edgeList).reverse(); // leaf frist
+  const dependencyList = toposort(edgeList).reverse(); // leaf first
 
   // remove core deps (fs, path, os, etc) from depList
   return dependencyList.filter((d) => {
@@ -254,10 +244,10 @@ function getDependencyOrder(entrypoint: string): Array<string> {
 
 // Process IModule[] from dependency-cruise to create
 // 1. directional edges (graph) -> [module, dependency]
-// 2. List of core deps which should be exclude in migration files
+// 2. List of core deps which should be excluded in migration files
 function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
   const edgeList: Array<[string, string | undefined]> = [];
-  const coreDepList: Array<string> = [];
+  const coreDepList: string[] = [];
 
   moduleList.forEach((m: IModule) => {
     if (m.dependencies.length > 0) {
@@ -270,9 +260,4 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
     }
   });
   return { edgeList, coreDepList };
-}
-
-// helper function to parse a,b,c to [a, b, c]
-function commaSeparatedArgs(input: string): string[] {
-  return input.split(',');
 }

@@ -1,7 +1,37 @@
-import { Report } from '@rehearsal/reporter';
+import { Report, Reporter, ReportFormatter } from '@rehearsal/reporter';
+import { mkdirSync } from 'fs';
+import { resolve } from 'path';
+import { MapLike } from 'typescript';
+
+export function generateReports(
+  reporter: Reporter,
+  outputPath: string,
+  formats: string[],
+  formatters: MapLike<ReportFormatter>
+): string[] {
+  const generatedReports: string[] = [];
+
+  if (formats.length === 0) {
+    return generatedReports;
+  }
+
+  mkdirSync(outputPath, { recursive: true });
+
+  const reportBaseName = 'report';
+
+  formats.forEach((format) => {
+    if (formatters[format]) {
+      const report = resolve(outputPath, `${reportBaseName}.${format}`);
+      generatedReports.push(report);
+      reporter.print(report, formatters[format]);
+    }
+  });
+
+  return generatedReports;
+}
 
 /**
- * Format JSON report
+ * Upgrade command result JSON report formatter
  */
 export function reportFormatter(report: Report): string {
   const fileNames = [
