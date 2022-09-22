@@ -32,6 +32,7 @@
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "unused",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 69,
         "length": 6,
@@ -64,6 +65,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unused",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 71,
         "length": 6,
@@ -96,6 +98,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 273,
         "length": 18,
@@ -128,6 +131,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 530,
         "length": 18,
@@ -160,6 +164,7 @@
       "fixed": false,
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeText": "$notExistingVariable",
+      "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
       "nodeLocation": {
         "start": 675,
         "length": 20,
@@ -192,6 +197,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingFragment",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1049,
         "length": 19,
@@ -224,6 +230,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "doesNotExist",
+      "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
       "nodeLocation": {
         "start": 1263,
         "length": 12,
@@ -257,6 +264,7 @@
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "unused",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 69,
         "length": 6,
@@ -289,6 +297,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unused",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 71,
         "length": 6,
@@ -321,6 +330,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 273,
         "length": 18,
@@ -353,6 +363,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingElement",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 523,
         "length": 18,
@@ -385,6 +396,7 @@
       "fixed": false,
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeText": "$notExistingVariable",
+      "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
       "nodeLocation": {
         "start": 661,
         "length": 20,
@@ -417,6 +429,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "NonExistingFragment",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1035,
         "length": 19,
@@ -449,6 +462,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "doesNotExist",
+      "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
       "nodeLocation": {
         "start": 1249,
         "length": 12,
@@ -482,6 +496,7 @@
       "fixed": true,
       "nodeKind": "ImportDeclaration",
       "nodeText": "import fs from 'fs';",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 0,
         "length": 20,
@@ -515,6 +530,7 @@
       "fixed": true,
       "nodeKind": "ImportSpecifier",
       "nodeText": "parse",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 9,
         "length": 5,
@@ -547,6 +563,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "thisConstant",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 70,
         "length": 12,
@@ -579,6 +596,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "thisVariable",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 238,
         "length": 12,
@@ -611,6 +629,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "thisFunctionIsNeverRead",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 418,
         "length": 23,
@@ -643,6 +662,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingFunction",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 660,
         "length": 15,
@@ -675,6 +695,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingVar",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 910,
         "length": 10,
@@ -707,6 +728,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingVar",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1147,
         "length": 10,
@@ -739,6 +761,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1240,
         "length": 90,
@@ -771,6 +794,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "notProperlyFormatted",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 1504,
         "length": 20,
@@ -803,6 +827,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "doSomething",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1685,
         "length": 11,
@@ -835,6 +860,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "thisFunctionIsACompleteMess",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 1835,
         "length": 27,
@@ -867,6 +893,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "foo",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 2087,
         "length": 3,
@@ -899,6 +926,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 2176,
         "length": 9,
@@ -931,6 +959,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "b",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 2341,
         "length": 1,
@@ -963,6 +992,7 @@
       "fixed": false,
       "nodeKind": "ReturnStatement",
       "nodeText": "return 'a';",
+      "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
       "nodeLocation": {
         "start": 2471,
         "length": 11,
@@ -995,6 +1025,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "timestamp",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 2770,
         "length": 9,
@@ -1028,6 +1059,7 @@
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "unusedFunction",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 121,
         "length": 14,
@@ -1060,6 +1092,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedFunction",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 121,
         "length": 14,
@@ -1092,6 +1125,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedVariable",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 314,
         "length": 14,
@@ -1124,6 +1158,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedConst1",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 539,
         "length": 12,
@@ -1156,6 +1191,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedConst2",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 718,
         "length": 12,
@@ -1188,6 +1224,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedConst3",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 897,
         "length": 12,
@@ -1220,6 +1257,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "unusedConstWithoutCommentButWithRehearsalTagAbove",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 1085,
         "length": 49,
@@ -1252,6 +1290,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "resultValue",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
       "nodeLocation": {
         "start": 1318,
         "length": 11,
@@ -1284,6 +1323,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingVar",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1470,
         "length": 10,
@@ -1316,6 +1356,7 @@
       "fixed": false,
       "nodeKind": "Identifier",
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
       "nodeLocation": {
         "start": 1559,
         "length": 90,
@@ -1347,6 +1388,7 @@
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "e",
+      "helpUrl": "https://stackoverflow.com/questions/65603803/typescript-object-is-of-type-unknown-ts2571",
       "nodeLocation": {
         "start": 1914,
         "length": 1,
@@ -1378,6 +1420,7 @@
       "fixed": true,
       "nodeKind": "Identifier",
       "nodeText": "e",
+      "helpUrl": "https://stackoverflow.com/questions/65603803/typescript-object-is-of-type-unknown-ts2571",
       "nodeLocation": {
         "start": 1961,
         "length": 1,

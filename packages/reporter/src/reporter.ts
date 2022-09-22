@@ -59,7 +59,8 @@ export class Reporter {
     files: { [fileName: string]: ProcessedFile },
     fixed: boolean,
     node?: Node,
-    hint = ''
+    hint = '',
+    helpUrl = ''
   ): void {
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
@@ -71,6 +72,7 @@ export class Reporter {
       fixed,
       nodeKind: node ? SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
+      helpUrl,
       nodeLocation: {
         start: diagnostic.start,
         length: diagnostic.length,
