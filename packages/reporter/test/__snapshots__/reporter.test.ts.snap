@@ -129,6 +129,7 @@ exports[`Test reporter > addItem 1`] = `
       \\"message\\": \\"unused variable\\",
       \\"hint\\": \\"\\",
       \\"fixed\\": false,
+      \\"helpUrl\\": \\"\\",
       \\"nodeLocation\\": {
         \\"line\\": 0,
         \\"character\\": 5

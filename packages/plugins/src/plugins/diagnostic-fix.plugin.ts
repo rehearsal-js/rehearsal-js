@@ -39,6 +39,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
       // TODO: Seems like a good candidate to be moved to `if (addHints)`
       let hint = codefixes.getHint(diagnostic);
+      const helpUrl = codefixes.getHelpUrl(diagnostic);
 
       if (fixed) {
         for (const fixedFile of fixedFiles) {
@@ -63,7 +64,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
       const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
 
-      this.reporter?.addItem(diagnostic, processedFiles, fixed, diagnostic.node, hint);
+      this.reporter?.addItem(diagnostic, processedFiles, fixed, diagnostic.node, hint, helpUrl);
 
       // Get updated list of diagnostics
       diagnostics = this.getDiagnostics(fileName, commentTag);

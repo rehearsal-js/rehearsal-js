@@ -4,7 +4,7 @@ import { DiagnosticWithLocation, SourceFile } from 'typescript';
 import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
-import { jsonFormatter, mdFormatter, type Report, Reporter } from '../src';
+import { type Report, jsonFormatter, mdFormatter, Reporter } from '../src';
 
 describe('Test reporter', function () {
   const basePath = resolve(__dirname, 'fixtures/reporter');
