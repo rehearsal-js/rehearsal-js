@@ -1,7 +1,7 @@
 import type { FixedFile } from '@rehearsal/codefixes';
 import type { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
 import type { DiagnosticWithLocation, SourceFile } from 'typescript';
-import  { getLineAndCharacterOfPosition } from 'typescript';
+import { getLineAndCharacterOfPosition } from 'typescript';
 
 export function getFilesData(
   fixedFiles: FixedFile[],
