@@ -53,7 +53,6 @@ migrateCommand
   )
   .option('-v, --verbose', 'Print more logs to debug.')
   .action(async (options: MigrateCommandOptions) => {
-    console.log(options);
     const loggerLevel = options.verbose ? 'debug' : 'info';
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
@@ -247,7 +246,7 @@ function getDependencyOrder(entrypoint: string): string[] {
 // 2. List of core deps which should be excluded in migration files
 function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
   const edgeList: Array<[string, string | undefined]> = [];
-  const coreDepList: string[] = [];
+  const coreDepList: string[] = ['sample-core']; // sample-core is a fake dep for files with no dependency
 
   moduleList.forEach((m: IModule) => {
     if (m.dependencies.length > 0) {
@@ -257,6 +256,12 @@ function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
         }
         edgeList.push([m.source, d.resolved]);
       });
+    } else {
+      // if a file has no dependency, we still want to migrate it from JS to TS
+      // Thus, adding a fake coreDep here to including this file in migrate function
+      // Or this file would be ignored
+      // Eventually sample-core would be cleaned since it's inside coreDepList
+      edgeList.push([m.source, 'sample-core']);
     }
   });
   return { edgeList, coreDepList };
