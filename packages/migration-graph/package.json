@@ -11,6 +11,7 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "yarn build",
+    "clean": "rm -rf fixtures/ember/*/node_modules",
     "test": "vitest --run"
   },
   "dependencies": {
@@ -25,8 +26,12 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "fixturify": "^2",
+    "@types/lodash": "^4.14.185",
+    "fixturify": "^2.1.1",
+    "lodash": "^4.17.21",
     "micromatch": "^4",
+    "rimraf": "^3.0.2",
+    "scenario-tester": "^2.1.2",
     "tmp": "^0.2.1",
     "vitest": "^0.22.0"
   },
