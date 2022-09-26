@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Reporter } from '@rehearsal/reporter';
+import { mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
 import { Command, InvalidArgumentError } from 'commander';
 import { compare } from 'compare-versions';
@@ -11,7 +11,7 @@ import { createLogger, format, transports } from 'winston';
 
 import execa = require('execa');
 
-import { reportFormatter } from '../helpers/report';
+import { generateReports, reportFormatter } from '../helpers/report';
 import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
   addDep,
@@ -23,23 +23,24 @@ import {
   gitCommit,
   gitIsRepoDirty,
   isValidSemver,
+<<<<<<< HEAD
+=======
+  isYarnManager,
+  parseCommaSeparatedList,
+>>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
   timestamp,
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:ts');
-const DEFAULT_TS_BUILD = 'beta';
-const DEFAULT_SRC_DIR = './app';
-
-let TSC_PATH = '';
 
 export const upgradeCommand = new Command();
 
-function validateTscVersion(value: string): string {
+function parseTsVersion(value: string): string {
   if (isValidSemver(value)) {
     return value;
   } else {
     throw new InvalidArgumentError(
-      'The tsc_version specified is an invalid string. Please specify a valid version as n.n.n'
+      'The tsVersion specified is an invalid string. Please specify a valid version as n.n.n'
     );
   }
 }
@@ -47,26 +48,31 @@ function validateTscVersion(value: string): string {
 upgradeCommand
   .name('upgrade')
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
-  .option('-b, --build <beta|next|latest>', 'typescript build variant', DEFAULT_TS_BUILD)
-  .option('-s, --src_dir <src directory>', 'typescript source directory', DEFAULT_SRC_DIR)
-  .option('-d, --dry_run', 'dry run. dont commit any changes. reporting only')
+  .argument('[basePath]', 'Path to directory contains tsconfig.json', '.')
+  .option('-b, --build <beta|next|latest>', 'typescript build variant', 'beta')
   .option(
-    '-t, --tsc_version <tsc_version>',
+    '-t, --tsVersion <tsVersion>',
     'override the build variant by specifying the typescript compiler version as n.n.n',
-    validateTscVersion
+    parseTsVersion
   )
-  .option('-o, --report_output <output dir>', 'set the directory for the report output')
+  .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
+  .option(
+    '-r, --report <reportTypes>',
+    'Report types separated by comma, e.g. -r json,sarif,md',
+    parseCommaSeparatedList,
+    []
+  )
+  .option('-d, --dryRun', `Don't commit any changes`, false)
 
-  .action(async (options: UpgradeCommandOptions) => {
+  .action(async (basePath: string, options: UpgradeCommandOptions) => {
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli() })],
     });
 
-    const { build, src_dir } = options;
-    const resolvedSrcDir = resolve(src_dir);
+    basePath = resolve(basePath);
 
     // WARN: is git dirty check and exit if dirty
-    if (!options.dry_run) {
+    if (!options.dryRun) {
       const hasUncommittedFiles = await gitIsRepoDirty();
       if (hasUncommittedFiles) {
         logger.warn(
@@ -76,15 +82,15 @@ upgradeCommand
       }
     }
 
-    TSC_PATH = await getPathToBinary('tsc');
+    const tscPath = await getPathToBinary('tsc');
 
-    DEBUG_CALLBACK('TSC_PATH', TSC_PATH);
+    DEBUG_CALLBACK('tscPath', tscPath);
     DEBUG_CALLBACK('options %O', options);
 
     // grab the consuming apps project name
     const projectName = (await determineProjectName()) || '';
 
-    const reporter = new Reporter(projectName, resolvedSrcDir, logger);
+    const reporter = new Reporter(projectName, basePath, logger);
 
     const tasks = new Listr<UpgradeCommandContext>(
       [
@@ -93,14 +99,14 @@ upgradeCommand
           task: (_ctx: UpgradeCommandContext, task): Listr =>
             task.newListr((parent) => [
               {
-                title: `Fetching latest published typescript@${build}`,
+                title: `Fetching latest published typescript@${options.build}`,
                 exitOnError: true,
                 task: async (ctx, task) => {
-                  if (!options.tsc_version) {
-                    ctx.latestELRdBuild = await getLatestTSVersion(build);
-                    task.title = `Latest typescript@${build} version is ${ctx.latestELRdBuild}`;
+                  if (!options.tsVersion) {
+                    ctx.latestELRdBuild = await getLatestTSVersion(options.build);
+                    task.title = `Latest typescript@${options.build} version is ${ctx.latestELRdBuild}`;
                   } else {
-                    ctx.latestELRdBuild = options.tsc_version;
+                    ctx.latestELRdBuild = options.tsVersion;
                     task.title = `Rehearsing with typescript version ${ctx.latestELRdBuild}`;
                   }
                 },
@@ -108,7 +114,7 @@ upgradeCommand
               {
                 title: 'Fetching installed typescript version',
                 task: async (ctx, task) => {
-                  const { stdout } = await execa(TSC_PATH, ['--version']);
+                  const { stdout } = await execa(tscPath, ['--version']);
                   // Version 4.5.0-beta
                   ctx.currentTSVersion = stdout.split(' ')[1];
                   task.title = `Currently on typescript version ${ctx.currentTSVersion}`;
@@ -138,11 +144,30 @@ upgradeCommand
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
                 task: async (ctx: UpgradeCommandContext) => {
-                  if (!options.dry_run) {
+                  if (!options.dryRun) {
                     // there will be a diff so branch is created
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
+<<<<<<< HEAD
                   await addDep([`typescript@${ctx.tsVersion}`], true);
+=======
+                  await bumpDevDep(`typescript@${ctx.tsVersion}`);
+                },
+              },
+              {
+                title: `Committing Changes`,
+                task: async (ctx: UpgradeCommandContext) => {
+                  if (options.dryRun) {
+                    task.skip('Skipping task because dryRun flag is set');
+                  } else {
+                    // eventually commit change
+                    const lockFile = (await isYarnManager()) ? 'yarn.lock' : 'package-lock.json';
+                    await git.add(['package.json', lockFile]);
+                    await gitCommit(
+                      `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
+                    );
+                  }
+>>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
                 },
               },
             ]),
@@ -157,16 +182,16 @@ upgradeCommand
                   title: 'Building TypeScript',
                   task: async (_ctx, task) => {
                     try {
-                      await execa(TSC_PATH, ['-b']);
+                      await execa(tscPath, ['-b']);
 
                       // if we should update package.json with typescript version and submit a PR
                       task.newListr(() => [
                         {
                           title: 'Creating Pull Request',
                           task: async (ctx, task) => {
-                            if (options.dry_run) {
+                            if (options.dryRun) {
                               ctx.skip = true;
-                              task.skip('Skipping task because dry_run flag is set');
+                              task.skip('Skipping task because dryRun flag is set');
                             }
                             // the diff has been added and commited to the branch
                             // do PR work here and push branch upstream
@@ -191,26 +216,29 @@ upgradeCommand
           title: 'Re-Building TypeScript with Clean',
           skip: (ctx): boolean => ctx.skip,
           task: async () => {
-            await execa(TSC_PATH, ['-b', '--clean']);
+            await execa(tscPath, ['-b', '--clean']);
           },
         },
         {
           title: 'Fixing the source code',
           skip: (ctx): boolean => ctx.skip,
           task: async (ctx, task) => {
-            await upgrade({
-              basePath: resolvedSrcDir,
-              configName: 'tsconfig.json', // TODO: Add to command options
-              reporter: reporter,
-              logger: logger,
-            });
+            const configName = 'tsconfig.json';
+
+            await upgrade({ basePath, configName, reporter, logger });
 
             // TODO: Check if code actually been fixed
+<<<<<<< HEAD
             task.title = 'Codefixes applied successfully';
 
             if (!options.dry_run) {
+=======
+            task.title = 'Code fixes applied successfully';
+
+            if (!options.dryRun) {
+>>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
               // add everything to the git repo within the specified src_dir
-              await git.add([`${options.src_dir}`]);
+              await git.add([`${options.basePath}`]);
               await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
             }
           },
@@ -226,17 +254,17 @@ upgradeCommand
       });
       logger.info(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
-      if (options.report_output) {
-        reporter.print(
-          resolve(options.report_output || src_dir, '.rehearsal.json'),
-          reportFormatter
-        );
-      }
+      const reportOutputPath = resolve(basePath, options.outputPath);
+      generateReports(reporter, reportOutputPath, options.report, {
+        json: reportFormatter,
+        sarif: sarifFormatter,
+        md: mdFormatter,
+      });
 
       // after the reporter closes the stream reset git to the original state
       // need to be careful with this otherwise if a given test fails the git state will be lost
       // this is reset within the afterEach hook for testing
-      if (options.dry_run) {
+      if (options.dryRun) {
         // await git.reset(['--hard', '--', 'package.json', 'yarn.lock', `${flags.src_dir}`]);
         // await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
       }

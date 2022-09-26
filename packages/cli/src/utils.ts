@@ -224,7 +224,7 @@ export async function runModuleCommand(args: string[], option: execa.Options = {
   await execa(binAndArgs.bin, binAndArgs.args, option);
 }
 
-// rather than explicity setting from node_modules dir we need to handle workspaces use case
+// rather than explicitly setting from node_modules dir we need to handle workspaces use case
 // we need to handle volta use case and check for npm or yarn
 export async function getPathToBinary(
   binaryName: string,
@@ -265,4 +265,11 @@ export async function getLatestTSVersion(build = 'beta'): Promise<string> {
 
 export function isValidSemver(input: string): boolean {
   return !!valid(input);
+}
+
+/**
+ * Parses the comma separated string `a,b,c` to an array os strings [a, b, c]
+ */
+export function parseCommaSeparatedList(value: string): string[] {
+  return value.split(',');
 }

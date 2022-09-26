@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph",
-  "version": "0.0.34",
+  "version": "0.0.36",
   "description": "Tool for generating a typescript conversion graph",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
@@ -25,7 +25,12 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "fixturify": "^2",
+    "@types/lodash": "^4.14.185",
+    "fixturify": "^2.1.1",
+    "lodash": "^4.17.21",
+    "micromatch": "^4",
+    "rimraf": "^3.0.2",
+    "scenario-tester": "^2.1.2",
     "tmp": "^0.2.1",
     "vitest": "^0.22.1"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/plugins",
-  "version": "0.0.34",
+  "version": "0.0.36",
   "description": "Rehearsal JavaScript to TypeScript Shared Libraries",
   "keywords": [
     "rehearsal",
@@ -37,7 +37,13 @@
   },
   "devDependencies": {
     "vitest": "^0.22.1",
-    "fixturify-project": "^5.0.3"
+    "fixturify-project": "^5.0.3",
+    "@rehearsal/codefixes": "^0.0.36",
+    "@rehearsal/service": "^0.0.36",
+    "eslint": "8.22.0",
+    "@rehearsal/reporter": "^0.0.36",
+    "@rehearsal/utils": "^0.0.36",
+    "@types/eslint": "^8.4.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

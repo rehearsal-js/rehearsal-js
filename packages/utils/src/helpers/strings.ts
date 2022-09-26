@@ -4,5 +4,5 @@
  */
 export function isSourceCodeChanged(originalText: string, updateText: string): boolean {
   // Compares source codes without spaces.
-  return originalText.replace(/\s+/g, ' ') !== updateText.replace(/\s+/g, ' ');
+  return originalText.trim().replace(/\s+/g, ' ') !== updateText.trim().replace(/\s+/g, ' ');
 }

@@ -9,7 +9,6 @@ import { getLatestTSVersion, git } from '../../src/utils';
 import { gitDeleteLocalBranch, PNPM_PATH, runTSNode } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
-const RESULTS_FILEPATH = join(FIXTURE_APP_PATH, '.rehearsal.json');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
@@ -40,22 +39,17 @@ describe('upgrade:command', async () => {
   afterAll(afterEachCleanup);
 
   test('against fixture', async () => {
-    const result = await runTSNode('upgrade', [
-      '--src_dir',
-      FIXTURE_APP_PATH,
-      '--dry_run',
-      '--report_output',
-      FIXTURE_APP_PATH,
-    ]);
+    const result = await runTSNode('upgrade', [FIXTURE_APP_PATH, '--report', 'json', '--dryRun']);
 
     // default is beta unless otherwise specified
     const latestPublishedTSVersion = await getLatestTSVersion();
+    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Codefixes applied successfully`);
-    expect(existsSync(RESULTS_FILEPATH)).toBeTruthy;
+    expect(result.stdout).to.contain(`Code fixes applied successfully`);
+    expect(existsSync(reportFile)).toBeTruthy;
 
-    const report: Report = readJSONSync(RESULTS_FILEPATH);
+    const report: Report = readJSONSync(reportFile);
 
     expect(report).toHaveProperty('summary');
 
@@ -102,20 +96,20 @@ describe('upgrade:command tsc version check', async () => {
   beforeAll(beforeSetup);
   afterAll(afterEachCleanup);
 
-  test(`it is on typescript invalid tsc_version`, async () => {
+  test(`it is on typescript invalid tsVersion`, async () => {
     try {
-      await runTSNode('upgrade', ['--tsc_version', '']);
+      await runTSNode('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '']);
     } catch (error) {
       expect(`${error}`).to.contain(
-        `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
+        `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
       );
     }
 
     try {
-      await runTSNode('upgrade', ['--tsc_version', '0']);
+      await runTSNode('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '0']);
     } catch (error) {
       expect(`${error}`).to.contain(
-        `The tsc_version specified is an invalid string. Please specify a valid version as n.n.n`
+        `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
       );
     }
   });
@@ -126,11 +120,10 @@ describe('upgrade:command tsc version check', async () => {
     await execa(PNPM_PATH, ['install']);
 
     const result = await runTSNode('upgrade', [
-      '--src_dir',
       FIXTURE_APP_PATH,
-      '--tsc_version',
+      '--tsVersion',
       TEST_TSC_VERSION,
-      '--dry_run',
+      '--dryRun',
     ]);
 
     // TODO: Fix CLI or this test

@@ -145,6 +145,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"startColumn\\": 7
           },
           \\"properties\\": {
+            \\"code\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"
@@ -183,6 +184,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"startColumn\\": 6
           },
           \\"properties\\": {
+            \\"code\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"

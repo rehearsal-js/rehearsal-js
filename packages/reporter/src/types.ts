@@ -36,6 +36,7 @@ export type ReportItem = {
   fixed?: boolean;
   nodeKind?: string;
   nodeText?: string;
+  helpUrl?: string;
   nodeLocation: {
     start: number;
     length: number;
@@ -48,3 +49,5 @@ export type Report = {
   summary: ReportSummary;
   items: ReportItem[];
 };
+
+export type ReportFormatter = (report: Report) => string;

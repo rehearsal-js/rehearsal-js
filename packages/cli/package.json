@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "0.0.34",
+  "version": "0.0.36",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",

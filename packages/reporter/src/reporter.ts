@@ -3,7 +3,7 @@ import type { DiagnosticWithLocation, Node } from 'typescript';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind, version } from 'typescript';
 import type { Logger } from 'winston';
 
-import { type ProcessedFile, type Report, type ReportItem } from './types';
+import { type ProcessedFile, type Report, type ReportFormatter, type ReportItem } from './types';
 
 /**
  * Representation of diagnostic and migration report.
@@ -59,7 +59,8 @@ export class Reporter {
     files: { [fileName: string]: ProcessedFile },
     fixed: boolean,
     node?: Node,
-    hint = ''
+    hint = '',
+    helpUrl = ''
   ): void {
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
@@ -71,6 +72,7 @@ export class Reporter {
       fixed,
       nodeKind: node ? SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
+      helpUrl,
       nodeLocation: {
         start: diagnostic.start,
         length: diagnostic.length,
@@ -82,7 +84,7 @@ export class Reporter {
   /**
    * Prints the current report using provided formatter (ex. json, pull-request etc.)
    */
-  print(file: string, formatter: (report: Report) => string): string {
+  print(file: string, formatter: ReportFormatter): string {
     const report = formatter(this.report);
 
     if (file) {
@@ -97,8 +99,7 @@ export class Reporter {
    * to be able to load it later with 'load' function
    */
   save(file: string): void {
-    const formatter = (report: Report): string => JSON.stringify(report, null, 2);
-    this.print(file, formatter);
+    this.print(file, (report: Report): string => JSON.stringify(report, null, 2));
     this.logger?.info(`Report saved to: ${file}.`);
   }
 

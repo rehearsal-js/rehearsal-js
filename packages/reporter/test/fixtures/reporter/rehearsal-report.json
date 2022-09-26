@@ -3,14 +3,14 @@
     "projectName": "@rehearsal/test",
     "tsVersion": "4.7.4",
     "timestamp": "9/16/2022, 13:24:57",
-    "basePath": "/reporter/test/sarif-formatter"
+    "basePath": "/base/path"
   },
   "items": [
     {
-      "analysisTarget": "add-result-1.ts",
+      "analysisTarget": "/base/path/file1.ts",
       "files": {
-        "add-result-1.ts": {
-          "fileName": "add-result-1.ts",
+        "/base/path/file1.ts": {
+          "fileName": "/base/path/file1.ts",
           "location": {
             "line": 1,
             "character": 1
@@ -40,10 +40,10 @@
       }
     },
     {
-      "analysisTarget": "add-result-1.ts",
+      "analysisTarget": "/base/path/file1.ts",
       "files": {
-        "add-result-1.ts": {
-          "fileName": "add-result-1.ts",
+        "/base/path/file1.ts": {
+          "fileName": "/base/path/file1.ts",
           "location": {
             "line": 2,
             "character": 7
@@ -72,10 +72,10 @@
       }
     },
     {
-      "analysisTarget": "add-result-1.ts",
+      "analysisTarget": "/base/path/file1.ts",
       "files": {
-        "add-result-1.ts": {
-          "fileName": "add-result-1.ts",
+        "/base/path/file1.ts": {
+          "fileName": "/base/path/file1.ts",
           "location": {
             "line": 9,
             "character": 6

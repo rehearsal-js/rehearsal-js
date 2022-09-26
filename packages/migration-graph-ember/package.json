@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph-ember",
-  "version": "0.0.34",
+  "version": "0.0.36",
   "description": "Tool for generating a typescript conversion graph for a ember.js",
   "license": "BSD-2-Clause",
   "scripts": {
