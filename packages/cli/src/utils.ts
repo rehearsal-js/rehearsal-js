@@ -149,44 +149,76 @@ export async function isYarnManager(): Promise<boolean> {
   return !!yarnPath;
 }
 
-// devDep: dep@version eg. typescript@4.4.4 or typescript or etc
-export async function bumpDevDep(devDep: string): Promise<void> {
-  const isYarn = await isYarnManager();
-  // check if npm or yarn
-  const binAndArgs = {
-    bin: isYarn ? 'yarn' : 'npm',
-    args: isYarn
-      ? ['add', '-D', `${devDep}`, '--ignore-scripts']
-      : ['install', `${devDep}`, '--save-dev', '--ignore-scripts'],
-  };
+export async function isPnpmManager(): Promise<boolean> {
+  const pnpmPath = await findup('pnpm-lock.yaml', {
+    cwd: process.cwd(),
+  });
 
-  await execa(binAndArgs.bin, binAndArgs.args);
+  return !!pnpmPath;
 }
 
+export async function getModuleManager(): Promise<'yarn' | 'npm' | 'pnpm'> {
+  const isYarn = await isYarnManager();
+  const isPnpm = await isPnpmManager();
+
+  if (isYarn) {
+    return 'yarn';
+  }
+
+  if (isPnpm) {
+    return 'pnpm';
+  }
+
+  return 'npm';
+}
+
+export async function getModuleManagerInstaller(
+  manager: 'yarn' | 'npm' | 'pnpm',
+  depList: string[],
+  isDev: boolean
+): Promise<{ bin: string; args: string[] }> {
+  switch (manager) {
+    case 'yarn':
+      return {
+        bin: 'yarn',
+        args: isDev
+          ? ['add', '-D', ...depList, '--ignore-scripts']
+          : ['add', ...depList, '--ignore-scripts'],
+      };
+    case 'pnpm':
+      return {
+        bin: 'pnpm',
+        args: isDev ? ['add', '-D', ...depList] : ['add', ...depList],
+      };
+    case 'npm':
+    default:
+      return {
+        bin: 'npm',
+        args: isDev
+          ? ['install', ...depList, '--save-dev', '--ignore-scripts']
+          : ['install', ...depList, '--ignore-scripts'],
+      };
+  }
+}
+
+// devDep: dep@version eg. typescript@4.4.4 or typescript or etc
 export async function addDep(
   depList: string[],
   isDev: boolean,
   options: execa.Options = {}
 ): Promise<void> {
-  const isYarn = await isYarnManager();
-  // check if npm or yarn
-  const binAndArgs = {
-    bin: isYarn ? 'yarn' : 'npm',
-    args: isYarn ? ['add', ...depList] : ['install', ...depList],
-    typeArgs: isDev ? (isYarn ? ['-D'] : ['--save-dev']) : [],
-  };
+  const moduleManager = await getModuleManager();
+  const binAndArgs = await getModuleManagerInstaller(moduleManager, depList, isDev);
 
-  await execa(binAndArgs.bin, [...binAndArgs.args, ...binAndArgs.typeArgs], options);
+  await execa(binAndArgs.bin, [...binAndArgs.args], options);
 }
 
-export async function runYarnOrNpmCommand(
-  args: Array<string>,
-  option: execa.Options = {}
-): Promise<void> {
-  const isYarn = await isYarnManager();
-  // check if npm or yarn
+// when executing a command with module manager prefix
+// eg. yarn tsc or pnpm tsc or npm tsc
+export async function runModuleCommand(args: string[], option: execa.Options = {}): Promise<void> {
+  const moduleManager = await getModuleManager();
   const binAndArgs = {
-    bin: isYarn ? 'yarn' : 'npm',
+    bin: moduleManager,
     args,
   };
   await execa(binAndArgs.bin, binAndArgs.args, option);
@@ -194,18 +226,20 @@ export async function runYarnOrNpmCommand(
 
 // rather than explicity setting from node_modules dir we need to handle workspaces use case
 // we need to handle volta use case and check for npm or yarn
-export async function getPathToBinary(binaryName: string): Promise<string> {
+export async function getPathToBinary(
+  binaryName: string,
+  options: execa.Options = {}
+): Promise<string> {
   // if volta exists on the path use it
-  let packageManager = (await isYarnManager()) ? 'yarn' : 'npm';
-  let stdoutMsg;
+  const moduleManager = await getModuleManager();
   const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-
-  if (VOLTA_HOME) {
-    packageManager = resolve(VOLTA_HOME, `bin/${packageManager}`);
-  }
+  const resolvedModuleManager = VOLTA_HOME
+    ? resolve(VOLTA_HOME, `bin/${moduleManager}`)
+    : moduleManager;
+  let stdoutMsg;
 
   try {
-    const { stdout } = await execa(packageManager, ['bin', binaryName]);
+    const { stdout } = await execa(resolvedModuleManager, ['bin', binaryName], options);
     stdoutMsg = stdout;
   } catch (e) {
     throw new Error(`Unable to find binary path to ${binaryName}`);
@@ -218,7 +252,7 @@ export async function getPathToBinary(binaryName: string): Promise<string> {
       .filter((p) => p.includes(`bin/${binaryName}`))[0]
       .trim();
   } catch (error) {
-    throw new Error(`Unable to find ${binaryName} with ${packageManager}`);
+    throw new Error(`Unable to find ${binaryName} with ${moduleManager}`);
   }
 }
 

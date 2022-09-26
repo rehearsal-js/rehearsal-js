@@ -8,7 +8,7 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run"
   },
   "main": "dist/src/index.js",
@@ -31,14 +31,9 @@
   },
   "devDependencies": {
     "@babel/types": "^7.18.13",
-    "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.18.0",
-    "@types/micromatch": "^4.0.2",
-    "@types/prettier": "^2.6.3",
-    "@types/tmp": "^0.2.3",
     "fixturify": "^2",
     "tmp": "^0.2.1",
-    "vitest": "^0.22.0",
+    "vitest": "^0.22.1",
     "walk-sync": "^3"
   },
   "peerDependencies": {

@@ -23,7 +23,7 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
@@ -31,12 +31,8 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.7",
-    "@types/eslint": "^8.4.1",
-    "@types/lodash.get":"^4.4.7",
-    "@types/sarif": "^2.1.4",
-    "vitest": "^0.22.1",
-    "lodash.get":"^4.4.2"
+    "lodash.get": "^4.4.2",
+    "vitest": "^0.22.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

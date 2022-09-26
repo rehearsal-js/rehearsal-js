@@ -16,7 +16,7 @@ jobs:
       - uses: volta-cli/action@v1
         with:
           node-version: 16
-          yarn-version: 1.22.17
-      - run: yarn install
-      - run: yarn test
-      - run: yarn lint
+          pnpm-version: 7.12.1
+      - run: pnpm install
+      - run: pnpm test
+      - run: pnpm lint

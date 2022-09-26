@@ -10,12 +10,10 @@
 *.log
 *.tgz
 *.tmp
+**/*.js.map
 
 coverage/
 dist/
 node_modules/
 results/
 tmp/
-
-**SCRATCH**
-

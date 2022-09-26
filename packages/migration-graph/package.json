@@ -10,13 +10,13 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run"
   },
   "dependencies": {
     "@babel/parser": "^7.18.4",
     "@babel/traverse": "^7.18.2",
-    "@rehearsal/migration-graph-ember": "^0.0.34",
+    "@rehearsal/migration-graph-ember": "workspace:*",
     "@swc/core": "^1.2.233",
     "debug": "^4.3.4",
     "fast-glob": "^3",
@@ -26,9 +26,8 @@
   },
   "devDependencies": {
     "fixturify": "^2",
-    "micromatch": "^4",
     "tmp": "^0.2.1",
-    "vitest": "^0.22.0"
+    "vitest": "^0.22.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"
