@@ -23,11 +23,8 @@ import {
   gitCommit,
   gitIsRepoDirty,
   isValidSemver,
-<<<<<<< HEAD
-=======
   isYarnManager,
   parseCommaSeparatedList,
->>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
   timestamp,
 } from '../utils';
 
@@ -148,10 +145,7 @@ upgradeCommand
                     // there will be a diff so branch is created
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
-<<<<<<< HEAD
                   await addDep([`typescript@${ctx.tsVersion}`], true);
-=======
-                  await bumpDevDep(`typescript@${ctx.tsVersion}`);
                 },
               },
               {
@@ -167,7 +161,7 @@ upgradeCommand
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
                     );
                   }
->>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
+                  await addDep([`typescript@${ctx.tsVersion}`], true);
                 },
               },
             ]),
@@ -228,15 +222,9 @@ upgradeCommand
             await upgrade({ basePath, configName, reporter, logger });
 
             // TODO: Check if code actually been fixed
-<<<<<<< HEAD
             task.title = 'Codefixes applied successfully';
 
             if (!options.dry_run) {
-=======
-            task.title = 'Code fixes applied successfully';
-
-            if (!options.dryRun) {
->>>>>>> 8445ca2ff3c4a66331ca47e61f24168a8e3e17ca
               // add everything to the git repo within the specified src_dir
               await git.add([`${options.basePath}`]);
               await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);

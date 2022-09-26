@@ -25,12 +25,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.185",
-    "fixturify": "^2.1.1",
-    "lodash": "^4.17.21",
-    "micromatch": "^4",
-    "rimraf": "^3.0.2",
-    "scenario-tester": "^2.1.2",
+    "fixturify": "^2",
     "tmp": "^0.2.1",
     "vitest": "^0.22.1"
   },
