@@ -24,6 +24,10 @@ import {
   gitCommit,
   gitIsRepoDirty,
   isValidSemver,
+<<<<<<< HEAD
+=======
+  isYarnManager,
+>>>>>>> 91069da (chore: migrate from yarn to pnpm)
   parseCommaSeparatedList,
   timestamp,
 } from '../utils';
