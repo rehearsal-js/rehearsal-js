@@ -30,14 +30,10 @@ describe('migration-graph', () => {
     beforeAll(() => {
       setup();
     });
-
-    test.only('app', async () => {
+    test('app', async () => {
       const app: PreparedApp = await getEmberApp('app');
-
       const m = buildMigrationGraph(app.dir);
-
       expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
-
       const orderedPackages = m.graph.topSort();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
       expect(flatten(orderedPackages[0].content.modules.topSort())).toStrictEqual([
@@ -46,76 +42,54 @@ describe('migration-graph', () => {
         'app/router.js',
       ]);
     });
-
     test('app-with-in-repo-addon', async () => {
       const app: PreparedApp = await getEmberApp('appWithInRepoAddon');
-
       const m = buildMigrationGraph(app.dir);
-
       expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
-
       const orderedPackages = m.graph.topSort();
-
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
-      expect(flatten(orderedPackages[0].content.modules.topSort())).toStrictEqual([
-        'addon/components/greet.js',
-        'app/components/greet.js',
-        'index.js',
-      ]);
+      expect(
+        flatten(orderedPackages[0].content.modules.topSort()),
+        'expected migraiton order for in-repo-addon'
+      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
 
-      expect(flatten(orderedPackages[1].content.modules.topSort())).toStrictEqual([]);
+      // Expected order for files in app
+      expect(
+        flatten(orderedPackages[1].content.modules.topSort()),
+        'expected migraiton order for app'
+      ).toStrictEqual(['app/app.js', 'app/components/salutation.js', 'app/router.js']);
     });
-
     test('app-with-in-repo-engine', async () => {
       const app: PreparedApp = await getEmberApp('appWithInRepoEngine');
-
       const m = buildMigrationGraph(app.dir);
-
       expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
-
       const orderedPackages = m.graph.topSort();
-
       expect(flatten(orderedPackages)).toStrictEqual(['some-engine', 'app-template']);
+      expect(
+        flatten(orderedPackages[0].content.modules.topSort()),
+        'expected migraiton order for in-repo-engine'
+      ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js', 'index.js']);
+
+      expect(
+        flatten(orderedPackages[1].content.modules.topSort()),
+        'expected migraiton order for app'
+      ).toStrictEqual(['app/app.js', 'app/components/salutation.js', 'app/router.js']);
+    });
+    test('addon', async () => {
+      const app: PreparedApp = await getEmberAddon('addon');
+      const m = buildMigrationGraph(app.dir);
+      expect(m.sourceType, 'should detect an EmberAddon').toBe(DetectedSource.EmberAddon);
+      const orderedPackages = m.graph.topSort();
+      console.log(orderedPackages);
+      expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
       expect(flatten(orderedPackages[0].content.modules.topSort())).toStrictEqual([
         'addon/components/greet.js',
         'app/components/greet.js',
         'index.js',
       ]);
-
-      expect(flatten(orderedPackages[1].content.modules.topSort())).toStrictEqual([]);
     });
-
-    test('addon', async () => {
-      const app: PreparedApp = await getEmberAddon('addon');
-
-      const m = buildMigrationGraph(app.dir);
-
-      expect(m.sourceType, 'should detect an EmberAddon').toBe(DetectedSource.EmberAddon);
-
-      const orderedPackages = m.graph.topSort();
-
-      expect(flatten(orderedPackages)).toStrictEqual(['test-addon']);
-
-      expect(flatten(orderedPackages[0].content.modules.topSort())).toStrictEqual([
-        'addon/components/my-component.js',
-        'app/components/my-component.js',
-        'index.js',
-      ]);
-
-      expect(flatten(orderedPackages[1].content.modules.topSort())).toStrictEqual([]);
+    test.todo('should filter package by name', () => {
+      expect(true).toBe(false);
     });
   });
-
-  //   test.todo('should filter package by name', () => {
-  //     // const someDir = `${__dirname}/fixtures/test-ember-app-3-28/`;
-
-  //     // const m = buildMigrationGraph(someDir, {
-  //     //   filterByPackageName: ['some-addon'],
-  //     // });
-
-  //     // Only `some-addon` should have a file level graph
-
-  //     expect(true).toBe(false);
-  //   });
-  // });
 });
