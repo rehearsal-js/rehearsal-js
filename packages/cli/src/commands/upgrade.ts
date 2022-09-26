@@ -17,13 +17,13 @@ import {
   addDep,
   determineProjectName,
   getLatestTSVersion,
+  getLockfilePath,
   getPathToBinary,
   git,
   gitCheckoutNewLocalBranch,
   gitCommit,
   gitIsRepoDirty,
   isValidSemver,
-  isYarnManager,
   parseCommaSeparatedList,
   timestamp,
 } from '../utils';
@@ -155,7 +155,7 @@ upgradeCommand
                     task.skip('Skipping task because dryRun flag is set');
                   } else {
                     // eventually commit change
-                    const lockFile = (await isYarnManager()) ? 'yarn.lock' : 'package-lock.json';
+                    const lockFile = (await getLockfilePath()) || '';
                     await git.add(['package.json', lockFile]);
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
