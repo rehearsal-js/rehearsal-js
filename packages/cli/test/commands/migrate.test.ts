@@ -214,8 +214,6 @@ describe('migrate - JS to TS conversion', async () => {
       }
     );
 
-    console.log(result.stdout);
-
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
     expect(readdirSync(basePath)).toContain('foo.ts');
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
