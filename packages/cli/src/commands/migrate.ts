@@ -2,13 +2,15 @@
 
 // TODO: handle ctrl + c
 
-import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
+import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
+import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
 import { createLogger, format, transports } from 'winston';
+
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions } from '../types';
 import { UserConfig } from '../userConfig';
@@ -18,7 +20,6 @@ import {
   parseCommaSeparatedList,
   runYarnOrNpmCommand,
 } from '../utils';
-import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
