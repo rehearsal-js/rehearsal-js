@@ -16,7 +16,9 @@ jobs:
       - uses: volta-cli/action@v1
         with:
           node-version: 16
-          pnpm-version: 7.12.1
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.12.1
       - run: pnpm install
-      - run: pnpm test
       - run: pnpm lint
+      - run: pnpm test
