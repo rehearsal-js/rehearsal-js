@@ -14,7 +14,7 @@ import { createLogger, format, transports } from 'winston';
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions } from '../types';
 import { UserConfig } from '../userConfig';
-import { addDep, determineProjectName, runModuleCommand } from '../utils';
+import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');

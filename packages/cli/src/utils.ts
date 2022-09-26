@@ -157,6 +157,34 @@ export async function isPnpmManager(): Promise<boolean> {
   return !!pnpmPath;
 }
 
+export async function getLockfilePath(): Promise<string | null> {
+  const yarnPath = await findup('yarn.lock', {
+    cwd: process.cwd(),
+  });
+
+  if (yarnPath) {
+    return yarnPath;
+  }
+
+  const pnpmPath = await findup('pnpm-lock.yaml', {
+    cwd: process.cwd(),
+  });
+
+  if (pnpmPath) {
+    return pnpmPath;
+  }
+
+  const npmPath = await findup('package-lock.json', {
+    cwd: process.cwd(),
+  });
+
+  if (npmPath) {
+    return npmPath;
+  }
+
+  return null;
+}
+
 export async function getModuleManager(): Promise<'yarn' | 'npm' | 'pnpm'> {
   const isYarn = await isYarnManager();
   const isPnpm = await isPnpmManager();

@@ -12,6 +12,7 @@
     "doc": "doc",
     "test": "tests"
   },
+  "packageManager": "npm@8.15.0",
   "scripts": {
     "build": "ember build --environment=production",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
@@ -77,6 +78,6 @@
   },
   "volta": {
     "node": "16.17.0",
-    "yarn": "1.22.17"
+    "npm": "8.15.0"
   }
 }

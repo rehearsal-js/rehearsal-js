@@ -1,6 +1,6 @@
 import { Scenarios, Project, Scenario, PreparedApp } from 'scenario-tester';
 import { dirname } from 'path';
-import { merge } from 'lodash';
+import merge from 'lodash.merge';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import rimraf from 'rimraf';
@@ -23,7 +23,7 @@ function prepare(dir: string): void {
 }
 
 // this scenario represents the last Ember 3.x release
-async function ember3(project: Project) {}
+async function ember3(_project: Project) {}
 
 function supportMatrix(scenarios: Scenarios) {
   return scenarios.expand({

@@ -1,4 +1,4 @@
-import { type Report, type ReportItem, Reporter } from '@rehearsal/reporter';
+import { type ReportItem, Reporter } from '@rehearsal/reporter';
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
 import { describe, expect, test } from 'vitest';
@@ -35,7 +35,7 @@ describe('Test upgrade', async function () {
   });
 
   test('should output the correct data from upgrade', () => {
-    const report = (reporter as any).report as Report;
+    const { report } = reporter;
 
     report.summary.timestamp = '9/22/2022, 13:48:38';
     report.summary.basePath = '';

@@ -50,6 +50,7 @@ importers:
       npm-run-all: ^4.1.5
       pre-commit: ^1.2.2
       prettier: ^2.7.1
+      rimraf: ^3.0.2
       tmp: ^0.2.1
       ts-node: ^10.4.0
       typescript: 4.7.4
@@ -104,6 +105,7 @@ importers:
       npm-run-all: 4.1.5
       pre-commit: 1.2.2
       prettier: 2.7.1
+      rimraf: 3.0.2
       tmp: 0.2.1
       ts-node: 10.9.1_nwm5gnmtj5mpwtqjmit2j7xbtu
       typescript: 4.7.4
@@ -192,12 +194,17 @@ importers:
       '@babel/traverse': ^7.18.2
       '@rehearsal/migration-graph-ember': workspace:*
       '@swc/core': ^1.2.233
+      '@types/lodash.merge': ^4.6.7
+      '@types/rimraf': ^3.0.2
       debug: ^4.3.4
       fast-glob: ^3
       fixturify: ^2
       fs-extra: ^10.1.0
       jsonc-parser: ^3
+      lodash.merge: ^4.6.2
       path: ^0.12.7
+      rimraf: ^3.0.2
+      scenario-tester: ^2.1.2
       tmp: ^0.2.1
       vitest: ^0.22.1
     dependencies:
@@ -211,7 +218,12 @@ importers:
       jsonc-parser: 3.2.0
       path: 0.12.7
     devDependencies:
+      '@types/lodash.merge': 4.6.7
+      '@types/rimraf': 3.0.2
       fixturify: 2.1.1
+      lodash.merge: 4.6.2
+      rimraf: 3.0.2
+      scenario-tester: 2.1.2
       tmp: 0.2.1
       vitest: 0.22.1
 
@@ -253,8 +265,10 @@ importers:
   packages/plugins:
     specifiers:
       '@rehearsal/codefixes': workspace:*
+      '@rehearsal/reporter': ^0.0.36
       '@rehearsal/service': workspace:*
       '@rehearsal/utils': workspace:*
+      '@types/eslint': ^8.4.1
       eslint: 8.22.0
       fixturify-project: ^5.0.3
       vitest: ^0.22.1
@@ -264,19 +278,31 @@ importers:
       '@rehearsal/utils': link:../utils
       eslint: 8.22.0
     devDependencies:
+      '@rehearsal/reporter': link:../reporter
+      '@types/eslint': 8.4.6
       fixturify-project: 5.1.0
       vitest: 0.22.1
 
   packages/reporter:
     specifiers:
+      '@types/debug': ^4.1.7
+      '@types/eslint': ^8.4.1
+      '@types/lodash.get': ^4.4.7
+      '@types/sarif': ^2.1.4
       lodash.get: ^4.4.2
       vitest: ^0.22.1
+      vitest-mock-extended: ^0.1.15
       winston: ^3.6.0
     dependencies:
       winston: 3.8.2
     devDependencies:
+      '@types/debug': 4.1.7
+      '@types/eslint': 8.4.6
+      '@types/lodash.get': 4.4.7
+      '@types/sarif': 2.1.4
       lodash.get: 4.4.2
       vitest: 0.22.1
+      vitest-mock-extended: 0.1.15_vitest@0.22.1
 
   packages/service:
     specifiers:
@@ -2120,6 +2146,12 @@ packages:
       '@types/lodash': 4.14.185
     dev: true
 
+  /@types/lodash.merge/4.6.7:
+    resolution: {integrity: sha512-OwxUJ9E50gw3LnAefSHJPHaBLGEKmQBQ7CZe/xflHkyy/wH2zVyEIAKReHvVrrn7zKdF58p16We9kMfh7v0RRQ==}
+    dependencies:
+      '@types/lodash': 4.14.185
+    dev: true
+
   /@types/lodash/4.14.185:
     resolution: {integrity: sha512-evMDG1bC4rgQg4ku9tKpuMh5iBNEwNa3tf9zRHdP1qlv+1WUg44xat4IxCE14gIpZRGUUWAx2VhItCZc25NfMA==}
     dev: true
@@ -2181,6 +2213,13 @@ packages:
 
   /@types/rimraf/2.0.5:
     resolution: {integrity: sha512-YyP+VfeaqAyFmXoTh3HChxOQMyjByRMsHU7kc5KOJkSlXudhMhQIALbYV7rHh/l8d2lX3VUQzprrcAgWdRuU8g==}
+    dependencies:
+      '@types/glob': 8.0.0
+      '@types/node': 18.7.18
+    dev: true
+
+  /@types/rimraf/3.0.2:
+    resolution: {integrity: sha512-F3OznnSLAUxFrCEu/L5PY8+ny8DtcFRjx7fZZ9bycvXRi3KPTRS9HOitGZwvPg0juRhXFWIeKX58cnX5YqLohQ==}
     dependencies:
       '@types/glob': 8.0.0
       '@types/node': 18.7.18
@@ -6623,6 +6662,17 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
+  /scenario-tester/2.1.2:
+    resolution: {integrity: sha512-fuwZoavM2v3CyfghIc3gCi36vFDSzIAW1mdgxjUXVQIsoR0aTG657CMnwYAagIN8Aqn1Qt9oJMuqIpggOvybQg==}
+    hasBin: true
+    dependencies:
+      fixturify-project: 5.1.0
+      fs-extra: 9.1.0
+      glob: 7.2.3
+      tmp: 0.2.1
+      yargs: 16.2.0
+    dev: true
+
   /semver-try-require/5.0.2:
     resolution: {integrity: sha512-azXRSvTHW8a0IE6+cTS+otCcHwu/Y4jcKTL7GVR4ZRJN9gdoSx/chw77IYlmoxvOr3q4RrsGMmo8GiJxijhnHw==}
     engines: {node: ^12||^14||>=16}
@@ -7110,6 +7160,12 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: false
 
+  /ts-essentials/9.3.0:
+    resolution: {integrity: sha512-XeiCboEyBG8UqXZtXl59bWEi4ZgOqRsogFDI6WDGIF1LmzbYiAkIwjkXN6zZWWl4re/lsOqMlYfe8KA0XiiEPw==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    dev: true
+
   /ts-node/10.9.1_nwm5gnmtj5mpwtqjmit2j7xbtu:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
@@ -7413,6 +7469,16 @@ packages:
       rollup: 2.78.1
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
+
+  /vitest-mock-extended/0.1.15_vitest@0.22.1:
+    resolution: {integrity: sha512-XN1quYLdddPTonsULiLvTbLlTQaMKE3aNDkeJlAfYvWaRKjNWXmVcJaELdEfejoC3GFS0cQITLgJwPVPVKh62w==}
+    peerDependencies:
+      typescript: 3.x || 4.x
+      vitest: '>=0.23.1'
+    dependencies:
+      ts-essentials: 9.3.0
+      vitest: 0.22.1
     dev: true
 
   /vitest/0.22.1:

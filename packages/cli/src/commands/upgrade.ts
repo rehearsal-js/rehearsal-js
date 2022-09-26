@@ -161,7 +161,6 @@ upgradeCommand
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
                     );
                   }
-                  await addDep([`typescript@${ctx.tsVersion}`], true);
                 },
               },
             ]),
@@ -224,7 +223,7 @@ upgradeCommand
             // TODO: Check if code actually been fixed
             task.title = 'Codefixes applied successfully';
 
-            if (!options.dry_run) {
+            if (!options.dryRun) {
               // add everything to the git repo within the specified src_dir
               await git.add([`${options.basePath}`]);
               await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
