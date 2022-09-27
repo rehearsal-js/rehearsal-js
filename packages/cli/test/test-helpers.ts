@@ -34,7 +34,7 @@ export function runTSNode(
 ): execa.ExecaChildProcess {
   const cliPath = resolve(__dirname, `./runner.ts`);
   // why use ts-node instead of calling bin/rehearsal.js directly?
-  // during the test process there would be yarn install typescript
+  // during the test process there would be pnpm install typescript
   // we need to run build after every install to make sure dist dir is ready to use
   return execa(PNPM_PATH, ['ts-node', cliPath, command, ...args], options);
 }

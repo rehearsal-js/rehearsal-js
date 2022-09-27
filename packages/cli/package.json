@@ -12,6 +12,7 @@
   "bin": {
     "rehearsal": "./bin/rehearsal.js"
   },
+  "packageManager": "pnpm@7.12.1",
   "files": [
     "bin",
     "dist",

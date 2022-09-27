@@ -16,7 +16,7 @@ function prepare(dir: string): void {
   clean(dir);
   // The (app|addon)-template needs a node_modules directory for
   // scenario - tester to craete a Project.fromDir()
-  execSync(`volta run yarn --version && volta run yarn install`, {
+  execSync(`volta run npm --version && volta run npm install`, {
     cwd: dir,
     stdio: 'ignore', // Otherwise this will output warning from install command
   });
@@ -514,7 +514,7 @@ async function getPreparedApp(scenario: Scenario): Promise<PreparedApp> {
   // fresh node_modules directory after install
   clean(app.dir);
 
-  const cmd = 'volta run yarn install';
+  const cmd = 'volta run npm install';
 
   let result = await app.execute(cmd);
 

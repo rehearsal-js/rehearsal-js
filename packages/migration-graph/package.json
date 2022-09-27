@@ -5,6 +5,7 @@
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "packageManager": "pnpm@7.12.1",
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
@@ -26,8 +27,8 @@
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
     "jsonc-parser": "^3",
-    "minimatch": "^5.1.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "minimatch": "^5.1.0"
   },
   "devDependencies": {
     "fixturify": "^2",
@@ -37,7 +38,9 @@
     "scenario-tester": "^2.1.2",
     "lodash.merge": "^4.6.2",
     "@types/rimraf": "^3.0.2",
-    "@types/lodash.merge": "^4.6.7"
+    "@types/lodash.merge": "^4.6.7",
+    "micromatch": "^4.0.4",
+    "@types/minimatch": "^5.1.2"
   },
   "peerDependencies": {
     "typescript": ">4.7"

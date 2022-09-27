@@ -12,7 +12,7 @@ function nukeNodeModules(dir: string): void {
 }
 function setup(cwd: string): void {
   nukeNodeModules(cwd);
-  execSync(`volta run pnpm --version && volta run pnpm install`, {
+  execSync(`volta run npm --version && volta run npm install`, {
     cwd,
   });
 }
@@ -36,10 +36,10 @@ describe('app-variants', () => {
         'should pass tests',
         async () => {
           // Setup
-          let result = await app.execute('volta run pnpm install');
+          let result = await app.execute('volta run npm install');
           expect(result.exitCode, result.output).toBe(0);
           // Should pass acceptance tests
-          result = await app.execute('volta run pnpm test');
+          result = await app.execute('volta run npm test');
           expect(result.exitCode, result.output).toBe(0);
         },
         TIMEOUT_FOR_BUILD
@@ -67,10 +67,10 @@ describe('addon-variants', () => {
         'should pass tests',
         async () => {
           // Setup
-          let result = await app.execute('volta run pnpm install');
+          let result = await app.execute('volta run npm install');
           expect(result.exitCode, result.output).toBe(0);
           // Should pass acceptance tests
-          result = await app.execute('volta run pnpm test');
+          result = await app.execute('volta run npm test');
           expect(result.exitCode, result.output).toBe(0);
         },
         TIMEOUT_FOR_BUILD

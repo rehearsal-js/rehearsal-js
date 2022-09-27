@@ -5,5 +5,5 @@
     "chalk": "*",
     "@babel/parser": "*"
   },
-  "packageManager": "pnpm@7.12.1"
+  "packageManager": "npm@8.15.0"
 }

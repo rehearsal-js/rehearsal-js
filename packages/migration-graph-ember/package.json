@@ -3,6 +3,7 @@
   "version": "0.0.36",
   "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
+  "packageManager": "pnpm@7.12.1",
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
