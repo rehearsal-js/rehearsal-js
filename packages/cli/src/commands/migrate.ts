@@ -9,7 +9,6 @@ import { Command } from 'commander';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
-// import inquirer from 'inquirer';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';
