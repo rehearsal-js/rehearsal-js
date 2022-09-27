@@ -11,7 +11,6 @@
     "tsc utils",
     "typescript"
   ],
-  "packageManager": "pnpm@7.12.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
@@ -38,6 +37,7 @@
   "peerDependencies": {
     "typescript": ">4.7"
   },
+  "packageManager": "pnpm@7.12.1",
   "engines": {
     "node": ">=14.16.0"
   },
