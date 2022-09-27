@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { parse } from 'json5';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { valid } from 'semver';
 import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
 
@@ -275,10 +275,7 @@ export async function getPathToBinary(
 
   // return the path to the binary
   try {
-    return stdoutMsg
-      .split('\n')
-      .filter((p) => p.includes(`bin/${binaryName}`))[0]
-      .trim();
+    return resolve(join(stdoutMsg.trim(), binaryName));
   } catch (error) {
     throw new Error(`Unable to find ${binaryName} with ${moduleManager}`);
   }
