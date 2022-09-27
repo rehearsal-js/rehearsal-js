@@ -46,7 +46,7 @@ describe('upgrade:command', async () => {
     const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Code fixes applied successfully`);
+    expect(result.stdout).to.contain(`Codefixes applied successfully`);
     expect(existsSync(reportFile)).toBeTruthy;
 
     const report: Report = readJSONSync(reportFile);
