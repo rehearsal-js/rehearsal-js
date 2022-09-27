@@ -1,3 +1,6 @@
+import { MigrationStrategy } from '@rehearsal/migration-graph';
+
+import { UserConfig } from './userConfig';
 export type CliCommand = `upgrade` | 'migrate';
 
 export type MigrateCommandOptions = {
@@ -14,7 +17,10 @@ export type MigrateCommandOptions = {
 
 export type MigrateCommandContext = {
   skip: boolean;
-  sourceFiles: string[];
+  userConfig: UserConfig | undefined;
+  strategy: MigrationStrategy;
+  sourceFilesWithAbsolutePath: string[];
+  sourceFilesWithRelativePath: string[];
 };
 
 export type UpgradeCommandContext = {
