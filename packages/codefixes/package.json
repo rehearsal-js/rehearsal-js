@@ -36,7 +36,7 @@
     "@rehearsal/utils": "workspace:*"
   },
   "devDependencies": {
-    "vitest": "^0.22.1"
+    "vitest": "^0.23.4"
   },
   "peerDependencies": {
     "typescript": ">4.7"

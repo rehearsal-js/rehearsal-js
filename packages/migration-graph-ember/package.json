@@ -35,7 +35,7 @@
     "@babel/types": "^7.18.13",
     "fixturify": "^2",
     "tmp": "^0.2.1",
-    "vitest": "^0.22.1",
+    "vitest": "^0.23.4",
     "walk-sync": "^3"
   },
   "peerDependencies": {
