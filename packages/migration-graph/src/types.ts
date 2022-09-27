@@ -1,13 +1,6 @@
-/**
- * Should be moved into my-package-util
- */
-export type Package = {
-  path: string;
-  name: string;
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-  addonPaths?: Array<string>;
-};
+import { Package } from '@rehearsal/migration-graph-shared';
+
+import { Graph } from './utils/graph';
 
 export type UniqueGraphNode = {
   key: string;
@@ -16,9 +9,11 @@ export type UniqueGraphNode = {
 export type PackageNode = UniqueGraphNode & {
   pkg: Package;
   converted?: boolean;
+  modules: Graph<ModuleNode>;
 };
 
-export type FileNode = UniqueGraphNode & {
+export type ModuleNode = UniqueGraphNode & {
   path: string;
   parsed?: boolean;
+  meta?: unknown;
 };

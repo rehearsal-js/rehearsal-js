@@ -17,11 +17,15 @@
     "@babel/parser": "^7.18.4",
     "@babel/traverse": "^7.18.2",
     "@rehearsal/migration-graph-ember": "workspace:*",
+    "@rehearsal/migration-graph-shared": "workspace:*",
     "@swc/core": "^1.2.233",
     "debug": "^4.3.4",
-    "fast-glob": "^3",
+    "dependency-cruiser": "^11.15.0",
+    "enhanced-resolve": "^5.10.0",
+    "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
     "jsonc-parser": "^3",
+    "minimatch": "^5.1.0",
     "path": "^0.12.7"
   },
   "devDependencies": {

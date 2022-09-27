@@ -8,6 +8,7 @@ import { runBin } from '../test-helpers';
 
 setGracefulCleanup();
 
+// TODO migrate this to fixturify
 const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
 const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
 
@@ -202,6 +203,9 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate multiple JS file from an entrypoint', async () => {
+    // TODO refactor test build to ensure that the bin command generated at the file level
+    // so we can do invoke `yarn vitest tests/commands/migrate.test.ts` without having to
+    // invoke a `yarn` "build" for the bin utiilty
     const result = await runBin(
       'migrate',
       ['--basePath', basePath, '--entrypoint', 'depends-on-foo.js'],

@@ -1,11 +1,31 @@
-import { Scenarios, Project } from 'scenario-tester';
+import { Scenarios, Project, Scenario, PreparedApp } from 'scenario-tester';
 import { dirname } from 'path';
 import { merge } from 'lodash';
+import { execSync } from 'child_process';
+import { join } from 'path';
+import rimraf from 'rimraf';
+
+const DIR_FIXTURE_EMBER_APP_TEMPLATE = `${__dirname}/ember/app-template`;
+const DIR_FIXTURE_EMBER_ADDON_TEMPLATE = `${__dirname}/ember/addon-template`;
+
+export function clean(dir: string): void {
+  rimraf.sync(join(dir, 'node_modules'));
+}
+
+function prepare(dir: string): void {
+  clean(dir);
+  // The (app|addon)-template needs a node_modules directory for
+  // scenario - tester to craete a Project.fromDir()
+  execSync(`volta run yarn --version && volta run yarn install`, {
+    cwd: dir,
+    stdio: 'ignore', // Otherwise this will output warning from install command
+  });
+}
 
 // this scenario represents the last Ember 3.x release
 async function ember3(project: Project) {}
 
-export function supportMatrix(scenarios: Scenarios) {
+function supportMatrix(scenarios: Scenarios) {
   return scenarios.expand({
     // lts,
     ember3,
@@ -92,7 +112,16 @@ function app(project: Project) {
     `,
     app: {
       components: {
-        'salutation.hbs': `Hello {{@name}}`,
+        'salutation.js': `
+          import Component from '@glimmer/component';
+
+          export default class Salutation extends Component {
+            get name() {
+              return 'Bob';
+            }
+          }
+        `,
+        'salutation.hbs': `Hello {{this.name}}`,
       },
       templates: {
         'application.hbs': `
@@ -100,7 +129,7 @@ function app(project: Project) {
             {{outlet}}
           </div>
         `,
-        'index.hbs': `<Salutation @name="Bob"/>`,
+        'index.hbs': `<Salutation/>`,
       },
     },
     tests: {
@@ -378,7 +407,63 @@ function addon(project: Project) {
     config: {
       'ember-try.js': EMBER_ADDON_CONFIG_EMBER_TRY,
     },
+    addon: {
+      components: {
+        'greet.js': `
+            import Component from '@glimmer/component';
+  
+            export default class Greet extends Component {
+              get name() {
+                return 'Sue';
+              }
+            }
+          `,
+        'greet.hbs': 'Hello {{this.name}}, from an addon!',
+      },
+    },
+    app: {
+      components: {
+        'greet.js': `export { default } from 'addon-template/components/greet';`,
+      },
+    },
+    tests: {
+      dummy: {
+        app: {
+          templates: {
+            'application.hbs': `
+              <div id='app-container'>
+                {{outlet}}
+              </div>
+            `,
+            'index.hbs': `<Greet/>`,
+          },
+        },
+      },
+      acceptance: {
+        'addon-template-test.js': `
+          import { module, test } from 'qunit';
+          import { visit, currentURL } from '@ember/test-helpers';
+          import { setupApplicationTest } from 'ember-qunit';
+      
+          module('Acceptance | addon-template', function (hooks) {
+            setupApplicationTest(hooks);
+      
+            test('visiting /', async function (assert) {
+              await visit('/');
+      
+              assert.equal(currentURL(), '/');
+      
+              assert
+                .dom('#app-container')
+                .hasText('Hello Sue, from an addon!', 'The user can see Hello World');
+            });
+          });
+        `,
+      },
+    },
   });
+
+  // Add acceptance test for validating that our engine is mounted and routable;
 }
 
 function appVariants(scenarios: Scenarios) {
@@ -389,7 +474,7 @@ function appVariants(scenarios: Scenarios) {
   });
 }
 
-export function baseApp() {
+function baseApp() {
   return Project.fromDir(dirname(require.resolve('./ember/app-template/package.json')), {
     linkDevDeps: true,
   });
@@ -397,7 +482,7 @@ export function baseApp() {
 
 export const appScenarios = appVariants(supportMatrix(Scenarios.fromProject(baseApp)));
 
-export function baseAddon(as: 'addon' | 'dummy-app' = 'addon') {
+function baseAddon(as: 'addon' | 'dummy-app' = 'addon') {
   return Project.fromDir(dirname(require.resolve('./ember/addon-template/package.json')), {
     linkDeps: true,
     linkDevDeps: as === 'dummy-app',
@@ -413,3 +498,53 @@ function addonVariants(scenarios: Scenarios) {
 export const addonScenarios = addonVariants(
   supportMatrix(Scenarios.fromProject(() => baseAddon('dummy-app')))
 );
+
+function pluck(scenarios: Scenarios, variantName: string): Promise<Scenario> {
+  return new Promise<Scenario>((resolve) => {
+    scenarios.only(variantName).forEachScenario((scenario) => {
+      resolve(scenario);
+    });
+  });
+}
+
+async function getPreparedApp(scenario: Scenario): Promise<PreparedApp> {
+  const app = await scenario.prepare();
+
+  // Remove node_modules to ensure changes package.json result in a
+  // fresh node_modules directory after install
+  clean(app.dir);
+
+  const cmd = 'volta run yarn install';
+
+  let result = await app.execute(cmd);
+
+  if (result.exitCode !== 0) {
+    throw new Error(
+      `Test support failure for scenario: ${scenario.name}\nTried to executed command: ${cmd}\nOutput:\n\n${result.output}`
+    );
+  }
+
+  return app;
+}
+
+export function prepareAppTemplate() {
+  prepare(DIR_FIXTURE_EMBER_APP_TEMPLATE);
+}
+export function prepareAddonTemplate() {
+  prepare(DIR_FIXTURE_EMBER_ADDON_TEMPLATE);
+}
+
+export function setup() {
+  prepareAppTemplate();
+  prepareAddonTemplate();
+}
+
+export async function getEmberApp(variantName: string): Promise<PreparedApp> {
+  const scenario = await pluck(appScenarios, variantName);
+  return await getPreparedApp(scenario);
+}
+
+export async function getEmberAddon(variantName: string): Promise<PreparedApp> {
+  const scenario = await pluck(addonScenarios, variantName);
+  return await getPreparedApp(scenario);
+}

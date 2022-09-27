@@ -1,7 +1,7 @@
-export { getMigrationGraph } from './migration-graph';
+export { buildMigrationGraph } from './migration-graph';
 export { GraphNode } from './utils/graph-node';
 export { Graph } from './utils/graph';
-export { createImportGraph } from './entrypoint';
+export { createDependencyGraph } from './file-dependency-graph';
 export {
   isModuleRelative,
   isModuleNonRelative,
@@ -10,4 +10,11 @@ export {
   resolveRelativeModule,
 } from './module-resolution';
 
-export type { Package, UniqueGraphNode, PackageNode, FileNode } from './types';
+export {
+  getMigrationStrategy,
+  type MigrationStrategy,
+  type MigrationStrategyOptions,
+  type SourceFile,
+} from './migration-strategy';
+
+export type { UniqueGraphNode, PackageNode, ModuleNode } from './types';
