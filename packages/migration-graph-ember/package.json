@@ -3,7 +3,12 @@
   "version": "0.0.36",
   "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
-  "packageManager": "pnpm@7.12.1",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
@@ -12,17 +17,11 @@
     "prepare": "pnpm build",
     "test": "vitest --run"
   },
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
   "dependencies": {
-    "@rehearsal/migration-graph-shared": "^0.0.36",
     "@babel/generator": "^7.18.13",
     "@babel/parser": "^7.18.13",
     "@babel/traverse": "^7.18.13",
+    "@rehearsal/migration-graph-shared": "^0.0.36",
     "fast-glob": "^3.2.12",
     "find-up": "^5.0.0",
     "fs-extra": "^10.1.0",
@@ -41,6 +40,7 @@
   "peerDependencies": {
     "typescript": ">4.7"
   },
+  "packageManager": "pnpm@7.12.1",
   "volta": {
     "extends": "../../package.json"
   }

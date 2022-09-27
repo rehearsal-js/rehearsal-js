@@ -3,7 +3,12 @@
   "version": "0.0.36",
   "description": "Tool for generating a typescript migration graph",
   "license": "BSD-2-Clause",
-  "packageManager": "pnpm@7.12.1",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
@@ -12,12 +17,6 @@
     "prepare": "pnpm build",
     "test": "vitest --run"
   },
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
   "dependencies": {
     "findup-sync": "^5.0.0",
     "fs-extra": "^10.1.0",
@@ -35,6 +34,7 @@
   "peerDependencies": {
     "typescript": ">4.7"
   },
+  "packageManager": "pnpm@7.12.1",
   "volta": {
     "extends": "../../package.json"
   }
