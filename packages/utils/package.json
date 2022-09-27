@@ -11,6 +11,7 @@
     "tsc utils",
     "typescript"
   ],
+  "packageManager": "pnpm@7.12.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
@@ -27,15 +28,12 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
   "devDependencies": {
-    "@types/eslint": "^8.4.1",
-    "@types/node": "^18.0.3",
-    "@types/react": "^18.0.9",
-    "vitest": "^0.22.1"
+    "vitest": "^0.23.4"
   },
   "peerDependencies": {
     "typescript": ">4.7"

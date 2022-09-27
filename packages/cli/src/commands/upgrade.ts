@@ -14,16 +14,16 @@ import execa = require('execa');
 import { generateReports, reportFormatter } from '../helpers/report';
 import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
-  bumpDevDep,
+  addDep,
   determineProjectName,
   getLatestTSVersion,
+  getLockfilePath,
   getPathToBinary,
   git,
   gitCheckoutNewLocalBranch,
   gitCommit,
   gitIsRepoDirty,
   isValidSemver,
-  isYarnManager,
   parseCommaSeparatedList,
   timestamp,
 } from '../utils';
@@ -145,7 +145,7 @@ upgradeCommand
                     // there will be a diff so branch is created
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
-                  await bumpDevDep(`typescript@${ctx.tsVersion}`);
+                  await addDep([`typescript@${ctx.tsVersion}`], true);
                 },
               },
               {
@@ -155,7 +155,7 @@ upgradeCommand
                     task.skip('Skipping task because dryRun flag is set');
                   } else {
                     // eventually commit change
-                    const lockFile = (await isYarnManager()) ? 'yarn.lock' : 'package-lock.json';
+                    const lockFile = (await getLockfilePath()) || '';
                     await git.add(['package.json', lockFile]);
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
@@ -221,7 +221,7 @@ upgradeCommand
             await upgrade({ basePath, configName, reporter, logger });
 
             // TODO: Check if code actually been fixed
-            task.title = 'Code fixes applied successfully';
+            task.title = 'Codefixes applied successfully';
 
             if (!options.dryRun) {
               // add everything to the git repo within the specified src_dir

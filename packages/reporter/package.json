@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
+  "packageManager": "pnpm@7.12.1",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -23,7 +24,7 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
@@ -31,16 +32,14 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
+    "lodash.get": "^4.4.2",
+    "vitest": "^0.23.4",
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
     "@types/lodash.get": "^4.4.7",
     "@types/sarif": "^2.1.4",
-    "lodash.get": "^4.4.2",
-    "vitest": "^0.22.1",
-    "vitest-mock-extended": "^0.1.15"
-  },
-  "peerDependencies": {
-    "typescript": ">4.7"
+    "vitest-mock-extended": "^0.1.15",
+    "typescript": "4.7.4"
   },
   "engines": {
     "node": ">=14.16.0"

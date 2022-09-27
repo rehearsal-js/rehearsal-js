@@ -9,6 +9,7 @@
     "javascript",
     "typescript"
   ],
+  "packageManager": "pnpm@7.12.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
@@ -25,21 +26,21 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
   "dependencies": {
-    "@rehearsal/codefixes": "^0.0.36",
-    "@rehearsal/service": "^0.0.36",
+    "@rehearsal/codefixes": "workspace:*",
+    "@rehearsal/service": "workspace:*",
+    "@rehearsal/utils": "workspace:*",
+    "@rehearsal/reporter": "workspace:*",
     "eslint": "8.22.0"
   },
   "devDependencies": {
-    "@rehearsal/reporter": "^0.0.36",
-    "@rehearsal/utils": "^0.0.36",
-    "@types/eslint": "^8.4.1",
+    "vitest": "^0.23.4",
     "fixturify-project": "^5.0.3",
-    "vitest": "^0.22.1"
+    "@types/eslint": "^8.4.1"
   },
   "peerDependencies": {
     "typescript": ">4.7"

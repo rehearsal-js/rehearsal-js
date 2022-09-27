@@ -3,23 +3,22 @@
 ## Developemnt
 
 ```
-yarn install
-yarn prepare
+pnpm install
 ```
 
 ## Usage
 
 ```
-yarn prepare
+pnpm prepare
 cd packages/migration-graph
-yarn link
+pnpm link
 ```
 
 In your package:
 
 ```
-yarn link @rehearsal/migration-graph
-yarn migration-graph
+pnpm link @rehearsal/migration-graph
+pnpm migration-graph
 // Expect some output
 ```
 

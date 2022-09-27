@@ -4,7 +4,10 @@ import execa = require('execa');
 
 import {
   determineProjectName,
+  getModuleManager,
+  getModuleManagerInstaller,
   getPathToBinary,
+  isPnpmManager,
   isYarnManager,
   normalizeVersionString,
   sleep,
@@ -27,7 +30,7 @@ describe('utils', () => {
     },
   ])('normalizeVersionString', ({ args, expected }) => {
     test('args should be converted to expected version', () => {
-      expect(normalizeVersionString(...args)).toBe(expected);
+      expect(normalizeVersionString(args[0])).toBe(expected);
     });
   });
 
@@ -51,10 +54,29 @@ describe('utils', () => {
     expect(stdout).toContain(`Version`);
   });
 
-  // @rehearsal/cli uses yarn
+  // @rehearsal/cli uses pnpm
   test('isYarnManager()', async () => {
     const isYarn = await isYarnManager();
 
-    expect(isYarn).equal(true);
+    expect(isYarn).equal(false);
+  });
+
+  test('isPnpmManager()', async () => {
+    const isPnpm = await isPnpmManager();
+
+    expect(isPnpm).equal(true);
+  });
+
+  test('getModuleManager()', async () => {
+    const manager = await getModuleManager();
+
+    expect(manager).equal('pnpm');
+  });
+
+  test('getModuleManagerInstaller()', async () => {
+    const { bin, args } = await getModuleManagerInstaller('pnpm', ['typescript'], true);
+
+    expect(bin).equal('pnpm');
+    expect(args).toEqual(['add', '-D', 'typescript']);
   });
 });

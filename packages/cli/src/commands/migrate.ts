@@ -14,12 +14,7 @@ import { createLogger, format, transports } from 'winston';
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions } from '../types';
 import { UserConfig } from '../userConfig';
-import {
-  addDep,
-  determineProjectName,
-  parseCommaSeparatedList,
-  runYarnOrNpmCommand,
-} from '../utils';
+import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
@@ -156,7 +151,7 @@ migrateCommand
         {
           title: 'Run Typescript compiler to check errors',
           task: async () => {
-            await runYarnOrNpmCommand(['tsc'], { cwd: options.basePath });
+            await runModuleCommand(['tsc'], { cwd: options.basePath });
           },
         },
         // TODO: what to do with those ts errors?

@@ -5,20 +5,21 @@
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "packageManager": "pnpm@7.12.1",
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "yarn build",
-    "clean": "rm -rf fixtures/ember/*/node_modules",
-    "test": "vitest --run"
+    "prepare": "pnpm build",
+    "test": "vitest --run",
+    "clean": "rm -rf fixtures/ember/*/node_modules"
   },
   "dependencies": {
     "@babel/parser": "^7.18.4",
     "@babel/traverse": "^7.18.2",
-    "@rehearsal/migration-graph-ember": "^0.0.36",
-    "@rehearsal/migration-graph-shared": "^0.0.36",
+    "@rehearsal/migration-graph-ember": "workspace:*",
+    "@rehearsal/migration-graph-shared": "workspace:*",
     "@swc/core": "^1.2.233",
     "debug": "^4.3.4",
     "dependency-cruiser": "^11.15.0",
@@ -26,18 +27,20 @@
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
     "jsonc-parser": "^3",
-    "minimatch": "^5.1.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "minimatch": "^5.1.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.185",
-    "fixturify": "^2.1.1",
-    "lodash": "^4.17.21",
-    "micromatch": "^4",
+    "fixturify": "^2",
+    "tmp": "^0.2.1",
+    "vitest": "^0.23.4",
     "rimraf": "^3.0.2",
     "scenario-tester": "^2.1.2",
-    "tmp": "^0.2.1",
-    "vitest": "^0.22.1"
+    "lodash.merge": "^4.6.2",
+    "@types/rimraf": "^3.0.2",
+    "@types/lodash.merge": "^4.6.7",
+    "micromatch": "^4.0.4",
+    "@types/minimatch": "^5.1.2"
   },
   "peerDependencies": {
     "typescript": ">4.7"

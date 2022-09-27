@@ -11,7 +11,7 @@ import { type ProcessedFile, type Report, type ReportFormatter, type ReportItem 
 export class Reporter {
   readonly basePath: string;
 
-  private report: Report;
+  public report: Report;
   private logger?: Logger;
 
   constructor(projectName = '', basePath = '', logger?: Logger) {

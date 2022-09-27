@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import { git, gitIsRepoDirty } from '../src/utils';
 
 export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-export const YARN_PATH = resolve(VOLTA_HOME, 'bin/yarn');
+export const PNPM_PATH = resolve(VOLTA_HOME, 'bin/pnpm');
 
 export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<void> {
   // this should be the rehearsal-bot branch
@@ -34,9 +34,9 @@ export function runTSNode(
 ): execa.ExecaChildProcess {
   const cliPath = resolve(__dirname, `./runner.ts`);
   // why use ts-node instead of calling bin/rehearsal.js directly?
-  // during the test process there would be yarn install typescript
+  // during the test process there would be pnpm install typescript
   // we need to run build after every install to make sure dist dir is ready to use
-  return execa(YARN_PATH, ['ts-node', cliPath, command, ...args], options);
+  return execa(PNPM_PATH, ['ts-node', cliPath, command, ...args], options);
 }
 
 // helper funcion to run a command via the actual bin

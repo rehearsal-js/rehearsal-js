@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 import packageJson from '../../package.json';
 import { getLatestTSVersion, git } from '../../src/utils';
-import { gitDeleteLocalBranch, runTSNode, YARN_PATH } from '../test-helpers';
+import { gitDeleteLocalBranch, PNPM_PATH, runTSNode } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
@@ -19,7 +19,7 @@ const beforeSetup = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
 };
 
 const afterEachCleanup = async (): Promise<void> => {
@@ -28,8 +28,8 @@ const afterEachCleanup = async (): Promise<void> => {
 
 // Revert to previous TSC version from TEST_TSC_VERSION
 const revertTSCVersion = async (): Promise<void> => {
-  await execa(YARN_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`, '--ignore-scripts']);
-  await execa(YARN_PATH, ['install']);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['install']);
 };
 
 afterAll(revertTSCVersion);
@@ -116,8 +116,8 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript version already tested`, async () => {
     // this will test the version already installed
-    await execa(YARN_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`, '--ignore-scripts']);
-    await execa(YARN_PATH, ['install']);
+    await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+    await execa(PNPM_PATH, ['install']);
 
     const result = await runTSNode('upgrade', [
       FIXTURE_APP_PATH,

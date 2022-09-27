@@ -10,6 +10,7 @@
 *.log
 *.tgz
 *.tmp
+**/*.js.map
 
 coverage/
 dist/
@@ -17,5 +18,7 @@ node_modules/
 results/
 tmp/
 
-**SCRATCH**
-
+# we use pnpm for package management. scenario-tester uses yarn we dont want these files checkedin
+**/.yarn/**
+.yarnrc.yml
+yarn.lock

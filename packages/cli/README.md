@@ -19,7 +19,7 @@ yarn global add  @rehearsal/cli
 Or
 
 ```
-npm install -g @rehearsal/cli
+pnpm install -g @rehearsal/cli
 ```
 
 ## Usage
