@@ -5,41 +5,40 @@ function json(jsonObj = {}) {
   return JSON.stringify(jsonObj, null, 2);
 }
 
-const PACKAGE_FIXTURE_NAMES = {
+const EMBER_FIXTURE_NAMES = {
   PLAIN_PACKAGE: 'plain-package',
   SIMPLE_ADDON: 'simple-addon',
   SIMPLE_ENGINE: 'simple-engine',
   ADDON_WITH_MODULE_NAME: 'addon-with-module-name',
   ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN: 'addon-with-simple-custom-module-name',
-  ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN:
-    'addon-with-complex-custom-module-name',
+  ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN: 'addon-with-complex-custom-module-name',
   WORKSPACE_CONTAINER: 'workspace-container',
   NON_WORKSPACE_IN_WORKSPACE_CONTAINER: 'non-workspace',
   SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER: 'simple-workspace-addon',
   MULTIPLE_EXPORTS_FROM_ADDON_MAIN: 'multiple-exports-from-addon-main',
 };
 
-const PACKAGE_FIXTURES: { [key: string]: any; } = {};
+const EMBER_FIXTURES: { [key: string]: any } = {};
+
+// Stub this with a package.json becuase this directory of FIXTURES is use for genearting module mappings.
+EMBER_FIXTURES['package.json'] = json({
+  name: 'some-root',
+  version: '0.0.0',
+});
 
 // a non-ember package
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
-  'index.js': readFileSync(
-    join(__dirname, 'simple-addon', 'index.js'),
-    'utf-8'
-  ),
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.PLAIN_PACKAGE] = {
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
+    name: EMBER_FIXTURE_NAMES.PLAIN_PACKAGE,
     version: '1.0.0',
   }),
 };
 // a simple addon
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON] = {
-  'index.js': readFileSync(
-    join(__dirname, 'simple-addon', 'index.js'),
-    'utf-8'
-  ),
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_ADDON] = {
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON,
+    name: EMBER_FIXTURE_NAMES.SIMPLE_ADDON,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -48,13 +47,10 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON] = {
   }),
 };
 // a simple engine
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE] = {
-  'index.js': readFileSync(
-    join(__dirname, 'simple-addon', 'index.js'),
-    'utf-8'
-  ),
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_ENGINE] = {
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE,
+    name: EMBER_FIXTURE_NAMES.SIMPLE_ENGINE,
     version: '1.0.0',
     keywords: ['ember-addon', 'ember-engine'],
     dependencies: {
@@ -69,20 +65,20 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.SIMPLE_ENGINE] = {
   }),
 };
 // an addon with a custom module name
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME] = {
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME] = {
   'index.js': `'use strict';
 
     const { name } = require('./package');
 
     module.exports = {
       name,
-      moduleName: () => '${PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME',
+      moduleName: () => '${EMBER_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME',
       isDevelopingAddon: () => true,
       includeTestsInHost: true,
     };
   `,
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME,
+    name: EMBER_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -91,7 +87,7 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_MODULE_NAME] = {
   }),
 };
 // an addon with a more complex addon-main
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN] = {
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN] = {
   'index.js': `'use strict';
 
     const { name } = require('./package');
@@ -105,7 +101,7 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN] = {
     };
   `,
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN,
+    name: EMBER_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -114,43 +110,35 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.MULTIPLE_EXPORTS_FROM_ADDON_MAIN] = {
   }),
 };
 // an addon with a simple custom package main file
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN] =
-  {
-    'index.js': readFileSync(
-      join(__dirname, 'simple-addon', 'index.js'),
-      'utf-8'
-    ),
-    'ember-addon-main.js': `'use strict';
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN] = {
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
+  'ember-addon-main.js': `'use strict';
 
     const { name } = require('./package');
 
     module.exports = {
       name,
-      moduleName: () => '${PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN}',
+      moduleName: () => '${EMBER_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN}',
       fileName: __filename.split(/[\\/]/).pop(),
       isDevelopingAddon: () => true,
       includeTestsInHost: true,
     };
     `,
-    'package.json': json({
-      name: PACKAGE_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN,
-      version: '1.0.0',
-      keywords: ['ember-addon'],
-      'ember-addon': {
-        main: 'ember-addon-main.js',
-        paths: [],
-      },
-    }),
-  };
+  'package.json': json({
+    name: EMBER_FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN,
+    version: '1.0.0',
+    keywords: ['ember-addon'],
+    'ember-addon': {
+      main: 'ember-addon-main.js',
+      paths: [],
+    },
+  }),
+};
 
 // an addon with a complex custom package main file
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN] =
-  {
-    'index.js': readFileSync(
-      join(__dirname, 'simple-addon', 'index.js'),
-      'utf-8'
-    ),
-    'ember-addon-main.js': `'use strict';
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN] = {
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
+  'ember-addon-main.js': `'use strict';
 
   const { name } = require('./package.json');
 
@@ -163,26 +151,26 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN] =
   module.exports = voyagerAddon(
     __dirname,
     BPREngineAddon.extend({
-      name: '${PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN}',
-      moduleName: () => '${PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN}',
+      name: '${EMBER_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN}',
+      moduleName: () => '${EMBER_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN}',
       lazyLoading: { enabled: true },
       includeTestsInHost: true,
       isDevelopingAddon: () => true,
     })
   );
   `,
-    'package.json': json({
-      name: PACKAGE_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN,
-      version: '1.0.0',
-      keywords: ['ember-addon'],
-      'ember-addon': {
-        main: 'ember-addon-main.js',
-        paths: [],
-      },
-    }),
-  };
+  'package.json': json({
+    name: EMBER_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN,
+    version: '1.0.0',
+    keywords: ['ember-addon'],
+    'ember-addon': {
+      main: 'ember-addon-main.js',
+      paths: [],
+    },
+  }),
+};
 
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
   'package.json': json({
     name: 'workspace-container',
     private: true,
@@ -191,15 +179,12 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
   packages: {},
 };
 
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
-  PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER][
+  EMBER_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER
 ] = {
-  'index.js': readFileSync(
-    join(__dirname, 'simple-addon', 'index.js'),
-    'utf-8'
-  ),
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER,
+    name: EMBER_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -208,15 +193,12 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
   }),
 };
 
-PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
-  PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
+  EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER
 ] = {
-  'index.js': readFileSync(
-    join(__dirname, 'simple-addon', 'index.js'),
-    'utf-8'
-  ),
+  'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: PACKAGE_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER,
+    name: EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -225,4 +207,4 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
   }),
 };
 // export the fixture and names for easier mapping
-export { PACKAGE_FIXTURES, PACKAGE_FIXTURE_NAMES };
+export { EMBER_FIXTURES as FIXTURES, EMBER_FIXTURE_NAMES as FIXTURE_NAMES };

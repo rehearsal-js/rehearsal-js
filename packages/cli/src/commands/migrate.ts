@@ -3,17 +3,16 @@
 // TODO: handle ctrl + c
 
 import { migrate } from '@rehearsal/migrate';
+import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { cruise, ICruiseOptions, ICruiseResult, IDependency, IModule } from 'dependency-cruiser';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { resolve } from 'path';
-import toposort from 'toposort';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';
-import { MigrateCommandContext, MigrateCommandOptions, ParsedModuleResult } from '../types';
+import { MigrateCommandContext, MigrateCommandOptions } from '../types';
 import { UserConfig } from '../userConfig';
 import {
   addDep,
@@ -37,7 +36,7 @@ migrateCommand
   .name('migrate')
   .description('Migrate Javascript project to Typescript')
   .requiredOption('-p, --basePath <project base path>', 'Base dir path of your project.')
-  .requiredOption('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
+  .option('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-r, --report <reportTypes>',
     'Report types separated by comma, e.g. -r json,sarif,md',
@@ -94,7 +93,14 @@ migrateCommand
                 task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
               } else {
                 task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
-                const sourceFiles: string[] = getDependencyOrder(options.entrypoint);
+
+                // TODO We shouldn't run this twice, but it's ok for small applications.
+                const strategy = getMigrationStrategy(options.basePath, {
+                  entrypoint: options.entrypoint,
+                });
+                const files: Array<SourceFile> = strategy.getMigrationOrder();
+                const sourceFiles: Array<string> = files.map((f) => f.relativePath);
+
                 createTSConfig(options.basePath, sourceFiles, !!options.strict);
               }
             }
@@ -106,7 +112,13 @@ migrateCommand
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
 
-            const sourceFiles: string[] = getDependencyOrder(options.entrypoint);
+            // TODO We shouldn't run this twice, but it's ok for small applications.
+            const strategy = getMigrationStrategy(options.basePath, {
+              entrypoint: options.entrypoint,
+            });
+            const files: Array<SourceFile> = strategy.getMigrationOrder();
+            const sourceFiles: string[] = files.map((f) => f.path);
+
             ctx.sourceFiles = sourceFiles;
             if (sourceFiles) {
               const input = {
@@ -219,50 +231,4 @@ function createTSConfig(basePath: string, fileList: string[], strict: boolean): 
  */
 function cleanJSFiles(fileList: string[]): void {
   fileList.filter((f) => f.match(/\.js$/)).forEach((f) => rmSync(f));
-}
-
-// Feed entrypoint to dependency-cruise to get an array or file list with migration order
-function getDependencyOrder(entrypoint: string): string[] {
-  const cruiseOptions: ICruiseOptions = {
-    exclude: {
-      path: 'node_modules',
-    },
-  };
-
-  const output = cruise([entrypoint], cruiseOptions).output as ICruiseResult;
-
-  const { edgeList, coreDepList } = parseModuleList(output.modules);
-
-  const dependencyList = toposort(edgeList).reverse(); // leaf first
-
-  // remove core deps (fs, path, os, etc) from depList
-  return dependencyList.filter((d) => {
-    return !coreDepList.includes(d);
-  });
-}
-
-// Process IModule[] from dependency-cruise to create
-// 1. directional edges (graph) -> [module, dependency]
-// 2. List of core deps which should be excluded in migration files
-function parseModuleList(moduleList: IModule[]): ParsedModuleResult {
-  const edgeList: Array<[string, string | undefined]> = [];
-  const coreDepList: string[] = ['sample-core']; // sample-core is a fake dep for files with no dependency
-
-  moduleList.forEach((m: IModule) => {
-    if (m.dependencies.length > 0) {
-      m.dependencies.forEach((d: IDependency) => {
-        if (d.dependencyTypes.includes('core') && !coreDepList.includes(d.resolved)) {
-          coreDepList.push(d.resolved);
-        }
-        edgeList.push([m.source, d.resolved]);
-      });
-    } else {
-      // if a file has no dependency, we still want to migrate it from JS to TS
-      // Thus, adding a fake coreDep here to including this file in migrate function
-      // Or this file would be ignored
-      // Eventually sample-core would be cleaned since it's inside coreDepList
-      edgeList.push([m.source, 'sample-core']);
-    }
-  });
-  return { edgeList, coreDepList };
 }
