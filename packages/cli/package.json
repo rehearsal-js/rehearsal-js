@@ -50,9 +50,11 @@
     "semver": "^7.3.5",
     "simple-git": "^3.10.0",
     "tmp": "^0.2.1",
+    "which": "^2.0.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/which": "^2.0.1",
     "typescript": "4.7.4",
     "vitest": "^0.23.4"
   },

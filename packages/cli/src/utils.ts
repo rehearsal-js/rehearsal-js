@@ -3,6 +3,7 @@ import { parse } from 'json5';
 import { join, resolve } from 'path';
 import { valid } from 'semver';
 import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
+import which from 'which';
 
 import findup = require('findup-sync');
 import execa = require('execa');
@@ -205,23 +206,25 @@ export async function getModuleManagerInstaller(
   depList: string[],
   isDev: boolean
 ): Promise<{ bin: string; args: string[] }> {
+  const bin = which.sync(manager);
+
   switch (manager) {
     case 'yarn':
       return {
-        bin: 'yarn',
+        bin,
         args: isDev
           ? ['add', '-D', ...depList, '--ignore-scripts']
           : ['add', ...depList, '--ignore-scripts'],
       };
     case 'pnpm':
       return {
-        bin: 'pnpm',
+        bin,
         args: isDev ? ['add', '-D', ...depList] : ['add', ...depList],
       };
     case 'npm':
     default:
       return {
-        bin: 'npm',
+        bin,
         args: isDev
           ? ['install', ...depList, '--save-dev', '--ignore-scripts']
           : ['install', ...depList, '--ignore-scripts'],
@@ -249,25 +252,25 @@ export async function runModuleCommand(args: string[], option: execa.Options = {
     bin: moduleManager,
     args,
   };
-  await execa(binAndArgs.bin, binAndArgs.args, option);
+  await execa(binAndArgs.bin, [...binAndArgs.args], option);
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
-// we need to handle volta use case and check for npm or yarn
+// and volta use case
 export async function getPathToBinary(
   binaryName: string,
   options: execa.Options = {}
 ): Promise<string> {
-  // if volta exists on the path use it
+  // pnpm | yarn | npm
   const moduleManager = await getModuleManager();
-  const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-  const resolvedModuleManager = VOLTA_HOME
-    ? resolve(VOLTA_HOME, `bin/${moduleManager}`)
-    : moduleManager;
+  // /Users/foo/.volta/bin/yarn
+  // /usr/local/bin/pnpm
+  const moduleManagerBin = which.sync(moduleManager);
+
   let stdoutMsg;
 
   try {
-    const { stdout } = await execa(resolvedModuleManager, ['bin', binaryName], options);
+    const { stdout } = await execa(moduleManagerBin, ['bin', binaryName], options);
     stdoutMsg = stdout;
   } catch (e) {
     throw new Error(`Unable to find binary path to ${binaryName}`);
@@ -277,7 +280,7 @@ export async function getPathToBinary(
   try {
     return resolve(join(stdoutMsg.trim(), binaryName));
   } catch (error) {
-    throw new Error(`Unable to find ${binaryName} with ${moduleManager}`);
+    throw new Error(`Unable to find ${binaryName} with ${moduleManagerBin}`);
   }
 }
 

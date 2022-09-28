@@ -1,10 +1,10 @@
 import execa from 'execa';
 import { resolve } from 'path';
+import which from 'which';
 
 import { git, gitIsRepoDirty } from '../src/utils';
 
-export const { VOLTA_HOME } = process.env as { VOLTA_HOME: string };
-export const PNPM_PATH = resolve(VOLTA_HOME, 'bin/pnpm');
+export const PNPM_PATH = which.sync('pnpm');
 
 export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<void> {
   // this should be the rehearsal-bot branch
