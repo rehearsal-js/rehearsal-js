@@ -60,7 +60,7 @@ migrateCommand
     const tasks = new Listr<MigrateCommandContext>(
       [
         {
-          title: 'Initializatoin',
+          title: 'Initialization',
           task: async (_ctx, task) => {
             // get custom config
             const userConfig = options.userConfig
