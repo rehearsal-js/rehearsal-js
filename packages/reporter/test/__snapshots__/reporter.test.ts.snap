@@ -15,8 +15,10 @@ exports[`Test reporter > addItem 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 1,
-            \\"character\\": 1
+            \\"startLine\\": 1,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 1
           },
           \\"fixed\\": true,
           \\"code\\": \\"import react from 'react';\\",
@@ -36,10 +38,10 @@ exports[`Test reporter > addItem 1`] = `
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
-        \\"start\\": 0,
-        \\"length\\": 26,
-        \\"line\\": 0,
-        \\"character\\": 0
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
       }
     },
     {
@@ -48,8 +50,10 @@ exports[`Test reporter > addItem 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 2,
-            \\"character\\": 7
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 20
           },
           \\"fixed\\": false,
           \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
@@ -68,10 +72,10 @@ exports[`Test reporter > addItem 1`] = `
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
-        \\"start\\": 15,
-        \\"length\\": 1,
-        \\"line\\": 1,
-        \\"character\\": 6
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 20
       }
     },
     {
@@ -80,8 +84,10 @@ exports[`Test reporter > addItem 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 9,
-            \\"character\\": 6
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 26
           },
           \\"fixed\\": false,
           \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
@@ -100,20 +106,22 @@ exports[`Test reporter > addItem 1`] = `
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {
-        \\"start\\": 283,
-        \\"length\\": 2,
-        \\"line\\": 8,
-        \\"character\\": 5
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 26
       }
     },
     {
-      \\"analysisTarget\\": \\"testFile.ts\\",
+      \\"analysisTarget\\": \\"testFile1.ts\\",
       \\"files\\": {
         \\"/base/path/testFile.ts\\": {
           \\"fileName\\": \\"/base/path/testFile.ts\\",
           \\"location\\": {
-            \\"line\\": 3,
-            \\"character\\": 7
+            \\"startLine\\": 3,
+            \\"startColumn\\": 7,
+            \\"endLine\\": 3,
+            \\"endColumn\\": 12
           },
           \\"fixed\\": false,
           \\"hint\\": \\"This is the hint.\\",
@@ -131,8 +139,10 @@ exports[`Test reporter > addItem 1`] = `
       \\"fixed\\": false,
       \\"helpUrl\\": \\"\\",
       \\"nodeLocation\\": {
-        \\"line\\": 0,
-        \\"character\\": 5
+        \\"startLine\\": 0,
+        \\"startColumn\\": 5,
+        \\"endLine\\": 0,
+        \\"endColumn\\": 5
       }
     }
   ]
@@ -153,8 +163,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
         "fixed": true,
         "hintAdded": false,
         "location": {
-          "character": 1,
-          "line": 1,
+          "endColumn": 1,
+          "endLine": 1,
+          "startColumn": 1,
+          "startLine": 1,
         },
         "roles": [
           "analysisTarget",
@@ -167,10 +179,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "message": "'react' is declared but its value is never read.",
     "nodeKind": "ImportDeclaration",
     "nodeLocation": {
-      "character": 0,
-      "length": 26,
-      "line": 0,
-      "start": 0,
+      "endColumn": 12,
+      "endLine": 1,
+      "startColumn": 1,
+      "startLine": 1,
     },
     "nodeText": "import react from 'react';",
   },
@@ -185,8 +197,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
         "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
         "hintAdded": true,
         "location": {
-          "character": 7,
-          "line": 2,
+          "endColumn": 20,
+          "endLine": 1,
+          "startColumn": 10,
+          "startLine": 1,
         },
         "roles": [
           "analysisTarget",
@@ -199,10 +213,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "message": "Type 'string' is not assignable to type 'number'.",
     "nodeKind": "Identifier",
     "nodeLocation": {
-      "character": 6,
-      "length": 1,
-      "line": 1,
-      "start": 15,
+      "endColumn": 20,
+      "endLine": 1,
+      "startColumn": 10,
+      "startLine": 1,
     },
     "nodeText": "a",
   },
@@ -217,8 +231,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
         "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
         "hintAdded": true,
         "location": {
-          "character": 6,
-          "line": 9,
+          "endColumn": 26,
+          "endLine": 1,
+          "startColumn": 10,
+          "startLine": 1,
         },
         "roles": [
           "analysisTarget",
@@ -231,10 +247,10 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
     "nodeKind": "ObjectLiteralExpression",
     "nodeLocation": {
-      "character": 5,
-      "length": 2,
-      "line": 8,
-      "start": 283,
+      "endColumn": 26,
+      "endLine": 1,
+      "startColumn": 10,
+      "startLine": 1,
     },
     "nodeText": "{}",
   },
@@ -256,8 +272,10 @@ exports[`Test reporter > load 1`] = `
           "fixed": true,
           "hintAdded": false,
           "location": {
-            "character": 1,
-            "line": 1,
+            "endColumn": 1,
+            "endLine": 1,
+            "startColumn": 1,
+            "startLine": 1,
           },
           "roles": [
             "analysisTarget",
@@ -270,10 +288,10 @@ exports[`Test reporter > load 1`] = `
       "message": "'react' is declared but its value is never read.",
       "nodeKind": "ImportDeclaration",
       "nodeLocation": {
-        "character": 0,
-        "length": 26,
-        "line": 0,
-        "start": 0,
+        "endColumn": 12,
+        "endLine": 1,
+        "startColumn": 1,
+        "startLine": 1,
       },
       "nodeText": "import react from 'react';",
     },
@@ -288,8 +306,10 @@ exports[`Test reporter > load 1`] = `
           "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
           "hintAdded": true,
           "location": {
-            "character": 7,
-            "line": 2,
+            "endColumn": 20,
+            "endLine": 1,
+            "startColumn": 10,
+            "startLine": 1,
           },
           "roles": [
             "analysisTarget",
@@ -302,10 +322,10 @@ exports[`Test reporter > load 1`] = `
       "message": "Type 'string' is not assignable to type 'number'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "character": 6,
-        "length": 1,
-        "line": 1,
-        "start": 15,
+        "endColumn": 20,
+        "endLine": 1,
+        "startColumn": 10,
+        "startLine": 1,
       },
       "nodeText": "a",
     },
@@ -320,8 +340,10 @@ exports[`Test reporter > load 1`] = `
           "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
           "hintAdded": true,
           "location": {
-            "character": 6,
-            "line": 9,
+            "endColumn": 26,
+            "endLine": 1,
+            "startColumn": 10,
+            "startLine": 1,
           },
           "roles": [
             "analysisTarget",
@@ -334,10 +356,10 @@ exports[`Test reporter > load 1`] = `
       "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
       "nodeKind": "ObjectLiteralExpression",
       "nodeLocation": {
-        "character": 5,
-        "length": 2,
-        "line": 8,
-        "start": 283,
+        "endColumn": 26,
+        "endLine": 1,
+        "startColumn": 10,
+        "startLine": 1,
       },
       "nodeText": "{}",
     },
@@ -366,8 +388,10 @@ exports[`Test reporter > print, json 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 1,
-            \\"character\\": 1
+            \\"startLine\\": 1,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 1
           },
           \\"fixed\\": true,
           \\"code\\": \\"import react from 'react';\\",
@@ -387,10 +411,10 @@ exports[`Test reporter > print, json 1`] = `
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
-        \\"start\\": 0,
-        \\"length\\": 26,
-        \\"line\\": 0,
-        \\"character\\": 0
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
       }
     },
     {
@@ -399,8 +423,10 @@ exports[`Test reporter > print, json 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 2,
-            \\"character\\": 7
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 20
           },
           \\"fixed\\": false,
           \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
@@ -419,10 +445,10 @@ exports[`Test reporter > print, json 1`] = `
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
-        \\"start\\": 15,
-        \\"length\\": 1,
-        \\"line\\": 1,
-        \\"character\\": 6
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 20
       }
     },
     {
@@ -431,8 +457,10 @@ exports[`Test reporter > print, json 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 9,
-            \\"character\\": 6
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 26
           },
           \\"fixed\\": false,
           \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
@@ -451,10 +479,10 @@ exports[`Test reporter > print, json 1`] = `
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {
-        \\"start\\": 283,
-        \\"length\\": 2,
-        \\"line\\": 8,
-        \\"character\\": 5
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 26
       }
     }
   ]
@@ -499,8 +527,10 @@ exports[`Test reporter > save 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 1,
-            \\"character\\": 1
+            \\"startLine\\": 1,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 1
           },
           \\"fixed\\": true,
           \\"code\\": \\"import react from 'react';\\",
@@ -520,10 +550,10 @@ exports[`Test reporter > save 1`] = `
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
-        \\"start\\": 0,
-        \\"length\\": 26,
-        \\"line\\": 0,
-        \\"character\\": 0
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
       }
     },
     {
@@ -532,8 +562,10 @@ exports[`Test reporter > save 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 2,
-            \\"character\\": 7
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 20
           },
           \\"fixed\\": false,
           \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
@@ -552,10 +584,10 @@ exports[`Test reporter > save 1`] = `
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
-        \\"start\\": 15,
-        \\"length\\": 1,
-        \\"line\\": 1,
-        \\"character\\": 6
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 20
       }
     },
     {
@@ -564,8 +596,10 @@ exports[`Test reporter > save 1`] = `
         \\"/base/path/file1.ts\\": {
           \\"fileName\\": \\"/base/path/file1.ts\\",
           \\"location\\": {
-            \\"line\\": 9,
-            \\"character\\": 6
+            \\"startLine\\": 1,
+            \\"startColumn\\": 10,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 26
           },
           \\"fixed\\": false,
           \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
@@ -584,10 +618,10 @@ exports[`Test reporter > save 1`] = `
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {
-        \\"start\\": 283,
-        \\"length\\": 2,
-        \\"line\\": 8,
-        \\"character\\": 5
+        \\"startLine\\": 1,
+        \\"startColumn\\": 10,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 26
       }
     }
   ]

@@ -22,14 +22,9 @@ export class ReRehearsePlugin extends Plugin {
         continue;
       }
 
-      // Comment end, including a tailing new line character
-      const commentSpanEnd =
-        commentSpan.start +
-        commentSpan.length +
-        +isLineBreak(text.charCodeAt(commentSpan.start + commentSpan.length)); // include `\n`
-
-      // Remove comment
-      text = text.substring(0, commentSpan.start) + text.substring(commentSpanEnd);
+      // Remove comment, together with the {} that wraps around comments in React, and  `\n`
+      const boundary = getBoundaryOfCommentBlock(commentSpan.start, commentSpan.length, text);
+      text = text.substring(0, boundary.start) + text.substring(boundary.end + 1);
     }
 
     this.service.setFileText(fileName, text);
@@ -38,4 +33,22 @@ export class ReRehearsePlugin extends Plugin {
 
     return [fileName];
   }
+}
+
+function getBoundaryOfCommentBlock(
+  start: number,
+  length: number,
+  text: string
+): { start: number; end: number } {
+  const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
+
+  let end = start + length - 1;
+
+  end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
+  end = isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
+
+  return {
+    start: newStart,
+    end,
+  };
 }

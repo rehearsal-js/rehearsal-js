@@ -14,8 +14,10 @@ const addRuleData: Report = {
         ["add-rule-1.ts"]: {
           fileName: "add-rule-1.ts",
           location: {
-          line: 1,
-          character: 1
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 1,
           },
           fixed: true,
           code: "import { resolve } from 'path';",
@@ -36,10 +38,10 @@ const addRuleData: Report = {
       nodeKind: "ImportDeclaration",
       nodeText: "import { resolve } from 'path';",
       nodeLocation: {
-        start: 0,
-        length: 31,
-        line: 0,
-        character: 0
+        startLine: 1,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 10,
       }
     },
     {
@@ -48,8 +50,10 @@ const addRuleData: Report = {
         ["add-rule-1.ts"]: {
           fileName: "add-rule-1.ts",
           location: {
-            line: 2,
-            character: 7
+            startLine: 3,
+            startColumn: 1,
+            endLine: 3,
+            endColumn: 2,
           },
           fixed: false,
           code: '',
@@ -70,10 +74,10 @@ const addRuleData: Report = {
       nodeKind: "Identifier",
       nodeText: "a",
       nodeLocation: {
-        start: 15,
-        length: 1,
-        line: 1,
-        character: 6
+        startLine: 3,
+        startColumn: 1,
+        endLine: 2,
+        endColumn: 2,
       }
     },
     {
@@ -82,8 +86,10 @@ const addRuleData: Report = {
         ["add-rule-2.ts"]: {
           fileName: "add-rule-2.ts",
           location: {
-            line: 5,
-            character: 13
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 5,
           },
           fixed: false,
           code: '',
@@ -104,10 +110,10 @@ const addRuleData: Report = {
       nodeKind: "FirstLiteralToken",
       nodeText: "6",
       nodeLocation: {
-        start: 81,
-        length: 1,
-        line: 4,
-        character: 12
+        startLine: 3,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 5,
       }
     }
   ]

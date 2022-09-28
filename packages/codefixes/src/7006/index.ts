@@ -30,7 +30,7 @@ export class FixTransform7006 extends FixTransform {
       {}
     );
 
-    const stubLocation = { line: 0, character: 0 }; // TODO: actually get the correct coordinates for this.
+    const stubLocation = { startLine: 1, startColumn: 1, endLine: 1, endColumn: 1 }; // TODO: actually get the correct coordinates for this.
 
     fixes.forEach((fix) => {
       if (fix.fixId) {
