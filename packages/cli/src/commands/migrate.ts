@@ -52,20 +52,36 @@ migrateCommand
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
 
-    // get custom config
-    const userConfig = options.userConfig
-      ? new UserConfig(options.basePath, options.userConfig, 'migrate')
-      : undefined;
-
     const tasks = new Listr<MigrateCommandContext>(
       [
+        {
+          title: 'Initialization',
+          task: async (_ctx, task) => {
+            // get custom config
+            const userConfig = options.userConfig
+              ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+              : undefined;
+
+            _ctx.userConfig = userConfig;
+
+            const strategy = getMigrationStrategy(options.basePath, {
+              entrypoint: options.entrypoint,
+            });
+            const files: Array<SourceFile> = strategy.getMigrationOrder();
+            _ctx.strategy = strategy;
+            _ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
+            _ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
+
+            task.title = `Initializatoin Completed! Running migration on ${_ctx.strategy.sourceType}`;
+          },
+        },
         {
           title: 'Installing dependencies',
           task: async (_ctx, task) => {
             // install custom dependencies
-            if (userConfig?.hasDependencies) {
+            if (_ctx.userConfig?.hasDependencies) {
               task.title = `Installing custom dependencies`;
-              await userConfig.install();
+              await _ctx.userConfig.install();
             }
 
             if (ifHasTypescriptInDevdep(options.basePath)) {
@@ -78,9 +94,9 @@ migrateCommand
         {
           title: 'Creating tsconfig.json',
           task: async (_ctx, task) => {
-            if (userConfig?.hasTsSetup) {
+            if (_ctx.userConfig?.hasTsSetup) {
               task.title = `Creating tsconfig from custom config.`;
-              await userConfig.tsSetup();
+              await _ctx.userConfig.tsSetup();
             } else {
               const configPath = resolve(options.basePath, 'tsconfig.json');
 
@@ -89,36 +105,25 @@ migrateCommand
               } else {
                 task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
 
-                // TODO We shouldn't run this twice, but it's ok for small applications.
-                const strategy = getMigrationStrategy(options.basePath, {
-                  entrypoint: options.entrypoint,
-                });
-                const files: Array<SourceFile> = strategy.getMigrationOrder();
-                const sourceFiles: Array<string> = files.map((f) => f.relativePath);
-
-                createTSConfig(options.basePath, sourceFiles, !!options.strict);
+                createTSConfig(
+                  options.basePath,
+                  _ctx.sourceFilesWithRelativePath,
+                  !!options.strict
+                );
               }
             }
           },
         },
         {
           title: 'Converting JS files to TS',
-          task: async (ctx, task) => {
+          task: async (_ctx, task) => {
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
 
-            // TODO We shouldn't run this twice, but it's ok for small applications.
-            const strategy = getMigrationStrategy(options.basePath, {
-              entrypoint: options.entrypoint,
-            });
-            const files: Array<SourceFile> = strategy.getMigrationOrder();
-            const sourceFiles: string[] = files.map((f) => f.path);
-
-            ctx.sourceFiles = sourceFiles;
-            if (sourceFiles) {
+            if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
                 basePath: options.basePath,
-                sourceFiles,
+                sourceFiles: _ctx.sourceFilesWithAbsolutePath,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
@@ -140,9 +145,9 @@ migrateCommand
         },
         {
           title: 'Clean up old JS files', // TODO: flag
-          task: async (ctx, task) => {
-            if (ctx.sourceFiles.length && options.clean) {
-              cleanJSFiles(ctx.sourceFiles);
+          task: async (_ctx, task) => {
+            if (_ctx.sourceFilesWithAbsolutePath.length && options.clean) {
+              cleanJSFiles(_ctx.sourceFilesWithAbsolutePath);
             } else {
               task.skip(`Skipping clean up task`);
             }
@@ -159,9 +164,9 @@ migrateCommand
         {
           title: 'Creating lint config',
           task: async (_ctx, task) => {
-            if (userConfig?.hasLintSetup) {
+            if (_ctx.userConfig?.hasLintSetup) {
               task.title = `Creating .eslintrc.js from custom config.`;
-              await userConfig.lintSetup();
+              await _ctx.userConfig.lintSetup();
             } else {
               task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
             }

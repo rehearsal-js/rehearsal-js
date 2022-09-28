@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { join, relative } from 'path';
 
-import { buildMigrationGraph, MigrationGraphOptions } from './migration-graph';
+import { buildMigrationGraph, DetectedSource, MigrationGraphOptions } from './migration-graph';
 import { ModuleNode, PackageNode } from './types';
 import { GraphNode } from './utils/graph-node';
 
@@ -35,6 +35,11 @@ export class SourceFile {
 
 export class MigrationStrategy {
   #files: Array<SourceFile> = [];
+  #sourceType: DetectedSource;
+
+  constructor(sourceType: DetectedSource) {
+    this.#sourceType = sourceType;
+  }
 
   addFile(file: SourceFile): void {
     this.#files.push(file);
@@ -42,6 +47,10 @@ export class MigrationStrategy {
 
   get files(): Array<SourceFile> {
     return this.#files;
+  }
+
+  get sourceType(): DetectedSource {
+    return this.#sourceType;
   }
 
   getMigrationOrder(): Array<SourceFile> {
@@ -65,7 +74,7 @@ export function getMigrationStrategy(
   rootDir = fs.realpathSync(rootDir);
   const m = buildMigrationGraph(rootDir, options);
 
-  const strategy = new MigrationStrategy();
+  const strategy = new MigrationStrategy(m.sourceType);
 
   m.graph
     .topSort()

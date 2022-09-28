@@ -6,6 +6,7 @@ const TEST_TIMEOUT = 500000;
 
 import { PreparedApp } from 'scenario-tester';
 
+import { DetectedSource } from '../src/migration-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 import { getLibrarySimple, getLibraryWithEntrypoint } from './fixtures/library';
 
@@ -17,6 +18,7 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
+      expect(strategy.sourceType).toBe(DetectedSource.Library);
     });
     test('simple with entrypoint', () => {
       const rootDir = getLibraryWithEntrypoint();
@@ -24,6 +26,7 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['foo.js', 'depends-on-foo.js']);
+      expect(strategy.sourceType).toBe(DetectedSource.Library);
     });
   });
 
@@ -45,6 +48,7 @@ describe('migration-strategy', () => {
           'app/components/salutation.js',
           'app/router.js',
         ]);
+        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -65,6 +69,7 @@ describe('migration-strategy', () => {
           'app/components/salutation.js',
           'app/router.js',
         ]);
+        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -86,6 +91,7 @@ describe('migration-strategy', () => {
           'app/components/salutation.js',
           'app/router.js',
         ]);
+        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -102,6 +108,7 @@ describe('migration-strategy', () => {
           'app/components/greet.js',
           'index.js',
         ]);
+        expect(strategy.sourceType).toBe(DetectedSource.EmberAddon);
       },
       TEST_TIMEOUT
     );
