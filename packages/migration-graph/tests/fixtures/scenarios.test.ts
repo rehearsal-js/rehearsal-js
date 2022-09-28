@@ -22,10 +22,10 @@ describe('scenarios', () => {
           'should pass tests',
           async () => {
             // Setup
-            let result = await app.execute('volta run npm install');
+            let result = await app.execute('npm install');
             expect(result.exitCode, result.output).toBe(0);
             // Should pass acceptance tests
-            result = await app.execute('volta run npm test');
+            result = await app.execute('npm test');
             expect(result.exitCode, result.output).toBe(0);
           },
           TEST_TIMEOUT
@@ -48,10 +48,10 @@ describe('scenarios', () => {
           'should pass tests',
           async () => {
             // Setup
-            let result = await app.execute('volta run npm install');
+            let result = await app.execute('npm install');
             expect(result.exitCode, result.output).toBe(0);
             // Should pass acceptance tests
-            result = await app.execute('volta run npm test');
+            result = await app.execute('npm test');
             expect(result.exitCode, result.output).toBe(0);
           },
           TEST_TIMEOUT

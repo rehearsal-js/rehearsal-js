@@ -76,7 +76,7 @@ describe('utils', () => {
   test('getModuleManagerInstaller()', async () => {
     const { bin, args } = await getModuleManagerInstaller('pnpm', ['typescript'], true);
 
-    expect(bin).equal('pnpm');
+    expect(bin).toContain('pnpm');
     expect(args).toEqual(['add', '-D', 'typescript']);
   });
 });
