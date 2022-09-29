@@ -14,8 +14,10 @@ const addArtifactData: Report = {
         ["add-artifact-2.ts"]: {
           fileName: "add-artifact-2.ts",
           location: {
-            line: 8,
-            character: 8
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 20,
           },
           fixed: false,
           hint: '',
@@ -30,8 +32,10 @@ const addArtifactData: Report = {
         ["add-artifact-1.ts"]: {
           fileName: "add-artifact-1.ts",
           location: {
-            line: 3,
-            character: 18
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 6,
           },
           hint: '',
           fixed: true,
@@ -52,10 +56,10 @@ const addArtifactData: Report = {
       nodeKind: "PropertyAccessExpression",
       nodeText: "teacher.yearsOfTeaching",
       nodeLocation: {
-        start: 143,
-        length: 23,
-        line: 7,
-        character: 7
+        startLine: 1,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 4,
       }
     },
     {
@@ -64,8 +68,10 @@ const addArtifactData: Report = {
         ["add-artifact-2.ts"]: {
           fileName: "add-artifact-2.ts",
           location: {
-            line: 14,
-            character: 18
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 8,
           },
           fixed: false,
           code: '',
@@ -86,10 +92,10 @@ const addArtifactData: Report = {
       nodeKind: "FirstLiteralToken",
       nodeText: "4",
       nodeLocation: {
-        start: 275,
-        length: 1,
-        line: 13,
-        character: 17
+        startLine: 1,
+        startColumn: 5,
+        endLine: 1,
+        endColumn: 8,
       }
     },
     {
@@ -98,8 +104,10 @@ const addArtifactData: Report = {
         ["add-artifact-4.ts"]: {
           fileName: "add-artifact-4.ts",
           location: {
-            line: 4,
-            character: 15
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 8,
           },
           fixed: true,
           hintAdded: false,
@@ -120,10 +128,10 @@ const addArtifactData: Report = {
       nodeKind: "Identifier",
       nodeText: "e",
       nodeLocation: {
-        start: 57,
-        length: 1,
-        line: 3,
-        character: 14
+        startLine: 1,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 4,
       }
     },
     {
@@ -132,8 +140,10 @@ const addArtifactData: Report = {
         ["add-artifact-4.ts"]: {
           fileName: "add-artifact-4.ts",
           location: {
-            line: 6,
-            character: 17
+            startLine: 1,
+            startColumn: 4,
+            endLine: 1,
+            endColumn: 7,
           },
           fixed: true,
           hintAdded: false,
@@ -154,10 +164,10 @@ const addArtifactData: Report = {
       nodeKind: "Identifier",
       nodeText: "e",
       nodeLocation: {
-        start: 100,
-        length: 1,
-        line: 5,
-        character: 16
+        startLine: 1,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 3,
       }
     }
   ]

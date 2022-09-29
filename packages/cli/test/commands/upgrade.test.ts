@@ -56,17 +56,17 @@ describe('upgrade:command', async () => {
     expect(report.summary.projectName).toBe('@rehearsal/cli');
     expect(report.summary.tsVersion).toBe(latestPublishedTSVersion);
     expect(report.summary.uniqueErrors).toBe(3);
-    expect(report.summary.totalErrors).toBe(28);
+    expect(report.summary.totalErrors).toBe(25);
     expect(report.summary.totalErrorsList).toStrictEqual({
       '2322': 1,
       '2616': 3,
-      '6133': 24,
+      '6133': 21, 
     });
-    expect(report.summary.fixedErrors).toBe(3);
+    expect(report.summary.fixedErrors).toBe(0);
     expect(report.summary.fixedErrorsList).toStrictEqual({
       '2322': 0,
       '2616': 0,
-      '6133': 3,
+      '6133': 0,
     });
     expect(report.summary.files).toBe(3);
     expect(report.summary.filesList).toStrictEqual([
@@ -74,7 +74,7 @@ describe('upgrade:command', async () => {
       '/foo_2/foo_2a.ts',
       '/foo_2/foo_2b.ts',
     ]);
-    expect(report.items.length).toBe(28);
+    expect(report.items.length).toBe(25);
 
     const firstFileReportError = report.items[0];
 

@@ -96,7 +96,9 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
           },
           \\"region\\": {
             \\"startLine\\": 1,
-            \\"startColumn\\": 1
+            \\"startColumn\\": 1,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 1
           },
           \\"properties\\": {
             \\"code\\": \\"import react from 'react';\\",
@@ -141,8 +143,10 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"index\\": 0
           },
           \\"region\\": {
-            \\"startLine\\": 2,
-            \\"startColumn\\": 7
+            \\"startLine\\": 3,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 1,
+            \\"endColumn\\": 5
           },
           \\"properties\\": {
             \\"code\\": \\"\\",
@@ -180,8 +184,10 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"index\\": 0
           },
           \\"region\\": {
-            \\"startLine\\": 9,
-            \\"startColumn\\": 6
+            \\"startLine\\": 10,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 10,
+            \\"endColumn\\": 5
           },
           \\"properties\\": {
             \\"code\\": \\"\\",

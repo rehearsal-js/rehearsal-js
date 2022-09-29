@@ -24,7 +24,7 @@ import {
 
 import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
-const EXPORT_KEYWORD = 'export';
+const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 
 export class FixTransform4082 extends FixTransform {
   fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
@@ -63,14 +63,14 @@ export class FixTransform4082 extends FixTransform {
     const updatedText = insertIntoText(
       sourceFile.getFullText(),
       targetTypeDeclaration.getStart(),
-      `${EXPORT_KEYWORD} `
+      EXPORT_KEYWORD_WITH_SPACE
     );
 
     return getCodemodData(
       sourceFile,
       updatedText,
       targetTypeDeclaration.getStart(),
-      EXPORT_KEYWORD,
+      EXPORT_KEYWORD_WITH_SPACE,
       'add'
     );
   };

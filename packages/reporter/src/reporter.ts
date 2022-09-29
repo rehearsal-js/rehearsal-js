@@ -62,6 +62,12 @@ export class Reporter {
     hint = '',
     helpUrl = ''
   ): void {
+    const { line: startLine, character: startColumn } =
+      diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+    const { line: endLine, character: endColumn } = diagnostic.file.getLineAndCharacterOfPosition(
+      diagnostic.start + diagnostic.length - 1
+    );
+
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
       files,
@@ -74,9 +80,10 @@ export class Reporter {
       nodeText: node?.getText(),
       helpUrl,
       nodeLocation: {
-        start: diagnostic.start,
-        length: diagnostic.length,
-        ...diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start),
+        startLine,
+        startColumn,
+        endLine,
+        endColumn,
       },
     });
   }

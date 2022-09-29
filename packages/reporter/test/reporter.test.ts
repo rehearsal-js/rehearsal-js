@@ -60,7 +60,7 @@ describe('Test reporter', function () {
 
   test('addItem', async () => {
     const mockSourceFile = mock<SourceFile>();
-    mockSourceFile.fileName = 'testFile.ts';
+    mockSourceFile.fileName = 'testFile1.ts';
     mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
 
     const mockDiagnostic = mock<DiagnosticWithLocation>();
@@ -68,11 +68,12 @@ describe('Test reporter', function () {
     mockDiagnostic.category = 1;
     mockDiagnostic.messageText = 'unused variable';
     mockDiagnostic.code = 1000;
+    mockDiagnostic.length = 5;
 
     const files = {
       '/base/path/testFile.ts': {
         fileName: '/base/path/testFile.ts',
-        location: { line: 3, character: 7 },
+        location: { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 },
         fixed: false,
         code: undefined,
         codeFixAction: undefined,

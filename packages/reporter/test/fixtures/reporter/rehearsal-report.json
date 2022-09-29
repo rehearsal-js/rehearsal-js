@@ -12,8 +12,10 @@
         "/base/path/file1.ts": {
           "fileName": "/base/path/file1.ts",
           "location": {
-            "line": 1,
-            "character": 1
+            "startLine": 1,
+            "startColumn": 1,
+            "endLine": 1,
+            "endColumn": 1
           },
           "fixed": true,
           "code": "import react from 'react';",
@@ -33,10 +35,10 @@
       "nodeKind": "ImportDeclaration",
       "nodeText": "import react from 'react';",
       "nodeLocation": {
-        "start": 0,
-        "length": 26,
-        "line": 0,
-        "character": 0
+        "startLine": 1,
+        "startColumn": 1,
+        "endLine": 1,
+        "endColumn": 12
       }
     },
     {
@@ -45,8 +47,10 @@
         "/base/path/file1.ts": {
           "fileName": "/base/path/file1.ts",
           "location": {
-            "line": 2,
-            "character": 7
+            "startLine": 1,
+            "startColumn": 10,
+            "endLine": 1,
+            "endColumn": 20
           },
           "fixed": false,
           "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
@@ -65,10 +69,10 @@
       "nodeKind": "Identifier",
       "nodeText": "a",
       "nodeLocation": {
-        "start": 15,
-        "length": 1,
-        "line": 1,
-        "character": 6
+        "startLine": 1,
+        "startColumn": 10,
+        "endLine": 1,
+        "endColumn": 20
       }
     },
     {
@@ -77,8 +81,10 @@
         "/base/path/file1.ts": {
           "fileName": "/base/path/file1.ts",
           "location": {
-            "line": 9,
-            "character": 6
+            "startLine": 1,
+            "startColumn": 10,
+            "endLine": 1,
+            "endColumn": 26
           },
           "fixed": false,
           "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
@@ -97,10 +103,10 @@
       "nodeKind": "ObjectLiteralExpression",
       "nodeText": "{}",
       "nodeLocation": {
-        "start": 283,
-        "length": 2,
-        "line": 8,
-        "character": 5
+        "startLine": 1,
+        "startColumn": 10,
+        "endLine": 1,
+        "endColumn": 26
       }
     }
   ]

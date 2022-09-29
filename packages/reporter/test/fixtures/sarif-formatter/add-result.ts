@@ -14,8 +14,10 @@ const addResultData: Report = {
         ["add-result-1.ts"]: {
           fileName: "add-result-1.ts",
           location: {
-            "line": 1,
-            "character": 1
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 1,
           },
           fixed: true,
           hint: '',
@@ -36,10 +38,10 @@ const addResultData: Report = {
       nodeKind: "ImportDeclaration",
       nodeText: "import react from 'react';",
       nodeLocation: {
-        start: 0,
-        length: 26,
-        line: 0,
-        character: 0
+        startLine: 1,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 20,
       }
     },
     {
@@ -48,8 +50,10 @@ const addResultData: Report = {
         ["add-result-1.ts"]: {
           fileName: "add-result-1.ts",
           location: {
-            line: 2,
-            character: 7
+            startLine: 3,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 5,
           },
           fixed: false,
           code: '',
@@ -70,10 +74,10 @@ const addResultData: Report = {
       nodeKind: "Identifier",
       nodeText: "a",
       nodeLocation: {
-        start: 15,
-        length: 1,
-        line: 1,
-        character: 6
+        startLine: 3,
+        startColumn: 1,
+        endLine: 1,
+        endColumn: 5,
       }
     },
     {
@@ -82,8 +86,10 @@ const addResultData: Report = {
         ["add-result-1.ts"]: {
           fileName: "add-result-1.ts",
           location: {
-            line: 9,
-            character: 6
+            startLine: 10,
+            startColumn: 1,
+            endLine: 10,
+            endColumn: 5,
           },
           fixed: false,
           code: '',
@@ -104,10 +110,10 @@ const addResultData: Report = {
       nodeKind: "ObjectLiteralExpression",
       nodeText: "{}",
       nodeLocation: {
-        start: 283,
-        length: 2,
-        line: 8,
-        character: 5
+        startLine: 3,
+        startColumn: 10,
+        endLine: 10,
+        endColumn: 5,
       }
     }
   ]

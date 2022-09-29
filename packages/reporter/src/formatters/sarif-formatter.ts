@@ -149,8 +149,10 @@ class SarifFormatter {
           index,
         },
         region: {
-          startLine: file.location?.line,
-          startColumn: file.location?.character,
+          startLine: file.location?.startLine,
+          startColumn: file.location?.startColumn,
+          endLine: file.location?.endLine,
+          endColumn: file.location?.endColumn,
         },
         properties: {
           code: file.code,

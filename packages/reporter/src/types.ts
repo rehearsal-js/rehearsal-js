@@ -6,11 +6,13 @@ export type ReportSummary = Record<string, unknown> & {
 };
 
 export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
-export type CodeFixAction = 'add' | 'delete';
+export type CodeFixAction = 'add' | 'delete' | 'replace';
 
 export interface Location {
-  line: number;
-  character: number;
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
 }
 
 export interface ProcessedFile {
@@ -38,10 +40,10 @@ export type ReportItem = {
   nodeText?: string;
   helpUrl?: string;
   nodeLocation: {
-    start: number;
-    length: number;
-    line: number;
-    character: number;
+    startLine: number;
+    startColumn: number;
+    endLine: number;
+    endColumn: number;
   };
 };
 
