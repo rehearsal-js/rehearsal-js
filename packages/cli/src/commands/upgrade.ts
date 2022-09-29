@@ -46,7 +46,7 @@ upgradeCommand
   .name('upgrade')
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
   .argument('[basePath]', 'Path to directory contains tsconfig.json', '.')
-  .option('-b, --build <beta|next|latest>', 'typescript build variant', 'beta')
+  .option('-b, --build <beta|next|latest|rc>', 'typescript build variant', 'beta')
   .option(
     '-t, --tsVersion <tsVersion>',
     'override the build variant by specifying the typescript compiler version as n.n.n',
