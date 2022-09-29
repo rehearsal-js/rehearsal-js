@@ -1,9 +1,11 @@
+import { compare } from 'compare-versions';
 import { describe, expect, test } from 'vitest';
 
 import execa = require('execa');
 
 import {
   determineProjectName,
+  getLatestTSVersion,
   getModuleManager,
   getModuleManagerInstaller,
   getPathToBinary,
@@ -78,5 +80,13 @@ describe('utils', () => {
 
     expect(bin).toContain('pnpm');
     expect(args).toEqual(['add', '-D', 'typescript']);
+  });
+
+  test('getLatestTSVersion()', async () => {
+    const latestVersionTagged = compare(await getLatestTSVersion('beta'), '1.0.0', '>');
+    const latestVersion = compare(await getLatestTSVersion('latestBeta'), '1.0.0', '>');
+
+    expect(latestVersionTagged).toBeTruthy();
+    expect(latestVersion).toBeTruthy();
   });
 });

@@ -1,8 +1,8 @@
 import { type Report } from '@rehearsal/reporter';
 import execa from 'execa';
-import { existsSync, readJSONSync } from 'fs-extra';
+import { existsSync, readJSONSync, rmSync } from 'fs-extra';
 import { join, resolve } from 'path';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import packageJson from '../../package.json';
 import { getLatestTSVersion, git } from '../../src/utils';
@@ -15,110 +15,91 @@ const TEST_TSC_VERSION = '4.5.5';
 const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
-const beforeSetup = async (): Promise<void> => {
+const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
   await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['install']);
+  // clean any report files
+  rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
 };
 
+// Revert to previous TSC version from TEST_TSC_VERSION
 const afterEachCleanup = async (): Promise<void> => {
   await gitDeleteLocalBranch(WORKING_BRANCH);
 };
 
-// Revert to previous TSC version from TEST_TSC_VERSION
-const revertTSCVersion = async (): Promise<void> => {
+// Revert to development version of TSC
+afterAll(async (): Promise<void> => {
   await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
-};
-
-afterAll(revertTSCVersion);
-
-describe('upgrade:command typescript@beta', async () => {
-  beforeAll(beforeSetup);
-  afterAll(afterEachCleanup);
-
-  test('runs', async () => {
-    // runs against `beta` by default
-    const result = await runTSNode('upgrade', [FIXTURE_APP_PATH, '--report', 'json', '--dryRun']);
-
-    // default is beta unless otherwise specified
-    //4.9.1-beta
-    const latestPublishedTSVersion = await getLatestTSVersion('beta');
-    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
-
-    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Codefixes applied successfully`);
-    expect(existsSync(reportFile)).toBeTruthy;
-
-    const report: Report = readJSONSync(reportFile);
-
-    expect(report).toMatchSnapshot();
-  });
 });
 
-describe('upgrade:command typescript@rc', async () => {
-  beforeAll(beforeSetup);
-  afterAll(afterEachCleanup);
+describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
+  'upgrade:command typescript@%s',
+  async (buildTag) => {
+    beforeEach(beforeEachPrep);
+    afterEach(afterEachCleanup);
+
+    test('runs', async () => {
+      // runs against `latestBeta` by default
+      const result = await runTSNode('upgrade', [
+        FIXTURE_APP_PATH,
+        '--report',
+        'json',
+        '--dryRun',
+        '--build',
+        buildTag,
+      ]);
+
+      // default is beta unless otherwise specified
+      const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
+      const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
+
+      expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
+      expect(result.stdout).to.contain(`Codefixes applied successfully`);
+      expect(existsSync(reportFile)).toBeTruthy;
+
+      const report: Report = readJSONSync(reportFile);
+      expect(report).to.exist;
+      expect(report).toHaveProperty('summary');
+      expect(report.summary.projectName).toBe('@rehearsal/cli');
+      expect(report.summary.tsVersion).toBe(latestPublishedTSVersion);
+    });
+  }
+);
+
+describe('upgrade:command typescript@next', async () => {
+  beforeEach(beforeEachPrep);
+  afterEach(afterEachCleanup);
 
   test('runs', async () => {
-    const buildTag = 'rc';
+    const buildTag = 'next';
 
     const result = await runTSNode('upgrade', [
       FIXTURE_APP_PATH,
       '--report',
-      'json',
+      'sarif',
       '--dryRun',
       '--build',
       buildTag,
     ]);
-
-    //4.8.1-rc
+    // eg. 4.9.0-dev.20220930
     const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
-    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
+    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.sarif');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Codefixes applied successfully`);
     expect(existsSync(reportFile)).toBeTruthy;
 
     const report: Report = readJSONSync(reportFile);
-
-    expect(report).toMatchSnapshot();
-  });
-});
-
-describe('upgrade:command typescript@latest', async () => {
-  beforeAll(beforeSetup);
-  afterAll(afterEachCleanup);
-
-  test('runs', async () => {
-    const buildTag = 'latest';
-
-    const result = await runTSNode('upgrade', [
-      FIXTURE_APP_PATH,
-      '--report',
-      'json',
-      '--dryRun',
-      '--build',
-      buildTag,
-    ]);
-    // 4.8.4
-    const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
-    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
-
-    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(result.stdout).to.contain(`Codefixes applied successfully`);
-    expect(existsSync(reportFile)).toBeTruthy;
-
-    const report: Report = readJSONSync(reportFile);
-
-    expect(report).toMatchSnapshot();
+    expect(report).to.exist;
   });
 });
 
 describe('upgrade:command tsc version check', async () => {
-  beforeAll(beforeSetup);
-  afterAll(afterEachCleanup);
+  beforeEach(beforeEachPrep);
+  afterEach(afterEachCleanup);
 
   test(`it is on typescript invalid tsVersion`, async () => {
     try {

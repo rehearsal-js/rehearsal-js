@@ -46,7 +46,7 @@ upgradeCommand
   .name('upgrade')
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
   .argument('[basePath]', 'Path to directory contains tsconfig.json', '.')
-  .option('-b, --build <beta|next|latest|rc>', 'typescript build variant', 'beta')
+  .option('-b, --build <latestBeta|beta|next|latest|rc>', 'typescript build variant', 'latestBeta')
   .option(
     '-t, --tsVersion <tsVersion>',
     'override the build variant by specifying the typescript compiler version as n.n.n',
@@ -96,7 +96,9 @@ upgradeCommand
           task: (_ctx: UpgradeCommandContext, task): Listr =>
             task.newListr((parent) => [
               {
-                title: `Fetching latest published typescript@${options.build}`,
+                title: options.tsVersion
+                  ? `Fetching typescript@${options.tsVersion}`
+                  : `Fetching latest published typescript@${options.build}`,
                 exitOnError: true,
                 task: async (ctx, task) => {
                   if (!options.tsVersion) {
@@ -104,7 +106,7 @@ upgradeCommand
                     task.title = `Latest typescript@${options.build} version is ${ctx.latestELRdBuild}`;
                   } else {
                     ctx.latestELRdBuild = options.tsVersion;
-                    task.title = `Rehearsing with typescript version ${ctx.latestELRdBuild}`;
+                    task.title = `Rehearsing with typescript@${ctx.latestELRdBuild}`;
                   }
                 },
               },
