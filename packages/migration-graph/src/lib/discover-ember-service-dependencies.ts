@@ -15,11 +15,14 @@ import type {
 } from '@swc/core';
 import { parseFileSync } from '@swc/core';
 import { join } from 'path';
+import debug from 'debug';
 
 type EmberInferredServiceDependency = {
   addonName?: string;
   serviceName: string;
 };
+
+const DEBUG_CALLBACK = debug('rehearsal:createDependencyGraph:cruiser');
 
 const EMPTY_RESULT: EmberInferredServiceDependency[] = [];
 
@@ -34,7 +37,7 @@ export function discoverServiceDependencies(
   const maybeImportDeclaration = findImportDeclarationsBySource(parsed.body, '@ember/service');
 
   if (!maybeImportDeclaration) {
-    console.log('No import declaration found');
+    DEBUG_CALLBACK('No import declaration found');
     return EMPTY_RESULT;
   }
 
@@ -73,7 +76,7 @@ export function discoverServiceDependencies(
     if (edd.decl.type === 'ClassExpression') {
       foundClasses.push(edd.decl as ClassExpression);
     } else {
-      console.log('Default export does not contain a ClassExpressio');
+      DEBUG_CALLBACK('Default export does not contain a ClassExpression');
     }
   }
 
