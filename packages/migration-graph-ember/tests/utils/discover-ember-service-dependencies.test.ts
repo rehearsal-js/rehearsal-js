@@ -1,5 +1,5 @@
 import fixturify from 'fixturify';
-import { discoverServiceDependencies } from 'src/lib/discover-ember-service-dependencies';
+import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies';
 import tmp from 'tmp';
 import { describe, expect, test } from 'vitest';
 
