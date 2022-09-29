@@ -14,7 +14,8 @@ console.log(say('hello'));
 `;
 
 exports[`migrate - JS to TS conversion > able to migrate single JS file 1`] = `
-"import path from 'path';
+"/* @ts-ignore @rehearsal TODO TS2307: Cannot find module 'path' or its corresponding type declarations. */
+import path from 'path';
 
 export function power(foo, bar) {
   return Math.pow(foo, bar);
