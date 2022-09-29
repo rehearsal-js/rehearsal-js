@@ -38,11 +38,12 @@ describe('upgrade:command', async () => {
   beforeAll(beforeSetup);
   afterAll(afterEachCleanup);
 
-  test('against fixture', async () => {
+  test('against fixture with typescript@beta', async () => {
+    // runs against `beta` by default
     const result = await runTSNode('upgrade', [FIXTURE_APP_PATH, '--report', 'json', '--dryRun']);
 
     // default is beta unless otherwise specified
-    const latestPublishedTSVersion = await getLatestTSVersion();
+    const latestPublishedTSVersion = await getLatestTSVersion('beta');
     const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
@@ -51,44 +52,55 @@ describe('upgrade:command', async () => {
 
     const report: Report = readJSONSync(reportFile);
 
-    expect(report).toHaveProperty('summary');
+    expect(report).toMatchSnapshot();
+  });
 
-    expect(report.summary.projectName).toBe('@rehearsal/cli');
-    expect(report.summary.tsVersion).toBe(latestPublishedTSVersion);
-    expect(report.summary.uniqueErrors).toBe(3);
-    expect(report.summary.totalErrors).toBe(25);
-    expect(report.summary.totalErrorsList).toStrictEqual({
-      '2322': 1,
-      '2616': 3,
-      '6133': 21, 
-    });
-    expect(report.summary.fixedErrors).toBe(0);
-    expect(report.summary.fixedErrorsList).toStrictEqual({
-      '2322': 0,
-      '2616': 0,
-      '6133': 0,
-    });
-    expect(report.summary.files).toBe(3);
-    expect(report.summary.filesList).toStrictEqual([
-      '/foo/foo.ts',
-      '/foo_2/foo_2a.ts',
-      '/foo_2/foo_2b.ts',
+  test('against fixture with typescript@rc', async () => {
+    const buildTag = 'rc';
+
+    const result = await runTSNode('upgrade', [
+      FIXTURE_APP_PATH,
+      '--report',
+      'json',
+      '--dryRun',
+      '--build',
+      buildTag,
     ]);
-    expect(report.items.length).toBe(25);
 
-    const firstFileReportError = report.items[0];
+    const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
+    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
 
-    expect(firstFileReportError.errorCode).toEqual(2616);
-    expect(firstFileReportError.category).toEqual('Error');
-    expect(firstFileReportError.fixed).toEqual(false);
-    expect(firstFileReportError.nodeKind).toEqual('ImportSpecifier');
-    expect(firstFileReportError.nodeText).toEqual('execa');
-    expect(firstFileReportError.message).toEqual(
-      `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
-    );
-    expect(firstFileReportError.hint).toEqual(
-      `'execa' can only be imported by using 'import execa = require("execa")' or a default import.`
-    );
+    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
+    expect(result.stdout).to.contain(`Codefixes applied successfully`);
+    expect(existsSync(reportFile)).toBeTruthy;
+
+    const report: Report = readJSONSync(reportFile);
+
+    expect(report).toMatchSnapshot();
+  });
+
+  test('against fixture with typescript@latest', async () => {
+    const buildTag = 'latest';
+
+    const result = await runTSNode('upgrade', [
+      FIXTURE_APP_PATH,
+      '--report',
+      'json',
+      '--dryRun',
+      '--build',
+      buildTag,
+    ]);
+
+    const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
+    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
+
+    expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
+    expect(result.stdout).to.contain(`Codefixes applied successfully`);
+    expect(existsSync(reportFile)).toBeTruthy;
+
+    const report: Report = readJSONSync(reportFile);
+
+    expect(report).toMatchSnapshot();
   });
 });
 
@@ -126,9 +138,8 @@ describe('upgrade:command tsc version check', async () => {
       '--dryRun',
     ]);
 
-    // TODO: Fix CLI or this test
     expect(result.stdout).toContain(
-      `This application is already on the latest version of TypeScript@`
+      `This application is already on the latest version of TypeScript@${TEST_TSC_VERSION}`
     );
   });
 });
