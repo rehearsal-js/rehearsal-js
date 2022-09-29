@@ -1,14 +1,21 @@
-import { beforeAll, describe, expect, test } from 'vitest';
-
-import { getEmberAddon, getEmberApp, setup } from './fixtures/scenarios';
-
-const TEST_TIMEOUT = 500000;
-
-import { PreparedApp } from 'scenario-tester';
+import merge from 'lodash.merge';
+import tmp from 'tmp';
+import { describe, expect, test } from 'vitest';
 
 import { DetectedSource } from '../src/migration-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 import { getLibrarySimple, getLibraryWithEntrypoint } from './fixtures/library';
+import {
+  getEmberAddonProject,
+  getEmberAppProject,
+  getEmberAppWithInRepoAddonProject,
+  getEmberAppWithInRepoEngineProject,
+  setupProject,
+} from './fixtures/project';
+
+tmp.setGracefulCleanup();
+
+const TEST_TIMEOUT = 500000;
 
 describe('migration-strategy', () => {
   describe('package', () => {
@@ -31,16 +38,12 @@ describe('migration-strategy', () => {
   });
 
   describe('ember', () => {
-    beforeAll(() => {
-      setup();
-    });
-
     test(
       'app should match migration order',
       async () => {
-        const app = await getEmberApp('app');
+        const project = await setupProject(getEmberAppProject());
 
-        const strategy = getMigrationStrategy(app.dir);
+        const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actaul: Array<string> = files.map((f) => f.relativePath);
         expect(actaul).toStrictEqual([
@@ -56,9 +59,9 @@ describe('migration-strategy', () => {
     test(
       'app-with-in-repo-addon should match migration order',
       async () => {
-        const app = await getEmberApp('appWithInRepoAddon');
+        const project = await setupProject(getEmberAppWithInRepoAddonProject());
 
-        const strategy = getMigrationStrategy(app.dir);
+        const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actaul: Array<string> = files.map((f) => f.relativePath);
         expect(actaul).toStrictEqual([
@@ -77,9 +80,38 @@ describe('migration-strategy', () => {
     test(
       'app-with-in-repo-engine should match migration order',
       async () => {
-        const app = await getEmberApp('appWithInRepoEngine');
+        const { name: tmpDir } = tmp.dirSync();
+        const project = getEmberAppWithInRepoEngineProject();
 
-        const strategy = getMigrationStrategy(app.dir);
+        // TODO refactor requirePackageMain() to parse the index.js file first, if no name found result to require.
+
+        // This is a workaround because for this test we don't want to have to do a `install`
+        // on the fixture
+        //
+        // We are mocking require(`ember-engines/lib/engine-addon`) for now because
+        // in `migration-graph-ember` there is a method called `requirePackageMain` which
+        // calls `require()` on the `index.js` of the addon to determine the addon-name.
+        // This test fails unless we mock that module.
+        //
+
+        project.files = merge(project.files, {
+          node_modules: {
+            'ember-engines': {
+              lib: {
+                'engine-addon': `module.exports = {
+                  extend: function(config) {
+                    return config;
+                  }
+                }`,
+              },
+            },
+          },
+        });
+
+        project.baseDir = tmpDir;
+        await project.write();
+
+        const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actaul: Array<string> = files.map((f) => f.relativePath);
         expect(actaul).toStrictEqual([
@@ -99,8 +131,9 @@ describe('migration-strategy', () => {
     test(
       'addon should match migration order',
       async () => {
-        const app: PreparedApp = await getEmberAddon('addon'); // returns the dummy-app
-        const strategy = getMigrationStrategy(app.dir);
+        const project = await setupProject(getEmberAddonProject());
+
+        const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actaul: Array<string> = files.map((f) => f.relativePath);
         expect(actaul).toStrictEqual([

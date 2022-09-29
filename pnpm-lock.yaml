@@ -207,6 +207,7 @@ importers:
       enhanced-resolve: ^5.10.0
       fast-glob: ^3.2.12
       fixturify: ^2
+      fixturify-project: ^5.0.3
       fs-extra: ^10.1.0
       jsonc-parser: ^3
       lodash.merge: ^4.6.2
@@ -236,6 +237,7 @@ importers:
       '@types/minimatch': 5.1.2
       '@types/rimraf': 3.0.2
       fixturify: 2.1.1
+      fixturify-project: 5.1.0
       lodash.merge: 4.6.2
       micromatch: 4.0.5
       rimraf: 3.0.2

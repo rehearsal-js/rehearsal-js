@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { addonScenarios, appScenarios, clean, setup } from './scenarios';
 const TEST_TIMEOUT = 500000;
 
-describe('scenarios', () => {
+describe('scenarios [internal] validate file fixture projects with acceptance tests', () => {
   beforeAll(() => {
     setup();
   });

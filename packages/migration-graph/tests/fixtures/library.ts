@@ -10,6 +10,7 @@ function create(files: fixturify.DirJSON) {
 }
 
 export function getLibrarySimple(): string {
+  // TODO refactor this test fixture to use fixturify-project
   const files = {
     'index.js': `
       import * as parser from '@babel/parser';
