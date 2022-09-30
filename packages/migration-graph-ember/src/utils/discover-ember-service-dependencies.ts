@@ -14,15 +14,15 @@ import type {
   StringLiteral,
 } from '@swc/core';
 import { parseFileSync } from '@swc/core';
-import { join } from 'path';
 import debug from 'debug';
+import { join } from 'path';
 
 type EmberInferredServiceDependency = {
   addonName?: string;
   serviceName: string;
 };
 
-const DEBUG_CALLBACK = debug('rehearsal:createDependencyGraph:cruiser');
+const DEBUG_CALLBACK = debug('rehearsal:discoverEmberServiceDependencies');
 
 const EMPTY_RESULT: EmberInferredServiceDependency[] = [];
 
