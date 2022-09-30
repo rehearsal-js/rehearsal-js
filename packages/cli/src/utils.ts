@@ -1,3 +1,4 @@
+import { compare } from 'compare-versions';
 import { readFileSync } from 'fs';
 import { parse } from 'json5';
 import { join, resolve } from 'path';
@@ -284,9 +285,29 @@ export async function getPathToBinary(
   }
 }
 
-// defaults to beta unless other
-export async function getLatestTSVersion(build = 'beta'): Promise<string> {
-  const { stdout } = await execa('npm', ['show', `typescript@${build}`, 'version']);
+// handles instances where latest is newer than beta and rc etc.
+// latestBeta = whichever is latest between latest, beta and rc tags
+export async function getLatestTSVersion(tag: string): Promise<string> {
+  const module = 'typescript';
+
+  if (tag === 'latestBeta') {
+    const compareTags = ['latest', 'beta', 'rc'];
+    const versions = await Promise.all(compareTags.map((t) => getLatestModuleVersion(module, t)));
+    // compare versions and return the latest
+    return versions.reverse().reduce((acc, curr) => {
+      if (compare(curr, acc, '>')) {
+        return curr;
+      }
+      return acc;
+    }, '0.0.0');
+  } else {
+    const { stdout } = await execa('npm', ['show', `typescript@${tag}`, 'version']);
+    return stdout;
+  }
+}
+
+export async function getLatestModuleVersion(module: string, tag: string): Promise<string> {
+  const { stdout } = await execa('npm', ['show', `${module}@${tag}`, 'version']);
 
   return stdout;
 }

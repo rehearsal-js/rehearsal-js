@@ -4,8 +4,6 @@
 .history/
 .nyc_output/
 .rehearsal/
-.vscode/
-
 
 *.log
 *.tgz
