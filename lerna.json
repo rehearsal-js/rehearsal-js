@@ -1,6 +1,9 @@
 {
-  "version": "0.0.34",
-  "ignoreChanges": ["**/test/**", "**/*.md"],
+  "version": "0.0.37",
+  "ignoreChanges": [
+    "**/test/**",
+    "**/*.md"
+  ],
   "npmClient": "pnpm",
   "useWorkspaces": true
 }

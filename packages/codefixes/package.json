@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/codefixes",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "Rehearsal Dependency Codefixes Collection",
   "keywords": [
     "transforms",

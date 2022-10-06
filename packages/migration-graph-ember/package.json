@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph-ember",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
@@ -21,7 +21,7 @@
     "@babel/generator": "^7.18.13",
     "@babel/parser": "^7.18.13",
     "@babel/traverse": "^7.18.13",
-    "@rehearsal/migration-graph-shared": "^0.0.36",
+    "@rehearsal/migration-graph-shared": "^0.0.37",
     "fast-glob": "^3.2.12",
     "find-up": "^5.0.0",
     "fs-extra": "^10.1.0",

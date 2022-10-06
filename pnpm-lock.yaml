@@ -249,7 +249,7 @@ importers:
       '@babel/parser': ^7.18.13
       '@babel/traverse': ^7.18.13
       '@babel/types': ^7.18.13
-      '@rehearsal/migration-graph-shared': ^0.0.36
+      '@rehearsal/migration-graph-shared': ^0.0.37
       fast-glob: ^3.2.12
       find-up: ^5.0.0
       fixturify: ^2
