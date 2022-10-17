@@ -1,6 +1,6 @@
 import merge from 'lodash.merge';
 import tmp from 'tmp';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, beforeAll } from 'vitest';
 
 import { DetectedSource } from '../src/migration-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
@@ -11,6 +11,7 @@ import {
   getEmberAppWithInRepoAddonProject,
   getEmberAppWithInRepoEngineProject,
   setupProject,
+  testSetup,
 } from './fixtures/project';
 
 tmp.setGracefulCleanup();
@@ -38,6 +39,8 @@ describe('migration-strategy', () => {
   });
 
   describe('ember', () => {
+    beforeAll(() => testSetup());
+
     test(
       'app should match migration order',
       async () => {

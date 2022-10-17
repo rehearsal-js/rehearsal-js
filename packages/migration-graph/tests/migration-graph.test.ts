@@ -1,6 +1,6 @@
 import merge from 'lodash.merge';
 import tmp from 'tmp';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, beforeAll } from 'vitest';
 
 import { GraphNode, UniqueGraphNode } from '../src';
 import { buildMigrationGraph, DetectedSource } from '../src/migration-graph';
@@ -11,6 +11,7 @@ import {
   getEmberAppWithInRepoAddonProject,
   getEmberAppWithInRepoEngineProject,
   setupProject,
+  testSetup,
 } from './fixtures/project';
 tmp.setGracefulCleanup();
 
@@ -35,6 +36,8 @@ describe('migration-graph', () => {
   });
 
   describe('ember', () => {
+    beforeAll(() => testSetup());
+
     test('app', async () => {
       const project = await setupProject(getEmberAppProject());
 

@@ -3,6 +3,7 @@ import { dirname, join } from 'path';
 import merge from 'lodash.merge';
 import tmp from 'tmp';
 import { execSync } from 'child_process';
+import { existsSync } from 'fs-extra';
 
 tmp.setGracefulCleanup();
 
@@ -67,21 +68,41 @@ export function getEmberAddonProject(project: Project = emberAddonTemplate()) {
 }
 
 export function emberAddonTemplate(as: 'addon' | 'dummy-app' = 'addon') {
-  return Project.fromDir(dirname(require.resolve('./ember/addon-template/package.json')), {
-    linkDeps: false,
+  const sourceDir = dirname(require.resolve('./ember/addon-template/package.json'));
+
+  return Project.fromDir(sourceDir, {
+    linkDeps: true,
     linkDevDeps: as === 'dummy-app',
   });
 }
 
 export function emberAppTemplate() {
-  return Project.fromDir(dirname(require.resolve('./ember/app-template/package.json')), {
-    linkDevDeps: true,
+  const sourceDir = dirname(require.resolve('./ember/app-template/package.json'));
+
+  return Project.fromDir(sourceDir, {
+    linkDevDeps: false,
   });
+}
+
+function prepare(dir: string): void {
+  if (!existsSync(join(dir, 'node_modules'))) {
+    console.log(`Initializing fixture directory: ${dir}`);
+    // The (app|addon)-template needs a node_modules directory for
+    // `Project.fromDir()` (fixturify-project) to work.
+    execSync(`npm --version && npm install`, {
+      cwd: dir,
+      stdio: 'ignore', // Otherwise this will output warning from install command
+    });
+  }
+}
+
+export function testSetup() {
+  prepare(dirname(require.resolve('./ember/app-template/package.json')));
+  prepare(dirname(require.resolve('./ember/addon-template/package.json')));
 }
 
 export async function setupProject(project: Project) {
   const { name: tmpDir } = tmp.dirSync();
-
   project.baseDir = tmpDir;
   await project.write();
   return project;
