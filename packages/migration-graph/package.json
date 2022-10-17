@@ -12,7 +12,7 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "prepare": "pnpm build",
-    "test": "vitest --run"
+    "test": "./tests/fixtures/ember/setup.sh && vitest --run"
   },
   "dependencies": {
     "@babel/parser": "^7.18.4",

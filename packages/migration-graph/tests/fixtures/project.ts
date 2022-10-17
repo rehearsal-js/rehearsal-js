@@ -1,7 +1,8 @@
 import { Project } from 'fixturify-project';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import merge from 'lodash.merge';
 import tmp from 'tmp';
+import { execSync } from 'child_process';
 
 tmp.setGracefulCleanup();
 
@@ -11,6 +12,7 @@ import {
   getEmberAddonFiles,
   getEmberAppWithInRepoEngine,
 } from './files';
+import rimraf from 'rimraf';
 
 // this scenario represents the last Ember 3.x release
 export async function ember3(_project: Project) {}
@@ -66,7 +68,7 @@ export function getEmberAddonProject(project: Project = emberAddonTemplate()) {
 
 export function emberAddonTemplate(as: 'addon' | 'dummy-app' = 'addon') {
   return Project.fromDir(dirname(require.resolve('./ember/addon-template/package.json')), {
-    linkDeps: true,
+    linkDeps: false,
     linkDevDeps: as === 'dummy-app',
   });
 }
@@ -79,6 +81,7 @@ export function emberAppTemplate() {
 
 export async function setupProject(project: Project) {
   const { name: tmpDir } = tmp.dirSync();
+
   project.baseDir = tmpDir;
   await project.write();
   return project;
