@@ -1,20 +1,9 @@
-import merge from 'lodash.merge';
-import tmp from 'tmp';
-import { describe, expect, test, beforeAll } from 'vitest';
+import { beforeAll, describe, expect, test } from 'vitest';
 
 import { DetectedSource } from '../src/migration-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 import { getLibrarySimple, getLibraryWithEntrypoint } from './fixtures/library';
-import {
-  getEmberAddonProject,
-  getEmberAppProject,
-  getEmberAppWithInRepoAddonProject,
-  getEmberAppWithInRepoEngineProject,
-  setupProject,
-  testSetup,
-} from './fixtures/project';
-
-tmp.setGracefulCleanup();
+import { getEmberProjectFixture, testSetup } from './fixtures/project';
 
 const TEST_TIMEOUT = 500000;
 
@@ -44,7 +33,7 @@ describe('migration-strategy', () => {
     test(
       'app should match migration order',
       async () => {
-        const project = await setupProject(getEmberAppProject());
+        const project = await getEmberProjectFixture('app');
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
@@ -62,7 +51,7 @@ describe('migration-strategy', () => {
     test(
       'app-with-in-repo-addon should match migration order',
       async () => {
-        const project = await setupProject(getEmberAppWithInRepoAddonProject());
+        const project = await getEmberProjectFixture('app-with-in-repo-addon');
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
@@ -83,36 +72,7 @@ describe('migration-strategy', () => {
     test(
       'app-with-in-repo-engine should match migration order',
       async () => {
-        const { name: tmpDir } = tmp.dirSync();
-        const project = getEmberAppWithInRepoEngineProject();
-
-        // TODO refactor requirePackageMain() to parse the index.js file first, if no name found result to require.
-
-        // This is a workaround because for this test we don't want to have to do a `install`
-        // on the fixture
-        //
-        // We are mocking require(`ember-engines/lib/engine-addon`) for now because
-        // in `migration-graph-ember` there is a method called `requirePackageMain` which
-        // calls `require()` on the `index.js` of the addon to determine the addon-name.
-        // This test fails unless we mock that module.
-        //
-
-        project.files = merge(project.files, {
-          node_modules: {
-            'ember-engines': {
-              lib: {
-                'engine-addon': `module.exports = {
-                  extend: function(config) {
-                    return config;
-                  }
-                }`,
-              },
-            },
-          },
-        });
-
-        project.baseDir = tmpDir;
-        await project.write();
+        const project = await getEmberProjectFixture('app-with-in-repo-engine');
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
@@ -134,7 +94,7 @@ describe('migration-strategy', () => {
     test(
       'addon should match migration order',
       async () => {
-        const project = await setupProject(getEmberAddonProject());
+        const project = await getEmberProjectFixture('addon');
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();

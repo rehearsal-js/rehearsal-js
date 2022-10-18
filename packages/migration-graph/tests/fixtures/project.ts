@@ -4,18 +4,16 @@ import merge from 'lodash.merge';
 import tmp from 'tmp';
 import { execSync } from 'child_process';
 import { existsSync } from 'fs-extra';
-
-tmp.setGracefulCleanup();
-
 import {
   getEmberAppFiles,
   getEmberAppWithInRepoAddonFiles,
   getEmberAddonFiles,
   getEmberAppWithInRepoEngine,
 } from './files';
-import rimraf from 'rimraf';
 
-// this scenario represents the last Ember 3.x release
+tmp.setGracefulCleanup();
+
+// this scenario represents the last Ember 3.x release (3.28)
 export async function ember3(_project: Project) {}
 
 export function getEmberAppProject(project: Project = emberAppTemplate()): Project {
@@ -54,6 +52,30 @@ export function getEmberAppWithInRepoEngineProject(
     paths: [`lib/${engineName}`],
   };
   project.addDevDependency('ember-engines', '0.8.23');
+
+  // TODO refactor requirePackageMain() to parse the index.js file first, if no name found result to require.
+
+  // This is a workaround because for this test we don't want to have to do a `install`
+  // on the fixture
+  //
+  // We are mocking require(`ember-engines/lib/engine-addon`) for now because
+  // in `migration-graph-ember` there is a method called `requirePackageMain` which
+  // calls `require()` on the `index.js` of the addon to determine the addon-name.
+  // This test fails unless we mock that module.
+
+  project.files = merge(project.files, {
+    node_modules: {
+      'ember-engines': {
+        lib: {
+          'engine-addon': `module.exports = {
+            extend: function(config) {
+              return config;
+            }
+          }`,
+        },
+      },
+    },
+  });
 
   merge(project.files, getEmberAppWithInRepoEngine(engineName));
 
@@ -101,9 +123,44 @@ export function testSetup() {
   prepare(dirname(require.resolve('./ember/addon-template/package.json')));
 }
 
-export async function setupProject(project: Project) {
+export async function setupProject(project: Project): Promise<Project> {
   const { name: tmpDir } = tmp.dirSync();
   project.baseDir = tmpDir;
   await project.write();
   return project;
+}
+
+type EmberProjectFixture = 'app' | 'app-with-in-repo-addon' | 'app-with-in-repo-engine' | 'addon';
+
+export function getEmberProject(variant: EmberProjectFixture): Project {
+  let project;
+
+  switch (variant) {
+    case 'app':
+      project = getEmberAppProject();
+      break;
+    case 'app-with-in-repo-addon':
+      project = getEmberAppWithInRepoAddonProject();
+      break;
+    case 'app-with-in-repo-engine':
+      project = getEmberAppWithInRepoEngineProject();
+      break;
+    case 'addon':
+      project = getEmberAddonProject();
+      break;
+    default:
+      throw new Error(`Unable to getProjectVaraint for '${variant}'.`);
+  }
+
+  return project;
+}
+
+/**
+ * Returns a test project variant that has been setup.
+ *
+ * @param variant
+ * @returns Promise<Project>
+ */
+export async function getEmberProjectFixture(variant: EmberProjectFixture): Promise<Project> {
+  return setupProject(getEmberProject(variant));
 }
