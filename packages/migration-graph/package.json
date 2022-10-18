@@ -19,7 +19,7 @@
     "@babel/traverse": "^7.18.2",
     "@rehearsal/migration-graph-ember": "workspace:*",
     "@rehearsal/migration-graph-shared": "workspace:*",
-    "@swc/core": "^1.2.233",
+    "@swc/core": "^1.3.9",
     "debug": "^4.3.4",
     "dependency-cruiser": "^11.15.0",
     "enhanced-resolve": "^5.10.0",
