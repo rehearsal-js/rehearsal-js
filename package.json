@@ -6,11 +6,9 @@
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "scripts": {
-    "lint": "pnpm lint:package-json && lerna run lint --stream",
+    "lint": "pnpm lint:package-json && pnpm recursive run lint",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
-    "prepare": "lerna run prepare --stream",
-    "test": "lerna run test",
-    "prepack": "lerna run prepack --stream",
+    "test": "pnpm recursive run test",
     "changelog": "pnpm conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
     "reset": "pnpm clean && pnpm install"
@@ -58,7 +56,6 @@
     "fixturify": "^2",
     "fixturify-project": "^5.0.3",
     "husky": "^8.0.1",
-    "lerna": "^5.5.2",
     "lodash.get": "^4.4.2",
     "micromatch": "^4",
     "npm-run-all": "^4.1.5",

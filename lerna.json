@@ -1,9 +1,0 @@
-{
-  "version": "0.0.37",
-  "ignoreChanges": [
-    "**/test/**",
-    "**/*.md"
-  ],
-  "npmClient": "pnpm",
-  "useWorkspaces": true
-}
