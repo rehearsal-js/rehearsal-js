@@ -24,7 +24,7 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeFalsy;
   });
 
-  test('should throw if found service but no classes found', () => {
+  test('should return empty array whens services decorators are used', () => {
     const { name: tmpDir } = tmp.dirSync();
 
     const files = {
@@ -39,9 +39,8 @@ describe('discoverServiceDependencies', () => {
     };
 
     fixturify.writeSync(tmpDir, files);
-    expect(() => {
-      discoverServiceDependencies(tmpDir, 'component.js');
-    }).toThrowError('Unexpected Error: No classes found despite having imported @ember/service.');
+    const result = discoverServiceDependencies(tmpDir, 'component.js');
+    expect(result).toEqual([]);
   });
 
   test('should find locale service', () => {

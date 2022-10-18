@@ -43,7 +43,7 @@ export function discoverServiceDependencies(
 
   const importDeclaration = maybeImportDeclaration as ImportDeclaration;
 
-  // In the case of re-assignment from ineject as service, we walk the specifiers
+  // In the case of re-assignment from inject as service, we walk the specifiers
   const maybeSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'inject');
 
   if (!maybeSpecifier) {
@@ -81,7 +81,7 @@ export function discoverServiceDependencies(
   }
 
   if (foundClasses.length < 1) {
-    throw new Error('Unexpected Error: No classes found despite having imported @ember/service.');
+    return [];
   }
 
   let results: EmberInferredServiceDependency[] = EMPTY_RESULT;
