@@ -1,15 +1,19 @@
 import fixturify from 'fixturify';
 import tmp from 'tmp';
-import { describe, expect, test } from 'vitest';
-
+import { beforeEach, describe, expect, test } from 'vitest';
 import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies';
 
 tmp.setGracefulCleanup();
 
 describe('discoverServiceDependencies', () => {
-  test('noop', () => {
-    const { name: tmpDir } = tmp.dirSync();
+  let tmpDir: string;
 
+  beforeEach(() => {
+    const { name: someDir } = tmp.dirSync();
+    tmpDir = someDir;
+  });
+
+  test('noop', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -24,9 +28,7 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeFalsy;
   });
 
-  test('should return empty array whens services decorators are used', () => {
-    const { name: tmpDir } = tmp.dirSync();
-
+  test('should return empty array when no services decorators are used', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -43,32 +45,7 @@ describe('discoverServiceDependencies', () => {
     expect(result).toEqual([]);
   });
 
-  test('should find locale service', () => {
-    const { name: tmpDir } = tmp.dirSync();
-
-    const files = {
-      'component.js': `
-        import Component from '@glimmer/component';
-        import { inject as service } from '@ember/service';
-
-        export default class Salutation extends Component {
-          @service locale;
-        }
-      `,
-    };
-
-    fixturify.writeSync(tmpDir, files);
-
-    const results = discoverServiceDependencies(tmpDir, 'component.js');
-
-    expect(results).toBeTruthy();
-    expect(results?.length).toBe(1);
-    const discovered = results[0];
-    expect(discovered.serviceName).toBe('locale');
-  });
-  test('should work without renaming', () => {
-    const { name: tmpDir } = tmp.dirSync();
-
+  test('should find service', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -89,9 +66,30 @@ describe('discoverServiceDependencies', () => {
     const discovered = results[0];
     expect(discovered.serviceName).toBe('locale');
   });
-  test('should find multiple services', () => {
-    const { name: tmpDir } = tmp.dirSync();
 
+  test('should find service when deorator method is renamed', () => {
+    const files = {
+      'component.js': `
+        import Component from '@glimmer/component';
+        import { inject as service } from '@ember/service';
+
+        export default class Salutation extends Component {
+          @service locale;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
+
+    expect(results).toBeTruthy();
+    expect(results?.length).toBe(1);
+    const discovered = results[0];
+    expect(discovered.serviceName).toBe('locale');
+  });
+
+  test('should find multiple services', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -115,9 +113,8 @@ describe('discoverServiceDependencies', () => {
     expect(results[1].serviceName).toBe('tracking');
     expect(results[2].serviceName).toBe('request');
   });
-  test('should discover serviceName if renamed', () => {
-    const { name: tmpDir } = tmp.dirSync();
 
+  test('should discover serviceName if renamed', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -137,7 +134,7 @@ describe('discoverServiceDependencies', () => {
     expect(results.length).toBe(1);
     expect(results[0].serviceName).toBe('shopping-cart');
   });
-  test('should find service from addon', () => {
+  test('should find fully qualified serviceName from addon', () => {
     const { name: tmpDir } = tmp.dirSync();
 
     const files = {
@@ -161,8 +158,6 @@ describe('discoverServiceDependencies', () => {
     expect(results[0].serviceName).toBe('authenticated-user');
   });
   test('should find without class on export', () => {
-    const { name: tmpDir } = tmp.dirSync();
-
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
@@ -183,5 +178,48 @@ describe('discoverServiceDependencies', () => {
     expect(resultss).toBeTruthy();
     expect(resultss.length).toBe(1);
     expect(resultss[0].serviceName).toBe('locale');
+  });
+
+  test('should handle multiple imports of @ember/service', () => {
+    const files = {
+      'service.js': `
+        import Service from '@ember/service';
+        import { inject as service } from '@ember/service';
+
+        export default class Locale extends Service {
+          @service request;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const resultss = discoverServiceDependencies(tmpDir, 'service.js');
+
+    expect(resultss).toBeTruthy();
+    expect(resultss.length).toBe(1);
+    expect(resultss[0].serviceName).toBe('request');
+  });
+
+  test('should handle default export and named exports from @ember/service', () => {
+    const { name: tmpDir } = tmp.dirSync();
+
+    const files = {
+      'service.js': `
+        import Service, { inject as service } from '@ember/service';
+
+        export default class Locale extends Service {
+          @service request;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const resultss = discoverServiceDependencies(tmpDir, 'service.js');
+
+    expect(resultss).toBeTruthy();
+    expect(resultss.length).toBe(1);
+    expect(resultss[0].serviceName).toBe('request');
   });
 });

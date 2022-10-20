@@ -17,3 +17,5 @@ export {
   isEngine as isEmberEngine,
   isAddon as isEmberAddon,
 } from './utils/ember';
+
+export { discoverServiceDependencies } from './utils/discover-ember-service-dependencies';
