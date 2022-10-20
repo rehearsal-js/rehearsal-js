@@ -68,7 +68,7 @@ describe('discoverServiceDependencies', () => {
     expect(discovered.serviceName).toBe('locale');
   });
 
-  test('should find service when deorator method is renamed', () => {
+  test('should find service when decorator method is renamed', () => {
     const files = {
       'component.js': `
         import Component from '@glimmer/component';
