@@ -7,6 +7,7 @@ function json(jsonObj = {}) {
 
 const EMBER_FIXTURE_NAMES = {
   PLAIN_PACKAGE: 'plain-package',
+  SIMPLE_APP: 'simple-app',
   SIMPLE_ADDON: 'simple-addon',
   SIMPLE_ENGINE: 'simple-engine',
   ADDON_WITH_MODULE_NAME: 'addon-with-module-name',
@@ -34,6 +35,19 @@ EMBER_FIXTURES[EMBER_FIXTURE_NAMES.PLAIN_PACKAGE] = {
     version: '1.0.0',
   }),
 };
+
+// a simple app
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_APP] = {
+  'package.json': json({
+    name: EMBER_FIXTURE_NAMES.SIMPLE_APP,
+    version: '1.0.0',
+    dependencies: {},
+    devDependencies: {
+      'ember-source': '^3.28.0',
+    },
+  }),
+};
+
 // a simple addon
 EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_ADDON] = {
   'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
