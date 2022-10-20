@@ -1,5 +1,5 @@
-import { copySync, readdirSync, readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { resolve } from 'path';
+import { copySync, readdirSync, readFileSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 

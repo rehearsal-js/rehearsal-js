@@ -1,11 +1,11 @@
-import { Reporter } from '@rehearsal/reporter';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
 import { join, resolve } from 'path';
+import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import type { Logger } from 'winston';
 import { createLogger, format, transports } from 'winston';
 
 import { migrate, MigrateInput } from '../src';
+import type { Logger } from 'winston';
 
 describe('migrate', () => {
   let sourceFiles: string[] = [];

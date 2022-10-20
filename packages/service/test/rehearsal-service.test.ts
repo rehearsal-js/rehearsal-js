@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
-import type { CompilerOptions, DiagnosticWithLocation } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { RehearsalService } from '../src';
+import type { CompilerOptions, DiagnosticWithLocation } from 'typescript';
 
 describe('Test service', function () {
   const basePath = resolve(__dirname, 'fixtures');

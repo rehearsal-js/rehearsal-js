@@ -1,3 +1,6 @@
+import { join } from 'path';
+import { parseFileSync } from '@swc/core';
+import debug from 'debug';
 import type {
   CallExpression,
   ClassDeclaration,
@@ -13,9 +16,6 @@ import type {
   NamedImportSpecifier,
   StringLiteral,
 } from '@swc/core';
-import { parseFileSync } from '@swc/core';
-import debug from 'debug';
-import { join } from 'path';
 
 type EmberInferredServiceDependency = {
   addonName?: string;

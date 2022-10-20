@@ -1,5 +1,5 @@
-import { writeSync } from 'fixturify';
 import { resolve } from 'path';
+import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 

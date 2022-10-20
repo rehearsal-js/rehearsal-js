@@ -1,5 +1,5 @@
-import execa from 'execa';
 import { resolve } from 'path';
+import execa from 'execa';
 import which from 'which';
 
 import { git, gitIsRepoDirty } from '../src/utils';

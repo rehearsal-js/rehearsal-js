@@ -1,3 +1,6 @@
+import { createLanguageService, resolveModuleName, ScriptSnapshot, sys } from 'typescript';
+
+import { RehearsalServiceHost } from './rehearsal-service-host';
 import type {
   CompilerOptions,
   Diagnostic,
@@ -5,9 +8,6 @@ import type {
   LanguageService,
   SourceFile,
 } from 'typescript';
-import { createLanguageService, resolveModuleName, ScriptSnapshot, sys } from 'typescript';
-
-import { RehearsalServiceHost } from './rehearsal-service-host';
 
 /**
  * Service represents the list of helper functions wrapped over compiled program context.

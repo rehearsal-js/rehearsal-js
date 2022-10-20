@@ -1,6 +1,6 @@
-import { Report, Reporter, ReportFormatter } from '@rehearsal/reporter';
 import { mkdirSync } from 'fs';
 import { resolve } from 'path';
+import { Report, Reporter, ReportFormatter } from '@rehearsal/reporter';
 import { MapLike } from 'typescript';
 
 export function generateReports(

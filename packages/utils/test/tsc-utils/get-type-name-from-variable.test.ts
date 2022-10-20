@@ -1,8 +1,8 @@
-import type { VariableStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getTypeNameFromVariable } from '../../src';
 import { setupTest } from '../helpers';
+import type { VariableStatement } from 'typescript';
 
 describe('Test getTypeNameFromVariable', () => {
   const { sourceFile, checker } = setupTest(__filename);

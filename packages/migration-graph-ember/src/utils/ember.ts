@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { join, resolve } from 'path';
 import { default as generate } from '@babel/generator';
 import * as parser from '@babel/parser';
 import * as t from '@babel/types';
 import { formatter, PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
 import { readFileSync, writeFileSync, writeJsonSync } from 'fs-extra';
-import { join, resolve } from 'path';
 import sortPackageJson from 'sort-package-json';
 
 export function isApp(packageJson: PackageJson): boolean {

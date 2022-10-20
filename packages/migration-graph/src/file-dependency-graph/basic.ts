@@ -1,12 +1,11 @@
-import type { ModuleItem } from '@swc/core';
-import { parseFileSync } from '@swc/core';
-import debug from 'debug';
 import { dirname } from 'path';
+import { parseFileSync, type ModuleItem } from '@swc/core';
+import debug from 'debug';
 
 import { resolveRelativeModule } from '../module-resolution';
-import type { ModuleNode } from '../types';
 import { Graph } from '../utils/graph';
-import { GraphNode } from '../utils/graph-node';
+import type { GraphNode } from '../utils/graph-node';
+import type { ModuleNode } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-grap:create-dependency-graph:basic');
 

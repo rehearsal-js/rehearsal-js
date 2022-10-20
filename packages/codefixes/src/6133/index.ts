@@ -1,8 +1,8 @@
 import { findNodeAtPosition } from '@rehearsal/utils';
-import type { DiagnosticWithLocation } from 'typescript';
 import { isImportDeclaration, isImportSpecifier } from 'typescript';
 
 import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
+import type { DiagnosticWithLocation } from 'typescript';
 
 export class FixTransform6133 extends FixTransform {
   fix = (diagnostic: DiagnosticWithLocation): FixedFile[] => {

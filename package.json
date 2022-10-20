@@ -14,6 +14,30 @@
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
     "reset": "pnpm clean && pnpm install"
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "rules": {
+      "type-enum": [
+        2,
+        "always",
+        [
+          "chore",
+          "ci",
+          "docs",
+          "feat",
+          "fix",
+          "perf",
+          "refactor",
+          "revert",
+          "style",
+          "test",
+          "BREAKING CHANGE"
+        ]
+      ]
+    }
+  },
   "devDependencies": {
     "@babel/types": "^7.18.13",
     "@commitlint/cli": "^17.0.3",
@@ -70,29 +94,5 @@
   "packageManager": "pnpm@7.12.1",
   "volta": {
     "node": "16.17.0"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ],
-    "rules": {
-      "type-enum": [
-        2,
-        "always",
-        [
-          "chore",
-          "ci",
-          "docs",
-          "feat",
-          "fix",
-          "perf",
-          "refactor",
-          "revert",
-          "style",
-          "test",
-          "BREAKING CHANGE"
-        ]
-      ]
-    }
   }
 }

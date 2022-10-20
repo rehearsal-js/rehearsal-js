@@ -1,9 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import type { DiagnosticWithLocation, Node } from 'typescript';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind, version } from 'typescript';
-import type { Logger } from 'winston';
-
 import { type ProcessedFile, type Report, type ReportFormatter, type ReportItem } from './types';
+import type { DiagnosticWithLocation, Node } from 'typescript';
+import type { Logger } from 'winston';
 
 /**
  * Representation of diagnostic and migration report.

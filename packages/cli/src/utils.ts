@@ -1,9 +1,9 @@
-import { compare } from 'compare-versions';
 import { readFileSync } from 'fs';
-import { parse } from 'json5';
 import { join, resolve } from 'path';
+import { compare } from 'compare-versions';
+import { parse } from 'json5';
 import { valid } from 'semver';
-import { SimpleGit, simpleGit, SimpleGitOptions } from 'simple-git';
+import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 
 import findup = require('findup-sync');

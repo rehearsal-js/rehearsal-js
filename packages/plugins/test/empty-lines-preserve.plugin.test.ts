@@ -1,7 +1,7 @@
-import { RehearsalService } from '@rehearsal/service';
-import { Project } from 'fixturify-project';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
+import { RehearsalService } from '@rehearsal/service';
+import { Project } from 'fixturify-project';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import { EmptyLinesPreservePlugin } from '../src';

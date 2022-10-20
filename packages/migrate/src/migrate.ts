@@ -1,14 +1,14 @@
+import { copyFileSync, existsSync } from 'fs';
+import { dirname, extname, resolve } from 'path';
+import { RehearsalService } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
   EmptyLinesPreservePlugin,
   EmptyLinesRestorePlugin,
   LintPlugin,
 } from '@rehearsal/plugins';
-import type { Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from '@rehearsal/service';
-import { copyFileSync, existsSync } from 'fs';
-import { dirname, extname, resolve } from 'path';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
 
 export type MigrateInput = {

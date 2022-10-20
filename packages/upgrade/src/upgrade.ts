@@ -1,3 +1,4 @@
+import { dirname, resolve } from 'path';
 import {
   DiagnosticFixPlugin,
   EmptyLinesPreservePlugin,
@@ -7,7 +8,6 @@ import {
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
-import { dirname, resolve } from 'path';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import type { Logger } from 'winston';
 

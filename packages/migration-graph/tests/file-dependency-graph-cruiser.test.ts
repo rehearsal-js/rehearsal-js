@@ -1,6 +1,6 @@
+import path from 'path';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
-import path from 'path';
 import rimraf from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';

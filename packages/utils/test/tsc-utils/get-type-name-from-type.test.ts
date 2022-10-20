@@ -1,8 +1,8 @@
-import type { BinaryExpression, ExpressionStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getTypeNameFromType } from '../../src';
 import { setupTest } from '../helpers';
+import type { BinaryExpression, ExpressionStatement } from 'typescript';
 
 describe('Test getTypeNameFromType', () => {
   const { sourceFile, checker } = setupTest(__filename);

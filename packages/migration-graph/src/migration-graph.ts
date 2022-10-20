@@ -1,3 +1,4 @@
+import { relative, resolve } from 'path';
 import {
   EmberAddonPackage,
   EmberPackage,
@@ -10,13 +11,12 @@ import { Package, readPackageJson } from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import minimatch from 'minimatch';
-import { relative, resolve } from 'path';
 
 import { createDependencyGraph as discoverModuleDependencyGraph } from './file-dependency-graph';
-import type { ModuleNode, PackageNode } from './types';
 import { dfs } from './utils/dfs';
 import { Graph } from './utils/graph';
-import { GraphNode } from './utils/graph-node';
+import type { GraphNode } from './utils/graph-node';
+import type { ModuleNode, PackageNode } from './types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph');
 
