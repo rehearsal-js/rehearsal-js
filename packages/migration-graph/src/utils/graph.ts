@@ -22,6 +22,15 @@ export class Graph<T extends UniqueGraphNode> {
     return this.#registry.get(key);
   }
 
+  updateNode(key: string, content: T): GraphNode<T> {
+    const node = this.getNode(key);
+    if (!node) {
+      throw new Error(`Unable to updateNode '${key}' with content '${content}'.`);
+    }
+    node.content = content;
+    return node;
+  }
+
   addNode(content: T): GraphNode<T> {
     const { key } = content;
     if (this.hasNode(key)) {
@@ -55,7 +64,7 @@ export class Graph<T extends UniqueGraphNode> {
       }
     });
 
-    return stack; // stack.reverse();
+    return stack; // stack.reverse() would be leaf first.
   }
 
   private topSortUtil(

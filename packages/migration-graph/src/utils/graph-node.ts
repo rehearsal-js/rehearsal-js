@@ -16,6 +16,10 @@ export class GraphNode<T> {
     return this.#content;
   }
 
+  set content(content: T) {
+    this.#content = content;
+  }
+
   get adjacent(): Set<GraphNode<T>> {
     return this.#adjacent;
   }
