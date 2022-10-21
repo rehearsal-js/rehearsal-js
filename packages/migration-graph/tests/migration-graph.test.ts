@@ -39,6 +39,7 @@ describe('migration-graph', () => {
         'app/app.js',
         'app/components/salutation.js',
         'app/router.js',
+        'app/services/locale.js',
       ]);
     });
     test('app-with-in-repo-addon', async () => {
@@ -58,7 +59,12 @@ describe('migration-graph', () => {
       expect(
         flatten(orderedPackages[1].content.modules.topSort()),
         'expected migraiton order for app'
-      ).toStrictEqual(['app/app.js', 'app/components/salutation.js', 'app/router.js']);
+      ).toStrictEqual([
+        'app/app.js',
+        'app/components/salutation.js',
+        'app/router.js',
+        'app/services/locale.js',
+      ]);
     });
     test('app-with-in-repo-engine', async () => {
       const project = await getEmberProjectFixture('app-with-in-repo-engine');
@@ -74,7 +80,12 @@ describe('migration-graph', () => {
       expect(
         flatten(orderedPackages[1].content.modules.topSort()),
         'expected migraiton order for app'
-      ).toStrictEqual(['app/app.js', 'app/components/salutation.js', 'app/router.js']);
+      ).toStrictEqual([
+        'app/app.js',
+        'app/components/salutation.js',
+        'app/router.js',
+        'app/services/locale.js',
+      ]);
     });
     test('addon', async () => {
       const project = await getEmberProjectFixture('addon');

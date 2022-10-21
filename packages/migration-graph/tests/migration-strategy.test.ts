@@ -42,6 +42,7 @@ describe('migration-strategy', () => {
           'app/app.js',
           'app/components/salutation.js',
           'app/router.js',
+          'app/services/locale.js',
         ]);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
@@ -63,6 +64,7 @@ describe('migration-strategy', () => {
           'app/app.js',
           'app/components/salutation.js',
           'app/router.js',
+          'app/services/locale.js',
         ]);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
@@ -85,6 +87,7 @@ describe('migration-strategy', () => {
           'app/app.js',
           'app/components/salutation.js',
           'app/router.js',
+          'app/services/locale.js',
         ]);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },

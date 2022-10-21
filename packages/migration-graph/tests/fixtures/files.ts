@@ -75,15 +75,31 @@ export const FILES_EMBER_APP = {
   app: {
     components: {
       'salutation.js': `
-          import Component from '@glimmer/component';
+        import Component from '@glimmer/component';
+        import { inject as service } from '@ember/service';
 
-          export default class Salutation extends Component {
-            get name() {
+        export default class Salutation extends Component {
+          @service locale;
+          get name() {
+            if (this.locale.current() == 'en-US') {
               return 'Bob';
             }
+            return 'Unknown';
           }
-        `,
+        }
+      `,
       'salutation.hbs': `Hello {{this.name}}`,
+    },
+    services: {
+      'locale.js': `
+      import Service from '@ember/service';
+
+      export default class LocaleService extends Service {
+        current() {
+          return 'en-US';
+        }
+      }
+      `,
     },
     templates: {
       'application.hbs': `
@@ -118,6 +134,24 @@ export const FILES_EMBER_APP = {
             });
           });
         `,
+    },
+    unit: {
+      services: {
+        'locale-test.js': `
+        import { module, test } from 'qunit';
+        import { setupTest } from 'ember-qunit';
+
+        module('Unit | Service | locale', function(hooks) {
+          setupTest(hooks);
+
+          test('it exists', function(assert) {
+            let service = this.owner.lookup('service:locale');
+            assert.ok(service);
+            assert.equal(service.current(), 'en-US', 'should match current() locale');
+          });
+        });
+        `,
+      },
     },
   },
 };
