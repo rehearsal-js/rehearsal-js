@@ -1,6 +1,6 @@
-import { type ReportItem, Reporter } from '@rehearsal/reporter';
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
+import { type ReportItem, Reporter } from '@rehearsal/reporter';
 import { describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 

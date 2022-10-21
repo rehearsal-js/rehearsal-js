@@ -1,9 +1,9 @@
-import type { ClassDeclaration } from 'typescript';
 import { isClassDeclaration, isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getClassMemberByName } from '../../src';
 import { setupTest } from '../helpers';
+import type { ClassDeclaration } from 'typescript';
 
 describe('Test getClassMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

@@ -1,6 +1,6 @@
+import { relative, resolve } from 'path';
 import { setupTestEnvironment } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
-import { relative, resolve } from 'path';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';

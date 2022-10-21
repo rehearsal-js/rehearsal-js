@@ -1,8 +1,8 @@
-import type { InterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getTypeDeclarationFromTypeSymbol } from '../../src';
 import { setupTest } from '../helpers';
+import type { InterfaceDeclaration } from 'typescript';
 
 describe('Test getTypeDeclarationFromSymbol', () => {
   const { sourceFile, checker } = setupTest(__filename);

@@ -1,3 +1,9 @@
+import {
+  isClassDeclaration,
+  isInterfaceDeclaration,
+  isTypeAliasDeclaration,
+  SyntaxKind,
+} from 'typescript';
 import type {
   ClassDeclaration,
   ClassElement,
@@ -10,12 +16,6 @@ import type {
   TypeChecker,
   TypeElement,
   TypeLiteralNode,
-} from 'typescript';
-import {
-  isClassDeclaration,
-  isInterfaceDeclaration,
-  isTypeAliasDeclaration,
-  SyntaxKind,
 } from 'typescript';
 
 export function getInterfaceByName(

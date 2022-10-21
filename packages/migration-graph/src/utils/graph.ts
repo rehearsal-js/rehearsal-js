@@ -1,5 +1,5 @@
-import type { UniqueGraphNode } from '../types';
 import { GraphNode } from './graph-node';
+import type { UniqueGraphNode } from '../types';
 
 export class Graph<T extends UniqueGraphNode> {
   #nodes: Set<GraphNode<T>>;

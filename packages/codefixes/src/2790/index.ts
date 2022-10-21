@@ -11,6 +11,9 @@ import {
   getTypeNameFromType,
   insertIntoText,
 } from '@rehearsal/utils';
+import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
+
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 import type {
   DiagnosticWithLocation,
   InterfaceDeclaration,
@@ -20,9 +23,6 @@ import type {
   TypeAliasDeclaration,
   TypeElement,
 } from 'typescript';
-import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
-
-import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 
 const OPTIONAL_TOKEN = '?';
 

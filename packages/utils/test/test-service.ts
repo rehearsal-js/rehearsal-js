@@ -1,5 +1,4 @@
 import { dirname } from 'path';
-import type { Program, SourceFile, TypeChecker } from 'typescript';
 import {
   createProgram,
   findConfigFile,
@@ -7,6 +6,7 @@ import {
   readConfigFile,
   sys,
 } from 'typescript';
+import type { Program, SourceFile, TypeChecker } from 'typescript';
 
 class TestService {
   private static instance: TestService;

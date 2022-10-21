@@ -1,8 +1,8 @@
-import type { VariableStatement } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { isSubtypeOf } from '../../src';
 import { setupTest } from '../helpers';
+import type { VariableStatement } from 'typescript';
 
 describe('Test isSubtypeOf', () => {
   const { sourceFile, checker } = setupTest(__filename);

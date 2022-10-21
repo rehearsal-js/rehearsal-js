@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { dirname, resolve } from 'path';
 import {
   isTesting,
   isWorkspace,
@@ -6,7 +7,6 @@ import {
   readPackageJson,
 } from '@rehearsal/migration-graph-shared';
 import { sync as fastGlobSync } from 'fast-glob';
-import { dirname, resolve } from 'path';
 import resolvePackagePath from 'resolve-package-path';
 
 import { EmberAddonPackage } from './entities/ember-addon-package';
@@ -21,9 +21,9 @@ import {
   MappingsLookup,
   RootInternalState,
 } from './entities/InternalState';
-import type { EmberPackageContainer as PackageContainer } from './types/package-container';
 import { isAddon, isApp } from './utils/ember';
 import { getInternalAddonTestFixtures } from './utils/environment';
+import type { EmberPackageContainer as PackageContainer } from './types/package-container';
 
 type EntityFactoryOptions = {
   packageContainer: PackageContainer;

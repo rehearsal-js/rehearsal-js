@@ -1,9 +1,9 @@
-import type { TypeAliasDeclaration, TypeLiteralNode } from 'typescript';
 import { isInterfaceDeclaration, isTypeAliasDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getTypeAliasMemberByName } from '../../src';
 import { setupTest } from '../helpers';
+import type { TypeAliasDeclaration, TypeLiteralNode } from 'typescript';
 
 describe('Test getTypeAliasMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

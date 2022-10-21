@@ -27,11 +27,6 @@
     "test": "vitest --run",
     "test:watch": "vitest --coverage --watch"
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "dependencies": {
     "@microsoft/api-documenter": "^7.13.68",
     "@rehearsal/migrate": "workspace:*",

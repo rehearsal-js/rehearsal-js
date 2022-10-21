@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import * as parser from '@babel/parser';
 import * as t from '@babel/types';
 import {
@@ -7,7 +8,6 @@ import {
 } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { readFileSync } from 'fs-extra';
-import { resolve } from 'path';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';

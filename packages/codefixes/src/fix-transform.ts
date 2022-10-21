@@ -1,6 +1,6 @@
+import { getLineAndCharacterOfPosition } from 'typescript';
 import type { RehearsalService } from '@rehearsal/service';
 import type { DiagnosticWithLocation, SourceFile } from 'typescript';
-import { getLineAndCharacterOfPosition } from 'typescript';
 
 export type CodeFixAction = 'add' | 'delete' | 'replace';
 

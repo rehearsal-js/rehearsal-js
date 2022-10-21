@@ -1,5 +1,5 @@
-import findup from 'findup-sync';
 import { existsSync, readFileSync } from 'fs';
+import findup from 'findup-sync';
 import { format } from 'prettier';
 
 /**

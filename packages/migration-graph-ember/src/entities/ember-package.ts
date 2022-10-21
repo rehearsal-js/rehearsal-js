@@ -1,5 +1,5 @@
-import { type PackageOptions, Package } from '@rehearsal/migration-graph-shared';
 import { relative, resolve } from 'path';
+import { type PackageOptions, Package } from '@rehearsal/migration-graph-shared';
 
 import { InternalState } from './InternalState';
 
