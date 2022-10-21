@@ -18,6 +18,7 @@ import {
   getEmberAddonName,
   getPackageMainAST,
   getPackageMainFileName,
+  isApp,
   isAddon,
   isEngine,
   requirePackageMain,
@@ -88,7 +89,15 @@ describe('Unit | ember', () => {
       expect(somePackage.version).toBeTruthy();
       expect(somePackage.keywords).toBeTruthy();
     });
-    test('isAddon', function () {
+
+    test('isApp', () => {
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_APP))).toBe(true);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_ADDON))).toBe(false);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_ENGINE))).toBe(false);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.PLAIN_PACKAGE))).toBe(false);
+    });
+
+    test('isAddon', () => {
       expect(isAddon(getPackageJson(FIXTURE_NAMES.SIMPLE_ADDON))).toBe(true);
       expect(isAddon(getPackageJson(FIXTURE_NAMES.SIMPLE_ENGINE))).toBe(true);
       expect(isAddon(getPackageJson(FIXTURE_NAMES.PLAIN_PACKAGE))).toBe(false);

@@ -8,7 +8,11 @@ import { join, resolve } from 'path';
 import sortPackageJson from 'sort-package-json';
 
 export function isApp(packageJson: PackageJson): boolean {
-  return packageJson['ember'] && !isAddon(packageJson);
+  return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
+}
+
+function hasDevDependency(packageJson: PackageJson, packageName: string): boolean {
+  return (packageJson?.devDependencies && packageJson?.devDependencies[packageName]) ?? false;
 }
 
 function hasKeyword(packageJson: PackageJson, keyword: string): boolean {
