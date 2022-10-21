@@ -34,14 +34,25 @@ export function discoverServiceDependencies(
 
   const parsed = parseFileSync(filePath, { syntax: 'ecmascript', decorators: true });
 
-  const maybeImportDeclaration = findImportDeclarationsBySource(parsed.body, '@ember/service');
+  // Get all imports of '@ember/service'.
 
-  if (!maybeImportDeclaration) {
+  const maybeImportDeclarations = filterImportDeclarationsBySource(parsed.body, '@ember/service');
+
+  if (!maybeImportDeclarations) {
     DEBUG_CALLBACK('No import declaration found');
     return EMPTY_RESULT;
   }
 
-  const importDeclaration = maybeImportDeclaration as ImportDeclaration;
+  // We need to look through all import declarations to find the one with the export `inject`
+  const importDeclaration = findImportDeclarationWithExportedName(
+    maybeImportDeclarations,
+    'inject'
+  );
+
+  if (!importDeclaration) {
+    DEBUG_CALLBACK('No import declaration found with usage of inject');
+    return EMPTY_RESULT;
+  }
 
   // In the case of re-assignment from inject as service, we walk the specifiers
   const maybeSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'inject');
@@ -81,7 +92,7 @@ export function discoverServiceDependencies(
   }
 
   if (foundClasses.length < 1) {
-    return [];
+    return EMPTY_RESULT;
   }
 
   let results: EmberInferredServiceDependency[] = EMPTY_RESULT;
@@ -196,12 +207,22 @@ function isDecoratorWithExpressionTypeCallExpression(d: Decorator): boolean {
   return d.expression.type === 'CallExpression';
 }
 
-function findImportDeclarationsBySource(
+function filterImportDeclarationsBySource(
   items: ModuleItem[],
   source: string
+): ImportDeclaration[] {
+  return items.filter((i) => isImportDeclaration(i, source)).map((i) => i as ImportDeclaration);
+}
+
+function findImportDeclarationWithExportedName(
+  items: ImportDeclaration[],
+  exportName: string
 ): ImportDeclaration | undefined {
-  const item = items.find((i) => isImportDeclaration(i, source));
-  return item ? (item as ImportDeclaration) : undefined;
+  return items.find((i: ImportDeclaration) => {
+    const found = findSpecifierByExportedName(i.specifiers, exportName);
+
+    return found ?? false;
+  });
 }
 
 function isImportDeclaration(m: ModuleItem, source: string): boolean {
