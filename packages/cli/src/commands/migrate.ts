@@ -2,6 +2,7 @@
 
 // TODO: handle ctrl + c
 
+import { resolve } from 'path';
 import { migrate } from '@rehearsal/migrate';
 import {
   discoverEmberPackages,
@@ -12,7 +13,6 @@ import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal
 import { Command } from 'commander';
 import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
-import { resolve } from 'path';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';

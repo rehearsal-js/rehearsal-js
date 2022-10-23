@@ -1,6 +1,6 @@
+import { join, resolve } from 'path';
 import { readJsonSync } from 'fs-extra';
 import micromatch from 'micromatch';
-import { join, resolve } from 'path';
 
 /**
  * Gets all workspace globs from the the root `package.json`

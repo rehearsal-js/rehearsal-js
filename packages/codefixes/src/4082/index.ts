@@ -1,4 +1,3 @@
-import type { RehearsalService } from '@rehearsal/service';
 import {
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
@@ -6,6 +5,13 @@ import {
   isSubtypeOf,
   isTypeMatched,
 } from '@rehearsal/utils';
+import {
+  flattenDiagnosticMessageText,
+  isExportAssignment,
+  isObjectLiteralExpression,
+} from 'typescript';
+
+import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
 import type {
   DiagnosticWithLocation,
   ExportAssignment,
@@ -16,13 +22,7 @@ import type {
   TypeChecker,
   TypeReference,
 } from 'typescript';
-import {
-  flattenDiagnosticMessageText,
-  isExportAssignment,
-  isObjectLiteralExpression,
-} from 'typescript';
-
-import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
+import type { RehearsalService } from '@rehearsal/service';
 
 const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 

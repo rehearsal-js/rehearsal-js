@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { readJsonSync, writeJsonSync } from 'fs-extra';
 import path, { resolve } from 'path';
+import { readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';

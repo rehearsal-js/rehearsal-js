@@ -1,5 +1,5 @@
-import fixturify from 'fixturify';
 import path from 'path';
+import fixturify from 'fixturify';
 import tmp from 'tmp';
 import { describe, expect, test } from 'vitest';
 

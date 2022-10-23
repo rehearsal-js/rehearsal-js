@@ -1,9 +1,9 @@
-import type { RehearsalService } from '@rehearsal/service';
 import { findNodeAtPosition, insertIntoText } from '@rehearsal/utils';
-import type { DiagnosticWithLocation, TextChange } from 'typescript';
 import { getDefaultFormatCodeSettings } from 'typescript';
 
 import { type FixedFile, FixTransform } from '../fix-transform';
+import type { DiagnosticWithLocation, TextChange } from 'typescript';
+import type { RehearsalService } from '@rehearsal/service';
 
 export class FixTransform7006 extends FixTransform {
   fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {

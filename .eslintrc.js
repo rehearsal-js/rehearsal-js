@@ -4,24 +4,29 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames', 'simple-import-sort'],
+  plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames'],
   extends: [
     'eslint:recommended',
     'plugin:prettier/recommended',
     'prettier',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
+    'plugin:import/recommended',
   ],
   rules: {
     curly: 'error',
-    'import/order': 'off',
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
     'import/no-extraneous-dependencies': 'error',
     'import/no-unassigned-import': 'error',
     'import/no-unresolved': 'off',
-    'simple-import-sort/imports': 'error',
-    'sort-imports': 'off',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+      },
+    ],
     'prettier/prettier': [
       'error',
       {

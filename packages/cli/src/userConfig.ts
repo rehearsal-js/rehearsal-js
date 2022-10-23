@@ -1,6 +1,6 @@
+import { resolve } from 'path';
 import execa from 'execa';
 import { readJSONSync } from 'fs-extra';
-import { resolve } from 'path';
 
 import { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 import { addDep } from './utils';

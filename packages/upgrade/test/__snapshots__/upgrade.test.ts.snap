@@ -453,7 +453,45 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "import fs from 'fs';",
+          "code": " parse",
+          "codeFixAction": "delete",
+          "fileName": "ts-errors.ts",
+          "fixed": true,
+          "hint": undefined,
+          "hintAdded": false,
+          "location": {
+            "endColumn": 19,
+            "endLine": 1,
+            "startColumn": 19,
+            "startLine": 1,
+          },
+          "roles": [
+            "analysisTarget",
+            "modified",
+          ],
+        },
+      },
+      "fixed": true,
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
+      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
+      "message": "'parse' is declared but its value is never read.",
+      "nodeKind": "ImportSpecifier",
+      "nodeLocation": {
+        "endColumn": 22,
+        "endLine": 0,
+        "startColumn": 18,
+        "startLine": 0,
+      },
+      "nodeText": "parse",
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "errorCode": 6133,
+      "files": {
+        "ts-errors.ts": {
+          "code": "
+import fs from 'fs';",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
@@ -461,9 +499,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": false,
           "location": {
             "endColumn": 1,
-            "endLine": 1,
+            "endLine": 2,
             "startColumn": 1,
-            "startLine": 1,
+            "startLine": 2,
           },
           "roles": [
             "analysisTarget",
@@ -478,48 +516,11 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "ImportDeclaration",
       "nodeLocation": {
         "endColumn": 19,
-        "endLine": 0,
-        "startColumn": 0,
-        "startLine": 0,
-      },
-      "nodeText": "import fs from 'fs';",
-    },
-    {
-      "analysisTarget": "ts-errors.ts",
-      "category": "Error",
-      "errorCode": 6133,
-      "files": {
-        "ts-errors.ts": {
-          "code": " parse",
-          "codeFixAction": "delete",
-          "fileName": "ts-errors.ts",
-          "fixed": true,
-          "hint": undefined,
-          "hintAdded": false,
-          "location": {
-            "endColumn": 10,
-            "endLine": 2,
-            "startColumn": 10,
-            "startLine": 2,
-          },
-          "roles": [
-            "analysisTarget",
-            "modified",
-          ],
-        },
-      },
-      "fixed": true,
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
-      "hint": "The declaration 'parse' is never read or used. Remove the declaration or use it.",
-      "message": "'parse' is declared but its value is never read.",
-      "nodeKind": "ImportSpecifier",
-      "nodeLocation": {
-        "endColumn": 13,
         "endLine": 1,
-        "startColumn": 9,
+        "startColumn": 0,
         "startLine": 1,
       },
-      "nodeText": "parse",
+      "nodeText": "import fs from 'fs';",
     },
     {
       "analysisTarget": "ts-errors.ts",
@@ -535,9 +536,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 17,
-            "endLine": 4,
+            "endLine": 3,
             "startColumn": 6,
-            "startLine": 4,
+            "startLine": 3,
           },
           "roles": [
             "analysisTarget",
@@ -552,9 +553,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 17,
-        "endLine": 4,
+        "endLine": 3,
         "startColumn": 6,
-        "startLine": 4,
+        "startLine": 3,
       },
       "nodeText": "thisConstant",
     },
@@ -572,9 +573,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 15,
-            "endLine": 7,
+            "endLine": 6,
             "startColumn": 4,
-            "startLine": 7,
+            "startLine": 6,
           },
           "roles": [
             "analysisTarget",
@@ -589,9 +590,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 15,
-        "endLine": 7,
+        "endLine": 6,
         "startColumn": 4,
-        "startLine": 7,
+        "startLine": 6,
       },
       "nodeText": "thisVariable",
     },
@@ -609,9 +610,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 31,
-            "endLine": 10,
+            "endLine": 9,
             "startColumn": 9,
-            "startLine": 10,
+            "startLine": 9,
           },
           "roles": [
             "analysisTarget",
@@ -626,9 +627,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 31,
-        "endLine": 10,
+        "endLine": 9,
         "startColumn": 9,
-        "startLine": 10,
+        "startLine": 9,
       },
       "nodeText": "thisFunctionIsNeverRead",
     },
@@ -646,9 +647,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 23,
-            "endLine": 16,
+            "endLine": 15,
             "startColumn": 9,
-            "startLine": 16,
+            "startLine": 15,
           },
           "roles": [
             "analysisTarget",
@@ -663,9 +664,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 23,
-        "endLine": 16,
+        "endLine": 15,
         "startColumn": 9,
-        "startLine": 16,
+        "startLine": 15,
       },
       "nodeText": "missingFunction",
     },
@@ -683,9 +684,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 30,
-            "endLine": 24,
+            "endLine": 23,
             "startColumn": 21,
-            "startLine": 24,
+            "startLine": 23,
           },
           "roles": [
             "analysisTarget",
@@ -700,9 +701,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 30,
-        "endLine": 24,
+        "endLine": 23,
         "startColumn": 21,
-        "startLine": 24,
+        "startLine": 23,
       },
       "nodeText": "missingVar",
     },
@@ -720,9 +721,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 15,
-            "endLine": 32,
+            "endLine": 31,
             "startColumn": 6,
-            "startLine": 32,
+            "startLine": 31,
           },
           "roles": [
             "analysisTarget",
@@ -737,9 +738,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 15,
-        "endLine": 32,
+        "endLine": 31,
         "startColumn": 6,
-        "startLine": 32,
+        "startLine": 31,
       },
       "nodeText": "missingVar",
     },
@@ -757,9 +758,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 95,
-            "endLine": 34,
+            "endLine": 33,
             "startColumn": 6,
-            "startLine": 34,
+            "startLine": 33,
           },
           "roles": [
             "analysisTarget",
@@ -774,9 +775,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 95,
-        "endLine": 34,
+        "endLine": 33,
         "startColumn": 6,
-        "startLine": 34,
+        "startLine": 33,
       },
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
     },
@@ -794,9 +795,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 28,
-            "endLine": 38,
+            "endLine": 37,
             "startColumn": 9,
-            "startLine": 38,
+            "startLine": 37,
           },
           "roles": [
             "analysisTarget",
@@ -811,9 +812,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 28,
-        "endLine": 38,
+        "endLine": 37,
         "startColumn": 9,
-        "startLine": 38,
+        "startLine": 37,
       },
       "nodeText": "notProperlyFormatted",
     },
@@ -831,9 +832,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 19,
-            "endLine": 40,
+            "endLine": 39,
             "startColumn": 9,
-            "startLine": 40,
+            "startLine": 39,
           },
           "roles": [
             "analysisTarget",
@@ -848,9 +849,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 19,
-        "endLine": 40,
+        "endLine": 39,
         "startColumn": 9,
-        "startLine": 40,
+        "startLine": 39,
       },
       "nodeText": "doSomething",
     },
@@ -868,9 +869,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 35,
-            "endLine": 47,
+            "endLine": 46,
             "startColumn": 9,
-            "startLine": 47,
+            "startLine": 46,
           },
           "roles": [
             "analysisTarget",
@@ -885,9 +886,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 35,
-        "endLine": 47,
+        "endLine": 46,
         "startColumn": 9,
-        "startLine": 47,
+        "startLine": 46,
       },
       "nodeText": "thisFunctionIsACompleteMess",
     },
@@ -905,9 +906,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 4,
-            "endLine": 51,
+            "endLine": 50,
             "startColumn": 2,
-            "startLine": 51,
+            "startLine": 50,
           },
           "roles": [
             "analysisTarget",
@@ -922,9 +923,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 4,
-        "endLine": 51,
+        "endLine": 50,
         "startColumn": 2,
-        "startLine": 51,
+        "startLine": 50,
       },
       "nodeText": "foo",
     },
@@ -942,9 +943,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 19,
-            "endLine": 53,
+            "endLine": 52,
             "startColumn": 11,
-            "startLine": 53,
+            "startLine": 52,
           },
           "roles": [
             "analysisTarget",
@@ -959,9 +960,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 19,
-        "endLine": 53,
+        "endLine": 52,
         "startColumn": 11,
-        "startLine": 53,
+        "startLine": 52,
       },
       "nodeText": "timestamp",
     },
@@ -979,9 +980,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 10,
-            "endLine": 55,
+            "endLine": 54,
             "startColumn": 10,
-            "startLine": 55,
+            "startLine": 54,
           },
           "roles": [
             "analysisTarget",
@@ -996,9 +997,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 10,
-        "endLine": 55,
+        "endLine": 54,
         "startColumn": 10,
-        "startLine": 55,
+        "startLine": 54,
       },
       "nodeText": "b",
     },
@@ -1016,9 +1017,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 14,
-            "endLine": 57,
+            "endLine": 56,
             "startColumn": 4,
-            "startLine": 57,
+            "startLine": 56,
           },
           "roles": [
             "analysisTarget",
@@ -1033,9 +1034,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 14,
-        "endLine": 57,
+        "endLine": 56,
         "startColumn": 4,
-        "startLine": 57,
+        "startLine": 56,
       },
       "nodeText": "return 'a';",
     },
@@ -1053,9 +1054,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hintAdded": true,
           "location": {
             "endColumn": 8,
-            "endLine": 65,
+            "endLine": 64,
             "startColumn": 0,
-            "startLine": 65,
+            "startLine": 64,
           },
           "roles": [
             "analysisTarget",
@@ -1070,9 +1071,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 8,
-        "endLine": 65,
+        "endLine": 64,
         "startColumn": 0,
-        "startLine": 65,
+        "startLine": 64,
       },
       "nodeText": "timestamp",
     },

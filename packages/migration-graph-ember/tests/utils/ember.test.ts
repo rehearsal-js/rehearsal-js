@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import * as parser from '@babel/parser';
 import * as t from '@babel/types';
 import {
@@ -7,7 +8,6 @@ import {
 } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { readFileSync } from 'fs-extra';
-import { resolve } from 'path';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
@@ -18,6 +18,7 @@ import {
   getEmberAddonName,
   getPackageMainAST,
   getPackageMainFileName,
+  isApp,
   isAddon,
   isEngine,
   requirePackageMain,
@@ -88,7 +89,15 @@ describe('Unit | ember', () => {
       expect(somePackage.version).toBeTruthy();
       expect(somePackage.keywords).toBeTruthy();
     });
-    test('isAddon', function () {
+
+    test('isApp', () => {
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_APP))).toBe(true);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_ADDON))).toBe(false);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.SIMPLE_ENGINE))).toBe(false);
+      expect(isApp(getPackageJson(FIXTURE_NAMES.PLAIN_PACKAGE))).toBe(false);
+    });
+
+    test('isAddon', () => {
       expect(isAddon(getPackageJson(FIXTURE_NAMES.SIMPLE_ADDON))).toBe(true);
       expect(isAddon(getPackageJson(FIXTURE_NAMES.SIMPLE_ENGINE))).toBe(true);
       expect(isAddon(getPackageJson(FIXTURE_NAMES.PLAIN_PACKAGE))).toBe(false);

@@ -1,7 +1,7 @@
-import { setupTestEnvironment } from '@rehearsal/migration-graph-shared';
-import { writeSync } from 'fixturify';
 import { readFileSync, realpathSync } from 'fs';
 import { join, resolve } from 'path';
+import { setupTestEnvironment } from '@rehearsal/migration-graph-shared';
+import { writeSync } from 'fixturify';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';

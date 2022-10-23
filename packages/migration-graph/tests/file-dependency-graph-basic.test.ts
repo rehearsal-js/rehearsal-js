@@ -1,6 +1,5 @@
-import { writeSync } from 'fixturify';
 import { join, relative } from 'path';
-import type { ModuleNode } from 'src/types';
+import { writeSync } from 'fixturify';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { describe, expect, test } from 'vitest';
 
@@ -8,6 +7,7 @@ import { createDependencyGraph } from '../src/file-dependency-graph/basic';
 import { Graph } from '../src/utils/graph';
 import { GraphNode } from '../src/utils/graph-node';
 import { getLibrarySimple } from './fixtures/library';
+import type { ModuleNode } from 'src/types';
 
 setGracefulCleanup();
 

@@ -1,6 +1,5 @@
-import { Package } from '@rehearsal/migration-graph-shared';
-
-import { Graph } from './utils/graph';
+import type { Package } from '@rehearsal/migration-graph-shared';
+import type { Graph } from './utils/graph';
 
 export type UniqueGraphNode = {
   key: string;

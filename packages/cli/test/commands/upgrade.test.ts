@@ -1,7 +1,7 @@
+import { join, resolve } from 'path';
 import { type Report } from '@rehearsal/reporter';
 import execa from 'execa';
 import { existsSync, readJSONSync, rmSync } from 'fs-extra';
-import { join, resolve } from 'path';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import packageJson from '../../package.json';

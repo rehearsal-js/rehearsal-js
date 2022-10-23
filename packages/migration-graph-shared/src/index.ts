@@ -1,5 +1,5 @@
-import { readJsonSync } from 'fs-extra';
 import { resolve } from 'path';
+import { readJsonSync } from 'fs-extra';
 
 import { PackageJson } from './entities/package';
 

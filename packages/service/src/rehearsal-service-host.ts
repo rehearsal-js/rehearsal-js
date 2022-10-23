@@ -1,5 +1,5 @@
-import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 import { getDefaultLibFilePath, LanguageServiceHost, ScriptSnapshot, sys } from 'typescript';
+import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 /**
  * ServiceHost represents the layer between the LanguageServer and the permanent storage.

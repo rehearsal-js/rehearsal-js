@@ -1,9 +1,13 @@
-import fs from 'fs-extra';
 import { join, relative } from 'path';
+import fs from 'fs-extra';
 
-import { buildMigrationGraph, DetectedSource, MigrationGraphOptions } from './migration-graph';
-import { ModuleNode, PackageNode } from './types';
-import { GraphNode } from './utils/graph-node';
+import {
+  buildMigrationGraph,
+  type DetectedSource,
+  type MigrationGraphOptions,
+} from './migration-graph';
+import type { ModuleNode, PackageNode } from './types';
+import type { GraphNode } from './utils/graph-node';
 
 export class SourceFile {
   #packageName: string;

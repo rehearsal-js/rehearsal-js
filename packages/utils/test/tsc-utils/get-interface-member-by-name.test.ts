@@ -1,9 +1,9 @@
-import type { InterfaceDeclaration } from 'typescript';
 import { isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getInterfaceMemberByName } from '../../src';
 import { setupTest } from '../helpers';
+import type { InterfaceDeclaration } from 'typescript';
 
 describe('Test getInterfaceMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

@@ -1,24 +1,22 @@
+import fs from 'fs';
+import { join, relative, resolve } from 'path';
 import { EmberAddonPackage } from '@rehearsal/migration-graph-ember';
-import { Package } from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
 import {
   cruise,
-  ICruiseOptions,
-  ICruiseResult,
-  IDependency,
-  IModule,
-  IReporterOutput,
-  IResolveOptions,
+  type ICruiseOptions,
+  type ICruiseResult,
+  type IDependency,
+  type IModule,
+  type IReporterOutput,
+  type IResolveOptions,
 } from 'dependency-cruiser';
-import fs from 'fs';
-import { join, relative, resolve } from 'path';
-
-import { ModuleNode } from '../types';
+import { CachedInputFileSystem } from 'enhanced-resolve';
 import { Graph } from '../utils/graph';
+import type { ModuleNode } from '../types';
+import type { Package } from '@rehearsal/migration-graph-shared';
 
 const DEBUG_CALLBACK = debug('rehearsal:createDependencyGraph:cruiser');
-
-import { CachedInputFileSystem } from 'enhanced-resolve';
 
 export type DependencyGraphOptions = {
   entrypoint?: string;

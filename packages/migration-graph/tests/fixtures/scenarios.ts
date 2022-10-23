@@ -1,5 +1,4 @@
 import { Scenarios, Project, Scenario, PreparedApp } from 'scenario-tester';
-import { dirname } from 'path';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import rimraf from 'rimraf';

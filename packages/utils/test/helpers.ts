@@ -1,7 +1,6 @@
 import { resolve } from 'path';
-import type { SourceFile, TypeChecker } from 'typescript';
-
 import { testService } from './test-service';
+import type { SourceFile, TypeChecker } from 'typescript';
 
 interface SetupResult {
   sourceFile: SourceFile | undefined;
