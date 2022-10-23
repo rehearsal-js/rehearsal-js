@@ -40,7 +40,6 @@ migrateCommand
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option('-s, --strict', 'Use strict tsconfig file')
-  .option('-c, --clean', 'Clean up old JS files after TS conversion')
   .option(
     '-u, --userConfig <custom json config for migrate command>',
     'File path for custom config'
@@ -140,16 +139,6 @@ migrateCommand
               task.skip(
                 `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
               );
-            }
-          },
-        },
-        {
-          title: 'Clean up old JS files', // TODO: flag
-          task: async (_ctx, task) => {
-            if (_ctx.sourceFilesWithAbsolutePath.length && options.clean) {
-              cleanJSFiles(_ctx.sourceFilesWithAbsolutePath);
-            } else {
-              task.skip(`Skipping clean up task`);
             }
           },
         },
