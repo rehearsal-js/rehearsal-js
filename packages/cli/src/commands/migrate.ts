@@ -107,10 +107,10 @@ migrateCommand
               ]);
               // update basePath based on the selection
               _ctx.targetPacakgePath = packageMap[_ctx.input as string];
-              task.title = `Initializatoin Completed! Running migration on ${_ctx.input}.`;
+              task.title = `Initialization Completed! Running migration on ${_ctx.input}.`;
             } else {
               _ctx.targetPacakgePath = options.basePath;
-              task.title = `Initializatoin Completed! Running migration on ${projectName}.`;
+              task.title = `Initialization Completed! Running migration on ${projectName}.`;
             }
 
             // construct migration strategy and prepare all the files needs to be migrated
@@ -196,7 +196,7 @@ migrateCommand
           },
         },
         {
-          title: 'Clean up old JS files',
+          title: 'Cleaning up old JS files',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             if (_ctx.sourceFilesWithAbsolutePath.length && options.clean) {
@@ -207,7 +207,7 @@ migrateCommand
           },
         },
         {
-          title: 'Run Typescript compiler to check errors',
+          title: 'Checking for TypeScript errors',
           enabled: (ctx): boolean => !ctx.skip,
           task: async () => {
             await runModuleCommand(['tsc'], { cwd: options.basePath });
@@ -216,7 +216,7 @@ migrateCommand
         // TODO: what to do with those ts errors?
 
         {
-          title: 'Creating lint config',
+          title: 'Creating eslint config',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             if (_ctx.userConfig?.hasLintSetup) {
