@@ -7,7 +7,7 @@ import { migrate } from '@rehearsal/migrate';
 import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
+import { existsSync, readJSONSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
@@ -212,12 +212,4 @@ function createTSConfig(basePath: string, fileList: string[], strict: boolean): 
         include,
       };
   writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
-}
-
-/**
- * Remove files
- * @param fileList Array of file paths
- */
-function cleanJSFiles(fileList: string[]): void {
-  fileList.filter((f) => f.match(/\.js$/)).forEach((f) => rmSync(f));
 }
