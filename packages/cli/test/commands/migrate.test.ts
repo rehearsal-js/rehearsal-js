@@ -239,7 +239,7 @@ describe('migrate - JS to TS conversion', async () => {
       { cwd: basePath }
     );
 
-    expect(result.stdout).toContain(`[SUCCESS] Clean up old JS files`);
+    expect(result.stdout).toContain(`[SUCCESS] Cleaning up old JS files`);
     expect(readdirSync(basePath)).toContain('foo.ts');
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).not.toContain('bar.js');

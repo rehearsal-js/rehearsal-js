@@ -109,7 +109,9 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
   }
 }
 
-function discoverEmberPackages(rootDir: string): Array<Package | EmberPackage | EmberAddonPackage> {
+export function discoverEmberPackages(
+  rootDir: string
+): Array<Package | EmberPackage | EmberAddonPackage> {
   const { mappingsByAddonName } = getInternalPackages(rootDir);
   return Array.from(Object.values(mappingsByAddonName));
 }
