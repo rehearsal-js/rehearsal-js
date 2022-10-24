@@ -4,7 +4,11 @@
 
 import { resolve } from 'path';
 import { migrate } from '@rehearsal/migrate';
-import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
+import {
+  discoverEmberPackages,
+  getMigrationStrategy,
+  SourceFile,
+} from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { existsSync, readJSONSync, writeJsonSync } from 'fs-extra';
@@ -12,7 +16,12 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';
-import { MigrateCommandContext, MigrateCommandOptions } from '../types';
+import {
+  MigrateCommandContext,
+  MigrateCommandOptions,
+  PackageMap,
+  PackageSelection,
+} from '../types';
 import { UserConfig } from '../userConfig';
 import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
 
@@ -44,6 +53,7 @@ migrateCommand
     '-u, --userConfig <custom json config for migrate command>',
     'File path for custom config'
   )
+  .option('-i, --interactive', 'Interactive mode to help migrate part of large apps')
   .option('-v, --verbose', 'Print more logs to debug.')
   .action(async (options: MigrateCommandOptions) => {
     const loggerLevel = options.verbose ? 'debug' : 'info';
@@ -56,6 +66,7 @@ migrateCommand
         {
           title: 'Initialization',
           task: async (_ctx, task) => {
+            // _ctx.skip = true;
             // get custom config
             const userConfig = options.userConfig
               ? new UserConfig(options.basePath, options.userConfig, 'migrate')
@@ -63,19 +74,58 @@ migrateCommand
 
             _ctx.userConfig = userConfig;
 
-            const strategy = getMigrationStrategy(options.basePath, {
+            const projectName = await determineProjectName(options.basePath);
+
+            if (options.interactive) {
+              const packageSelections: PackageSelection[] = discoverEmberPackages(
+                options.basePath
+              ).map((p) => {
+                let { packageName: name } = p;
+                if (name === projectName) {
+                  // a little better message to indicate this option is for entire project
+                  name = `${name} (this entire project)`;
+                }
+                return {
+                  name,
+                  location: p.path,
+                };
+              });
+              const packageMap = packageSelections.reduce((map, p) => {
+                map[p.name] = p.location;
+                return map;
+              }, {} as PackageMap);
+
+              _ctx.input = await task.prompt<{ test: boolean; other: boolean }>([
+                {
+                  type: 'Select',
+                  name: 'packageSelection',
+                  message:
+                    'We have found multiple packages in your project, select the one to migrate:',
+                  choices: Object.keys(packageMap),
+                },
+              ]);
+              // update basePath based on the selection
+              _ctx.targetPacakgePath = packageMap[_ctx.input as string];
+              task.title = `Initialization Completed! Running migration on ${_ctx.input}.`;
+            } else {
+              _ctx.targetPacakgePath = options.basePath;
+              task.title = `Initialization Completed! Running migration on ${projectName}.`;
+            }
+
+            // construct migration strategy and prepare all the files needs to be migrated
+            const strategy = getMigrationStrategy(_ctx.targetPacakgePath, {
               entrypoint: options.entrypoint,
+              filterByPackageName: [],
             });
             const files: Array<SourceFile> = strategy.getMigrationOrder();
             _ctx.strategy = strategy;
             _ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
             _ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
-
-            task.title = `Initializatoin Completed! Running migration on ${_ctx.strategy.sourceType}`;
           },
         },
         {
           title: 'Installing dependencies',
+          enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             // install custom dependencies
             if (_ctx.userConfig?.hasDependencies) {
@@ -92,6 +142,7 @@ migrateCommand
         },
         {
           title: 'Creating tsconfig.json',
+          enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             if (_ctx.userConfig?.hasTsSetup) {
               task.title = `Creating tsconfig from custom config.`;
@@ -115,13 +166,14 @@ migrateCommand
         },
         {
           title: 'Converting JS files to TS',
+          enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
 
             if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
-                basePath: options.basePath,
+                basePath: _ctx.targetPacakgePath,
                 sourceFiles: _ctx.sourceFilesWithAbsolutePath,
                 logger: options.verbose ? logger : undefined,
                 reporter,
@@ -143,7 +195,8 @@ migrateCommand
           },
         },
         {
-          title: 'Run Typescript compiler to check errors',
+          title: 'Checking for TypeScript errors',
+          enabled: (ctx): boolean => !ctx.skip,
           task: async () => {
             await runModuleCommand(['tsc'], { cwd: options.basePath });
           },
@@ -151,7 +204,8 @@ migrateCommand
         // TODO: what to do with those ts errors?
 
         {
-          title: 'Creating lint config',
+          title: 'Creating eslint config',
+          enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
             if (_ctx.userConfig?.hasLintSetup) {
               task.title = `Creating .eslintrc.js from custom config.`;

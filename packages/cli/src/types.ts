@@ -12,6 +12,7 @@ export type MigrateCommandOptions = {
   verbose: boolean | undefined;
   strict: boolean | undefined;
   userConfig: string | undefined;
+  interactive: boolean | undefined;
 };
 
 export type MigrateCommandContext = {
@@ -20,6 +21,8 @@ export type MigrateCommandContext = {
   strategy: MigrationStrategy;
   sourceFilesWithAbsolutePath: string[];
   sourceFilesWithRelativePath: string[];
+  input: unknown;
+  targetPacakgePath: string;
 };
 
 export type UpgradeCommandContext = {
@@ -61,4 +64,13 @@ export type CustomCommandConfig = {
 export type CustomConfig = {
   upgrade?: CustomCommandConfig;
   migrate?: CustomCommandConfig;
+};
+
+export type PackageSelection = {
+  name: string;
+  location: string;
+};
+
+export type PackageMap = {
+  [key: string]: string;
 };
