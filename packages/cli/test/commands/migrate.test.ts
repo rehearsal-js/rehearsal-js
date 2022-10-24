@@ -166,8 +166,7 @@ describe('migrate - JS to TS conversion', async () => {
 
     expect(content).toMatchSnapshot();
 
-    // keep old JS files without --clean flag
-    expect(readdirSync(basePath)).toContain('index.js');
+    expect(readdirSync(basePath)).not.toContain('index.js');
 
     const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
     expect(config.include).toEqual(['index.ts']);
@@ -224,26 +223,11 @@ describe('migrate - JS to TS conversion', async () => {
     expect(foo).toMatchSnapshot();
     expect(depends_on_foo).toMatchSnapshot();
 
-    // keep old JS files without --clean flag
-    expect(readdirSync(basePath)).toContain('depends-on-foo.js');
-    expect(readdirSync(basePath)).toContain('foo.js');
+    expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
+    expect(readdirSync(basePath)).not.toContain('foo.js');
 
     const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
     expect(config.include).toEqual(['foo.ts', 'depends-on-foo.ts']);
-  });
-
-  test('able to cleanup old JS filse', async () => {
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'depends-on-foo.js', '--clean'],
-      { cwd: basePath }
-    );
-
-    expect(result.stdout).toContain(`[SUCCESS] Cleaning up old JS files`);
-    expect(readdirSync(basePath)).toContain('foo.ts');
-    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
-    expect(readdirSync(basePath)).not.toContain('bar.js');
-    expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
   });
 });
 

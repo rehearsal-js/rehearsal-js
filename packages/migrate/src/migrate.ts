@@ -1,6 +1,7 @@
-import { copyFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { RehearsalService } from '@rehearsal/service';
+import { sync as execaSync } from 'execa';
 import {
   DiagnosticFixPlugin,
   EmptyLinesPreservePlugin,
@@ -62,9 +63,16 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
       // Should prepend d.ts file if it exists to the new ts file.
     } else {
       const destFile = tsFile;
-      copyFileSync(sourceFile, destFile);
+      try {
+        // use git mv to keep the commit history in each file
+        // would fail if the file is not been tracked
+        execaSync('git', ['mv', sourceFile, destFile]);
+      } catch (e) {
+        // use simple mv if git mv fails
+        execaSync('mv', [sourceFile, destFile]);
+      }
       logger?.info(
-        `Copying ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
+        `Moving ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
       );
     }
 

@@ -55,7 +55,7 @@ describe('migrate', () => {
     clean(actualDir);
   });
 
-  test('should rename file to ts extension', async () => {
+  test('should move js file to ts extension', async () => {
     const input: MigrateInput = {
       basePath,
       sourceFiles,
@@ -71,6 +71,7 @@ describe('migrate', () => {
 
     expect(report.summary.basePath).toMatch(/migrate/);
     expect(migratedFiles).includes(`${actualDir}/index.ts`);
+    expect(existsSync(`${actualDir}/index.js`)).toBeFalsy();
     rmSync(jsonReport);
   });
 

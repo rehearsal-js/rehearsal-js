@@ -11,7 +11,7 @@ import {
 } from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync, readJSONSync, rmSync, writeJsonSync } from 'fs-extra';
+import { existsSync, readJSONSync, writeJsonSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
@@ -49,7 +49,6 @@ migrateCommand
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option('-s, --strict', 'Use strict tsconfig file')
-  .option('-c, --clean', 'Clean up old JS files after TS conversion')
   .option(
     '-u, --userConfig <custom json config for migrate command>',
     'File path for custom config'
@@ -196,17 +195,6 @@ migrateCommand
           },
         },
         {
-          title: 'Cleaning up old JS files',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async (_ctx, task) => {
-            if (_ctx.sourceFilesWithAbsolutePath.length && options.clean) {
-              cleanJSFiles(_ctx.sourceFilesWithAbsolutePath);
-            } else {
-              task.skip(`Skipping clean up task`);
-            }
-          },
-        },
-        {
           title: 'Checking for TypeScript errors',
           enabled: (ctx): boolean => !ctx.skip,
           task: async () => {
@@ -278,12 +266,4 @@ function createTSConfig(basePath: string, fileList: string[], strict: boolean): 
         include,
       };
   writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
-}
-
-/**
- * Remove files
- * @param fileList Array of file paths
- */
-function cleanJSFiles(fileList: string[]): void {
-  fileList.filter((f) => f.match(/\.js$/)).forEach((f) => rmSync(f));
 }

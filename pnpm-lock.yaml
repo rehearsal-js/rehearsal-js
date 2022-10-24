@@ -176,6 +176,7 @@ importers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/service': workspace:*
       '@rehearsal/utils': workspace:*
+      execa: ^5.1.1
       vitest: ^0.23.4
       winston: ^3.6.0
     dependencies:
@@ -183,6 +184,7 @@ importers:
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/service': link:../service
       '@rehearsal/utils': link:../utils
+      execa: 5.1.1
       winston: 3.8.2
     devDependencies:
       vitest: 0.23.4
