@@ -10,7 +10,6 @@ export type MigrateCommandOptions = {
   report: string[];
   outputPath: string;
   verbose: boolean | undefined;
-  strict: boolean | undefined;
   userConfig: string | undefined;
   interactive: boolean | undefined;
 };

@@ -39,7 +39,7 @@ export const migrateCommand = new Command();
 migrateCommand
   .name('migrate')
   .description('Migrate Javascript project to Typescript')
-  .requiredOption('-p, --basePath <project base path>', 'Base dir path of your project.')
+  .option('-p, --basePath <project base path>', 'Base dir path of your project.', process.cwd())
   .option('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-r, --report <reportTypes>',
@@ -48,7 +48,6 @@ migrateCommand
     []
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
-  .option('-s, --strict', 'Use strict tsconfig file')
   .option(
     '-u, --userConfig <custom json config for migrate command>',
     'File path for custom config'
@@ -153,13 +152,9 @@ migrateCommand
               if (existsSync(configPath)) {
                 task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
               } else {
-                task.title = `Creating ${options.strict ? 'strict' : 'basic'} tsconfig.`;
+                task.title = `Creating tsconfig.`;
 
-                createTSConfig(
-                  options.basePath,
-                  _ctx.sourceFilesWithRelativePath,
-                  !!options.strict
-                );
+                createTSConfig(options.basePath, _ctx.sourceFilesWithRelativePath);
               }
             }
           },
@@ -228,42 +223,20 @@ migrateCommand
 /**
  * Generate tsconfig
  */
-function createTSConfig(basePath: string, fileList: string[], strict: boolean): void {
+function createTSConfig(basePath: string, fileList: string[]): void {
   const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
-  const config = strict
-    ? {
-        $schema: 'http://json.schemastore.org/tsconfig',
-        compilerOptions: {
-          baseUrl: '.',
-          outDir: 'dist',
-          strict: true,
-          noUncheckedIndexedAccess: true,
-          module: 'es2020',
-          moduleResolution: 'node',
-          newLine: 'lf',
-          forceConsistentCasingInFileNames: true,
-          noFallthroughCasesInSwitch: true,
-          target: 'es2020',
-          lib: ['es2020'],
-          esModuleInterop: true,
-          declaration: true,
-          sourceMap: true,
-          declarationMap: true,
-        },
-        include,
-      }
-    : {
-        $schema: 'http://json.schemastore.org/tsconfig',
-        compilerOptions: {
-          baseUrl: '.',
-          outDir: 'dist',
-          emitDeclarationOnly: true,
-          allowJs: true,
-          target: 'es2016',
-          module: 'commonjs',
-          moduleResolution: 'node',
-        },
-        include,
-      };
+  const config = {
+    $schema: 'http://json.schemastore.org/tsconfig',
+    compilerOptions: {
+      baseUrl: '.',
+      outDir: 'dist',
+      emitDeclarationOnly: true,
+      allowJs: true,
+      target: 'es2016',
+      module: 'commonjs',
+      moduleResolution: 'node',
+    },
+    include,
+  };
   writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
 }
