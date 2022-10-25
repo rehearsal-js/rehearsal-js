@@ -48,7 +48,8 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
   /**
    *
    *  When we add an ember module (file) to the graph. It may contain services.
-   *    - We we find a services we add a synthetic node to the graph to model the dependency.
+   *  If we we find a service, we add a synthetic node to the graph to model the
+   *  dependency.
    *
    *  Later during graph creation, we may add the service node to the graph.
    *
