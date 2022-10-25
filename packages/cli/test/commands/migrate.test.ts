@@ -221,7 +221,7 @@ describe('migrate - handle custom basePath', async () => {
     });
 
     expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
-    expect(result.stdout).toContain('Creating basic tsconfig');
+    expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
