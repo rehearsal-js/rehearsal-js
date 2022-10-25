@@ -1,3 +1,3 @@
-import { say } from './foo';
+import { foo } from './foo';
 
-console.log(say('hello'));
+console.log(foo('hello'));

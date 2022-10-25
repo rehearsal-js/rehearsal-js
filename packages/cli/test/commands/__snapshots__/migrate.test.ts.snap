@@ -1,26 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`migrate - JS to TS conversion > able to migrate multiple JS file from an entrypoint 1`] = `
-"export function say(name = 'World') {
-  return \`Hello \${name}\`;
-}"
-`;
-
-exports[`migrate - JS to TS conversion > able to migrate multiple JS file from an entrypoint 2`] = `
-"import { say } from './foo';
-
-console.log(say('hello'));
-"
-`;
-
-exports[`migrate - JS to TS conversion > able to migrate single JS file 1`] = `
-"import path from 'path';
-
-export function power(foo, bar) {
-  return Math.pow(foo, bar);
-}"
-`;
-
 exports[`migrate - generate tsconfig > Create strict tsconfig 1`] = `
 "{
   \\"$schema\\": \\"http://json.schemastore.org/tsconfig\\",
