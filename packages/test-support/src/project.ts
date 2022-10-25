@@ -1,7 +1,6 @@
 import { dirname, join } from 'path';
 import { Project } from 'fixturify-project';
 import findupSync from 'findup-sync';
-import merge from 'lodash.merge';
 import tmp from 'tmp';
 import {
   getEmberAppFiles,
@@ -23,7 +22,7 @@ const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
 const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
 
 export function getEmberAppProject(project: Project = emberAppTemplate()): Project {
-  merge(project.files, getEmberAppFiles());
+  project.mergeFiles(getEmberAppFiles());
   return project;
 }
 
@@ -43,7 +42,7 @@ export function getEmberAppWithInRepoAddonProject(
     paths: [`lib/${addonName}`],
   };
 
-  merge(project.files, getEmberAppWithInRepoAddonFiles(addonName));
+  project.mergeFiles(getEmberAppWithInRepoAddonFiles(addonName));
 
   return project;
 }
@@ -69,7 +68,7 @@ export function getEmberAppWithInRepoEngineProject(
   // calls `require()` on the `index.js` of the addon to determine the addon-name.
   // This test fails unless we mock that module.
 
-  project.files = merge(project.files, {
+  project.mergeFiles({
     node_modules: {
       'ember-engines': {
         lib: {
@@ -83,7 +82,7 @@ export function getEmberAppWithInRepoEngineProject(
     },
   });
 
-  merge(project.files, getEmberAppWithInRepoEngine(engineName));
+  project.mergeFiles(getEmberAppWithInRepoEngine(engineName));
 
   return project;
 }
@@ -91,7 +90,7 @@ export function getEmberAppWithInRepoEngineProject(
 export function getEmberAddonProject(project: Project = emberAddonTemplate()): Project {
   // For now we are only making compat tests for ember-source >=3.24 and < 4.0
   // Add acceptance test for validating that our engine is mounted and routable;
-  merge(project.files, getEmberAddonFiles());
+  project.mergeFiles(getEmberAddonFiles());
   return project;
 }
 
