@@ -68,13 +68,9 @@ export class PackageDependencyGraph {
     // TODO get entrypoint  Package (maybePckage) and instantiate with that value if provided from API.
     const target = entrypoint ? [entrypoint] : [...include];
 
-    DEBUG_CALLBACK(target);
-
-    // console.log(target);
-
-    // console.log('GOING TO CRUISE');
-
-    // console.log(cruiseOptions);
+    DEBUG_CALLBACK('Executing dependency-cruiser');
+    DEBUG_CALLBACK(`Target: ${target}`);
+    DEBUG_CALLBACK(`Options: ${cruiseOptions}`);
 
     try {
       result = cruise(target, cruiseOptions, this.resolveOptions);
@@ -82,7 +78,7 @@ export class PackageDependencyGraph {
       throw new Error(`Unable to cruise: ${error}`);
     }
 
-    // console.log(result);
+    DEBUG_CALLBACK(result);
 
     const output = result.output as ICruiseResult;
 
@@ -116,7 +112,6 @@ export class PackageDependencyGraph {
 
         const relativePath = resolveRelative(baseDir, d.resolved);
 
-        // console.log(relativePath)
         const dest = this.addNode({ key: relativePath, path: relativePath, meta: d });
 
         this.graph.addEdge(source, dest);
