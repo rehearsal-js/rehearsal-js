@@ -68,13 +68,24 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
 
     const moduleNodeKey = m.key;
 
-    // Thus completing the self sustaining economy.
-    if (this.graph.hasNode(moduleNodeKey) && this.graph.getNode(moduleNodeKey)?.content.synthetic) {
-      DEBUG_CALLBACK(`>>> updateNode ${moduleNodeKey}`);
-      n = this.graph.updateNode(moduleNodeKey, m);
+    DEBUG_CALLBACK(`>>> attempting to adddNode ${this.package.packageName} ${moduleNodeKey}`);
+
+    // Thus completing the self sustaining e  conomy.
+    if (this.graph.hasNode(moduleNodeKey)) {
+      DEBUG_CALLBACK(`>>> getNode ${moduleNodeKey}`);
+      n = this.graph.getNode(moduleNodeKey);
+
+      if (this.graph.getNode(moduleNodeKey)?.content.synthetic) {
+        DEBUG_CALLBACK(`>>> updateNode ${moduleNodeKey}`);
+        n = this.graph.updateNode(moduleNodeKey, m);
+      }
     } else {
       DEBUG_CALLBACK(`>>> addNode ${moduleNodeKey}`);
       n = this.graph.addNode(m);
+    }
+
+    if (n.content.parsed) {
+      return n;
     }
 
     const services = discoverServiceDependencies(this.baseDir, n.content.path);
@@ -186,6 +197,8 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
       }
     });
 
+    n.content.parsed = true;
+
     return n;
   }
 
@@ -226,11 +239,7 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
 
   createSyntheticModuleNode(key: string): GraphNode<ModuleNode> {
     if (this.graph.hasNode(key)) {
-      const node = this.graph.getNode(key);
-      if (!node) {
-        throw new Error(`Internal error: Unable to retrieve GraphNode<ModuleNode> for ${key}`);
-      }
-      return node;
+      return this.graph.getNode(key);
     }
 
     return this.graph.addNode({
