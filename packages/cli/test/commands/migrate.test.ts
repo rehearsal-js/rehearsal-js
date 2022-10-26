@@ -32,7 +32,7 @@ describe('migrate - install dependencies', async () => {
   });
 
   test('Do install typescript dependency if project dose not have one', async () => {
-    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+    const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
@@ -41,7 +41,7 @@ describe('migrate - install dependencies', async () => {
 
   test('Do not install typescript dependency if project already has one', async () => {
     // at this point project already have typescript installed in previous test
-    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+    const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
@@ -61,13 +61,9 @@ describe('migrate - install dependencies', async () => {
       },
     });
 
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['-u', 'rehearsal-config.json'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain('Installing custom dependencies');
 
@@ -85,40 +81,22 @@ describe('migrate - generate tsconfig', async () => {
   });
 
   test('Create basic tsconfig', async () => {
-    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+    const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('Creating basic tsconfig');
+    expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
   test('Do not create tsconfig if there is an existed one', async () => {
     // tsconfig already created from previous test
-    const result = await runBin('migrate', ['--basePath', basePath, '--entrypoint', 'index.js'], {
+    const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
     expect(result.stdout).toContain('skipping creating tsconfig.json');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
-  });
-
-  test('Create strict tsconfig', async () => {
-    // reset the test dir
-    basePath = prepareTmpDir('initialization');
-
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-s'],
-      {
-        cwd: basePath,
-      }
-    );
-
-    expect(result.stdout).toContain('Creating strict tsconfig');
-    expect(readdirSync(basePath)).toContain('tsconfig.json');
-    const content = readFileSync(resolve(basePath, 'tsconfig.json'), 'utf-8');
-    expect(content).toMatchSnapshot();
   });
 
   test('runBin custom ts config command with user config provided', async () => {
@@ -131,13 +109,9 @@ describe('migrate - generate tsconfig', async () => {
       },
     });
 
-    await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
-      {
-        cwd: basePath,
-      }
-    );
+    await runBin('migrate', ['-u', 'rehearsal-config.json'], {
+      cwd: basePath,
+    });
 
     expect(readdirSync(basePath)).toContain('custom-ts-config-script');
   });
@@ -150,48 +124,53 @@ describe('migrate - JS to TS conversion', async () => {
     basePath = prepareTmpDir('basic');
   });
 
-  test('able to migrate single JS file', async () => {
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-v'],
-      {
-        cwd: basePath,
-      }
-    );
+  test('able to migrate from default index.js', async () => {
+    const result = await runBin('migrate', [], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
     expect(readdirSync(basePath)).toContain('index.ts');
-
-    const content = readFileSync(resolve(basePath, 'index.ts'), 'utf-8').trim();
-
-    expect(content).toMatchSnapshot();
+    expect(readdirSync(basePath)).toContain('foo.ts');
 
     expect(readdirSync(basePath)).not.toContain('index.js');
+    expect(readdirSync(basePath)).not.toContain('foo.js');
 
     const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
-    expect(config.include).toEqual(['index.ts']);
+    expect(config.include).toContain('index.ts');
+    expect(config.include).toContain('foo.ts');
+  });
+
+  test('able to migrate from specific entrypoint', async () => {
+    console.log(basePath);
+    const result = await runBin('migrate', ['--entrypoint', 'depends-on-foo.js'], {
+      cwd: basePath,
+    });
+
+    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
+    expect(readdirSync(basePath)).toContain('foo.ts');
+
+    expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
+    expect(readdirSync(basePath)).not.toContain('foo.js');
+
+    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    expect(config.include).toContain('depends-on-foo.ts');
+    expect(config.include).toContain('foo.ts');
   });
 
   test('Print debug messages with verbose', async () => {
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '--verbose'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['--verbose'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
   });
 
   test('Generate report with -r flag', async () => {
-    await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-r', 'json,md,sarif,foo'],
-      {
-        cwd: basePath,
-      }
-    );
+    await runBin('migrate', ['-r', 'json,md,sarif,foo'], {
+      cwd: basePath,
+    });
 
     const reportPath = resolve(basePath, '.rehearsal');
 
@@ -199,35 +178,6 @@ describe('migrate - JS to TS conversion', async () => {
     expect(readdirSync(reportPath)).toContain('report.md');
     expect(readdirSync(reportPath)).toContain('report.sarif');
     expect(readdirSync(reportPath)).not.toContain('report.foo');
-  });
-
-  test('able to migrate multiple JS file from an entrypoint', async () => {
-    // TODO refactor test build to ensure that the bin command generated at the file level
-    // so we can do invoke `yarn vitest tests/commands/migrate.test.ts` without having to
-    // invoke a `yarn` "build" for the bin utiilty
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'depends-on-foo.js'],
-      {
-        cwd: basePath,
-      }
-    );
-
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
-    expect(readdirSync(basePath)).toContain('foo.ts');
-    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
-
-    const foo = readFileSync(resolve(basePath, 'foo.ts'), 'utf-8');
-    const depends_on_foo = readFileSync(resolve(basePath, 'depends-on-foo.ts'), 'utf-8');
-
-    expect(foo).toMatchSnapshot();
-    expect(depends_on_foo).toMatchSnapshot();
-
-    expect(readdirSync(basePath)).not.toContain('depends-on-foo.js');
-    expect(readdirSync(basePath)).not.toContain('foo.js');
-
-    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
-    expect(config.include).toEqual(['foo.ts', 'depends-on-foo.ts']);
   });
 });
 
@@ -248,15 +198,37 @@ describe('migrate - generate eslint config', async () => {
       },
     });
 
-    const result = await runBin(
-      'migrate',
-      ['--basePath', basePath, '--entrypoint', 'index.js', '-u', 'rehearsal-config.json'],
-      {
-        cwd: basePath,
-      }
-    );
+    const result = await runBin('migrate', ['-u', 'rehearsal-config.json'], {
+      cwd: basePath,
+    });
 
     expect(result.stdout).toContain('Creating .eslintrc.js from custom config.');
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
+  });
+});
+
+describe('migrate - handle custom basePath', async () => {
+  let basePath = '';
+
+  beforeAll(() => {
+    basePath = prepareTmpDir('custom_basepath');
+  });
+
+  test('Run cli againt specific basePath via -basePath option', async () => {
+    const customBasePath = resolve(basePath, 'base');
+    const result = await runBin('migrate', ['--basePath', customBasePath], {
+      cwd: basePath, // still run cli in basePath
+    });
+
+    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Creating tsconfig');
+    expect(readdirSync(customBasePath)).toContain('tsconfig.json');
+
+    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(readdirSync(customBasePath)).toContain('index.ts');
+    expect(readdirSync(customBasePath)).not.toContain('index.js');
+
+    const config = readJSONSync(resolve(customBasePath, 'tsconfig.json'));
+    expect(config.include).toContain('index.ts');
   });
 });

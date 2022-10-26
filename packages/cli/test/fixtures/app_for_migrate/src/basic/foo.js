@@ -1,3 +1,3 @@
-export function say(name = 'World') {
+export function foo(name = 'World') {
   return `Hello ${name}`;
 }
