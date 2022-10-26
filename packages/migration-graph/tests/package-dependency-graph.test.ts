@@ -549,7 +549,7 @@ describe('createFileDependencyGraph', () => {
 
       project.mergeFiles(files);
 
-      // Add anotherAddon to the package.json of the app
+      // Add addons to ember-addon entry in  package.json
       project.pkg['ember-addon'] = { paths: [`lib/${firstAddonName}`, `lib/${secondAddonName}`] };
 
       await setupProject(project);
@@ -564,6 +564,7 @@ describe('createFileDependencyGraph', () => {
       const firstAddonPackage = new EmberAddonPackage(
         join(project.baseDir, `lib/${firstAddonName}`)
       );
+
       firstAddonNode = m.addPackageToGraph(firstAddonPackage);
       expect(firstAddonNode.content.synthetic).toBeFalsy();
 
