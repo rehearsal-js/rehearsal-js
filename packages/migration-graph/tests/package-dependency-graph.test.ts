@@ -1,27 +1,25 @@
 import path, { join } from 'path';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { EmberAddonPackage, EmberPackage } from '@rehearsal/migration-graph-ember';
 import { Package } from '@rehearsal/migration-graph-shared';
+import {
+  getEmberProject,
+  getEmberProjectFixture,
+  getEmberAddonWithInRepoAddonFiles,
+  getLibrarySimple,
+  setupProject,
+} from '@rehearsal/test-support';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
 import rimraf from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import merge from 'lodash.merge';
 import { MigrationGraph } from '../src/migration-graph';
 import { EmberAppPackageDependencyGraph } from '../src/package-dependency-graph/ember-app';
-
 import { createPackageDependencyGraph } from '../src/package-dependency-graph';
 import { ModuleNode, PackageNode } from '../src/types';
 import { Graph } from '../src/utils/graph';
 import { GraphNode } from '../src/utils/graph-node';
-import { getLibrarySimple } from './fixtures/library';
-import {
-  getEmberProject,
-  getEmberProjectFixture,
-  setupProject,
-  testSetup,
-} from './fixtures/project';
-import { getEmberAddonWithInRepoAddonFiles } from './fixtures/files';
-import merge from 'lodash.merge';
 
 setGracefulCleanup();
 
@@ -272,7 +270,6 @@ describe('createFileDependencyGraph', () => {
   });
 
   describe('EmberAppPackageDependencyGraph', () => {
-    beforeAll(() => testSetup());
     test('should determine what graph to create (e.g. library | app | addon)', async () => {
       const project = await getEmberProjectFixture('app');
 

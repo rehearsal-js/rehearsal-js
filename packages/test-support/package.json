@@ -1,13 +1,19 @@
 {
-  "name": "@rehearsal/migration-graph",
+  "name": "@rehearsal/test-support",
   "version": "0.0.37",
-  "description": "Tool for generating a typescript conversion graph",
+  "description": "Test support uitlities for rehearsal",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "fixtures"
+  ],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf fixtures/ember/*/node_modules",
+    "fixtures:clean": "rm -rf ./fixtures/ember/*/node_modules",
+    "fixtures:prepare": "node ./scripts/setup-fixtures.js ./fixtures/ember/app-template ./fixtures/ember/addon-template",
+    "postinstall": "pnpm fixtures:prepare",
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
@@ -15,29 +21,21 @@
     "test": "vitest --run"
   },
   "dependencies": {
-    "@babel/parser": "^7.18.4",
-    "@babel/traverse": "^7.18.2",
-    "@rehearsal/migration-graph-ember": "workspace:*",
-    "@rehearsal/migration-graph-shared": "workspace:*",
-    "@swc/core": "^1.3.2",
-    "debug": "^4.3.4",
-    "dependency-cruiser": "^11.15.0",
-    "enhanced-resolve": "^5.10.0",
-    "fast-glob": "^3.2.12",
-    "fs-extra": "^10.1.0",
-    "jsonc-parser": "^3",
-    "minimatch": "^5.1.0",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "@rehearsal/test-support": "workspace:*",
     "@types/lodash.merge": "^4.6.7",
     "@types/minimatch": "^5.1.2",
     "@types/rimraf": "^3.0.2",
+    "findup-sync": "^5.0.0",
     "fixturify": "^2",
+    "fixturify-project": "^5.0.3",
+    "fs-extra": "^10.1.0",
     "lodash.merge": "^4.6.2",
+    "micromatch": "^4.0.4",
     "rimraf": "^3.0.2",
-    "tmp": "^0.2.1",
+    "scenario-tester": "^2.1.2",
+    "tmp": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/findup-sync": "^4.0.2",
     "vitest": "^0.23.4"
   },
   "peerDependencies": {

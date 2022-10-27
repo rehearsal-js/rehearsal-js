@@ -1,9 +1,8 @@
-import { Project } from 'fixturify-project';
 import { dirname, join } from 'path';
+import { Project } from 'fixturify-project';
+import findupSync from 'findup-sync';
 import merge from 'lodash.merge';
 import tmp from 'tmp';
-import { execSync } from 'child_process';
-import { existsSync } from 'fs-extra';
 import {
   getEmberAppFiles,
   getEmberAppWithInRepoAddonFiles,
@@ -13,8 +12,15 @@ import {
 
 tmp.setGracefulCleanup();
 
-// this scenario represents the last Ember 3.x release (3.28)
-export async function ember3(_project: Project) {}
+const maybePackageJson = findupSync('./package.json', { cwd: __dirname });
+
+if (!maybePackageJson) {
+  throw new Error('Unable to dermien rooDir for @rehearsal/test-support');
+}
+
+const ROOT_DIR = dirname(maybePackageJson);
+const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
+const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
 
 export function getEmberAppProject(project: Project = emberAppTemplate()): Project {
   merge(project.files, getEmberAppFiles());
@@ -29,7 +35,7 @@ export function getEmberAppProject(project: Project = emberAppTemplate()): Proje
 export function getEmberAppWithInRepoAddonProject(
   project: Project = emberAppTemplate(),
   addonName = 'some-addon'
-) {
+): Project {
   getEmberAppProject(project);
 
   // augment package.json with
@@ -82,45 +88,24 @@ export function getEmberAppWithInRepoEngineProject(
   return project;
 }
 
-export function getEmberAddonProject(project: Project = emberAddonTemplate()) {
+export function getEmberAddonProject(project: Project = emberAddonTemplate()): Project {
   // For now we are only making compat tests for ember-source >=3.24 and < 4.0
   // Add acceptance test for validating that our engine is mounted and routable;
   merge(project.files, getEmberAddonFiles());
   return project;
 }
 
-export function emberAddonTemplate(as: 'addon' | 'dummy-app' = 'addon') {
-  const sourceDir = dirname(require.resolve('./ember/addon-template/package.json'));
-
-  return Project.fromDir(sourceDir, {
+export function emberAddonTemplate(as: 'addon' | 'dummy-app' = 'addon'): Project {
+  return Project.fromDir(EMBER_ADDON_TEMPLATE_DIR, {
     linkDeps: true,
     linkDevDeps: as === 'dummy-app',
   });
 }
 
-export function emberAppTemplate() {
-  const sourceDir = dirname(require.resolve('./ember/app-template/package.json'));
-
-  return Project.fromDir(sourceDir, {
+export function emberAppTemplate(): Project {
+  return Project.fromDir(EMBER_APP_TEMPLATE_DIR, {
     linkDevDeps: false,
   });
-}
-
-function prepare(dir: string): void {
-  if (!existsSync(join(dir, 'node_modules'))) {
-    console.log(`Initializing fixture directory: ${dir}`);
-    // The (app|addon)-template needs a node_modules directory for
-    // `Project.fromDir()` (fixturify-project) to work.
-    execSync(`npm --version && npm install`, {
-      cwd: dir,
-      stdio: 'ignore', // Otherwise this will output warning from install command
-    });
-  }
-}
-
-export function testSetup() {
-  prepare(dirname(require.resolve('./ember/app-template/package.json')));
-  prepare(dirname(require.resolve('./ember/addon-template/package.json')));
 }
 
 export async function setupProject(project: Project): Promise<Project> {
