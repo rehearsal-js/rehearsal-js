@@ -1,3 +1,5 @@
+import fixturify from 'fixturify';
+
 export const FILE_EMBER_ADDON_CONFIG_EMBER_TRY = `
 'use strict';
 
@@ -156,21 +158,27 @@ export const FILES_EMBER_APP = {
   },
 };
 
-export function getEmberAddonConfigEmberyTryFile() {
+export function getEmberAddonConfigEmberyTryFile(): string {
   return FILE_EMBER_ADDON_CONFIG_EMBER_TRY;
 }
-export function getEmberAppFiles() {
+export function getEmberAppFiles(): fixturify.DirJSON {
   return FILES_EMBER_APP;
 }
 
-export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon') {
-  const files: Record<string, any> = {
+export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
+  const addon = getEmberAddonWithInRepoAddonFiles(addonName);
+
+  const lib: Record<string, fixturify.DirJSON> = {};
+
+  lib[addonName] = addon;
+
+  const files: fixturify.DirJSON = {
     app: {
       components: {
         'salutation.hbs': `<h1><Greet/></h1>`,
       },
     },
-    lib: {},
+    lib: lib as fixturify.DirJSON,
     tests: {
       acceptance: {
         'index-test.js': `
@@ -199,14 +207,10 @@ export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon') {
     },
   };
 
-  const addon = getEmberAddonWithInRepoAddonFiles(addonName);
-
-  files.lib[addonName] = addon;
-
   return files;
 }
 
-export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon') {
+export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
   return {
     addon: {
       components: {
@@ -254,7 +258,7 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon') {
   };
 }
 
-export function getEmberAddonFiles() {
+export function getEmberAddonFiles(): fixturify.DirJSON {
   return {
     config: {
       'ember-try.js': FILE_EMBER_ADDON_CONFIG_EMBER_TRY,
@@ -316,8 +320,8 @@ export function getEmberAddonFiles() {
   };
 }
 
-export function getEmberAppWithInRepoEngine(engineName = 'some-engine') {
-  let files: Record<string, any> = {
+export function getEmberAppWithInRepoEngine(engineName = 'some-engine'): fixturify.DirJSON {
+  const files: Record<string, any> = {
     app: {
       'router.js': `
         import EmberRouter from '@ember/routing/router';
@@ -447,5 +451,5 @@ export function getEmberAppWithInRepoEngine(engineName = 'some-engine') {
   // Add the egine to lib directory
   files.lib[engineName] = engine;
 
-  return files;
+  return files as fixturify.DirJSON;
 }

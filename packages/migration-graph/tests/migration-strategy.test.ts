@@ -1,9 +1,11 @@
-import { beforeAll, describe, expect, test } from 'vitest';
-
+import { describe, expect, test } from 'vitest';
+import {
+  getLibrarySimple,
+  getLibraryWithEntrypoint,
+  getEmberProjectFixture,
+} from '@rehearsal/test-support';
 import { DetectedSource } from '../src/migration-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
-import { getLibrarySimple, getLibraryWithEntrypoint } from './fixtures/library';
-import { getEmberProjectFixture, testSetup } from './fixtures/project';
 
 const TEST_TIMEOUT = 500000;
 
@@ -28,15 +30,12 @@ describe('migration-strategy', () => {
   });
 
   describe('ember', () => {
-    beforeAll(() => testSetup());
-
     const EXPECTED_APP_FILES = [
       'app/app.js',
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
     ];
-
     test(
       'app should match migration order',
       async () => {

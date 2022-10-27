@@ -3,7 +3,7 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 
 setGracefulCleanup();
 
-function create(files: fixturify.DirJSON) {
+function create(files: fixturify.DirJSON): string {
   const { name: tmpdir } = dirSync();
   fixturify.writeSync(tmpdir, files);
   return tmpdir;
@@ -47,7 +47,7 @@ export function getLibrarySimple(): string {
 }
 
 // This is a fixturify version of cli fixtures/app_for_migration/src/basic
-export function getLibraryWithEntrypoint() {
+export function getLibraryWithEntrypoint(): string {
   const files = {
     'foo.js': `
       export function say(name = 'World') {

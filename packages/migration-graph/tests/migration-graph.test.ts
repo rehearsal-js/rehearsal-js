@@ -1,14 +1,13 @@
-import { beforeAll, describe, expect, test } from 'vitest';
-
-import { GraphNode, ModuleNode, UniqueGraphNode } from '../src';
-import { buildMigrationGraph, DetectedSource } from '../src/migration-graph';
-import { getLibrarySimple } from './fixtures/library';
+import { describe, expect, test } from 'vitest';
 import {
   getEmberProject,
   getEmberProjectFixture,
+  getLibrarySimple,
   setupProject,
-  testSetup,
-} from './fixtures/project';
+} from '@rehearsal/test-support';
+import { GraphNode } from '../src/utils/graph-node';
+import { ModuleNode, UniqueGraphNode } from '../src/types';
+import { buildMigrationGraph, DetectedSource } from '../src/migration-graph';
 
 function flatten(arr: GraphNode<UniqueGraphNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.key);
@@ -37,8 +36,6 @@ describe('migration-graph', () => {
   });
 
   describe('ember', () => {
-    beforeAll(() => testSetup());
-
     const EXPECTED_APP_FILES = [
       'app/app.js',
       'app/services/locale.js',

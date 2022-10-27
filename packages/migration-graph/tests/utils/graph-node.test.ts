@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import { GraphNode } from '../../src/utils/graph-node';
-import { createNodeContent } from '../test-support';
+import { createNodeContent } from '../test-util';
 
 describe('node', () => {
   test('should create node', async () => {

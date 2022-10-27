@@ -1,10 +1,8 @@
-import { Scenarios, Project, Scenario, PreparedApp } from 'scenario-tester';
-import { execSync } from 'child_process';
 import { join } from 'path';
+import { Scenarios, Scenario, PreparedApp } from 'scenario-tester';
 import rimraf from 'rimraf';
 
 import {
-  ember3,
   getEmberAppProject,
   emberAppTemplate,
   emberAddonTemplate,
@@ -13,34 +11,23 @@ import {
   getEmberAppWithInRepoEngineProject,
 } from './project';
 
-const DIR_FIXTURE_EMBER_APP_TEMPLATE = `${__dirname}/ember/app-template`;
-const DIR_FIXTURE_EMBER_ADDON_TEMPLATE = `${__dirname}/ember/addon-template`;
-
 export function clean(dir: string): void {
   rimraf.sync(join(dir, 'node_modules'));
 }
 
-function prepare(dir: string): void {
-  clean(dir);
-  // The (app|addon)-template needs a node_modules directory for
-  // scenario - tester to craete a Project.fromDir()
-  execSync(`npm --version && npm install`, {
-    cwd: dir,
-    stdio: 'ignore', // Otherwise this will output warning from install command
-  });
-}
-
-function supportMatrix(scenarios: Scenarios) {
+function supportMatrix(scenarios: Scenarios): Scenarios {
+  // Future place for adding different versions of ember to test.
   return scenarios.expand({
     // lts,
-    ember3,
+    //eslint-disable-next-line @typescript-eslint/no-empty-function
+    ember3: () => {},
     // release,
     // beta,
     // canary,
   });
 }
 
-function appVariants(scenarios: Scenarios) {
+function appVariants(scenarios: Scenarios): Scenarios {
   return scenarios.expand({
     app: (project) => {
       getEmberAppProject(project);
@@ -56,9 +43,11 @@ function appVariants(scenarios: Scenarios) {
 
 export const appScenarios = appVariants(supportMatrix(Scenarios.fromProject(emberAppTemplate)));
 
-function addonVariants(scenarios: Scenarios) {
+function addonVariants(scenarios: Scenarios): Scenarios {
   return scenarios.expand({
-    addon: getEmberAddonProject,
+    addon: (project) => {
+      getEmberAddonProject(project);
+    },
   });
 }
 
@@ -77,8 +66,6 @@ function pluck(scenarios: Scenarios, variantName: string): Promise<Scenario> {
 const preparedAppCache = new WeakMap<Scenario, PreparedApp>();
 
 async function getPreparedApp(scenario: Scenario, cache = false): Promise<PreparedApp> {
-  let app: PreparedApp;
-
   // if the cache flag is set, we will attempt to retrieve the prepared app from the cache.
   // this should only be used idempotent tests
   if (cache && preparedAppCache.has(scenario)) {
@@ -91,7 +78,7 @@ async function getPreparedApp(scenario: Scenario, cache = false): Promise<Prepar
     return maybeApp;
   }
 
-  app = await scenario.prepare();
+  const app: PreparedApp = await scenario.prepare();
 
   // Remove node_modules to ensure changes package.json result in a
   // fresh node_modules directory after install
@@ -99,7 +86,7 @@ async function getPreparedApp(scenario: Scenario, cache = false): Promise<Prepar
 
   const cmd = 'npm install';
 
-  let result = await app.execute(cmd);
+  const result = await app.execute(cmd);
 
   if (result.exitCode !== 0) {
     throw new Error(
@@ -113,18 +100,6 @@ async function getPreparedApp(scenario: Scenario, cache = false): Promise<Prepar
   }
 
   return app;
-}
-
-export function prepareAppTemplate() {
-  prepare(DIR_FIXTURE_EMBER_APP_TEMPLATE);
-}
-export function prepareAddonTemplate() {
-  prepare(DIR_FIXTURE_EMBER_ADDON_TEMPLATE);
-}
-
-export function setup() {
-  prepareAppTemplate();
-  prepareAddonTemplate();
 }
 
 export async function getEmberAppScenario(
