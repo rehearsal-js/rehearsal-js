@@ -1,5 +1,5 @@
-import { Log, PhysicalLocation, Result } from 'sarif';
 import { isAbsolute, resolve } from 'path';
+import { Log, PhysicalLocation, Result } from 'sarif';
 
 interface FormatterOptions {
   cwd: string;
@@ -39,7 +39,7 @@ export function sonarqubeFormatter(log: Log, options: FormatterOptions): string 
     for (const result of results) {
       const physicalLocation = getPhysicalLocation(result);
       const filePath = physicalLocation ? getFilePath(physicalLocation) : '';
-      const absolutePath = isAbsolute(filePath) ? filePath: resolve(options.cwd, filePath);
+      const absolutePath = isAbsolute(filePath) ? filePath : resolve(options.cwd, filePath);
 
       issues.push({
         engineId: 'rehearsal-ts',
