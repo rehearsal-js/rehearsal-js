@@ -15,7 +15,9 @@ import { ModuleNode } from '../types';
 import { Graph } from '../utils/graph';
 import { GraphNode } from '../utils/graph-node';
 
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph:PackageDependencyGraph');
+const DEBUG_CALLBACK = debug(
+  'rehearsal:migration-graph:package-dependency-graph:PackageDependencyGraph'
+);
 
 function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
   // If it's a coreModule like `path` skip;
@@ -83,6 +85,7 @@ export class PackageDependencyGraph {
     const output = result.output as ICruiseResult;
 
     output.modules.forEach((m: IModule) => {
+      DEBUG_CALLBACK(m);
       if (isExternalModule(m)) {
         return;
       }

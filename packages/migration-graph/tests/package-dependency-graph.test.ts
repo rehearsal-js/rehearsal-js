@@ -16,6 +16,7 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import merge from 'lodash.merge';
 import { MigrationGraph } from '../src/migration-graph';
 import { EmberAppPackageDependencyGraph } from '../src/package-dependency-graph/ember-app';
+import { EmberAddonPackageDependencyGraph } from '../src/package-dependency-graph/ember-addon';
 import { createPackageDependencyGraph } from '../src/package-dependency-graph';
 import { ModuleNode, PackageNode } from '../src/types';
 import { Graph } from '../src/utils/graph';
@@ -587,6 +588,119 @@ describe('createFileDependencyGraph', () => {
         'first-addon',
         'app-template',
       ]);
+    });
+
+    test('should ', async () => {
+      // app uses a service `date` from `some-addon`
+      // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
+      //     └── second-addon exposes a service `time`.
+
+      const firstAddonName = 'first-addon';
+      const secondAddonName = 'second-addon';
+
+      const firstAddonFiles = merge(getEmptyInRepoAddonFiles(firstAddonName), {
+        addon: {
+          components: {},
+          services: {
+            'date.js': `
+                  import { inject as service } from '@ember/service';
+                  export default class DateService extends Service {
+                    @service('${secondAddonName}@time') t;
+                  }
+                `,
+          },
+        },
+        app: {
+          components: {},
+          services: {
+            'date.js': `export { default } from '${firstAddonName}/services/date';`,
+          },
+        },
+      });
+
+      const secondAddonFiles = merge(getEmptyInRepoAddonFiles(secondAddonName), {
+        addon: {
+          components: {},
+          services: {
+            'time.js': `
+              import { inject as service } from '@ember/service';
+              export default class TimeService extends Service {}
+            `,
+          },
+        },
+        app: {
+          components: {},
+          services: {
+            'time.js': `export { default } from '${secondAddonName}/services/time';`,
+          },
+        },
+      });
+
+      const project = getEmberProject('app');
+
+      const files: Record<string, any> = {
+        lib: {},
+      };
+
+      files.lib[firstAddonName] = firstAddonFiles;
+      files.lib[secondAddonName] = secondAddonFiles;
+
+      project.mergeFiles(files);
+
+      // Add addons to ember-addon entry in  package.json
+      project.pkg['ember-addon'] = { paths: [`lib/${firstAddonName}`, `lib/${secondAddonName}`] };
+
+      await setupProject(project);
+
+      const m = new MigrationGraph(project.baseDir);
+
+      const firstAddonPackage = new EmberAddonPackage(
+        join(project.baseDir, `lib/${firstAddonName}`)
+      );
+
+      const firstAddonNode = m.addPackageToGraph(firstAddonPackage);
+      expect(firstAddonNode.content.synthetic).toBeFalsy();
+      expect(firstAddonNode.content.modules.getNode('addon/services/date.js')?.content.parsed).toBe(
+        true
+      );
+
+      let secondAddonNode = m.graph.getNode(secondAddonName);
+      expect(secondAddonNode?.content.synthetic).toBe(true);
+
+      const secondAddonPackage = new EmberAddonPackage(
+        join(project.baseDir, `lib/${secondAddonName}`)
+      );
+
+      secondAddonNode = m.addPackageToGraph(secondAddonPackage);
+      expect(secondAddonNode.content.synthetic).toBeFalsy();
+
+      expect(
+        firstAddonNode.adjacent.has(secondAddonNode),
+        'some-addon should depend on another-addon'
+      ).toBe(true);
+
+      expect(flatten(m.graph.topSort()), 'package graph should have another-addon first').toEqual([
+        'second-addon',
+        'first-addon',
+      ]);
+    });
+  });
+
+  describe('EmberAddonPackageDependencyGraph', () => {
+    test.only('should create an edge between app/components/<file>.js and addon/components/<file>.js', async () => {
+      const project = getEmberProject('addon');
+
+      await setupProject(project);
+
+      const addonPackage = new EmberAddonPackage(project.baseDir);
+
+      const addonPackageGraph = new EmberAddonPackageDependencyGraph(addonPackage);
+      addonPackageGraph.discover();
+
+      const implNode = addonPackageGraph.getGraph().getNode('addon/components/greet.js');
+      const interfaceNode = addonPackageGraph.getGraph().getNode('app/components/greet.js');
+      console.log(flatten(addonPackageGraph.getGraph().topSort()));
+      expect(interfaceNode.adjacent.has(implNode)).toBe(true);
     });
   });
 });

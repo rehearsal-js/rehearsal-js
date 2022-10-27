@@ -5,7 +5,7 @@ import { InternalState } from './InternalState';
 
 export type EmberPackageOptions = PackageOptions;
 
-export class EmberPackage extends Package {
+export class EmberAppPackage extends Package {
   protected internalState: InternalState;
 
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {

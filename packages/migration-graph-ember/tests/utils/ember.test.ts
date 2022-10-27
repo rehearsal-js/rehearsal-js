@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
-import { EmberPackage } from '../../src/entities/ember-package';
+import { EmberAppPackage } from '../../src/entities/ember-package';
 import {
   getEmberAddonName,
   getPackageMainAST,
@@ -69,7 +69,7 @@ describe('Unit | ember', () => {
 
   describe('simple properties', () => {
     test('packageName', () => {
-      expect(new EmberPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON)).packageName).toBe(
+      expect(new EmberAppPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON)).packageName).toBe(
         FIXTURE_NAMES.SIMPLE_ADDON
       );
       expect(

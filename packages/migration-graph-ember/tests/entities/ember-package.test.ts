@@ -5,7 +5,7 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
-import { EmberPackage } from '../../src/entities/ember-package';
+import { EmberAppPackage } from '../../src/entities/ember-package';
 // import the container so it can be called with the correct root
 import { getInternalAddonPackages } from '../../src/index';
 import { type EmberPackageContainer } from '../../src/types/package-container';
@@ -57,7 +57,7 @@ describe('Unit | EmberPackage', () => {
         getInternalAddonPackages: () => addonPackages,
       };
 
-      const emberPackage = new EmberPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON), {
+      const emberPackage = new EmberAppPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON), {
         packageContainer,
       });
 
@@ -83,7 +83,7 @@ describe('Unit | EmberPackage', () => {
       const packageContainer: EmberPackageContainer = {
         getInternalAddonPackages: () => addonPackages,
       };
-      const emberPackage = new EmberPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ENGINE), {
+      const emberPackage = new EmberAppPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ENGINE), {
         packageContainer,
       });
 
@@ -102,7 +102,7 @@ describe('Unit | EmberPackage', () => {
       const packageContainer: EmberPackageContainer = {
         getInternalAddonPackages: () => addonPackages,
       };
-      const emberPackage = new EmberPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ENGINE), {
+      const emberPackage = new EmberAppPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ENGINE), {
         packageContainer,
       });
 

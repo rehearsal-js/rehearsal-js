@@ -10,7 +10,7 @@ import { sync as fastGlobSync } from 'fast-glob';
 import resolvePackagePath from 'resolve-package-path';
 
 import { EmberAddonPackage } from './entities/ember-addon-package';
-import { EmberPackage } from './entities/ember-package';
+import { EmberAppPackage } from './entities/ember-package';
 import {
   type MappingsByAddonName,
   type MappingsByLocation,
@@ -35,14 +35,14 @@ type EntityFactoryOptions = {
 export function entityFactory(
   pathToPackage: string,
   options: EntityFactoryOptions
-): EmberPackage | EmberAddonPackage | Package {
+): EmberAppPackage | EmberAddonPackage | Package {
   let Klass;
   try {
     const packageJson = readPackageJson(pathToPackage);
     if (isAddon(packageJson)) {
       Klass = EmberAddonPackage;
     } else if (isApp(packageJson)) {
-      Klass = EmberPackage;
+      Klass = EmberAppPackage;
     } else {
       Klass = Package;
     }
