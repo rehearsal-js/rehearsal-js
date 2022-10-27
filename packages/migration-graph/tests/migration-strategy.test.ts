@@ -30,6 +30,13 @@ describe('migration-strategy', () => {
   describe('ember', () => {
     beforeAll(() => testSetup());
 
+    const EXPECTED_APP_FILES = [
+      'app/app.js',
+      'app/services/locale.js',
+      'app/components/salutation.js',
+      'app/router.js',
+    ];
+
     test(
       'app should match migration order',
       async () => {
@@ -38,12 +45,7 @@ describe('migration-strategy', () => {
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actaul: Array<string> = files.map((f) => f.relativePath);
-        expect(actaul).toStrictEqual([
-          'app/app.js',
-          'app/components/salutation.js',
-          'app/router.js',
-          'app/services/locale.js',
-        ]);
+        expect(actaul).toStrictEqual(EXPECTED_APP_FILES);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
       TEST_TIMEOUT
@@ -61,10 +63,7 @@ describe('migration-strategy', () => {
           'lib/some-addon/addon/components/greet.js',
           'lib/some-addon/app/components/greet.js',
           'lib/some-addon/index.js',
-          'app/app.js',
-          'app/components/salutation.js',
-          'app/router.js',
-          'app/services/locale.js',
+          ...EXPECTED_APP_FILES,
         ]);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
@@ -84,10 +83,7 @@ describe('migration-strategy', () => {
           'lib/some-engine/addon/engine.js',
           'lib/some-engine/addon/routes.js',
           'lib/some-engine/index.js',
-          'app/app.js',
-          'app/components/salutation.js',
-          'app/router.js',
-          'app/services/locale.js',
+          ...EXPECTED_APP_FILES,
         ]);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },

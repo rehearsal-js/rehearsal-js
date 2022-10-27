@@ -1,5 +1,5 @@
-import { UniqueGraphNode } from 'src/types';
 import { describe, expect, test } from 'vitest';
+import { UniqueGraphNode } from '../../src/types';
 
 import { Graph } from '../../src/utils/graph';
 

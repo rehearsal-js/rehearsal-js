@@ -12,7 +12,7 @@ import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import minimatch from 'minimatch';
 
-import { createDependencyGraph as discoverModuleDependencyGraph } from './file-dependency-graph';
+import { createPackageDependencyGraph } from './package-dependency-graph';
 import { dfs } from './utils/dfs';
 import { Graph } from './utils/graph';
 import type { GraphNode } from './utils/graph-node';
@@ -85,7 +85,14 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
     }
 
     const packageData = someGraphNode.content;
-    const packageName = packageData.pkg.packageName;
+
+    const pkg = packageData?.pkg ?? undefined;
+
+    if (!pkg) {
+      continue;
+    }
+
+    const packageName = pkg.packageName ?? '';
     const duplicate = reportedNodes.has(packageName) ? 'DUPLICATE' : '';
 
     if (duplicate.length) {
@@ -93,11 +100,14 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
       return;
     }
 
-    const relativePath = relative(process.cwd(), packageData.pkg.path);
-    const parentPkgName = someGraphNode.parent?.content?.pkg.packageName;
+    const relativePath = relative(process.cwd(), pkg.path);
+    const parentPkgName = someGraphNode.parent?.content?.pkg?.packageName;
 
-    let taskString = `${taskNumber++}. ${packageData.pkg.packageName} (./${relativePath})`;
-    taskString = taskString.concat(` parent: ${parentPkgName}`);
+    let taskString = `${taskNumber++}. ${pkg.packageName} (./${relativePath})`;
+
+    if (parentPkgName) {
+      taskString = taskString.concat(` parent: ${parentPkgName}`);
+    }
 
     if (packageData.converted) {
       DEBUG_CALLBACK(`[X] DONE ${taskString}`);
@@ -127,7 +137,7 @@ export enum DetectedSource {
   Library = 'Javascript Library',
 }
 
-class MigrationGraph {
+export class MigrationGraph {
   #rootDir: string;
   #detectedSource: DetectedSource;
   #graph: Graph<PackageNode>;
@@ -158,43 +168,59 @@ class MigrationGraph {
     return this.#detectedSource;
   }
 
-  addPackageToGraph(p: Package): void {
+  addPackageToGraph(p: Package): GraphNode<PackageNode> {
     DEBUG_CALLBACK(`\n------------------`);
     DEBUG_CALLBACK(`Package Name: ${p.packageName}`);
     DEBUG_CALLBACK(`Package Path: ${p.packagePath}`);
 
     const isConverted = isPackageConvertedToTypescript(p, 'source-only');
 
+    const contents = {
+      key: p.packageName,
+      pkg: p,
+      converted: isConverted,
+      modules: new Graph<ModuleNode>(),
+    };
+
+    const entry: GraphNode<PackageNode> = this.#graph.hasNode(p.packageName)
+      ? this.#graph.updateNode(p.packageName, contents)
+      : this.#graph.addNode(contents);
+
     let modules;
 
     if (!isConverted) {
-      modules = discoverModuleDependencyGraph(
-        p.path,
-        {
-          include: p.includePatterns,
-          exclude: p.excludePatterns,
-        },
-        p
-      );
+      modules = createPackageDependencyGraph(p, { project: this, parent: entry });
     } else {
       modules = new Graph<ModuleNode>();
       DEBUG_CALLBACK('This package appears to be written in Typescript.');
     }
 
-    const entry = this.#graph.addNode({
-      key: p.packageName,
-      pkg: p,
-      converted: isConverted,
-      modules,
-    });
+    entry.content.modules = modules;
 
     this.buildAnalyzedPackageTree(entry);
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(entry));
+    return entry;
   }
 
   buildAnalyzedPackageTree(currentNode: GraphNode<PackageNode>, depth = 1): void {
-    const explicitDependencies = this.getExplicitPackageDependencies(currentNode.content.pkg);
+    // Ensure we're dealing with a full fledges node, otherwise it could be synthetic
+    if (!currentNode.content?.synthetic) {
+      return;
+      // throw new Error('No package found for node ... TBD');
+    }
+
+    if (!currentNode?.content.pkg) {
+      return;
+    }
+
+    const pkg = currentNode?.content?.pkg;
+
+    if (!pkg) {
+      throw new Error('Unable to buildAnalyzedPackageTree; node has no package defined.');
+    }
+
+    const explicitDependencies = this.getExplicitPackageDependencies(pkg);
 
     explicitDependencies.forEach((p: Package) => {
       const key = p.packageName;
@@ -203,18 +229,20 @@ class MigrationGraph {
 
       if (!this.#graph.hasNode(key)) {
         // DEBUG_CALLBACK('buildAnalyzedPackagTree - addNode');
+
         depNode = this.#graph.addNode({
           key,
           pkg: p,
           converted: isPackageConvertedToTypescript(p),
-          modules: discoverModuleDependencyGraph(
-            p.path,
-            {
-              include: p.includePatterns,
-              exclude: p.excludePatterns,
-            },
-            p
-          ),
+          modules: new Graph<ModuleNode>(), // Stubbing this out
+        });
+
+        // Need to refactor data flow here. Seems odd how we're creating the graph node without modules the populating it after.
+        // Probably should lazily populate this.
+
+        depNode.content.modules = createPackageDependencyGraph(p, {
+          project: this,
+          parent: depNode,
         });
       } else {
         depNode = this.#graph.getNode(key);
@@ -280,10 +308,8 @@ function buildMigrationGraphForLibrary(
     key: p.packageName,
     pkg: p,
     converted: isPackageConvertedToTypescript(p),
-    modules: discoverModuleDependencyGraph(rootDir, {
+    modules: createPackageDependencyGraph(p, {
       entrypoint: options?.entrypoint,
-      include: p.includePatterns,
-      exclude: p.excludePatterns,
     }),
   });
   return m;
@@ -318,7 +344,6 @@ function buildMigrationGraphForEmber(
       return !!isMatch;
     });
 
-    // TOOD add to logging Verbose
     DEBUG_CALLBACK(`Total Filtered Packages: ${filtered.length}`);
 
     counter = 1;

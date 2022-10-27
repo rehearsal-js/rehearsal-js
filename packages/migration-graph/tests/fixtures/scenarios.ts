@@ -74,8 +74,24 @@ function pluck(scenarios: Scenarios, variantName: string): Promise<Scenario> {
   });
 }
 
-async function getPreparedApp(scenario: Scenario): Promise<PreparedApp> {
-  const app = await scenario.prepare();
+const preparedAppCache = new WeakMap<Scenario, PreparedApp>();
+
+async function getPreparedApp(scenario: Scenario, cache = false): Promise<PreparedApp> {
+  let app: PreparedApp;
+
+  // if the cache flag is set, we will attempt to retrieve the prepared app from the cache.
+  // this should only be used idempotent tests
+  if (cache && preparedAppCache.has(scenario)) {
+    const maybeApp = preparedAppCache.get(scenario);
+
+    if (!maybeApp) {
+      throw new Error(`Unable to retrieve parepared app for ${scenario.name}`);
+    }
+
+    return maybeApp;
+  }
+
+  app = await scenario.prepare();
 
   // Remove node_modules to ensure changes package.json result in a
   // fresh node_modules directory after install
@@ -89,6 +105,11 @@ async function getPreparedApp(scenario: Scenario): Promise<PreparedApp> {
     throw new Error(
       `Test support failure for scenario: ${scenario.name}\nTried to executed command: ${cmd}\nOutput:\n\n${result.output}`
     );
+  }
+
+  if (cache) {
+    // Add to scenario cache
+    preparedAppCache.set(scenario, app);
   }
 
   return app;
@@ -106,12 +127,18 @@ export function setup() {
   prepareAddonTemplate();
 }
 
-export async function getEmberAppScenario(variantName: string): Promise<PreparedApp> {
+export async function getEmberAppScenario(
+  variantName: string,
+  cache = false
+): Promise<PreparedApp> {
   const scenario = await pluck(appScenarios, variantName);
-  return await getPreparedApp(scenario);
+  return await getPreparedApp(scenario, cache);
 }
 
-export async function getEmberAddonScenario(variantName: string): Promise<PreparedApp> {
+export async function getEmberAddonScenario(
+  variantName: string,
+  cache = false
+): Promise<PreparedApp> {
   const scenario = await pluck(addonScenarios, variantName);
-  return await getPreparedApp(scenario);
+  return await getPreparedApp(scenario, cache);
 }

@@ -82,13 +82,22 @@ export function getMigrationStrategy(
 
   m.graph
     .topSort()
+    .reverse() // Reverse the graph order to ensure leaf package first.
     // Iterate through each package
     .forEach((packageNode: GraphNode<PackageNode>) => {
-      const packagePath = packageNode.content.pkg.packagePath;
+      const packagePath = packageNode.content?.pkg?.packagePath;
+
+      if (!packagePath) {
+        return;
+      }
+
       const modules = packageNode.content.modules;
 
       // For this package, get a list of modules (files)
-      const ordered: Array<ModuleNode> = modules.topSort().map((node) => node.content);
+      const ordered: Array<ModuleNode> = modules
+        .topSort()
+        .filter((node) => !node.content?.synthetic) // Remove synthetic nodes
+        .map((node) => node.content);
 
       // Iterate through each module (file) node
       ordered.forEach((moduleNode) => {

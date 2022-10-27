@@ -1,7 +1,7 @@
 export { buildMigrationGraph, discoverEmberPackages } from './migration-graph';
 export { GraphNode } from './utils/graph-node';
 export { Graph } from './utils/graph';
-export { createDependencyGraph } from './file-dependency-graph';
+
 export {
   isModuleRelative,
   isModuleNonRelative,

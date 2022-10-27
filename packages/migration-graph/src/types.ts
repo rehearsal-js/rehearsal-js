@@ -6,13 +6,15 @@ export type UniqueGraphNode = {
 };
 
 export type PackageNode = UniqueGraphNode & {
-  pkg: Package;
-  converted?: boolean;
+  pkg: Package | undefined;
   modules: Graph<ModuleNode>;
+  converted?: boolean;
+  synthetic?: boolean;
 };
 
 export type ModuleNode = UniqueGraphNode & {
   path: string;
   parsed?: boolean;
   meta?: unknown;
+  synthetic?: boolean;
 };
