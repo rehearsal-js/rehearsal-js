@@ -2,7 +2,7 @@ import { PreparedApp, Scenario } from 'scenario-tester';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { addonScenarios, clean } from '../src/scenarios';
 
-const TEST_TIMEOUT = 50000;
+const TEST_TIMEOUT = 100000;
 
 describe('scenarios - addon-scenarios', () => {
   addonScenarios.forEachScenario((scenario: Scenario) => {
