@@ -21,6 +21,8 @@ module.exports = {
     'import/no-extraneous-dependencies': 'error',
     'import/no-unassigned-import': 'error',
     'import/no-unresolved': 'off',
+    'import/namespace': 'off',
+    'import/named': 'off',
     'import/order': [
       'error',
       {
