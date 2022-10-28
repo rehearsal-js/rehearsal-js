@@ -14,10 +14,10 @@ import { mkdirSync } from 'fs-extra';
 import rimraf from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import merge from 'lodash.merge';
-import { MigrationGraph } from '../src/migration-graph';
-import { EmberAppPackageDependencyGraph } from '../src/package-dependency-graph/ember-app';
-import { EmberAddonPackageDependencyGraph } from '../src/package-dependency-graph/ember-addon';
-import { createPackageDependencyGraph } from '../src/package-dependency-graph';
+import { ProjectGraph } from '../src/project-graph';
+import { EmberAppPackageGraph } from '../src/package-graph/ember-app';
+import { EmberAddonPackageGraph } from '../src/package-graph/ember-addon';
+import { createPackageDependencyGraph } from '../src/package-graph';
 import { ModuleNode, PackageNode } from '../src/types';
 import { Graph } from '../src/utils/graph';
 import { GraphNode } from '../src/utils/graph-node';
@@ -292,7 +292,7 @@ describe('createFileDependencyGraph', () => {
 
       const p = new EmberAppPackage(project.baseDir);
       const options = {};
-      const output: Graph<ModuleNode> = new EmberAppPackageDependencyGraph(p, options).discover();
+      const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
       const actual = flatten(output.topSort());
 
       expect(actual).toStrictEqual([
@@ -338,7 +338,7 @@ describe('createFileDependencyGraph', () => {
 
       const p = new EmberAppPackage(project.baseDir);
       const options = {};
-      const output: Graph<ModuleNode> = new EmberAppPackageDependencyGraph(p, options).discover();
+      const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
       const actual = flatten(output.topSort());
 
       expect(actual).toStrictEqual([
@@ -383,7 +383,7 @@ describe('createFileDependencyGraph', () => {
         },
       };
 
-      const output: Graph<ModuleNode> = new EmberAppPackageDependencyGraph(p, options).discover();
+      const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
       const actual = flatten(output.topSort());
 
       expect(actual).toStrictEqual([
@@ -415,7 +415,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const m = new MigrationGraph(project.baseDir);
+      const m = new ProjectGraph(project.baseDir);
       const emberPackage = new EmberAppPackage(project.baseDir);
       const source = m.addPackageToGraph(emberPackage);
       const dest = m.graph.getNode('some-addon');
@@ -465,7 +465,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const m = new MigrationGraph(project.baseDir);
+      const m = new ProjectGraph(project.baseDir);
 
       const emberPackage = new EmberAppPackage(project.baseDir);
       const appNode = m.addPackageToGraph(emberPackage);
@@ -554,7 +554,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const m = new MigrationGraph(project.baseDir);
+      const m = new ProjectGraph(project.baseDir);
 
       const emberPackage = new EmberAppPackage(project.baseDir);
       const appNode = m.addPackageToGraph(emberPackage);
@@ -653,7 +653,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const m = new MigrationGraph(project.baseDir);
+      const m = new ProjectGraph(project.baseDir);
 
       const firstAddonPackage = new EmberAddonPackage(
         join(project.baseDir, `lib/${firstAddonName}`)
@@ -695,7 +695,7 @@ describe('createFileDependencyGraph', () => {
 
       const addonPackage = new EmberAddonPackage(project.baseDir);
 
-      const addonPackageGraph = new EmberAddonPackageDependencyGraph(addonPackage);
+      const addonPackageGraph = new EmberAddonPackageGraph(addonPackage);
       addonPackageGraph.discover();
 
       const implNode = addonPackageGraph.getGraph().getNode('addon/components/greet.js');

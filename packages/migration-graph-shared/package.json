@@ -18,6 +18,7 @@
     "test": "vitest --run"
   },
   "dependencies": {
+    "fast-glob": "^3.2.12",
     "findup-sync": "^5.0.0",
     "fs-extra": "^10.1.0",
     "micromatch": "^4",

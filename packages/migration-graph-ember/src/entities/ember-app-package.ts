@@ -15,7 +15,15 @@ export class EmberAppPackage extends Package {
 
   get excludePatterns(): Array<string> {
     // TODO Determine ember-config directory from package.json entry
-    return ['dist', 'config', 'ember-config', 'tests', '@ember/*', 'public'];
+    const files = [
+      '.ember-cli.js',
+      'ember-cli-build.js',
+      'ember-config.js',
+      'index.js',
+      'testem.js',
+    ];
+    const directories = ['dist', 'config', 'ember-config', 'tests', '@ember/*', 'public'];
+    return [...directories, ...files];
   }
 
   get includePatterns(): Array<string> {

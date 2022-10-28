@@ -4,9 +4,9 @@ import { readJsonSync } from 'fs-extra';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { Package } from '../src/entities/package';
-import { setupTestEnvironment } from '../src/utils/environment';
-import { FIXTURE_NAMES, FIXTURES } from './fixtures/package-fixtures';
+import { Package } from '../../src/entities/package';
+import { setupTestEnvironment } from '../../src/utils/environment';
+import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
 
 setGracefulCleanup();
 
@@ -137,6 +137,23 @@ describe('Unit | Entities | Package', function () {
       p.addPackageJsonKey('taco', 'al pastor');
       p.writePackageJsonToDisk();
       expect(readJsonSync(resolve(p.path, 'package.json')).taco).toBe('al pastor');
+    });
+  });
+
+  describe('isConvertedToTypescript', () => {
+    test('should be false for plain package', () => {
+      const p = new Package(pathToPackage);
+      expect(p.isConvertedToTypescript()).toBe(false);
+    });
+    test('should be true if tsconfig.json and atleast one .ts file exists', () => {
+      pathToPackage = getPathToPackage(FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT);
+      const p = new Package(pathToPackage);
+      expect(p.isConvertedToTypescript()).toBe(true);
+    });
+    test('should be true if tsconfig.json and atleast one .ts file exists', () => {
+      pathToPackage = getPathToPackage(FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT);
+      const p = new Package(pathToPackage);
+      expect(p.isConvertedToTypescript()).toBe(true);
     });
   });
 });

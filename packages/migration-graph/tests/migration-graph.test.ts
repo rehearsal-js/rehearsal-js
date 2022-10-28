@@ -7,7 +7,8 @@ import {
 } from '@rehearsal/test-support';
 import { GraphNode } from '../src/utils/graph-node';
 import { ModuleNode, UniqueGraphNode } from '../src/types';
-import { buildMigrationGraph, DetectedSource } from '../src/migration-graph';
+import { DetectedSource } from '../src/project-graph';
+import { buildMigrationGraph } from '../src/migration-graph';
 
 function flatten(arr: GraphNode<UniqueGraphNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.key);

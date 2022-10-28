@@ -5,16 +5,16 @@ import { IResolveOptions } from 'dependency-cruiser';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import debug from 'debug';
 
-import { EmberAppPackageDependencyGraph, EmberAppPackageDependencyGraphOptions } from './ember-app';
+import { EmberAppPackageGraph, EmberAppPackageyGraphOptions } from './ember-app';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:EmberAddonPackageDependencyGraph'
 );
 
-type EmberAddonPackageDependencyGraphOptions = EmberAppPackageDependencyGraphOptions;
+type EmberAddonPackageGraphOptions = EmberAppPackageyGraphOptions;
 
-export class EmberAddonPackageDependencyGraph extends EmberAppPackageDependencyGraph {
-  constructor(p: EmberAddonPackage, options: EmberAddonPackageDependencyGraphOptions = {}) {
+export class EmberAddonPackageGraph extends EmberAppPackageGraph {
+  constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
     super(p, options);
   }
 

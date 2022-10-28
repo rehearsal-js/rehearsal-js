@@ -4,7 +4,7 @@ import {
   getLibraryWithEntrypoint,
   getEmberProjectFixture,
 } from '@rehearsal/test-support';
-import { DetectedSource } from '../src/migration-graph';
+import { DetectedSource } from '../src/project-graph';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 
 const TEST_TIMEOUT = 500000;

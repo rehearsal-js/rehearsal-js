@@ -1,4 +1,5 @@
-export { buildMigrationGraph, discoverEmberPackages } from './migration-graph';
+export { buildMigrationGraph } from './migration-graph';
+export { discoverEmberPackages } from '@rehearsal/migration-graph-ember';
 export { GraphNode } from './utils/graph-node';
 export { Graph } from './utils/graph';
 

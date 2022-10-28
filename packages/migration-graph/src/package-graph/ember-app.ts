@@ -9,29 +9,29 @@ import {
 } from '@rehearsal/migration-graph-ember';
 import debug from 'debug';
 import { ModuleNode, PackageNode } from '../types';
-import { MigrationGraph } from '../migration-graph';
+import { ProjectGraph } from '../project-graph';
 import { Graph } from '../utils/graph';
 import { GraphNode } from '../utils/graph-node';
-import { PackageDependencyGraph, PackageDependencyGraphOptions } from './package';
+import { PackageGraph, PackageGraphOptions } from './package';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'
 );
 
-export type EmberAppPackageDependencyGraphOptions = {
+export type EmberAppPackageyGraphOptions = {
   parent?: GraphNode<PackageNode>;
-  project?: MigrationGraph;
+  project?: ProjectGraph;
   resolutions?: { services: Record<string, string> };
-} & PackageDependencyGraphOptions;
+} & PackageGraphOptions;
 
-export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
+export class EmberAppPackageGraph extends PackageGraph {
   serviceLookup: Map<string, string>;
 
   package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
-  project: MigrationGraph | undefined;
+  project: ProjectGraph | undefined;
 
-  constructor(pkg: EmberAppPackage, options: EmberAppPackageDependencyGraphOptions = {}) {
+  constructor(pkg: EmberAppPackage, options: EmberAppPackageyGraphOptions = {}) {
     super(pkg, options);
 
     this.package = pkg;

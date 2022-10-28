@@ -28,17 +28,17 @@ function resolveRelative(baseDir: string, somePath: string): string {
   return relative(fs.realpathSync(baseDir), fs.realpathSync(join(baseDir, somePath)));
 }
 
-export type PackageDependencyGraphOptions = {
+export type PackageGraphOptions = {
   entrypoint?: string;
 };
 
-export class PackageDependencyGraph {
-  protected options: PackageDependencyGraphOptions;
+export class PackageGraph {
+  protected options: PackageGraphOptions;
   protected baseDir: string;
   protected graph: Graph<ModuleNode>;
   protected package: Package;
 
-  constructor(p: Package, options: PackageDependencyGraphOptions = {}) {
+  constructor(p: Package, options: PackageGraphOptions = {}) {
     this.package = p;
     this.baseDir = p.path;
     this.options = options || {};
