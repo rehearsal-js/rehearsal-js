@@ -1,6 +1,6 @@
 import path, { join } from 'path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { EmberAddonPackage, EmberPackage } from '@rehearsal/migration-graph-ember';
+import { EmberAddonPackage, EmberAppPackage } from '@rehearsal/migration-graph-ember';
 import { Package } from '@rehearsal/migration-graph-shared';
 import {
   getEmberProject,
@@ -275,7 +275,7 @@ describe('createFileDependencyGraph', () => {
       const project = await getEmberProjectFixture('app');
 
       const output: Graph<ModuleNode> = createPackageDependencyGraph(
-        new EmberPackage(project.baseDir)
+        new EmberAppPackage(project.baseDir)
       );
       const actual = flatten(output.topSort());
 
@@ -290,7 +290,7 @@ describe('createFileDependencyGraph', () => {
     test('should produce a graph from an ember app', async () => {
       const project = await getEmberProjectFixture('app');
 
-      const p = new EmberPackage(project.baseDir);
+      const p = new EmberAppPackage(project.baseDir);
       const options = {};
       const output: Graph<ModuleNode> = new EmberAppPackageDependencyGraph(p, options).discover();
       const actual = flatten(output.topSort());
@@ -336,7 +336,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const p = new EmberPackage(project.baseDir);
+      const p = new EmberAppPackage(project.baseDir);
       const options = {};
       const output: Graph<ModuleNode> = new EmberAppPackageDependencyGraph(p, options).discover();
       const actual = flatten(output.topSort());
@@ -374,7 +374,7 @@ describe('createFileDependencyGraph', () => {
 
       await setupProject(project);
 
-      const p = new EmberPackage(project.baseDir);
+      const p = new EmberAppPackage(project.baseDir);
       const options = {
         resolutions: {
           services: {
@@ -416,7 +416,7 @@ describe('createFileDependencyGraph', () => {
       await setupProject(project);
 
       const m = new MigrationGraph(project.baseDir);
-      const emberPackage = new EmberPackage(project.baseDir);
+      const emberPackage = new EmberAppPackage(project.baseDir);
       const source = m.addPackageToGraph(emberPackage);
       const dest = m.graph.getNode('some-addon');
       expect(dest).toBeTruthy();
@@ -467,7 +467,7 @@ describe('createFileDependencyGraph', () => {
 
       const m = new MigrationGraph(project.baseDir);
 
-      const emberPackage = new EmberPackage(project.baseDir);
+      const emberPackage = new EmberAppPackage(project.baseDir);
       const appNode = m.addPackageToGraph(emberPackage);
       const node = m.graph.getNode('some-addon');
       expect(node?.content.synthetic).toBe(true);
@@ -556,7 +556,7 @@ describe('createFileDependencyGraph', () => {
 
       const m = new MigrationGraph(project.baseDir);
 
-      const emberPackage = new EmberPackage(project.baseDir);
+      const emberPackage = new EmberAppPackage(project.baseDir);
       const appNode = m.addPackageToGraph(emberPackage);
       let firstAddonNode = m.graph.getNode(firstAddonName);
       expect(firstAddonNode?.content.synthetic).toBe(true);
@@ -688,7 +688,7 @@ describe('createFileDependencyGraph', () => {
   });
 
   describe('EmberAddonPackageDependencyGraph', () => {
-    test.only('should create an edge between app/components/<file>.js and addon/components/<file>.js', async () => {
+    test('should create an edge between app/components/<file>.js and addon/components/<file>.js', async () => {
       const project = getEmberProject('addon');
 
       await setupProject(project);
@@ -700,7 +700,6 @@ describe('createFileDependencyGraph', () => {
 
       const implNode = addonPackageGraph.getGraph().getNode('addon/components/greet.js');
       const interfaceNode = addonPackageGraph.getGraph().getNode('app/components/greet.js');
-      console.log(flatten(addonPackageGraph.getGraph().topSort()));
       expect(interfaceNode.adjacent.has(implNode)).toBe(true);
     });
   });
