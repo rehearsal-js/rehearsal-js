@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
-import { EmberAppPackage } from '../../src/entities/ember-package';
+import { EmberAppPackage } from '../../src/entities/ember-app-package';
 import {
   getEmberAddonName,
   getPackageMainAST,

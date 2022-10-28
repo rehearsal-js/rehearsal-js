@@ -5,7 +5,7 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
-import { EmberAppPackage } from '../../src/entities/ember-package';
+import { EmberAppPackage } from '../../src/entities/ember-app-package';
 // import the container so it can be called with the correct root
 import { getInternalAddonPackages } from '../../src/index';
 import { type EmberPackageContainer } from '../../src/types/package-container';

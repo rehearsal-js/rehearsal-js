@@ -10,7 +10,7 @@ import { sync as fastGlobSync } from 'fast-glob';
 import resolvePackagePath from 'resolve-package-path';
 
 import { EmberAddonPackage } from './entities/ember-addon-package';
-import { EmberAppPackage } from './entities/ember-package';
+import { EmberAppPackage } from './entities/ember-app-package';
 import {
   type MappingsByAddonName,
   type MappingsByLocation,

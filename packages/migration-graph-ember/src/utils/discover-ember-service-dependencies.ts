@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, extname } from 'path';
 import { parseFileSync } from '@swc/core';
 import debug from 'debug';
 import type {
@@ -31,6 +31,11 @@ export function discoverServiceDependencies(
   pathToFile: string
 ): EmberInferredServiceDependency[] {
   const filePath = join(baseDir, pathToFile);
+
+  // TODO Evaluate if we need service discovery of TS files. Currently this parser doesn't work for typescript source.
+  if (extname(filePath) !== '.js') {
+    return EMPTY_RESULT;
+  }
 
   const parsed = parseFileSync(filePath, { syntax: 'ecmascript', decorators: true });
 

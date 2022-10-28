@@ -9,7 +9,7 @@ export {
   getExternalModuleMappings,
 } from './mappings-container';
 
-export { EmberAppPackage } from './entities/ember-package';
+export { EmberAppPackage } from './entities/ember-app-package';
 export { EmberAddonPackage } from './entities/ember-addon-package';
 
 export {

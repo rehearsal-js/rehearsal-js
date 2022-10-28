@@ -13,7 +13,7 @@ import {
   isEngine,
   writePackageMain,
 } from '../utils/ember';
-import { type EmberPackageOptions, EmberAppPackage } from './ember-package';
+import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package';
 import { InternalState } from './InternalState';
 
 export class EmberAddonPackage extends EmberAppPackage {
