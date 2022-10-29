@@ -12,7 +12,7 @@ import { ModuleNode, PackageNode } from '../types';
 import { ProjectGraph } from '../project-graph';
 import { Graph } from '../utils/graph';
 import { GraphNode } from '../utils/graph-node';
-import { PackageGraph, PackageGraphOptions } from './package';
+import { PackageGraph, PackageGraphOptions } from './package-graph';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'

@@ -5,7 +5,7 @@ import { IResolveOptions } from 'dependency-cruiser';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import debug from 'debug';
 
-import { EmberAppPackageGraph, EmberAppPackageyGraphOptions } from './ember-app';
+import { EmberAppPackageGraph, EmberAppPackageyGraphOptions } from './ember-app-package-graph';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:EmberAddonPackageDependencyGraph'

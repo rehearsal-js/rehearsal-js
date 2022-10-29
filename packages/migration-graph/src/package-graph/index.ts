@@ -3,9 +3,9 @@ import { Package } from '@rehearsal/migration-graph-shared';
 import { ModuleNode } from '../types';
 import { Graph } from '../utils/graph';
 
-import { EmberAddonPackageGraph } from './ember-addon';
-import { EmberAppPackageyGraphOptions, EmberAppPackageGraph } from './ember-app';
-import { PackageGraph, PackageGraphOptions } from './package';
+import { EmberAddonPackageGraph } from './ember-addon-package-graph';
+import { EmberAppPackageyGraphOptions, EmberAppPackageGraph } from './ember-app-package-graph';
+import { PackageGraph, PackageGraphOptions } from './package-graph';
 
 export type DependencyGraphOptions = EmberAppPackageyGraphOptions | PackageGraphOptions;
 export { PackageGraph as PackageDependencyGraph };
