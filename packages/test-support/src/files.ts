@@ -210,6 +210,37 @@ export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon'): fixtu
   return files;
 }
 
+export function getEmptyInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
+  return {
+    addon: {},
+    app: {},
+    'index.js': `
+      'use strict';
+  
+      module.exports = {
+        name: require('./package').name,
+  
+        isDevelopingAddon() {
+          return true;
+        },
+      };
+      `,
+    'package.json': `
+      {
+        "name": "${addonName}",
+        "keywords": [
+          "ember-addon"
+        ],
+        "dependencies": {
+          "ember-cli-babel": "*",
+          "ember-cli-htmlbars": "*",
+          "@glimmer/component": "*"
+        }
+      }
+    `,
+  };
+}
+
 export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
   return {
     addon: {

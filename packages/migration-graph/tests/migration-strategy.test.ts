@@ -43,8 +43,8 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
-        const actaul: Array<string> = files.map((f) => f.relativePath);
-        expect(actaul).toStrictEqual(EXPECTED_APP_FILES);
+        const actual: Array<string> = files.map((f) => f.relativePath);
+        expect(actual).toStrictEqual(EXPECTED_APP_FILES);
         expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
       },
       TEST_TIMEOUT
@@ -57,8 +57,8 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
-        const actaul: Array<string> = files.map((f) => f.relativePath);
-        expect(actaul).toStrictEqual([
+        const actual: Array<string> = files.map((f) => f.relativePath);
+        expect(actual).toStrictEqual([
           'lib/some-addon/addon/components/greet.js',
           'lib/some-addon/app/components/greet.js',
           'lib/some-addon/index.js',
@@ -76,8 +76,8 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
-        const actaul: Array<string> = files.map((f) => f.relativePath);
-        expect(actaul).toStrictEqual([
+        const actual: Array<string> = files.map((f) => f.relativePath);
+        expect(actual).toStrictEqual([
           'lib/some-engine/addon/resolver.js',
           'lib/some-engine/addon/engine.js',
           'lib/some-engine/addon/routes.js',
@@ -96,8 +96,8 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
-        const actaul: Array<string> = files.map((f) => f.relativePath);
-        expect(actaul).toStrictEqual([
+        const actual: Array<string> = files.map((f) => f.relativePath);
+        expect(actual).toStrictEqual([
           'addon/components/greet.js',
           'app/components/greet.js',
           'index.js',

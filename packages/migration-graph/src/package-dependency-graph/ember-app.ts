@@ -3,8 +3,8 @@ import { join, resolve } from 'path';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import { IResolveOptions } from 'dependency-cruiser';
 import {
-  EmberPackage,
   discoverServiceDependencies,
+  EmberAppPackage,
   EmberAddonPackage,
 } from '@rehearsal/migration-graph-ember';
 import debug from 'debug';
@@ -14,9 +14,11 @@ import { Graph } from '../utils/graph';
 import { GraphNode } from '../utils/graph-node';
 import { PackageDependencyGraph, PackageDependencyGraphOptions } from './package';
 
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph:EmberAppPackageDependencyGraph');
+const DEBUG_CALLBACK = debug(
+  'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'
+);
 
-export type EmberAppDependencyGraphOptions = {
+export type EmberAppPackageDependencyGraphOptions = {
   parent?: GraphNode<PackageNode>;
   project?: MigrationGraph;
   resolutions?: { services: Record<string, string> };
@@ -25,11 +27,11 @@ export type EmberAppDependencyGraphOptions = {
 export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
   serviceLookup: Map<string, string>;
 
-  package: EmberPackage;
+  package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
   project: MigrationGraph | undefined;
 
-  constructor(pkg: EmberPackage, options: EmberAppDependencyGraphOptions = {}) {
+  constructor(pkg: EmberAppPackage, options: EmberAppPackageDependencyGraphOptions = {}) {
     super(pkg, options);
 
     this.package = pkg;
@@ -66,13 +68,24 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
 
     const moduleNodeKey = m.key;
 
-    // Thus completing the self sustaining economy.
-    if (this.graph.hasNode(moduleNodeKey) && this.graph.getNode(moduleNodeKey)?.content.synthetic) {
-      DEBUG_CALLBACK(`>>> updateNode ${moduleNodeKey}`);
-      n = this.graph.updateNode(moduleNodeKey, m);
+    DEBUG_CALLBACK(`>>> attempting to adddNode ${this.package.packageName} ${moduleNodeKey}`);
+
+    // Thus completing the self sustaining e  conomy.
+    if (this.graph.hasNode(moduleNodeKey)) {
+      DEBUG_CALLBACK(`>>> getNode ${moduleNodeKey}`);
+      n = this.graph.getNode(moduleNodeKey);
+
+      if (this.graph.getNode(moduleNodeKey)?.content.synthetic) {
+        DEBUG_CALLBACK(`>>> updateNode ${moduleNodeKey}`);
+        n = this.graph.updateNode(moduleNodeKey, m);
+      }
     } else {
       DEBUG_CALLBACK(`>>> addNode ${moduleNodeKey}`);
       n = this.graph.addNode(m);
+    }
+
+    if (n.content.parsed) {
+      return n;
     }
 
     const services = discoverServiceDependencies(this.baseDir, n.content.path);
@@ -184,6 +197,8 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
       }
     });
 
+    n.content.parsed = true;
+
     return n;
   }
 
@@ -224,11 +239,7 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
 
   createSyntheticModuleNode(key: string): GraphNode<ModuleNode> {
     if (this.graph.hasNode(key)) {
-      const node = this.graph.getNode(key);
-      if (!node) {
-        throw new Error(`Internal error: Unable to retrieve GraphNode<ModuleNode> for ${key}`);
-      }
-      return node;
+      return this.graph.getNode(key);
     }
 
     return this.graph.addNode({

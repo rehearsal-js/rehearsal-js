@@ -13,10 +13,10 @@ import {
   isEngine,
   writePackageMain,
 } from '../utils/ember';
-import { type EmberPackageOptions, EmberPackage } from './ember-package';
+import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package';
 import { InternalState } from './InternalState';
 
-export class EmberAddonPackage extends EmberPackage {
+export class EmberAddonPackage extends EmberAppPackage {
   isAddon: boolean;
 
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {

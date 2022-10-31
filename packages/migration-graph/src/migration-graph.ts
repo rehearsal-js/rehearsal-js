@@ -1,7 +1,7 @@
 import { relative, resolve } from 'path';
 import {
   EmberAddonPackage,
-  EmberPackage,
+  EmberAppPackage,
   getInternalPackages,
   getRootPackage,
   isEmberAddon,
@@ -121,7 +121,7 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
 
 export function discoverEmberPackages(
   rootDir: string
-): Array<Package | EmberPackage | EmberAddonPackage> {
+): Array<Package | EmberAppPackage | EmberAddonPackage> {
   const { mappingsByAddonName } = getInternalPackages(rootDir);
   return Array.from(Object.values(mappingsByAddonName));
 }
@@ -258,7 +258,9 @@ export class MigrationGraph {
     });
   }
 
-  getExplicitPackageDependencies(pkg: Package): Array<Package | EmberPackage | EmberAddonPackage> {
+  getExplicitPackageDependencies(
+    pkg: Package
+  ): Array<Package | EmberAppPackage | EmberAddonPackage> {
     const { mappingsByAddonName, mappingsByLocation } = getInternalPackages(this.rootDir);
 
     let explicitDependencies: Array<Package> = [];
@@ -277,8 +279,8 @@ export class MigrationGraph {
         ) ?? [])
       );
     }
-    if (pkg instanceof EmberPackage) {
-      const emberPackage = pkg as EmberPackage;
+    if (pkg instanceof EmberAppPackage) {
+      const emberPackage = pkg as EmberAppPackage;
 
       if (emberPackage.addonPaths?.length) {
         // get the package by location

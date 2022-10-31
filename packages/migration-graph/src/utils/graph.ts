@@ -18,8 +18,14 @@ export class Graph<T extends UniqueGraphNode> {
     return this.#registry.has(key);
   }
 
-  getNode(key: string): GraphNode<T> | undefined {
-    return this.#registry.get(key);
+  getNode(key: string): GraphNode<T> {
+    const node = this.#registry.get(key);
+
+    if (!node) {
+      throw new Error(`Unable to getNode() with key: ${key}. Not found in graph registry.`);
+    }
+
+    return node;
   }
 
   updateNode(key: string, content: T): GraphNode<T> {

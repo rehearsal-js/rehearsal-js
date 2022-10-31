@@ -1,27 +1,45 @@
 import fs from 'fs';
 import { resolve } from 'path';
-import { Package } from '@rehearsal/migration-graph-shared';
+import { EmberAddonPackage, getEmberAddonName } from '@rehearsal/migration-graph-ember';
 import { IResolveOptions } from 'dependency-cruiser';
 import { CachedInputFileSystem } from 'enhanced-resolve';
-import { PackageDependencyGraphOptions, PackageDependencyGraph } from './package';
+import debug from 'debug';
 
-type EmberAddonPackageDependencyGraphOptions = PackageDependencyGraphOptions;
+import { EmberAppPackageDependencyGraph, EmberAppPackageDependencyGraphOptions } from './ember-app';
 
-export class EmberAddonPackageDependencyGraph extends PackageDependencyGraph {
-  constructor(p: Package, options: EmberAddonPackageDependencyGraphOptions = {}) {
+const DEBUG_CALLBACK = debug(
+  'rehearsal:migration-graph:package-dependency-graph:EmberAddonPackageDependencyGraph'
+);
+
+type EmberAddonPackageDependencyGraphOptions = EmberAppPackageDependencyGraphOptions;
+
+export class EmberAddonPackageDependencyGraph extends EmberAppPackageDependencyGraph {
+  constructor(p: EmberAddonPackage, options: EmberAddonPackageDependencyGraphOptions = {}) {
     super(p, options);
   }
 
   get resolveOptions(): IResolveOptions {
-    const addonName = this.package.packageJson.emberAddonName;
+    const addonName = getEmberAddonName(this.package.packagePath);
+
+    if (!addonName) {
+      console.warn('addonName is undefined, unable to create alias from app directory');
+    }
 
     const alias: Record<string, string> = {};
+
     alias[addonName] = resolve(this.baseDir, 'addon');
 
-    return {
+    DEBUG_CALLBACK({
+      baseDir: this.baseDir,
+      alias,
+    });
+
+    const options = {
       fileSystem: new CachedInputFileSystem(fs, 4000),
       resolveDeprecations: false,
       alias: alias,
     };
+
+    return options;
   }
 }
