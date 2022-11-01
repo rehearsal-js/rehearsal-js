@@ -1,5 +1,8 @@
 import { type PluginResult, Plugin } from '@rehearsal/service';
-import { isLineBreak } from 'typescript';
+import { debug } from 'debug';
+import { getBoundaryOfCommentBlock } from '../data/utils';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
 
 /**
  * Removes all comments with `@rehearsal` tag inside
@@ -29,26 +32,8 @@ export class ReRehearsePlugin extends Plugin {
 
     this.service.setFileText(fileName, text);
 
-    this.logger?.debug(`Plugin 'Re-Rehearse' run on ${fileName}`);
+    DEBUG_CALLBACK(`Plugin 'ReRehearse' run on %O:`, fileName);
 
     return [fileName];
   }
-}
-
-function getBoundaryOfCommentBlock(
-  start: number,
-  length: number,
-  text: string
-): { start: number; end: number } {
-  const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
-
-  let end = start + length - 1;
-
-  end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
-  end = isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
-
-  return {
-    start: newStart,
-    end,
-  };
 }
