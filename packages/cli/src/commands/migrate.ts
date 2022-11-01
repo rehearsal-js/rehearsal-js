@@ -11,27 +11,27 @@ import {
 } from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync, readJSONSync, writeJsonSync } from 'fs-extra';
+import { existsSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
+import { debug } from 'debug';
 
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
 import { UserConfig } from '../userConfig';
-import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
+import {
+  addDep,
+  determineProjectName,
+  parseCommaSeparatedList,
+  runModuleCommand,
+  writeTSConfig,
+  isTypescriptInDevdep,
+} from '../utils';
 import { State } from '../helpers/state';
 
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
-
-function ifHasTypescriptInDevdep(basePath: string): boolean {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath);
-  return (
-    (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
-    (packageJSON.dependencies && packageJSON.dependencies.typescript)
-  );
-}
+const DEBUG_CALLBACK = debug('rehearsal:migrate');
 
 export const migrateCommand = new Command();
 
@@ -75,8 +75,9 @@ migrateCommand
 
             _ctx.userConfig = userConfig;
 
-            const projectName = await determineProjectName(options.basePath);
+            const projectName = determineProjectName(options.basePath);
             const packages = discoverEmberPackages(options.basePath);
+            DEBUG_CALLBACK('projectName', projectName);
 
             if (options.interactive) {
               // Init state and store
@@ -92,6 +93,7 @@ migrateCommand
                   path: p.path,
                 };
               });
+
               // Get the menu text for each package during interactive mode to show:
               // 1. package has not started any migration before -> no progress found
               // 2. package had a migration with remaining JS files -> x/x migrated, x rehearsal todos
@@ -155,7 +157,9 @@ migrateCommand
               entrypoint: options.entrypoint,
               filterByPackageName: [],
             });
-            const files: Array<SourceFile> = strategy.getMigrationOrder();
+            const files: SourceFile[] = strategy.getMigrationOrder();
+            DEBUG_CALLBACK('migrationOrder', files);
+
             _ctx.strategy = strategy;
             _ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
             _ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
@@ -171,7 +175,7 @@ migrateCommand
               await _ctx.userConfig.install();
             }
 
-            if (ifHasTypescriptInDevdep(options.basePath)) {
+            if (isTypescriptInDevdep(options.basePath)) {
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
               await addDep(['typescript'], true, { cwd: options.basePath });
@@ -193,7 +197,7 @@ migrateCommand
               } else {
                 task.title = `Creating tsconfig.`;
 
-                createTSConfig(options.basePath, _ctx.sourceFilesWithRelativePath);
+                writeTSConfig(options.basePath, _ctx.sourceFilesWithRelativePath);
               }
             }
           },
@@ -262,24 +266,3 @@ migrateCommand
       logger.error(`${e}`);
     }
   });
-
-/**
- * Generate tsconfig
- */
-function createTSConfig(basePath: string, fileList: string[]): void {
-  const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
-  const config = {
-    $schema: 'http://json.schemastore.org/tsconfig',
-    compilerOptions: {
-      baseUrl: '.',
-      outDir: 'dist',
-      emitDeclarationOnly: true,
-      allowJs: true,
-      target: 'es2016',
-      module: 'commonjs',
-      moduleResolution: 'node',
-    },
-    include,
-  };
-  writeJsonSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
-}

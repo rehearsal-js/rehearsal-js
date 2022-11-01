@@ -14,6 +14,7 @@ import {
   normalizeVersionString,
   sleep,
   timestamp,
+  getLockfilePath,
 } from '../../src/utils';
 
 describe('utils', () => {
@@ -36,8 +37,8 @@ describe('utils', () => {
     });
   });
 
-  test('determineProjectName()', async () => {
-    const projectName = await determineProjectName();
+  test('determineProjectName()', () => {
+    const projectName = determineProjectName();
     expect(projectName).toEqual('@rehearsal/cli');
   });
 
@@ -57,26 +58,26 @@ describe('utils', () => {
   });
 
   // @rehearsal/cli uses pnpm
-  test('isYarnManager()', async () => {
-    const isYarn = await isYarnManager();
+  test('isYarnManager()', () => {
+    const isYarn = isYarnManager();
 
     expect(isYarn).equal(false);
   });
 
-  test('isPnpmManager()', async () => {
-    const isPnpm = await isPnpmManager();
+  test('isPnpmManager()', () => {
+    const isPnpm = isPnpmManager();
 
     expect(isPnpm).equal(true);
   });
 
-  test('getModuleManager()', async () => {
-    const manager = await getModuleManager();
+  test('getModuleManager()', () => {
+    const manager = getModuleManager();
 
     expect(manager).equal('pnpm');
   });
 
-  test('getModuleManagerInstaller()', async () => {
-    const { bin, args } = await getModuleManagerInstaller('pnpm', ['typescript'], true);
+  test('getModuleManagerInstaller()', () => {
+    const { bin, args } = getModuleManagerInstaller('pnpm', ['typescript'], true);
 
     expect(bin).toContain('pnpm');
     expect(args).toEqual(['add', '-D', 'typescript']);
@@ -88,5 +89,11 @@ describe('utils', () => {
 
     expect(latestVersionTagged).toBeTruthy();
     expect(latestVersion).toBeTruthy();
+  });
+
+  test('getLockfilePath()', () => {
+    const lockfilePath = getLockfilePath();
+
+    expect(lockfilePath).toContain('pnpm-lock.yaml');
   });
 });

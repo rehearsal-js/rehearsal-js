@@ -1,6 +1,6 @@
+import { type DiagnosticWithLocation, type SourceFile, isLineBreak } from 'typescript';
 import type { FixedFile } from '@rehearsal/codefixes';
 import type { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
-import type { DiagnosticWithLocation, SourceFile } from 'typescript';
 
 export function getFilesData(
   fixedFiles: FixedFile[],
@@ -102,5 +102,23 @@ export function getInitialEntryFileData(diagnostic: DiagnosticWithLocation): Pro
     hint: undefined,
     hintAdded: false,
     roles: ['analysisTarget', 'unmodified'],
+  };
+}
+
+export function getBoundaryOfCommentBlock(
+  start: number,
+  length: number,
+  text: string
+): { start: number; end: number } {
+  const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
+
+  let end = start + length - 1;
+
+  end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
+  end = isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
+
+  return {
+    start: newStart,
+    end,
   };
 }
