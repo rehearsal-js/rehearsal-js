@@ -6,8 +6,10 @@ import {
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
 } from 'typescript';
-
+import { debug } from 'debug';
 import { getFilesData } from '../data';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
 /**
  * Diagnose issues in the file and applied transforms to fix them
@@ -21,14 +23,14 @@ export class DiagnosticFixPlugin extends Plugin {
     let diagnostics = this.getDiagnostics(fileName, commentTag);
     let tries = diagnostics.length + 1;
 
-    this.logger?.debug(`Plugin 'DiagnosticAutofix' run on ${fileName}`);
+    DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
     while (diagnostics.length > 0 && tries-- > 0) {
       const diagnostic = diagnostics.shift()!;
 
       if (!diagnostic.node) {
-        this.logger?.warning(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
         continue;
       }
 
@@ -46,7 +48,7 @@ export class DiagnosticFixPlugin extends Plugin {
           allFixedFiles.add(fixedFile.fileName);
         }
 
-        this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       } else {
         if (addHints) {
           // Add a hint message in case we didn't modify any files (codefix was not applied)
@@ -54,10 +56,10 @@ export class DiagnosticFixPlugin extends Plugin {
           this.service.setFileText(fileName, text);
           allFixedFiles.add(fileName);
 
-          this.logger?.debug(` - TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
         } else {
           hint = '';
-          this.logger?.warning(` - TS${diagnostic.code} at ${diagnostic.start}:\t not handled`);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t not handled`);
         }
       }
 

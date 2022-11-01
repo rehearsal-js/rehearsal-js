@@ -9,6 +9,7 @@ import {
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import { debug } from 'debug';
 import type { Logger } from 'winston';
 
 export type UpgradeInput = {
@@ -23,6 +24,8 @@ export type UpgradeOutput = {
   configFile: string;
   sourceFiles: string[];
 };
+
+const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 
 /**
  * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
@@ -42,8 +45,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     LintPlugin,
   ];
 
-  logger?.info('Upgrade started.');
-  logger?.info(`Base path: ${basePath}`);
+  DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);
 
   const configFile = findConfigFile(basePath, sys.fileExists, configName);
 
@@ -53,7 +55,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     throw Error(message);
   }
 
-  logger?.info(`Config file found: ${configFile}`);
+  DEBUG_CALLBACK('Config file found: %O', configFile);
 
   const { config } = readConfigFile(configFile, sys.readFile);
   const { options, fileNames } = parseJsonConfigFileContent(
@@ -64,10 +66,12 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     configFile
   );
 
+  DEBUG_CALLBACK('Config file content: %O', { options, fileNames });
+
   const service = new RehearsalService(options, fileNames);
 
   for (const fileName of fileNames) {
-    logger?.info(`Processing file: ${fileName}`);
+    DEBUG_CALLBACK('Processing file: %O', fileName);
 
     let allChangedFiles: Set<string> = new Set();
 
@@ -77,11 +81,13 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 
+    DEBUG_CALLBACK('Plugins Complete on: %O', fileName);
+
     // Save file to the filesystem
     allChangedFiles.forEach((file) => service.saveFile(file));
+    DEBUG_CALLBACK('Files Saved: %O', allChangedFiles);
   }
-
-  logger?.info(`Upgrade finished.`);
+  DEBUG_CALLBACK('Upgrade finished');
 
   return {
     basePath,
