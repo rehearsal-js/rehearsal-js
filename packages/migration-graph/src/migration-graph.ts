@@ -1,10 +1,15 @@
-import { getRootPackage, discoverEmberPackages } from '@rehearsal/migration-graph-ember';
-import { Package } from '@rehearsal/migration-graph-shared';
+import { Package, ProjectGraph, readPackageJson } from '@rehearsal/migration-graph-shared';
+import {
+  EmberAddonProjectGraph,
+  EmberAppProjectGraph,
+  getRootPackage,
+  discoverEmberPackages,
+  isEmberAddon,
+  isEmberApp,
+} from '@rehearsal/migration-graph-ember';
 import debug from 'debug';
 import minimatch from 'minimatch';
-
-import { createPackageDependencyGraph } from './package-graph';
-import { DetectedSource, ProjectGraph } from './project-graph';
+import { SourceType } from './source-type';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph');
 
@@ -24,7 +29,7 @@ function buildMigrationGraphForLibrary(
     key: p.packageName,
     pkg: p,
     converted: p.isConvertedToTypescript(),
-    modules: createPackageDependencyGraph(p, {
+    modules: p.createModuleGraph({
       entrypoint: options?.entrypoint,
     }),
   });
@@ -86,20 +91,20 @@ export function buildMigrationGraph(
   // Ember App
   // Ember Addon
 
-  let m = new ProjectGraph(rootDir);
+  const packageJson = readPackageJson(rootDir);
 
-  switch (m.sourceType) {
-    case DetectedSource.Library:
-      m = buildMigrationGraphForLibrary(m, options);
-      break;
-    case DetectedSource.EmberApp:
-    case DetectedSource.EmberAddon:
-      m = buildMigrationGraphForEmber(m, options);
-      break;
-    default:
-      throw new Error('Undetected source.');
-      break;
+  let projectGraph: ProjectGraph;
+
+  if (isEmberAddon(packageJson)) {
+    projectGraph = new EmberAddonProjectGraph(rootDir, SourceType.EmberAddon);
+    projectGraph = buildMigrationGraphForEmber(projectGraph, options);
+  } else if (isEmberApp(packageJson)) {
+    projectGraph = new EmberAppProjectGraph(rootDir, SourceType.EmberApp);
+    projectGraph = buildMigrationGraphForEmber(projectGraph, options);
+  } else {
+    projectGraph = new ProjectGraph(rootDir, SourceType.Library);
+    projectGraph = buildMigrationGraphForLibrary(projectGraph, options);
   }
 
-  return m;
+  return projectGraph;
 }

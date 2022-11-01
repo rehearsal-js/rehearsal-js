@@ -1,3 +1,5 @@
+// This is named GraphNode as not to confuse the language server that it's related to a DOM "Node".
+
 export class GraphNode<T> {
   // eslint-disable-next-line no-use-before-define
   #parent: GraphNode<T> | null = null;

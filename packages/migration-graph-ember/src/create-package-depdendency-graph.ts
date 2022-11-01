@@ -1,13 +1,25 @@
-import { EmberAddonPackage, EmberAppPackage } from '@rehearsal/migration-graph-ember';
-import { Package } from '@rehearsal/migration-graph-shared';
-import { ModuleNode } from '../types';
-import { Graph } from '../utils/graph';
+import {
+  Graph,
+  ModuleNode,
+  Package,
+  PackageGraph,
+  PackageGraphOptions,
+} from '@rehearsal/migration-graph-shared';
+import { EmberAppPackage } from './entities/ember-app-package';
+import { EmberAddonPackage } from './entities/ember-addon-package';
+import {
+  EmberAddonPackageGraph,
+  EmberAddonPackageGraphOptions,
+} from './entities/ember-addon-package-graph';
+import {
+  EmberAppPackageyGraphOptions,
+  EmberAppPackageGraph,
+} from './entities/ember-app-package-graph';
 
-import { EmberAddonPackageGraph } from './ember-addon-package-graph';
-import { EmberAppPackageyGraphOptions, EmberAppPackageGraph } from './ember-app-package-graph';
-import { PackageGraph, PackageGraphOptions } from './package-graph';
-
-export type DependencyGraphOptions = EmberAppPackageyGraphOptions | PackageGraphOptions;
+export type DependencyGraphOptions =
+  | EmberAppPackageyGraphOptions
+  | EmberAddonPackageGraphOptions
+  | PackageGraphOptions;
 export { PackageGraph as PackageDependencyGraph };
 export { EmberAppPackageGraph as EmberAppPackageDependencyGraph };
 export { EmberAddonPackageGraph as EmberAddonPackageDependencyGraph };

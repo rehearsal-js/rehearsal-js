@@ -3,10 +3,9 @@ import fs from 'fs-extra';
 
 import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph';
 
-import { type DetectedSource } from './project-graph';
+import { type SourceType } from './source-type';
 
-import type { ModuleNode, PackageNode } from './types';
-import type { GraphNode } from './utils/graph-node';
+import type { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 
 export class SourceFile {
   #packageName: string;
@@ -38,9 +37,9 @@ export class SourceFile {
 
 export class MigrationStrategy {
   #files: Array<SourceFile> = [];
-  #sourceType: DetectedSource;
+  #sourceType: SourceType;
 
-  constructor(sourceType: DetectedSource) {
+  constructor(sourceType: SourceType) {
     this.#sourceType = sourceType;
   }
 
@@ -52,7 +51,7 @@ export class MigrationStrategy {
     return this.#files;
   }
 
-  get sourceType(): DetectedSource {
+  get sourceType(): SourceType {
     return this.#sourceType;
   }
 
@@ -77,7 +76,7 @@ export function getMigrationStrategy(
   rootDir = fs.realpathSync(rootDir);
   const m = buildMigrationGraph(rootDir, options);
 
-  const strategy = new MigrationStrategy(m.sourceType);
+  const strategy = new MigrationStrategy(m.sourceType as SourceType);
 
   m.graph
     .topSort()

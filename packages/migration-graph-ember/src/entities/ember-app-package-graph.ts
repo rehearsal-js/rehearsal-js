@@ -1,18 +1,20 @@
 import fs from 'fs';
 import { join, resolve } from 'path';
 import { CachedInputFileSystem } from 'enhanced-resolve';
-import { IResolveOptions } from 'dependency-cruiser';
+import { type IResolveOptions } from 'dependency-cruiser';
 import {
-  discoverServiceDependencies,
-  EmberAppPackage,
-  EmberAddonPackage,
-} from '@rehearsal/migration-graph-ember';
+  Graph,
+  GraphNode,
+  ModuleNode,
+  ProjectGraph,
+  PackageGraph,
+  PackageGraphOptions,
+  PackageNode,
+} from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
-import { ModuleNode, PackageNode } from '../types';
-import { ProjectGraph } from '../project-graph';
-import { Graph } from '../utils/graph';
-import { GraphNode } from '../utils/graph-node';
-import { PackageGraph, PackageGraphOptions } from './package-graph';
+import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies';
+import { EmberAppPackage } from './ember-app-package';
+import { EmberAddonPackage } from './ember-addon-package';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'
@@ -57,11 +59,11 @@ export class EmberAppPackageGraph extends PackageGraph {
    *
    *  In this case we are processing that file.
    *
-   *  We need to update that GraphNode with the complete ModuleNode data.
+   *  We need to update that Node with the complete ModuleNode data.
    *  Then we parse that service file for any other service depdendencies.
    *
    * @param m A `ModuleNode` with the path information
-   * @returns GraphNode<ModuleNode> the new or existing GraphNode<ModuleNode>
+   * @returns Node<ModuleNode> the new or existing Node<ModuleNode>
    */
   addNode(m: ModuleNode): GraphNode<ModuleNode> {
     let n: GraphNode<ModuleNode>;
@@ -167,7 +169,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
             // Create an edge between these packages.
             // We can create edges between files but I dont know if we want that yet.
-            // Get this package GraphNode<PackageNode> for this package.
+            // Get this package Node<PackageNode> for this package.
 
             if (this.parent) {
               DEBUG_CALLBACK('Adding edge between parent and addon');
@@ -260,7 +262,7 @@ export class EmberAppPackageGraph extends PackageGraph {
       const node = graph.getNode(key);
 
       if (!node) {
-        throw new Error(`Internal error: Unable to retrieve GraphNode<ModuleNode> for ${key}`);
+        throw new Error(`Internal error: Unable to retrieve Node<ModuleNode> for ${key}`);
       }
       return node;
     }

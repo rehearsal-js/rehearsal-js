@@ -4,7 +4,7 @@ import {
   getLibraryWithEntrypoint,
   getEmberProjectFixture,
 } from '@rehearsal/test-support';
-import { DetectedSource } from '../src/project-graph';
+import { SourceType } from '../src/source-type';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 
 const TEST_TIMEOUT = 500000;
@@ -17,7 +17,7 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(strategy.sourceType).toBe(DetectedSource.Library);
+      expect(strategy.sourceType).toBe(SourceType.Library);
     });
     test('simple with entrypoint', () => {
       const rootDir = getLibraryWithEntrypoint();
@@ -25,7 +25,7 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['foo.js', 'depends-on-foo.js']);
-      expect(strategy.sourceType).toBe(DetectedSource.Library);
+      expect(strategy.sourceType).toBe(SourceType.Library);
     });
   });
 
@@ -45,7 +45,7 @@ describe('migration-strategy', () => {
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const actual: Array<string> = files.map((f) => f.relativePath);
         expect(actual).toStrictEqual(EXPECTED_APP_FILES);
-        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
+        expect(strategy.sourceType).toBe(SourceType.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -64,7 +64,7 @@ describe('migration-strategy', () => {
           'lib/some-addon/index.js',
           ...EXPECTED_APP_FILES,
         ]);
-        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
+        expect(strategy.sourceType).toBe(SourceType.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -84,7 +84,7 @@ describe('migration-strategy', () => {
           'lib/some-engine/index.js',
           ...EXPECTED_APP_FILES,
         ]);
-        expect(strategy.sourceType).toBe(DetectedSource.EmberApp);
+        expect(strategy.sourceType).toBe(SourceType.EmberApp);
       },
       TEST_TIMEOUT
     );
@@ -102,7 +102,7 @@ describe('migration-strategy', () => {
           'app/components/greet.js',
           'index.js',
         ]);
-        expect(strategy.sourceType).toBe(DetectedSource.EmberAddon);
+        expect(strategy.sourceType).toBe(SourceType.EmberAddon);
       },
       TEST_TIMEOUT
     );

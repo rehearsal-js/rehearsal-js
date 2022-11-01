@@ -1,6 +1,5 @@
 import fs from 'fs';
 import { join, relative } from 'path';
-import { Package } from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
 import {
   cruise,
@@ -11,9 +10,9 @@ import {
   IReporterOutput,
   IResolveOptions,
 } from 'dependency-cruiser';
+import { Graph, GraphNode } from '../graph';
 import { ModuleNode } from '../types';
-import { Graph } from '../utils/graph';
-import { GraphNode } from '../utils/graph-node';
+import { Package } from './package';
 
 const DEBUG_CALLBACK = debug(
   'rehearsal:migration-graph:package-dependency-graph:PackageDependencyGraph'

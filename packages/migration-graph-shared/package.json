@@ -18,6 +18,8 @@
     "test": "vitest --run"
   },
   "dependencies": {
+    "debug": "^4.3.4",
+    "dependency-cruiser": "^11.15.0",
     "fast-glob": "^3.2.12",
     "findup-sync": "^5.0.0",
     "fs-extra": "^10.1.0",
@@ -26,7 +28,9 @@
     "sort-package-json": "^1.0.0"
   },
   "devDependencies": {
+    "@rehearsal/test-support": "workspace:*",
     "@types/findup-sync": "^4.0.2",
+    "@types/rimraf": "^3.0.2",
     "fixturify": "^2.1.1",
     "rimraf": "^3.0.2",
     "tmp": "^0.2.1",

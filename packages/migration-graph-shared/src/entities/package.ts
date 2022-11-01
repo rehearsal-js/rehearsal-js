@@ -6,6 +6,9 @@ import { sync as fastGlobSync } from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
 import { getWorkspaceGlobs } from '../utils/workspace';
+import { Graph } from '../graph';
+import { ModuleNode } from '../types';
+import { PackageGraph } from './package-graph';
 
 export type PackageJson = Record<string, any>;
 
@@ -50,6 +53,8 @@ export class Package {
   #type: string;
 
   #packageContainer: PackageContainer;
+
+  protected files: Graph<ModuleNode>;
 
   constructor(pathToPackage: string, { type = '', packageContainer }: PackageOptions = {}) {
     this.#path = pathToPackage;
@@ -256,5 +261,15 @@ export class Package {
       return true;
     }
     return false;
+  }
+
+  createModuleGraph(options = {}): Graph<ModuleNode> {
+    if (this.files) {
+      return this.files;
+    }
+
+    this.files = new PackageGraph(this, options).discover();
+
+    return this.files;
   }
 }

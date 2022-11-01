@@ -1,7 +1,8 @@
 import { relative, resolve } from 'path';
-import { type PackageOptions, Package } from '@rehearsal/migration-graph-shared';
+import { type PackageOptions, Package, Graph, ModuleNode } from '@rehearsal/migration-graph-shared';
 
 import { InternalState } from './InternalState';
+import { EmberAppPackageGraph } from './ember-app-package-graph';
 
 export type EmberPackageOptions = PackageOptions;
 
@@ -94,5 +95,15 @@ export class EmberAppPackage extends Package {
     );
 
     return this;
+  }
+
+  createModuleGraph(options = {}): Graph<ModuleNode> {
+    if (this.files) {
+      return this.files;
+    }
+
+    this.files = new EmberAppPackageGraph(this, options).discover();
+
+    return this.files;
   }
 }

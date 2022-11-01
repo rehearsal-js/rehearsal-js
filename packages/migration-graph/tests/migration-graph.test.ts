@@ -5,12 +5,12 @@ import {
   getLibrarySimple,
   setupProject,
 } from '@rehearsal/test-support';
-import { GraphNode } from '../src/utils/graph-node';
-import { ModuleNode, UniqueGraphNode } from '../src/types';
-import { DetectedSource } from '../src/project-graph';
+import { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
+
+import { SourceType } from '../src/source-type';
 import { buildMigrationGraph } from '../src/migration-graph';
 
-function flatten(arr: GraphNode<UniqueGraphNode>[]): string[] {
+function flatten(arr: GraphNode<UniqueNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.key);
 }
 
@@ -27,7 +27,7 @@ describe('migration-graph', () => {
       const m = buildMigrationGraph(baseDir);
 
       expect(m.graph.hasNode('my-package')).toBe(true);
-      expect(m.sourceType).toBe(DetectedSource.Library);
+      expect(m.sourceType).toBe(SourceType.Library);
       expect(flatten(m.graph.topSort())).toStrictEqual(['my-package']);
       expect(flatten(m.graph.topSort()[0].content.modules.topSort())).toStrictEqual([
         'lib/a.js',
@@ -48,7 +48,7 @@ describe('migration-graph', () => {
       const project = await getEmberProjectFixture('app');
 
       const m = buildMigrationGraph(project.baseDir);
-      expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
+      expect(m.sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
       const orderedPackages = m.graph.topSort();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
       expect(flatten(filter(orderedPackages[0].content.modules.topSort()))).toStrictEqual(
@@ -60,7 +60,7 @@ describe('migration-graph', () => {
 
       const m = buildMigrationGraph(project.baseDir);
 
-      expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
+      expect(m.sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
 
       const orderedPackages = m.graph.topSort();
       // Package order is root to leaf
@@ -79,7 +79,7 @@ describe('migration-graph', () => {
     test('app-with-in-repo-engine', async () => {
       const project = await getEmberProjectFixture('app-with-in-repo-engine');
       const m = buildMigrationGraph(project.baseDir);
-      expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
+      expect(m.sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
       const orderedPackages = m.graph.topSort();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template', 'some-engine']);
 
@@ -97,7 +97,7 @@ describe('migration-graph', () => {
       const project = await getEmberProjectFixture('addon');
 
       const m = buildMigrationGraph(project.baseDir);
-      expect(m.sourceType, 'should detect an EmberAddon').toBe(DetectedSource.EmberAddon);
+      expect(m.sourceType, 'should detect an EmberAddon').toBe(SourceType.EmberAddon);
       const orderedPackages = m.graph.topSort();
 
       expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
@@ -145,7 +145,7 @@ describe('migration-graph', () => {
       await setupProject(project);
       const m = buildMigrationGraph(project.baseDir);
 
-      expect(m.sourceType, 'should detect an EmberApp').toBe(DetectedSource.EmberApp);
+      expect(m.sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
       const orderedPackages = m.graph.topSort();
 
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
