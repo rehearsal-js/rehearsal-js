@@ -26,7 +26,7 @@ export type MigrateCommandContext = {
 
 export type UpgradeCommandContext = {
   tsVersion: string;
-  latestELRdBuild: string;
+  latestAvailableBuild: string;
   currentTSVersion: string;
   skip: boolean;
 };

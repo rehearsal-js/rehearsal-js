@@ -1,10 +1,11 @@
-import { readFileSync } from 'fs';
 import { join, resolve } from 'path';
+import { readFileSync, writeJSONSync, readJSONSync } from 'fs-extra';
 import { compare } from 'compare-versions';
 import { parse } from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
+import { InvalidArgumentError } from 'commander';
 
 import findup = require('findup-sync');
 import execa = require('execa');
@@ -131,8 +132,8 @@ export function normalizeVersionString(versionString: string): string {
   return versionString;
 }
 
-export async function determineProjectName(directory = process.cwd()): Promise<string | null> {
-  const packageJSONPath = await findup('package.json', {
+export function determineProjectName(directory = process.cwd()): string | null {
+  const packageJSONPath = findup('package.json', {
     cwd: directory,
   });
 
@@ -143,24 +144,24 @@ export async function determineProjectName(directory = process.cwd()): Promise<s
   return packageJSON?.name ?? null;
 }
 
-export async function isYarnManager(): Promise<boolean> {
-  const yarnPath = await findup('yarn.lock', {
+export function isYarnManager(): boolean {
+  const yarnPath = findup('yarn.lock', {
     cwd: process.cwd(),
   });
 
   return !!yarnPath;
 }
 
-export async function isPnpmManager(): Promise<boolean> {
-  const pnpmPath = await findup('pnpm-lock.yaml', {
+export function isPnpmManager(): boolean {
+  const pnpmPath = findup('pnpm-lock.yaml', {
     cwd: process.cwd(),
   });
 
   return !!pnpmPath;
 }
 
-export async function getLockfilePath(): Promise<string | null> {
-  const yarnPath = await findup('yarn.lock', {
+export function getLockfilePath(): string | null {
+  const yarnPath = findup('yarn.lock', {
     cwd: process.cwd(),
   });
 
@@ -168,7 +169,7 @@ export async function getLockfilePath(): Promise<string | null> {
     return yarnPath;
   }
 
-  const pnpmPath = await findup('pnpm-lock.yaml', {
+  const pnpmPath = findup('pnpm-lock.yaml', {
     cwd: process.cwd(),
   });
 
@@ -176,7 +177,7 @@ export async function getLockfilePath(): Promise<string | null> {
     return pnpmPath;
   }
 
-  const npmPath = await findup('package-lock.json', {
+  const npmPath = findup('package-lock.json', {
     cwd: process.cwd(),
   });
 
@@ -187,9 +188,9 @@ export async function getLockfilePath(): Promise<string | null> {
   return null;
 }
 
-export async function getModuleManager(): Promise<'yarn' | 'npm' | 'pnpm'> {
-  const isYarn = await isYarnManager();
-  const isPnpm = await isPnpmManager();
+export function getModuleManager(): 'yarn' | 'npm' | 'pnpm' {
+  const isYarn = isYarnManager();
+  const isPnpm = isPnpmManager();
 
   if (isYarn) {
     return 'yarn';
@@ -202,11 +203,11 @@ export async function getModuleManager(): Promise<'yarn' | 'npm' | 'pnpm'> {
   return 'npm';
 }
 
-export async function getModuleManagerInstaller(
+export function getModuleManagerInstaller(
   manager: 'yarn' | 'npm' | 'pnpm',
   depList: string[],
   isDev: boolean
-): Promise<{ bin: string; args: string[] }> {
+): { bin: string; args: string[] } {
   const bin = which.sync(manager);
 
   switch (manager) {
@@ -239,8 +240,8 @@ export async function addDep(
   isDev: boolean,
   options: execa.Options = {}
 ): Promise<void> {
-  const moduleManager = await getModuleManager();
-  const binAndArgs = await getModuleManagerInstaller(moduleManager, depList, isDev);
+  const moduleManager = getModuleManager();
+  const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
   await execa(binAndArgs.bin, [...binAndArgs.args], options);
 }
@@ -248,7 +249,7 @@ export async function addDep(
 // when executing a command with module manager prefix
 // eg. yarn tsc or pnpm tsc or npm tsc
 export async function runModuleCommand(args: string[], option: execa.Options = {}): Promise<void> {
-  const moduleManager = await getModuleManager();
+  const moduleManager = getModuleManager();
   const binAndArgs = {
     bin: moduleManager,
     args,
@@ -263,7 +264,7 @@ export async function getPathToBinary(
   options: execa.Options = {}
 ): Promise<string> {
   // pnpm | yarn | npm
-  const moduleManager = await getModuleManager();
+  const moduleManager = getModuleManager();
   // /Users/foo/.volta/bin/yarn
   // /usr/local/bin/pnpm
   const moduleManagerBin = which.sync(moduleManager);
@@ -321,4 +322,51 @@ export function isValidSemver(input: string): boolean {
  */
 export function parseCommaSeparatedList(value: string): string[] {
   return value.split(',');
+}
+
+/**
+ * Generate tsconfig
+ */
+export function writeTSConfig(basePath: string, fileList: string[]): void {
+  const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
+  const config = {
+    $schema: 'http://json.schemastore.org/tsconfig',
+    compilerOptions: {
+      baseUrl: '.',
+      outDir: 'dist',
+      emitDeclarationOnly: true,
+      allowJs: true,
+      target: 'es2016',
+      module: 'commonjs',
+      moduleResolution: 'node',
+    },
+    include,
+  };
+
+  writeJSONSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
+}
+
+/**
+ * Parse the TS Version passed in by the user
+ */
+export function parseTsVersion(value: string): string {
+  if (isValidSemver(value)) {
+    return value;
+  } else {
+    throw new InvalidArgumentError(
+      'The tsVersion specified is an invalid string. Please specify a valid version as n.n.n'
+    );
+  }
+}
+
+/**
+ * Check if typescript is already installed
+ */
+export function isTypescriptInDevdep(basePath: string): boolean {
+  const packageJSONPath = resolve(basePath, 'package.json');
+  const packageJSON = readJSONSync(packageJSONPath);
+  return (
+    (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
+    (packageJSON.dependencies && packageJSON.dependencies.typescript)
+  );
 }

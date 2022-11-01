@@ -3,7 +3,7 @@
 import { resolve } from 'path';
 import { mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
-import { Command, InvalidArgumentError } from 'commander';
+import { Command } from 'commander';
 import { compare } from 'compare-versions';
 import { debug } from 'debug';
 import { Listr } from 'listr2';
@@ -23,24 +23,13 @@ import {
   gitCheckoutNewLocalBranch,
   gitCommit,
   gitIsRepoDirty,
-  isValidSemver,
   parseCommaSeparatedList,
-  timestamp,
+  parseTsVersion,
 } from '../utils';
 
-const DEBUG_CALLBACK = debug('rehearsal:ts');
+const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 
 export const upgradeCommand = new Command();
-
-function parseTsVersion(value: string): string {
-  if (isValidSemver(value)) {
-    return value;
-  } else {
-    throw new InvalidArgumentError(
-      'The tsVersion specified is an invalid string. Please specify a valid version as n.n.n'
-    );
-  }
-}
 
 upgradeCommand
   .name('upgrade')
@@ -81,8 +70,8 @@ upgradeCommand
 
     const tscPath = await getPathToBinary('tsc');
 
-    DEBUG_CALLBACK('tscPath', tscPath);
-    DEBUG_CALLBACK('options %O', options);
+    DEBUG_CALLBACK('tscPath: %O', tscPath);
+    DEBUG_CALLBACK('options: %O', options);
 
     // grab the consuming apps project name
     const projectName = (await determineProjectName()) || '';
@@ -102,11 +91,11 @@ upgradeCommand
                 exitOnError: true,
                 task: async (ctx, task) => {
                   if (!options.tsVersion) {
-                    ctx.latestELRdBuild = await getLatestTSVersion(options.build);
-                    task.title = `Latest typescript@${options.build} version is ${ctx.latestELRdBuild}`;
+                    ctx.latestAvailableBuild = await getLatestTSVersion(options.build);
+                    task.title = `Latest typescript@${options.build} version is ${ctx.latestAvailableBuild}`;
                   } else {
-                    ctx.latestELRdBuild = options.tsVersion;
-                    task.title = `Rehearsing with typescript@${ctx.latestELRdBuild}`;
+                    ctx.latestAvailableBuild = options.tsVersion;
+                    task.title = `Rehearsing with typescript@${ctx.latestAvailableBuild}`;
                   }
                 },
               },
@@ -122,8 +111,8 @@ upgradeCommand
               {
                 title: 'Comparing TypeScript versions',
                 task: async (ctx) => {
-                  if (compare(ctx.latestELRdBuild, ctx.currentTSVersion, '>')) {
-                    ctx.tsVersion = ctx.latestELRdBuild;
+                  if (compare(ctx.latestAvailableBuild, ctx.currentTSVersion, '>')) {
+                    ctx.tsVersion = ctx.latestAvailableBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
                     reporter.addSummary('tsVersion', ctx.tsVersion);
                   } else {
@@ -226,9 +215,10 @@ upgradeCommand
             task.title = 'Codefixes applied successfully';
 
             if (!options.dryRun) {
+              DEBUG_CALLBACK('Committing changes');
               // add everything to the git repo within the specified src_dir
-              await git.add([`${options.basePath}`]);
-              await gitCommit(`fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
+              await git.add([`${basePath}`]);
+              await gitCommit(`fix: fixes tsc type errors with TypeScript@${ctx.tsVersion}`);
             }
           },
         },
@@ -237,11 +227,9 @@ upgradeCommand
     );
 
     try {
-      const startTime = timestamp(true);
       await tasks.run().then(async (ctx) => {
-        DEBUG_CALLBACK('ctx %O', ctx);
+        DEBUG_CALLBACK('ctx: %O', ctx);
       });
-      logger.info(`Duration:              ${Math.floor(timestamp(true) - startTime)} sec`);
 
       const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports(reporter, reportOutputPath, options.report, {
@@ -249,14 +237,6 @@ upgradeCommand
         sarif: sarifFormatter,
         md: mdFormatter,
       });
-
-      // after the reporter closes the stream reset git to the original state
-      // need to be careful with this otherwise if a given test fails the git state will be lost
-      // this is reset within the afterEach hook for testing
-      if (options.dryRun) {
-        // await git.reset(['--hard', '--', 'package.json', 'yarn.lock', `${flags.src_dir}`]);
-        // await git(['restore', 'package.json', 'yarn.lock', `${flags.src_dir}`], process.cwd());
-      }
     } catch (e) {
       logger.error(`${e}`);
     }
