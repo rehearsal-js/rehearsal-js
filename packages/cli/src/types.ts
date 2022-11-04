@@ -1,6 +1,7 @@
 import { MigrationStrategy } from '@rehearsal/migration-graph';
 
 import { UserConfig } from './userConfig';
+import { State } from './helpers/state';
 export type CliCommand = `upgrade` | 'migrate';
 
 export type MigrateCommandOptions = {
@@ -21,7 +22,8 @@ export type MigrateCommandContext = {
   sourceFilesWithAbsolutePath: string[];
   sourceFilesWithRelativePath: string[];
   input: unknown;
-  targetPacakgePath: string;
+  targetPackagePath: string;
+  state: State;
 };
 
 export type UpgradeCommandContext = {
@@ -70,6 +72,6 @@ export type PackageSelection = {
   location: string;
 };
 
-export type PackageMap = {
+export type packageChoiceMap = {
   [key: string]: string;
 };

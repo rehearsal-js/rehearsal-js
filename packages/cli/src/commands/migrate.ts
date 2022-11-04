@@ -19,11 +19,15 @@ import { generateReports } from '../helpers/report';
 import {
   MigrateCommandContext,
   MigrateCommandOptions,
-  PackageMap,
+  packageChoiceMap,
   PackageSelection,
 } from '../types';
 import { UserConfig } from '../userConfig';
 import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
+import { State } from '../helpers/state';
+
+const IN_PROGRESS_MARK = '🚧';
+const COMPLETION_MARK = '✅';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
@@ -74,25 +78,36 @@ migrateCommand
             _ctx.userConfig = userConfig;
 
             const projectName = await determineProjectName(options.basePath);
+            const packages = discoverEmberPackages(options.basePath);
 
             if (options.interactive) {
-              const packageSelections: PackageSelection[] = discoverEmberPackages(
-                options.basePath
-              ).map((p) => {
-                let { packageName: name } = p;
-                if (name === projectName) {
-                  // a little better message to indicate this option is for entire project
-                  name = `${name} (this entire project)`;
-                }
+              // Init state and store
+              const state = new State(
+                projectName as string,
+                packages.map((p) => p.path)
+              );
+              _ctx.state = state;
+
+              const packageSelections: PackageSelection[] = packages.map((p) => {
                 return {
-                  name,
+                  name: p.packageName,
                   location: p.path,
                 };
               });
-              const packageMap = packageSelections.reduce((map, p) => {
-                map[p.name] = p.location;
+              const packageChoiceMap = packageSelections.reduce((map, p) => {
+                const { completeFileCount, totalFileCount } = _ctx.state.getPackageMigrateProgress(
+                  p.location
+                );
+                // text to show the progress per package based on state
+                let key = `${p.name}(no progress found)`;
+                if (totalFileCount !== 0) {
+                  const mark =
+                    completeFileCount === totalFileCount ? COMPLETION_MARK : IN_PROGRESS_MARK;
+                  key = `${mark} ${p.name} (${completeFileCount} of ${totalFileCount} completed)`;
+                }
+                map[key] = p.location;
                 return map;
-              }, {} as PackageMap);
+              }, {} as packageChoiceMap);
 
               _ctx.input = await task.prompt<{ test: boolean; other: boolean }>([
                 {
@@ -100,19 +115,19 @@ migrateCommand
                   name: 'packageSelection',
                   message:
                     'We have found multiple packages in your project, select the one to migrate:',
-                  choices: Object.keys(packageMap),
+                  choices: Object.keys(packageChoiceMap),
                 },
               ]);
               // update basePath based on the selection
-              _ctx.targetPacakgePath = packageMap[_ctx.input as string];
+              _ctx.targetPackagePath = packageChoiceMap[_ctx.input as string];
               task.title = `Initialization Completed! Running migration on ${_ctx.input}.`;
             } else {
-              _ctx.targetPacakgePath = options.basePath;
+              _ctx.targetPackagePath = options.basePath;
               task.title = `Initialization Completed! Running migration on ${projectName}.`;
             }
 
             // construct migration strategy and prepare all the files needs to be migrated
-            const strategy = getMigrationStrategy(_ctx.targetPacakgePath, {
+            const strategy = getMigrationStrategy(_ctx.targetPackagePath, {
               entrypoint: options.entrypoint,
               filterByPackageName: [],
             });
@@ -120,6 +135,8 @@ migrateCommand
             _ctx.strategy = strategy;
             _ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
             _ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
+
+            // _ctx.skip = true;
           },
         },
         {
@@ -166,15 +183,21 @@ migrateCommand
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
 
+            _ctx.skip = true;
+
             if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
-                basePath: _ctx.targetPacakgePath,
+                basePath: _ctx.targetPackagePath,
                 sourceFiles: _ctx.sourceFilesWithAbsolutePath,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
 
-              await migrate(input);
+              const { migratedFiles } = await migrate(input);
+              if (_ctx.state) {
+                _ctx.state.addFilesToPackage(_ctx.targetPackagePath, migratedFiles);
+                await _ctx.state.addStateFileToGit();
+              }
 
               const reportOutputPath = resolve(options.basePath, options.outputPath);
               generateReports(reporter, reportOutputPath, options.report, {
