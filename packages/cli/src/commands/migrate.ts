@@ -135,8 +135,6 @@ migrateCommand
             _ctx.strategy = strategy;
             _ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
             _ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
-
-            // _ctx.skip = true;
           },
         },
         {
@@ -182,8 +180,6 @@ migrateCommand
           task: async (_ctx, task) => {
             const projectName = (await determineProjectName()) || '';
             const reporter = new Reporter(projectName, options.basePath, logger);
-
-            _ctx.skip = true;
 
             if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
