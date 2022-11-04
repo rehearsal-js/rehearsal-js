@@ -69,7 +69,6 @@ migrateCommand
         {
           title: 'Initialization',
           task: async (_ctx, task) => {
-            // _ctx.skip = true;
             // get custom config
             const userConfig = options.userConfig
               ? new UserConfig(options.basePath, options.userConfig, 'migrate')

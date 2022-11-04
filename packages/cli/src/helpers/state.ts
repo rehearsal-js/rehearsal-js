@@ -10,6 +10,8 @@ export type Store = {
 
 // represent single file state
 type FileState = {
+  origin: string;
+  current: string | null;
   package: string;
   errorCount: number;
 };
@@ -39,19 +41,19 @@ export class State {
   private store: Store;
   constructor(name: string, packages: string[] = [], configPath: string = DEFAULT_CONFIG_PATH) {
     this.configPath = configPath;
-    if (this.checkState()) {
-      const store = this.readState();
-      this.store = store;
-      this.saveState();
+    let store;
+    if (this.isStateExists()) {
+      store = this.verifyState();
     } else {
       const initPackageMap: PackageMap = {};
       const packageMap: PackageMap = packages.reduce((map, current) => {
         map[current] = [];
         return map;
       }, initPackageMap);
-      this.store = { name, packageMap, files: {} };
-      this.saveState();
+      store = { name, packageMap, files: {} };
     }
+    this.store = store;
+    this.saveState();
   }
 
   get packages(): PackageMap {
@@ -62,24 +64,20 @@ export class State {
     return this.store.files;
   }
 
-  // if state exists, load the state file and verify
-  readState(): Store {
+  // verify and update state based on files on disk
+  verifyState(): Store {
     const store: Store = readJSONSync(this.configPath);
-    Object.entries(store.packageMap).forEach(([packageName, fileMap]) => {
-      const result = fileMap.filter((f) => {
-        if (!existsSync(f)) {
-          // if a file in state doesn't exist, remove if from both files and inside the package map
-          delete store.files[f];
-          return false;
-        }
-        return true;
-      });
-      store.packageMap[packageName] = result;
-    });
+    for (const f in store.files) {
+      const status = store.files[f];
+      if (!status.current || !existsSync(status.current)) {
+        // if a ts file in state doesn't exist on disk, mark it as un-migrated
+        store.files[f].current = null;
+      }
+    }
     return store;
   }
 
-  checkState(): boolean {
+  isStateExists(): boolean {
     if (!existsSync(DEFAULT_REHEARSAL_PATH)) {
       mkdirSync(DEFAULT_REHEARSAL_PATH);
     }
@@ -96,8 +94,10 @@ export class State {
     this.store.packageMap[packageName] = files;
 
     files.forEach(
-      (f: keyof FileStateMap) =>
+      (f) =>
         (fileMap[f] = {
+          origin: f.replace('.ts', '.js'),
+          current: f,
           package: packageName,
           errorCount: calculateTSError(f as string),
         })
@@ -105,6 +105,10 @@ export class State {
     this.store.files = { ...this.store.files, ...fileMap };
     this.saveState();
   }
+
+  // TODO
+  // 1. function to get how many files have been migrated to TS in a package
+  // 2. funciton to get how many TODO left in a package
 
   getPackageMigrateProgress(packageName: string): PackageMigrateProgress {
     const fileList = this.store.packageMap[packageName];

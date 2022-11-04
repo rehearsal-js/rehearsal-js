@@ -40,6 +40,8 @@ describe('state', async () => {
       files: {},
     };
     existedStore.files[fooPath] = {
+      origin: 'foo',
+      current: 'foo',
       package: 'bar',
       errorCount: 2,
     };
@@ -66,6 +68,8 @@ describe('state', async () => {
       files: {},
     };
     existedStore.files[fooPath] = {
+      origin: 'foo',
+      current: 'foo',
       package: 'bar',
       errorCount: 2,
     };
@@ -75,8 +79,8 @@ describe('state', async () => {
 
     const { packages, files } = new State('foo', [], configPath);
 
-    expect(packages.bar).toEqual([]);
-    expect(files[fooPath]).toBe(undefined);
+    expect(packages.bar).toEqual([fooPath]);
+    expect(files[fooPath].current).toBe(null);
   });
 
   test('addFilesToPackages', async () => {
