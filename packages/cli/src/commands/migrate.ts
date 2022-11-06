@@ -16,12 +16,7 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';
-import {
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  packageChoiceMap,
-  PackageSelection,
-} from '../types';
+import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
 import { UserConfig } from '../userConfig';
 import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
 import { State } from '../helpers/state';
@@ -90,36 +85,62 @@ migrateCommand
               const packageSelections: PackageSelection[] = packages.map((p) => {
                 return {
                   name: p.packageName,
-                  location: p.path,
+                  path: p.path,
                 };
               });
-              const packageChoiceMap = packageSelections.reduce((map, p) => {
-                const { completeFileCount, totalFileCount } = _ctx.state.getPackageMigrateProgress(
-                  p.location
-                );
-                // text to show the progress per package based on state
-                let key = `${p.name}(no progress found)`;
+              // Get the menu text for each package during interactive mode to show:
+              // 1. package has not started any migration before -> no progress found
+              // 2. package had a migration with remaining JS files -> x/x migrated, x rehearsal todos
+              // 3. package had a full migration with rehearsal todos -> all migrated, x rehearsal todos
+              // 4. fully migrated with no JS and rehearsal todo -> do not show the option
+              const menuList = packageSelections.map((p) => {
+                const { migratedFileCount, totalFileCount, isCompleted } =
+                  _ctx.state.getPackageMigrateProgress(
+                    p.path // pacakge fullpath is the key of the packageMap in state
+                  );
+                const errorCount = _ctx.state.getPackageErrorCount(p.path);
+                // default text to show per package
+                let progressText = `no progress found`;
+                let icon = '';
+                let isOptionDisabled = false;
                 if (totalFileCount !== 0) {
-                  const mark =
-                    completeFileCount === totalFileCount ? COMPLETION_MARK : IN_PROGRESS_MARK;
-                  key = `${mark} ${p.name} (${completeFileCount} of ${totalFileCount} completed)`;
-                }
-                map[key] = p.location;
-                return map;
-              }, {} as packageChoiceMap);
+                  // has previous migratoin
+                  progressText = `${migratedFileCount} of ${totalFileCount} files migrated, ${errorCount} @ts-ignore(s) need to be fixed`;
+                  icon = IN_PROGRESS_MARK;
 
-              _ctx.input = await task.prompt<{ test: boolean; other: boolean }>([
+                  if (isCompleted && errorCount === 0) {
+                    icon = COMPLETION_MARK;
+                    progressText = `Fully migrated`;
+                    isOptionDisabled = true;
+                  }
+                }
+                return {
+                  name: `${p.name}(${progressText}) ${icon}`,
+                  message: `${p.name}(${progressText}) ${icon}`,
+                  value: p.path,
+                  disabled: isOptionDisabled,
+                };
+              });
+
+              // use a map (option display name -> package location pair) to solve an enquirer bug
+              // https://github.com/enquirer/enquirer/issues/121
+              const menuMap = menuList.reduce((map, current) => {
+                map[current.name] = current.value;
+                return map;
+              }, {} as MenuMap);
+
+              _ctx.input = await task.prompt([
                 {
                   type: 'Select',
                   name: 'packageSelection',
                   message:
                     'We have found multiple packages in your project, select the one to migrate:',
-                  choices: Object.keys(packageChoiceMap),
+                  choices: menuList,
                 },
               ]);
               // update basePath based on the selection
-              _ctx.targetPackagePath = packageChoiceMap[_ctx.input as string];
-              task.title = `Initialization Completed! Running migration on ${_ctx.input}.`;
+              _ctx.targetPackagePath = menuMap[_ctx.input as string];
+              task.title = `Initialization Completed! Running migration on ${_ctx.targetPackagePath}.`;
             } else {
               _ctx.targetPackagePath = options.basePath;
               task.title = `Initialization Completed! Running migration on ${projectName}.`;

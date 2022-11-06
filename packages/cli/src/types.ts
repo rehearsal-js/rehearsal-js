@@ -69,9 +69,9 @@ export type CustomConfig = {
 
 export type PackageSelection = {
   name: string;
-  location: string;
+  path: string;
 };
 
-export type packageChoiceMap = {
+export type MenuMap = {
   [key: string]: string;
 };

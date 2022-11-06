@@ -57,7 +57,7 @@ describe('state', async () => {
     expect(files[fooPath].package).toBe('bar');
   });
 
-  test('constructor should verify existed state', async () => {
+  test('getVerifiedStore', async () => {
     const configPath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
     const existedStore: Store = {
@@ -115,6 +115,51 @@ describe('state', async () => {
   test('getPackageMigrateProgress', async () => {
     const configPath = resolve(basePath, 'state.json');
 
+    const fooPath = resolve(basePath, 'foo.ts');
+    const barPath = resolve(basePath, 'bar.ts');
+
+    const store: Store = {
+      name: 'bar',
+      packageMap: {
+        bar: [fooPath, barPath],
+      },
+      files: {},
+    };
+    store.files[fooPath] = {
+      origin: fooPath,
+      current: fooPath,
+      package: 'bar',
+      errorCount: 2,
+    };
+    store.files[barPath] = {
+      origin: barPath,
+      current: null,
+      package: 'bar',
+      errorCount: 2,
+    };
+
+    writeJSONSync(configPath, store);
+    // only have fooPath on disk, so state should know only foo is migrated
+    writeFileSync(fooPath, '', 'utf-8');
+
+    let state = new State('bar', ['sample-package'], configPath);
+    state.addFilesToPackage('sample-package', [fooPath, barPath]);
+    // here create the state again, to simulate loading previous state
+    // the getVerifiedStore would be triggered here to update files' state
+    state = new State('bar', ['sample-package'], configPath);
+
+    const expected = {
+      migratedFileCount: 1,
+      totalFileCount: 2,
+      isCompleted: false,
+    };
+
+    expect(state.getPackageMigrateProgress('sample-package')).toStrictEqual(expected);
+  });
+
+  test('getPackageErrorCount', async () => {
+    const configPath = resolve(basePath, 'state.json');
+
     const foo = '@rehearsal TODO foo bar';
     const fooPath = resolve(basePath, 'foo');
 
@@ -128,12 +173,6 @@ describe('state', async () => {
 
     state.addFilesToPackage('sample-package', [fooPath, barPath]);
 
-    const expected = {
-      completeFileCount: 0,
-      inProgressFileCount: 2,
-      totalFileCount: 2,
-    };
-
-    expect(state.getPackageMigrateProgress('sample-package')).toStrictEqual(expected);
+    expect(state.getPackageErrorCount('sample-package')).toStrictEqual(3);
   });
 });

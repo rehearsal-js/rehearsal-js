@@ -2,6 +2,8 @@ import { resolve } from 'path';
 import { existsSync, writeJSONSync, readJSONSync, readFileSync, mkdirSync } from 'fs-extra';
 import execa from 'execa';
 
+// The reaosn to have packageMap is getting all files in a package faster
+// than loop through everyhing in the files
 export type Store = {
   name: string;
   packageMap: PackageMap;
@@ -27,9 +29,9 @@ type PackageMap = {
 };
 
 type PackageMigrateProgress = {
-  completeFileCount: number;
-  inProgressFileCount: number;
+  migratedFileCount: number;
   totalFileCount: number;
+  isCompleted: boolean;
 };
 
 const DEFAULT_REHEARSAL_PATH = resolve(process.cwd(), '.rehearsal');
@@ -43,7 +45,8 @@ export class State {
     this.configPath = configPath;
     let store;
     if (this.isStateExists()) {
-      store = this.verifyState();
+      // every time loading a previous state, need to check if files on disk matches the state
+      store = this.getVerifiedStore();
     } else {
       const initPackageMap: PackageMap = {};
       const packageMap: PackageMap = packages.reduce((map, current) => {
@@ -65,11 +68,11 @@ export class State {
   }
 
   // verify and update state based on files on disk
-  verifyState(): Store {
+  getVerifiedStore(): Store {
     const store: Store = readJSONSync(this.configPath);
     for (const f in store.files) {
       const status = store.files[f];
-      if (!status.current || !existsSync(status.current)) {
+      if (status.current && !existsSync(status.current)) {
         // if a ts file in state doesn't exist on disk, mark it as un-migrated
         store.files[f].current = null;
       }
@@ -106,27 +109,31 @@ export class State {
     this.saveState();
   }
 
-  // TODO
-  // 1. function to get how many files have been migrated to TS in a package
-  // 2. funciton to get how many TODO left in a package
-
   getPackageMigrateProgress(packageName: string): PackageMigrateProgress {
     const fileList = this.store.packageMap[packageName];
-    let completeFileCount = 0;
-    let inProgressFileCount = 0;
+    let migratedFileCount = 0;
     fileList.forEach((f) => {
       const fileState = this.store.files[f];
-      if (fileState.errorCount === 0) {
-        completeFileCount++;
-      } else {
-        inProgressFileCount++;
+      if (fileState.current) {
+        // if current is not null, then the migrated TS files should be there
+        migratedFileCount++;
       }
     });
     return {
-      completeFileCount,
-      inProgressFileCount,
-      totalFileCount: completeFileCount + inProgressFileCount,
+      migratedFileCount,
+      totalFileCount: fileList.length,
+      isCompleted: migratedFileCount === fileList.length,
     };
+  }
+
+  getPackageErrorCount(packageName: string): number {
+    const fileList = this.store.packageMap[packageName];
+    let errorCount = 0;
+    fileList.forEach((f) => {
+      const fileState = this.store.files[f];
+      errorCount += fileState.errorCount;
+    });
+    return errorCount;
   }
 
   async addStateFileToGit(): Promise<void> {
@@ -141,6 +148,10 @@ export class State {
 }
 
 export function calculateTSError(filePath: string): number {
-  const content = readFileSync(filePath, 'utf-8');
-  return (content.match(REHEARSAL_TODO_REGEX) || []).length;
+  if (existsSync(filePath)) {
+    const content = readFileSync(filePath, 'utf-8');
+    return (content.match(REHEARSAL_TODO_REGEX) || []).length;
+  } else {
+    return 0;
+  }
 }
