@@ -76,6 +76,8 @@ export class State {
         // if a ts file in state doesn't exist on disk, mark it as un-migrated
         store.files[f].current = null;
       }
+      // update ts-ignore count
+      store.files[f].errorCount = calculateTSIgnoreCount(f);
     }
     return store;
   }
@@ -102,7 +104,7 @@ export class State {
           origin: f.replace('.ts', '.js'),
           current: f,
           package: packageName,
-          errorCount: calculateTSError(f as string),
+          errorCount: calculateTSIgnoreCount(f as string),
         })
     );
     this.store.files = { ...this.store.files, ...fileMap };
@@ -147,7 +149,7 @@ export class State {
   }
 }
 
-export function calculateTSError(filePath: string): number {
+export function calculateTSIgnoreCount(filePath: string): number {
   if (existsSync(filePath)) {
     const content = readFileSync(filePath, 'utf-8');
     return (content.match(REHEARSAL_TODO_REGEX) || []).length;

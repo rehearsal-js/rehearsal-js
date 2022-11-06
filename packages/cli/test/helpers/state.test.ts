@@ -3,7 +3,7 @@ import { readJSONSync, writeJSONSync, existsSync, writeFileSync } from 'fs-extra
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { State, calculateTSError, Store } from '../../src/helpers/state';
+import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state';
 
 setGracefulCleanup();
 
@@ -98,7 +98,7 @@ describe('state', async () => {
     expect(state.files[fooPath].package).toBe('bar');
   });
 
-  test('calculateTSError', async () => {
+  test('calculateTSIgnoreCount', async () => {
     const foo = '@rehearsal TODO foo bar';
     const fooPath = resolve(basePath, 'foo');
 
@@ -108,8 +108,8 @@ describe('state', async () => {
     writeFileSync(fooPath, foo, 'utf-8');
     writeFileSync(barPath, bar, 'utf-8');
 
-    expect(calculateTSError(fooPath)).toBe(1);
-    expect(calculateTSError(barPath)).toBe(2);
+    expect(calculateTSIgnoreCount(fooPath)).toBe(1);
+    expect(calculateTSIgnoreCount(barPath)).toBe(2);
   });
 
   test('getPackageMigrateProgress', async () => {
