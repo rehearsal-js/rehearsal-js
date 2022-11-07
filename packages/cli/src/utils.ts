@@ -151,6 +151,17 @@ export async function isYarnManager(): Promise<boolean> {
   return !!yarnPath;
 }
 
+export async function isYarnBerryManager(): Promise<boolean> {
+  const lockFilePath = await findup('yarn.lock', {
+    cwd: process.cwd(),
+  });
+  const berryConfigPath = await findup('.yarnrc.yml', {
+    cwd: process.cwd(),
+  });
+
+  return !!lockFilePath && !!berryConfigPath;
+}
+
 export async function isPnpmManager(): Promise<boolean> {
   const pnpmPath = await findup('pnpm-lock.yaml', {
     cwd: process.cwd(),
@@ -211,11 +222,12 @@ export async function getModuleManagerInstaller(
 
   switch (manager) {
     case 'yarn':
+      // since yarn@3 doesn't have --ignore-scripts anymore
       return {
         bin,
         args: isDev
-          ? ['add', '-D', ...depList, '--ignore-scripts']
-          : ['add', ...depList, '--ignore-scripts'],
+          ? ['add', '-D', ...depList, ...((await isYarnBerryManager()) ? [] : ['--ignore-scripts'])]
+          : ['add', ...depList, ...((await isYarnBerryManager()) ? [] : ['--ignore-scripts'])],
       };
     case 'pnpm':
       return {
