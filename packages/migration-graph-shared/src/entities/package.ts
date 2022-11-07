@@ -6,9 +6,10 @@ import { sync as fastGlobSync } from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
 import { getWorkspaceGlobs } from '../utils/workspace';
-import { Graph } from '../graph';
-import { ModuleNode } from '../types';
 import { PackageGraph } from './package-graph';
+
+import type { Graph } from '../graph';
+import type { ModuleNode } from '../types';
 
 export type PackageJson = Record<string, any>;
 
