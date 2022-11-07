@@ -1,0 +1,9 @@
+// Vitest Snapshot v1
+
+exports[`state > constructor should init state to disk 1`] = `
+{
+  "files": {},
+  "name": "foo",
+  "packageMap": {},
+}
+`;

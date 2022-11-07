@@ -16,14 +16,13 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
 import { generateReports } from '../helpers/report';
-import {
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  PackageMap,
-  PackageSelection,
-} from '../types';
+import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
 import { UserConfig } from '../userConfig';
 import { addDep, determineProjectName, parseCommaSeparatedList, runModuleCommand } from '../utils';
+import { State } from '../helpers/state';
+
+const IN_PROGRESS_MARK = '🚧';
+const COMPLETION_MARK = '✅';
 
 function ifHasTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
@@ -35,6 +34,10 @@ function ifHasTypescriptInDevdep(basePath: string): boolean {
 }
 
 export const migrateCommand = new Command();
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT. Press Control-D to exit.');
+});
 
 migrateCommand
   .name('migrate')
@@ -65,7 +68,6 @@ migrateCommand
         {
           title: 'Initialization',
           task: async (_ctx, task) => {
-            // _ctx.skip = true;
             // get custom config
             const userConfig = options.userConfig
               ? new UserConfig(options.basePath, options.userConfig, 'migrate')
@@ -74,45 +76,82 @@ migrateCommand
             _ctx.userConfig = userConfig;
 
             const projectName = await determineProjectName(options.basePath);
+            const packages = discoverEmberPackages(options.basePath);
 
             if (options.interactive) {
-              const packageSelections: PackageSelection[] = discoverEmberPackages(
-                options.basePath
-              ).map((p) => {
-                let { packageName: name } = p;
-                if (name === projectName) {
-                  // a little better message to indicate this option is for entire project
-                  name = `${name} (this entire project)`;
-                }
+              // Init state and store
+              const state = new State(
+                projectName,
+                packages.map((p) => p.path)
+              );
+              _ctx.state = state;
+
+              const packageSelections: PackageSelection[] = packages.map((p) => {
                 return {
-                  name,
-                  location: p.path,
+                  name: p.packageName,
+                  path: p.path,
                 };
               });
-              const packageMap = packageSelections.reduce((map, p) => {
-                map[p.name] = p.location;
-                return map;
-              }, {} as PackageMap);
+              // Get the menu text for each package during interactive mode to show:
+              // 1. package has not started any migration before -> no progress found
+              // 2. package had a migration with remaining JS files -> x/x migrated, x rehearsal todos
+              // 3. package had a full migration with rehearsal todos -> all migrated, x rehearsal todos
+              // 4. fully migrated with no JS and rehearsal todo -> do not show the option
+              const menuList = packageSelections.map((p) => {
+                const { migratedFileCount, totalFileCount, isCompleted } =
+                  _ctx.state.getPackageMigrateProgress(
+                    p.path // pacakge fullpath is the key of the packageMap in state
+                  );
+                const errorCount = _ctx.state.getPackageErrorCount(p.path);
+                // default text to show per package
+                let progressText = `no progress found`;
+                let icon = '';
+                let isOptionDisabled = false;
+                if (totalFileCount !== 0) {
+                  // has previous migratoin
+                  progressText = `${migratedFileCount} of ${totalFileCount} files migrated, ${errorCount} @ts-ignore(s) need to be fixed`;
+                  icon = IN_PROGRESS_MARK;
 
-              _ctx.input = await task.prompt<{ test: boolean; other: boolean }>([
+                  if (isCompleted && errorCount === 0) {
+                    icon = COMPLETION_MARK;
+                    progressText = `Fully migrated`;
+                    isOptionDisabled = true;
+                  }
+                }
+                return {
+                  name: `${p.name}(${progressText}) ${icon}`,
+                  message: `${p.name}(${progressText}) ${icon}`,
+                  value: p.path,
+                  disabled: isOptionDisabled,
+                };
+              });
+
+              // use a map (option display name -> package location pair) to solve an enquirer bug
+              // https://github.com/enquirer/enquirer/issues/121
+              const menuMap = menuList.reduce((map, current) => {
+                map[current.name] = current.value;
+                return map;
+              }, {} as MenuMap);
+
+              _ctx.input = await task.prompt([
                 {
                   type: 'Select',
                   name: 'packageSelection',
                   message:
                     'We have found multiple packages in your project, select the one to migrate:',
-                  choices: Object.keys(packageMap),
+                  choices: menuList,
                 },
               ]);
               // update basePath based on the selection
-              _ctx.targetPacakgePath = packageMap[_ctx.input as string];
-              task.title = `Initialization Completed! Running migration on ${_ctx.input}.`;
+              _ctx.targetPackagePath = menuMap[_ctx.input as string];
+              task.title = `Initialization Completed! Running migration on ${_ctx.targetPackagePath}.`;
             } else {
-              _ctx.targetPacakgePath = options.basePath;
+              _ctx.targetPackagePath = options.basePath;
               task.title = `Initialization Completed! Running migration on ${projectName}.`;
             }
 
             // construct migration strategy and prepare all the files needs to be migrated
-            const strategy = getMigrationStrategy(_ctx.targetPacakgePath, {
+            const strategy = getMigrationStrategy(_ctx.targetPackagePath, {
               entrypoint: options.entrypoint,
               filterByPackageName: [],
             });
@@ -168,13 +207,17 @@ migrateCommand
 
             if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
-                basePath: _ctx.targetPacakgePath,
+                basePath: _ctx.targetPackagePath,
                 sourceFiles: _ctx.sourceFilesWithAbsolutePath,
                 logger: options.verbose ? logger : undefined,
                 reporter,
               };
 
-              await migrate(input);
+              const { migratedFiles } = await migrate(input);
+              if (_ctx.state) {
+                _ctx.state.addFilesToPackage(_ctx.targetPackagePath, migratedFiles);
+                await _ctx.state.addStateFileToGit();
+              }
 
               const reportOutputPath = resolve(options.basePath, options.outputPath);
               generateReports(reporter, reportOutputPath, options.report, {
