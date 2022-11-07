@@ -65,9 +65,9 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
     }
 
     if (packageData.converted) {
-      DEBUG_CALLBACK(`[X] DONE ${taskString}`);
+      DEBUG_CALLBACK('[X] DONE %0', taskString);
     } else {
-      DEBUG_CALLBACK(`[ ] TODO ${taskString}`);
+      DEBUG_CALLBACK('[ ] TODO %0', taskString);
     }
 
     reportedNodes.add(packageName);
