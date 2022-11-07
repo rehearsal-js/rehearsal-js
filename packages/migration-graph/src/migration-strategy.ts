@@ -74,11 +74,11 @@ export function getMigrationStrategy(
   options?: MigrationStrategyOptions
 ): MigrationStrategy {
   rootDir = fs.realpathSync(rootDir);
-  const m = buildMigrationGraph(rootDir, options);
+  const { projectGraph, sourceType } = buildMigrationGraph(rootDir, options);
 
-  const strategy = new MigrationStrategy(m.sourceType as SourceType);
+  const strategy = new MigrationStrategy(sourceType);
 
-  m.graph
+  projectGraph.graph
     .topSort()
     .reverse() // Reverse the graph order to ensure leaf package first.
     // Iterate through each package
