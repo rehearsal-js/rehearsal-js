@@ -33,8 +33,8 @@ export class ProjectGraph {
 
   addPackageToGraph(p: Package): GraphNode<PackageNode> {
     DEBUG_CALLBACK(`\n------------------`);
-    DEBUG_CALLBACK(`Package Name: ${p.packageName}`);
-    DEBUG_CALLBACK(`Package Path: ${p.packagePath}`);
+    DEBUG_CALLBACK('Package Name: %0', p.packageName);
+    DEBUG_CALLBACK('Package Path: %0', p.packagePath);
 
     const isConverted = p.isConvertedToTypescript('source-only');
 
@@ -55,7 +55,7 @@ export class ProjectGraph {
       modules = p.createModuleGraph({ project: this, parent: entry });
     } else {
       modules = new Graph<ModuleNode>();
-      DEBUG_CALLBACK('This package appears to be written in Typescript.');
+      DEBUG_CALLBACK('Package %0 appears to been migrated to Typescript.', p.packageName);
     }
 
     entry.content.modules = modules;
