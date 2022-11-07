@@ -5,7 +5,7 @@ import execa from 'execa';
 // The reaosn to have packageMap is getting all files in a package faster
 // than loop through everyhing in the files
 export type Store = {
-  name: string;
+  name: string | null;
   packageMap: PackageMap;
   files: FileStateMap;
 };
@@ -41,7 +41,11 @@ const REHEARSAL_TODO_REGEX = /@rehearsal TODO/g;
 export class State {
   private configPath: string;
   private store: Store;
-  constructor(name: string, packages: string[] = [], configPath: string = DEFAULT_CONFIG_PATH) {
+  constructor(
+    name: string | null,
+    packages: string[] = [],
+    configPath: string = DEFAULT_CONFIG_PATH
+  ) {
     this.configPath = configPath;
     let store;
     if (this.isStateExists()) {
@@ -53,7 +57,7 @@ export class State {
         map[current] = [];
         return map;
       }, initPackageMap);
-      store = { name, packageMap, files: {} };
+      store = { name: name ? name : '', packageMap, files: {} };
     }
     this.store = store;
     this.saveState();

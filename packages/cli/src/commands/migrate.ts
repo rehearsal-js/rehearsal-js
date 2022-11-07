@@ -35,6 +35,10 @@ function ifHasTypescriptInDevdep(basePath: string): boolean {
 
 export const migrateCommand = new Command();
 
+process.on('SIGINT', () => {
+  console.log('Received SIGINT. Press Control-D to exit.');
+});
+
 migrateCommand
   .name('migrate')
   .description('Migrate Javascript project to Typescript')
@@ -77,7 +81,7 @@ migrateCommand
             if (options.interactive) {
               // Init state and store
               const state = new State(
-                projectName as string,
+                projectName,
                 packages.map((p) => p.path)
               );
               _ctx.state = state;
