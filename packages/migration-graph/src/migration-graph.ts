@@ -1,4 +1,8 @@
-import { Package, ProjectGraph, readPackageJson } from '@rehearsal/migration-graph-shared';
+import {
+  Package,
+  ProjectGraph as EmberProjectGraph,
+  readPackageJson,
+} from '@rehearsal/migration-graph-shared';
 import {
   EmberAddonProjectGraph,
   EmberAppProjectGraph,
@@ -19,9 +23,9 @@ export type MigrationGraphOptions = {
 };
 
 function buildMigrationGraphForLibrary(
-  m: ProjectGraph,
+  m: EmberProjectGraph,
   options?: MigrationGraphOptions
-): ProjectGraph {
+): EmberProjectGraph {
   const rootDir = m.rootDir;
   const p = new Package(rootDir);
 
@@ -37,9 +41,9 @@ function buildMigrationGraphForLibrary(
 }
 
 function buildMigrationGraphForEmber(
-  m: ProjectGraph,
+  m: EmberProjectGraph | EmberAddonProjectGraph,
   options?: MigrationGraphOptions
-): ProjectGraph {
+): EmberProjectGraph {
   const rootDir = m.rootDir;
   // Evaluate the directory to see if it has any internal packages e.g. in-repo-addon or in-repo-engines
   const packages = discoverEmberPackages(rootDir);
@@ -85,7 +89,7 @@ function buildMigrationGraphForEmber(
 export function buildMigrationGraph(
   rootDir: string,
   options?: MigrationGraphOptions
-): ProjectGraph {
+): EmberProjectGraph {
   // Determine what kind of MigrationGraph should be created.
   // Library
   // Ember App
@@ -93,7 +97,7 @@ export function buildMigrationGraph(
 
   const packageJson = readPackageJson(rootDir);
 
-  let projectGraph: ProjectGraph;
+  let projectGraph: EmberProjectGraph;
 
   if (isEmberAddon(packageJson)) {
     projectGraph = new EmberAddonProjectGraph(rootDir, SourceType.EmberAddon);
@@ -102,7 +106,7 @@ export function buildMigrationGraph(
     projectGraph = new EmberAppProjectGraph(rootDir, SourceType.EmberApp);
     projectGraph = buildMigrationGraphForEmber(projectGraph, options);
   } else {
-    projectGraph = new ProjectGraph(rootDir, SourceType.Library);
+    projectGraph = new EmberProjectGraph(rootDir, SourceType.Library);
     projectGraph = buildMigrationGraphForLibrary(projectGraph, options);
   }
 

@@ -4,7 +4,7 @@ import { Package } from './package';
 
 import type { ModuleNode, PackageNode } from '../types';
 
-const DEBUG_CALLBACK = debug('rehearsal:project-graph');
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
 // TODO this package level dependency data should be surfaced in a report
 

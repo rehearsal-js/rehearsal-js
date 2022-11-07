@@ -49,3 +49,5 @@ All output options will show the following info for each node in the dependency 
 - non-converted
 - depth (add a warning that any limit might not find the leafs)
 - exclude - comma separate list of globs that match names of packages to ignore (ex. lib/foo-\*)
+
+![UML Diagram showing MigrationStrategy](./docs/rehearsal-migration-graph-diagram.png)

@@ -14,9 +14,7 @@ import { Graph, GraphNode } from '../graph';
 import { ModuleNode } from '../types';
 import { Package } from './package';
 
-const DEBUG_CALLBACK = debug(
-  'rehearsal:migration-graph:package-dependency-graph:PackageDependencyGraph'
-);
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 
 function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
   // If it's a coreModule like `path` skip;
@@ -100,7 +98,6 @@ export class PackageGraph {
       const source = this.addNode({
         key: sourcePath,
         path: sourcePath,
-        meta: m,
       });
 
       if (m.dependencies.length < 0) {
@@ -114,7 +111,7 @@ export class PackageGraph {
 
         const relativePath = resolveRelative(baseDir, d.resolved);
 
-        const dest = this.addNode({ key: relativePath, path: relativePath, meta: d });
+        const dest = this.addNode({ key: relativePath, path: relativePath });
 
         this.graph.addEdge(source, dest);
       });

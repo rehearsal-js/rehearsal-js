@@ -6,7 +6,6 @@ import {
   Graph,
   GraphNode,
   ModuleNode,
-  ProjectGraph,
   PackageGraph,
   PackageGraphOptions,
   PackageNode,
@@ -15,14 +14,13 @@ import debug from 'debug';
 import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies';
 import { EmberAppPackage } from './ember-app-package';
 import { EmberAddonPackage } from './ember-addon-package';
+import { EmberAppProjectGraph } from './ember-app-project-graph';
 
-const DEBUG_CALLBACK = debug(
-  'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'
-);
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-package-graph');
 
-export type EmberAppPackageyGraphOptions = {
+export type EmberAppPackageGraphOptions = {
   parent?: GraphNode<PackageNode>;
-  project?: ProjectGraph;
+  project?: EmberAppProjectGraph;
   resolutions?: { services: Record<string, string> };
 } & PackageGraphOptions;
 
@@ -31,9 +29,9 @@ export class EmberAppPackageGraph extends PackageGraph {
 
   package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
-  project: ProjectGraph | undefined;
+  project: EmberAppProjectGraph | undefined;
 
-  constructor(pkg: EmberAppPackage, options: EmberAppPackageyGraphOptions = {}) {
+  constructor(pkg: EmberAppPackage, options: EmberAppPackageGraphOptions = {}) {
     super(pkg, options);
 
     this.package = pkg;

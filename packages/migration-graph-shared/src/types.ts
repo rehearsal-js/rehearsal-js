@@ -15,5 +15,4 @@ export type PackageNode = UniqueNode & {
 export type ModuleNode = UniqueNode & {
   path: string;
   parsed?: boolean;
-  meta?: unknown;
 };

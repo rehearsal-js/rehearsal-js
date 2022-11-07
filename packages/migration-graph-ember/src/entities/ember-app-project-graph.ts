@@ -15,7 +15,7 @@ import { EmberAppPackage } from './ember-app-package';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
-const DEBUG_CALLBACK = debug('rehearsal:ember-app-project-graph');
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-project-graph');
 
 function debugAnalysis(entry: GraphNode<PackageNode>): void {
   // Get this list of dependent nodes in some order

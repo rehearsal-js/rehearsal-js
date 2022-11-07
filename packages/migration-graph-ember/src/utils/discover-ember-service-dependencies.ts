@@ -22,7 +22,7 @@ type EmberInferredServiceDependency = {
   serviceName: string;
 };
 
-const DEBUG_CALLBACK = debug('rehearsal:discoverEmberServiceDependencies');
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:discover-ember-service-dependencies');
 
 const EMPTY_RESULT: EmberInferredServiceDependency[] = [];
 

@@ -1,12 +1,5 @@
-export { buildMigrationGraph } from './migration-graph';
+// This is consumed by CLI. We can rename the import and drop this.
 export { discoverEmberPackages } from '@rehearsal/migration-graph-ember';
-export type {
-  UniqueNode,
-  PackageNode,
-  ModuleNode,
-  GraphNode,
-} from '@rehearsal/migration-graph-shared';
-export { Graph } from '@rehearsal/migration-graph-shared';
 
 export {
   getMigrationStrategy,

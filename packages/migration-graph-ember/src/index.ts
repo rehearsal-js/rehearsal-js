@@ -24,7 +24,7 @@ export { discoverServiceDependencies } from './utils/discover-ember-service-depe
 
 export {
   EmberAppPackageGraph,
-  EmberAppPackageyGraphOptions,
+  EmberAppPackageGraphOptions,
 } from './entities/ember-app-package-graph';
 export {
   EmberAddonPackageGraph,
