@@ -2,9 +2,14 @@
 import path, { resolve } from 'path';
 import { readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
+import { sync as fastGlobSync } from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
 import { getWorkspaceGlobs } from '../utils/workspace';
+import { PackageGraph } from './package-graph';
+
+import type { Graph } from '../graph';
+import type { ModuleNode } from '../types';
 
 export type PackageJson = Record<string, any>;
 
@@ -49,6 +54,8 @@ export class Package {
   #type: string;
 
   #packageContainer: PackageContainer;
+
+  protected files: Graph<ModuleNode>;
 
   constructor(pathToPackage: string, { type = '', packageContainer }: PackageOptions = {}) {
     this.#path = pathToPackage;
@@ -227,5 +234,43 @@ export class Package {
     const sorted: Record<any, any> = sortPackageJson(this.packageJson);
     const pathToPackageJson = path.join(this.path, 'package.json');
     writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
+  }
+
+  isConvertedToTypescript(conversionLevel?: string): boolean {
+    const fastGlobConfig = {
+      absolute: true,
+      cwd: this.path,
+      ignore: ['**/node_modules/**'],
+    };
+    // ignore a tests directory if we only want to consider the source
+    if (conversionLevel === 'source-only') {
+      fastGlobConfig.ignore.push('**/tests/**');
+    }
+
+    // ignore some common .js files unless considering "full" conversion
+    if (conversionLevel !== 'full') {
+      this.excludePatterns;
+      fastGlobConfig.ignore.push(...this.excludePatterns);
+    }
+
+    // if there's a tsconfig
+    const hasTSConfig = fastGlobSync('tsconfig.json', fastGlobConfig);
+    // if there aren't any .js files in addon (minus the ignore list)
+    const hasJS = fastGlobSync('**/*.js', fastGlobConfig);
+
+    if (!!hasTSConfig?.length && !hasJS?.length) {
+      return true;
+    }
+    return false;
+  }
+
+  createModuleGraph(options = {}): Graph<ModuleNode> {
+    if (this.files) {
+      return this.files;
+    }
+
+    this.files = new PackageGraph(this, options).discover();
+
+    return this.files;
   }
 }

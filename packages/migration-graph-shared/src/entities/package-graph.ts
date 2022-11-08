@@ -1,6 +1,5 @@
 import fs from 'fs';
 import { join, relative } from 'path';
-import { Package } from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
 import {
   cruise,
@@ -11,13 +10,11 @@ import {
   IReporterOutput,
   IResolveOptions,
 } from 'dependency-cruiser';
+import { Graph, GraphNode } from '../graph';
 import { ModuleNode } from '../types';
-import { Graph } from '../utils/graph';
-import { GraphNode } from '../utils/graph-node';
+import { Package } from './package';
 
-const DEBUG_CALLBACK = debug(
-  'rehearsal:migration-graph:package-dependency-graph:PackageDependencyGraph'
-);
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 
 function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
   // If it's a coreModule like `path` skip;
@@ -28,17 +25,17 @@ function resolveRelative(baseDir: string, somePath: string): string {
   return relative(fs.realpathSync(baseDir), fs.realpathSync(join(baseDir, somePath)));
 }
 
-export type PackageDependencyGraphOptions = {
+export type PackageGraphOptions = {
   entrypoint?: string;
 };
 
-export class PackageDependencyGraph {
-  protected options: PackageDependencyGraphOptions;
+export class PackageGraph {
+  protected options: PackageGraphOptions;
   protected baseDir: string;
   protected graph: Graph<ModuleNode>;
   protected package: Package;
 
-  constructor(p: Package, options: PackageDependencyGraphOptions = {}) {
+  constructor(p: Package, options: PackageGraphOptions = {}) {
     this.package = p;
     this.baseDir = p.path;
     this.options = options || {};
@@ -101,7 +98,6 @@ export class PackageDependencyGraph {
       const source = this.addNode({
         key: sourcePath,
         path: sourcePath,
-        meta: m,
       });
 
       if (m.dependencies.length < 0) {
@@ -115,7 +111,7 @@ export class PackageDependencyGraph {
 
         const relativePath = resolveRelative(baseDir, d.resolved);
 
-        const dest = this.addNode({ key: relativePath, path: relativePath, meta: d });
+        const dest = this.addNode({ key: relativePath, path: relativePath });
 
         this.graph.addEdge(source, dest);
       });

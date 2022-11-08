@@ -1,20 +1,19 @@
 import fs from 'fs';
 import { resolve } from 'path';
-import { EmberAddonPackage, getEmberAddonName } from '@rehearsal/migration-graph-ember';
 import { IResolveOptions } from 'dependency-cruiser';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import debug from 'debug';
 
-import { EmberAppPackageDependencyGraph, EmberAppPackageDependencyGraphOptions } from './ember-app';
+import { getEmberAddonName } from '../utils/ember';
+import { EmberAddonPackage } from './ember-addon-package';
+import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
 
-const DEBUG_CALLBACK = debug(
-  'rehearsal:migration-graph:package-dependency-graph:EmberAddonPackageDependencyGraph'
-);
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-addon-package-graph');
 
-type EmberAddonPackageDependencyGraphOptions = EmberAppPackageDependencyGraphOptions;
+export type EmberAddonPackageGraphOptions = EmberAppPackageGraphOptions;
 
-export class EmberAddonPackageDependencyGraph extends EmberAppPackageDependencyGraph {
-  constructor(p: EmberAddonPackage, options: EmberAddonPackageDependencyGraphOptions = {}) {
+export class EmberAddonPackageGraph extends EmberAppPackageGraph {
+  constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
     super(p, options);
   }
 

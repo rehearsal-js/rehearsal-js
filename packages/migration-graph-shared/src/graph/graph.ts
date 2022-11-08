@@ -1,7 +1,7 @@
-import { GraphNode } from './graph-node';
-import type { UniqueGraphNode } from '../types';
+import { GraphNode } from './node';
+import type { UniqueNode } from '../types';
 
-export class Graph<T extends UniqueGraphNode> {
+export class Graph<T extends UniqueNode> {
   #nodes: Set<GraphNode<T>>;
   #registry: Map<string, GraphNode<T>>;
 

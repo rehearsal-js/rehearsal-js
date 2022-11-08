@@ -1,4 +1,4 @@
-import type { PackageNode } from '@rehearsal/migration-graph-shared';
+import type { PackageNode } from '../src/types';
 
 export function createNodeContent(name = 'some-name'): PackageNode {
   return {

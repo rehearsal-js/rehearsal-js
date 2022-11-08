@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'vitest';
-import { UniqueGraphNode } from '../../src/types';
+import { UniqueNode } from '../../src/types';
+import { Graph } from '../../src/graph';
 
-import { Graph } from '../../src/utils/graph';
-
-export function createNode(key = 'some-name'): UniqueGraphNode {
+export function createNode(key = 'some-name'): UniqueNode {
   return {
     key,
   };
@@ -11,13 +10,13 @@ export function createNode(key = 'some-name'): UniqueGraphNode {
 
 describe('graph', () => {
   test('should addNode', async () => {
-    const graph = new Graph<UniqueGraphNode>();
+    const graph = new Graph<UniqueNode>();
     graph.addNode(createNode());
     expect(graph.nodes.size).toEqual(1);
   });
 
   test('should addEdge to node', async () => {
-    const graph = new Graph<UniqueGraphNode>();
+    const graph = new Graph<UniqueNode>();
     const someNode = graph.addNode(createNode('some-node'));
     const someEdgeNode = graph.addNode(createNode('some-edge-node'));
 
@@ -31,7 +30,7 @@ describe('graph', () => {
 
   test('should produce a topologicalSort iterator', async () => {
     // Reference https://www.geeksforgeeks.org/topological-sorting/
-    const graph = new Graph<UniqueGraphNode>();
+    const graph = new Graph<UniqueNode>();
 
     const a = graph.addNode(createNode('0'));
     const b = graph.addNode(createNode('1'));

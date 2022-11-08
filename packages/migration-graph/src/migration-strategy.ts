@@ -1,13 +1,11 @@
 import { join, relative } from 'path';
 import fs from 'fs-extra';
 
-import {
-  buildMigrationGraph,
-  type DetectedSource,
-  type MigrationGraphOptions,
-} from './migration-graph';
-import type { ModuleNode, PackageNode } from './types';
-import type { GraphNode } from './utils/graph-node';
+import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph';
+
+import { type SourceType } from './source-type';
+
+import type { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 
 export class SourceFile {
   #packageName: string;
@@ -39,9 +37,9 @@ export class SourceFile {
 
 export class MigrationStrategy {
   #files: Array<SourceFile> = [];
-  #sourceType: DetectedSource;
+  #sourceType: SourceType;
 
-  constructor(sourceType: DetectedSource) {
+  constructor(sourceType: SourceType) {
     this.#sourceType = sourceType;
   }
 
@@ -53,7 +51,7 @@ export class MigrationStrategy {
     return this.#files;
   }
 
-  get sourceType(): DetectedSource {
+  get sourceType(): SourceType {
     return this.#sourceType;
   }
 
@@ -76,11 +74,11 @@ export function getMigrationStrategy(
   options?: MigrationStrategyOptions
 ): MigrationStrategy {
   rootDir = fs.realpathSync(rootDir);
-  const m = buildMigrationGraph(rootDir, options);
+  const { projectGraph, sourceType } = buildMigrationGraph(rootDir, options);
 
-  const strategy = new MigrationStrategy(m.sourceType);
+  const strategy = new MigrationStrategy(sourceType);
 
-  m.graph
+  projectGraph.graph
     .topSort()
     .reverse() // Reverse the graph order to ensure leaf package first.
     // Iterate through each package

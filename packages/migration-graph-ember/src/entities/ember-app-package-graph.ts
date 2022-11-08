@@ -1,37 +1,37 @@
 import fs from 'fs';
 import { join, resolve } from 'path';
 import { CachedInputFileSystem } from 'enhanced-resolve';
-import { IResolveOptions } from 'dependency-cruiser';
+import { type IResolveOptions } from 'dependency-cruiser';
 import {
-  discoverServiceDependencies,
-  EmberAppPackage,
-  EmberAddonPackage,
-} from '@rehearsal/migration-graph-ember';
+  Graph,
+  GraphNode,
+  ModuleNode,
+  PackageGraph,
+  PackageGraphOptions,
+  PackageNode,
+} from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
-import { ModuleNode, PackageNode } from '../types';
-import { MigrationGraph } from '../migration-graph';
-import { Graph } from '../utils/graph';
-import { GraphNode } from '../utils/graph-node';
-import { PackageDependencyGraph, PackageDependencyGraphOptions } from './package';
+import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies';
+import { EmberAppPackage } from './ember-app-package';
+import { EmberAddonPackage } from './ember-addon-package';
+import { EmberAppProjectGraph } from './ember-app-project-graph';
 
-const DEBUG_CALLBACK = debug(
-  'rehearsal:migration-graph:package-dependency-graph:EmberAppPackageDependencyGraph'
-);
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-package-graph');
 
-export type EmberAppPackageDependencyGraphOptions = {
+export type EmberAppPackageGraphOptions = {
   parent?: GraphNode<PackageNode>;
-  project?: MigrationGraph;
+  project?: EmberAppProjectGraph;
   resolutions?: { services: Record<string, string> };
-} & PackageDependencyGraphOptions;
+} & PackageGraphOptions;
 
-export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
+export class EmberAppPackageGraph extends PackageGraph {
   serviceLookup: Map<string, string>;
 
   package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
-  project: MigrationGraph | undefined;
+  project: EmberAppProjectGraph | undefined;
 
-  constructor(pkg: EmberAppPackage, options: EmberAppPackageDependencyGraphOptions = {}) {
+  constructor(pkg: EmberAppPackage, options: EmberAppPackageGraphOptions = {}) {
     super(pkg, options);
 
     this.package = pkg;
@@ -57,11 +57,11 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
    *
    *  In this case we are processing that file.
    *
-   *  We need to update that GraphNode with the complete ModuleNode data.
+   *  We need to update that Node with the complete ModuleNode data.
    *  Then we parse that service file for any other service depdendencies.
    *
    * @param m A `ModuleNode` with the path information
-   * @returns GraphNode<ModuleNode> the new or existing GraphNode<ModuleNode>
+   * @returns Node<ModuleNode> the new or existing Node<ModuleNode>
    */
   addNode(m: ModuleNode): GraphNode<ModuleNode> {
     let n: GraphNode<ModuleNode>;
@@ -167,7 +167,7 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
 
             // Create an edge between these packages.
             // We can create edges between files but I dont know if we want that yet.
-            // Get this package GraphNode<PackageNode> for this package.
+            // Get this package Node<PackageNode> for this package.
 
             if (this.parent) {
               DEBUG_CALLBACK('Adding edge between parent and addon');
@@ -260,7 +260,7 @@ export class EmberAppPackageDependencyGraph extends PackageDependencyGraph {
       const node = graph.getNode(key);
 
       if (!node) {
-        throw new Error(`Internal error: Unable to retrieve GraphNode<ModuleNode> for ${key}`);
+        throw new Error(`Internal error: Unable to retrieve Node<ModuleNode> for ${key}`);
       }
       return node;
     }

@@ -11,6 +11,8 @@ const PACKAGE_FIXTURE_NAMES = {
   WORKSPACE_CONTAINER: 'workspace-container',
   NON_WORKSPACE_IN_WORKSPACE_CONTAINER: 'non-workspace',
   PACKAGE_IN_WORKSPACE_CONTAINER: 'package-in-workspace',
+  PACKAGE_CONTAINS_TYPESCRIPT: 'package-with-typescript',
+  PACKAGE_TSCONFIG_BUT_NO_FILES: 'package-tsconfig-but-no-ts-files',
 };
 
 const PACKAGE_FIXTURES: { [key: string]: any } = {};
@@ -24,6 +26,50 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
     'some-package-key': {
       paths: ['index.js'],
     },
+  }),
+};
+
+PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT] = {
+  'index.ts': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'package.json': json({
+    name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
+    version: '1.0.0',
+    keywords: ['super', 'simple'],
+    'some-package-key': {
+      paths: ['index.js'],
+    },
+  }),
+  'tsconfig.json': json({
+    compilerOptions: {
+      module: 'commonjs',
+      noImplicitAny: true,
+      removeComments: true,
+      preserveConstEnums: true,
+      sourceMap: true,
+    },
+    files: ['index.ts'],
+  }),
+};
+
+PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_TSCONFIG_BUT_NO_FILES] = {
+  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'package.json': json({
+    name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
+    version: '1.0.0',
+    keywords: ['super', 'simple'],
+    'some-package-key': {
+      paths: ['index.js'],
+    },
+  }),
+  'tsconfig.json': json({
+    compilerOptions: {
+      module: 'commonjs',
+      noImplicitAny: true,
+      removeComments: true,
+      preserveConstEnums: true,
+      sourceMap: true,
+    },
+    files: ['index.ts'],
   }),
 };
 
