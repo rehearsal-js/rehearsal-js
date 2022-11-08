@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { resolve } from 'path';
-import { mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
+import { mdFormatter, Reporter, sarifFormatter, sonarqubeFormatter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
@@ -236,6 +236,7 @@ upgradeCommand
         json: reportFormatter,
         sarif: sarifFormatter,
         md: mdFormatter,
+        sonarqube: sonarqubeFormatter,
       });
     } catch (e) {
       logger.error(`${e}`);

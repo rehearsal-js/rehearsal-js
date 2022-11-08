@@ -2,7 +2,7 @@ import { Artifact, Location, Log, PropertyBag, ReportingDescriptor, Result, Run 
 
 import { FileCollection, ProcessedFile, Report, ReportItem } from '../types';
 
-class SarifFormatter {
+export class SarifFormatter {
   private report: Report;
   private rules: ReportingDescriptor[] = [];
   private ruleIndexMap: { [ruleId: string]: number } = {};
@@ -15,7 +15,17 @@ class SarifFormatter {
   }
 
   format(): string {
-    return JSON.stringify(buildLog(this.buildRun()), null, 2);
+    return JSON.stringify(this.buildLog(), null, 2);
+  }
+
+  buildLog(): Log {
+    const runs = this.buildRun();
+
+    return {
+      version: '2.1.0' as const,
+      $schema: 'http://json.schemastore.org/sarif-2.1.0-rtm.4',
+      runs: Array.isArray(runs) ? runs : [runs],
+    };
   }
 
   private buildRun(): Run {
@@ -170,14 +180,6 @@ class SarifFormatter {
   private artifactExists(artifactName: string): boolean {
     return this.artifactIndexMap[artifactName] !== undefined;
   }
-}
-
-function buildLog(runs: Run | Run[]): Log {
-  return {
-    version: '2.1.0' as const,
-    $schema: 'http://json.schemastore.org/sarif-2.1.0-rtm.4',
-    runs: Array.isArray(runs) ? runs : [runs],
-  };
 }
 
 function updateArtifact(artifact: Artifact, file: ProcessedFile): Artifact {
