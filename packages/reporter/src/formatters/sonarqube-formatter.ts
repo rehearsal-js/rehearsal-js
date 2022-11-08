@@ -1,10 +1,10 @@
 import { isAbsolute, resolve } from 'path';
-import { Log, PhysicalLocation, Result } from 'sarif';
+import { PhysicalLocation, Result } from 'sarif';
 
-interface FormatterOptions {
-  cwd: string;
-  outputFile?: string;
-}
+import { SarifFormatter } from './sarif-formatter';
+import type { Report } from '../types';
+
+type ErrorLevel = Extract<Result.level, 'error' | 'warning' | 'note'>;
 
 const SONARQUBE_SEVERITY: Record<Result.kind, string> = {
   notApplicable: 'INFO',
@@ -14,7 +14,7 @@ const SONARQUBE_SEVERITY: Record<Result.kind, string> = {
   open: 'MINOR',
   informational: 'INFO',
 };
-type ErrorLevel = Extract<Result.level, 'error' | 'warning' | 'note'>;
+
 const SONARQUBE_TYPE: Record<ErrorLevel, string> = {
   note: 'CODE_SMELL',
   warning: 'CODE_SMELL',
@@ -29,17 +29,18 @@ function getFilePath(physicalLocation: PhysicalLocation): string {
   return physicalLocation?.artifactLocation?.uri ?? '';
 }
 
-export function sonarqubeFormatter(log: Log, options: FormatterOptions): string | undefined {
+// SonarQube Formatter will convert to SARIF first and then convert to SonarQube format
+// We have to assume the default Report shape
+export function sonarqubeFormatter(report: Report): string {
   const issues = [];
-
-  const run = log.runs[0];
-  const results = run.results || [];
+  const log = new SarifFormatter(report).buildLog();
+  const results = log.runs[0].results || [];
 
   if (results.length > 0) {
     for (const result of results) {
       const physicalLocation = getPhysicalLocation(result);
       const filePath = physicalLocation ? getFilePath(physicalLocation) : '';
-      const absolutePath = isAbsolute(filePath) ? filePath : resolve(options.cwd, filePath);
+      const absolutePath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
 
       issues.push({
         engineId: 'rehearsal-ts',
@@ -58,6 +59,7 @@ export function sonarqubeFormatter(log: Log, options: FormatterOptions): string 
         },
       });
     }
-    return JSON.stringify({ issues }, null, 2);
   }
+
+  return JSON.stringify({ issues }, null, 2) || '';
 }

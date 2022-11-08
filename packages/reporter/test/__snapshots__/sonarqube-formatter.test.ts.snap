@@ -10,7 +10,7 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
       \\"type\\": \\"BUG\\",
       \\"primaryLocation\\": {
         \\"message\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
-        \\"filePath\\": \\"/base/path/add-result-1.ts\\",
+        \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
           \\"startLine\\": 1,
           \\"startColumn\\": 1,
@@ -25,13 +25,13 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
       \\"severity\\": \\"INFO\\",
       \\"type\\": \\"BUG\\",
       \\"primaryLocation\\": {
-        \\"message\\": \\"\\",
-        \\"filePath\\": \\"/base/path\\",
+        \\"message\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
+        \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 0,
-          \\"startColumn\\": 0,
-          \\"endLine\\": 0,
-          \\"endColumn\\": 0
+          \\"startLine\\": 1,
+          \\"startColumn\\": 10,
+          \\"endLine\\": 1,
+          \\"endColumn\\": 20
         }
       }
     },
@@ -42,12 +42,12 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
       \\"type\\": \\"BUG\\",
       \\"primaryLocation\\": {
         \\"message\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-        \\"filePath\\": \\"/base/path/add-result-1.ts\\",
+        \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 10,
-          \\"startColumn\\": 1,
-          \\"endLine\\": 10,
-          \\"endColumn\\": 5
+          \\"startLine\\": 1,
+          \\"startColumn\\": 10,
+          \\"endLine\\": 1,
+          \\"endColumn\\": 26
         }
       }
     }
