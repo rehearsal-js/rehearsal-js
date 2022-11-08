@@ -99,7 +99,7 @@ export function getPackageMainExportConfigFromASTNode(
   let configurationObject: ConfigurationObject | undefined;
 
   // TODO FIX THESE TYPINGS
-  // based on babel parser this node AddignmentExpression should have left.property.name
+  // based on babel parser this node AssignmentExpression should have left.property.name
   // however the typings from @babel/types show they do not
   const memberExpression = node.left as t.MemberExpression;
   const memberIdentifier = memberExpression.property as t.Identifier;
@@ -144,7 +144,7 @@ export function writePackageMain(
   });
 }
 
-export function getNameFromMain(pathToPackage: string): any {
+export function getNameFromMain(pathToPackage: string): string {
   const addonEntryPoint = requirePackageMain(pathToPackage);
   const isFunction = typeof addonEntryPoint === 'function';
   let name;
@@ -157,7 +157,7 @@ export function getNameFromMain(pathToPackage: string): any {
   return name;
 }
 
-export function getModuleNameFromMain(pathToPackage: string): any {
+export function getModuleNameFromMain(pathToPackage: string): string {
   const addonEntryPoint = requirePackageMain(pathToPackage);
 
   const isFunction = typeof addonEntryPoint === 'function';
@@ -181,7 +181,7 @@ export function getModuleNameFromMain(pathToPackage: string): any {
  * @param {string} pathToPackage - the path to the addon directory
  * @returns {string} - the name of the addon
  */
-export function getEmberAddonName(pathToPackage: string): any {
+export function getEmberAddonName(pathToPackage: string): string {
   const name = getNameFromMain(pathToPackage);
   const moduleName = getModuleNameFromMain(pathToPackage);
   return moduleName ?? name;
