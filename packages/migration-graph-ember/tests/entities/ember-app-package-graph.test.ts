@@ -148,7 +148,7 @@ describe('EmberAppPackageGraph', () => {
     ]);
   });
 
-  test.only('should find a synthetic package node when an external service is discovered', async () => {
+  test('should find a synthetic package node when an external service is discovered', async () => {
     const project = getEmberProject('app');
 
     project.mergeFiles({
