@@ -19,4 +19,6 @@ export { isTesting, setupTestEnvironment } from './utils/environment';
 export * from './graph';
 export * from './types';
 export { PackageGraph, PackageGraphOptions } from './entities/package-graph';
-export { ProjectGraph } from './entities/project-graph';
+export { ProjectGraph, ProjectGraphOptions } from './entities/project-graph';
+
+export { IPackage } from './entities/IPackage';

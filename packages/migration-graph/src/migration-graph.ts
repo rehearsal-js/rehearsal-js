@@ -3,7 +3,6 @@ import {
   EmberAddonProjectGraph,
   EmberAppProjectGraph,
   getRootPackage,
-  discoverEmberPackages,
   isEmberAddon,
   isEmberApp,
 } from '@rehearsal/migration-graph-ember';
@@ -19,30 +18,28 @@ export type MigrationGraphOptions = {
 };
 
 function buildMigrationGraphForLibrary(
-  m: ProjectGraph,
+  projectGraph: ProjectGraph,
   options?: MigrationGraphOptions
 ): ProjectGraph {
-  const rootDir = m.rootDir;
-  const p = new Package(rootDir);
+  const rootDir = projectGraph.rootDir;
+  const pkg = new Package(rootDir);
 
-  m.graph.addNode({
-    key: p.packageName,
-    pkg: p,
-    converted: p.isConvertedToTypescript(),
-    modules: p.createModuleGraph({
-      entrypoint: options?.entrypoint,
-    }),
+  projectGraph.addPackageToGraph(pkg);
+
+  pkg.getModuleGraph({
+    entrypoint: options?.entrypoint,
   });
-  return m;
+
+  return projectGraph;
 }
 
 function buildMigrationGraphForEmber(
-  m: EmberAppProjectGraph | EmberAddonProjectGraph,
+  projectGraph: EmberAppProjectGraph | EmberAddonProjectGraph,
   options?: MigrationGraphOptions
 ): EmberAppProjectGraph | EmberAddonProjectGraph {
-  const rootDir = m.rootDir;
+  const rootDir = projectGraph.rootDir;
   // Evaluate the directory to see if it has any internal packages e.g. in-repo-addon or in-repo-engines
-  const packages = discoverEmberPackages(rootDir);
+  const packages = projectGraph.discover();
 
   // If there no packages, we dont' have to do much.
   if (packages && packages.length > 1) {
@@ -71,15 +68,15 @@ function buildMigrationGraphForEmber(
 
     filtered.forEach((p) => DEBUG_CALLBACK(` ${counter++}. ${p.packageName}: ${p.path}`));
     filtered.forEach((p) => {
-      m.addPackageToGraph(p);
+      projectGraph.addPackageToGraph(p);
     });
   } else {
     // Otherwise, it's just an ember-app or ember-addon with no internal addons or engines.
     const p = getRootPackage(rootDir);
-    m.addPackageToGraph(p);
+    projectGraph.addPackageToGraph(p);
   }
 
-  return m;
+  return projectGraph;
 }
 
 export function buildMigrationGraph(
@@ -99,18 +96,21 @@ export function buildMigrationGraph(
   if (isEmberAddon(packageJson)) {
     sourceType = SourceType.EmberAddon;
     projectGraph = buildMigrationGraphForEmber(
-      new EmberAddonProjectGraph(rootDir, SourceType.EmberAddon),
+      new EmberAddonProjectGraph(rootDir, { sourceType: SourceType.EmberAddon }),
       options
     );
   } else if (isEmberApp(packageJson)) {
     sourceType = SourceType.EmberApp;
     projectGraph = buildMigrationGraphForEmber(
-      new EmberAppProjectGraph(rootDir, sourceType),
+      new EmberAppProjectGraph(rootDir, { sourceType }),
       options
     );
   } else {
     sourceType = SourceType.Library;
-    projectGraph = buildMigrationGraphForLibrary(new ProjectGraph(rootDir, sourceType), options);
+    projectGraph = buildMigrationGraphForLibrary(
+      new ProjectGraph(rootDir, { sourceType }),
+      options
+    );
   }
 
   return { projectGraph, sourceType };

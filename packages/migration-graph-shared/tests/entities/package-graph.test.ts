@@ -6,10 +6,8 @@ import { mkdirSync } from 'fs-extra';
 import rimraf from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { Package } from '../../src/entities/package';
-
 import { ModuleNode, PackageNode } from '../../src/types';
 import { Graph, GraphNode } from '../../src/graph';
-
 import { PackageGraph } from '../../src/entities/package-graph';
 
 setGracefulCleanup();

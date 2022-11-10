@@ -1,13 +1,6 @@
 import { join } from 'path';
 import { describe, expect, test } from 'vitest';
 import {
-  ModuleNode,
-  PackageNode,
-  ProjectGraph,
-  Graph,
-  GraphNode,
-} from '@rehearsal/migration-graph-shared';
-import {
   getEmberProject,
   getEmberProjectFixture,
   getEmptyInRepoAddonFiles,
@@ -17,8 +10,12 @@ import {
 import merge from 'lodash.merge';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
-import { EmberAppPackageGraph } from '../../src/entities/ember-app-package-graph';
+import {
+  EmberAppPackageGraph,
+  EmberAppPackageGraphOptions,
+} from '../../src/entities/ember-app-package-graph';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
+import type { ModuleNode, PackageNode, Graph, GraphNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {
@@ -151,7 +148,7 @@ describe('EmberAppPackageGraph', () => {
     ]);
   });
 
-  test('should find a synthetic package node when an external service is discovered', async () => {
+  test.only('should find a synthetic package node when an external service is discovered', async () => {
     const project = getEmberProject('app');
 
     project.mergeFiles({
@@ -162,7 +159,7 @@ describe('EmberAppPackageGraph', () => {
               import { inject as service } from '@ember/service';
       
               export default class Obtuse extends Component {
-                @service('some-addon@date') myDate;
+                @service('some-external@date') myDate;
               }
             `,
         },
@@ -171,10 +168,13 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new ProjectGraph(project.baseDir);
+    const m = new EmberAppProjectGraph(project.baseDir);
     const emberPackage = new EmberAppPackage(project.baseDir);
     const source = m.addPackageToGraph(emberPackage);
-    const dest = m.graph.getNode('some-addon');
+    const options: EmberAppPackageGraphOptions = { parent: source, project: m };
+    emberPackage.getModuleGraph(options);
+
+    const dest = m.graph.getNode('some-external');
     expect(dest).toBeTruthy();
     expect(dest?.content.synthetic, 'the addon node to be synthetic').toBe(true);
 
@@ -221,11 +221,15 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new ProjectGraph(project.baseDir);
+    const m = new EmberAppProjectGraph(project.baseDir);
 
     const emberPackage = new EmberAppPackage(project.baseDir);
     const appNode = m.addPackageToGraph(emberPackage);
-    const node = m.graph.getNode('some-addon');
+
+    const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
+    emberPackage.getModuleGraph(options);
+
+    const node: GraphNode<PackageNode> = m.graph.getNode('some-addon');
     expect(node?.content.synthetic).toBe(true);
 
     const emberAddonPackage = new EmberAddonPackage(join(project.baseDir, 'lib/some-addon'));
@@ -236,7 +240,7 @@ describe('EmberAppPackageGraph', () => {
     expect(appNode.adjacent.has(addonNode)).toBe(true);
   });
 
-  test('should update graph to show nested addon service dependencies', async () => {
+  test('should stub a GraphNode and backfill for an app and addons ', async () => {
     // app uses a service `date` from `some-addon`
     // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
     //     └── second-addon exposes a service `time`.
@@ -249,11 +253,11 @@ describe('EmberAppPackageGraph', () => {
         components: {},
         services: {
           'date.js': `
-                  import { inject as service } from '@ember/service';
-                  export default class DateService extends Service {
-                    @service('${secondAddonName}@time') t;
-                  }
-                `,
+            import { inject as service } from '@ember/service';
+            export default class DateService extends Service {
+              @service('${secondAddonName}@time') t;
+            }
+          `,
         },
       },
       app: {
@@ -288,13 +292,13 @@ describe('EmberAppPackageGraph', () => {
       app: {
         components: {
           'obtuse.js': `
-                import Component from '@glimmer/component';
-                import { inject as service } from '@ember/service';
-        
-                export default class Obtuse extends Component {
-                  @service('${firstAddonName}@date') d;
-                }
-              `,
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
+    
+            export default class Obtuse extends Component {
+              @service('${firstAddonName}@date') d;
+            }
+          `,
         },
       },
       lib: {},
@@ -310,21 +314,39 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new ProjectGraph(project.baseDir);
+    const m = new EmberAppProjectGraph(project.baseDir);
 
-    const emberPackage = new EmberAppPackage(project.baseDir);
-    const appNode = m.addPackageToGraph(emberPackage);
+    const emberAppPackage = new EmberAppPackage(project.baseDir);
+    const appNode = m.addPackageToGraph(emberAppPackage);
+
+    const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
+    emberAppPackage.getModuleGraph(options);
+
+    // Validate that there is a syntehtic node to firstAddon and that there
+    // is an edge between the app and the addon
+
     let firstAddonNode = m.graph.getNode(firstAddonName);
     expect(firstAddonNode?.content.synthetic).toBe(true);
 
     const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
 
+    // Add firstAddon
     firstAddonNode = m.addPackageToGraph(firstAddonPackage);
     expect(firstAddonNode.content.synthetic).toBeFalsy();
 
+    // Force populate the addon's graph by calling IPackage.getModuleGraph, this will
+    // force discovery of the edge between firstAddon and secondAddon.
+    const addonOptions = { parent: firstAddonNode, project: m };
+    firstAddonPackage.getModuleGraph(addonOptions);
+
+    // Get the synthetic secondAddon, validate it's been added and it stubbed out.
     let secondAddonNode = m.graph.getNode(secondAddonName);
     expect(secondAddonNode?.content.synthetic).toBe(true);
     expect(appNode.adjacent.has(firstAddonNode), 'app should depend on some-addon').toBe(true);
+    expect(
+      firstAddonNode.adjacent.has(secondAddonNode),
+      'some-addon should depend on another-addon'
+    ).toBe(true);
 
     const secondAddonPackage = new EmberAddonPackage(
       join(project.baseDir, `lib/${secondAddonName}`)
@@ -345,7 +367,7 @@ describe('EmberAppPackageGraph', () => {
     ]);
   });
 
-  test('should ', async () => {
+  test('should stub a GraphNode and backfill for only addons', async () => {
     // app uses a service `date` from `some-addon`
     // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
     //     └── second-addon exposes a service `time`.
@@ -407,15 +429,18 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir, 'ember-app');
+    const m = new EmberAppProjectGraph(project.baseDir, { eager: false });
 
     const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
 
     const firstAddonNode = m.addPackageToGraph(firstAddonPackage);
+    const addonOptions = { parent: firstAddonNode, project: m };
+    firstAddonPackage.getModuleGraph(addonOptions);
+
     expect(firstAddonNode.content.synthetic).toBeFalsy();
-    expect(firstAddonNode.content.modules.getNode('addon/services/date.js')?.content.parsed).toBe(
-      true
-    );
+    expect(
+      firstAddonNode.content.pkg?.getModuleGraph().getNode('addon/services/date.js')?.content.parsed
+    ).toBe(true);
 
     let secondAddonNode = m.graph.getNode(secondAddonName);
     expect(secondAddonNode?.content.synthetic).toBe(true);

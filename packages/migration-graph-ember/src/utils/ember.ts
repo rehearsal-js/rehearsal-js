@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { join, resolve } from 'path';
-import { default as generate } from '@babel/generator';
-import * as parser from '@babel/parser';
-import * as t from '@babel/types';
-import { formatter, PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
-import { readFileSync, writeFileSync, writeJsonSync } from 'fs-extra';
+import { PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
+import { writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 
 export function isApp(packageJson: PackageJson): boolean {
@@ -63,85 +59,6 @@ export function requirePackageMain(
     delete require.cache[require.resolve(resolve(pathToPackage, packageMain))];
   }
   return require(resolve(pathToPackage, packageMain));
-}
-
-export function getPackageMainAST(
-  pathToPackage: string,
-  packageMain = getPackageMainFileName(pathToPackage)
-): parser.ParseResult<t.File> {
-  const somePath = resolve(pathToPackage, packageMain);
-  const content = readFileSync(somePath, 'utf-8');
-  return parser.parse(content, {
-    sourceFilename: packageMain,
-  });
-}
-
-// export type ConfigurationObject =
-//   | Expression
-//   | SpreadElement
-//   | JSXNamespacedName
-//   | ArgumentPlaceholder;
-export type ConfigurationObject = any;
-
-/**
- * The variations will be hardcoded as they come up, so far there are:
- * ```
- *  module.exports = {};
- *  module.exports = function({})
- *  module.exports = function('string', {})
- *  module.exports = function('string', [Class].extend({})
- * ```
- */
-
-export function getPackageMainExportConfigFromASTNode(
-  node: t.AssignmentExpression
-): ConfigurationObject | undefined {
-  let configurationObject: ConfigurationObject | undefined;
-
-  // TODO FIX THESE TYPINGS
-  // based on babel parser this node AssignmentExpression should have left.property.name
-  // however the typings from @babel/types show they do not
-  const memberExpression = node.left as t.MemberExpression;
-  const memberIdentifier = memberExpression.property as t.Identifier;
-
-  if (memberIdentifier.name === 'exports') {
-    // object case
-    // simple object as second param
-    if (node.right.type === 'ObjectExpression') {
-      configurationObject = node.right;
-    } else if (node.right.type === 'CallExpression') {
-      const exportFunctionArguments = node.right.arguments;
-
-      // module.exports = addon({})
-      if (exportFunctionArguments[0].type === 'ObjectExpression') {
-        [configurationObject] = exportFunctionArguments;
-      }
-      // TODO Rename this; module.exports = voyagerAddon(__dirname, {})
-      else if (exportFunctionArguments[1].type === 'ObjectExpression') {
-        [, configurationObject] = exportFunctionArguments;
-      }
-      // TODO Rename this; module.exports = voyagerAddon(__dirname, BPREngineAddon.extend({});
-      else if (exportFunctionArguments[1].type === 'CallExpression') {
-        [configurationObject] = exportFunctionArguments[1].arguments;
-      }
-    }
-  }
-
-  return configurationObject;
-}
-
-export function writePackageMain(
-  pathToPackage: string,
-  packageMainAST: t.Node,
-  packageMain = getPackageMainFileName(pathToPackage)
-): void {
-  const somePath = resolve(pathToPackage, packageMain);
-
-  const content = formatter(generate(packageMainAST).code, packageMain);
-
-  writeFileSync(somePath, content, {
-    encoding: 'utf8',
-  });
 }
 
 export function getNameFromMain(pathToPackage: string): string {

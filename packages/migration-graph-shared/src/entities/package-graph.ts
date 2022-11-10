@@ -32,18 +32,18 @@ export type PackageGraphOptions = {
 export class PackageGraph {
   protected options: PackageGraphOptions;
   protected baseDir: string;
-  protected graph: Graph<ModuleNode>;
   protected package: Package;
+  #graph: Graph<ModuleNode>;
 
   constructor(p: Package, options: PackageGraphOptions = {}) {
     this.package = p;
     this.baseDir = p.path;
     this.options = options || {};
-    this.graph = new Graph<ModuleNode>();
+    this.#graph = new Graph<ModuleNode>();
   }
 
-  getGraph(): Graph<ModuleNode> {
-    return this.graph;
+  get graph(): Graph<ModuleNode> {
+    return this.#graph;
   }
 
   discover(): Graph<ModuleNode> {
@@ -113,11 +113,11 @@ export class PackageGraph {
 
         const dest = this.addNode({ key: relativePath, path: relativePath });
 
-        this.graph.addEdge(source, dest);
+        this.#graph.addEdge(source, dest);
       });
     });
 
-    return this.graph;
+    return this.#graph;
   }
 
   get resolveOptions(): IResolveOptions {
@@ -125,6 +125,6 @@ export class PackageGraph {
   }
 
   addNode(m: ModuleNode): GraphNode<ModuleNode> {
-    return this.graph.addNode(m);
+    return this.#graph.addNode(m);
   }
 }

@@ -2,16 +2,17 @@ import { relative, resolve } from 'path';
 
 import debug from 'debug';
 import {
-  ProjectGraph,
   dfs,
-  Package,
   GraphNode,
+  Package,
   PackageNode,
-  ModuleNode,
-  Graph,
+  ProjectGraph,
+  ProjectGraphOptions,
 } from '@rehearsal/migration-graph-shared';
 import { getInternalPackages } from '../mappings-container';
+import { discoverEmberPackages } from '../utils/discover-ember-packages';
 import { EmberAppPackage } from './ember-app-package';
+import { EmberAddonPackage } from './ember-addon-package';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -74,12 +75,15 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
   }
 }
 
+export type EmberAppProjectGraphOptions = ProjectGraphOptions;
+
 export class EmberAppProjectGraph extends ProjectGraph {
-  constructor(rootDir: string, sourceType: string) {
-    super(rootDir, sourceType);
+  constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
+    options = { sourceType: 'Ember Application', ...options };
+    super(rootDir, options);
   }
 
-  addPackageNodeToGraph(p: Package): GraphNode<PackageNode> {
+  addPackageToGraph(p: Package): GraphNode<PackageNode> {
     const node = super.addPackageToGraph(p);
     this.buildAnalyzedPackageTree(node);
 
@@ -119,16 +123,15 @@ export class EmberAppProjectGraph extends ProjectGraph {
           key,
           pkg: p,
           converted: p.isConvertedToTypescript(),
-          modules: new Graph<ModuleNode>(), // Stubbing this out
         });
 
-        // Need to refactor data flow here. Seems odd how we're creating the graph node without modules the populating it after.
+        // Need to refactor data flow here. Seems odd how we're creating the graph node without modules then populating it after.
         // Probably should lazily populate this.
 
-        depNode.content.modules = p.createModuleGraph({
-          project: this,
-          parent: depNode,
-        });
+        // depNode.content.modules = p.createModuleGraph({
+        //   project: this,
+        //   parent: depNode,
+        // });
       } else {
         depNode = this.graph.getNode(key);
       }
@@ -176,5 +179,56 @@ export class EmberAppProjectGraph extends ProjectGraph {
       }
     }
     return deps.filter((dep) => !!dep && !EXCLUDED_PACKAGES.includes(dep.packageName));
+  }
+
+  private isMatch(addonName: string, emberAddonPackage: EmberAddonPackage): boolean {
+    return (
+      addonName == emberAddonPackage.name ||
+      addonName == emberAddonPackage.emberAddonName ||
+      addonName == emberAddonPackage.moduleName
+    );
+  }
+
+  /**
+   *
+   * @param addonName the name for an ember addon. This is defined by the index which may or may not match package.json's `name` entry.
+   * @returns
+   */
+  findPackageByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
+    DEBUG_CALLBACK('findPackageNodeByAddonName:');
+
+    return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
+      DEBUG_CALLBACK(n.content);
+
+      const pkg: Package | undefined = n.content.pkg;
+
+      if (!pkg) {
+        return false;
+      }
+
+      const emberAddonPackage: EmberAddonPackage | undefined =
+        pkg instanceof EmberAddonPackage ? pkg : undefined;
+
+      if (!emberAddonPackage) {
+        return false;
+      }
+
+      if (n.content.key === addonName || this.isMatch(addonName, emberAddonPackage)) {
+        if (n.content.synthetic) {
+          // TODO: FIX THIS;
+          console.log('findPackageNodeByAddonName.synth');
+        } else {
+          DEBUG_CALLBACK(
+            `Found an EmberAddonPackage ${(n.content.pkg as EmberAddonPackage).emberAddonName}`
+          );
+        }
+        return true;
+      }
+      return false;
+    });
+  }
+
+  discover(): Array<Package | EmberAppPackage | EmberAddonPackage> {
+    return discoverEmberPackages(this.rootDir);
   }
 }

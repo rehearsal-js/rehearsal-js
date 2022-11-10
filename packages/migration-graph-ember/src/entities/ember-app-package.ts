@@ -1,17 +1,18 @@
 import { relative, resolve } from 'path';
-import { type PackageOptions, Package, Graph, ModuleNode } from '@rehearsal/migration-graph-shared';
-
-import { InternalState } from './InternalState';
-import { EmberAppPackageGraph } from './ember-app-package-graph';
+import {
+  type PackageOptions,
+  Package,
+  Graph,
+  ModuleNode,
+  IPackage,
+} from '@rehearsal/migration-graph-shared';
+import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
 
 export type EmberPackageOptions = PackageOptions;
 
-export class EmberAppPackage extends Package {
-  protected internalState: InternalState;
-
+export class EmberAppPackage extends Package implements IPackage {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
     super(pathToPackage, options);
-    this.internalState = new InternalState();
   }
 
   get excludePatterns(): Array<string> {
@@ -97,13 +98,13 @@ export class EmberAppPackage extends Package {
     return this;
   }
 
-  createModuleGraph(options = {}): Graph<ModuleNode> {
-    if (this.files) {
-      return this.files;
+  getModuleGraph(options: EmberAppPackageGraphOptions = {}): Graph<ModuleNode> {
+    if (this.graph) {
+      return this.graph;
     }
 
-    this.files = new EmberAppPackageGraph(this, options).discover();
+    this.graph = new EmberAppPackageGraph(this, options).discover();
 
-    return this.files;
+    return this.graph;
   }
 }

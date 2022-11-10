@@ -30,10 +30,9 @@ describe('migration-graph', () => {
       expect(projectGraph.sourceType).toBe(SourceType.Library);
       expect(sourceType).toBe(SourceType.Library);
       expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package']);
-      expect(flatten(projectGraph.graph.topSort()[0].content.modules.topSort())).toStrictEqual([
-        'lib/a.js',
-        'index.js',
-      ]);
+      expect(
+        flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+      ).toStrictEqual(['lib/a.js', 'index.js']);
     });
   });
 
@@ -52,9 +51,9 @@ describe('migration-graph', () => {
       expect(sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
       const orderedPackages = projectGraph.graph.topSort();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
-      expect(flatten(filter(orderedPackages[0].content.modules.topSort()))).toStrictEqual(
-        EXPECTED_APP_FILES
-      );
+      expect(
+        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+      ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-addon', async () => {
       const project = await getEmberProjectFixture('app-with-in-repo-addon');
@@ -69,12 +68,12 @@ describe('migration-graph', () => {
       expect(flatten(orderedPackages)).toStrictEqual(['app-template', 'some-addon']);
 
       expect(
-        flatten(filter(orderedPackages[0].content.modules.topSort())),
+        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
 
       expect(
-        flatten(filter(orderedPackages[1].content.modules.topSort())),
+        flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for addon'
       ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
     });
@@ -89,12 +88,12 @@ describe('migration-graph', () => {
       expect(flatten(orderedPackages)).toStrictEqual(['app-template', 'some-engine']);
 
       expect(
-        flatten(filter(orderedPackages[0].content.modules.topSort())),
+        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
 
       expect(
-        flatten(filter(orderedPackages[1].content.modules.topSort())),
+        flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for in-repo-engine'
       ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js', 'index.js']);
     });
@@ -109,11 +108,9 @@ describe('migration-graph', () => {
       const orderedPackages = projectGraph.graph.topSort();
 
       expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
-      expect(flatten(filter(orderedPackages[0].content.modules.topSort()))).toStrictEqual([
-        'addon/components/greet.js',
-        'app/components/greet.js',
-        'index.js',
-      ]);
+      expect(
+        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
     });
     test('should create a dependency between an app using a service from an in-repo addon', async () => {
       const project = getEmberProject('app-with-in-repo-addon');
@@ -156,13 +153,13 @@ describe('migration-graph', () => {
       expect(projectGraph.sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
       expect(sourceType, 'should detect an EmberApp').toBe(SourceType.EmberApp);
 
-      const orderedPackages = projectGraph.graph.topSort();
+      const orderedPackages = projectGraph.graph.topSort().reverse();
 
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
-          const modules = pkg.content.modules;
+          const modules = pkg.content.pkg.getModuleGraph();
           return flatten(modules.topSort());
         })
         .flat();

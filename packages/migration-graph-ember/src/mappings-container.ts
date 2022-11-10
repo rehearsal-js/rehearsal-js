@@ -11,19 +11,69 @@ import resolvePackagePath from 'resolve-package-path';
 
 import { EmberAddonPackage } from './entities/ember-addon-package';
 import { EmberAppPackage } from './entities/ember-app-package';
-import {
-  type MappingsByAddonName,
-  type MappingsByLocation,
-  ExternalAddonPackages,
-  ExternalPackages,
-  InternalAddonPackages,
-  InternalPackages,
-  MappingsLookup,
-  RootInternalState,
-} from './entities/InternalState';
+
 import { isAddon, isApp } from './utils/ember';
 import { getInternalAddonTestFixtures } from './utils/environment';
 import type { EmberPackageContainer as PackageContainer } from './types/package-container';
+
+type AddonName = string;
+type AddonLocation = string;
+type MappingsByAddonName = Record<AddonName, Package>;
+type MappingsByLocation = Record<AddonLocation, Package>;
+
+type MappingsLookup = {
+  mappingsByAddonName: MappingsByAddonName;
+  mappingsByLocation: MappingsByLocation;
+};
+
+type ExternalPackages = MappingsLookup;
+type ExternalAddonPackages = MappingsLookup;
+
+type InternalPackages = MappingsLookup;
+type InternalAddonPackages = MappingsLookup;
+
+interface InternalState {
+  addonPackages: any;
+  externalAddonPackages: ExternalAddonPackages;
+  internalAddonPackages: InternalAddonPackages;
+}
+
+class InternalState implements InternalState {
+  name: string | undefined;
+  moduleName: string | undefined;
+  emberAddonName: string | undefined;
+  packageMain: string | undefined;
+  externalAddonPackages: ExternalAddonPackages;
+  internalAddonPackages: InternalAddonPackages;
+
+  constructor() {
+    this.addonPackages = {};
+    this.externalAddonPackages = {
+      mappingsByAddonName: {},
+      mappingsByLocation: {},
+    };
+  }
+
+  reset(): void {
+    this.name = undefined;
+    this.moduleName = undefined;
+    this.emberAddonName = undefined;
+    this.addonPackages = {};
+    this.externalAddonPackages = {
+      mappingsByAddonName: {},
+      mappingsByLocation: {},
+    };
+  }
+}
+
+class RootInternalState extends InternalState {
+  rootPackage: Package;
+
+  constructor(rootPackage: Package) {
+    super();
+    this.rootPackage = rootPackage;
+  }
+}
 
 type EntityFactoryOptions = {
   packageContainer: PackageContainer;

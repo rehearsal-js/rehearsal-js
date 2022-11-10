@@ -5,7 +5,9 @@ import { type IResolveOptions } from 'dependency-cruiser';
 import {
   Graph,
   GraphNode,
+  IPackage,
   ModuleNode,
+  Package,
   PackageGraph,
   PackageGraphOptions,
   PackageNode,
@@ -17,6 +19,19 @@ import { EmberAddonPackage } from './ember-addon-package';
 import { EmberAppProjectGraph } from './ember-app-project-graph';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-package-graph');
+
+class SyntheticPackage extends Package implements IPackage {
+  #graph: Graph<ModuleNode>;
+
+  constructor() {
+    super('/dev/null');
+    this.#graph = new Graph<ModuleNode>();
+  }
+
+  getModuleGraph(): Graph<ModuleNode> {
+    return this.#graph;
+  }
+}
 
 export type EmberAppPackageGraphOptions = {
   parent?: GraphNode<PackageNode>;
@@ -68,9 +83,11 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     const moduleNodeKey = m.key;
 
-    DEBUG_CALLBACK(`>>> attempting to adddNode ${this.package.packageName} ${moduleNodeKey}`);
+    DEBUG_CALLBACK(
+      `>>> attempting to addNode to packageGraph for: ${this.package.packageName}, with path:  ${moduleNodeKey}`
+    );
 
-    // Thus completing the self sustaining e  conomy.
+    // Thus completing the self sustaining economy.
     if (this.graph.hasNode(moduleNodeKey)) {
       DEBUG_CALLBACK(`>>> getNode ${moduleNodeKey}`);
       n = this.graph.getNode(moduleNodeKey);
@@ -89,12 +106,14 @@ export class EmberAppPackageGraph extends PackageGraph {
     }
 
     const services = discoverServiceDependencies(this.baseDir, n.content.path);
+
     DEBUG_CALLBACK('>>> SERVICES DISCOVERD', services);
 
     services.forEach((s) => {
       const maybePathToService = `app/services/${s.serviceName}.js`;
 
-      // Does the service exist in our graph?
+      // Does the service exist in this package?
+      // If so it will have a node on the graph with the given file path.
       if (this.graph.hasNode(maybePathToService)) {
         const someService = this.graph.getNode(maybePathToService);
         if (!someService) {
@@ -109,6 +128,7 @@ export class EmberAppPackageGraph extends PackageGraph {
       // If the service doesn't exist we need to determine if it exists in the app or an in-repo addon.
 
       // If the service is a external resolution, we can ignore it.
+      // We look this up in our resolution map to short-circuit this process
       if (this.hasServiceResolution(s.serviceName)) {
         // Look at the resolution.
         const maybePackage = this.getServiceResolution(s.serviceName);
@@ -143,27 +163,38 @@ export class EmberAppPackageGraph extends PackageGraph {
 
         if (maybeAddonPackageNode) {
           // We've found a package in the migration graph that has the addonName
-          const packageNode = maybeAddonPackageNode.content;
+          const { synthetic, pkg } = maybeAddonPackageNode.content;
 
-          const emberAddonPackage = packageNode.pkg as EmberAddonPackage;
+          if (!synthetic) {
+            const emberAddonPackage = pkg as EmberAddonPackage;
 
-          const someServiceInAnInRepoAddon = join(
-            emberAddonPackage.packagePath,
-            `app/services/${s.serviceName}.js`
-          );
+            const key = `app/services/${s.serviceName}.js`;
 
-          DEBUG_CALLBACK(emberAddonPackage.path);
+            const someServiceInAnInRepoAddon = join(emberAddonPackage.packagePath, key);
 
-          DEBUG_CALLBACK(someServiceInAnInRepoAddon);
-          const key = `app/services/${s.serviceName}.js`;
+            DEBUG_CALLBACK(emberAddonPackage.path);
+            DEBUG_CALLBACK(someServiceInAnInRepoAddon);
 
-          if (packageNode.modules.hasNode(key)) {
-            const dest = packageNode.modules.getNode(key);
-            if (!dest) {
-              throw new Error(
-                `Unexpected Error; Unable to retreive node ${key} from package ${packageNode.key}`
-              );
+            if (key) {
+              const dest = emberAddonPackage.getModuleGraph().hasNode(key);
+              if (!dest) {
+                throw new Error(
+                  `Unexpected Error; Unable to retreive node ${key} from package ${emberAddonPackage.name}`
+                );
+              }
+
+              // Create an edge between these packages.
+              // We can create edges between files but I dont know if we want that yet.
+              // Get this package Node<PackageNode> for this package.
+
+              if (this.parent) {
+                DEBUG_CALLBACK('Adding edge between parent and addon');
+                this.project?.graph.addEdge(this.parent, maybeAddonPackageNode);
+              }
             }
+          } else {
+            console.log('SHOULD NOT HAVE A SYNTH NODE, UNLESS EXTERNAL');
+            console.log('packageNode is synthetic unable to create edge at this time.');
 
             // Create an edge between these packages.
             // We can create edges between files but I dont know if we want that yet.
@@ -175,14 +206,12 @@ export class EmberAppPackageGraph extends PackageGraph {
             }
           }
         } else {
+          // It's an unknown package, maybe external?
           if (this.parent) {
             const key = s.addonName;
             const dest = this.createSyntheticPackageNode(key);
             this.project?.graph.addEdge(this.parent, dest);
           }
-
-          // Stub out with a sythetic to package.
-          // throw new Error(`TBD s.addon synthetic node not yet created. ${s.addonName}`);
         }
       }
 
@@ -203,21 +232,11 @@ export class EmberAppPackageGraph extends PackageGraph {
   }
 
   private findPackageNodeByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
-    // I think we need the parent graph here. this.graph is for the app and not all the packages.
     if (!this.project) {
       return undefined;
     }
-    DEBUG_CALLBACK('findPackageNodeByAddonName:');
-    return Array.from(this.project.graph.nodes).find((n: GraphNode<PackageNode>) => {
-      DEBUG_CALLBACK(n.content);
-      if (n.content.key === addonName) {
-        DEBUG_CALLBACK(
-          `Found an EmberAddonPackage ${(n.content.pkg as EmberAddonPackage).emberAddonName}`
-        );
-        return true;
-      }
-      return false;
-    });
+
+    return this.project.findPackageByAddonName(addonName);
   }
 
   /**
@@ -267,8 +286,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     return graph.addNode({
       key,
-      pkg: undefined,
-      modules: new Graph<ModuleNode>(),
+      pkg: new SyntheticPackage(), // We could make pkg optionally undfined but this simplifies iteration
       synthetic: true,
     });
   }

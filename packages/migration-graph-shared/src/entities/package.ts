@@ -8,6 +8,7 @@ import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo
 import { getWorkspaceGlobs } from '../utils/workspace';
 import { PackageGraph } from './package-graph';
 
+import { IPackage } from './IPackage';
 import type { Graph } from '../graph';
 import type { ModuleNode } from '../types';
 
@@ -33,14 +34,13 @@ export type PackageOptions = {
  *    - add/removeDevDependency
  *    - add/removeInRepoDependency
  *    - add/removeInRepoDevDependency
- *    - setModuleName
  *
  * Implementation Details
  *  - removeInRepo*
  *    - if workspace, manipulate deps and devDeps
  *    - else, remove addon-paths
  */
-export class Package {
+export class Package implements IPackage {
   /**
    * path {string} - the path to this package
    */
@@ -55,7 +55,7 @@ export class Package {
 
   #packageContainer: PackageContainer;
 
-  protected files: Graph<ModuleNode>;
+  protected graph: Graph<ModuleNode>;
 
   constructor(pathToPackage: string, { type = '', packageContainer }: PackageOptions = {}) {
     this.#path = pathToPackage;
@@ -66,9 +66,6 @@ export class Package {
     } else {
       this.#packageContainer = { isWorkspace: () => false };
     }
-
-    const packageJsonPath = resolve(pathToPackage, 'package.json');
-    this.#pkg = readJsonSync(packageJsonPath);
   }
 
   get excludePatterns(): Array<string> {
@@ -129,6 +126,10 @@ export class Package {
   }
 
   get packageJson(): PackageJson {
+    if (!this.#pkg) {
+      const packageJsonPath = resolve(this.#path, 'package.json');
+      this.#pkg = readJsonSync(packageJsonPath);
+    }
     return this.#pkg;
   }
 
@@ -264,13 +265,17 @@ export class Package {
     return false;
   }
 
-  createModuleGraph(options = {}): Graph<ModuleNode> {
-    if (this.files) {
-      return this.files;
+  hasModuleGraph(): boolean {
+    return this.graph !== undefined;
+  }
+
+  getModuleGraph(options = {}): Graph<ModuleNode> {
+    if (this.graph) {
+      return this.graph;
     }
 
-    this.files = new PackageGraph(this, options).discover();
+    this.graph = new PackageGraph(this, options).discover();
 
-    return this.files;
+    return this.graph;
   }
 }
