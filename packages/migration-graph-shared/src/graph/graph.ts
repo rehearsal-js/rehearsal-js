@@ -14,6 +14,10 @@ export class Graph<T extends UniqueNode> {
     return this.#nodes;
   }
 
+  get registry(): Map<string, GraphNode<T>> {
+    return this.#registry;
+  }
+
   hasNode(key: string): boolean {
     return this.#registry.has(key);
   }

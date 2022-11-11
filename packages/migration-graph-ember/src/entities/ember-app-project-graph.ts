@@ -83,8 +83,22 @@ export class EmberAppProjectGraph extends ProjectGraph {
     super(rootDir, options);
   }
 
-  addPackageToGraph(p: Package): GraphNode<PackageNode> {
+  addPackageToGraph(p: EmberAppPackage | EmberAddonPackage | Package): GraphNode<PackageNode> {
+    if (p instanceof EmberAddonPackage) {
+      // Check the graph if it has this node already
+      const hasNodeByPackageName = this.graph.hasNode(p.packageName);
+
+      if (!hasNodeByPackageName) {
+        const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(p.name);
+        // Create a registry entry for the packageName to ensure a update
+        if (maybeNode) {
+          this.graph.registry.set(p.packageName, maybeNode);
+        }
+      }
+    }
+
     const node = super.addPackageToGraph(p);
+
     this.buildAnalyzedPackageTree(node);
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));
@@ -195,33 +209,16 @@ export class EmberAppProjectGraph extends ProjectGraph {
    * @returns
    */
   findPackageByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
-    DEBUG_CALLBACK('findPackageNodeByAddonName:');
-
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
-      DEBUG_CALLBACK(n.content);
+      DEBUG_CALLBACK('findPackageNodeByAddonName: %0', n.content);
 
-      const pkg: Package | undefined = n.content.pkg;
+      const somePackage: Package = n.content.pkg;
 
-      if (!pkg) {
-        return false;
-      }
-
-      const emberAddonPackage: EmberAddonPackage | undefined =
-        pkg instanceof EmberAddonPackage ? pkg : undefined;
-
-      if (!emberAddonPackage) {
-        return false;
-      }
-
-      if (n.content.key === addonName || this.isMatch(addonName, emberAddonPackage)) {
-        if (n.content.synthetic) {
-          // TODO: FIX THIS;
-          console.log('findPackageNodeByAddonName.synth');
-        } else {
-          DEBUG_CALLBACK(
-            `Found an EmberAddonPackage ${(n.content.pkg as EmberAddonPackage).emberAddonName}`
-          );
-        }
+      if (
+        n.content.key === addonName ||
+        (somePackage instanceof EmberAddonPackage && this.isMatch(addonName, somePackage))
+      ) {
+        DEBUG_CALLBACK('Found an EmberAddonPackage %0', somePackage);
         return true;
       }
       return false;

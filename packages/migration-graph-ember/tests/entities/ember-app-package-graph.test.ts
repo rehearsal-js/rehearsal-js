@@ -462,4 +462,101 @@ describe('EmberAppPackageGraph', () => {
       'first-addon',
     ]);
   });
+
+  test('should stub a GraphNode and backfill when moduleName differs from packageName', async () => {
+    // app uses a service `date` from `some-addon`
+    // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
+    //     └── second-addon exposes a service `time`.
+
+    const someAddonName = 'special-addon';
+    const someAddonModuleName = someAddonName;
+    const someAddonPackageName = `@namespace/${someAddonModuleName}`;
+
+    const someAddonFiles = merge(getEmptyInRepoAddonFiles(someAddonPackageName), {
+      'index.js': `
+        'use strict';
+    
+        module.exports = {
+          name: '${someAddonModuleName}',
+          moduleName: () => '${someAddonModuleName}',
+    
+          isDevelopingAddon() {
+            return true;
+          },
+        };
+      `,
+      addon: {
+        components: {},
+        services: {
+          'date.js': `
+            import { inject as service } from '@ember/service';
+            export default class DateService extends Service {}
+          `,
+        },
+      },
+      app: {
+        components: {},
+        services: {
+          'date.js': `export { default } from '${someAddonModuleName}/services/date';`,
+        },
+      },
+    });
+    const project = getEmberProject('app');
+
+    const files: Record<string, any> = {
+      app: {
+        components: {
+          'obtuse.js': `
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
+    
+            export default class Obtuse extends Component {
+              @service('${someAddonModuleName}@date') d;
+            }
+          `,
+        },
+      },
+      lib: {},
+    };
+
+    files.lib[someAddonModuleName] = someAddonFiles;
+
+    project.mergeFiles(files);
+
+    // Add addons to ember-addon entry in  package.json
+    project.pkg['ember-addon'] = { paths: [`lib/${someAddonName}`] };
+
+    await setupProject(project);
+
+    const projectGraph = new EmberAppProjectGraph(project.baseDir);
+
+    // Add the app to the project graph
+    const emberAppPackage = new EmberAppPackage(project.baseDir);
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage);
+
+    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    emberAppPackage.getModuleGraph(options);
+
+    // Validate that there is a syntehtic node to firstAddon and that there
+    // is an edge between the app and the addon
+
+    console.log(flatten(projectGraph.graph.topSort()));
+
+    expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonModuleName))).toBe(true);
+    expect(projectGraph.graph.hasNode(someAddonPackageName)).toBe(false);
+
+    const someAddonNode = projectGraph.graph.getNode(someAddonModuleName);
+    expect(someAddonNode?.content.synthetic).toBe(true);
+
+    // Create addon package
+    const somePackage = new EmberAddonPackage(join(project.baseDir, `lib/${someAddonName}`));
+
+    // Add package to graph
+    const someNode = projectGraph.addPackageToGraph(somePackage);
+
+    expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonModuleName))).toBe(true);
+    expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonPackageName))).toBe(true);
+
+    expect(someNode.content.synthetic, 'the node on the graph should be replaced').toBeFalsy();
+  });
 });
