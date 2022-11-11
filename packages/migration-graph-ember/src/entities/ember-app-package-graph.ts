@@ -193,12 +193,10 @@ export class EmberAppPackageGraph extends PackageGraph {
               }
             }
           } else {
-            console.log('SHOULD NOT HAVE A SYNTH NODE, UNLESS EXTERNAL');
-            console.log('packageNode is synthetic unable to create edge at this time.');
-
             // Create an edge between these packages.
-            // We can create edges between files but I dont know if we want that yet.
-            // Get this package Node<PackageNode> for this package.
+            // We can create edges between packages in the project.
+            // When the actual implmentation is added to the project, it will
+            // get updated.
 
             if (this.parent) {
               DEBUG_CALLBACK('Adding edge between parent and addon');

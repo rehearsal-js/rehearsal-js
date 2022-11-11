@@ -77,8 +77,6 @@ export function getNameFromMain(pathToPackage: string): string {
 export function getModuleNameFromMain(pathToPackage: string): string {
   const addonEntryPoint = requirePackageMain(pathToPackage);
 
-  console.log(addonEntryPoint);
-
   const isFunction = typeof addonEntryPoint === 'function';
 
   let moduleName;

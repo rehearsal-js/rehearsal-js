@@ -465,8 +465,18 @@ describe('EmberAppPackageGraph', () => {
 
   test('should stub a GraphNode and backfill when moduleName differs from packageName', async () => {
     // app uses a service `date` from `some-addon`
-    // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
-    //     └── second-addon exposes a service `time`.
+    // └── some-addon exposes `date`
+
+    // We start creating the proejct graph
+
+    // We add walk the app first
+    // Then we walk the addon.
+
+    // In this case, we are adding a PackageNode to the graph for some package
+    // that we don't know exists yet.
+
+    // We create an edge between the packages, but until we add the package
+    // that has service.
 
     const someAddonName = 'special-addon';
     const someAddonModuleName = someAddonName;
@@ -539,8 +549,6 @@ describe('EmberAppPackageGraph', () => {
 
     // Validate that there is a syntehtic node to firstAddon and that there
     // is an edge between the app and the addon
-
-    console.log(flatten(projectGraph.graph.topSort()));
 
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonModuleName))).toBe(true);
     expect(projectGraph.graph.hasNode(someAddonPackageName)).toBe(false);
