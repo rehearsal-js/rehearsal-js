@@ -14,6 +14,8 @@ import { Command } from 'commander';
 import { existsSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
+import chalk from 'chalk';
+import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 
 import { generateReports } from '../helpers/report';
@@ -26,6 +28,7 @@ import {
   runModuleCommand,
   writeTSConfig,
   isTypescriptInDevdep,
+  getModuleManager,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -237,15 +240,6 @@ migrateCommand
           },
         },
         {
-          title: 'Checking for TypeScript errors',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async () => {
-            await runModuleCommand(['tsc'], { cwd: options.basePath });
-          },
-        },
-        // TODO: what to do with those ts errors?
-
-        {
           title: 'Creating eslint config',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
@@ -254,6 +248,29 @@ migrateCommand
               await _ctx.userConfig.lintSetup();
             } else {
               task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
+            }
+          },
+        },
+        {
+          title: 'Checking for TypeScript errors',
+          enabled: (ctx): boolean => !ctx.skip,
+          task: async (_ctx, task) => {
+            const moduleManager = await getModuleManager();
+            try {
+              await runModuleCommand(['tsc'], { cwd: options.basePath });
+              task.title = `Congratulations! There is no addtional TS error via ${moduleManager}.`;
+            } catch (e) {
+              // workaround for type e = unknown or any
+              let message;
+              if (e instanceof Error) {
+                message = e.message;
+              } else {
+                message = String(e);
+              }
+              const hintText = chalk.yellow(
+                `The migration is completed, but there are some extra TS erros listed above to be fixed manually.\nYou can run '${moduleManager} tsc' to get the errors, or to verify after the fix.`
+              );
+              throw new Error(`${message}\n${hintText}`);
             }
           },
         },
