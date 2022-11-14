@@ -352,6 +352,7 @@ export function writeTSConfig(basePath: string, fileList: string[]): void {
       target: 'ES2021',
       forceConsistentCasingInFileNames: true,
       noFallthroughCasesInSwitch: true,
+      noEmit: true,
     },
     include,
   };
