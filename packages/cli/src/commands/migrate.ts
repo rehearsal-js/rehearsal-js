@@ -15,7 +15,6 @@ import { existsSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import chalk from 'chalk';
-import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 
 import { generateReports } from '../helpers/report';
