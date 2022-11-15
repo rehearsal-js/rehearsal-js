@@ -1,28 +1,25 @@
 import { resolve } from 'path';
-import * as parser from '@babel/parser';
-import * as t from '@babel/types';
+
 import {
   PackageJson,
   readPackageJson,
   setupTestEnvironment,
 } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
-import { readFileSync } from 'fs-extra';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
+
 import {
   getEmberAddonName,
-  getPackageMainAST,
   getPackageMainFileName,
   isApp,
   isAddon,
   isEngine,
   requirePackageMain,
-  writePackageMain,
 } from '../../src/utils/ember';
 import {
   registerInternalAddonTestFixtures,
@@ -130,33 +127,6 @@ describe('Unit | ember', () => {
         'the custom main js file was loaded instead of index'
       ).toBeTruthy();
     });
-
-    // TODO: Fix this test or the type for getPackageMainAST()
-    test('getPackageMainAST', () => {
-      const simpleAST: parser.ParseResult<t.File> = getPackageMainAST(
-        getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON)
-      );
-      expect(simpleAST).toBeTruthy();
-
-      // We are attempting to validate index.js file was parsed.
-      // simpleAST.loc.filename was in the original test
-      //
-      // simpleAst.program.sourceFile is the typed API that should have a value,
-      // but during the execution it works.
-      //
-      // Casting this as an any because `SourceLocation` eg. `loc` doesn't have a filename property.
-      let loc = simpleAST?.loc as t.SourceLocation & { filename: string };
-      expect(loc?.filename).toEqual('index.js');
-
-      // assert the ast of the correct file was read in
-      const complexAST: parser.ParseResult<t.File> = getPackageMainAST(
-        getPathToPackage(FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN)
-      );
-
-      expect(complexAST).toBeTruthy();
-      loc = complexAST?.loc as t.SourceLocation & { filename: string };
-      expect(loc?.filename).toEqual('ember-addon-main.js');
-    });
   });
 
   describe('getEmberAddonName', function () {
@@ -173,22 +143,6 @@ describe('Unit | ember', () => {
       expect(
         getEmberAddonName(getPathToPackage(FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN))
       ).toEqual(FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN);
-    });
-  });
-
-  describe('update and write package data', function () {
-    test('writePackageAST', async () => {
-      const pathToPackage = getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON);
-      const packageMainPath = getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON, 'index.js');
-      const original = readFileSync(packageMainPath, 'utf-8');
-
-      const ast = getPackageMainAST(pathToPackage);
-      writePackageMain(pathToPackage, ast); // expect
-
-      // Should read the file and validate it exists.
-      const modified = readFileSync(packageMainPath, 'utf-8');
-      expect(modified).not.toEqual(original);
-      expect(modified).toMatchSnapshot('should replace double quotes with single-quotes');
     });
   });
 });

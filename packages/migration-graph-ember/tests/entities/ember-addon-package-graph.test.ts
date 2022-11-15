@@ -14,8 +14,8 @@ describe('EmberAddonPackageDependencyGraph', () => {
     const addonPackageGraph = new EmberAddonPackageGraph(addonPackage);
     addonPackageGraph.discover();
 
-    const implNode = addonPackageGraph.getGraph().getNode('addon/components/greet.js');
-    const interfaceNode = addonPackageGraph.getGraph().getNode('app/components/greet.js');
+    const implNode = addonPackageGraph.graph.getNode('addon/components/greet.js');
+    const interfaceNode = addonPackageGraph.graph.getNode('app/components/greet.js');
     expect(interfaceNode.adjacent.has(implNode)).toBe(true);
   });
 });

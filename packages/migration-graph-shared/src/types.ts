@@ -1,5 +1,4 @@
 import type { Package } from './entities/package';
-import type { Graph } from './graph';
 
 export type UniqueNode = {
   key: string;
@@ -7,8 +6,7 @@ export type UniqueNode = {
 };
 
 export type PackageNode = UniqueNode & {
-  pkg: Package | undefined;
-  modules: Graph<ModuleNode>;
+  pkg: Package;
   converted?: boolean;
 };
 

@@ -89,7 +89,11 @@ export function getMigrationStrategy(
         return;
       }
 
-      const modules = packageNode.content.modules;
+      if (!packageNode.content.pkg) {
+        throw new Error('WTF');
+      }
+
+      const modules = packageNode.content.pkg?.getModuleGraph();
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = modules

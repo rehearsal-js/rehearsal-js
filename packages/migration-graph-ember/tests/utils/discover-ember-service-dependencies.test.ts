@@ -223,4 +223,28 @@ describe('discoverServiceDependencies', () => {
     expect(resultss.length).toBe(1);
     expect(resultss[0].serviceName).toBe('request');
   });
+
+  test('should ignore @classic decorator', () => {
+    const files = {
+      'component.js': `
+        import classic from 'ember-classic-decorator';
+        import Component from '@glimmer/component';
+        import { inject } from '@ember/service';
+
+        @classic
+        export default class Salutation extends Component {
+          @inject locale;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
+
+    expect(results).toBeTruthy();
+    expect(results?.length).toBe(1);
+    const discovered = results[0];
+    expect(discovered.serviceName).toBe('locale');
+  });
 });

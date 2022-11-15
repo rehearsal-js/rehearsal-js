@@ -1,10 +1,10 @@
-import debug from 'debug';
-import { EmberAppProjectGraph } from './ember-app-project-graph';
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-addon-project-graph');
+import { EmberAppProjectGraph, EmberAppProjectGraphOptions } from './ember-app-project-graph';
+
+export type EmberAddonProjectGraphOptions = EmberAppProjectGraphOptions;
 
 export class EmberAddonProjectGraph extends EmberAppProjectGraph {
-  constructor(rootDir: string, sourceType: string) {
-    super(rootDir, sourceType);
-    DEBUG_CALLBACK('constructor');
+  constructor(rootDir: string, options?: EmberAddonProjectGraphOptions) {
+    options = { sourceType: 'Ember Addon', ...options };
+    super(rootDir, options);
   }
 }

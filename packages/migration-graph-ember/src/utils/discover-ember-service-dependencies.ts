@@ -37,7 +37,22 @@ export function discoverServiceDependencies(
     return EMPTY_RESULT;
   }
 
-  const parsed = parseFileSync(filePath, { syntax: 'ecmascript', decorators: true });
+  let parsed;
+
+  try {
+    parsed = parseFileSync(filePath, {
+      syntax: 'ecmascript',
+      decorators: true,
+      decoratorsBeforeExport: true,
+    });
+  } catch (e) {
+    console.warn(`Ember service discovery failed. Unable to parse: ${filePath}`);
+    DEBUG_CALLBACK(`Error: %0`, e);
+  }
+
+  if (!parsed) {
+    return EMPTY_RESULT;
+  }
 
   // Get all imports of '@ember/service'.
 
