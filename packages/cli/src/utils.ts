@@ -342,15 +342,17 @@ export function parseCommaSeparatedList(value: string): string[] {
 export function writeTSConfig(basePath: string, fileList: string[]): void {
   const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
   const config = {
-    $schema: 'http://json.schemastore.org/tsconfig',
+    $schema: 'https://json.schemastore.org/tsconfig',
     compilerOptions: {
-      baseUrl: '.',
-      outDir: 'dist',
-      emitDeclarationOnly: true,
-      allowJs: true,
-      target: 'es2016',
-      module: 'commonjs',
+      strict: true,
+      noUncheckedIndexedAccess: true,
+      module: 'es2020',
       moduleResolution: 'node',
+      newLine: 'lf',
+      target: 'ES2021',
+      forceConsistentCasingInFileNames: true,
+      noFallthroughCasesInSwitch: true,
+      noEmit: true,
     },
     include,
   };
