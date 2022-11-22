@@ -1,32 +1,38 @@
 import { Report } from '../types';
 
 export function mdFormatter(report: Report): string {
-  const fileNames = [...new Set(report.items.map((item) => item.analysisTarget))];
+  const fileNames = [
+    ...new Set(report.results.map((result) => result.analysisTarget?.uri).filter(onlyFileNames)),
+  ];
 
   let text = ``;
 
   text += `### Summary:\n`;
-  text += `Typescript Version: ${report.summary.tsVersion}\n`;
+  text += `Typescript Version: ${report.tool.properties?.tsVersion}\n`;
   text += `Files Tested: ${fileNames.length}\n`;
   text += `\n`;
   text += `### Results:\n`;
 
   for (const fileName of fileNames) {
-    const items = report.items.filter((item) => item.analysisTarget === fileName);
-    const relativeFileName = fileName.replace(report.summary.basePath, '');
+    const results = report.results.filter((result) => result.analysisTarget === fileName);
+    const relativeFileName = fileName.replace(report.tool.properties?.basePath, '');
 
     text += `\n`;
-    text += `#### File: ${relativeFileName}, issues: ${items.length}:\n`;
+    text += `#### File: ${relativeFileName}, issues: ${results.length}:\n`;
 
-    for (const item of items) {
+    for (const result of results) {
       text += `\n`;
-      text += `**${item.category} TS${item.errorCode}**: ${
-        item.fixed ? 'FIXED' : 'NEED TO BE FIXED MANUALLY'
+      text += `**${result.level} ${result.ruleId}**: ${
+        result.properties?.fixed ? 'FIXED' : 'NEED TO BE FIXED MANUALLY'
       }\n`;
-      text += `${item.hint}\n`;
-      text += `Code: \`${item.nodeText}\`\n`;
+      // text += `${result.hint}\n`;
+      // text += `Code: \`${result.nodeText}\`\n`;
     }
   }
 
   return text;
+}
+
+function onlyFileNames(uri: string | undefined): uri is string {
+  return !!uri;
 }

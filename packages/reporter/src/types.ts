@@ -1,3 +1,5 @@
+import { ArtifactChange, Location, Run, Tool, ToolComponent } from 'sarif';
+
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
   basePath: string;
@@ -8,7 +10,7 @@ export type ReportSummary = Record<string, unknown> & {
 export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
 export type CodeFixAction = 'add' | 'delete' | 'replace';
 
-export interface Location {
+export interface ProcessedLocation {
   startLine: number;
   startColumn: number;
   endLine: number;
@@ -17,7 +19,7 @@ export interface Location {
 
 export interface ProcessedFile {
   fileName: string;
-  location: Location;
+  location: ProcessedLocation;
   fixed: boolean;
   code: string | undefined;
   codeFixAction: CodeFixAction | undefined;
@@ -47,9 +49,16 @@ export type ReportItem = {
   };
 };
 
-export type Report = {
-  summary: ReportSummary;
-  items: ReportItem[];
-};
-
 export type ReportFormatter = (report: Report) => string;
+
+type RequiredToolComponent = ToolComponent & Required<Pick<ToolComponent, 'rules'>>;
+type RequiredTool = Tool & { driver: RequiredToolComponent };
+type RequiredArtifactsAndResults = Required<Pick<Run, 'artifacts' | 'results'>>;
+
+export type Report = Run & RequiredArtifactsAndResults & { tool: RequiredTool };
+
+export type LocAndFixes = {
+  locations: Location[];
+  relatedLocations: Location[];
+  fixes: ArtifactChange[];
+};

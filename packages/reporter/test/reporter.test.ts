@@ -1,30 +1,25 @@
 import { existsSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
 import { DiagnosticWithLocation, SourceFile } from 'typescript';
-import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
-import { type Report, jsonFormatter, mdFormatter, Reporter } from '../src';
+import { jsonFormatter, mdFormatter, Reporter } from '../src';
 
 describe('Test reporter', function () {
   const basePath = resolve(__dirname, 'fixtures/reporter');
 
-  let reporter: Reporter | undefined;
+  let reporter: Reporter;
 
   beforeEach(() => {
     reporter = new Reporter('test', basePath).load(resolve(basePath, 'rehearsal-report.json'));
   });
 
-  afterEach(() => {
-    reporter = undefined;
-  });
-
   test('load', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const report = (reporter as any).report as Report;
+    const report = reporter.report;
 
-    expect(report.summary.basePath).toMatch(/base/);
-    expect(report.summary.timestamp).toMatch(/\d+/);
+    expect(report.tool.driver.properties?.basePath).toMatch(/base/);
+    expect(report.tool.driver.properties?.timestamp).toMatch(/\d+/);
     expect(report).toMatchSnapshot();
   });
 
@@ -92,14 +87,5 @@ describe('Test reporter', function () {
     expect(readFileSync(testAddItemFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testAddItemFile);
-  });
-
-  test('getFileNames', async () => {
-    assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts']);
-  });
-
-  test('getItemsByFile', async () => {
-    const items = reporter!.getItemsByAnalysisTarget('/base/path/file1.ts');
-    expect(items).toMatchSnapshot();
   });
 });
