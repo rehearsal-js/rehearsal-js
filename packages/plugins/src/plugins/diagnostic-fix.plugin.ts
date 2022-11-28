@@ -1,4 +1,4 @@
-import { type DiagnosticWithContext, type FixedFile, codefixes } from '@rehearsal/codefixes';
+import { type DiagnosticWithContext, type FixedFile, codefixes, hints } from '@rehearsal/codefixes';
 import { type PluginResult, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
 import {
@@ -34,13 +34,19 @@ export class DiagnosticFixPlugin extends Plugin {
         continue;
       }
 
-      const fix = codefixes.getFixForDiagnostic(diagnostic);
-      const fixedFiles: FixedFile[] = fix?.run(diagnostic, this.service) || [];
-      const fixed = fixedFiles.length > 0;
+      let fixedFiles: FixedFile[] = [];
+
+      const fixes = codefixes.getCodeFixes(diagnostic);
+
+      while (fixes.length > 0 && fixedFiles.length === 0) {
+        fixedFiles = fixes.shift()?.run(diagnostic, this.service) || [];
+      }
 
       // TODO: Seems like a good candidate to be moved to `if (addHints)`
-      let hint = codefixes.getHint(diagnostic);
-      const helpUrl = codefixes.getHelpUrl(diagnostic);
+      let hint = hints.getHint(diagnostic);
+      const helpUrl = hints.getHelpUrl(diagnostic);
+
+      const fixed = fixedFiles.length > 0;
 
       if (fixed) {
         for (const fixedFile of fixedFiles) {

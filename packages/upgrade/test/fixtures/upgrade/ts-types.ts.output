@@ -1,0 +1,3 @@
+export function test(me: string) {
+  return 'This is ' + me;
+}

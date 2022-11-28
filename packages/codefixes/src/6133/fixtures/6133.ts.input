@@ -8,7 +8,7 @@ let defined_var = null;
 
 const defined_const = null;
 
-function defined_function(): void {
+function defined_function(huh): void {
   return;
 }
 
