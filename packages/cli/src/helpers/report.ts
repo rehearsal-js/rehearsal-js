@@ -2,6 +2,7 @@ import { mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { Report, Reporter, ReportFormatter } from '@rehearsal/reporter';
 import { MapLike } from 'typescript';
+import { MigrationSummary } from 'src/types';
 
 export function generateReports(
   reporter: Reporter,
@@ -70,4 +71,27 @@ export function reportFormatter(report: Report): string {
   };
 
   return JSON.stringify(report, null, 2);
+}
+
+/**
+ * Reads report and generate migration summary
+ */
+export function getReportSummary(report: Report): MigrationSummary {
+  const fileMap = new Set<string>();
+  let errorFixedCount = 0;
+  let hintAddedCount = 0;
+  report.items.forEach((item) => {
+    fileMap.add(item.analysisTarget);
+    if (item.fixed) {
+      errorFixedCount++;
+    }
+    if (item.hint) {
+      hintAddedCount++;
+    }
+  });
+  return {
+    totalErrorCount: report.items.length,
+    errorFixedCount,
+    hintAddedCount,
+  };
 }

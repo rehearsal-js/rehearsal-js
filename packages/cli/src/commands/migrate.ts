@@ -9,21 +9,20 @@ import {
   getMigrationStrategy,
   SourceFile,
 } from '@rehearsal/migration-graph';
-import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
+import { mdFormatter, Reporter, sarifFormatter, sonarqubeFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { existsSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 
-import { generateReports } from '../helpers/report';
+import { generateReports, reportFormatter, getReportSummary } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
 import { UserConfig } from '../userConfig';
 import {
   addDep,
   determineProjectName,
   parseCommaSeparatedList,
-  runModuleCommand,
   writeTSConfig,
   isTypescriptInDevdep,
 } from '../utils';
@@ -48,7 +47,7 @@ migrateCommand
     '-r, --report <reportTypes>',
     'Report types separated by comma, e.g. -r json,sarif,md',
     parseCommaSeparatedList,
-    []
+    ['json']
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option(
@@ -218,6 +217,7 @@ migrateCommand
               };
 
               const { migratedFiles } = await migrate(input);
+              DEBUG_CALLBACK('migratedFiles', migratedFiles);
               if (_ctx.state) {
                 _ctx.state.addFilesToPackage(_ctx.targetPackagePath, migratedFiles);
                 await _ctx.state.addStateFileToGit();
@@ -225,10 +225,21 @@ migrateCommand
 
               const reportOutputPath = resolve(options.basePath, options.outputPath);
               generateReports(reporter, reportOutputPath, options.report, {
-                json: jsonFormatter,
+                json: reportFormatter,
                 sarif: sarifFormatter,
                 md: mdFormatter,
+                sonarqube: sonarqubeFormatter,
               });
+
+              const { totalErrorCount, errorFixedCount, hintAddedCount } = getReportSummary(
+                reporter.report
+              );
+              const migratedFileCount = migratedFiles.length;
+              task.title = `${migratedFileCount} JS ${
+                migratedFileCount === 1 ? 'file' : 'files'
+              } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
+                - ${errorFixedCount} have been fixed automatically by rehearsal
+                - ${hintAddedCount} have been updated with @ts-ignore @rehearsal TODO which need further manual check`;
             } else {
               task.skip(
                 `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
@@ -236,15 +247,6 @@ migrateCommand
             }
           },
         },
-        {
-          title: 'Checking for TypeScript errors',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async () => {
-            await runModuleCommand(['tsc'], { cwd: options.basePath });
-          },
-        },
-        // TODO: what to do with those ts errors?
-
         {
           title: 'Creating eslint config',
           enabled: (ctx): boolean => !ctx.skip,

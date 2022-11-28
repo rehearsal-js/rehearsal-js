@@ -125,11 +125,11 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from default index.js', async () => {
-    const result = await runBin('migrate', [], {
+    const result = await runBin('migrate', ['-v'], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
     expect(readdirSync(basePath)).toContain('index.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
@@ -142,12 +142,11 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from specific entrypoint', async () => {
-    console.log(basePath);
     const result = await runBin('migrate', ['--entrypoint', 'depends-on-foo.js'], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
@@ -165,6 +164,16 @@ describe('migrate - JS to TS conversion', async () => {
     });
 
     expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
+  });
+
+  test('Generate json report by default', async () => {
+    await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    const reportPath = resolve(basePath, '.rehearsal');
+
+    expect(readdirSync(reportPath)).toContain('report.json');
   });
 
   test('Generate report with -r flag', async () => {
@@ -216,7 +225,7 @@ describe('migrate - handle custom basePath', async () => {
 
   test('Run cli againt specific basePath via -basePath option', async () => {
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath], {
+    const result = await runBin('migrate', ['--basePath', customBasePath, '-v'], {
       cwd: basePath, // still run cli in basePath
     });
 
@@ -224,7 +233,7 @@ describe('migrate - handle custom basePath', async () => {
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 
