@@ -1,54 +1,19 @@
 import {
   type DiagnosticWithLocation,
-  type LanguageService,
-  type Node,
-  type Program,
-  type TypeChecker,
   flattenDiagnosticMessageText,
   isIdentifier,
 } from 'typescript';
 
-import { FixTransform } from './fix-transform';
-
-export interface DiagnosticWithContext extends DiagnosticWithLocation {
-  service: LanguageService;
-  program: Program;
-  checker: TypeChecker;
-  node?: Node;
-}
-
-export type CodefixList = { [key: number]: CodefixListElement };
-
-export type CodefixListElement = {
-  hint: string;
-  helpUrl?: string;
-  codefix?: FixTransform;
-  hints?: CodefixHint[];
-};
-
-export type CodefixHint = {
-  when: (n: Node, p: Program, c: TypeChecker) => boolean;
-  hint: string;
-};
+import { CodeHintList, DiagnosticWithContext } from './types';
 
 /**
- * Provides
+ * Provides access to useful hints for Diagnostics
  */
-export class CodeFixCollection {
-  readonly list: CodefixList;
+export class HintsProvider {
+  readonly list: CodeHintList;
 
-  constructor(list: CodefixList) {
+  constructor(list: CodeHintList) {
     this.list = list;
-  }
-
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): FixTransform | undefined {
-    // TODO: Import dynamically if codefix module for provided code exists
-
-    if (this.list[diagnostic.code]?.codefix !== undefined) {
-      return this.list[diagnostic.code].codefix!;
-    }
-
-    return undefined;
   }
 
   getHint(diagnostic: DiagnosticWithContext): string {

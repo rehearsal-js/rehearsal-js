@@ -1,11 +1,5 @@
 import { dirname, resolve } from 'path';
-import {
-  DiagnosticFixPlugin,
-  EmptyLinesPreservePlugin,
-  EmptyLinesRestorePlugin,
-  LintPlugin,
-  ReRehearsePlugin,
-} from '@rehearsal/plugins';
+import { DiagnosticFixPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
@@ -36,14 +30,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
 
-  const plugins = [
-    ReRehearsePlugin,
-    LintPlugin,
-    EmptyLinesPreservePlugin,
-    DiagnosticFixPlugin,
-    EmptyLinesRestorePlugin,
-    LintPlugin,
-  ];
+  const plugins = [ReRehearsePlugin, LintPlugin, DiagnosticFixPlugin, LintPlugin];
 
   DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);
 

@@ -2,19 +2,7 @@ import { sep } from 'path';
 
 sep;
 
-/* @ts-ignore @rehearsal TODO TS6133: The variable 'defined_var' is never read or used. Remove the variable or use it. */
-const defined_var = null;
-
-/* @ts-ignore @rehearsal TODO TS6133: The variable 'defined_const' is never read or used. Remove the variable or use it. */
-const defined_const = null;
-
-/* @ts-ignore @rehearsal TODO TS6133: The function 'defined_function' is never called. Remove the function or use it. */
-function defined_function(): void {
-  return;
-}
-
-/* @ts-ignore @rehearsal TODO TS6133: The parameter 'defined_param' is never used. Remove the parameter from function definition or use it. */
-function defined_function_with_params(defined_param: string): void {
+function defined_function_with_params(_defined_param: string): void {
   return;
 }
 

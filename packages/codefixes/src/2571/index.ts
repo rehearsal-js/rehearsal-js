@@ -1,7 +1,8 @@
 import { findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
 import { DiagnosticWithLocation, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
 
-import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
+import { type FixedFile, FixTransform } from '../types';
+import { getCodemodData } from '../utils';
 
 export class FixTransform2571 extends FixTransform {
   fix = (diagnostic: DiagnosticWithLocation): FixedFile[] => {

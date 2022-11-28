@@ -1,3 +1,4 @@
-export * from './codefix-collection';
-export * from './codefixes';
-export * from './fix-transform';
+export { codefixes } from './codefixes';
+export { hints } from './hints';
+export * from './types';
+export * from './utils';

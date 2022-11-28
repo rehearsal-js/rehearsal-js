@@ -11,7 +11,8 @@ import {
   isObjectLiteralExpression,
 } from 'typescript';
 
-import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
+import { type FixedFile, FixTransform } from '../types';
+import { getCodemodData } from '../utils';
 import type {
   DiagnosticWithLocation,
   ExportAssignment,

@@ -13,7 +13,8 @@ import {
 } from '@rehearsal/utils';
 import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
 
-import { type FixedFile, FixTransform, getCodemodData } from '../fix-transform';
+import { type FixedFile, FixTransform } from '../types';
+import { getCodemodData } from '../utils';
 import type {
   DiagnosticWithLocation,
   InterfaceDeclaration,

@@ -1,31 +1,6 @@
 import { getLineAndCharacterOfPosition } from 'typescript';
-import type { RehearsalService } from '@rehearsal/service';
-import type { DiagnosticWithLocation, SourceFile } from 'typescript';
-
-export type CodeFixAction = 'add' | 'delete' | 'replace';
-
-export interface FixedFile {
-  fileName: string;
-  updatedText: string;
-  code?: string;
-  codeFixAction?: CodeFixAction;
-  location: {
-    startLine: number;
-    startColumn: number;
-    endLine: number;
-    endColumn: number;
-  };
-}
-
-export class FixTransform {
-  hint?: string;
-  /** Function to fix the diagnostic issue */
-  fix?: (diagnostic: DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
-
-  run(diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] {
-    return this.fix ? this.fix(diagnostic, service) : [];
-  }
-}
+import { CodeFixAction, FixedFile } from './types';
+import type { SourceFile } from 'typescript';
 
 export function getCodemodData(
   modifiedSourceFile: SourceFile,
