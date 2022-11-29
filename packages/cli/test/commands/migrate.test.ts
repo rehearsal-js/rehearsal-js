@@ -78,7 +78,7 @@ describe('migrate - generate tsconfig', async () => {
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
-  test('On tsconfig exists, esure strict mode', async () => {
+  test('On tsconfig exists, ensure strict mode', async () => {
     // tsconfig already created from previous test
     const result = await runBin('migrate', [], {
       cwd: basePath,
@@ -212,11 +212,11 @@ describe('migrate - handle custom basePath', async () => {
       cwd: basePath, // still run cli in basePath
     });
 
-    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Installing dependencies');
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`Converting JS files to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 
