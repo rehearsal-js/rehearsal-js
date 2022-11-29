@@ -34,8 +34,8 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "eslint": "^8.26.0",
-    "debug": "^4.3.2"
+    "debug": "^4.3.2",
+    "eslint": "^8.26.0"
   },
   "devDependencies": {
     "@types/eslint": "^8.4.1",

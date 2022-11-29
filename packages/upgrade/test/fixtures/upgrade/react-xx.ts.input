@@ -17,6 +17,7 @@ export class Radio extends Component {
 
   /**
    * Action
+   * @return {string}
    */
   @action
   async onRadioChange(value) {
