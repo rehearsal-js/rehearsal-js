@@ -225,7 +225,7 @@ function createRun(report: Report): Run {
   return {
     tool: {
       driver: {
-        name: '@rehearsal/upgrade',
+        name: `${report.summary.commandName}`,
         informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
         rules: [],
       },
@@ -234,11 +234,7 @@ function createRun(report: Report): Run {
     results: [],
     automationDetails: {
       description: {
-        text:
-          'This is the run of @rehearsal/upgrade on your product against TypeScript ' +
-          report.summary.tsVersion +
-          ' at ' +
-          report.summary.timestamp,
+        text: `This is the run of ${report.summary.commandName} on your product against TypeScript ${report.summary.tsVersion} at ${report.summary.timestamp}`,
       },
     },
   };

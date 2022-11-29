@@ -3,6 +3,7 @@ export type ReportSummary = Record<string, unknown> & {
   basePath: string;
   tsVersion: string;
   timestamp: string;
+  commandName: string;
 };
 
 export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';

@@ -5,7 +5,8 @@ const addResultData: Report = {
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
     timestamp: "9/16/2022, 13:24:57",
-    basePath: "/reporter/test/sarif-formatter"
+    basePath: "/reporter/test/sarif-formatter",
+    commandName: "@rehearsal/reporter"
   },
   items: [
     {

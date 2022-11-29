@@ -1,8 +1,15 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind, version } from 'typescript';
+import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
 import { type ProcessedFile, type Report, type ReportFormatter, type ReportItem } from './types';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
+
+type ReporterMeta = {
+  projectName: string;
+  basePath: string;
+  commandName: string;
+  tsVersion: string;
+};
 
 /**
  * Representation of diagnostic and migration report.
@@ -13,13 +20,16 @@ export class Reporter {
   public report: Report;
   private logger?: Logger;
 
-  constructor(projectName = '', basePath = '', logger?: Logger) {
+  constructor(meta: ReporterMeta, logger?: Logger) {
+    const { projectName, basePath, commandName, tsVersion } = meta;
+
     this.basePath = basePath;
     this.logger = logger?.child({ service: 'rehearsal-reporter' });
+
     this.report = {
       summary: {
         projectName: projectName,
-        tsVersion: version,
+        tsVersion: tsVersion,
         timestamp: new Date().toLocaleString('en-US', {
           year: 'numeric',
           month: 'numeric',
@@ -30,6 +40,7 @@ export class Reporter {
           second: '2-digit',
         }),
         basePath: basePath,
+        commandName: commandName,
       },
       items: [],
     };

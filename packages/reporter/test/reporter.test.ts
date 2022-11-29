@@ -12,7 +12,12 @@ describe('Test reporter', function () {
   let reporter: Reporter | undefined;
 
   beforeEach(() => {
-    reporter = new Reporter('test', basePath).load(resolve(basePath, 'rehearsal-report.json'));
+    reporter = new Reporter({
+      tsVersion: '',
+      projectName: 'test',
+      basePath,
+      commandName: '@rehearsal/reporter',
+    }).load(resolve(basePath, 'rehearsal-report.json'));
   });
 
   afterEach(() => {
