@@ -15,7 +15,10 @@ describe('Test upgrade', async function () {
     transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
   });
 
-  const reporter = new Reporter('@rehearsal/test', basePath, logger);
+  const reporter = new Reporter(
+    { tsVersion: '', projectName: '@rehearsal/test', basePath, commandName: '@rehearsal/upgrade' },
+    logger
+  );
 
   createTsFilesFromInputs(files);
 

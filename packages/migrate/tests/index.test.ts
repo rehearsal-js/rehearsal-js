@@ -48,7 +48,15 @@ describe('migrate', () => {
       transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
     });
 
-    reporter = new Reporter('@rehearsal/test', basePath, logger);
+    reporter = new Reporter(
+      {
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath,
+        commandName: '@rehearsal/migrate',
+      },
+      logger
+    );
   });
 
   afterEach(() => {

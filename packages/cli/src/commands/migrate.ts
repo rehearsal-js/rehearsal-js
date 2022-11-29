@@ -9,12 +9,19 @@ import {
   getMigrationStrategy,
   SourceFile,
 } from '@rehearsal/migration-graph';
-import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
+import {
+  jsonFormatter,
+  mdFormatter,
+  Reporter,
+  sarifFormatter,
+  sonarqubeFormatter,
+} from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync } from 'fs-extra';
+import { existsSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
+import execa = require('execa');
 
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
@@ -23,9 +30,8 @@ import {
   addDep,
   determineProjectName,
   parseCommaSeparatedList,
-  runModuleCommand,
   writeTSConfig,
-  isTypescriptInDevdep,
+  getPathToBinary,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -46,9 +52,9 @@ migrateCommand
   .option('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-r, --report <reportTypes>',
-    'Report types separated by comma, e.g. -r json,sarif,md',
+    'Report types separated by comma, e.g. -r json,sarif,md,sonarqube',
     parseCommaSeparatedList,
-    []
+    ['sarif']
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option(
@@ -174,12 +180,8 @@ migrateCommand
               task.title = `Installing custom dependencies`;
               await _ctx.userConfig.install();
             }
-
-            if (isTypescriptInDevdep(options.basePath)) {
-              task.skip('typescript already exists. Skipping installing typescript.');
-            } else {
-              await addDep(['typescript'], true, { cwd: options.basePath });
-            }
+            // even if typescript is installed, exec this and get the latest patch
+            await addDep(['typescript'], true, { cwd: options.basePath });
           },
         },
         {
@@ -193,7 +195,11 @@ migrateCommand
               const configPath = resolve(options.basePath, 'tsconfig.json');
 
               if (existsSync(configPath)) {
-                task.skip(`${configPath} already exists, skipping creating tsconfig.json`);
+                task.title = `${configPath} already exists, ensuring strict mode is enabled.`;
+
+                const tsConfig = readJSONSync(configPath);
+                tsConfig.compilerOptions.strict = true;
+                writeJSONSync(configPath, tsConfig, { spaces: 2 });
               } else {
                 task.title = `Creating tsconfig.`;
 
@@ -206,8 +212,16 @@ migrateCommand
           title: 'Converting JS files to TS',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
-            const projectName = (await determineProjectName()) || '';
-            const reporter = new Reporter(projectName, options.basePath, logger);
+            const projectName = determineProjectName() || '';
+            const { basePath } = options;
+            const tscPath = await getPathToBinary('tsc');
+            const { stdout } = await execa(tscPath, ['--version']);
+            const tsVersion = stdout.split(' ')[1];
+
+            const reporter = new Reporter(
+              { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
+              logger
+            );
 
             if (_ctx.sourceFilesWithAbsolutePath) {
               const input = {
@@ -228,6 +242,7 @@ migrateCommand
                 json: jsonFormatter,
                 sarif: sarifFormatter,
                 md: mdFormatter,
+                sonarqube: sonarqubeFormatter,
               });
             } else {
               task.skip(
@@ -236,15 +251,6 @@ migrateCommand
             }
           },
         },
-        {
-          title: 'Checking for TypeScript errors',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async () => {
-            await runModuleCommand(['tsc'], { cwd: options.basePath });
-          },
-        },
-        // TODO: what to do with those ts errors?
-
         {
           title: 'Creating eslint config',
           enabled: (ctx): boolean => !ctx.skip,
