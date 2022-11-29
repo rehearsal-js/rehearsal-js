@@ -75,3 +75,9 @@ export type PackageSelection = {
 export type MenuMap = {
   [key: string]: string;
 };
+
+export type TSConfig = {
+  compilerOptions: {
+    strict: boolean;
+  };
+};
