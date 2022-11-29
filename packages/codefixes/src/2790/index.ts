@@ -30,6 +30,7 @@ const OPTIONAL_TOKEN = '?';
 export class FixTransform2790 extends FixTransform {
   fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
+
     if (
       !errorNode ||
       !isPropertyAccessExpression(errorNode) ||
@@ -51,7 +52,7 @@ export class FixTransform2790 extends FixTransform {
     const sourceFile = typeDeclaration.getSourceFile();
 
     const typeName = getTypeNameFromType(type, checker); //'Person' as in 'Interface Person' or 'Car' as in 'class Car'
-    const typeMemberName = errorNode.name.getFullText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
+    const typeMemberName = errorNode.name.getText(); //'name' as in 'delete person.name' or 'make' as in 'delete car.make';
 
     if (!typeMemberName || !typeName || !sourceFile) {
       return [];
@@ -75,7 +76,7 @@ export class FixTransform2790 extends FixTransform {
       return [];
     }
 
-    const updatedText = insertIntoText(sourceFile.getFullText(), nameEnd, OPTIONAL_TOKEN);
+    const updatedText = insertIntoText(sourceFile.text, nameEnd, OPTIONAL_TOKEN);
 
     return getCodemodData(sourceFile, updatedText, nameEnd, OPTIONAL_TOKEN, 'add');
   };
@@ -107,13 +108,14 @@ function findTypeMemberDeclaration(
     sourceFile,
     typeName
   );
-
   const matchedType = matchedInterface || matchedTypeAlias;
+
   let matchedMember;
   if (matchedType && isInterfaceDeclaration(matchedType)) {
     matchedMember = getInterfaceMemberByName(matchedType, memberName);
   } else if (matchedType) {
     matchedMember = getTypeAliasMemberByName(matchedType, memberName);
   }
+
   return matchedMember;
 }

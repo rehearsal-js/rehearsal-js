@@ -1,8 +1,4 @@
-import {
-  type DiagnosticWithLocation,
-  flattenDiagnosticMessageText,
-  isIdentifier,
-} from 'typescript';
+import { type DiagnosticWithLocation, flattenDiagnosticMessageText } from 'typescript';
 
 import { CodeHintList, DiagnosticWithContext } from './types';
 
@@ -60,9 +56,6 @@ export class HintsProvider {
     if (node !== undefined) {
       replacements['{node.text}'] = node.getText();
       replacements['{node.fullText}'] = node.getFullText();
-      replacements['{node.escapedText}'] = isIdentifier(node)
-        ? node.escapedText.toString()
-        : node.getText();
     }
 
     // Replaces {0}, {1}... placeholders with corresponding values from the original message
