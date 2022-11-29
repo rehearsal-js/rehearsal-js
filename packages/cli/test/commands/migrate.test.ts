@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { copySync, readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
+import { copySync, readdirSync, readJSONSync, writeJSONSync, realpathSync } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
@@ -16,7 +16,8 @@ function prepareTmpDir(dir: string): string {
   const srcDir = resolve(TEST_SRC_DIR, dir);
   const { name: targetDir } = dirSync();
   copySync(srcDir, targetDir);
-  return targetDir;
+  // /var is a symlink to /private/var, use realpath to return /private/var
+  return realpathSync(targetDir);
 }
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -233,7 +234,7 @@ describe('migrate - handle custom basePath', async () => {
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
+    expect(result.stdout).toContain(`1 JS file has been converted to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 
