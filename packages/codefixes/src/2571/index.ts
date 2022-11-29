@@ -11,17 +11,17 @@ export class FixTransform2571 extends FixTransform {
       let codeReplacement;
 
       if (isPropertyOfErrorInterface(errorNode.parent)) {
-        codeReplacement = `(${errorNode.getFullText()} as Error)`;
+        codeReplacement = `(${errorNode.getText()} as Error)`;
       } else {
-        codeReplacement = `(${errorNode.getFullText()} as any)`;
+        codeReplacement = `(${errorNode.getText()} as any)`;
       }
-      const originalText = diagnostic.file.getFullText();
-      const updatedText = `${originalText.substring(
-        0,
-        diagnostic.start
-      )}${codeReplacement}${originalText.substring(
-        diagnostic.start + errorNode.getFullText().length
-      )}`;
+
+      const originalText = diagnostic.file.text;
+      const updatedText =
+        originalText.substring(0, errorNode.getStart()) +
+        codeReplacement +
+        originalText.substring(errorNode.getEnd());
+
       return getCodemodData(
         diagnostic.file,
         updatedText,
