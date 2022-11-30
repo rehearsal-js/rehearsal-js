@@ -285,14 +285,14 @@ export async function getPathToBinary(
 
   try {
     const { stdout } = await execa(moduleManagerBin, ['bin', binaryName], options);
-    stdoutMsg = stdout;
+    stdoutMsg = stdout.trim().split(`/${binaryName}`)[0];
   } catch (e) {
     throw new Error(`Unable to find binary path to ${binaryName}`);
   }
 
   // return the path to the binary
   try {
-    return resolve(join(stdoutMsg.trim(), binaryName));
+    return resolve(join(stdoutMsg, binaryName));
   } catch (error) {
     throw new Error(`Unable to find ${binaryName} with ${moduleManagerBin}`);
   }
