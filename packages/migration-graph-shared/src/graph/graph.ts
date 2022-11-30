@@ -59,13 +59,16 @@ export class Graph<T extends UniqueNode> {
     return this;
   }
 
-  topSort(): GraphNode<T>[] {
+  topSort(start: GraphNode<T> | undefined = undefined): GraphNode<T>[] {
     const visited = new Set<GraphNode<T>>();
     const stack = new Array<GraphNode<T>>();
 
+    if (start) {
+      this.topSortUtil(start, visited, stack);
+    }
+
     Array.from(this.#nodes).forEach((node: GraphNode<T>) => {
       if (!visited.has(node)) {
-        // const iterator = topSort(node, visited);
         this.topSortUtil(node, visited, stack);
       }
     });
