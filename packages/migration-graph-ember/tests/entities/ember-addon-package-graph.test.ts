@@ -3,7 +3,7 @@ import { getEmberProject, setupProject } from '@rehearsal/test-support';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
 import { EmberAddonPackageGraph } from '../../src/entities/ember-addon-package-graph';
 
-describe('EmberAddonPackageDependencyGraph', () => {
+describe('EmberAddonPackageGraph', () => {
   test('should create an edge between app/components/<file>.js and addon/components/<file>.js', async () => {
     const project = getEmberProject('addon');
 

@@ -32,12 +32,12 @@ describe('graph', () => {
     // Reference https://www.geeksforgeeks.org/topological-sorting/
     const graph = new Graph<UniqueNode>();
 
+    const f = graph.addNode(createNode('5'));
     const a = graph.addNode(createNode('0'));
     const b = graph.addNode(createNode('1'));
     const c = graph.addNode(createNode('2'));
     const d = graph.addNode(createNode('3'));
     const e = graph.addNode(createNode('4'));
-    const f = graph.addNode(createNode('5'));
 
     graph.addEdge(f, c); // 5,2
     graph.addEdge(f, a); // 5,0
@@ -47,8 +47,36 @@ describe('graph', () => {
     graph.addEdge(d, b); // 3,1
 
     // We expect a leaf-to-root output.
-    const expected = ['0', '1', '3', '2', '4', '5'];
+    // const expected = ['0', '1', '3', '2', '4', '5'];
+    // This order is determiend by the order for which the node was added to the graph.
+    // Node f was added first and it's dependencies are in the order of adjacencies.
+    const expected = ['1', '3', '2', '0', '5', '4'];
     const nodes = graph.topSort();
+    const actual = nodes.map((node) => node.content.key);
+    expect(actual).toEqual(expected);
+  });
+
+  test('should print a graph relative to a passed node', async () => {
+    // Reference https://www.geeksforgeeks.org/topological-sorting/
+    const graph = new Graph<UniqueNode>();
+
+    const f = graph.addNode(createNode('5'));
+    const a = graph.addNode(createNode('0'));
+    const b = graph.addNode(createNode('1'));
+    const c = graph.addNode(createNode('2'));
+    const d = graph.addNode(createNode('3'));
+    const e = graph.addNode(createNode('4'));
+
+    graph.addEdge(f, c); // 5,2
+    graph.addEdge(f, a); // 5,0
+    graph.addEdge(e, a); // 4,0
+    graph.addEdge(e, b); // 4,1
+    graph.addEdge(c, d); // 2,3
+    graph.addEdge(d, b); // 3,1
+
+    // We expect a leaf-to-root output.
+    const expected = ['1', '3', '2', '0', '5', '4'];
+    const nodes = graph.topSort(c);
     const actual = nodes.map((node) => node.content.key);
     expect(actual).toEqual(expected);
   });
