@@ -159,7 +159,7 @@ export class EmberAppPackageGraph extends PackageGraph {
         // Lookup the addonName in the package graph
         const maybeAddonPackageNode: GraphNode<PackageNode> | undefined =
           this.findPackageNodeByAddonName(s.addonName);
-        DEBUG_CALLBACK('findPackageNodeByAddonName', maybeAddonPackageNode);
+        DEBUG_CALLBACK('findPackageNodeByAddonName: %O', maybeAddonPackageNode);
 
         if (maybeAddonPackageNode) {
           // We've found a package in the migration graph that has the addonName
