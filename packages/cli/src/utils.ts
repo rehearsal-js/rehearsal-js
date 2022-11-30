@@ -62,7 +62,7 @@ export function msToSeconds(ms: number): number {
   return Math.round(ms / 1000);
 }
 
-export function readJSON<TJson = unknown>(file: string): TJson | undefined {
+export function readJSON<T>(file: string): T | undefined {
   const text = readText(file);
   if (text !== undefined) {
     return parse(text);

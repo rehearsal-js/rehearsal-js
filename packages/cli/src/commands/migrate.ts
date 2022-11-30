@@ -17,14 +17,20 @@ import {
   sonarqubeFormatter,
 } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync, readJSONSync, writeJSONSync } from 'fs-extra';
+import { existsSync, writeJSONSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 import execa = require('execa');
 
 import { generateReports } from '../helpers/report';
-import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
+import {
+  MigrateCommandContext,
+  MigrateCommandOptions,
+  PackageSelection,
+  MenuMap,
+  TSConfig,
+} from '../types';
 import { UserConfig } from '../userConfig';
 import {
   addDep,
@@ -32,6 +38,7 @@ import {
   parseCommaSeparatedList,
   writeTSConfig,
   getPathToBinary,
+  readJSON,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -197,7 +204,7 @@ migrateCommand
               if (existsSync(configPath)) {
                 task.title = `${configPath} already exists, ensuring strict mode is enabled.`;
 
-                const tsConfig = readJSONSync(configPath);
+                const tsConfig = readJSON<TSConfig>(configPath) as TSConfig;
                 tsConfig.compilerOptions.strict = true;
                 writeJSONSync(configPath, tsConfig, { spaces: 2 });
               } else {

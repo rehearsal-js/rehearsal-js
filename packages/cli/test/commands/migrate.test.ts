@@ -208,9 +208,7 @@ describe('migrate - handle custom basePath', async () => {
 
   test('Run cli againt specific basePath via -basePath option', async () => {
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath], {
-      cwd: basePath, // still run cli in basePath
-    });
+    const result = await runBin('migrate', ['--basePath', customBasePath]);
 
     expect(result.stdout).toContain('Installing dependencies');
     expect(result.stdout).toContain('Creating tsconfig');
