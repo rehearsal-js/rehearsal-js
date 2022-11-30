@@ -125,8 +125,6 @@ export class DiagnosticFixPlugin extends Plugin {
       const lineAboveEnd = sourceFile.getLineEndOfPosition(lineAboveStart);
 
       lineAboveText = sourceFile.getFullText().substring(lineAboveStart, lineAboveEnd).trim();
-      // Trim all empty spaces including `//:line:` hack
-      lineAboveText = lineAboveText.replace(/^\s*(\/\/:line:)?$/gm, '');
 
       lineAbove -= 1;
     } while (lineAbove > 0 && lineAboveText === '');

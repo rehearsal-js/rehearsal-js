@@ -31,7 +31,7 @@ export class TypescriptCodeFix extends FixTransform {
     // Do we need to use only the first (or selected) fix only? Seems applying them all can brake the source code
     for (const fix of this.fixes) {
       for (const fileTextChange of fix.changes) {
-        // TODO: Support modification of other then affected files
+        // TODO: Support modification of other than affected files
         if (fileTextChange.fileName !== diagnostic.file.fileName) {
           continue;
         }
