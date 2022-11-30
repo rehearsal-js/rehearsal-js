@@ -1363,9 +1363,10 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
   ],
   "summary": {
     "basePath": "",
+    "commandName": "@rehearsal/upgrade",
     "projectName": "@rehearsal/test",
     "timestamp": "9/22/2022, 13:48:38",
-    "tsVersion": "4.7.4",
+    "tsVersion": "",
   },
 }
 `;
