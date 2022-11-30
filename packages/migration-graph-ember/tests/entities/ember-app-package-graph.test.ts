@@ -221,19 +221,19 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir);
+    const projectGraph = new EmberAppProjectGraph(project.baseDir);
 
     const emberPackage = new EmberAppPackage(project.baseDir);
-    const appNode = m.addPackageToGraph(emberPackage);
+    const appNode = projectGraph.addPackageToGraph(emberPackage, false);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
+    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
     emberPackage.getModuleGraph(options);
 
-    const node: GraphNode<PackageNode> = m.graph.getNode('some-addon');
+    const node: GraphNode<PackageNode> = projectGraph.graph.getNode('some-addon');
     expect(node?.content.synthetic).toBe(true);
 
     const emberAddonPackage = new EmberAddonPackage(join(project.baseDir, 'lib/some-addon'));
-    const addonNode = m.addPackageToGraph(emberAddonPackage);
+    const addonNode = projectGraph.addPackageToGraph(emberAddonPackage);
     expect(addonNode.content.synthetic).toBeFalsy();
 
     // Validate that addonn package has an the edge exists between
@@ -317,7 +317,7 @@ describe('EmberAppPackageGraph', () => {
     const m = new EmberAppProjectGraph(project.baseDir);
 
     const emberAppPackage = new EmberAppPackage(project.baseDir);
-    const appNode = m.addPackageToGraph(emberAppPackage);
+    const appNode = m.addPackageToGraph(emberAppPackage, false);
 
     const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
     emberAppPackage.getModuleGraph(options);
@@ -542,7 +542,7 @@ describe('EmberAppPackageGraph', () => {
 
     // Add the app to the project graph
     const emberAppPackage = new EmberAppPackage(project.baseDir);
-    const appNode = projectGraph.addPackageToGraph(emberAppPackage);
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage, false);
 
     const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
     emberAppPackage.getModuleGraph(options);

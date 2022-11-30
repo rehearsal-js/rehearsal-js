@@ -45,10 +45,6 @@ export class Graph<T extends UniqueNode> {
     const { key } = content;
     if (this.hasNode(key)) {
       const node = this.getNode(key);
-      if (!node) {
-        throw new Error(`Registry populated with undefined graph node at ${key}`);
-      }
-
       return node;
     }
 
