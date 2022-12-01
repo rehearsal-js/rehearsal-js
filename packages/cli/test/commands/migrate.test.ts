@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { copySync, readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
+import { copySync, readdirSync, readJSONSync, writeJSONSync, realpathSync } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
@@ -16,7 +16,8 @@ function prepareTmpDir(dir: string): string {
   const srcDir = resolve(TEST_SRC_DIR, dir);
   const { name: targetDir } = dirSync();
   copySync(srcDir, targetDir);
-  return targetDir;
+  // /var is a symlink to /private/var, use realpath to return /private/var
+  return realpathSync(targetDir);
 }
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -117,11 +118,11 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from default index.js', async () => {
-    const result = await runBin('migrate', [], {
+    const result = await runBin('migrate', ['-v'], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
     expect(readdirSync(basePath)).toContain('index.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
@@ -134,12 +135,11 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from specific entrypoint', async () => {
-    console.log(basePath);
     const result = await runBin('migrate', ['--entrypoint', 'depends-on-foo.js'], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
@@ -157,6 +157,16 @@ describe('migrate - JS to TS conversion', async () => {
     });
 
     expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
+  });
+
+  test('Generate sarif report by default', async () => {
+    await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    const reportPath = resolve(basePath, '.rehearsal');
+
+    expect(readdirSync(reportPath)).toContain('report.sarif');
   });
 
   test('Generate report with -r flag', async () => {
@@ -214,7 +224,7 @@ describe('migrate - handle custom basePath', async () => {
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`Converting JS files to TS`);
+    expect(result.stdout).toContain(`1 JS file has been converted to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 
