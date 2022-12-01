@@ -6,6 +6,8 @@ import { valid } from 'semver';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
+import { isEmberApp, isEmberEngine, isEmberAddon } from '@rehearsal/migration-graph-ember';
+import { PackageJson } from '@rehearsal/migration-graph-shared';
 
 import findup = require('findup-sync');
 import execa = require('execa');
@@ -383,4 +385,11 @@ export function isTypescriptInDevdep(basePath: string): boolean {
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
     (packageJSON.dependencies && packageJSON.dependencies.typescript)
   );
+}
+
+/**
+ * Check if it's an ember project
+ */
+export function isEmber(packageJson: PackageJson): boolean {
+  return isEmberApp(packageJson) || isEmberAddon(packageJson) || isEmberEngine(packageJson);
 }

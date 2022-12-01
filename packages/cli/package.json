@@ -31,6 +31,8 @@
     "@microsoft/api-documenter": "^7.13.68",
     "@rehearsal/migrate": "workspace:*",
     "@rehearsal/migration-graph": "workspace:*",
+    "@rehearsal/migration-graph-ember": "workspace:*",
+    "@rehearsal/migration-graph-shared": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/upgrade": "workspace:*",
     "commander": "^9.4.0",

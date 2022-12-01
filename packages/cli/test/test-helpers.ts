@@ -3,6 +3,7 @@ import execa from 'execa';
 import which from 'which';
 
 import { git, gitIsRepoDirty } from '../src/utils';
+export { addDep } from '../src/utils';
 
 export const PNPM_PATH = which.sync('pnpm');
 

@@ -1,0 +1,9 @@
+{
+  "name": "ember-app",
+  "version": "1.0.0",
+  "dependencies": {},
+  "devDependencies": {
+    "ember-source": "^3.28.0",
+    "ember-cli": "^3.28.0"
+  }
+}

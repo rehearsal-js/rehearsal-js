@@ -4,7 +4,7 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
 import { CustomConfig } from '../../src/types';
-import { runBin } from '../test-helpers';
+import { runBin, addDep } from '../test-helpers';
 
 setGracefulCleanup();
 
@@ -70,6 +70,25 @@ describe('migrate - install dependencies', async () => {
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     expect(packageJson.dependencies).toHaveProperty('fs-extra');
     expect(packageJson.devDependencies).toHaveProperty('@types/fs-extra');
+  });
+
+  test('Install extra dependencies for Ember', async () => {
+    basePath = prepareTmpDir('ember');
+
+    // Assume ember-cli should be always available in ember app/addon/engine
+    await addDep(['ember-cli@^3.28'], true, { cwd: basePath });
+
+    const result = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(result.stdout).toContain('Installing dependencies for Ember');
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    expect(packageJson.devDependencies).toHaveProperty('@glint/core');
+    expect(packageJson.devDependencies).toHaveProperty('@glint/template');
+    expect(packageJson.devDependencies).toHaveProperty('@glint/environment-ember-loose');
+    expect(packageJson.devDependencies).toHaveProperty('ember-cli-typescript');
   });
 });
 

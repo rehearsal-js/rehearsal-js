@@ -11,10 +11,12 @@ import {
 } from '@rehearsal/migration-graph';
 import { jsonFormatter, mdFormatter, Reporter, sarifFormatter } from '@rehearsal/reporter';
 import { Command } from 'commander';
-import { existsSync } from 'fs-extra';
+import { existsSync, readJSONSync } from 'fs-extra';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
+
+import execa = require('execa');
 
 import { generateReports } from '../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions, PackageSelection, MenuMap } from '../types';
@@ -26,6 +28,8 @@ import {
   runModuleCommand,
   writeTSConfig,
   isTypescriptInDevdep,
+  getPathToBinary,
+  isEmber,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -169,6 +173,7 @@ migrateCommand
           title: 'Installing dependencies',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
+            const packageJson = readJSONSync(resolve(options.basePath, 'package.json'));
             // install custom dependencies
             if (_ctx.userConfig?.hasDependencies) {
               task.title = `Installing custom dependencies`;
@@ -179,6 +184,23 @@ migrateCommand
               task.skip('typescript already exists. Skipping installing typescript.');
             } else {
               await addDep(['typescript'], true, { cwd: options.basePath });
+            }
+
+            // extra dependencies for Ember App/Addon/Engine
+            // TODO: dependes on how much extra stuff we need for a specific framework,
+            // probably need a plugable system for this.
+            if (isEmber(packageJson)) {
+              task.title = `Installing dependencies for Ember`;
+              await addDep(
+                ['@glint/core', '@glint/template', '@glint/environment-ember-loose'],
+                true,
+                { cwd: options.basePath }
+              );
+              // assuming ember-cli should be always installed in ember app/addon/engine
+              const emberCLIBinPath = await getPathToBinary('ember', { cwd: options.basePath });
+              await execa(emberCLIBinPath, ['install', 'ember-cli-typescript@latest'], {
+                cwd: options.basePath,
+              });
             }
           },
         },

@@ -113,6 +113,8 @@ importers:
       '@microsoft/api-documenter': ^7.13.68
       '@rehearsal/migrate': workspace:*
       '@rehearsal/migration-graph': workspace:*
+      '@rehearsal/migration-graph-ember': workspace:*
+      '@rehearsal/migration-graph-shared': workspace:*
       '@rehearsal/reporter': workspace:*
       '@rehearsal/upgrade': workspace:*
       '@types/which': ^2.0.1
@@ -137,6 +139,8 @@ importers:
       '@microsoft/api-documenter': 7.19.14
       '@rehearsal/migrate': link:../migrate
       '@rehearsal/migration-graph': link:../migration-graph
+      '@rehearsal/migration-graph-ember': link:../migration-graph-ember
+      '@rehearsal/migration-graph-shared': link:../migration-graph-shared
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/upgrade': link:../upgrade
       commander: 9.4.0
