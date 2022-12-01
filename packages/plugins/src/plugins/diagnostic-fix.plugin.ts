@@ -1,10 +1,22 @@
-import { type DiagnosticWithContext, type FixedFile, codefixes, hints } from '@rehearsal/codefixes';
+import {
+  codefixes,
+  hints,
+  type DiagnosticWithContext,
+  type FixedFile,
+  type CodeFixKind,
+} from '@rehearsal/codefixes';
 import { type PluginResult, Plugin } from '@rehearsal/service';
-import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
+import {
+  applyTextChange,
+  findNodeAtPosition,
+  isNodeInsideJsx,
+  normalizeTextChanges,
+} from '@rehearsal/utils';
 import {
   type DiagnosticWithLocation,
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
+  TextChange,
 } from 'typescript';
 import { debug } from 'debug';
 import { getFilesData } from '../data';
@@ -34,41 +46,42 @@ export class DiagnosticFixPlugin extends Plugin {
         continue;
       }
 
-      let fixedFiles: FixedFile[] = [];
+      const fix = codefixes.getCodeFixes(diagnostic);
+      const fixedFiles: FixedFile[] = [];
+      const hint = hints.getHint(diagnostic);
 
-      const fixes = codefixes.getCodeFixes(diagnostic);
+      if (fix) {
+        for (const fileTextChange of fix.changes) {
+          let text = this.service.getFileText(fileTextChange.fileName);
 
-      while (fixes.length > 0 && fixedFiles.length === 0) {
-        fixedFiles = fixes.shift()?.run(diagnostic, this.service) || [];
-      }
+          const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
+          for (const textChange of textChanges) {
+            fixedFiles.push(this.convertTextChangeToFixedFile(fileName, textChange));
 
-      // TODO: Seems like a good candidate to be moved to `if (addHints)`
-      let hint = hints.getHint(diagnostic);
-      const helpUrl = hints.getHelpUrl(diagnostic);
+            text = applyTextChange(text, textChange);
+          }
 
-      const fixed = fixedFiles.length > 0;
+          this.service.setFileText(fileTextChange.fileName, text);
+          allFixedFiles.add(fileTextChange.fileName);
 
-      if (fixed) {
-        for (const fixedFile of fixedFiles) {
-          this.service.setFileText(fixedFile.fileName, fixedFile.updatedText!);
-          allFixedFiles.add(fixedFile.fileName);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         }
-
-        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       } else {
         if (addHints) {
           // Add a hint message in case we didn't modify any files (codefix was not applied)
           const text = this.addHintComment(diagnostic, hint, commentTag);
+
           this.service.setFileText(fileName, text);
           allFixedFiles.add(fileName);
 
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
         } else {
-          hint = '';
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t not handled`);
         }
       }
 
+      const fixed = fix !== undefined;
+      const helpUrl = hints.getHelpUrl(diagnostic);
       const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
 
       this.reporter?.addItem(diagnostic, processedFiles, fixed, diagnostic.node, hint, helpUrl);
@@ -88,8 +101,14 @@ export class DiagnosticFixPlugin extends Plugin {
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
 
-    return this.service
-      .getSemanticDiagnosticsWithLocation(fileName)
+    const diagnostics = [
+      ...this.service.getSemanticDiagnosticsWithLocation(fileName),
+      ...this.service.getSuggestionDiagnostics(fileName)
+    ];
+
+    diagnostics.sort((a, b) => a.start - b.start);
+
+    return diagnostics
       .filter((diagnostic) => !this.getHintComment(diagnostic, tag)) // Except diagnostics with comment
       .map<DiagnosticWithContext>((diagnostic) => ({
         ...diagnostic,
@@ -147,7 +166,6 @@ export class DiagnosticFixPlugin extends Plugin {
       return undefined;
     }
 
-    // Get a text after tag till the end of comment
     return sourceFile
       .getFullText()
       .substring(tagStart + tag.length, commentSpan.start + commentSpan.length) // grab `@rehearsal ... */`
@@ -172,5 +190,42 @@ export class DiagnosticFixPlugin extends Plugin {
     const text = diagnostic.file.getFullText();
 
     return text.slice(0, positionToAddComment) + comment + '\n' + text.slice(positionToAddComment);
+  }
+
+  convertTextChangeToFixedFile(fileName: string, textChange: TextChange): FixedFile {
+    const sourceFile = this.service.getSourceFile(fileName);
+    const { line, character } = getLineAndCharacterOfPosition(sourceFile, textChange.span.start);
+    const startLine = line + 1; //bump line 0 to line 1, so on and so forth
+    const startColumn = character + 1; //bump character 0 to character 1, so on and so forth
+    const newCode = textChange.newText;
+    const oldCode = sourceFile.text.substring(
+          textChange.span.start,
+          textChange.span.start + textChange.span.length
+        ) ;
+
+    const getActionKind = (textChange: TextChange): CodeFixKind => {
+      if (textChange.span.length === 0) {
+        return 'add';
+      }
+
+      if (textChange.newText === '') {
+        return 'delete';
+      }
+
+      return 'replace';
+    };
+
+    return {
+      fileName,
+      newCode,
+      oldCode,
+      location: {
+        startLine,
+        startColumn,
+        endLine: startLine, //TODO: calculate endLine for multiple line insertion
+        endColumn: startColumn + newCode.length, //TODO: calculate endLine for multiple line insertion
+      },
+      codeFixAction: getActionKind(textChange),
+    };
   }
 }

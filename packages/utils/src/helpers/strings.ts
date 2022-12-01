@@ -1,15 +1,6 @@
 import { TextChange } from 'typescript';
 
 /**
- * Checks if there are changes in the code between to strings
- * by comparing code without empty spaces between structures.
- */
-export function isSourceCodeChanged(originalText: string, updateText: string): boolean {
-  // Compares source codes without spaces.
-  return originalText.trim().replace(/\s+/g, ' ') !== updateText.trim().replace(/\s+/g, ' ');
-}
-
-/**
  * Applies text change (ts.TextChange) to the text string
  */
 export function applyTextChange(text: string, textChange: TextChange): string {

@@ -1,49 +1,40 @@
-import { findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
-import { DiagnosticWithLocation, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
+import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
+import { CodeFixAction, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
+import { CodeFix, createCodeFixAction, DiagnosticWithContext } from '../types';
 
-import { type FixedFile, FixTransform } from '../types';
-import { getCodemodData } from '../utils';
-
-export class FixTransform2571 extends FixTransform {
-  fix = (diagnostic: DiagnosticWithLocation): FixedFile[] => {
+export class Fix2571 implements CodeFix {
+  getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-    if (errorNode && isIdentifier(errorNode) && isVariableOfCatchClause(errorNode)) {
-      let codeReplacement;
-
-      if (isPropertyOfErrorInterface(errorNode.parent)) {
-        codeReplacement = `(${errorNode.getText()} as Error)`;
-      } else {
-        codeReplacement = `(${errorNode.getText()} as any)`;
-      }
-
-      const originalText = diagnostic.file.text;
-      const updatedText =
-        originalText.substring(0, errorNode.getStart()) +
-        codeReplacement +
-        originalText.substring(errorNode.getEnd());
-
-      return getCodemodData(
-        diagnostic.file,
-        updatedText,
-        diagnostic.start,
-        codeReplacement,
-        'replace'
-      );
-    } else {
-      return [];
+    if (!errorNode || !isIdentifier(errorNode) || !isVariableOfCatchClause(errorNode)) {
+      return undefined;
     }
-  };
-}
 
-/**
- * Checks if the `node` is a part of property access expression and is a member of the `Error` interface
- */
-function isPropertyOfErrorInterface(node: Node): boolean {
-  const errorProps: string[] = ['name', 'message', 'stack'];
+    let codeReplacement = `(${errorNode.getText()} as Error)`;
 
-  if (isPropertyAccessExpression(node)) {
-    return errorProps.includes(node.name.getText());
+    if (!this.isPropertyOfErrorInterface(errorNode.parent)) {
+      codeReplacement = `(${errorNode.getText()} as any)`;
+    }
+
+    const changes = ChangesFactory.replaceText(
+      diagnostic.file,
+      errorNode.getStart(),
+      errorNode.getWidth(),
+      codeReplacement
+    );
+
+    return createCodeFixAction('addTypeGuard', [changes], 'Add type guard for an Error object');
   }
 
-  return false;
+  /**
+   * Checks if the `node` is a part of property access expression and is a member of the `Error` interface
+   */
+  isPropertyOfErrorInterface(node: Node): boolean {
+    const errorProps: string[] = ['name', 'message', 'stack'];
+
+    if (isPropertyAccessExpression(node)) {
+      return errorProps.includes(node.name.getText());
+    }
+
+    return false;
+  }
 }

@@ -1,4 +1,5 @@
-import { CodeFixCollection, DiagnosticWithContext, FixTransform } from '.';
+import { CodeFixAction } from 'typescript';
+import { CodeFix, CodeFixCollection, DiagnosticWithContext } from '.';
 
 /**
  * Provides
@@ -6,13 +7,13 @@ import { CodeFixCollection, DiagnosticWithContext, FixTransform } from '.';
 export class BaseCodeFixCollection implements CodeFixCollection {
   readonly list;
 
-  constructor(list: { [key: number]: FixTransform }) {
+  constructor(list: { [key: number]: CodeFix }) {
     this.list = list;
   }
 
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): FixTransform | undefined {
+  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     if (this.list[diagnostic.code] !== undefined) {
-      return this.list[diagnostic.code];
+      return this.list[diagnostic.code].getCodeAction(diagnostic);
     }
 
     return undefined;

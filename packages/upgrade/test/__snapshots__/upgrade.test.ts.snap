@@ -9,18 +9,20 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "react-processed.tsx": {
-          "code": "const unused = 'something';",
           "codeFixAction": "delete",
           "fileName": "react-processed.tsx",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 9,
+            "endColumn": 1,
             "endLine": 4,
-            "startColumn": 9,
+            "startColumn": 1,
             "startLine": 4,
           },
+          "newCode": "",
+          "oldCode": "  const unused = 'something';
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -46,7 +48,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react-processed.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react-processed.tsx",
           "fixed": false,
@@ -58,6 +59,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 20,
             "startLine": 6,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -83,7 +86,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react-processed.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react-processed.tsx",
           "fixed": false,
@@ -95,6 +97,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 7,
             "startLine": 12,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -120,7 +124,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2322,
       "files": {
         "react-processed.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react-processed.tsx",
           "fixed": false,
@@ -132,6 +135,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 12,
             "startLine": 14,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -157,7 +162,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react-processed.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react-processed.tsx",
           "fixed": false,
@@ -169,6 +173,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 10,
             "startLine": 21,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -194,7 +200,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2322,
       "files": {
         "react-processed.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react-processed.tsx",
           "fixed": false,
@@ -206,6 +211,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 27,
             "startLine": 28,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -227,22 +234,61 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     },
     {
       "analysisTarget": "react-xx.ts",
-      "category": "Error",
-      "errorCode": 7006,
+      "category": "Suggestion",
+      "errorCode": 80004,
       "files": {
         "react-xx.ts": {
-          "code": ": boolean",
           "codeFixAction": "add",
           "fileName": "react-xx.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 32,
-            "endLine": 22,
-            "startColumn": 23,
-            "startLine": 22,
+            "endColumn": 37,
+            "endLine": 23,
+            "startColumn": 29,
+            "startLine": 23,
           },
+          "newCode": ": string",
+          "oldCode": "",
+          "roles": [
+            "analysisTarget",
+            "modified",
+          ],
+        },
+      },
+      "fixed": true,
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts80004}",
+      "hint": "JSDoc types may be moved to TypeScript types.",
+      "message": "JSDoc types may be moved to TypeScript types.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 20,
+        "endLine": 22,
+        "startColumn": 8,
+        "startLine": 22,
+      },
+      "nodeText": "onRadioChange",
+    },
+    {
+      "analysisTarget": "react-xx.ts",
+      "category": "Error",
+      "errorCode": 7006,
+      "files": {
+        "react-xx.ts": {
+          "codeFixAction": "add",
+          "fileName": "react-xx.ts",
+          "fixed": true,
+          "hint": undefined,
+          "hintAdded": false,
+          "location": {
+            "endColumn": 37,
+            "endLine": 23,
+            "startColumn": 28,
+            "startLine": 23,
+          },
+          "newCode": ": boolean",
+          "oldCode": "",
           "roles": [
             "analysisTarget",
             "modified",
@@ -256,11 +302,49 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 26,
-        "endLine": 21,
+        "endLine": 22,
         "startColumn": 22,
-        "startLine": 21,
+        "startLine": 22,
       },
       "nodeText": "value",
+    },
+    {
+      "analysisTarget": "react-xx.ts",
+      "category": "Error",
+      "errorCode": 1064,
+      "files": {
+        "react-xx.ts": {
+          "codeFixAction": "replace",
+          "fileName": "react-xx.ts",
+          "fixed": true,
+          "hint": undefined,
+          "hintAdded": false,
+          "location": {
+            "endColumn": 55,
+            "endLine": 23,
+            "startColumn": 40,
+            "startLine": 23,
+          },
+          "newCode": "Promise<string>",
+          "oldCode": "string",
+          "roles": [
+            "analysisTarget",
+            "modified",
+          ],
+        },
+      },
+      "fixed": true,
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts1064}",
+      "hint": "The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?",
+      "message": "The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?",
+      "nodeKind": "StringKeyword",
+      "nodeLocation": {
+        "endColumn": 44,
+        "endLine": 22,
+        "startColumn": 39,
+        "startLine": 22,
+      },
+      "nodeText": "string",
     },
     {
       "analysisTarget": "react.tsx",
@@ -268,18 +352,20 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "react.tsx": {
-          "code": "const unused = 'something';",
           "codeFixAction": "delete",
           "fileName": "react.tsx",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 9,
+            "endColumn": 1,
             "endLine": 4,
-            "startColumn": 9,
+            "startColumn": 1,
             "startLine": 4,
           },
+          "newCode": "",
+          "oldCode": "  const unused = 'something';
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -305,7 +391,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react.tsx",
           "fixed": false,
@@ -317,6 +402,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 20,
             "startLine": 6,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -342,7 +429,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react.tsx",
           "fixed": false,
@@ -354,6 +440,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 7,
             "startLine": 12,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -379,7 +467,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2322,
       "files": {
         "react.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react.tsx",
           "fixed": false,
@@ -391,6 +478,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 12,
             "startLine": 14,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -416,7 +505,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "react.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react.tsx",
           "fixed": false,
@@ -428,6 +516,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 10,
             "startLine": 21,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -453,7 +543,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2322,
       "files": {
         "react.tsx": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "react.tsx",
           "fixed": false,
@@ -465,6 +554,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 27,
             "startLine": 28,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -490,18 +581,19 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": ",",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 19,
+            "endColumn": 17,
             "endLine": 1,
-            "startColumn": 19,
+            "startColumn": 17,
             "startLine": 1,
           },
+          "newCode": "",
+          "oldCode": ", ",
           "roles": [
             "analysisTarget",
             "modified",
@@ -527,7 +619,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "import fs from 'fs';",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
@@ -539,6 +630,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 1,
             "startLine": 2,
           },
+          "newCode": "",
+          "oldCode": "import fs from 'fs';
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -564,18 +658,20 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "const thisConstant = 'is never read';",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 4,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 4,
           },
+          "newCode": "",
+          "oldCode": "const thisConstant = 'is never read';
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -601,18 +697,20 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "let thisVariable: number; // is never read",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 5,
+            "endColumn": 1,
             "endLine": 5,
-            "startColumn": 5,
+            "startColumn": 1,
             "startLine": 5,
           },
+          "newCode": "",
+          "oldCode": "let thisVariable: number; // is never read
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -638,20 +736,22 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "function thisFunctionIsNeverRead(): void {
-  return;
-}",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 10,
+            "endColumn": 1,
             "endLine": 6,
-            "startColumn": 10,
+            "startColumn": 1,
             "startLine": 6,
           },
+          "newCode": "",
+          "oldCode": "function thisFunctionIsNeverRead(): void {
+  return;
+}
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -677,20 +777,23 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "code": "function missingFunction(): void {
-    throw new Error('Function not implemented.');
-}",
           "codeFixAction": "add",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 96,
-            "endLine": 8,
-            "startColumn": 10,
-            "startLine": 8,
+            "endColumn": 89,
+            "endLine": 47,
+            "startColumn": 1,
+            "startLine": 47,
           },
+          "newCode": "
+function missingFunction(): void {
+    throw new Error('Function not implemented.');
+}
+",
+          "oldCode": "",
           "roles": [
             "analysisTarget",
             "modified",
@@ -716,7 +819,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "ts-errors.ts",
           "fixed": false,
@@ -728,6 +830,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 21,
             "startLine": 14,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -753,7 +857,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "ts-errors.ts",
           "fixed": false,
@@ -765,6 +868,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 6,
             "startLine": 22,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -790,7 +895,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "code": undefined,
           "codeFixAction": undefined,
           "fileName": "ts-errors.ts",
           "fixed": false,
@@ -802,6 +906,8 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
             "startColumn": 6,
             "startLine": 24,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
             "unmodified",
@@ -827,20 +933,22 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "function notProperlyFormatted(file: string): string {
-  return doSomething(file);
-}",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 10,
+            "endColumn": 1,
             "endLine": 29,
-            "startColumn": 10,
+            "startColumn": 1,
             "startLine": 29,
           },
+          "newCode": "",
+          "oldCode": "function notProperlyFormatted(file: string): string {
+  return doSomething(file);
+}
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -866,7 +974,19 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "/**
+          "codeFixAction": "delete",
+          "fileName": "ts-errors.ts",
+          "fixed": true,
+          "hint": undefined,
+          "hintAdded": false,
+          "location": {
+            "endColumn": 1,
+            "endLine": 30,
+            "startColumn": 1,
+            "startLine": 30,
+          },
+          "newCode": "",
+          "oldCode": "/**
  * Existing multiline comment
  */
 function thisFunctionIsACompleteMess(inSeconds = false): string {
@@ -879,18 +999,8 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
   }
 
   return resolved;
-}",
-          "codeFixAction": "delete",
-          "fileName": "ts-errors.ts",
-          "fixed": true,
-          "hint": undefined,
-          "hintAdded": false,
-          "location": {
-            "endColumn": 10,
-            "endLine": 33,
-            "startColumn": 10,
-            "startLine": 33,
-          },
+}
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -916,7 +1026,6 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-errors.ts": {
-          "code": "import { resolve } from 'path';",
           "codeFixAction": "delete",
           "fileName": "ts-errors.ts",
           "fixed": true,
@@ -928,6 +1037,9 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
             "startColumn": 1,
             "startLine": 1,
           },
+          "newCode": "",
+          "oldCode": "import { resolve } from 'path';
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -953,20 +1065,23 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "code": "function timestamp() {
-    throw new Error(\\"Function not implemented.\\");
-}",
           "codeFixAction": "add",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 75,
-            "endLine": 31,
+            "endColumn": 77,
+            "endLine": 36,
             "startColumn": 1,
-            "startLine": 31,
+            "startLine": 36,
           },
+          "newCode": "
+function timestamp() {
+    throw new Error(\\"Function not implemented.\\");
+}
+",
+          "oldCode": "",
           "roles": [
             "analysisTarget",
             "modified",
@@ -992,20 +1107,22 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "function unusedFunction(): boolean {
-  return fs.existsSync('.');
-}",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 10,
+            "endColumn": 1,
             "endLine": 6,
-            "startColumn": 10,
+            "startColumn": 1,
             "startLine": 6,
           },
+          "newCode": "",
+          "oldCode": "function unusedFunction(): boolean {
+  return fs.existsSync('.');
+}
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1031,18 +1148,20 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "let unusedVariable: number;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 5,
+            "endColumn": 1,
             "endLine": 7,
-            "startColumn": 5,
+            "startColumn": 1,
             "startLine": 7,
           },
+          "newCode": "",
+          "oldCode": "let unusedVariable: number;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1068,18 +1187,20 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "const unusedConst1 = null;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 9,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 9,
           },
+          "newCode": "",
+          "oldCode": "const unusedConst1 = null;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1105,18 +1226,20 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "const unusedConst2 = null;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 11,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 11,
           },
+          "newCode": "",
+          "oldCode": "const unusedConst2 = null;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1142,18 +1265,20 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "const unusedConst3 = null;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 13,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 13,
           },
+          "newCode": "",
+          "oldCode": "const unusedConst3 = null;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1179,18 +1304,20 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "const unusedConstWithoutCommentButWithRehearsalTagAbove = null;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 15,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 15,
           },
+          "newCode": "",
+          "oldCode": "const unusedConstWithoutCommentButWithRehearsalTagAbove = null;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1216,20 +1343,22 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 6133,
       "files": {
         "ts-processed.ts": {
-          "code": "const resultValue = something
-  ? missingVar
-  : missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;",
           "codeFixAction": "delete",
           "fileName": "ts-processed.ts",
           "fixed": true,
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 7,
+            "endColumn": 1,
             "endLine": 16,
-            "startColumn": 7,
+            "startColumn": 1,
             "startLine": 16,
           },
+          "newCode": "",
+          "oldCode": "const resultValue = something
+  ? missingVar
+  : missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
+",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1255,7 +1384,6 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 2571,
       "files": {
         "ts-processed.ts": {
-          "code": "(e as Error)",
           "codeFixAction": "replace",
           "fileName": "ts-processed.ts",
           "fixed": true,
@@ -1267,6 +1395,8 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
             "startColumn": 15,
             "startLine": 21,
           },
+          "newCode": "(e as Error)",
+          "oldCode": "e",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1292,7 +1422,6 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 2571,
       "files": {
         "ts-processed.ts": {
-          "code": "(e as any)",
           "codeFixAction": "replace",
           "fileName": "ts-processed.ts",
           "fixed": true,
@@ -1304,6 +1433,8 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
             "startColumn": 15,
             "startLine": 22,
           },
+          "newCode": "(e as any)",
+          "oldCode": "e",
           "roles": [
             "analysisTarget",
             "modified",
@@ -1326,39 +1457,40 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
     {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
-      "errorCode": 7006,
+      "errorCode": 2345,
       "files": {
         "ts-types.ts": {
-          "code": ": string",
-          "codeFixAction": "add",
+          "codeFixAction": undefined,
           "fileName": "ts-types.ts",
-          "fixed": true,
-          "hint": undefined,
-          "hintAdded": false,
+          "fixed": false,
+          "hint": "Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'.",
+          "hintAdded": true,
           "location": {
-            "endColumn": 30,
-            "endLine": 1,
-            "startColumn": 22,
-            "startLine": 1,
+            "endColumn": 8,
+            "endLine": 26,
+            "startColumn": 6,
+            "startLine": 26,
           },
+          "newCode": undefined,
+          "oldCode": undefined,
           "roles": [
             "analysisTarget",
-            "modified",
+            "unmodified",
           ],
         },
       },
-      "fixed": true,
-      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
-      "hint": "Parameter 'me' implicitly has an 'any' type.",
-      "message": "Parameter 'me' implicitly has an 'any' type.",
-      "nodeKind": "Parameter",
+      "fixed": false,
+      "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
+      "hint": "Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'.",
+      "message": "Argument of type 'string' is not assignable to parameter of type 'number'.",
+      "nodeKind": "StringLiteral",
       "nodeLocation": {
-        "endColumn": 22,
-        "endLine": 0,
-        "startColumn": 21,
-        "startLine": 0,
+        "endColumn": 8,
+        "endLine": 26,
+        "startColumn": 6,
+        "startLine": 26,
       },
-      "nodeText": "me",
+      "nodeText": "'O'",
     },
   ],
   "summary": {
