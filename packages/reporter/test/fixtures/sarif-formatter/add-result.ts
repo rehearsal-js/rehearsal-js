@@ -5,7 +5,8 @@ const addResultData: Report = {
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
     timestamp: "9/16/2022, 13:24:57",
-    basePath: "/reporter/test/sarif-formatter"
+    basePath: "/reporter/test/sarif-formatter",
+    commandName: "@rehearsal/reporter"
   },
   items: [
     {
@@ -21,7 +22,8 @@ const addResultData: Report = {
           },
           fixed: true,
           hint: '',
-          code: "import react from 'react';",
+          oldCode: "import react from 'react';",
+          newCode: '',
           codeFixAction: "delete",
           hintAdded: false,
           roles: [
@@ -56,7 +58,8 @@ const addResultData: Report = {
             endColumn: 5,
           },
           fixed: false,
-          code: '',
+          oldCode: '',
+          newCode: '',
           codeFixAction: undefined,
           hint: "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
           hintAdded: true,
@@ -92,7 +95,8 @@ const addResultData: Report = {
             endColumn: 5,
           },
           fixed: false,
-          code: '',
+          oldCode: undefined,
+          newCode: undefined,
           codeFixAction: undefined,
           hint: "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
           hintAdded: true,

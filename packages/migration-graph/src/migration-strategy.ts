@@ -80,7 +80,6 @@ export function getMigrationStrategy(
 
   projectGraph.graph
     .topSort()
-    .reverse() // Reverse the graph order to ensure leaf package first.
     // Iterate through each package
     .forEach((packageNode: GraphNode<PackageNode>) => {
       const packagePath = packageNode.content?.pkg?.packagePath;

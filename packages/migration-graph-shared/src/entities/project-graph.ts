@@ -38,9 +38,7 @@ export class ProjectGraph {
   }
 
   addPackageToGraph(p: Package): GraphNode<PackageNode> {
-    DEBUG_CALLBACK(`\n------------------`);
-    DEBUG_CALLBACK('Package Name: %0', p.packageName);
-    DEBUG_CALLBACK('Package Path: %0', p.packagePath);
+    DEBUG_CALLBACK('addPackageToGraph: name: %s, path: %s', p.packageName, p.packagePath);
 
     const isConverted = p.isConvertedToTypescript('source-only');
 
@@ -59,7 +57,7 @@ export class ProjectGraph {
     }
 
     if (isConverted) {
-      DEBUG_CALLBACK('Package %0 appears to been migrated to Typescript.', p.packageName);
+      DEBUG_CALLBACK('Package %s appears to been migrated to Typescript.', p.packageName);
     }
 
     return entry;

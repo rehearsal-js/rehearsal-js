@@ -71,6 +71,13 @@ export class RehearsalService {
   }
 
   /**
+   * Gets a list of suggested diagnostic objects
+   */
+  getSuggestionDiagnostics(fileName: string): DiagnosticWithLocation[] {
+    return this.service.getSuggestionDiagnostics(fileName);
+  }
+
+  /**
    * Provides a path to a module file by its name
    */
   resolveModuleName(moduleName: string, containingFile: string): string | undefined {

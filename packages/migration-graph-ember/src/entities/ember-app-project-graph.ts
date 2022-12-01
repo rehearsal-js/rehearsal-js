@@ -66,9 +66,9 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
     }
 
     if (packageData.converted) {
-      DEBUG_CALLBACK('[X] DONE %0', taskString);
+      DEBUG_CALLBACK('[X] DONE %s', taskString);
     } else {
-      DEBUG_CALLBACK('[ ] TODO %0', taskString);
+      DEBUG_CALLBACK('[ ] TODO %s', taskString);
     }
 
     reportedNodes.add(packageName);
@@ -83,7 +83,10 @@ export class EmberAppProjectGraph extends ProjectGraph {
     super(rootDir, options);
   }
 
-  addPackageToGraph(p: EmberAppPackage | EmberAddonPackage | Package): GraphNode<PackageNode> {
+  addPackageToGraph(
+    p: EmberAppPackage | EmberAddonPackage | Package,
+    crawl = true
+  ): GraphNode<PackageNode> {
     if (p instanceof EmberAddonPackage) {
       // Check the graph if it has this node already
       const hasNodeByPackageName = this.graph.hasNode(p.packageName);
@@ -96,28 +99,19 @@ export class EmberAppProjectGraph extends ProjectGraph {
         }
       }
     }
-
     const node = super.addPackageToGraph(p);
 
-    this.buildAnalyzedPackageTree(node);
+    if (crawl) {
+      this.buildAnalyzedPackageTree(node);
+    }
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));
 
     return node;
   }
 
-  buildAnalyzedPackageTree(currentNode: GraphNode<PackageNode>, depth = 1): void {
-    // Ensure we're dealing with a full fledged node, otherwise it could be synthetic
-    if (!currentNode.content?.synthetic) {
-      return;
-      // throw new Error('No package found for node ... TBD');
-    }
-
-    if (!currentNode?.content.pkg) {
-      return;
-    }
-
-    const pkg = currentNode?.content?.pkg;
+  buildAnalyzedPackageTree(source: GraphNode<PackageNode>, depth = 1): void {
+    const pkg = source?.content?.pkg;
 
     if (!pkg) {
       throw new Error('Unable to buildAnalyzedPackageTree; node has no package defined.');
@@ -125,38 +119,16 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const explicitDependencies = this.getExplicitPackageDependencies(pkg);
 
-    explicitDependencies.forEach((p: Package) => {
-      const key = p.packageName;
+    DEBUG_CALLBACK('explicitDependencies: %O', explicitDependencies);
 
-      let depNode;
+    explicitDependencies.forEach((p: Package | EmberAddonPackage) => {
+      const dest = this.addPackageToGraph(p, false);
 
-      if (!this.graph.hasNode(key)) {
-        // DEBUG_CALLBACK('buildAnalyzedPackagTree - addNode');
+      DEBUG_CALLBACK('Adding edge from %s to %s', source.content.key, dest.content.key);
 
-        depNode = this.graph.addNode({
-          key,
-          pkg: p,
-          converted: p.isConvertedToTypescript(),
-        });
+      this.graph.addEdge(source, dest);
 
-        // Need to refactor data flow here. Seems odd how we're creating the graph node without modules then populating it after.
-        // Probably should lazily populate this.
-
-        // depNode.content.modules = p.createModuleGraph({
-        //   project: this,
-        //   parent: depNode,
-        // });
-      } else {
-        depNode = this.graph.getNode(key);
-      }
-
-      if (!depNode) {
-        throw new Error(`Unable to find node for ${key}`);
-      }
-
-      this.graph.addEdge(currentNode, depNode);
-
-      this.buildAnalyzedPackageTree(depNode, depth + 1);
+      this.buildAnalyzedPackageTree(dest, depth + 1);
     });
   }
 
@@ -210,7 +182,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
    */
   findPackageByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
-      DEBUG_CALLBACK('findPackageNodeByAddonName: %0', n.content);
+      DEBUG_CALLBACK('findPackageNodeByAddonName: %O', n.content);
 
       const somePackage: Package = n.content.pkg;
 
@@ -218,7 +190,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         n.content.key === addonName ||
         (somePackage instanceof EmberAddonPackage && this.isMatch(addonName, somePackage))
       ) {
-        DEBUG_CALLBACK('Found an EmberAddonPackage %0', somePackage);
+        DEBUG_CALLBACK('Found an EmberAddonPackage %O', somePackage);
         return true;
       }
       return false;

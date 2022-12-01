@@ -39,17 +39,6 @@ describe('migrate - install dependencies', async () => {
     expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
   });
 
-  test('Do not install typescript dependency if project already has one', async () => {
-    // at this point project already have typescript installed in previous test
-    const result = await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    expect(result.stdout).toContain(
-      '[SKIPPED] typescript already exists. Skipping installing typescript.'
-    );
-  });
-
   test('Install custom dependencies with user config provided', async () => {
     basePath = prepareTmpDir('initialization');
     createUserConfig(basePath, {
@@ -108,14 +97,17 @@ describe('migrate - generate tsconfig', async () => {
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
-  test('Do not create tsconfig if there is an existed one', async () => {
+  test('On tsconfig exists, ensure strict mode', async () => {
     // tsconfig already created from previous test
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('skipping creating tsconfig.json');
+    expect(result.stdout).toContain('ensuring strict mode is enabled');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
+
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    expect(tsConfig.compilerOptions.strict).toBeTruthy;
   });
 
   test('runBin custom ts config command with user config provided', async () => {
@@ -235,15 +227,13 @@ describe('migrate - handle custom basePath', async () => {
 
   test('Run cli againt specific basePath via -basePath option', async () => {
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath], {
-      cwd: basePath, // still run cli in basePath
-    });
+    const result = await runBin('migrate', ['--basePath', customBasePath]);
 
-    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Installing dependencies');
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`[SUCCESS] Converting JS files to TS`);
+    expect(result.stdout).toContain(`Converting JS files to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 

@@ -44,9 +44,9 @@ upgradeCommand
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option(
     '-r, --report <reportTypes>',
-    'Report types separated by comma, e.g. -r json,sarif,md',
+    'Report types separated by comma, e.g. -r json,sarif,md,sonarqube',
     parseCommaSeparatedList,
-    []
+    ['sarif']
   )
   .option('-d, --dryRun', `Don't commit any changes`, false)
 
@@ -74,9 +74,12 @@ upgradeCommand
     DEBUG_CALLBACK('options: %O', options);
 
     // grab the consuming apps project name
-    const projectName = (await determineProjectName()) || '';
+    const projectName = determineProjectName() || '';
 
-    const reporter = new Reporter(projectName, basePath, logger);
+    const reporter = new Reporter(
+      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade' },
+      logger
+    );
 
     const tasks = new Listr<UpgradeCommandContext>(
       [
@@ -137,6 +140,7 @@ upgradeCommand
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
                   await addDep([`typescript@${ctx.tsVersion}`], true);
+                  reporter.report.summary.tsVersion = ctx.tsVersion;
                 },
               },
               {
