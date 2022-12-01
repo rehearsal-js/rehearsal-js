@@ -27,6 +27,7 @@ export class FixTransform2571 extends FixTransform {
         updatedText,
         diagnostic.start,
         codeReplacement,
+        errorNode.getFullText().trim(),
         'replace'
       );
     } else {

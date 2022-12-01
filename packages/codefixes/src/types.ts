@@ -32,7 +32,8 @@ export type CodeFixAction = 'add' | 'delete' | 'replace';
 export interface FixedFile {
   fileName: string;
   updatedText: string;
-  code?: string;
+  newCode?: string;
+  oldCode?: string;
   codeFixAction?: CodeFixAction;
   location: {
     startLine: number;

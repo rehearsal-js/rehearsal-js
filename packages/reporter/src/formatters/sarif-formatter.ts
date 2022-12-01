@@ -136,7 +136,8 @@ export class SarifFormatter {
           ...fixes,
           {
             fileName: file.fileName,
-            code: file.code || undefined,
+            newCode: file.newCode,
+            oldCode: file.oldCode,
             codeFixAction: file.codeFixAction || undefined,
           },
         ];
@@ -165,7 +166,8 @@ export class SarifFormatter {
           endColumn: file.location?.endColumn,
         },
         properties: {
-          code: file.code,
+          newCode: file.newCode,
+          oldCode: file.oldCode,
           codeFixAction: file.codeFixAction,
           roles: file.roles,
         },

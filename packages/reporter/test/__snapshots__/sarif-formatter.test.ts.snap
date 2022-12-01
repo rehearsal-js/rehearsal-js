@@ -101,7 +101,8 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 1
           },
           \\"properties\\": {
-            \\"code\\": \\"import react from 'react';\\",
+            \\"newCode\\": \\"\\",
+            \\"oldCode\\": \\"import react from 'react';\\",
             \\"codeFixAction\\": \\"delete\\",
             \\"roles\\": [
               \\"analysisTarget\\",
@@ -117,7 +118,8 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
       \\"fixes\\": [
         {
           \\"fileName\\": \\"add-result-1.ts\\",
-          \\"code\\": \\"import react from 'react';\\",
+          \\"newCode\\": \\"\\",
+          \\"oldCode\\": \\"import react from 'react';\\",
           \\"codeFixAction\\": \\"delete\\"
         }
       ]
@@ -149,7 +151,6 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 5
           },
           \\"properties\\": {
-            \\"code\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"
@@ -190,7 +191,6 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 5
           },
           \\"properties\\": {
-            \\"code\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"

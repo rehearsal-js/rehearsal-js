@@ -78,7 +78,7 @@ export class FixTransform2790 extends FixTransform {
 
     const updatedText = insertIntoText(sourceFile.text, nameEnd, OPTIONAL_TOKEN);
 
-    return getCodemodData(sourceFile, updatedText, nameEnd, OPTIONAL_TOKEN, 'add');
+    return getCodemodData(sourceFile, updatedText, nameEnd, OPTIONAL_TOKEN, '', 'add');
   };
 }
 

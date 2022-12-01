@@ -20,7 +20,8 @@ export interface ProcessedFile {
   fileName: string;
   location: Location;
   fixed: boolean;
-  code: string | undefined;
+  newCode: string | undefined;
+  oldCode: string | undefined;
   codeFixAction: CodeFixAction | undefined;
   hintAdded: boolean;
   hint: string | undefined;

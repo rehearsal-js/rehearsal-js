@@ -6,7 +6,8 @@ export function getCodemodData(
   modifiedSourceFile: SourceFile,
   updatedText: string,
   insertionPos: number,
-  code: string,
+  newCode = '',
+  oldCode = '',
   action: CodeFixAction
 ): FixedFile[] {
   const { line, character } = getLineAndCharacterOfPosition(modifiedSourceFile, insertionPos);
@@ -17,12 +18,13 @@ export function getCodemodData(
     {
       fileName: modifiedSourceFile.fileName,
       updatedText,
-      code: code,
+      newCode,
+      oldCode,
       location: {
         startLine,
         startColumn,
         endLine: startLine, //TODO: calculate endLine for multiple line insertion
-        endColumn: getEndColumn(startColumn, code, action),
+        endColumn: getEndColumn(startColumn, newCode, action),
       },
       codeFixAction: action,
     },

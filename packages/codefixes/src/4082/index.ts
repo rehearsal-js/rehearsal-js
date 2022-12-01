@@ -72,6 +72,7 @@ export class FixTransform4082 extends FixTransform {
       updatedText,
       targetTypeDeclaration.getStart(),
       EXPORT_KEYWORD_WITH_SPACE,
+      '',
       'add'
     );
   };

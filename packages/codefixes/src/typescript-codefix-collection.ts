@@ -80,14 +80,15 @@ export class TypescriptCodeFix extends FixTransform {
 
       return 'replace';
     };
-
-    const affectedCode = textChange.newText || originalText;
+    const newCode = textChange.newText || '';
+    const oldCode = originalText || '';
 
     return getCodemodData(
       diagnostic.file,
       updatedText,
       diagnostic.start,
-      affectedCode.trim(),
+      newCode,
+      oldCode,
       getActionType(textChange)
     ).pop();
   }
