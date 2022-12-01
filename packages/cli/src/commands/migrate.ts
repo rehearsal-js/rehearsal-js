@@ -189,10 +189,10 @@ migrateCommand
               task.title = `Installing custom dependencies`;
               await _ctx.userConfig.install();
             }
-            
+
             // even if typescript is installed, exec this and get the latest patch
             await addDep(['typescript'], true, { cwd: options.basePath });
-            
+
             // extra dependencies for Ember App/Addon/Engine
             // TODO: dependes on how much extra stuff we need for a specific framework,
             // probably need a plugable system for this.
