@@ -1,5 +1,12 @@
-import { DiagnosticWithLocation, LanguageService, Node, Program, TypeChecker } from 'typescript';
-import { RehearsalService } from '@rehearsal/service';
+import {
+  CodeFixAction,
+  DiagnosticWithLocation,
+  FileTextChanges,
+  LanguageService,
+  Node,
+  Program,
+  TypeChecker,
+} from 'typescript';
 
 export interface DiagnosticWithContext extends DiagnosticWithLocation {
   service: LanguageService;
@@ -24,16 +31,16 @@ export interface CodeHint {
 }
 
 export interface CodeFixCollection {
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): FixTransform | undefined;
+  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined;
 }
 
-export type CodeFixAction = 'add' | 'delete' | 'replace';
+export type CodeFixKind = 'add' | 'delete' | 'replace';
 
 export interface FixedFile {
   fileName: string;
-  updatedText: string;
-  code?: string;
-  codeFixAction?: CodeFixAction;
+  newCode?: string;
+  oldCode?: string;
+  codeFixAction?: CodeFixKind;
   location: {
     startLine: number;
     startColumn: number;
@@ -42,12 +49,18 @@ export interface FixedFile {
   };
 }
 
-export class FixTransform {
-  hint?: string;
-  /** Function to fix the diagnostic issue */
-  fix?: (diagnostic: DiagnosticWithLocation, service: RehearsalService) => FixedFile[];
+export interface CodeFix {
+  getCodeAction: (diagnostic: DiagnosticWithContext) => CodeFixAction | undefined;
+}
 
-  run(diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] {
-    return this.fix ? this.fix(diagnostic, service) : [];
-  }
+export function createCodeFixAction(
+  fixName: string,
+  changes: FileTextChanges[],
+  description: string
+): CodeFixAction {
+  return {
+    fixName,
+    description,
+    changes,
+  };
 }

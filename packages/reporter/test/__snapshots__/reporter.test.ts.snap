@@ -6,7 +6,8 @@ exports[`Test reporter > addItem 1`] = `
     \\"projectName\\": \\"@rehearsal/test\\",
     \\"tsVersion\\": \\"4.7.4\\",
     \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\"
+    \\"basePath\\": \\"/base/path\\",
+    \\"commandName\\": \\"@rehearsal/reporter\\"
   },
   \\"items\\": [
     {
@@ -366,6 +367,7 @@ exports[`Test reporter > load 1`] = `
   ],
   "summary": {
     "basePath": "/base/path",
+    "commandName": "@rehearsal/reporter",
     "projectName": "@rehearsal/test",
     "timestamp": "9/16/2022, 13:24:57",
     "tsVersion": "4.7.4",
@@ -379,7 +381,8 @@ exports[`Test reporter > print, json 1`] = `
     \\"projectName\\": \\"@rehearsal/test\\",
     \\"tsVersion\\": \\"4.7.4\\",
     \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\"
+    \\"basePath\\": \\"/base/path\\",
+    \\"commandName\\": \\"@rehearsal/reporter\\"
   },
   \\"items\\": [
     {
@@ -518,7 +521,8 @@ exports[`Test reporter > save 1`] = `
     \\"projectName\\": \\"@rehearsal/test\\",
     \\"tsVersion\\": \\"4.7.4\\",
     \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\"
+    \\"basePath\\": \\"/base/path\\",
+    \\"commandName\\": \\"@rehearsal/reporter\\"
   },
   \\"items\\": [
     {

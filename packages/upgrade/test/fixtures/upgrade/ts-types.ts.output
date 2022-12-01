@@ -1,3 +1,39 @@
-export function test(me: string) {
+export function test1(me: string) {
   return 'This is ' + me;
+}
+
+test1('test');
+
+/**
+ * JSDoc
+ * @param {number} me
+ * @return {string}
+ */
+export function test2(me: number): string {
+  return me.toString();
+}
+
+test2(0);
+
+/**
+ * JSDoc is ignored
+ * @param {number} me
+ * @return {string}
+ */
+export function test3(me: number): string {
+  return me.toString();
+}
+
+/* @ts-ignore @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
+test3('O');
+
+export class A {
+  /**
+   * JSDoc
+   * @param {number} me
+   * @return {string}
+   */
+  test4(me: number): string {
+    return me.toString(2);
+  }
 }

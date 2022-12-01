@@ -1,15 +1,36 @@
-import { type DiagnosticWithLocation, flattenDiagnosticMessageText } from 'typescript';
-
-import { CodeHintList, DiagnosticWithContext } from './types';
+import { CodeFixAction, DiagnosticWithLocation, flattenDiagnosticMessageText } from 'typescript';
+import { ChangesFactory } from '@rehearsal/utils';
+import {
+  CodeFixCollection,
+  CodeHintList,
+  createCodeFixAction,
+  type DiagnosticWithContext,
+} from './types';
 
 /**
- * Provides access to useful hints for Diagnostics
+ * Don't actually fix the issue but adds a @ts-ignore comments instead
  */
-export class HintsProvider {
+export class HintCodeFixCollection implements CodeFixCollection {
   readonly list: CodeHintList;
 
   constructor(list: CodeHintList) {
     this.list = list;
+  }
+
+  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+    const hint = this.getHint(diagnostic);
+    const comment = `@ts-ignore @rehearsal TODO TS${diagnostic.code}: ${hint}`;
+
+    console.log(diagnostic.node?.getText());
+    console.log(diagnostic.node?.getStart());
+
+    const changes = ChangesFactory.insertCommentAtLineBeforeNode(
+      diagnostic.file,
+      diagnostic.node!,
+      comment
+    );
+
+    return createCodeFixAction('hint', [changes], 'Add hint comment to help solve the issue');
   }
 
   getHint(diagnostic: DiagnosticWithContext): string {
@@ -17,7 +38,7 @@ export class HintsProvider {
 
     if (conditionalHints !== undefined && diagnostic.node !== undefined) {
       for (const conditionalHint of conditionalHints) {
-        if (conditionalHint.when(diagnostic.node, diagnostic.program, diagnostic.checker)) {
+        if (conditionalHint.when(diagnostic.node!, diagnostic.program, diagnostic.checker)) {
           return this.prepareHint(conditionalHint.hint, diagnostic);
         }
       }

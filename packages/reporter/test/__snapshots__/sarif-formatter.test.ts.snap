@@ -101,7 +101,8 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 1
           },
           \\"properties\\": {
-            \\"code\\": \\"import react from 'react';\\",
+            \\"newCode\\": \\"\\",
+            \\"oldCode\\": \\"import react from 'react';\\",
             \\"codeFixAction\\": \\"delete\\",
             \\"roles\\": [
               \\"analysisTarget\\",
@@ -117,7 +118,8 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
       \\"fixes\\": [
         {
           \\"fileName\\": \\"add-result-1.ts\\",
-          \\"code\\": \\"import react from 'react';\\",
+          \\"newCode\\": \\"\\",
+          \\"oldCode\\": \\"import react from 'react';\\",
           \\"codeFixAction\\": \\"delete\\"
         }
       ]
@@ -149,7 +151,8 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 5
           },
           \\"properties\\": {
-            \\"code\\": \\"\\",
+            \\"newCode\\": \\"\\",
+            \\"oldCode\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"
@@ -190,7 +193,6 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"endColumn\\": 5
           },
           \\"properties\\": {
-            \\"code\\": \\"\\",
             \\"roles\\": [
               \\"analysisTarget\\",
               \\"unmodified\\"
@@ -216,7 +218,7 @@ exports[`Test sarif-formatter > should set the correct version, $schema, and ini
     {
       \\"tool\\": {
         \\"driver\\": {
-          \\"name\\": \\"@rehearsal/upgrade\\",
+          \\"name\\": \\"@rehearsal/reporter\\",
           \\"informationUri\\": \\"https://github.com/rehearsal-js/rehearsal-js\\",
           \\"rules\\": []
         }
@@ -225,7 +227,7 @@ exports[`Test sarif-formatter > should set the correct version, $schema, and ini
       \\"results\\": [],
       \\"automationDetails\\": {
         \\"description\\": {
-          \\"text\\": \\"This is the run of @rehearsal/upgrade on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
+          \\"text\\": \\"This is the run of @rehearsal/reporter on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
         }
       }
     }

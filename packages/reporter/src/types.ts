@@ -3,6 +3,7 @@ export type ReportSummary = Record<string, unknown> & {
   basePath: string;
   tsVersion: string;
   timestamp: string;
+  commandName: string;
 };
 
 export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
@@ -19,7 +20,8 @@ export interface ProcessedFile {
   fileName: string;
   location: Location;
   fixed: boolean;
-  code: string | undefined;
+  newCode: string | undefined;
+  oldCode: string | undefined;
   codeFixAction: CodeFixAction | undefined;
   hintAdded: boolean;
   hint: string | undefined;

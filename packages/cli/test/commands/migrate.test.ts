@@ -40,17 +40,6 @@ describe('migrate - install dependencies', async () => {
     expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
   });
 
-  test('Do not install typescript dependency if project already has one', async () => {
-    // at this point project already have typescript installed in previous test
-    const result = await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    expect(result.stdout).toContain(
-      '[SKIPPED] typescript already exists. Skipping installing typescript.'
-    );
-  });
-
   test('Install custom dependencies with user config provided', async () => {
     basePath = prepareTmpDir('initialization');
     createUserConfig(basePath, {
@@ -90,14 +79,17 @@ describe('migrate - generate tsconfig', async () => {
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
-  test('Do not create tsconfig if there is an existed one', async () => {
+  test('On tsconfig exists, ensure strict mode', async () => {
     // tsconfig already created from previous test
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('skipping creating tsconfig.json');
+    expect(result.stdout).toContain('ensuring strict mode is enabled');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
+
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    expect(tsConfig.compilerOptions.strict).toBeTruthy;
   });
 
   test('runBin custom ts config command with user config provided', async () => {
@@ -167,14 +159,14 @@ describe('migrate - JS to TS conversion', async () => {
     expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
   });
 
-  test('Generate json report by default', async () => {
+  test('Generate sarif report by default', async () => {
     await runBin('migrate', [], {
       cwd: basePath,
     });
 
     const reportPath = resolve(basePath, '.rehearsal');
 
-    expect(readdirSync(reportPath)).toContain('report.json');
+    expect(readdirSync(reportPath)).toContain('report.sarif');
   });
 
   test('Generate report with -r flag', async () => {
@@ -226,11 +218,9 @@ describe('migrate - handle custom basePath', async () => {
 
   test('Run cli againt specific basePath via -basePath option', async () => {
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath, '-v'], {
-      cwd: basePath, // still run cli in basePath
-    });
+    const result = await runBin('migrate', ['--basePath', customBasePath]);
 
-    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Installing dependencies');
     expect(result.stdout).toContain('Creating tsconfig');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 

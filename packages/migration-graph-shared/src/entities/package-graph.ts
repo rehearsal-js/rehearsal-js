@@ -68,8 +68,8 @@ export class PackageGraph {
     const target = entrypoint ? [entrypoint] : [...include];
 
     DEBUG_CALLBACK('Executing dependency-cruiser');
-    DEBUG_CALLBACK(`Target: ${target}`);
-    DEBUG_CALLBACK(`Options: ${cruiseOptions}`);
+    DEBUG_CALLBACK('Target: %O', target);
+    DEBUG_CALLBACK('Options: %O', cruiseOptions);
 
     try {
       result = cruise(target, cruiseOptions, this.resolveOptions);

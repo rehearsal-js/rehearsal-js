@@ -1,20 +1,18 @@
 import {
+  ChangesFactory,
   findNodeAtPosition,
   getTypeDeclarationFromTypeSymbol,
-  insertIntoText,
   isSubtypeOf,
   isTypeMatched,
 } from '@rehearsal/utils';
 import {
+  CodeFixAction,
   flattenDiagnosticMessageText,
   isExportAssignment,
   isObjectLiteralExpression,
 } from 'typescript';
-
-import { type FixedFile, FixTransform } from '../types';
-import { getCodemodData } from '../utils';
+import { CodeFix, createCodeFixAction, DiagnosticWithContext } from '../types';
 import type {
-  DiagnosticWithLocation,
   ExportAssignment,
   Node,
   ObjectLiteralExpression,
@@ -23,18 +21,14 @@ import type {
   TypeChecker,
   TypeReference,
 } from 'typescript';
-import type { RehearsalService } from '@rehearsal/service';
 
 const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 
-export class FixTransform4082 extends FixTransform {
-  fix = (diagnostic: DiagnosticWithLocation, service: RehearsalService): FixedFile[] => {
-    const program = service.getLanguageService().getProgram()!;
-    const checker = program.getTypeChecker();
-
+export class Fix4082 implements CodeFix {
+  getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !isExportAssignment(errorNode)) {
-      return [];
+      return undefined;
     }
 
     /**
@@ -43,147 +37,159 @@ export class FixTransform4082 extends FixTransform {
      * parentType is the type object that has the type string of: '({ name: string, age: number} : Props): JXS.Element'
      **/
     const message = flattenDiagnosticMessageText(diagnostic.messageText, '. ');
-    const targetTypeString = getTargetTypeName(message);
+    const targetTypeString = this.getTargetTypeName(message);
+
     if (!targetTypeString) {
-      return [];
+      return undefined;
     }
 
-    const parentType = findParentTypeInExportAssignment(errorNode, targetTypeString, checker);
+    const parentType = this.findParentTypeInExportAssignment(
+      errorNode,
+      targetTypeString,
+      diagnostic.checker
+    );
+
     if (!parentType) {
-      return [];
+      return undefined;
     }
 
-    const targetType = findTargetTypeInParentType(targetTypeString, parentType, checker);
-
+    const targetType = this.findTargetTypeInParentType(
+      targetTypeString,
+      parentType,
+      diagnostic.checker
+    );
     const targetTypeDeclaration = targetType && getTypeDeclarationFromTypeSymbol(targetType);
+
     if (!targetTypeDeclaration) {
-      return [];
+      return undefined;
     }
 
-    const sourceFile = targetTypeDeclaration.getSourceFile();
-    const updatedText = insertIntoText(
-      sourceFile.getFullText(),
+    const changes = ChangesFactory.insertText(
+      targetTypeDeclaration.getSourceFile(),
       targetTypeDeclaration.getStart(),
       EXPORT_KEYWORD_WITH_SPACE
     );
 
-    return getCodemodData(
-      sourceFile,
-      updatedText,
-      targetTypeDeclaration.getStart(),
-      EXPORT_KEYWORD_WITH_SPACE,
-      'add'
+    return createCodeFixAction(
+      'addMissingExport',
+      [changes],
+      'Add the export keyword to missing type'
     );
-  };
-}
-
-function getTargetTypeName(message: string): string | undefined {
-  const matches = message.match(/'([^']+)'/);
-  if (matches && matches.length > 1) {
-    return matches[1];
   }
-  return undefined;
-}
 
-function findParentTypeInExportAssignment(
-  exportAssignment: ExportAssignment,
-  targetTypeString: string,
-  checker: TypeChecker
-): Type | undefined {
-  const expression = exportAssignment.expression;
-  let parentType: Type | undefined;
-
-  if (isObjectLiteralExpression(expression)) {
-    parentType = findTypeInObjectLiteralExpression(expression, targetTypeString, checker);
-  } else {
-    parentType = checker.getTypeAtLocation(expression);
-  }
-  return parentType;
-}
-
-function findTypeInObjectLiteralExpression(
-  expression: ObjectLiteralExpression,
-  targetTypeStr: string,
-  checker: TypeChecker
-): Type | undefined {
-  for (const prop of expression.properties) {
-    const type = checker.getTypeAtLocation((prop as PropertyAssignment).initializer);
-    if (isSubtypeOf(targetTypeStr, type, checker)) {
-      return type;
+  getTargetTypeName(message: string): string | undefined {
+    const matches = message.match(/'([^']+)'/);
+    if (matches && matches.length > 1) {
+      return matches[1];
     }
-  }
-  return undefined;
-}
 
-function findNodeByText(node: Node, text: string): Node | undefined {
-  const children = Array.from(node.getChildren());
-  for (const child of children) {
-    const childText = child.getFullText().trim();
-    if (childText === text) {
-      return child;
-    } else if (childText.match(new RegExp('\\b' + text + '\\b'))) {
-      return findNodeByText(child, text);
-    }
-  }
-  return undefined;
-}
-
-function findTargetTypeInParentType(
-  targetTypeString: string,
-  parentType: Type,
-  checker: TypeChecker
-): Type | undefined {
-  let targetType: Type | undefined;
-
-  if (parentType.symbol) {
-    const parentTypeDeclaration = getTypeDeclarationFromTypeSymbol(parentType);
-    const targetTypeNode =
-      parentTypeDeclaration && findNodeByText(parentTypeDeclaration, targetTypeString);
-    targetType = targetTypeNode && checker.getTypeAtLocation(targetTypeNode);
-  } else {
-    targetType = findTypeInCompositeType(parentType, targetTypeString, checker);
-  }
-  return targetType;
-}
-
-function findTypeInCompositeType(
-  type: Type,
-  subTypeString: string,
-  checker: TypeChecker
-): Type | undefined {
-  if (!isSubtypeOf(subTypeString, type, checker)) {
     return undefined;
   }
-  if (type.isUnionOrIntersection()) {
-    for (const t of type.types) {
-      if (isTypeMatched(subTypeString, t)) {
-        return t;
-      } else if (isSubtypeOf(subTypeString, t, checker)) {
-        return findTypeInCompositeType(t, subTypeString, checker);
+
+  findParentTypeInExportAssignment(
+    exportAssignment: ExportAssignment,
+    targetTypeString: string,
+    checker: TypeChecker
+  ): Type | undefined {
+    const expression = exportAssignment.expression;
+    let parentType: Type | undefined;
+    if (isObjectLiteralExpression(expression)) {
+      parentType = this.findTypeInObjectLiteralExpression(expression, targetTypeString, checker);
+    } else {
+      parentType = checker.getTypeAtLocation(expression);
+    }
+
+    return parentType;
+  }
+
+  findTypeInObjectLiteralExpression(
+    expression: ObjectLiteralExpression,
+    targetTypeStr: string,
+    checker: TypeChecker
+  ): Type | undefined {
+    for (const prop of expression.properties) {
+      const type = checker.getTypeAtLocation((prop as PropertyAssignment).initializer);
+      if (isSubtypeOf(targetTypeStr, type, checker)) {
+        return type;
       }
     }
-  } else {
-    const typeArguments = checker.getTypeArguments(type as TypeReference);
-    if (typeArguments.length > 0) {
-      for (const t of typeArguments) {
+
+    return undefined;
+  }
+
+  findNodeByText(node: Node, text: string): Node | undefined {
+    const children = Array.from(node.getChildren());
+    for (const child of children) {
+      const childText = child.getText();
+      if (childText === text) {
+        return child;
+      } else if (childText.match(new RegExp('\\b' + text + '\\b'))) {
+        return this.findNodeByText(child, text);
+      }
+    }
+
+    return undefined;
+  }
+
+  findTargetTypeInParentType(
+    targetTypeString: string,
+    parentType: Type,
+    checker: TypeChecker
+  ): Type | undefined {
+    let targetType: Type | undefined;
+
+    if (parentType.symbol) {
+      const parentTypeDeclaration = getTypeDeclarationFromTypeSymbol(parentType);
+      const targetTypeNode =
+        parentTypeDeclaration && this.findNodeByText(parentTypeDeclaration, targetTypeString);
+      targetType = targetTypeNode && checker.getTypeAtLocation(targetTypeNode);
+    } else {
+      targetType = this.findTypeInCompositeType(parentType, targetTypeString, checker);
+    }
+
+    return targetType;
+  }
+
+  findTypeInCompositeType(
+    type: Type,
+    subTypeString: string,
+    checker: TypeChecker
+  ): Type | undefined {
+    if (!isSubtypeOf(subTypeString, type, checker)) {
+      return undefined;
+    }
+    if (type.isUnionOrIntersection()) {
+      for (const t of type.types) {
         if (isTypeMatched(subTypeString, t)) {
           return t;
         } else if (isSubtypeOf(subTypeString, t, checker)) {
-          return findTypeInCompositeType(t, subTypeString, checker);
+          return this.findTypeInCompositeType(t, subTypeString, checker);
+        }
+      }
+    } else {
+      const typeArguments = checker.getTypeArguments(type as TypeReference);
+      if (typeArguments.length > 0) {
+        for (const t of typeArguments) {
+          if (isTypeMatched(subTypeString, t)) {
+            return t;
+          } else if (isSubtypeOf(subTypeString, t, checker)) {
+            return this.findTypeInCompositeType(t, subTypeString, checker);
+          }
+        }
+      }
+
+      const aliasTypeArguments = type.aliasTypeArguments;
+      if (aliasTypeArguments && aliasTypeArguments.length > 0) {
+        for (const t of aliasTypeArguments) {
+          if (isTypeMatched(subTypeString, t)) {
+            return t;
+          } else if (isSubtypeOf(subTypeString, t, checker)) {
+            return this.findTypeInCompositeType(t, subTypeString, checker);
+          }
         }
       }
     }
 
-    const aliasTypeArguments = type.aliasTypeArguments;
-    if (aliasTypeArguments && aliasTypeArguments.length > 0) {
-      for (const t of aliasTypeArguments) {
-        if (isTypeMatched(subTypeString, t)) {
-          return t;
-        } else if (isSubtypeOf(subTypeString, t, checker)) {
-          return findTypeInCompositeType(t, subTypeString, checker);
-        }
-      }
-    }
+    return undefined;
   }
-  return undefined;
 }

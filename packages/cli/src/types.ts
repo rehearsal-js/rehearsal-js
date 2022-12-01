@@ -81,3 +81,8 @@ export type MigrationSummary = {
   errorFixedCount: number;
   hintAddedCount: number;
 }
+export type TSConfig = {
+  compilerOptions: {
+    strict: boolean;
+  };
+};

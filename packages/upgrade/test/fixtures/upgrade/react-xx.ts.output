@@ -17,9 +17,10 @@ export class Radio extends Component {
 
   /**
    * Action
+   * @return {string}
    */
   @action
-  async onRadioChange(value: boolean) {
+  async onRadioChange(value: boolean): Promise<string> {
     this.one = true;
     this.two = false;
 

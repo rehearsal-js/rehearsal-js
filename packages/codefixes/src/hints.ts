@@ -15,7 +15,7 @@ export const hints = new HintsProvider({
       },
       {
         when: (n) => isIdentifier(n),
-        hint: `The variable '{node.escapedText}' has type '{1}', but '{0}' is assigned. Please convert '{0}' to '{1}' or change variable's type.`,
+        hint: `The variable '{node.text}' has type '{1}', but '{0}' is assigned. Please convert '{0}' to '{1}' or change variable's type.`,
       },
     ],
   },
