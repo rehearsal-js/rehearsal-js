@@ -23,8 +23,6 @@ import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 import execa = require('execa');
 
-import execa = require('execa');
-
 import { generateReports } from '../helpers/report';
 import {
   MigrateCommandContext,
