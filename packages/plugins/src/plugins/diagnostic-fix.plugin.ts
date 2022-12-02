@@ -187,6 +187,9 @@ export class DiagnosticFixPlugin extends Plugin {
     let comment = `@ts-ignore ${tag} TODO TS${diagnostic.code}: ${hint}`;
     comment = isNodeInsideJsx(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
 
+    // Make sure the comment is a single because we have to place @ tags right above the issue
+    comment.replace(/(\n|\r|\r\n)/gm, ' ');
+
     const text = diagnostic.file.getFullText();
 
     return text.slice(0, positionToAddComment) + comment + '\n' + text.slice(positionToAddComment);
