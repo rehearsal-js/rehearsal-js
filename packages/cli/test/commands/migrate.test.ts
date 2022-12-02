@@ -24,6 +24,25 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
+describe('migrate - validation', async () => {
+  let basePath = '';
+
+  test('Do not proceed for ember app that does not meet requirements', async () => {
+    basePath = prepareTmpDir('non_valid_ember');
+
+    const { stderr } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(stderr).toContain(
+      '[FAILED] Your Ember project does not meet the requirements of migration'
+    );
+    expect(stderr).toContain('✅ Project Node Version');
+    expect(stderr).toContain('❌ Dependency ember-source ^3.10.0 should >=3.24.0');
+    expect(stderr).toContain('❌ Dependency ember-modifier 3.1.7 should >=3.2.7');
+  });
+});
+
 describe('migrate - install dependencies', async () => {
   let basePath = '';
 
@@ -62,7 +81,7 @@ describe('migrate - install dependencies', async () => {
   });
 
   test('Install extra dependencies for Ember', async () => {
-    basePath = prepareTmpDir('ember');
+    basePath = prepareTmpDir('valid_ember');
 
     // Assume ember-cli should be always available in ember app/addon/engine
     await addDep(['ember-cli@^3.28'], true, { cwd: basePath });
@@ -153,7 +172,6 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from specific entrypoint', async () => {
-    console.log(basePath);
     const result = await runBin('migrate', ['--entrypoint', 'depends-on-foo.js'], {
       cwd: basePath,
     });

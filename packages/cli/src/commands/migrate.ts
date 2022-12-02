@@ -23,6 +23,7 @@ import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 import execa = require('execa');
 
+import { isEmber, validateEmberProject, installEmberDependencies } from '../helpers/ember';
 import { generateReports } from '../helpers/report';
 import {
   MigrateCommandContext,
@@ -39,7 +40,6 @@ import {
   writeTSConfig,
   getPathToBinary,
   readJSON,
-  isEmber,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -79,6 +79,19 @@ migrateCommand
 
     const tasks = new Listr<MigrateCommandContext>(
       [
+        {
+          title: 'Validating project',
+          enabled: (ctx): boolean => !ctx.skip,
+          task: async (_ctx) => {
+            const { basePath } = options;
+            const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+
+            if (isEmber(packageJson)) {
+              _ctx.isEmber = true;
+              await validateEmberProject(packageJson, basePath);
+            }
+          },
+        },
         {
           title: 'Initialization',
           task: async (_ctx, task) => {
@@ -183,7 +196,7 @@ migrateCommand
           title: 'Installing dependencies',
           enabled: (ctx): boolean => !ctx.skip,
           task: async (_ctx, task) => {
-            const packageJson = readJSONSync(resolve(options.basePath, 'package.json'));
+            const { basePath } = options;
             // install custom dependencies
             if (_ctx.userConfig?.hasDependencies) {
               task.title = `Installing custom dependencies`;
@@ -191,23 +204,12 @@ migrateCommand
             }
 
             // even if typescript is installed, exec this and get the latest patch
-            await addDep(['typescript'], true, { cwd: options.basePath });
+            await addDep(['typescript'], true, { cwd: basePath });
 
             // extra dependencies for Ember App/Addon/Engine
-            // TODO: dependes on how much extra stuff we need for a specific framework,
-            // probably need a plugable system for this.
-            if (isEmber(packageJson)) {
+            if (_ctx.isEmber) {
               task.title = `Installing dependencies for Ember`;
-              await addDep(
-                ['@glint/core', '@glint/template', '@glint/environment-ember-loose'],
-                true,
-                { cwd: options.basePath }
-              );
-              // assuming ember-cli should be always installed in ember app/addon/engine
-              const emberCLIBinPath = await getPathToBinary('ember', { cwd: options.basePath });
-              await execa(emberCLIBinPath, ['install', 'ember-cli-typescript@latest'], {
-                cwd: options.basePath,
-              });
+              await installEmberDependencies(basePath);
             }
           },
         },
@@ -291,7 +293,7 @@ migrateCommand
           },
         },
       ],
-      { concurrent: false, exitOnError: false }
+      { concurrent: false, exitOnError: true }
     );
     try {
       await tasks.run();

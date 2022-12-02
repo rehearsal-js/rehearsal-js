@@ -24,6 +24,7 @@ export type MigrateCommandContext = {
   input: unknown;
   targetPackagePath: string;
   state: State;
+  isEmber: boolean;
 };
 
 export type UpgradeCommandContext = {

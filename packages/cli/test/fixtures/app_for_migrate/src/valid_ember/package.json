@@ -4,6 +4,7 @@
   "dependencies": {},
   "devDependencies": {
     "ember-source": "^3.28.0",
-    "ember-cli": "^3.28.0"
+    "ember-cli": "^3.28.0",
+    "ember-modifier": "3.2.7"
   }
 }
