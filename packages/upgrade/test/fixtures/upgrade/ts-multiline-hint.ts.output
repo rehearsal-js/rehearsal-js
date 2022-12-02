@@ -1,0 +1,69 @@
+function action(_target: unknown, propertyKey: string): void {
+  console.log(propertyKey);
+}
+
+/**
+ * Breakpoint Map
+ * @type {Object<string, number>}
+ */
+const breakpointMap: { [s: string]: number } = { s: 1, m: 2, l: 3 };
+
+/**
+ * Ordered Breakpoints
+ * @type {Array<[string, number]>}
+ */
+const orderedBreakpointsLongNameConstant: Array<[string, number]> = Object.entries(
+  breakpointMap
+).sort((a, b) => a[1] - b[1]);
+
+export class Foo {
+  /**
+   * Size
+   * @type {string}
+   */
+  @action size = 'l';
+
+  /**
+   * Viewport Width
+   * @type {string}
+   */
+  @action viewportWidth: number | undefined;
+
+  /**
+   * Foo Method
+   * @param {string} size
+   * @returns {boolean}
+   */
+  fooMethod(size: string): boolean {
+    const nextBreakpointIndex =
+      orderedBreakpointsLongNameConstant.indexOf(
+        /* @ts-ignore @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
+        orderedBreakpointsLongNameConstant.find(([key]) => key === size)
+      ) + 1;
+    if (nextBreakpointIndex < orderedBreakpointsLongNameConstant.length) {
+      /* @ts-ignore @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+      return this.viewportWidth >= orderedBreakpointsLongNameConstant[nextBreakpointIndex][1];
+    }
+
+    return false;
+  }
+
+  /**
+   * Is Equal
+   * @param {string} size
+   * @returns {boolean}
+   */
+  isEqual(size: string): boolean {
+    return this.size === size;
+  }
+
+  /**
+   * Is Less
+   * @param {string} size
+   * @returns {boolean}
+   */
+  isLess(size: string): boolean {
+    /* @ts-ignore @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    return this.viewportWidth < breakpointMap[size];
+  }
+}
