@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "Tool for generating a typescript conversion graph",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
