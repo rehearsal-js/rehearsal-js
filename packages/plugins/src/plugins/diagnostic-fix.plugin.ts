@@ -188,7 +188,7 @@ export class DiagnosticFixPlugin extends Plugin {
     comment = isNodeInsideJsx(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
 
     // Make sure the comment is a single because we have to place @ tags right above the issue
-    comment.replace(/(\n|\r|\r\n)/gm, ' ');
+    comment = comment.replace(/(\n|\r|\r\n)/gm, ' ');
 
     const text = diagnostic.file.getFullText();
 
