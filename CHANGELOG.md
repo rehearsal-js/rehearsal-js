@@ -1,3 +1,8 @@
+##  v0.0.39
+
+* fix: excessive inline comments (#478) ([000592d](https://github.com/rehearsal-js/rehearsal-js/commit/000592d)), closes [#460](https://github.com/rehearsal-js/rehearsal-js/issues/478)
+* chore: make sure @rehearsal comment is a single line (#482) ([0982bd5](https://github.com/rehearsal-js/rehearsal-js/commit/0982bd5)), closes [#426](https://github.com/rehearsal-js/rehearsal-js/issues/482)
+
 ##  v0.0.38
 
 * feat: Add service discovery to migration-graph (#426) ([2aa9942](https://github.com/rehearsal-js/rehearsal-js/commit/2aa9942)), closes [#426](https://github.com/rehearsal-js/rehearsal-js/issues/426)
