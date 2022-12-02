@@ -24,7 +24,7 @@ import { debug } from 'debug';
 import execa = require('execa');
 
 import { isEmber, validateEmberProject, installEmberDependencies } from '../helpers/ember';
-import { generateReports } from '../helpers/report';
+import { generateReports, getReportSummary } from '../helpers/report';
 import {
   MigrateCommandContext,
   MigrateCommandOptions,
@@ -261,6 +261,7 @@ migrateCommand
               };
 
               const { migratedFiles } = await migrate(input);
+              DEBUG_CALLBACK('migratedFiles', migratedFiles);
               if (_ctx.state) {
                 _ctx.state.addFilesToPackage(_ctx.targetPackagePath, migratedFiles);
                 await _ctx.state.addStateFileToGit();
@@ -273,6 +274,16 @@ migrateCommand
                 md: mdFormatter,
                 sonarqube: sonarqubeFormatter,
               });
+
+              const { totalErrorCount, errorFixedCount, hintAddedCount } = getReportSummary(
+                reporter.report
+              );
+              const migratedFileCount = migratedFiles.length;
+              task.title = `${migratedFileCount} JS ${
+                migratedFileCount === 1 ? 'file' : 'files'
+              } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
+                - ${errorFixedCount} have been fixed automatically by rehearsal
+                - ${hintAddedCount} have been updated with @ts-ignore @rehearsal TODO which need further manual check`;
             } else {
               task.skip(
                 `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`

@@ -1,0 +1,43 @@
+##  v0.0.39
+
+* fix: excessive inline comments (#478) ([000592d](https://github.com/rehearsal-js/rehearsal-js/commit/000592d)), closes [#460](https://github.com/rehearsal-js/rehearsal-js/issues/478)
+* chore: make sure @rehearsal comment is a single line (#482) ([0982bd5](https://github.com/rehearsal-js/rehearsal-js/commit/0982bd5)), closes [#426](https://github.com/rehearsal-js/rehearsal-js/issues/482)
+
+##  v0.0.38
+
+* feat: Add service discovery to migration-graph (#426) ([2aa9942](https://github.com/rehearsal-js/rehearsal-js/commit/2aa9942)), closes [#426](https://github.com/rehearsal-js/rehearsal-js/issues/426)
+* feat: add sonarqube-formatter (#423) ([2fb910f](https://github.com/rehearsal-js/rehearsal-js/commit/2fb910f)), closes [#423](https://github.com/rehearsal-js/rehearsal-js/issues/423)
+* feat: adding migration summary (#462) ([a30fb52](https://github.com/rehearsal-js/rehearsal-js/commit/a30fb52)), closes [#462](https://github.com/rehearsal-js/rehearsal-js/issues/462)
+* feat: discover ember service dependency information from a file (#403) ([c53b601](https://github.com/rehearsal-js/rehearsal-js/commit/c53b601)), closes [#403](https://github.com/rehearsal-js/rehearsal-js/issues/403)
+* feat: ember app detect (#419) ([9433d00](https://github.com/rehearsal-js/rehearsal-js/commit/9433d00)), closes [#419](https://github.com/rehearsal-js/rehearsal-js/issues/419)
+* feat: improve service discovery util (#420) ([fdb4cf3](https://github.com/rehearsal-js/rehearsal-js/commit/fdb4cf3)), closes [#420](https://github.com/rehearsal-js/rehearsal-js/issues/420)
+* feat: keep git history during converting JS to TS files (#422) ([55de74d](https://github.com/rehearsal-js/rehearsal-js/commit/55de74d)), closes [#422](https://github.com/rehearsal-js/rehearsal-js/issues/422)
+* feat: migration state (#440) ([99d9ef5](https://github.com/rehearsal-js/rehearsal-js/commit/99d9ef5)), closes [#440](https://github.com/rehearsal-js/rehearsal-js/issues/440)
+* feat: minumum interactive mode (#410) ([a45536a](https://github.com/rehearsal-js/rehearsal-js/commit/a45536a)), closes [#410](https://github.com/rehearsal-js/rehearsal-js/issues/410)
+* feat: tighten default tsconfig (#452) ([f56c61b](https://github.com/rehearsal-js/rehearsal-js/commit/f56c61b)), closes [#452](https://github.com/rehearsal-js/rehearsal-js/issues/452)
+* feat: use typescript codefixes with type inference (#459) ([74db741](https://github.com/rehearsal-js/rehearsal-js/commit/74db741)), closes [#459](https://github.com/rehearsal-js/rehearsal-js/issues/459)
+* feat(tests): create test-support package (#427) ([2c52484](https://github.com/rehearsal-js/rehearsal-js/commit/2c52484)), closes [#427](https://github.com/rehearsal-js/rehearsal-js/issues/427)
+* refactor: few cleanups in migrate CLI flag/option (#425) ([b8d9a63](https://github.com/rehearsal-js/rehearsal-js/commit/b8d9a63)), closes [#425](https://github.com/rehearsal-js/rehearsal-js/issues/425)
+* refactor: sonarqube formatter takes Report (#445) ([917af03](https://github.com/rehearsal-js/rehearsal-js/commit/917af03)), closes [#445](https://github.com/rehearsal-js/rehearsal-js/issues/445)
+* refactor: use ts.CodeFixAction instead of FixTransform (#465) ([6247ec8](https://github.com/rehearsal-js/rehearsal-js/commit/6247ec8)), closes [#465](https://github.com/rehearsal-js/rehearsal-js/issues/465)
+* refactor: ux improvements (#464) ([c20e6b7](https://github.com/rehearsal-js/rehearsal-js/commit/c20e6b7)), closes [#464](https://github.com/rehearsal-js/rehearsal-js/issues/464)
+* fix: debug output (#469) ([b2f2b4a](https://github.com/rehearsal-js/rehearsal-js/commit/b2f2b4a)), closes [#469](https://github.com/rehearsal-js/rehearsal-js/issues/469)
+* fix: don't use --ignore-scripts option with yarn@3 (#442) ([3687819](https://github.com/rehearsal-js/rehearsal-js/commit/3687819)), closes [#442](https://github.com/rehearsal-js/rehearsal-js/issues/442)
+* fix: graph edge cases (#470) ([e5f4010](https://github.com/rehearsal-js/rehearsal-js/commit/e5f4010)), closes [#470](https://github.com/rehearsal-js/rehearsal-js/issues/470)
+* fix: improve service dependency graph for addons (#431) ([44d8c20](https://github.com/rehearsal-js/rehearsal-js/commit/44d8c20)), closes [#431](https://github.com/rehearsal-js/rehearsal-js/issues/431)
+* fix: remove lerna (#414) ([2546d73](https://github.com/rehearsal-js/rehearsal-js/commit/2546d73)), closes [#414](https://github.com/rehearsal-js/rehearsal-js/issues/414)
+* fix: transforms change source code at wrong positions (#454) ([4ff4df9](https://github.com/rehearsal-js/rehearsal-js/commit/4ff4df9)), closes [#454](https://github.com/rehearsal-js/rehearsal-js/issues/454)
+* fix: use json5 to parse (#466) ([ae10c39](https://github.com/rehearsal-js/rehearsal-js/commit/ae10c39)), closes [#466](https://github.com/rehearsal-js/rehearsal-js/issues/466)
+* fix: yarn classic binary path (#467) ([40bf551](https://github.com/rehearsal-js/rehearsal-js/commit/40bf551)), closes [#467](https://github.com/rehearsal-js/rehearsal-js/issues/467)
+* chore: cleanup of incorrect async types and replace winston logging for debug (#432) ([f8603fb](https://github.com/rehearsal-js/rehearsal-js/commit/f8603fb)), closes [#432](https://github.com/rehearsal-js/rehearsal-js/issues/432)
+* chore: lint config and fix (#418) ([fff5f74](https://github.com/rehearsal-js/rehearsal-js/commit/fff5f74)), closes [#418](https://github.com/rehearsal-js/rehearsal-js/issues/418)
+* chore: refactor test fixtures (#406) ([ad6c3b3](https://github.com/rehearsal-js/rehearsal-js/commit/ad6c3b3)), closes [#406](https://github.com/rehearsal-js/rehearsal-js/issues/406)
+* chore: remove babel, improve graph creation performance for large ember apps (#450) ([dea1915](https://github.com/rehearsal-js/rehearsal-js/commit/dea1915)), closes [#450](https://github.com/rehearsal-js/rehearsal-js/issues/450)
+* chore: remove ember implementations from `migration-graph` (#436) ([32cf4b3](https://github.com/rehearsal-js/rehearsal-js/commit/32cf4b3)), closes [#436](https://github.com/rehearsal-js/rehearsal-js/issues/436)
+* chore: remove EmptyLines* plugins (#468) ([ef4e87c](https://github.com/rehearsal-js/rehearsal-js/commit/ef4e87c)), closes [#468](https://github.com/rehearsal-js/rehearsal-js/issues/468)
+* chore: remove unused dependencies in migration-graph (#446) ([4c8bd7a](https://github.com/rehearsal-js/rehearsal-js/commit/4c8bd7a)), closes [#446](https://github.com/rehearsal-js/rehearsal-js/issues/446)
+* test: add service to ember test fixtures (#421) ([467eee8](https://github.com/rehearsal-js/rehearsal-js/commit/467eee8)), closes [#421](https://github.com/rehearsal-js/rehearsal-js/issues/421)
+* test: reduce eslint import rules (#430) ([0ea229f](https://github.com/rehearsal-js/rehearsal-js/commit/0ea229f)), closes [#430](https://github.com/rehearsal-js/rehearsal-js/issues/430)
+
+
+
