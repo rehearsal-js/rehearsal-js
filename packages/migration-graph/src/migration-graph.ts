@@ -22,11 +22,11 @@ function buildMigrationGraphForLibrary(
   options?: MigrationGraphOptions
 ): ProjectGraph {
   const rootDir = projectGraph.rootDir;
-  const pkg = new Package(rootDir);
+  const p = new Package(rootDir);
 
-  projectGraph.addPackageToGraph(pkg);
+  projectGraph.addPackageToGraph(p);
 
-  pkg.getModuleGraph({
+  p.getModuleGraph({
     entrypoint: options?.entrypoint,
   });
 
@@ -65,7 +65,6 @@ function buildMigrationGraphForEmber(
     DEBUG_CALLBACK(`Total Filtered Packages: ${filtered.length}`);
 
     counter = 1;
-
     filtered.forEach((p) => DEBUG_CALLBACK(` ${counter++}. ${p.packageName}: ${p.path}`));
     filtered.forEach((p) => {
       projectGraph.addPackageToGraph(p);

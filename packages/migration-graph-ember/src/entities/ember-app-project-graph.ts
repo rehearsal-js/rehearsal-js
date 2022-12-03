@@ -81,12 +81,16 @@ export class EmberAppProjectGraph extends ProjectGraph {
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     options = { sourceType: 'Ember Application', ...options };
     super(rootDir, options);
+
+    this.#visited = new Set<Package>();
   }
 
   addPackageToGraph(
     p: EmberAppPackage | EmberAddonPackage | Package,
     crawl = true
   ): GraphNode<PackageNode> {
+    DEBUG_CALLBACK('addPackageToGraph: "%s"', p.packageName);
+
     if (p instanceof EmberAddonPackage) {
       // Check the graph if it has this node already
       const hasNodeByPackageName = this.graph.hasNode(p.packageName);
@@ -102,7 +106,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     const node = super.addPackageToGraph(p);
 
     if (crawl) {
-      this.buildAnalyzedPackageTree(node);
+      this.discoverEdgesFromDependencies(node);
     }
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));
@@ -110,25 +114,39 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return node;
   }
 
-  buildAnalyzedPackageTree(source: GraphNode<PackageNode>, depth = 1): void {
+  #visited: Set<Package>;
+
+  hasDiscoveredEdges(pkg: Package): boolean {
+    return this.#visited.has(pkg);
+  }
+
+  discoverEdgesFromDependencies(source: GraphNode<PackageNode>): void {
     const pkg = source?.content?.pkg;
 
     if (!pkg) {
-      throw new Error('Unable to buildAnalyzedPackageTree; node has no package defined.');
+      throw new Error('Unable to discoverEdgesFromDependencies; node has no package defined.');
+    }
+
+    if (this.hasDiscoveredEdges(pkg)) {
+      DEBUG_CALLBACK('Already processed "%s". Skip.', pkg.packageName);
+      return;
     }
 
     const explicitDependencies = this.getExplicitPackageDependencies(pkg);
 
-    DEBUG_CALLBACK('explicitDependencies: %O', explicitDependencies);
+    this.#visited.add(pkg);
+
+    DEBUG_CALLBACK(
+      '"%s" depends on: %O',
+      pkg.packageName,
+      explicitDependencies.map((p) => p.packageName)
+    );
 
     explicitDependencies.forEach((p: Package | EmberAddonPackage) => {
-      const dest = this.addPackageToGraph(p, false);
+      const dest = this.addPackageToGraph(p);
 
-      DEBUG_CALLBACK('Adding edge from %s to %s', source.content.key, dest.content.key);
-
+      DEBUG_CALLBACK('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
       this.graph.addEdge(source, dest);
-
-      this.buildAnalyzedPackageTree(dest, depth + 1);
     });
   }
 
@@ -137,12 +155,17 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const { mappingsByAddonName, mappingsByLocation } = getInternalPackages(this.rootDir);
 
+    // let counter = 0;
+    // DEBUG_CALLBACK('echo: %s', counter++);
+
     if (pkg.dependencies) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
       deps = deps.concat(...somePackages);
     }
+
+    // DEBUG_CALLBACK('echo: %s', counter++);
 
     if (pkg.devDependencies) {
       deps = deps.concat(
@@ -151,6 +174,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         ) ?? [])
       );
     }
+    // DEBUG_CALLBACK('echo: %s', counter++);
 
     if (pkg instanceof EmberAppPackage) {
       const emberPackage = pkg as EmberAppPackage;
@@ -164,6 +188,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         );
       }
     }
+
     return deps.filter((dep) => !!dep && !EXCLUDED_PACKAGES.includes(dep.packageName));
   }
 
@@ -182,7 +207,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
    */
   findPackageByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
-      DEBUG_CALLBACK('findPackageNodeByAddonName: %O', n.content);
+      // DEBUG_CALLBACK('findPackageNodeByAddonName: %O', n.content);
 
       const somePackage: Package = n.content.pkg;
 
