@@ -36,8 +36,8 @@ Assuming we have a `rehearsal-config.json`:
 
 ```
 {
-  "upgradeConfig": {},
-  "migrateConfig": {
+  "upgrade": {},
+  "migrate": {
     "install": {
       "devDependencies": ["foo", "bar"],
       "dependencies": ["baz"]
