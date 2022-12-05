@@ -8,6 +8,10 @@
 transforms the code to align it with new TypeScript requirements,
 provides additional information to help engineers to migrate project to desired TypeScript version.
 
+# CLI
+Usage of Rehearsal is via @rehearsal/cli which is available here: https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli
+
+
 # Packages
 
 | Folder                                    | Version                                                                                                              | Package                                                                  |
