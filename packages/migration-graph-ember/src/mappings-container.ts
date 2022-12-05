@@ -8,6 +8,7 @@ import {
 } from '@rehearsal/migration-graph-shared';
 import { sync as fastGlobSync } from 'fast-glob';
 import resolvePackagePath from 'resolve-package-path';
+import debug from 'debug';
 
 import { EmberAddonPackage } from './entities/ember-addon-package';
 import { EmberAppPackage } from './entities/ember-app-package';
@@ -15,6 +16,8 @@ import { EmberAppPackage } from './entities/ember-app-package';
 import { isAddon, isApp } from './utils/ember';
 import { getInternalAddonTestFixtures } from './utils/environment';
 import type { EmberPackageContainer as PackageContainer } from './types/package-container';
+
+const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:mappings-container');
 
 type AddonName = string;
 type AddonLocation = string;
@@ -109,6 +112,7 @@ class MappingsContainer {
   private static instance: MappingsContainer;
 
   constructor(pathToRoot: string) {
+    DEBUG_CALLBACK('pathToRoot: %s', pathToRoot);
     const rootPackage = entityFactory(pathToRoot, {
       packageContainer: this.packageContainerInterface,
     });
@@ -168,12 +172,15 @@ class MappingsContainer {
   }
 
   private resetInternalState(rootPackage: Package): void {
+    DEBUG_CALLBACK('resetInternalState: %s', rootPackage);
     this.internalState = new RootInternalState(rootPackage);
   }
 
   private setRootPackage(pathToRoot: string): void {
     // If the current rootPackage path differs from pathToRoot re-initialize
     if (isTesting() || !this.internalState || this.internalState?.rootPackage.path !== pathToRoot) {
+      DEBUG_CALLBACK('setRootPackage: %s', pathToRoot);
+
       const rootPackage = entityFactory(pathToRoot, {
         packageContainer: this.packageContainerInterface,
       });
@@ -286,6 +293,7 @@ class MappingsContainer {
   }
 
   private globInternalPackages(pathToRoot: string): Package[] {
+    DEBUG_CALLBACK('globInternalPackages: %s', pathToRoot);
     const cwd = resolve(pathToRoot);
 
     // There is a bug (feature?) in fast glob where the exclude patterns include the `cwd`
@@ -302,7 +310,7 @@ class MappingsContainer {
     // This issue was discovered during a migration-graph.test.ts because we have a fixtures
     // directory.
 
-    const internalPackages = fastGlobSync(
+    let pathToPackageJsonList = fastGlobSync(
       [
         `**/package.json`,
         `!${pathToRoot}/**/build/**`,
@@ -316,14 +324,20 @@ class MappingsContainer {
         absolute: true,
         cwd,
       }
-    )
-      .map((pathToPackage) => dirname(pathToPackage))
-      .map((pathToPackage) =>
-        entityFactory(pathToPackage, {
-          type: 'in-repo',
-          packageContainer: this.packageContainerInterface,
-        })
-      );
+    );
+
+    DEBUG_CALLBACK('globInternalPackages: %s', pathToPackageJsonList.length);
+
+    pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+    const entities = pathToPackageJsonList.map((pathToPackage) =>
+      entityFactory(pathToPackage, {
+        type: 'in-repo',
+        packageContainer: this.packageContainerInterface,
+      })
+    );
+
+    DEBUG_CALLBACK('globInternalPackages: %s', entities.length);
 
     const fixturePackages = getInternalAddonTestFixtures().map((fixturePath) =>
       entityFactory(fixturePath, {
@@ -332,7 +346,7 @@ class MappingsContainer {
       })
     );
 
-    return [...internalPackages, ...fixturePackages];
+    return [...entities, ...fixturePackages];
   }
 
   public getInternalPackages(pathToRoot = process.cwd(), clearCache = false): InternalPackages {
@@ -343,6 +357,7 @@ class MappingsContainer {
     this.setRootPackage(pathToRoot);
 
     if (isTesting() || !this.internalState.internalAddonPackages) {
+      DEBUG_CALLBACK('getInternalPackages: No InternalAddonPackages');
       const mappingsByAddonName: MappingsByAddonName = {};
       const mappingsByLocation: MappingsByLocation = {};
 
