@@ -11,6 +11,7 @@ import { createLogger, format, transports } from 'winston';
 
 import execa = require('execa');
 
+import { version } from '../../package.json';
 import { generateReports, reportFormatter } from '../helpers/report';
 import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
@@ -28,7 +29,6 @@ import {
 } from '../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
-
 export const upgradeCommand = new Command();
 
 upgradeCommand
@@ -56,6 +56,8 @@ upgradeCommand
     });
 
     basePath = resolve(basePath);
+
+    console.log(`@rehearsal/upgrade ${version.trim()}`);
 
     // WARN: is git dirty check and exit if dirty
     if (!options.dryRun) {
