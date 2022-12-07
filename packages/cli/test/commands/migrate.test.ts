@@ -37,7 +37,7 @@ describe('migrate - install dependencies', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Installing dependencies');
   });
 
   test('Install custom dependencies with user config provided', async () => {
@@ -118,11 +118,19 @@ describe('migrate - JS to TS conversion', async () => {
   });
 
   test('able to migrate from default index.js', async () => {
-    const result = await runBin('migrate', ['-v'], {
+    const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
+    // Test logger messages from package/migrate
+    expect(result.stdout).toContain('info');
+    expect(result.stdout).toContain('Moving /foo.js to /foo.ts');
+    expect(result.stdout).toContain('Moving /index.js to /index.ts');
+    expect(result.stdout).toContain('Processing file:');
+
+    // Test summary message
     expect(result.stdout).toContain(`2 JS files has been converted to TS`);
+
     expect(readdirSync(basePath)).toContain('index.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
