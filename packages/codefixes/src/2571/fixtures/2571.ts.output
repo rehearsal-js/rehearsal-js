@@ -29,5 +29,5 @@ function getObject<T>(): T {
 
 const dummy = getObject();
 
-/* @ts-ignore @rehearsal TODO TS2571: Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }` */
+/* @ts-expect-error @rehearsal TODO TS2571: Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }` */
 dummy.key;

@@ -8,7 +8,7 @@ export function usesMissingVariable(): boolean {
   const something = true;
   const existingVar = true;
 
-  /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
   return something ? missingVar : existingVar;
 }
 
@@ -16,9 +16,9 @@ export function usesMissingVarWithLongName(): boolean {
   const something = true;
 
   return something
-    ? /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+    ? /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
       missingVar
-    : /* @ts-ignore @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
+    : /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
       missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
 }
 

@@ -21,7 +21,7 @@ export function Component() {
 
   console.log(element1, element2);
 
-  /* @ts-ignore @rehearsal TODO TS2304: ... */
+  /* @ts-expect-error @rehearsal TODO TS2304: ... */
   return <NonExistingFragment />;
 }
 

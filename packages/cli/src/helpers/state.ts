@@ -80,7 +80,7 @@ export class State {
         // if a ts file in state doesn't exist on disk, mark it as un-migrated
         store.files[f].current = null;
       }
-      // update ts-ignore count
+      // update ts-expect-error count
       store.files[f].errorCount = calculateTSIgnoreCount(f);
     }
     return store;

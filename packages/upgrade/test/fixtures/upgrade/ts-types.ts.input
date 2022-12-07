@@ -24,7 +24,7 @@ export function test3(me: number): string {
   return me.toString();
 }
 
-/* @ts-ignore @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
 test3('O');
 
 export class A {

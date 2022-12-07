@@ -37,11 +37,11 @@ export class Foo {
   fooMethod(size: string): boolean {
     const nextBreakpointIndex =
       orderedBreakpointsLongNameConstant.indexOf(
-        /* @ts-ignore @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
+        /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
         orderedBreakpointsLongNameConstant.find(([key]) => key === size)
       ) + 1;
     if (nextBreakpointIndex < orderedBreakpointsLongNameConstant.length) {
-      /* @ts-ignore @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+      /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
       return this.viewportWidth >= orderedBreakpointsLongNameConstant[nextBreakpointIndex][1];
     }
 
@@ -63,7 +63,7 @@ export class Foo {
    * @returns {boolean}
    */
   isLess(size: string): boolean {
-    /* @ts-ignore @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
     return this.viewportWidth < breakpointMap[size];
   }
 }
