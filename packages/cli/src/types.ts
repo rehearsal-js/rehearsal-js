@@ -80,9 +80,13 @@ export type MigrationSummary = {
   totalErrorCount: number;
   errorFixedCount: number;
   hintAddedCount: number;
-}
+};
 export type TSConfig = {
   compilerOptions: {
     strict: boolean;
   };
+};
+
+export type ScriptMap = {
+  [key: string]: string;
 };

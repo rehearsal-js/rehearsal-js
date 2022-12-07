@@ -240,3 +240,23 @@ describe('migrate - handle custom basePath', async () => {
     expect(config.include).toContain('index.ts');
   });
 });
+
+describe('migrate - new scripts for TS', async () => {
+  let basePath = '';
+
+  beforeAll(() => {
+    basePath = prepareTmpDir('basic');
+  });
+
+  test('add build:tsc and lint:tsc in package.json ', async () => {
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(stdout).toContain('Creating new scripts for Typescript in package.json');
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    expect(packageJson.scripts['build:tsc']).toBe('tsc -b');
+    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+  });
+});
