@@ -282,7 +282,7 @@ migrateCommand
           },
         },
       ],
-      { concurrent: false, exitOnError: false }
+      { concurrent: false, exitOnError: true }
     );
     try {
       await tasks.run();
