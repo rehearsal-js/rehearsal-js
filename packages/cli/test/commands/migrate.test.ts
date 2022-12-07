@@ -37,7 +37,7 @@ describe('migrate - install dependencies', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('[SUCCESS] Installing dependencies');
+    expect(result.stdout).toContain('Installing dependencies');
   });
 
   test('Install custom dependencies with user config provided', async () => {

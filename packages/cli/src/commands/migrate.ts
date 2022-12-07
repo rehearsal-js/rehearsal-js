@@ -183,7 +183,7 @@ migrateCommand
           },
         },
         {
-          title: 'Installing dependencies',
+          title: 'Installing dependencies.',
           enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
           task: async (_ctx: MigrateCommandContext, task) => {
             // install custom dependencies
@@ -263,9 +263,9 @@ migrateCommand
               const migratedFileCount = migratedFiles.length;
               task.title = `${migratedFileCount} JS ${
                 migratedFileCount === 1 ? 'file' : 'files'
-              } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
-                - ${errorFixedCount} have been fixed automatically by rehearsal
-                - ${hintAddedCount} have been updated with @ts-ignore @rehearsal TODO which need further manual check`;
+              } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal:
+                - ${errorFixedCount} have been fixed automatically by rehearsal.
+                - ${hintAddedCount} have been updated with @ts-ignore @rehearsal TODO which need further manual check.`;
             } else {
               task.skip(
                 `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
