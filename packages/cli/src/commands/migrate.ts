@@ -40,7 +40,7 @@ import {
   writeTSConfig,
   getPathToBinary,
   readJSON,
-  addPakcageJsonScripts,
+  addPackageJsonScripts,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -289,7 +289,7 @@ migrateCommand
           title: 'Creating new scripts for Typescript in package.json',
           enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
           task: async () => {
-            addPakcageJsonScripts(options.basePath, {
+            addPackageJsonScripts(options.basePath, {
               'build:tsc': 'tsc -b',
               'lint:tsc': 'tsc --noEmit',
             });

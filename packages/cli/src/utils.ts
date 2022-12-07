@@ -389,7 +389,7 @@ export function isTypescriptInDevdep(basePath: string): boolean {
 /**
  * Add/Update scripts in package.json
  */
-export function addPakcageJsonScripts(basePath: string, scriptMap: ScriptMap): void {
+export function addPackageJsonScripts(basePath: string, scriptMap: ScriptMap): void {
   const packageJSONPath = resolve(basePath, 'package.json');
   const packageJSON = readJSONSync(packageJSONPath);
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
