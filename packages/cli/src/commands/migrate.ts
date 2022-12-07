@@ -40,6 +40,7 @@ import {
   writeTSConfig,
   getPathToBinary,
   readJSON,
+  addPakcageJsonScripts,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -76,7 +77,6 @@ migrateCommand
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
-
 
     console.log(`@rehearsal/migrate ${version.trim()}`);
 
@@ -283,6 +283,16 @@ migrateCommand
             } else {
               task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
             }
+          },
+        },
+        {
+          title: 'Creating new scripts for Typescript in package.json',
+          enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+          task: async () => {
+            addPakcageJsonScripts(options.basePath, {
+              'build:tsc': 'tsc -b',
+              'lint:tsc': 'tsc --noEmit',
+            });
           },
         },
       ],

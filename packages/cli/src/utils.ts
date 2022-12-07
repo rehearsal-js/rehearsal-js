@@ -10,6 +10,7 @@ import { InvalidArgumentError } from 'commander';
 import findup = require('findup-sync');
 import execa = require('execa');
 
+import { ScriptMap } from './types';
 import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
@@ -383,4 +384,14 @@ export function isTypescriptInDevdep(basePath: string): boolean {
     (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
     (packageJSON.dependencies && packageJSON.dependencies.typescript)
   );
+}
+
+/**
+ * Add/Update scripts in package.json
+ */
+export function addPakcageJsonScripts(basePath: string, scriptMap: ScriptMap): void {
+  const packageJSONPath = resolve(basePath, 'package.json');
+  const packageJSON = readJSONSync(packageJSONPath);
+  packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
+  writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
 }
