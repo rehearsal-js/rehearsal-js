@@ -22,6 +22,7 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { debug } from 'debug';
 import execa = require('execa');
+import { version } from '../../package.json';
 
 import { generateReports, getReportSummary } from '../helpers/report';
 import {
@@ -75,6 +76,8 @@ migrateCommand
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
+
+    console.log(`@rehearsal/migrate ${version.trim()}`);
 
     const tasks = new Listr<MigrateCommandContext>(
       [
