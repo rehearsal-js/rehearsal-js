@@ -76,11 +76,11 @@ migrateCommand
       transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
     });
 
-    const tasks = new Listr<MigrateCommandContext>(
+    const tasks = new Listr(
       [
         {
           title: 'Initialization',
-          task: async (_ctx, task) => {
+          task: async (_ctx: MigrateCommandContext, task) => {
             // get custom config
             const userConfig = options.userConfig
               ? new UserConfig(options.basePath, options.userConfig, 'migrate')
@@ -180,8 +180,8 @@ migrateCommand
         },
         {
           title: 'Installing dependencies',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async (_ctx, task) => {
+          enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+          task: async (_ctx: MigrateCommandContext, task) => {
             // install custom dependencies
             if (_ctx.userConfig?.hasDependencies) {
               task.title = `Installing custom dependencies`;
@@ -193,8 +193,8 @@ migrateCommand
         },
         {
           title: 'Creating tsconfig.json',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async (_ctx, task) => {
+          enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+          task: async (_ctx: MigrateCommandContext, task) => {
             if (_ctx.userConfig?.hasTsSetup) {
               task.title = `Creating tsconfig from custom config.`;
               await _ctx.userConfig.tsSetup();
@@ -217,8 +217,8 @@ migrateCommand
         },
         {
           title: 'Converting JS files to TS',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async (_ctx, task) => {
+          enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+          task: async (_ctx: MigrateCommandContext, task) => {
             const projectName = determineProjectName() || '';
             const { basePath } = options;
             const tscPath = await getPathToBinary('tsc');
@@ -234,7 +234,7 @@ migrateCommand
               const input = {
                 basePath: _ctx.targetPackagePath,
                 sourceFiles: _ctx.sourceFilesWithAbsolutePath,
-                logger: options.verbose ? logger : undefined,
+                logger: logger,
                 reporter,
               };
 
@@ -271,8 +271,8 @@ migrateCommand
         },
         {
           title: 'Creating eslint config',
-          enabled: (ctx): boolean => !ctx.skip,
-          task: async (_ctx, task) => {
+          enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+          task: async (_ctx: MigrateCommandContext, task) => {
             if (_ctx.userConfig?.hasLintSetup) {
               task.title = `Creating .eslintrc.js from custom config.`;
               await _ctx.userConfig.lintSetup();
@@ -282,7 +282,11 @@ migrateCommand
           },
         },
       ],
-      { concurrent: false, exitOnError: false }
+      {
+        concurrent: false,
+        exitOnError: false,
+        renderer: 'simple',
+      }
     );
     try {
       await tasks.run();
