@@ -8,7 +8,7 @@ import {
 } from './types';
 
 /**
- * Don't actually fix the issue but adds a @ts-ignore comments instead
+ * Don't actually fix the issue but adds a @ts-expect-error comments instead
  */
 export class HintCodeFixCollection implements CodeFixCollection {
   readonly list: CodeHintList;
@@ -19,7 +19,7 @@ export class HintCodeFixCollection implements CodeFixCollection {
 
   getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const hint = this.getHint(diagnostic);
-    const comment = `@ts-ignore @rehearsal TODO TS${diagnostic.code}: ${hint}`;
+    const comment = `@ts-expect-error @rehearsal TODO TS${diagnostic.code}: ${hint}`;
 
     console.log(diagnostic.node?.getText());
     console.log(diagnostic.node?.getStart());

@@ -22,7 +22,7 @@ export type UpgradeOutput = {
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 
 /**
- * Provides semantic diagnostic information in @ts-ignore comments and in a JSON report
+ * Provides semantic diagnostic information in @ts-expect-error comments and in a JSON report
  */
 export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const basePath = resolve(input.basePath);

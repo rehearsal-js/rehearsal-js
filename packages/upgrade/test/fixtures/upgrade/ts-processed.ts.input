@@ -35,8 +35,8 @@ const resultValue = something
 try {
   console.log('success');
 } catch (e) {
-  /* @ts-ignore @rehearsal Object is of type '{0}'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }` */
+  /* @ts-expect-error @rehearsal Object is of type '{0}'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }` */
   console.log(e.message);
-  /* @ts-ignore @rehearsal Object is of type '{0}'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }` */
+  /* @ts-expect-error @rehearsal Object is of type '{0}'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }` */
   console.log(e.notErrorMember);
 }

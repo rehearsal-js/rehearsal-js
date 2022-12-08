@@ -103,7 +103,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
     const diagnostics = [
       ...this.service.getSemanticDiagnosticsWithLocation(fileName),
-      ...this.service.getSuggestionDiagnostics(fileName)
+      ...this.service.getSuggestionDiagnostics(fileName),
     ];
 
     diagnostics.sort((a, b) => a.start - b.start);
@@ -184,7 +184,7 @@ export class DiagnosticFixPlugin extends Plugin {
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
 
     // TODO: Pass a comment template in config
-    let comment = `@ts-ignore ${tag} TODO TS${diagnostic.code}: ${hint}`;
+    let comment = `@ts-expect-error ${tag} TODO TS${diagnostic.code}: ${hint}`;
     comment = isNodeInsideJsx(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
 
     // Make sure the comment is a single because we have to place @ tags right above the issue
@@ -202,9 +202,9 @@ export class DiagnosticFixPlugin extends Plugin {
     const startColumn = character + 1; //bump character 0 to character 1, so on and so forth
     const newCode = textChange.newText;
     const oldCode = sourceFile.text.substring(
-          textChange.span.start,
-          textChange.span.start + textChange.span.length
-        ) ;
+      textChange.span.start,
+      textChange.span.start + textChange.span.length
+    );
 
     const getActionKind = (textChange: TextChange): CodeFixKind => {
       if (textChange.span.length === 0) {

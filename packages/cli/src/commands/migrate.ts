@@ -128,7 +128,7 @@ migrateCommand
                 let isOptionDisabled = false;
                 if (totalFileCount !== 0) {
                   // has previous migratoin
-                  progressText = `${migratedFileCount} of ${totalFileCount} files migrated, ${errorCount} @ts-ignore(s) need to be fixed`;
+                  progressText = `${migratedFileCount} of ${totalFileCount} files migrated, ${errorCount} @ts-expect-error(s) need to be fixed`;
                   icon = IN_PROGRESS_MARK;
 
                   if (isCompleted && errorCount === 0) {
@@ -265,7 +265,7 @@ migrateCommand
                 migratedFileCount === 1 ? 'file' : 'files'
               } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal:
                 - ${errorFixedCount} have been fixed automatically by rehearsal.
-                - ${hintAddedCount} have been updated with @ts-ignore @rehearsal TODO which need further manual check.`;
+                - ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
             } else {
               task.skip(
                 `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
