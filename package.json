@@ -46,8 +46,6 @@
     "@microsoft/api-extractor": "^7.18.19",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.18.0",
     "@types/commander": "^2.12.2",
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
