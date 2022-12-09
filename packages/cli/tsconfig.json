@@ -1,8 +1,22 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist"
   },
-  "include": ["src", "package.json"]
+  "include": ["src", "package.json"],
+  "references": [
+    {
+      "path": "../migrate"
+    },
+    {
+      "path": "../migration-graph"
+    },
+    {
+      "path": "../reporter"
+    },
+    {
+      "path": "../upgrade"
+    }
+  ]
 }

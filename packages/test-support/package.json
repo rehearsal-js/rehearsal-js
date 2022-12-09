@@ -17,7 +17,6 @@
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
-    "prepare": "pnpm build",
     "test": "vitest --run"
   },
   "dependencies": {

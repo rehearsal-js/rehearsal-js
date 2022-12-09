@@ -1,20 +1,42 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "newLine": "LF",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "es2017",
-    "skipLibCheck": true
-  }
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/codefixes"
+    },
+    {
+      "path": "./packages/migrate"
+    },
+    {
+      "path": "./packages/migration-graph"
+    },
+    {
+      "path": "./packages/migration-graph-ember"
+    },
+    {
+      "path": "./packages/migration-graph-shared"
+    },
+    {
+      "path": "./packages/plugins"
+    },
+    {
+      "path": "./packages/reporter"
+    },
+    {
+      "path": "./packages/service"
+    },
+    {
+      "path": "./packages/test-support"
+    },
+    {
+      "path": "./packages/upgrade"
+    },
+    {
+      "path": "./packages/utils"
+    }
+  ]
 }
