@@ -3,6 +3,7 @@ import {
   getEmberProject,
   getEmberProjectFixture,
   getLibrarySimple,
+  getLibraryWithWorkspaces,
   setupProject,
 } from '@rehearsal/test-support';
 import { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
@@ -21,7 +22,7 @@ function filter(arr: GraphNode<ModuleNode>[]): GraphNode<ModuleNode>[] {
 }
 
 describe('migration-graph', () => {
-  describe('package', () => {
+  describe('library', () => {
     test('simple', () => {
       const baseDir = getLibrarySimple();
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
@@ -33,6 +34,42 @@ describe('migration-graph', () => {
       expect(
         flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
       ).toStrictEqual(['lib/a.js', 'index.js']);
+    });
+
+    test('workspace', () => {
+      const baseDir = getLibraryWithWorkspaces();
+      const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
+
+      expect(projectGraph.sourceType).toBe(SourceType.Library);
+      expect(sourceType).toBe(SourceType.Library);
+
+      expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/foo')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/bar')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/baz')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/blorp')).toBe(true);
+
+      const sortedPackages = projectGraph.graph.topSort();
+
+      expect(flatten(sortedPackages)).toStrictEqual([
+        'some-library-with-workspace',
+        '@something/baz',
+        '@something/blorp',
+        '@something/bar',
+        '@something/foo',
+      ]);
+
+      expect(flatten(sortedPackages[0].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(sortedPackages[1].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(sortedPackages[2].content.pkg.getModuleGraph().topSort())).toStrictEqual([
+        'lib/impl.js',
+        'index.js',
+      ]);
+      expect(flatten(sortedPackages[3].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(sortedPackages[4].content.pkg.getModuleGraph().topSort())).toStrictEqual([
+        'lib/a.js',
+        'index.js',
+      ]);
     });
   });
 

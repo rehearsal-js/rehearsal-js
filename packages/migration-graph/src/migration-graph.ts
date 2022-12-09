@@ -30,6 +30,8 @@ function buildMigrationGraphForLibrary(
     entrypoint: options?.entrypoint,
   });
 
+  projectGraph.discover();
+
   return projectGraph;
 }
 

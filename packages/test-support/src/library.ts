@@ -4,79 +4,166 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 setGracefulCleanup();
 
 function create(files: fixturify.DirJSON): string {
+  // TODO refactor this test fixture to use fixturify-project
   const { name: tmpdir } = dirSync();
   fixturify.writeSync(tmpdir, files);
   return tmpdir;
 }
 
-export function getLibrarySimple(): string {
-  // TODO refactor this test fixture to use fixturify-project
-  const files = {
-    'index.js': `
-      import * as parser from '@babel/parser';
-      import chalk from 'chalk';
-      import path from 'path';
-      import './lib/a';
-      
-      console.log(path.join('foo', 'bar', 'baz'));
-      console.log(parser, chalk);
-    `,
-    'package.json': `
-      {
-        "name": "my-package",
-        "main": "index.js",
-        "dependencies": {
-          "@babel/parser": "*",
-          "chalk": "*"
-        },
-        "devDependencies": {
-          "typescript": "^4.8.3"
-        }
-      }
-    `,
-    lib: {
-      'a.js': `
-        // a.js
-        console.log('foo');        
-       `,
-    },
-  };
-  const dir = create(files);
+type LibraryVariants = 'simple' | 'library-with-entrypoint' | 'library-with-workspaces';
 
-  return dir;
+export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
+  let files: fixturify.DirJSON;
+
+  switch (variant) {
+    case 'simple':
+      files = {
+        'index.js': `
+          import * as parser from '@babel/parser';
+          import chalk from 'chalk';
+          import path from 'path';
+          import './lib/a';
+          
+          console.log(path.join('foo', 'bar', 'baz'));
+          console.log(parser, chalk);
+        `,
+        'package.json': `
+          {
+            "name": "my-package",
+            "main": "index.js",
+            "dependencies": {
+              "@babel/parser": "*",
+              "chalk": "*"
+            },
+            "devDependencies": {
+              "typescript": "^4.8.3"
+            }
+          }
+        `,
+        lib: {
+          'a.js': `
+            // a.js
+            console.log('foo');        
+           `,
+        },
+      };
+      break;
+    case 'library-with-workspaces':
+      files = {
+        packages: {
+          foo: {
+            'package.json': `{
+              "name": "@something/foo",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": {
+                "@something/bar": "*"
+              }
+            }`,
+            'index.js': `
+              import './lib/a';
+            `,
+            lib: {
+              'a.js': `
+              // a.js
+              console.log('foo');        
+             `,
+            },
+          },
+          bar: {
+            'package.json': `{
+              "name": "@something/bar",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": { 
+                "@something/baz": "*"
+              },
+              "devDependencies": {
+                "@something/blorp": "*"
+              }
+            }`,
+          },
+          baz: {
+            'package.json': `{
+              "name": "@something/baz",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": {
+              }
+            }`,
+          },
+          blorp: {
+            'package.json': `{
+              "name": "@something/blorp",
+              "version": "1.0.0",
+              "main": "index.js"
+            }`,
+            'index.js': `
+              import './lib/impl';
+            `,
+            lib: {
+              'impl.js': `
+                // impl.js
+              `,
+            },
+          },
+        },
+        'package.json': `
+          {
+            "name": "some-library-with-workspace",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT",
+            "workspaces": [
+              "packages/*"
+            ]
+          }    
+        `,
+      };
+      break;
+    case 'library-with-entrypoint':
+      files = {
+        'foo.js': `
+          export function say(name = 'World') {
+            return \`Hello \${name}\`;
+          }
+        `,
+        'depends-on-foo.js': `
+          import { say } from './foo';
+    
+          console.log(say('hello'));    
+        `,
+        'index.js': `
+          import path from 'path';
+    
+          export function power(foo, bar) {
+            return Math.pow(foo, bar);
+          }
+        `,
+        'package.json': `
+          {
+            "name": "basic",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT"
+          }    
+        `,
+      };
+      break;
+    default:
+      throw new Error('Unable to getFiles; Invalid variant;');
+  }
+
+  return files;
+}
+export function getLibrarySimple(): string {
+  return create(getFiles('simple'));
 }
 
-// This is a fixturify version of cli fixtures/app_for_migration/src/basic
 export function getLibraryWithEntrypoint(): string {
-  const files = {
-    'foo.js': `
-      export function say(name = 'World') {
-        return \`Hello \${name}\`;
-      }
-    `,
-    'depends-on-foo.js': `
-      import { say } from './foo';
+  return create(getFiles('library-with-entrypoint'));
+}
 
-      console.log(say('hello'));    
-    `,
-    'index.js': `
-      import path from 'path';
-
-      export function power(foo, bar) {
-        return Math.pow(foo, bar);
-      }
-    `,
-    'package.json': `
-      {
-        "name": "basic",
-        "version": "1.0.0",
-        "main": "index.js",
-        "license": "MIT"
-      }    
-    `,
-  };
-
-  const { name: someTmpDir } = dirSync();
-  fixturify.writeSync(someTmpDir, files);
-  return someTmpDir;
+export function getLibraryWithWorkspaces(): string {
+  return create(getFiles('library-with-workspaces'));
 }
