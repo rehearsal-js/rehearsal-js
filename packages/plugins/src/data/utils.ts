@@ -51,11 +51,12 @@ export function getLocation(sourceFile: SourceFile, start: number, length: numbe
     start + length - 1
   );
 
+  // bump 0 to 1, so on and so forth, so that sarif reader can show correct line and column numbers
   return {
-    startLine,
-    startColumn,
-    endLine,
-    endColumn,
+    startLine: startLine + 1,
+    startColumn: startColumn + 1,
+    endLine: endLine + 1,
+    endColumn: endColumn + 1,
   };
 }
 
@@ -95,9 +96,16 @@ export function getCommentedFileData(
 }
 
 export function getInitialEntryFileData(diagnostic: DiagnosticWithLocation): ProcessedFile {
+  const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+  // add 1 to line number, because comment pushes diagnostic down by 1 line
+  const adjustedLocation = {
+    ...location,
+    startLine: location.startLine + 1,
+    endLine: location.endLine + 1,
+  };
   return {
     fileName: diagnostic.file.fileName,
-    location: getLocation(diagnostic.file, diagnostic.start, diagnostic.length),
+    location: adjustedLocation,
     fixed: false,
     newCode: undefined,
     oldCode: undefined,
