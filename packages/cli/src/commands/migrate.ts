@@ -41,6 +41,8 @@ import {
   getPathToBinary,
   readJSON,
   addPackageJsonScripts,
+  gitIsRepoDirty,
+  resetFiles,
 } from '../utils';
 import { State } from '../helpers/state';
 
@@ -79,6 +81,14 @@ migrateCommand
     });
 
     console.log(`@rehearsal/migrate ${version.trim()}`);
+
+    const hasUncommittedFiles = await gitIsRepoDirty();
+    if (hasUncommittedFiles) {
+      logger.warn(
+        'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+      );
+      process.exit(0);
+    }
 
     const tasks = new Listr(
       [
@@ -298,13 +308,14 @@ migrateCommand
       ],
       {
         concurrent: false,
-        exitOnError: false,
+        exitOnError: true,
         renderer: 'simple',
       }
     );
     try {
       await tasks.run();
     } catch (e) {
+      await resetFiles();
       logger.error(`${e}`);
     }
   });

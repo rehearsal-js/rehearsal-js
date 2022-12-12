@@ -395,3 +395,16 @@ export function addPackageJsonScripts(basePath: string, scriptMap: ScriptMap): v
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
   writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
 }
+
+/**
+ * Run git reset to get all file changes to the previous state
+ */
+export async function resetFiles(): Promise<void> {
+  try {
+    // check if git history exists
+    await execa('git', ['status']);
+    await execa('git', ['reset', '--hard']);
+  } catch (e) {
+    // no ops
+  }
+}
