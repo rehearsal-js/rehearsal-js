@@ -1,6 +1,8 @@
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import execa from 'execa';
 import which from 'which';
+import { rmSync } from 'fs-extra';
+import packageJson from '../package.json';
 
 import { git, gitIsRepoDirty } from '../src/utils';
 
@@ -25,20 +27,6 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
   }
 }
 
-// helper funcion to run a command via ts-node
-// stdout of commands available via ExecaChildProcess.stdout
-export function runTSNode(
-  command: string,
-  args: string[],
-  options: execa.Options = {}
-): execa.ExecaChildProcess {
-  const cliPath = resolve(__dirname, `./runner.ts`);
-  // why use ts-node instead of calling bin/rehearsal.js directly?
-  // during the test process there would be pnpm install typescript
-  // we need to run build after every install to make sure dist dir is ready to use
-  return execa(PNPM_PATH, ['ts-node', cliPath, command, ...args], options);
-}
-
 // helper funcion to run a command via the actual bin
 // stdout of commands available via ExecaChildProcess.stdout
 export function runBin(
@@ -49,3 +37,27 @@ export function runBin(
   const cliPath = resolve(__dirname, `../bin/rehearsal.js`);
   return execa(cliPath, [command, ...args], options);
 }
+
+let WORKING_BRANCH = '';
+
+export const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
+
+// we want an older version of typescript to test against
+// eg 4.2.4 since we want to be sure to get compile errors
+export const TEST_TSC_VERSION = '4.5.5';
+export const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
+
+export const beforeEachPrep = async (): Promise<void> => {
+  const { current } = await git.branchLocal();
+  WORKING_BRANCH = current;
+  // install the test version of tsc
+  await execa(PNPM_PATH, ['add', '-D', '-w', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['install']);
+  // clean any report files
+  rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
+};
+
+// Revert to previous TSC version from TEST_TSC_VERSION
+export const afterEachCleanup = async (): Promise<void> => {
+  await gitDeleteLocalBranch(WORKING_BRANCH);
+};

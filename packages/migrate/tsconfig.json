@@ -1,8 +1,22 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../plugins",
+    },
+    {
+      "path": "../reporter"
+    },
+    {
+      "path": "../service"
+    },
+    {
+      "path": "../utils"
+    }
+  ]
 }

@@ -6,7 +6,7 @@ import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest'
 
 import packageJson from '../../package.json';
 import { getLatestTSVersion, git } from '../../src/utils';
-import { gitDeleteLocalBranch, PNPM_PATH, runTSNode } from '../test-helpers';
+import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
@@ -44,14 +44,11 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
 
     test('runs', async () => {
       // runs against `latestBeta` by default
-      const result = await runTSNode('upgrade', [
-        FIXTURE_APP_PATH,
-        '--report',
-        'json',
-        '--dryRun',
-        '--build',
-        buildTag,
-      ]);
+      const result = await runBin(
+        'upgrade',
+        [FIXTURE_APP_PATH, '--report', 'json', '--dryRun', '--build', buildTag],
+        { cwd: FIXTURE_APP_PATH }
+      );
 
       // default is beta unless otherwise specified
       const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
@@ -77,14 +74,11 @@ describe('upgrade:command typescript@next', async () => {
   test('runs', async () => {
     const buildTag = 'next';
 
-    const result = await runTSNode('upgrade', [
-      FIXTURE_APP_PATH,
-      '--report',
-      'sarif',
-      '--dryRun',
-      '--build',
-      buildTag,
-    ]);
+    const result = await runBin(
+      'upgrade',
+      [FIXTURE_APP_PATH, '--report', 'sarif', '--dryRun', '--build', buildTag],
+      { cwd: FIXTURE_APP_PATH }
+    );
     // eg. 4.9.0-dev.20220930
     const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
     const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.sarif');
@@ -103,7 +97,7 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript invalid tsVersion`, async () => {
     try {
-      await runTSNode('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '']);
+      await runBin('upgrade', [FIXTURE_APP_PATH, '--tsVersion', ''], { cwd: FIXTURE_APP_PATH });
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
@@ -111,7 +105,7 @@ describe('upgrade:command tsc version check', async () => {
     }
 
     try {
-      await runTSNode('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '0']);
+      await runBin('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '0'], { cwd: FIXTURE_APP_PATH });
     } catch (error) {
       expect(`${error}`).to.contain(
         `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
@@ -124,12 +118,11 @@ describe('upgrade:command tsc version check', async () => {
     await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
     await execa(PNPM_PATH, ['install']);
 
-    const result = await runTSNode('upgrade', [
-      FIXTURE_APP_PATH,
-      '--tsVersion',
-      TEST_TSC_VERSION,
-      '--dryRun',
-    ]);
+    const result = await runBin(
+      'upgrade',
+      [FIXTURE_APP_PATH, '--tsVersion', TEST_TSC_VERSION, '--dryRun'],
+      { cwd: FIXTURE_APP_PATH }
+    );
 
     expect(result.stdout).toContain(
       `This application is already on the latest version of TypeScript@${TEST_TSC_VERSION}`

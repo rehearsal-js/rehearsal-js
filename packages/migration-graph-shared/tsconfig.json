@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
     "skipLibCheck": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../test-support" }
+  ]
 }
