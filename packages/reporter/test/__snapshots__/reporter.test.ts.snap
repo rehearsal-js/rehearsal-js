@@ -136,14 +136,16 @@ exports[`Test reporter > addItem 1`] = `
       \\"errorCode\\": 1000,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"unused variable\\",
-      \\"hint\\": \\"\\",
+      \\"hint\\": \\"This is the hint.\\",
       \\"fixed\\": false,
+      \\"nodeKind\\": 79,
+      \\"nodeText\\": \\"var1\\",
       \\"helpUrl\\": \\"\\",
       \\"nodeLocation\\": {
-        \\"startLine\\": 0,
-        \\"startColumn\\": 5,
-        \\"endLine\\": 0,
-        \\"endColumn\\": 5
+        \\"startLine\\": 3,
+        \\"startColumn\\": 7,
+        \\"endLine\\": 3,
+        \\"endColumn\\": 12
       }
     }
   ]
