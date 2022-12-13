@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { existsSync, writeJSONSync, readJSONSync, readFileSync, mkdirSync } from 'fs-extra';
-import execa from 'execa';
+
+import { git } from '../utils';
 
 // The reaosn to have packageMap is getting all files in a package faster
 // than loop through everyhing in the files
@@ -143,12 +144,8 @@ export class State {
   }
 
   async addStateFileToGit(): Promise<void> {
-    try {
-      // check if git history exists
-      await execa('git', ['status']);
-      await execa('git', ['add', this.configPath]);
-    } catch (e) {
-      // no ops
+    if (await git.checkIsRepo()) {
+      git.add(['add', this.configPath]);
     }
   }
 }

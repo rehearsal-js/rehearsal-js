@@ -82,7 +82,7 @@ migrateCommand
 
     console.log(`@rehearsal/migrate ${version.trim()}`);
 
-    const hasUncommittedFiles = await gitIsRepoDirty();
+    const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(
         'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'

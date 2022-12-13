@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { copySync, readdirSync, readJSONSync, writeJSONSync, realpathSync } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { CustomConfig } from '../../src/types';
 import { runBin } from '../test-helpers';
@@ -24,6 +25,59 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');
   writeJSONSync(configPath, config);
 }
+
+describe('migrate - check repo status', async () => {
+  let basePath = '';
+
+  beforeEach(() => {
+    basePath = prepareTmpDir('initialization');
+  });
+
+  test('pass in a non git project', async () => {
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(stdout).toContain('Initialization Completed!');
+  });
+
+  test('pass in a clean git project', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+      binary: 'git',
+      maxConcurrentProcesses: 6,
+    } as Partial<SimpleGitOptions>);
+    await git.init();
+    await git.add('package.json');
+    await git.commit('test');
+
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(stdout).toContain('Initialization Completed!');
+  });
+
+  test('exit in a dirty git project', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+      binary: 'git',
+      maxConcurrentProcesses: 6,
+    } as Partial<SimpleGitOptions>);
+    await git.init();
+    await git.add('package.json');
+
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(stdout).toContain(
+      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+    );
+  });
+});
 
 describe('migrate - install dependencies', async () => {
   let basePath = '';
