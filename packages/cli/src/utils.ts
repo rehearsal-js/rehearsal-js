@@ -39,9 +39,20 @@ export async function gitCheckoutNewLocalBranch(
   return branchName;
 }
 
-export async function gitIsRepoDirty(): Promise<boolean> {
-  const status = await git.status();
-  return status.isClean() === false;
+export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
+  // if cwd is provided, create a new git instance with the correct cwd
+  const gitClient = cwd
+    ? simpleGit({
+        baseDir: cwd,
+        binary: 'git',
+        maxConcurrentProcesses: 6,
+      } as Partial<SimpleGitOptions>)
+    : git;
+  if (await gitClient.checkIsRepo()) {
+    const status = await gitClient.status();
+    return status.isClean() === false;
+  }
+  return false; // false if it's not a git repo
 }
 
 /**
@@ -394,4 +405,13 @@ export function addPackageJsonScripts(basePath: string, scriptMap: ScriptMap): v
   const packageJSON = readJSONSync(packageJSONPath);
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
   writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
+}
+
+/**
+ * Run git reset to get all file changes to the previous state
+ */
+export async function resetFiles(): Promise<void> {
+  if (await git.checkIsRepo()) {
+    await git.reset(['--hard']);
+  }
 }
