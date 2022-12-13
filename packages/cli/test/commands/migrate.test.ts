@@ -50,6 +50,9 @@ describe('migrate - check repo status', async () => {
     } as Partial<SimpleGitOptions>);
     await git.init();
     await git.add('package.json');
+    // GH CI would require git name and email
+    await git.addConfig('user.name', 'tester');
+    await git.addConfig('user.email', 'tester@tester.com');
     await git.commit('test');
 
     const { stdout } = await runBin('migrate', [], {
