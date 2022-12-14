@@ -85,6 +85,8 @@ describe('project-graph', () => {
       expect(barNode.adjacent.has(bazNode)).toBe(true);
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
     });
-    test.todo('should do something if a cycle is found', () => {});
+    test.todo('should do something if a cycle is found', () => {
+      expect(true).toBe(false);
+    });
   });
 });
