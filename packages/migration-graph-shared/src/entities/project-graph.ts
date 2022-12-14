@@ -6,7 +6,6 @@ import { getWorkspaceGlobs, isWorkspace } from '../../src/utils/workspace';
 import { Package } from './package';
 
 import type { PackageNode } from '../types';
-import { readPackageJson } from 'src';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
