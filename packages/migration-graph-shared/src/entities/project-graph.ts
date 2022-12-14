@@ -6,6 +6,7 @@ import { getWorkspaceGlobs, isWorkspace } from '../../src/utils/workspace';
 import { Package } from './package';
 
 import type { PackageNode } from '../types';
+import { readPackageJson } from 'src';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
@@ -137,12 +138,13 @@ export class ProjectGraph {
   }
 
   discover(): Array<Package> {
-    if (!isWorkspace(this.rootDir, this.rootDir)) {
+    // Get root package.json
+    const globs = getWorkspaceGlobs(this.rootDir);
+
+    if (globs.length <= 0) {
       return [];
     }
 
-    // Get root package.json
-    const globs = getWorkspaceGlobs(this.rootDir);
     DEBUG_CALLBACK('globs %s', globs);
 
     const pathToRoot = this.rootDir;
@@ -166,7 +168,9 @@ export class ProjectGraph {
 
     pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
 
-    const entities = pathToPackageJsonList.map((pathToPackage) => new Package(pathToPackage));
+    const entities = pathToPackageJsonList
+      .filter((pathToPackage) => isWorkspace(this.rootDir, pathToPackage)) // Ensures any package found is in the workspace.
+      .map((pathToPackage) => new Package(pathToPackage));
 
     this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
       acc[pkg.packageName] = pkg;
