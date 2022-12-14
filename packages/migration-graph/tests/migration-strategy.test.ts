@@ -3,12 +3,13 @@ import {
   getLibrarySimple,
   getLibraryWithEntrypoint,
   getEmberProjectFixture,
+  getLibraryWithWorkspaces,
 } from '@rehearsal/test-support';
 import { SourceType } from '../src/source-type';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 
 describe('migration-strategy', () => {
-  describe('package', () => {
+  describe('library', () => {
     test('simple', () => {
       const rootDir = getLibrarySimple();
       const strategy = getMigrationStrategy(rootDir);
@@ -23,6 +24,20 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['foo.js', 'depends-on-foo.js']);
+      expect(strategy.sourceType).toBe(SourceType.Library);
+    });
+
+    test('workspaces', () => {
+      const rootDir = getLibraryWithWorkspaces();
+      const strategy = getMigrationStrategy(rootDir);
+      const files: Array<SourceFile> = strategy.getMigrationOrder();
+      const relativePaths: Array<string> = files.map((f) => f.relativePath);
+      expect(relativePaths).toStrictEqual([
+        'packages/blorp/lib/impl.js',
+        'packages/blorp/index.js',
+        'packages/foo/lib/a.js',
+        'packages/foo/index.js',
+      ]);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
   });

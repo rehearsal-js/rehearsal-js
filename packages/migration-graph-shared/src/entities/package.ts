@@ -14,6 +14,7 @@ import type { ModuleNode } from '../types';
 
 export type PackageJson = Record<string, any>;
 
+// TODO evaluate if the packageContainer is actually needed
 export type PackageContainer = {
   isWorkspace?: (...args: any) => boolean;
   addWorkspaceGlob?: (...args: any) => unknown;

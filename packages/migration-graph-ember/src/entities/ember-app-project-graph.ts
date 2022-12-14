@@ -78,11 +78,11 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
+  protected discoveredPackages: Record<string, Package | EmberAddonPackage | EmberAppPackage>;
+
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     options = { sourceType: 'Ember Application', ...options };
     super(rootDir, options);
-
-    this.#visited = new Set<Package>();
   }
 
   addPackageToGraph(
@@ -103,60 +103,23 @@ export class EmberAppProjectGraph extends ProjectGraph {
         }
       }
     }
-    const node = super.addPackageToGraph(p);
-
-    if (crawl) {
-      this.discoverEdgesFromDependencies(node);
-    }
+    const node = super.addPackageToGraph(p, crawl);
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));
 
     return node;
   }
 
-  #visited: Set<Package>;
-
-  hasDiscoveredEdges(pkg: Package): boolean {
-    return this.#visited.has(pkg);
-  }
-
-  discoverEdgesFromDependencies(source: GraphNode<PackageNode>): void {
-    const pkg = source?.content?.pkg;
-
-    if (!pkg) {
-      throw new Error('Unable to discoverEdgesFromDependencies; node has no package defined.');
-    }
-
-    if (this.hasDiscoveredEdges(pkg)) {
-      DEBUG_CALLBACK('Already processed "%s". Skip.', pkg.packageName);
-      return;
-    }
-
-    const explicitDependencies = this.getExplicitPackageDependencies(pkg);
-
-    this.#visited.add(pkg);
-
-    DEBUG_CALLBACK(
-      '"%s" depends on: %O',
-      pkg.packageName,
-      explicitDependencies.map((p) => p.packageName)
-    );
-
-    explicitDependencies.forEach((p: Package | EmberAddonPackage) => {
-      const dest = this.addPackageToGraph(p);
-
-      DEBUG_CALLBACK('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
-      this.graph.addEdge(source, dest);
-    });
-  }
-
-  getExplicitPackageDependencies(pkg: Package): Array<Package> {
+  /**
+   * Looks at a given package and sees if any of the addons and packages
+   * are internal to the project.
+   * @param pkg we want
+   * @returns an array of found packages
+   */
+  findInternalPackageDependencies(pkg: Package): Array<Package> {
     let deps: Array<Package> = [];
 
     const { mappingsByAddonName, mappingsByLocation } = getInternalPackages(this.rootDir);
-
-    // let counter = 0;
-    // DEBUG_CALLBACK('echo: %s', counter++);
 
     if (pkg.dependencies) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
@@ -165,16 +128,12 @@ export class EmberAppProjectGraph extends ProjectGraph {
       deps = deps.concat(...somePackages);
     }
 
-    // DEBUG_CALLBACK('echo: %s', counter++);
-
     if (pkg.devDependencies) {
-      deps = deps.concat(
-        ...(Object.keys(pkg.devDependencies)?.map(
-          (devDepName) => mappingsByAddonName[devDepName]
-        ) ?? [])
+      const somePackages: Array<Package> = Object.keys(pkg.devDependencies).map(
+        (depName) => mappingsByAddonName[depName] as Package
       );
+      deps = deps.concat(...somePackages);
     }
-    // DEBUG_CALLBACK('echo: %s', counter++);
 
     if (pkg instanceof EmberAppPackage) {
       const emberPackage = pkg as EmberAppPackage;
@@ -188,6 +147,8 @@ export class EmberAppProjectGraph extends ProjectGraph {
         );
       }
     }
+
+    deps = deps.concat(super.findInternalPackageDependencies(pkg));
 
     return deps.filter((dep) => !!dep && !EXCLUDED_PACKAGES.includes(dep.packageName));
   }
@@ -223,6 +184,13 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   discover(): Array<Package | EmberAppPackage | EmberAddonPackage> {
-    return discoverEmberPackages(this.rootDir);
+    const entities = discoverEmberPackages(this.rootDir);
+
+    this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
+      acc[pkg.packageName] = pkg;
+      return acc;
+    }, {});
+
+    return entities;
   }
 }

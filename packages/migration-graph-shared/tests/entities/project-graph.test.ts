@@ -1,4 +1,4 @@
-import { getLibrarySimple } from '@rehearsal/test-support';
+import { getLibrarySimple, getLibraryWithWorkspaces } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -37,7 +37,7 @@ describe('project-graph', () => {
       expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
     }
   });
-  test('options.eager', async () => {
+  test('options.eager', () => {
     const baseDir = getLibrarySimple();
 
     const projectGraph = new ProjectGraph(baseDir, { eager: true });
@@ -57,5 +57,36 @@ describe('project-graph', () => {
     const moduleGraphForPackage = maybePackage?.getModuleGraph(); // Forces creation of moduleGraph
     expect(maybePackage.hasModuleGraph()).toBe(true);
     expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
+  describe('workspaces', () => {
+    test('should discover packages defined in workspaces in package.json', () => {
+      const baseDir = getLibraryWithWorkspaces();
+
+      const projectGraph = new ProjectGraph(baseDir);
+
+      projectGraph.discover();
+      expect(projectGraph.graph.hasNode('@something/foo')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/bar')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/baz')).toBe(true);
+    });
+    test('should find edges between packages', () => {
+      const baseDir = getLibraryWithWorkspaces();
+
+      const projectGraph = new ProjectGraph(baseDir);
+
+      projectGraph.discover();
+
+      const fooNode = projectGraph.graph.getNode('@something/foo');
+      const barNode = projectGraph.graph.getNode('@something/bar');
+      const bazNode = projectGraph.graph.getNode('@something/baz');
+      const blorpNode = projectGraph.graph.getNode('@something/blorp');
+
+      expect(fooNode.adjacent.has(barNode)).toBe(true);
+      expect(barNode.adjacent.has(bazNode)).toBe(true);
+      expect(barNode.adjacent.has(blorpNode)).toBe(true);
+    });
+    test.todo('should do something if a cycle is found', () => {
+      expect(true).toBe(false);
+    });
   });
 });
