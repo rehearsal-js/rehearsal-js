@@ -19,7 +19,7 @@ import {
   TextChange,
 } from 'typescript';
 import { debug } from 'debug';
-import { getFilesData } from '../data';
+import { getFilesData, getTriggeringNodeLocation } from '../data';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
@@ -83,8 +83,17 @@ export class DiagnosticFixPlugin extends Plugin {
       const fixed = fix !== undefined;
       const helpUrl = hints.getHelpUrl(diagnostic);
       const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
+      const triggeringLocation = getTriggeringNodeLocation(diagnostic, processedFiles);
 
-      this.reporter?.addItem(diagnostic, processedFiles, fixed, diagnostic.node, hint, helpUrl);
+      this.reporter?.addItem(
+        diagnostic,
+        processedFiles,
+        fixed,
+        diagnostic.node,
+        triggeringLocation,
+        hint,
+        helpUrl
+      );
 
       // Get updated list of diagnostics
       diagnostics = this.getDiagnostics(fileName, commentTag);

@@ -1,6 +1,12 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
-import { type ProcessedFile, type Report, type ReportFormatter, type ReportItem } from './types';
+import {
+  type ProcessedFile,
+  type Report,
+  type ReportFormatter,
+  type ReportItem,
+  type Location,
+} from './types';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
 
@@ -69,15 +75,10 @@ export class Reporter {
     files: { [fileName: string]: ProcessedFile },
     fixed: boolean,
     node?: Node,
+    triggeringLocation?: Location,
     hint = '',
     helpUrl = ''
   ): void {
-    const { line: startLine, character: startColumn } =
-      diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-    const { line: endLine, character: endColumn } = diagnostic.file.getLineAndCharacterOfPosition(
-      diagnostic.start + diagnostic.length - 1
-    );
-
     this.report.items.push({
       analysisTarget: diagnostic.file.fileName,
       files,
@@ -89,12 +90,10 @@ export class Reporter {
       nodeKind: node ? SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
       helpUrl,
-      nodeLocation: {
-        startLine,
-        startColumn,
-        endLine,
-        endColumn,
-      },
+      //Original node that triggers the error; may not be the node where the codefix happens
+      //Location in type ProcessedFile is where the codefix happens or the message is added
+      //The two locations in most cases will be the same, but can be different
+      nodeLocation: triggeringLocation || undefined,
     });
   }
 

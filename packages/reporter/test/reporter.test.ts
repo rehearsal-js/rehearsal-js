@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
-import { DiagnosticWithLocation, SourceFile } from 'typescript';
+import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
 import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
@@ -68,6 +68,14 @@ describe('Test reporter', function () {
     mockSourceFile.fileName = 'testFile1.ts';
     mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
 
+    const mockNode = mock<Node>();
+    mockNode.getText.mockReturnValue('var1');
+    Object.defineProperty(mockNode, 'kind', {
+      value: 'Identifier',
+      configurable: true,
+      writable: true,
+    });
+
     const mockDiagnostic = mock<DiagnosticWithLocation>();
     mockDiagnostic.file = mockSourceFile;
     mockDiagnostic.category = 1;
@@ -75,20 +83,24 @@ describe('Test reporter', function () {
     mockDiagnostic.code = 1000;
     mockDiagnostic.length = 5;
 
+    const location = { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 };
+    const hint = 'This is the hint.';
+
     const files = {
       '/base/path/testFile.ts': {
         fileName: '/base/path/testFile.ts',
-        location: { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 },
+        location,
         fixed: false,
-        code: undefined,
+        newCode: undefined,
+        oldCode: undefined,
         codeFixAction: undefined,
-        hint: 'This is the hint.',
+        hint,
         hintAdded: true,
         roles: ['analysisTarget' as const, 'unmodified' as const],
       },
     };
 
-    reporter!.addItem(mockDiagnostic, files, false, undefined);
+    reporter!.addItem(mockDiagnostic, files, false, mockNode, location, hint);
 
     const testAddItemFile = resolve(basePath, 'test-add-item.json');
 

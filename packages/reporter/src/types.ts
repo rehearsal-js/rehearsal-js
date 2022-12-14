@@ -41,7 +41,7 @@ export type ReportItem = {
   nodeKind?: string;
   nodeText?: string;
   helpUrl?: string;
-  nodeLocation: {
+  nodeLocation?: {
     startLine: number;
     startColumn: number;
     endLine: number;
