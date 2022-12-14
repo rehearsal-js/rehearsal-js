@@ -93,7 +93,7 @@ export class SarifFormatter {
   }
 
   private buildResult(item: ReportItem): Result {
-    const { locations, relatedLocations, fixes } = this.getFilesData(
+    const { locations, relatedLocations, codeFix } = this.getFilesData(
       item.files,
       item.analysisTarget
     );
@@ -115,7 +115,7 @@ export class SarifFormatter {
       relatedLocations,
       properties: {
         fixed: item.fixed || false,
-        fixes,
+        codeFix,
       },
     };
   }
@@ -124,7 +124,7 @@ export class SarifFormatter {
     let locations: Location[] = [];
     let relatedLocations: Location[] = [];
 
-    let fixes: { [key: string]: string | undefined }[] = [];
+    let codeFix: { [key: string]: string | undefined } | undefined;
     Object.values(files).forEach((file) => {
       if (file.fileName === entryFileName) {
         locations = [...locations, this.buildLocation(file)];
@@ -132,22 +132,19 @@ export class SarifFormatter {
         relatedLocations = [...relatedLocations, this.buildLocation(file)];
       }
       if (file.fixed) {
-        fixes = [
-          ...fixes,
-          {
-            fileName: file.fileName,
-            newCode: file.newCode,
-            oldCode: file.oldCode,
-            codeFixAction: file.codeFixAction || undefined,
-          },
-        ];
+        codeFix = {
+          fileName: file.fileName,
+          newCode: file.newCode,
+          oldCode: file.oldCode,
+          codeFixAction: file.codeFixAction || undefined,
+        };
       }
     });
 
     return {
       locations,
       relatedLocations,
-      fixes,
+      codeFix,
     };
   }
 

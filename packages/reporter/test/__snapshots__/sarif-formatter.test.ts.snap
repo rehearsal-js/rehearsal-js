@@ -115,14 +115,12 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     \\"relatedLocations\\": [],
     \\"properties\\": {
       \\"fixed\\": true,
-      \\"fixes\\": [
-        {
-          \\"fileName\\": \\"add-result-1.ts\\",
-          \\"newCode\\": \\"\\",
-          \\"oldCode\\": \\"import react from 'react';\\",
-          \\"codeFixAction\\": \\"delete\\"
-        }
-      ]
+      \\"codeFix\\": {
+        \\"fileName\\": \\"add-result-1.ts\\",
+        \\"newCode\\": \\"\\",
+        \\"oldCode\\": \\"import react from 'react';\\",
+        \\"codeFixAction\\": \\"delete\\"
+      }
     }
   },
   {
@@ -163,8 +161,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     ],
     \\"relatedLocations\\": [],
     \\"properties\\": {
-      \\"fixed\\": false,
-      \\"fixes\\": []
+      \\"fixed\\": false
     }
   },
   {
@@ -203,8 +200,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     ],
     \\"relatedLocations\\": [],
     \\"properties\\": {
-      \\"fixed\\": false,
-      \\"fixes\\": []
+      \\"fixed\\": false
     }
   }
 ]"
