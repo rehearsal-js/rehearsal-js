@@ -5,9 +5,10 @@ import type { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
 export function getFilesData(
   fixedFiles: FixedFile[],
   diagnostic: DiagnosticWithLocation,
-  hint = ''
+  hint = '',
+  basePath: string = process.cwd()
 ): { [fileName: string]: ProcessedFile } {
-  const entryFileName = diagnostic.file.fileName;
+  const entryFileName = diagnostic.file.fileName.replace(basePath, '');
 
   let filesData: { [fileName: string]: ProcessedFile } = {
     [entryFileName]: getInitialEntryFileData(diagnostic),

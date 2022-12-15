@@ -80,7 +80,7 @@ export class Reporter {
     helpUrl = ''
   ): void {
     this.report.items.push({
-      analysisTarget: diagnostic.file.fileName,
+      analysisTarget: diagnostic.file.fileName.replace(this.report.summary.basePath, ''),
       files,
       errorCode: diagnostic.code,
       category: DiagnosticCategory[diagnostic.category],

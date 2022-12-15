@@ -82,7 +82,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
       const fixed = fix !== undefined;
       const helpUrl = hints.getHelpUrl(diagnostic);
-      const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
+      const processedFiles = getFilesData(fixedFiles, diagnostic, hint, this.reporter?.basePath);
       const triggeringLocation = getTriggeringNodeLocation(diagnostic, processedFiles);
 
       this.reporter?.addItem(

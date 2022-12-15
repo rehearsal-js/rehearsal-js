@@ -1,4 +1,4 @@
-import { isAbsolute, resolve } from 'path';
+import { relative } from 'path';
 import { PhysicalLocation, Result } from 'sarif';
 
 import { SarifFormatter } from './sarif-formatter';
@@ -40,7 +40,7 @@ export function sonarqubeFormatter(report: Report): string {
     for (const result of results) {
       const physicalLocation = getPhysicalLocation(result);
       const filePath = physicalLocation ? getFilePath(physicalLocation) : '';
-      const absolutePath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+      const relativePath = relative(report.summary.basePath, filePath);
 
       issues.push({
         engineId: 'rehearsal-ts',
@@ -49,7 +49,7 @@ export function sonarqubeFormatter(report: Report): string {
         type: SONARQUBE_TYPE[result.level as ErrorLevel],
         primaryLocation: {
           message: result.message.text ?? '',
-          filePath: absolutePath,
+          filePath: relativePath,
           textRange: {
             startLine: physicalLocation?.region?.startLine ?? 0,
             startColumn: physicalLocation?.region?.startColumn ?? 0,

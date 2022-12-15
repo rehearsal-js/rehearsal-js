@@ -133,7 +133,7 @@ export class SarifFormatter {
       }
       if (file.fixed) {
         codeFix = {
-          fileName: file.fileName,
+          fileName: file.fileName.replace(this.report.summary.basePath, ''),
           newCode: file.newCode,
           oldCode: file.oldCode,
           codeFixAction: file.codeFixAction || undefined,
