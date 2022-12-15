@@ -238,7 +238,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 80004,
       "files": {
         "react-xx.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "react-xx.ts",
           "fixed": true,
           "hint": undefined,
@@ -276,7 +276,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 7006,
       "files": {
         "react-xx.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "react-xx.ts",
           "fixed": true,
           "hint": undefined,
@@ -777,7 +777,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
@@ -1065,7 +1065,7 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
       "errorCode": 2304,
       "files": {
         "ts-errors.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-errors.ts",
           "fixed": true,
           "hint": undefined,
@@ -1107,7 +1107,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1145,7 +1145,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1183,7 +1183,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1221,7 +1221,7 @@ function timestamp() {
       "errorCode": 7008,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1297,7 +1297,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1415,7 +1415,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
@@ -1453,7 +1453,7 @@ function timestamp() {
       "errorCode": 80004,
       "files": {
         "ts-multiline-hint.ts": {
-          "codeFixAction": "add",
+          "codeFixAction": "insert",
           "fileName": "ts-multiline-hint.ts",
           "fixed": true,
           "hint": undefined,
