@@ -193,7 +193,7 @@ migrateCommand
           },
         },
         {
-          title: 'Installing dependencies.',
+          title: 'Installing dependencies',
           enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
           task: async (_ctx: MigrateCommandContext, task) => {
             // install custom dependencies
@@ -210,19 +210,19 @@ migrateCommand
           enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
           task: async (_ctx: MigrateCommandContext, task) => {
             if (_ctx.userConfig?.hasTsSetup) {
-              task.title = `Creating tsconfig from custom config.`;
+              task.title = `Creating tsconfig from custom config`;
               await _ctx.userConfig.tsSetup();
             } else {
               const configPath = resolve(options.basePath, 'tsconfig.json');
 
               if (existsSync(configPath)) {
-                task.title = `${configPath} already exists, ensuring strict mode is enabled.`;
+                task.title = `${configPath} already exists, ensuring strict mode is enabled`;
 
                 const tsConfig = readJSON<TSConfig>(configPath) as TSConfig;
                 tsConfig.compilerOptions.strict = true;
                 writeJSONSync(configPath, tsConfig, { spaces: 2 });
               } else {
-                task.title = `Creating tsconfig.`;
+                task.title = `Creating tsconfig`;
 
                 writeTSConfig(options.basePath, _ctx.sourceFilesWithRelativePath);
               }
@@ -288,7 +288,7 @@ migrateCommand
           enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
           task: async (_ctx: MigrateCommandContext, task) => {
             if (_ctx.userConfig?.hasLintSetup) {
-              task.title = `Creating .eslintrc.js from custom config.`;
+              task.title = `Creating .eslintrc.js from custom config`;
               await _ctx.userConfig.lintSetup();
             } else {
               task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
