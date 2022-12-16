@@ -97,14 +97,11 @@ export class SarifFormatter {
       item.files,
       item.analysisTarget
     );
-    const baselineState = item.fixed ? 'updated' : 'unchanged';
-    const kind = item.fixed ? 'review' : 'informational';
     return {
       ruleId: `TS${item.errorCode}`,
       ruleIndex: this.ruleIndexMap[`TS${item.errorCode}`],
       level: levelConverter(item.category),
-      baselineState,
-      kind,
+      kind: kindConverter(item.category),
       message: {
         text: item.hint,
       },
@@ -203,6 +200,16 @@ function buildArtifact(file: ProcessedFile): Artifact {
       hintAdded: file.hintAdded,
     },
   };
+}
+function kindConverter(category: string): Result.kind {
+  switch (category) {
+    case 'Warning':
+    case 'Suggestion':
+    case 'Message':
+      return 'review';
+    default:
+      return 'fail';
+  }
 }
 
 function levelConverter(category: string): Result.level {

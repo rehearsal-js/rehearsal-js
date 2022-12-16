@@ -79,8 +79,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     \\"ruleId\\": \\"TS6133\\",
     \\"ruleIndex\\": 0,
     \\"level\\": \\"error\\",
-    \\"baselineState\\": \\"updated\\",
-    \\"kind\\": \\"review\\",
+    \\"kind\\": \\"fail\\",
     \\"message\\": {
       \\"text\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\"
     },
@@ -127,8 +126,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     \\"ruleId\\": \\"TS2322\\",
     \\"ruleIndex\\": 1,
     \\"level\\": \\"error\\",
-    \\"baselineState\\": \\"unchanged\\",
-    \\"kind\\": \\"informational\\",
+    \\"kind\\": \\"fail\\",
     \\"message\\": {
       \\"text\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\"
     },
@@ -168,8 +166,7 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
     \\"ruleId\\": \\"TS2345\\",
     \\"ruleIndex\\": 2,
     \\"level\\": \\"error\\",
-    \\"baselineState\\": \\"unchanged\\",
-    \\"kind\\": \\"informational\\",
+    \\"kind\\": \\"fail\\",
     \\"message\\": {
       \\"text\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\"
     },
