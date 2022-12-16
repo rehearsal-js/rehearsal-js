@@ -7,6 +7,7 @@ import {
   type ReportItem,
   type Location,
 } from './types';
+import { normalizeFilePath } from './normalize-paths';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
 
@@ -80,7 +81,7 @@ export class Reporter {
     helpUrl = ''
   ): void {
     this.report.items.push({
-      analysisTarget: diagnostic.file.fileName,
+      analysisTarget: normalizeFilePath(this.basePath, diagnostic.file.fileName),
       files,
       errorCode: diagnostic.code,
       category: DiagnosticCategory[diagnostic.category],
