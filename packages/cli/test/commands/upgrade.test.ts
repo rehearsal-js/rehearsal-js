@@ -52,7 +52,7 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
 
       // default is beta unless otherwise specified
       const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
-      const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.json');
+      const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'upgrade-report.json');
 
       expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
       expect(result.stdout).to.contain(`Codefixes applied successfully`);
@@ -81,7 +81,7 @@ describe('upgrade:command typescript@next', async () => {
     );
     // eg. 4.9.0-dev.20220930
     const latestPublishedTSVersion = await getLatestTSVersion(buildTag);
-    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'report.sarif');
+    const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'upgrade-report.sarif');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
     expect(existsSync(reportFile)).toBeTruthy;
