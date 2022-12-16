@@ -46,7 +46,7 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
       // runs against `latestBeta` by default
       const result = await runBin(
         'upgrade',
-        [FIXTURE_APP_PATH, '--report', 'json', '--dryRun', '--build', buildTag],
+        [FIXTURE_APP_PATH, '--format', 'json', '--dryRun', '--build', buildTag],
         { cwd: FIXTURE_APP_PATH }
       );
 
@@ -76,7 +76,7 @@ describe('upgrade:command typescript@next', async () => {
 
     const result = await runBin(
       'upgrade',
-      [FIXTURE_APP_PATH, '--report', 'sarif', '--dryRun', '--build', buildTag],
+      [FIXTURE_APP_PATH, '--format', 'sarif', '--dryRun', '--build', buildTag],
       { cwd: FIXTURE_APP_PATH }
     );
     // eg. 4.9.0-dev.20220930

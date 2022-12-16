@@ -62,8 +62,8 @@ migrateCommand
   .option('-p, --basePath <project base path>', 'Base dir path of your project.', process.cwd())
   .option('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
-    '-r, --report <reportTypes>',
-    'Report types separated by comma, e.g. -r json,sarif,md,sonarqube',
+    '-f, --format <format>',
+    'Report format separated by comma, e.g. -f json,sarif,md,sonarqube',
     parseCommaSeparatedList,
     ['sarif']
   )
@@ -260,7 +260,7 @@ migrateCommand
               }
 
               const reportOutputPath = resolve(options.basePath, options.outputPath);
-              generateReports(reporter, reportOutputPath, options.report, {
+              generateReports(reporter, reportOutputPath, options.format, {
                 json: jsonFormatter,
                 sarif: sarifFormatter,
                 md: mdFormatter,
