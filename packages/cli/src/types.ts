@@ -2,13 +2,15 @@ import { MigrationStrategy } from '@rehearsal/migration-graph';
 
 import { UserConfig } from './userConfig';
 import { State } from './helpers/state';
-export type CliCommand = `upgrade` | 'migrate';
+
+export type CliCommand = 'upgrade' | 'migrate';
+export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 
 export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  format: string[];
+  format: Formats[];
   outputPath: string;
   verbose: boolean | undefined;
   userConfig: string | undefined;
@@ -36,7 +38,7 @@ export type UpgradeCommandContext = {
 export type UpgradeCommandOptions = {
   build: string;
   basePath: string;
-  format: string[];
+  format: Formats[];
   outputPath: string;
   tsVersion: string;
   dryRun: boolean;

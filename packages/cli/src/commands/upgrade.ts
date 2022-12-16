@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { resolve } from 'path';
-import { mdFormatter, Reporter, sarifFormatter, sonarqubeFormatter } from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import { upgrade } from '@rehearsal/upgrade';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
@@ -12,7 +12,7 @@ import { createLogger, format, transports } from 'winston';
 import execa = require('execa');
 
 import { version } from '../../package.json';
-import { generateReports, reportFormatter } from '../helpers/report';
+import { generateReports } from '../helpers/report';
 import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
   addDep,
@@ -238,12 +238,7 @@ upgradeCommand
       });
 
       const reportOutputPath = resolve(basePath, options.outputPath);
-      generateReports(reporter, reportOutputPath, options.format, {
-        json: reportFormatter,
-        sarif: sarifFormatter,
-        md: mdFormatter,
-        sonarqube: sonarqubeFormatter,
-      });
+      generateReports('upgrade', reporter, reportOutputPath, options.format);
     } catch (e) {
       logger.error(`${e}`);
     }

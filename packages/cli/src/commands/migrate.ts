@@ -9,13 +9,7 @@ import {
   getMigrationStrategy,
   SourceFile,
 } from '@rehearsal/migration-graph';
-import {
-  jsonFormatter,
-  mdFormatter,
-  Reporter,
-  sarifFormatter,
-  sonarqubeFormatter,
-} from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import { Command } from 'commander';
 import { existsSync, writeJSONSync } from 'fs-extra';
 import { Listr } from 'listr2';
@@ -260,12 +254,7 @@ migrateCommand
               }
 
               const reportOutputPath = resolve(options.basePath, options.outputPath);
-              generateReports(reporter, reportOutputPath, options.format, {
-                json: jsonFormatter,
-                sarif: sarifFormatter,
-                md: mdFormatter,
-                sonarqube: sonarqubeFormatter,
-              });
+              generateReports('migrate', reporter, reportOutputPath, options.format);
 
               const { totalErrorCount, errorFixedCount, hintAddedCount } = getReportSummary(
                 reporter.report
