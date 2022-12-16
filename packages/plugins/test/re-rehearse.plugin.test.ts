@@ -4,6 +4,7 @@ import { RehearsalService } from '@rehearsal/service';
 import { Project } from 'fixturify-project';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
+import { Reporter } from '@rehearsal/reporter';
 import { ReRehearsePlugin } from '../src';
 
 describe('Test ReRehearsalPlugin', function () {
@@ -24,8 +25,14 @@ describe('Test ReRehearsalPlugin', function () {
     const fileNames = Object.keys(project.files).map((file) => resolve(project.baseDir, file));
 
     const service = new RehearsalService({ baseUrl: project.baseDir }, fileNames);
+    const reporter = new Reporter({
+      tsVersion: '',
+      projectName: '@rehearsal/test',
+      basePath: '',
+      commandName: '@rehearsal/migrate',
+    });
 
-    const plugin = new ReRehearsePlugin(service);
+    const plugin = new ReRehearsePlugin(service, reporter);
 
     for (const fileName of fileNames) {
       const result = await plugin.run(fileName);

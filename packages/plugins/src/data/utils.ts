@@ -1,39 +1,7 @@
 import { type DiagnosticWithLocation, type SourceFile, isLineBreak } from 'typescript';
-import type { FixedFile } from '@rehearsal/codefixes';
-import type { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
+import { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
 
-export function getFilesData(
-  fixedFiles: FixedFile[],
-  diagnostic: DiagnosticWithLocation,
-  hint = ''
-): { [fileName: string]: ProcessedFile } {
-  const entryFileName = diagnostic.file.fileName;
-
-  let filesData: { [fileName: string]: ProcessedFile } = {
-    [entryFileName]: getInitialEntryFileData(diagnostic),
-  };
-
-  if (fixedFiles.length > 0) {
-    for (const fixedFile of fixedFiles) {
-      filesData = {
-        ...filesData,
-        [fixedFile.fileName]: getFixedFileData(fixedFile, entryFileName),
-      };
-    }
-  } else {
-    filesData = {
-      [entryFileName]: {
-        ...filesData[entryFileName],
-        hintAdded: true,
-        hint,
-      },
-    };
-  }
-
-  return filesData;
-}
-
-function getRoles(fileName: string, entryFileName: string, fixed: boolean): FileRole[] {
+export function getRoles(fileName: string, entryFileName: string, fixed: boolean): FileRole[] {
   const isEntryFile = fileName === entryFileName;
 
   if (isEntryFile) {
@@ -57,62 +25,6 @@ export function getLocation(sourceFile: SourceFile, start: number, length: numbe
     startColumn: startColumn + 1,
     endLine: endLine + 1,
     endColumn: endColumn + 1,
-  };
-}
-
-export function getFixedFileData(fixedFile: FixedFile, entryFileName: string): ProcessedFile {
-  const roles = getRoles(fixedFile.fileName, entryFileName, true);
-  return {
-    fileName: fixedFile.fileName,
-    location: fixedFile.location,
-    fixed: true,
-    newCode: fixedFile.newCode,
-    oldCode: fixedFile.oldCode,
-    codeFixAction: fixedFile.codeFixAction,
-    hint: undefined,
-    hintAdded: false,
-    roles,
-  };
-}
-
-export function getCommentedFileData(
-  fileName: string,
-  location: Location,
-  hint: string,
-  entryFileName: string
-): ProcessedFile {
-  const roles = getRoles(fileName, entryFileName, false);
-  return {
-    fileName,
-    location,
-    fixed: false,
-    newCode: undefined,
-    oldCode: undefined,
-    codeFixAction: undefined,
-    hint: hint,
-    hintAdded: true,
-    roles,
-  };
-}
-
-export function getInitialEntryFileData(diagnostic: DiagnosticWithLocation): ProcessedFile {
-  const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-  //factor in the 1 line number bump when comment is added
-  const adjustedLocation = {
-    ...location,
-    startLine: location.startLine + 1,
-    endLine: location.endLine + 1,
-  };
-  return {
-    fileName: diagnostic.file.fileName,
-    location: adjustedLocation,
-    fixed: false,
-    newCode: undefined,
-    oldCode: undefined,
-    codeFixAction: undefined,
-    hint: undefined,
-    hintAdded: false,
-    roles: ['analysisTarget', 'unmodified'],
   };
 }
 

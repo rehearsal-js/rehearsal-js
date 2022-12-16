@@ -1,14 +1,21 @@
 import { mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { Report, Reporter, ReportFormatter } from '@rehearsal/reporter';
-import { MapLike } from 'typescript';
-import { MigrationSummary } from 'src/types';
+import {
+  jsonFormatter,
+  Report,
+  Reporter,
+  sonarqubeFormatter,
+  mdFormatter,
+  sarifFormatter,
+  ReportFormatter,
+} from '@rehearsal/reporter';
+import { CliCommand, Formats, MigrationSummary } from 'src/types';
 
 export function generateReports(
+  command: CliCommand,
   reporter: Reporter,
   outputPath: string,
-  formats: string[],
-  formatters: MapLike<ReportFormatter>
+  formats: Formats[]
 ): string[] {
   const generatedReports: string[] = [];
 
@@ -18,14 +25,28 @@ export function generateReports(
 
   mkdirSync(outputPath, { recursive: true });
 
-  const reportBaseName = 'report';
+  const reportBaseName = `${command}-report`;
 
   formats.forEach((format) => {
-    if (formatters[format]) {
-      const report = resolve(outputPath, `${reportBaseName}.${format}`);
-      generatedReports.push(report);
-      reporter.print(report, formatters[format]);
+    let reportPath: string;
+    let formatter: ReportFormatter;
+
+    if (format === 'json') {
+      reportPath = resolve(outputPath, `${reportBaseName}.json`);
+      formatter = jsonFormatter;
+    } else if (format === 'sonarqube') {
+      reportPath = resolve(outputPath, `${reportBaseName}.json`);
+      formatter = sonarqubeFormatter;
+    } else if (format === 'md') {
+      reportPath = resolve(outputPath, `${reportBaseName}.md`);
+      formatter = mdFormatter;
+    } else {
+      reportPath = resolve(outputPath, `${reportBaseName}.sarif`);
+      formatter = sarifFormatter;
     }
+
+    reporter.print(reportPath, formatter);
+    generatedReports.push(reportPath);
   });
 
   return generatedReports;

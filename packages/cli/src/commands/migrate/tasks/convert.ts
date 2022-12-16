@@ -2,13 +2,7 @@ import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { debug } from 'debug';
-import {
-  jsonFormatter,
-  mdFormatter,
-  Reporter,
-  sarifFormatter,
-  sonarqubeFormatter,
-} from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
 import execa = require('execa');
 
@@ -50,12 +44,7 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
         }
 
         const reportOutputPath = resolve(options.basePath, options.outputPath);
-        generateReports(reporter, reportOutputPath, options.format, {
-          json: jsonFormatter,
-          sarif: sarifFormatter,
-          md: mdFormatter,
-          sonarqube: sonarqubeFormatter,
-        });
+        generateReports('migrate', reporter, reportOutputPath, options.format);
 
         const { totalErrorCount, errorFixedCount, hintAddedCount } = getReportSummary(
           reporter.report

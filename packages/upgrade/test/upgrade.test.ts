@@ -1,6 +1,6 @@
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
-import { type ReportItem, Reporter } from '@rehearsal/reporter';
+import { Reporter } from '@rehearsal/reporter';
 import { describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
@@ -42,9 +42,6 @@ describe('Test upgrade', async function () {
 
     report.summary.timestamp = '9/22/2022, 13:48:38';
     report.summary.basePath = '';
-    report.items.forEach((item) => {
-      removeAllBasePaths(item, basePath);
-    });
 
     expect(report).toMatchSnapshot();
   });
@@ -76,21 +73,4 @@ function cleanupTsFiles(files: string[]): void {
   for (const file of files) {
     rmSync(file);
   }
-}
-
-function removeAllBasePaths(item: ReportItem, basePath: string): void {
-  item.analysisTarget = removeBasePath(item.analysisTarget, basePath);
-  if (item.files) {
-    for (const fileKey in item.files) {
-      item.files[fileKey].fileName = removeBasePath(item.files[fileKey].fileName, basePath);
-
-      const newFileKey = removeBasePath(fileKey, basePath);
-      item.files[newFileKey] = item.files[fileKey];
-      delete item.files[fileKey];
-    }
-  }
-}
-
-function removeBasePath(file: string, basePath: string): string {
-  return file.replace(`${basePath}/`, '');
 }

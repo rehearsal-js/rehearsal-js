@@ -231,7 +231,7 @@ describe('migrate - JS to TS conversion', async () => {
 
     const reportPath = resolve(basePath, '.rehearsal');
 
-    expect(readdirSync(reportPath)).toContain('report.sarif');
+    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
   });
 
   test('Generate report in different formats with -f flag', async () => {
@@ -241,10 +241,10 @@ describe('migrate - JS to TS conversion', async () => {
 
     const reportPath = resolve(basePath, '.rehearsal');
 
-    expect(readdirSync(reportPath)).toContain('report.json');
-    expect(readdirSync(reportPath)).toContain('report.md');
-    expect(readdirSync(reportPath)).toContain('report.sarif');
-    expect(readdirSync(reportPath)).not.toContain('report.foo');
+    expect(readdirSync(reportPath)).toContain('migrate-report.json');
+    expect(readdirSync(reportPath)).toContain('migrate-report.md');
+    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
+    expect(readdirSync(reportPath)).not.toContain('migrate-report.foo');
   });
 });
 

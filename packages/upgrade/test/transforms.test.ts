@@ -1,5 +1,6 @@
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { parse, resolve } from 'path';
+import { Reporter } from '@rehearsal/reporter';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import { upgrade } from '../src';
@@ -51,7 +52,13 @@ function prepareListOfTestFiles(path: string): string[] {
  */
 async function runAutofixOnTestApp(basePath: string): Promise<void> {
   // TODO: https://github.com/rehearsal-js/rehearsal-js/issues/294
-  await upgrade({ basePath });
+  const reporter = new Reporter({
+    tsVersion: '',
+    projectName: '@rehearsal/test',
+    basePath: '',
+    commandName: '@rehearsal/migrate',
+  });
+  await upgrade({ basePath, reporter });
 }
 
 /**

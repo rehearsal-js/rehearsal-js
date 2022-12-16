@@ -11,7 +11,7 @@ export type MigrateInput = {
   basePath: string;
   sourceFiles: Array<string>;
   configName?: string;
-  reporter?: Reporter; // Reporter
+  reporter: Reporter; // Reporter
   logger?: Logger;
 };
 
@@ -100,7 +100,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     let allChangedFiles: Set<string> = new Set();
 
     for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, logger, reporter);
+      const plugin = new pluginClass(service, reporter, logger);
       const changedFiles = await plugin.run(fileName);
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
