@@ -7,7 +7,7 @@ export type ReportSummary = Record<string, unknown> & {
 };
 
 export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
-export type CodeFixAction = 'add' | 'delete' | 'replace';
+export type CodeFixAction = 'insert' | 'delete' | 'replace';
 
 export interface Location {
   startLine: number;

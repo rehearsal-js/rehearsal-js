@@ -217,7 +217,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
     const getActionKind = (textChange: TextChange): CodeFixKind => {
       if (textChange.span.length === 0) {
-        return 'add';
+        return 'insert';
       }
 
       if (textChange.newText === '') {
