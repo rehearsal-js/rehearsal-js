@@ -1,4 +1,4 @@
-import { CodeFixAction, getDefaultFormatCodeSettings } from 'typescript';
+import { CodeFixAction, getDefaultFormatCodeSettings, type UserPreferences } from 'typescript';
 import { CodeFixCollection, type DiagnosticWithContext } from './types';
 
 /**
@@ -10,7 +10,23 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     const languageService = diagnostic.service;
 
     const formatOptions = getDefaultFormatCodeSettings();
-    const userPreferences = {};
+    const userPreferences: UserPreferences = {
+      disableSuggestions: false,
+      quotePreference: 'auto',
+      includeCompletionsForModuleExports: true,
+      includeCompletionsForImportStatements: true,
+      includeAutomaticOptionalChainCompletions: true,
+      importModuleSpecifierEnding: 'minimal',
+      includePackageJsonAutoImports: 'auto',
+      jsxAttributeCompletionStyle: 'auto',
+      /*
+      includeInlayFunctionParameterTypeHints: true,
+      includeInlayVariableTypeHints: true,
+      includeInlayPropertyDeclarationTypeHints: true,
+      includeInlayFunctionLikeReturnTypeHints: true,
+      includeInlayEnumMemberValueHints: true,
+      */
+    };
 
     const fixes = languageService.getCodeFixesAtPosition(
       diagnostic.file.fileName,

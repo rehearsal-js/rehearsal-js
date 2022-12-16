@@ -62,7 +62,7 @@ export class Foo {
    * @param {string} size
    * @returns {boolean}
    */
-  isLess(size: string): boolean {
+  isLess(size: string | number): boolean {
     /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
     return this.viewportWidth < breakpointMap[size];
   }

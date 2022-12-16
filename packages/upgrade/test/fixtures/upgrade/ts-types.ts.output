@@ -20,11 +20,10 @@ test2(0);
  * @param {number} me
  * @return {string}
  */
-export function test3(me: number): string {
+export function test3(me: string): string {
   return me.toString();
 }
 
-/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
 test3('O');
 
 export class A {
@@ -33,7 +32,29 @@ export class A {
    * @param {number} me
    * @return {string}
    */
-  test4(me: number): string {
+  test4(me: { toString: (arg0: number) => any }): string {
     return me.toString(2);
+  }
+}
+
+export class Foo {
+  value = 0;
+
+  get foo() {
+    return this.value;
+  }
+
+  set foo(value) {
+    this.value = value;
+  }
+
+  boo(value: number) {
+    this.value = value;
+
+    if (this.value) {
+      return null;
+    } else {
+      return this.value;
+    }
   }
 }

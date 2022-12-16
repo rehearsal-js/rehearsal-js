@@ -1,11 +1,11 @@
 import {
   codefixes,
-  hints,
+  type CodeFixKind,
   type DiagnosticWithContext,
   type FixedFile,
-  type CodeFixKind,
+  hints,
 } from '@rehearsal/codefixes';
-import { type PluginResult, Plugin } from '@rehearsal/service';
+import { Plugin, type PluginResult } from '@rehearsal/service';
 import {
   applyTextChange,
   findNodeAtPosition,
@@ -19,7 +19,7 @@ import {
   TextChange,
 } from 'typescript';
 import { debug } from 'debug';
-import { normalizeFilePath, ProcessedFile, type Location } from '@rehearsal/reporter';
+import { type Location, normalizeFilePath, ProcessedFile } from '@rehearsal/reporter';
 import { getLocation, getRoles } from '../data';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
@@ -28,12 +28,26 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
  * Diagnose issues in the file and applied transforms to fix them
  */
 export class DiagnosticFixPlugin extends Plugin {
-  async run(fileName: string): PluginResult {
-    // TODO: Move next 2 lines to constructor options
-    const addHints = true;
-    const commentTag = '@rehearsal';
+  // TODO: Move next 3 lines to constructor options
+  addHints = true;
+  commentTag = '@rehearsal';
 
-    let diagnostics = this.getDiagnostics(fileName, commentTag);
+  /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
+  prioritizedCodes = [
+    80005, // 'require' call may be converted to an import
+    7005, // Variable implicitly has an ___ type
+    7006, // Parameter implicitly has an ___ type
+    7008, // Member implicitly has an ___ type
+    80004, // JSDoc types may be moved to TypeScript types
+    90016, // Declare property
+    90035, // Declare private property
+    90053, // Declare a private field named
+    2339, // Property does not exist on type
+    2525, // Initializer provides no value for this binding element and the binding element has no default value
+  ];
+
+  async run(fileName: string): PluginResult {
+    let diagnostics = this.getDiagnostics(fileName, this.commentTag);
     let tries = diagnostics.length + 1;
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
@@ -68,9 +82,9 @@ export class DiagnosticFixPlugin extends Plugin {
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         }
       } else {
-        if (addHints) {
+        if (this.addHints) {
           // Add a hint message in case we didn't modify any files (codefix was not applied)
-          const text = this.addHintComment(diagnostic, hint, commentTag);
+          const text = this.addHintComment(diagnostic, hint, this.commentTag);
 
           this.service.setFileText(fileName, text);
           allFixedFiles.add(fileName);
@@ -97,38 +111,10 @@ export class DiagnosticFixPlugin extends Plugin {
       );
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(fileName, commentTag);
+      diagnostics = this.getDiagnostics(fileName, this.commentTag);
     }
 
     return Array.from(allFixedFiles);
-  }
-
-  /**
-   * Returns the list of diagnostics with location and additional context of the application
-   */
-  getDiagnostics(fileName: string, tag: string): DiagnosticWithContext[] {
-    const service = this.service.getLanguageService();
-    const program = service.getProgram()!;
-    const checker = program.getTypeChecker();
-
-    const diagnostics = [
-      ...this.service.getSemanticDiagnosticsWithLocation(fileName),
-      ...this.service.getSuggestionDiagnostics(fileName),
-    ];
-
-    diagnostics.sort((a, b) => a.start - b.start);
-
-    return diagnostics
-      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)) // Except diagnostics with comment
-      .map<DiagnosticWithContext>((diagnostic) => ({
-        ...diagnostic,
-        ...{
-          service,
-          program,
-          checker,
-          node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
-        },
-      }));
   }
 
   /**
@@ -242,6 +228,63 @@ export class DiagnosticFixPlugin extends Plugin {
     };
   }
 
+  /**
+   * Returns the list of diagnostics with location and additional context of the application
+   */
+  getDiagnostics(fileName: string, tag: string): DiagnosticWithContext[] {
+    const service = this.service.getLanguageService();
+    const program = service.getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnostics = [
+      ...this.service.getSemanticDiagnosticsWithLocation(fileName),
+      ...this.service.getSuggestionDiagnostics(fileName),
+    ];
+
+    this.sort(diagnostics, this.prioritizedCodes);
+
+    return diagnostics
+      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)) // Except diagnostics with comment
+      .map<DiagnosticWithContext>((diagnostic) => ({
+        ...diagnostic,
+        ...{
+          service,
+          program,
+          checker,
+          node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+        },
+      }));
+  }
+
+  /**
+   * Sorts diagnostics by the `start` position with prioritization of diagnostic have codes in `prioritizedCodes`.
+   * If the diagnostic has the code mentioned in the `prioritizedCodes` list, it will be moved to the start and will
+   * be ordered against other prioritized codes in the order codes provided in the `prioritizedCodes`.
+   */
+  sort(diagnostics: DiagnosticWithLocation[], prioritizedCodes: number[]): void {
+    diagnostics.sort((left, right) => {
+      if (left.code != right.code) {
+        const leftIndex = prioritizedCodes.indexOf(left.code);
+        const rightIndex = prioritizedCodes.indexOf(right.code);
+
+        // Sort prioritized codes by how they ordered in `prioritizedCodes`
+        if (leftIndex >= 0 && rightIndex >= 0) {
+          return leftIndex - rightIndex;
+        }
+
+        if (leftIndex >= 0) {
+          return -1;
+        }
+
+        if (rightIndex >= 0) {
+          return 1;
+        }
+      }
+
+      return left.start - right.start;
+    });
+  }
+
   private getFilesData(
     fixedFiles: FixedFile[],
     diagnostic: DiagnosticWithLocation,
@@ -318,7 +361,7 @@ export class DiagnosticFixPlugin extends Plugin {
   ): Location {
     const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
     const triggeringFile = normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName);
-    const triggeringLocation = files[triggeringFile] ? files[triggeringFile].location : location;
-    return triggeringLocation;
+
+    return files[triggeringFile] ? files[triggeringFile].location : location;
   }
 }
