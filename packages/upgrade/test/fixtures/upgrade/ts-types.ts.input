@@ -1,4 +1,4 @@
-export function test1(me: string) {
+export function test1(me) {
   return 'This is ' + me;
 }
 
@@ -9,7 +9,7 @@ test1('test');
  * @param {number} me
  * @return {string}
  */
-export function test2(me: number): string {
+export function test2(me) {
   return me.toString();
 }
 
@@ -20,7 +20,7 @@ test2(0);
  * @param {number} me
  * @return {string}
  */
-export function test3(me: number): string {
+export function test3(me) {
   return me.toString();
 }
 
@@ -33,7 +33,29 @@ export class A {
    * @param {number} me
    * @return {string}
    */
-  test4(me: number): string {
+  test4(me) {
     return me.toString(2);
+  }
+}
+
+export class Foo {
+  value = 0;
+
+  get foo() {
+    return this.value;
+  }
+
+  set foo(value) {
+    this.value = value;
+  }
+
+  boo(value) {
+    this.value = value;
+
+    if (this.value) {
+      return null;
+    } else {
+      return this.value;
+    }
   }
 }
