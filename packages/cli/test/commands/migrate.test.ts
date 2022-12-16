@@ -181,9 +181,9 @@ describe('migrate - JS to TS conversion', async () => {
 
     // Test logger messages from package/migrate
     expect(result.stdout).toContain('info');
-    expect(result.stdout).toContain('Moving /foo.js to /foo.ts');
-    expect(result.stdout).toContain('Moving /index.js to /index.ts');
-    expect(result.stdout).toContain('Processing file:');
+    expect(result.stdout).toContain('Moving: /foo.js to /foo.ts');
+    expect(result.stdout).toContain('Moving: /index.js to /index.ts');
+    expect(result.stdout).toContain('Processing:');
 
     // Test summary message
     expect(result.stdout).toContain(`2 JS files has been converted to TS`);
@@ -269,7 +269,7 @@ describe('migrate - generate eslint config', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('Creating .eslintrc.js from custom config.');
+    expect(result.stdout).toContain('Creating .eslintrc.js from custom config');
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
   });
 });

@@ -30,7 +30,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin];
 
-  logger?.info('Migration started.');
+  logger?.info('Migration started');
   logger?.info(`Base path: ${basePath}`);
   logger?.debug(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
 
@@ -61,7 +61,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
         execaSync('mv', [sourceFile, destFile]);
       }
       logger?.info(
-        `Moving ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
+        `Moving: ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
       );
     }
 
@@ -95,7 +95,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const service = new RehearsalService(options, fileNames);
 
   for (const fileName of fileNames) {
-    logger?.info(`Processing file: ${fileName}`);
+    logger?.info(`Processing: ${fileName.replace(basePath, '')}`);
 
     let allChangedFiles: Set<string> = new Set();
 
