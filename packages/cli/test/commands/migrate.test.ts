@@ -234,8 +234,8 @@ describe('migrate - JS to TS conversion', async () => {
     expect(readdirSync(reportPath)).toContain('report.sarif');
   });
 
-  test('Generate report with -r flag', async () => {
-    await runBin('migrate', ['-r', 'json,md,sarif,foo'], {
+  test('Generate report in different formats with -f flag', async () => {
+    await runBin('migrate', ['-f', 'json,md,sarif,foo'], {
       cwd: basePath,
     });
 

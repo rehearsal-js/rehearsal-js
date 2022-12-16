@@ -43,8 +43,8 @@ upgradeCommand
   )
   .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
   .option(
-    '-r, --report <reportTypes>',
-    'Report types separated by comma, e.g. -r json,sarif,md,sonarqube',
+    '-f, --format <format>',
+    'Report format separated by comma, e.g. -f json,sarif,md,sonarqube',
     parseCommaSeparatedList,
     ['sarif']
   )
@@ -238,7 +238,7 @@ upgradeCommand
       });
 
       const reportOutputPath = resolve(basePath, options.outputPath);
-      generateReports(reporter, reportOutputPath, options.report, {
+      generateReports(reporter, reportOutputPath, options.format, {
         json: reportFormatter,
         sarif: sarifFormatter,
         md: mdFormatter,

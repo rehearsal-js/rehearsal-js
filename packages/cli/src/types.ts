@@ -8,7 +8,7 @@ export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
   files: string;
-  report: string[];
+  format: string[];
   outputPath: string;
   verbose: boolean | undefined;
   userConfig: string | undefined;
@@ -36,7 +36,7 @@ export type UpgradeCommandContext = {
 export type UpgradeCommandOptions = {
   build: string;
   basePath: string;
-  report: string[];
+  format: string[];
   outputPath: string;
   tsVersion: string;
   dryRun: boolean;
