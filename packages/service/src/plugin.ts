@@ -5,10 +5,10 @@ import type { RehearsalService } from './rehearsal-service';
 
 export class Plugin {
   protected readonly logger?: Logger;
-  protected readonly reporter?: Reporter;
+  protected readonly reporter: Reporter;
   protected readonly service: RehearsalService;
 
-  constructor(service: RehearsalService, logger?: Logger, reporter?: Reporter) {
+  constructor(service: RehearsalService, reporter: Reporter, logger?: Logger) {
     this.service = service;
     this.logger = logger;
     this.reporter = reporter;

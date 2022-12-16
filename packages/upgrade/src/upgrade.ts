@@ -9,7 +9,7 @@ import type { Logger } from 'winston';
 export type UpgradeInput = {
   basePath: string;
   configName?: string;
-  reporter?: Reporter;
+  reporter: Reporter;
   logger?: Logger;
 };
 
@@ -63,7 +63,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     let allChangedFiles: Set<string> = new Set();
 
     for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, logger, reporter);
+      const plugin = new pluginClass(service, reporter, logger);
       const changedFiles = await plugin.run(fileName);
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }

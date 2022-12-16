@@ -19,7 +19,8 @@ import {
   TextChange,
 } from 'typescript';
 import { debug } from 'debug';
-import { getFilesData, getTriggeringNodeLocation } from '../data';
+import { normalizeFilePath, ProcessedFile, type Location } from '@rehearsal/reporter';
+import { getLocation, getRoles } from '../data';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
@@ -82,10 +83,10 @@ export class DiagnosticFixPlugin extends Plugin {
 
       const fixed = fix !== undefined;
       const helpUrl = hints.getHelpUrl(diagnostic);
-      const processedFiles = getFilesData(fixedFiles, diagnostic, hint);
-      const triggeringLocation = getTriggeringNodeLocation(diagnostic, processedFiles);
+      const processedFiles = this.getFilesData(fixedFiles, diagnostic, hint);
+      const triggeringLocation = this.getTriggeringNodeLocation(diagnostic, processedFiles);
 
-      this.reporter?.addItem(
+      this.reporter.addItem(
         diagnostic,
         processedFiles,
         fixed,
@@ -228,7 +229,7 @@ export class DiagnosticFixPlugin extends Plugin {
     };
 
     return {
-      fileName,
+      fileName: normalizeFilePath(this.reporter.basePath, fileName),
       newCode,
       oldCode,
       location: {
@@ -239,5 +240,85 @@ export class DiagnosticFixPlugin extends Plugin {
       },
       codeFixAction: getActionKind(textChange),
     };
+  }
+
+  private getFilesData(
+    fixedFiles: FixedFile[],
+    diagnostic: DiagnosticWithLocation,
+    hint = ''
+  ): { [fileName: string]: ProcessedFile } {
+    const entryFileName = normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName);
+
+    let filesData: { [fileName: string]: ProcessedFile } = {
+      [entryFileName]: this.getInitialEntryFileData(diagnostic),
+    };
+
+    if (fixedFiles.length > 0) {
+      for (const fixedFile of fixedFiles) {
+        const fixedFileName = normalizeFilePath(this.reporter.basePath, fixedFile.fileName);
+        filesData = {
+          ...filesData,
+          [fixedFileName]: this.getFixedFileData(fixedFile, entryFileName),
+        };
+      }
+    } else {
+      filesData = {
+        [entryFileName]: {
+          ...filesData[entryFileName],
+          hintAdded: true,
+          hint,
+        },
+      };
+    }
+
+    return filesData;
+  }
+
+  private getInitialEntryFileData(diagnostic: DiagnosticWithLocation): ProcessedFile {
+    const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+    //factor in the 1 line number bump when comment is added
+    const adjustedLocation = {
+      ...location,
+      startLine: location.startLine + 1,
+      endLine: location.endLine + 1,
+    };
+    return {
+      fileName: normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName),
+      location: adjustedLocation,
+      fixed: false,
+      newCode: undefined,
+      oldCode: undefined,
+      codeFixAction: undefined,
+      hint: undefined,
+      hintAdded: false,
+      roles: ['analysisTarget', 'unmodified'],
+    };
+  }
+
+  private getFixedFileData(fixedFile: FixedFile, entryFileName: string): ProcessedFile {
+    const fixedFileName = normalizeFilePath(this.reporter.basePath, fixedFile.fileName);
+
+    const roles = getRoles(fixedFileName, entryFileName, true);
+    return {
+      fileName: fixedFileName,
+      location: fixedFile.location,
+      fixed: true,
+      newCode: fixedFile.newCode,
+      oldCode: fixedFile.oldCode,
+      codeFixAction: fixedFile.codeFixAction,
+      hint: undefined,
+      hintAdded: false,
+      roles,
+    };
+  }
+
+  private getTriggeringNodeLocation(
+    diagnostic: DiagnosticWithLocation,
+    files: { [fileName: string]: ProcessedFile }
+  ): Location {
+    const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+    const triggeringFile = normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName);
+    const triggeringLocation = files[triggeringFile] ? files[triggeringFile].location : location;
+    return triggeringLocation;
   }
 }
