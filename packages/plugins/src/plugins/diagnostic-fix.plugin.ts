@@ -14,8 +14,10 @@ import {
 } from '@rehearsal/utils';
 import {
   type DiagnosticWithLocation,
+  findAncestor,
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
+  isTemplateLiteral,
   TextChange,
 } from 'typescript';
 import { debug } from 'debug';
@@ -121,10 +123,17 @@ export class DiagnosticFixPlugin extends Plugin {
    * Tries to find a `@rehearsal` on the first non-empty line above the affected node
    * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
    */
-  getHintComment(diagnostic: DiagnosticWithLocation, tag: string): string | undefined {
+  getHintComment(diagnostic: DiagnosticWithContext, tag: string): string | undefined {
     // Search for a position to add comment - the first element at the line with affected node
     const sourceFile = diagnostic.file;
-    const lineWithNode = getLineAndCharacterOfPosition(sourceFile, diagnostic.start).line;
+
+    let lineWithNode = sourceFile.getLineAndCharacterOfPosition(diagnostic.start).line;
+
+    // In case of issue inside template literal the node line will the start of template literal
+    const templateLiteralNode = findAncestor(diagnostic.node, isTemplateLiteral);
+    if (templateLiteralNode) {
+      lineWithNode = sourceFile.getLineAndCharacterOfPosition(templateLiteralNode.getStart()).line;
+    }
 
     if (lineWithNode === 0) {
       return undefined;
@@ -172,9 +181,17 @@ export class DiagnosticFixPlugin extends Plugin {
   /**
    * Builds and adds a `@rehearsal` comment above the affected node
    */
-  addHintComment(diagnostic: DiagnosticWithLocation, hint: string, tag: string): string {
+  addHintComment(diagnostic: DiagnosticWithContext, hint: string, tag: string): string {
     // Search for a position to add comment - the first element at the line with affected node
-    const line = getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
+    let line = getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
+
+    // In case of issue inside template literal the node line will the start of template literal
+    // See https://github.com/microsoft/TypeScript/issues/51600 if another solution will be implemented
+    const templateLiteralNode = findAncestor(diagnostic.node, isTemplateLiteral);
+    if (templateLiteralNode) {
+      line = getLineAndCharacterOfPosition(diagnostic.file, templateLiteralNode.getStart()).line;
+    }
+
     const positionToAddComment = getPositionOfLineAndCharacter(diagnostic.file, line, 0);
 
     const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
@@ -243,17 +260,21 @@ export class DiagnosticFixPlugin extends Plugin {
 
     this.sort(diagnostics, this.prioritizedCodes);
 
-    return diagnostics
-      .filter((diagnostic) => !this.getHintComment(diagnostic, tag)) // Except diagnostics with comment
-      .map<DiagnosticWithContext>((diagnostic) => ({
-        ...diagnostic,
-        ...{
-          service,
-          program,
-          checker,
-          node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
-        },
-      }));
+    return (
+      diagnostics
+        // Convert DiagnosticWithLocation to DiagnosticWithContext
+        .map<DiagnosticWithContext>((diagnostic) => ({
+          ...diagnostic,
+          ...{
+            service,
+            program,
+            checker,
+            node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+          },
+        }))
+        // Filter out diagnostics with related tagged comment
+        .filter((diagnostic) => !this.getHintComment(diagnostic, tag))
+    );
   }
 
   /**

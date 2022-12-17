@@ -105,24 +105,7 @@ export function findTheFirstParentNodeInTheLine(node: Node): Node {
  * Checks if the node is the part of JSX Text (Element or Fragment)
  */
 export function isNodeInsideJsx(node: Node): boolean {
-  const visit = (node: Node): boolean => {
-    if (node === undefined || isSourceFile(node)) {
-      return false;
-    }
-
-    if (isJsxElement(node) || isJsxFragment(node)) {
-      return true;
-    }
-
-    return visit(node.parent);
-  };
-
-  return visit(node);
-}
-
-export function insertIntoText(text: string, insertAt: number, strToInsert: string): string {
-  const newText = `${text.substring(0, insertAt)}${strToInsert}${text.substring(insertAt)}`;
-  return newText;
+  return findAncestor(node, (node) => isJsxElement(node) || isJsxFragment(node)) !== undefined;
 }
 
 /**
