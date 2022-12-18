@@ -357,6 +357,7 @@ export function writeTSConfig(basePath: string, fileList: string[]): void {
     $schema: 'https://json.schemastore.org/tsconfig',
     compilerOptions: {
       strict: true,
+      esModuleInterop: true,
       noUncheckedIndexedAccess: true,
       module: 'es2020',
       moduleResolution: 'node',
