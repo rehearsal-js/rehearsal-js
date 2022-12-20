@@ -35,7 +35,7 @@ describe('migration-graph', () => {
       ).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
-    test.only('workspace', () => {
+    test('workspace', () => {
       const baseDir = getLibrary('library-with-workspaces');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
 
