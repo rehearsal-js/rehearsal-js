@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { getLibrarySimple } from '@rehearsal/test-support';
+import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
 import rimraf from 'rimraf';
@@ -207,7 +207,7 @@ describe('PackageGraph', () => {
   });
 
   test('should ignore node_modules ', async () => {
-    const baseDir = getLibrarySimple();
+    const baseDir = getLibrary('simple');
     const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
     const actual = flatten(output.topSort());
     expect(actual).toStrictEqual(['lib/a.js', 'index.js']);

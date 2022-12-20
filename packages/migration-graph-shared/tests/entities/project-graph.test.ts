@@ -1,4 +1,4 @@
-import { getLibrarySimple, getLibraryWithWorkspaces } from '@rehearsal/test-support';
+import { getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -13,7 +13,7 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 
 describe('project-graph', () => {
   test('should create a graph', () => {
-    const baseDir = getLibrarySimple();
+    const baseDir = getLibrary('simple');
 
     const projectGraph = new ProjectGraph(baseDir);
 
@@ -37,8 +37,20 @@ describe('project-graph', () => {
       expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
     }
   });
+  test('should ignore css imports', () => {
+    const baseDir = getLibrary('library-with-css-imports');
+
+    console.log(baseDir);
+    const projectGraph = new ProjectGraph(baseDir);
+    const somePackage = new Package(baseDir);
+    projectGraph.addPackageToGraph(somePackage);
+
+    projectGraph.discover();
+
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
   test('options.eager', () => {
-    const baseDir = getLibrarySimple();
+    const baseDir = getLibrary('simple');
 
     const projectGraph = new ProjectGraph(baseDir, { eager: true });
     const somePackage = new Package(baseDir);
@@ -60,7 +72,7 @@ describe('project-graph', () => {
   });
   describe('workspaces', () => {
     test('should discover packages defined in workspaces in package.json', () => {
-      const baseDir = getLibraryWithWorkspaces();
+      const baseDir = getLibrary('library-with-workspaces');
 
       const projectGraph = new ProjectGraph(baseDir);
 
@@ -70,7 +82,7 @@ describe('project-graph', () => {
       expect(projectGraph.graph.hasNode('@something/baz')).toBe(true);
     });
     test('should find edges between packages', () => {
-      const baseDir = getLibraryWithWorkspaces();
+      const baseDir = getLibrary('library-with-workspaces');
 
       const projectGraph = new ProjectGraph(baseDir);
 

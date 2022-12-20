@@ -2,8 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   getEmberProject,
   getEmberProjectFixture,
-  getLibrarySimple,
-  getLibraryWithWorkspaces,
+  getLibrary,
   setupProject,
 } from '@rehearsal/test-support';
 import { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
@@ -24,7 +23,7 @@ function filter(arr: GraphNode<ModuleNode>[]): GraphNode<ModuleNode>[] {
 describe('migration-graph', () => {
   describe('library', () => {
     test('simple', () => {
-      const baseDir = getLibrarySimple();
+      const baseDir = getLibrary('simple');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
 
       expect(projectGraph.graph.hasNode('my-package')).toBe(true);
@@ -36,8 +35,8 @@ describe('migration-graph', () => {
       ).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
-    test('workspace', () => {
-      const baseDir = getLibraryWithWorkspaces();
+    test.only('workspace', () => {
+      const baseDir = getLibrary('library-with-workspaces');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
 
       expect(projectGraph.sourceType).toBe(SourceType.Library);
