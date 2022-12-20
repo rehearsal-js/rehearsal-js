@@ -70,7 +70,7 @@ export class Package implements IPackage {
   }
 
   get excludePatterns(): Array<string> {
-    return ['node_modules', 'dist', 'test', 'tests'];
+    return ['dist', 'test', 'tests'];
   }
 
   get includePatterns(): Array<string> {
