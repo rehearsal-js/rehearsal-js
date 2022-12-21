@@ -1,17 +1,12 @@
 import { describe, expect, test } from 'vitest';
-import {
-  getLibrarySimple,
-  getLibraryWithEntrypoint,
-  getEmberProjectFixture,
-  getLibraryWithWorkspaces,
-} from '@rehearsal/test-support';
+import { getLibrary, getEmberProjectFixture } from '@rehearsal/test-support';
 import { SourceType } from '../src/source-type';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 
 describe('migration-strategy', () => {
   describe('library', () => {
     test('simple', () => {
-      const rootDir = getLibrarySimple();
+      const rootDir = getLibrary('simple');
       const strategy = getMigrationStrategy(rootDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -19,7 +14,7 @@ describe('migration-strategy', () => {
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
     test('simple with entrypoint', () => {
-      const rootDir = getLibraryWithEntrypoint();
+      const rootDir = getLibrary('library-with-entrypoint');
       const strategy = getMigrationStrategy(rootDir, { entrypoint: 'depends-on-foo.js' });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -28,7 +23,7 @@ describe('migration-strategy', () => {
     });
 
     test('workspaces', () => {
-      const rootDir = getLibraryWithWorkspaces();
+      const rootDir = getLibrary('library-with-workspaces');
       const strategy = getMigrationStrategy(rootDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);

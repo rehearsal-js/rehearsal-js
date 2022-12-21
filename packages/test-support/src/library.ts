@@ -3,14 +3,20 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 
 setGracefulCleanup();
 
-function create(files: fixturify.DirJSON): string {
+export function create(files: fixturify.DirJSON): string {
   // TODO refactor this test fixture to use fixturify-project
   const { name: tmpdir } = dirSync();
   fixturify.writeSync(tmpdir, files);
   return tmpdir;
 }
 
-type LibraryVariants = 'simple' | 'library-with-entrypoint' | 'library-with-workspaces';
+type FixtureDir = string;
+
+type LibraryVariants =
+  | 'simple'
+  | 'library-with-css-imports'
+  | 'library-with-entrypoint'
+  | 'library-with-workspaces';
 
 export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
   let files: fixturify.DirJSON;
@@ -45,6 +51,33 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             // a.js
             console.log('foo');        
            `,
+        },
+      };
+      break;
+    case 'library-with-css-imports':
+      files = {
+        'index.js': `
+          import './lib/a';
+          import './styles/main.css';
+        `,
+        'package.json': `
+          {
+            "name": "my-package",
+            "main": "index.js",
+            "dependencies": {
+            },
+            "devDependencies": {
+            }
+          }
+        `,
+        lib: {
+          'a.js': `
+            // a.js
+            console.log('foo');        
+           `,
+        },
+        styles: {
+          'main.css': `.main { color: "black"}`,
         },
       };
       break;
@@ -156,14 +189,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
 
   return files;
 }
-export function getLibrarySimple(): string {
-  return create(getFiles('simple'));
-}
 
-export function getLibraryWithEntrypoint(): string {
-  return create(getFiles('library-with-entrypoint'));
-}
-
-export function getLibraryWithWorkspaces(): string {
-  return create(getFiles('library-with-workspaces'));
+export function getLibrary(variant: LibraryVariants): FixtureDir {
+  return create(getFiles(variant));
 }
