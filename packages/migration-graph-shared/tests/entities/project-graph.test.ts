@@ -40,7 +40,6 @@ describe('project-graph', () => {
   test('should ignore css imports', () => {
     const baseDir = getLibrary('library-with-css-imports');
 
-    console.log(baseDir);
     const projectGraph = new ProjectGraph(baseDir);
     const somePackage = new Package(baseDir);
     projectGraph.addPackageToGraph(somePackage);
