@@ -141,6 +141,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             },
           },
         },
+        'some-util.js': '// Shared file',
         'package.json': `
           {
             "name": "some-library-with-workspace",

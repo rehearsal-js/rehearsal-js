@@ -1,4 +1,4 @@
-import { getLibrary } from '@rehearsal/test-support';
+import { create, getFiles, getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -95,6 +95,80 @@ describe('project-graph', () => {
       expect(fooNode.adjacent.has(barNode)).toBe(true);
       expect(barNode.adjacent.has(bazNode)).toBe(true);
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
+    });
+    test('should not include a file out of the package scope', () => {
+      // const files = getFiles('library-with-workspaces');
+
+      const files = {
+        packages: {
+          'some-package': {
+            'package.json': `{
+              "name": "@some-workspace/some-package",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": {
+                "@something/bar": "*"
+              }
+            }`,
+            'index.js': `
+              import './lib/a';
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'a.js': `
+              // a.js
+              console.log('foo');        
+             `,
+            },
+          },
+          'another-package': {
+            'package.json': `{
+              "name": "@some-workspace/another-package",
+              "version": "1.0.0",
+              "main": "index.js"
+            }`,
+            'index.js': `
+              import './lib/impl';
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'impl.js': `
+                // impl.js
+              `,
+            },
+          },
+        },
+        'some-shared-util.js': '// something-shared',
+        'package.json': `
+          {
+            "name": "some-library-with-workspace",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT",
+            "workspaces": [
+              "packages/*"
+            ]
+          }    
+        `,
+      };
+
+      // mutate a file to include a file from the root directory.
+
+      const baseDir = create(files);
+
+      const projectGraph = new ProjectGraph(baseDir);
+
+      projectGraph.discover();
+      expect(projectGraph.graph.hasNode('@some-workspace/some-package')).toBe(true);
+      expect(projectGraph.graph.hasNode('@some-workspace/another-package')).toBe(true);
+
+      Array.from(projectGraph.graph.topSort()).forEach((node: GraphNode<PackageNode>) => {
+        const somePackage = node.content.pkg;
+        console.log();
+        console.log(flatten(somePackage.getModuleGraph().topSort()));
+      });
+
+      expect(true).toBe(false);
     });
     test.todo('should do something if a cycle is found', () => {
       expect(true).toBe(false);
