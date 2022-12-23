@@ -1,16 +1,8 @@
-import { type DiagnosticWithLocation, type SourceFile, isLineBreak } from 'typescript';
-import { FileRole, Location, ProcessedFile } from '@rehearsal/reporter';
+import { type SourceFile, isLineBreak } from 'typescript';
+import { Location } from '@rehearsal/reporter';
 
-export function getRoles(fileName: string, entryFileName: string, fixed: boolean): FileRole[] {
-  const isEntryFile = fileName === entryFileName;
-
-  if (isEntryFile) {
-    return fixed
-      ? ['analysisTarget' as const, 'modified' as const]
-      : ['analysisTarget', 'unmodified'];
-  }
-  return fixed ? ['tracedFile' as const, 'modified' as const] : ['tracedFile', 'unmodified'];
-}
+const INDEX_BUMP = 1; //bump line and column numbers from 0 to 1 for sarif reader
+const COMMENT_BUMP = 1; //bump line numbers because added comment pushes the line number down by 1
 
 export function getLocation(sourceFile: SourceFile, start: number, length: number): Location {
   const { line: startLine, character: startColumn } =
@@ -19,12 +11,11 @@ export function getLocation(sourceFile: SourceFile, start: number, length: numbe
     start + length - 1
   );
 
-  //bump 0 to 1, so on and so forth, so that line and column can be correctly displayed in sarif.
   return {
-    startLine: startLine + 1,
-    startColumn: startColumn + 1,
-    endLine: endLine + 1,
-    endColumn: endColumn + 1,
+    startLine: startLine + INDEX_BUMP + COMMENT_BUMP,
+    startColumn: startColumn + INDEX_BUMP,
+    endLine: endLine + INDEX_BUMP + COMMENT_BUMP,
+    endColumn: endColumn + INDEX_BUMP,
   };
 }
 
@@ -44,16 +35,4 @@ export function getBoundaryOfCommentBlock(
     start: newStart,
     end,
   };
-}
-
-//Location of the node that triggers the error
-//In most cases it is the same as the location in type ProcessedFile, but can be different
-export function getTriggeringNodeLocation(
-  diagnostic: DiagnosticWithLocation,
-  files: { [fileName: string]: ProcessedFile }
-): Location {
-  const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-  const triggeringFile = diagnostic.file.fileName;
-  const triggeringLocation = files[triggeringFile] ? files[triggeringFile].location : location;
-  return triggeringLocation;
 }

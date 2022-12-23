@@ -1,28 +1,9 @@
-import {
-  codefixes,
-  type CodeFixKind,
-  type DiagnosticWithContext,
-  type FixedFile,
-  hints,
-} from '@rehearsal/codefixes';
-import { Plugin, type PluginResult } from '@rehearsal/service';
-import {
-  applyTextChange,
-  findNodeAtPosition,
-  isNodeInsideJsx,
-  normalizeTextChanges,
-} from '@rehearsal/utils';
-import {
-  type DiagnosticWithLocation,
-  findAncestor,
-  getLineAndCharacterOfPosition,
-  getPositionOfLineAndCharacter,
-  isTemplateLiteral,
-  TextChange,
-} from 'typescript';
+import { type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
-import { type Location, normalizeFilePath, ProcessedFile } from '@rehearsal/reporter';
-import { getLocation, getRoles } from '../data';
+
+import { codefixes, type DiagnosticWithContext } from '@rehearsal/codefixes';
+import { Plugin, type PluginResult } from '@rehearsal/service';
+import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
@@ -30,8 +11,7 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
  * Diagnose issues in the file and applied transforms to fix them
  */
 export class DiagnosticFixPlugin extends Plugin {
-  // TODO: Move next 3 lines to constructor options
-  addHints = true;
+  // TODO: Move next 1 line to constructor options
   commentTag = '@rehearsal';
 
   /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
@@ -49,7 +29,7 @@ export class DiagnosticFixPlugin extends Plugin {
   ];
 
   async run(fileName: string): PluginResult {
-    let diagnostics = this.getDiagnostics(fileName, this.commentTag);
+    let diagnostics = this.getDiagnostics(fileName);
     let tries = diagnostics.length + 1;
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
@@ -64,17 +44,14 @@ export class DiagnosticFixPlugin extends Plugin {
       }
 
       const fix = codefixes.getCodeFixes(diagnostic);
-      const fixedFiles: FixedFile[] = [];
-      const hint = hints.getHint(diagnostic);
-
-      if (fix) {
+      if (!fix) {
+        continue;
+      } else {
         for (const fileTextChange of fix.changes) {
           let text = this.service.getFileText(fileTextChange.fileName);
 
           const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
           for (const textChange of textChanges) {
-            fixedFiles.push(this.convertTextChangeToFixedFile(fileName, textChange));
-
             text = applyTextChange(text, textChange);
           }
 
@@ -83,172 +60,19 @@ export class DiagnosticFixPlugin extends Plugin {
 
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         }
-      } else {
-        if (this.addHints) {
-          // Add a hint message in case we didn't modify any files (codefix was not applied)
-          const text = this.addHintComment(diagnostic, hint, this.commentTag);
-
-          this.service.setFileText(fileName, text);
-          allFixedFiles.add(fileName);
-
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
-        } else {
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t not handled`);
-        }
       }
 
-      const fixed = fix !== undefined;
-      const helpUrl = hints.getHelpUrl(diagnostic);
-      const processedFiles = this.getFilesData(fixedFiles, diagnostic, hint);
-      const triggeringLocation = this.getTriggeringNodeLocation(diagnostic, processedFiles);
-
-      this.reporter.addItem(
-        diagnostic,
-        processedFiles,
-        fixed,
-        diagnostic.node,
-        triggeringLocation,
-        hint,
-        helpUrl
-      );
-
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(fileName, this.commentTag);
+      diagnostics = this.getDiagnostics(fileName);
     }
 
     return Array.from(allFixedFiles);
   }
 
   /**
-   * Tries to find a `@rehearsal` on the first non-empty line above the affected node
-   * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
-   */
-  getHintComment(diagnostic: DiagnosticWithContext, tag: string): string | undefined {
-    // Search for a position to add comment - the first element at the line with affected node
-    const sourceFile = diagnostic.file;
-
-    let lineWithNode = sourceFile.getLineAndCharacterOfPosition(diagnostic.start).line;
-
-    // In case of issue inside template literal the node line will the start of template literal
-    const templateLiteralNode = findAncestor(diagnostic.node, isTemplateLiteral);
-    if (templateLiteralNode) {
-      lineWithNode = sourceFile.getLineAndCharacterOfPosition(templateLiteralNode.getStart()).line;
-    }
-
-    if (lineWithNode === 0) {
-      return undefined;
-    }
-
-    // Search for the first non-empty line above the node
-    let lineAbove = lineWithNode - 1;
-    let lineAboveText = '';
-    let lineAboveStart = 0;
-
-    do {
-      lineAboveStart = sourceFile.getPositionOfLineAndCharacter(lineAbove, 0);
-      const lineAboveEnd = sourceFile.getLineEndOfPosition(lineAboveStart);
-
-      lineAboveText = sourceFile.getFullText().substring(lineAboveStart, lineAboveEnd).trim();
-
-      lineAbove -= 1;
-    } while (lineAbove > 0 && lineAboveText === '');
-
-    // Check if line contains `@rehearsal` tag
-    const tagIndex = lineAboveText.indexOf(tag);
-
-    if (tagIndex === -1) {
-      return undefined;
-    }
-
-    const tagStart = lineAboveStart + tagIndex;
-
-    // Make sure the tag within a comment (not a part of string value)
-    const commentSpan = this.service
-      .getLanguageService()
-      .getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
-
-    if (commentSpan === undefined) {
-      return undefined;
-    }
-
-    return sourceFile
-      .getFullText()
-      .substring(tagStart + tag.length, commentSpan.start + commentSpan.length) // grab `@rehearsal ... */`
-      .replace(/\*\/(})?$/gm, '') // remove */ or */} from the end
-      .trim();
-  }
-
-  /**
-   * Builds and adds a `@rehearsal` comment above the affected node
-   */
-  addHintComment(diagnostic: DiagnosticWithContext, hint: string, tag: string): string {
-    // Search for a position to add comment - the first element at the line with affected node
-    let line = getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
-
-    // In case of issue inside template literal the node line will the start of template literal
-    // See https://github.com/microsoft/TypeScript/issues/51600 if another solution will be implemented
-    const templateLiteralNode = findAncestor(diagnostic.node, isTemplateLiteral);
-    if (templateLiteralNode) {
-      line = getLineAndCharacterOfPosition(diagnostic.file, templateLiteralNode.getStart()).line;
-    }
-
-    const positionToAddComment = getPositionOfLineAndCharacter(diagnostic.file, line, 0);
-
-    const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length)!;
-
-    // TODO: Pass a comment template in config
-    let comment = `@ts-expect-error ${tag} TODO TS${diagnostic.code}: ${hint}`;
-    comment = isNodeInsideJsx(node) ? `{/* ${comment} */}` : `/* ${comment} */`;
-
-    // Make sure the comment is a single because we have to place @ tags right above the issue
-    comment = comment.replace(/(\n|\r|\r\n)/gm, ' ');
-
-    const text = diagnostic.file.getFullText();
-
-    return text.slice(0, positionToAddComment) + comment + '\n' + text.slice(positionToAddComment);
-  }
-
-  convertTextChangeToFixedFile(fileName: string, textChange: TextChange): FixedFile {
-    const sourceFile = this.service.getSourceFile(fileName);
-    const { line, character } = getLineAndCharacterOfPosition(sourceFile, textChange.span.start);
-    const startLine = line + 1; //bump line 0 to line 1, so on and so forth
-    const startColumn = character + 1; //bump character 0 to character 1, so on and so forth
-    const newCode = textChange.newText;
-    const oldCode = sourceFile.text.substring(
-      textChange.span.start,
-      textChange.span.start + textChange.span.length
-    );
-
-    const getActionKind = (textChange: TextChange): CodeFixKind => {
-      if (textChange.span.length === 0) {
-        return 'insert';
-      }
-
-      if (textChange.newText === '') {
-        return 'delete';
-      }
-
-      return 'replace';
-    };
-
-    return {
-      fileName: normalizeFilePath(this.reporter.basePath, fileName),
-      newCode,
-      oldCode,
-      location: {
-        startLine,
-        startColumn,
-        endLine: startLine, //TODO: calculate endLine for multiple line insertion
-        endColumn: startColumn + newCode.length, //TODO: calculate endLine for multiple line insertion
-      },
-      codeFixAction: getActionKind(textChange),
-    };
-  }
-
-  /**
    * Returns the list of diagnostics with location and additional context of the application
    */
-  getDiagnostics(fileName: string, tag: string): DiagnosticWithContext[] {
+  getDiagnostics(fileName: string): DiagnosticWithContext[] {
     const service = this.service.getLanguageService();
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
@@ -272,8 +96,6 @@ export class DiagnosticFixPlugin extends Plugin {
             node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
           },
         }))
-        // Filter out diagnostics with related tagged comment
-        .filter((diagnostic) => !this.getHintComment(diagnostic, tag))
     );
   }
 
@@ -304,85 +126,5 @@ export class DiagnosticFixPlugin extends Plugin {
 
       return left.start - right.start;
     });
-  }
-
-  private getFilesData(
-    fixedFiles: FixedFile[],
-    diagnostic: DiagnosticWithLocation,
-    hint = ''
-  ): { [fileName: string]: ProcessedFile } {
-    const entryFileName = normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName);
-
-    let filesData: { [fileName: string]: ProcessedFile } = {
-      [entryFileName]: this.getInitialEntryFileData(diagnostic),
-    };
-
-    if (fixedFiles.length > 0) {
-      for (const fixedFile of fixedFiles) {
-        const fixedFileName = normalizeFilePath(this.reporter.basePath, fixedFile.fileName);
-        filesData = {
-          ...filesData,
-          [fixedFileName]: this.getFixedFileData(fixedFile, entryFileName),
-        };
-      }
-    } else {
-      filesData = {
-        [entryFileName]: {
-          ...filesData[entryFileName],
-          hintAdded: true,
-          hint,
-        },
-      };
-    }
-
-    return filesData;
-  }
-
-  private getInitialEntryFileData(diagnostic: DiagnosticWithLocation): ProcessedFile {
-    const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-    //factor in the 1 line number bump when comment is added
-    const adjustedLocation = {
-      ...location,
-      startLine: location.startLine + 1,
-      endLine: location.endLine + 1,
-    };
-    return {
-      fileName: normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName),
-      location: adjustedLocation,
-      fixed: false,
-      newCode: undefined,
-      oldCode: undefined,
-      codeFixAction: undefined,
-      hint: undefined,
-      hintAdded: false,
-      roles: ['analysisTarget', 'unmodified'],
-    };
-  }
-
-  private getFixedFileData(fixedFile: FixedFile, entryFileName: string): ProcessedFile {
-    const fixedFileName = normalizeFilePath(this.reporter.basePath, fixedFile.fileName);
-
-    const roles = getRoles(fixedFileName, entryFileName, true);
-    return {
-      fileName: fixedFileName,
-      location: fixedFile.location,
-      fixed: true,
-      newCode: fixedFile.newCode,
-      oldCode: fixedFile.oldCode,
-      codeFixAction: fixedFile.codeFixAction,
-      hint: undefined,
-      hintAdded: false,
-      roles,
-    };
-  }
-
-  private getTriggeringNodeLocation(
-    diagnostic: DiagnosticWithLocation,
-    files: { [fileName: string]: ProcessedFile }
-  ): Location {
-    const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-    const triggeringFile = normalizeFilePath(this.reporter.basePath, diagnostic.file.fileName);
-
-    return files[triggeringFile] ? files[triggeringFile].location : location;
   }
 }

@@ -21,7 +21,7 @@ export class Foo {
    * Size
    * @type {string}
    */
-  @action size = 'l';
+  @action size: string = 'l';
 
   /**
    * Viewport Width

@@ -80,7 +80,7 @@ export type MenuMap = {
 
 export type MigrationSummary = {
   totalErrorCount: number;
-  errorFixedCount: number;
+  // errorFixedCount: number;
   hintAddedCount: number;
 };
 export type TSConfig = {

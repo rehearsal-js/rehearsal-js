@@ -34,21 +34,6 @@ export interface CodeFixCollection {
   getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined;
 }
 
-export type CodeFixKind = 'insert' | 'delete' | 'replace';
-
-export interface FixedFile {
-  fileName: string;
-  newCode?: string;
-  oldCode?: string;
-  codeFixAction?: CodeFixKind;
-  location: {
-    startLine: number;
-    startColumn: number;
-    endLine: number;
-    endColumn: number;
-  };
-}
-
 export interface CodeFix {
   getCodeAction: (diagnostic: DiagnosticWithContext) => CodeFixAction | undefined;
 }

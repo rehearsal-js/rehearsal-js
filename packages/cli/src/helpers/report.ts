@@ -62,19 +62,7 @@ export function reportFormatter(report: Report): string {
     ),
   ];
 
-  const fixedErrors: { [key: string]: number } = {};
-  let fixedErrorsCounter = 0;
-
   const totalErrors: { [key: string]: number } = {};
-  let totalErrorsCounter = 0;
-
-  report.items.forEach((item) => {
-    const fixed = item.fixed ? 1 : 0;
-    fixedErrors[item.errorCode] = (fixedErrors[item.errorCode] || 0) + fixed;
-    fixedErrorsCounter += fixed;
-    totalErrors[item.errorCode] = (totalErrors[item.errorCode] || 0) + 1;
-    totalErrorsCounter += 1;
-  });
 
   // Add statistic info to summary
   report.summary = {
@@ -82,10 +70,8 @@ export function reportFormatter(report: Report): string {
     ...{
       timestamp: new Date().toISOString(),
       uniqueErrors: Object.keys(totalErrors).length,
-      totalErrors: totalErrorsCounter,
+      totalErrors: totalErrors.length,
       totalErrorsList: totalErrors,
-      fixedErrors: fixedErrorsCounter,
-      fixedErrorsList: fixedErrors,
       files: fileNames.length,
       filesList: fileNames,
     },
@@ -99,20 +85,15 @@ export function reportFormatter(report: Report): string {
  */
 export function getReportSummary(report: Report): MigrationSummary {
   const fileMap = new Set<string>();
-  let errorFixedCount = 0;
   let hintAddedCount = 0;
   report.items.forEach((item) => {
     fileMap.add(item.analysisTarget);
-    if (item.fixed) {
-      errorFixedCount++;
-    }
-    if (item.hint) {
+    if (item.hintAdded) {
       hintAddedCount++;
     }
   });
   return {
     totalErrorCount: report.items.length,
-    errorFixedCount,
     hintAddedCount,
   };
 }

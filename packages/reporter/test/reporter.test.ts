@@ -86,21 +86,7 @@ describe('Test reporter', function () {
     const location = { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 };
     const hint = 'This is the hint.';
 
-    const files = {
-      '/base/path/testFile.ts': {
-        fileName: '/base/path/testFile.ts',
-        location,
-        fixed: false,
-        newCode: undefined,
-        oldCode: undefined,
-        codeFixAction: undefined,
-        hint,
-        hintAdded: true,
-        roles: ['analysisTarget' as const, 'unmodified' as const],
-      },
-    };
-
-    reporter!.addItem(mockDiagnostic, files, false, mockNode, location, hint);
+    reporter!.addItem(mockDiagnostic, mockNode, location, hint);
 
     const testAddItemFile = resolve(basePath, 'test-add-item.json');
 

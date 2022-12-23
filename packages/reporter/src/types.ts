@@ -6,9 +6,6 @@ export type ReportSummary = Record<string, unknown> & {
   commandName: string;
 };
 
-export type FileRole = 'analysisTarget' | 'tracedFile' | 'unmodified' | 'modified';
-export type CodeFixAction = 'insert' | 'delete' | 'replace';
-
 export interface Location {
   startLine: number;
   startColumn: number;
@@ -16,28 +13,13 @@ export interface Location {
   endColumn: number;
 }
 
-export interface ProcessedFile {
-  fileName: string;
-  location: Location;
-  fixed: boolean;
-  newCode: string | undefined;
-  oldCode: string | undefined;
-  codeFixAction: CodeFixAction | undefined;
-  hintAdded: boolean;
-  hint: string | undefined;
-  roles: FileRole[];
-}
-
-export type FileCollection = { [fileName: string]: ProcessedFile };
-
 export type ReportItem = {
   analysisTarget: string;
-  files: FileCollection;
   errorCode: number;
   category: string;
   message: string;
   hint?: string;
-  fixed?: boolean;
+  hintAdded?: boolean;
   nodeKind?: string;
   nodeText?: string;
   helpUrl?: string;

@@ -5,13 +5,4 @@ export { sarifFormatter } from './formatters/sarif-formatter';
 export { sonarqubeFormatter } from './formatters/sonarqube-formatter';
 export { normalizeFilePath } from './normalize-paths';
 
-export type {
-  CodeFixAction,
-  FileRole,
-  Location,
-  ProcessedFile,
-  Report,
-  ReportItem,
-  ReportSummary,
-  ReportFormatter,
-} from './types';
+export type { Location, Report, ReportItem, ReportSummary, ReportFormatter } from './types';
