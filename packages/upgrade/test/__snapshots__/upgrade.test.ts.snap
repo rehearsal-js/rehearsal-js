@@ -13,7 +13,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 38,
+        "endColumn": 39,
         "endLine": 7,
         "startColumn": 21,
         "startLine": 7,
@@ -30,7 +30,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 25,
+        "endColumn": 26,
         "endLine": 13,
         "startColumn": 8,
         "startLine": 13,
@@ -47,7 +47,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 32,
+        "endColumn": 33,
         "endLine": 15,
         "startColumn": 13,
         "startLine": 15,
@@ -64,7 +64,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingFragment'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 29,
+        "endColumn": 30,
         "endLine": 22,
         "startColumn": 11,
         "startLine": 22,
@@ -81,7 +81,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 39,
+        "endColumn": 40,
         "endLine": 29,
         "startColumn": 28,
         "startLine": 29,
@@ -98,7 +98,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "A function whose declared type is neither 'void' nor 'any' must return a value.",
       "nodeKind": "TypeReference",
       "nodeLocation": {
-        "endColumn": 54,
+        "endColumn": 55,
         "endLine": 24,
         "startColumn": 40,
         "startLine": 24,
@@ -115,7 +115,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 38,
+        "endColumn": 39,
         "endLine": 7,
         "startColumn": 21,
         "startLine": 7,
@@ -132,7 +132,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 25,
+        "endColumn": 26,
         "endLine": 13,
         "startColumn": 8,
         "startLine": 13,
@@ -149,7 +149,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 32,
+        "endColumn": 33,
         "endLine": 15,
         "startColumn": 13,
         "startLine": 15,
@@ -166,7 +166,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingFragment'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 29,
+        "endColumn": 30,
         "endLine": 22,
         "startColumn": 11,
         "startLine": 22,
@@ -183,7 +183,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 39,
+        "endColumn": 40,
         "endLine": 29,
         "startColumn": 28,
         "startLine": 29,
@@ -200,7 +200,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Property 'one' does not exist on type 'object'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 33,
+        "endColumn": 34,
         "endLine": 7,
         "startColumn": 31,
         "startLine": 7,
@@ -217,7 +217,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Property 'two' does not exist on type 'object'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 33,
+        "endColumn": 34,
         "endLine": 13,
         "startColumn": 31,
         "startLine": 13,
@@ -234,7 +234,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Property 'three' does not exist on type 'object'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 35,
+        "endColumn": 36,
         "endLine": 19,
         "startColumn": 31,
         "startLine": 19,
@@ -251,7 +251,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'missingVar'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 31,
+        "endColumn": 32,
         "endLine": 12,
         "startColumn": 22,
         "startLine": 12,
@@ -268,7 +268,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'missingVar'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 16,
+        "endColumn": 17,
         "endLine": 20,
         "startColumn": 7,
         "startLine": 20,
@@ -285,7 +285,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 96,
+        "endColumn": 97,
         "endLine": 22,
         "startColumn": 7,
         "startLine": 22,
@@ -304,7 +304,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Argument of type '[string, number] | undefined' is not assignable to parameter of type '[string, number]'..   Type 'undefined' is not assignable to type '[string, number]'.",
       "nodeKind": "CallExpression",
       "nodeLocation": {
-        "endColumn": 72,
+        "endColumn": 73,
         "endLine": 41,
         "startColumn": 9,
         "startLine": 41,
@@ -321,7 +321,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Object is possibly 'undefined'.",
       "nodeKind": "PropertyAccessExpression",
       "nodeLocation": {
-        "endColumn": 31,
+        "endColumn": 32,
         "endLine": 45,
         "startColumn": 14,
         "startLine": 45,
@@ -338,7 +338,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Object is possibly 'undefined'.",
       "nodeKind": "PropertyAccessExpression",
       "nodeLocation": {
-        "endColumn": 29,
+        "endColumn": 30,
         "endLine": 67,
         "startColumn": 12,
         "startLine": 67,

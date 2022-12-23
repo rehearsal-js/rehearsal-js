@@ -8,7 +8,7 @@ export function getLocation(sourceFile: SourceFile, start: number, length: numbe
   const { line: startLine, character: startColumn } =
     sourceFile.getLineAndCharacterOfPosition(start);
   const { line: endLine, character: endColumn } = sourceFile.getLineAndCharacterOfPosition(
-    start + length - 1
+    start + length
   );
 
   return {
