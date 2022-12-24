@@ -10,6 +10,7 @@ import {
   Package,
   PackageGraph,
   PackageGraphOptions,
+  PackageJson,
   PackageNode,
 } from '@rehearsal/migration-graph-shared';
 import debug from 'debug';
@@ -25,7 +26,19 @@ class SyntheticPackage extends Package implements IPackage {
 
   constructor() {
     super('/dev/null');
+
     this.#graph = new Graph<ModuleNode>();
+
+    const EMPTY_PACKAGE_JSON: PackageJson = {};
+
+    this.pkg = new Proxy(EMPTY_PACKAGE_JSON, {
+      get(...args) {
+        const prop = args[1];
+        throw new Error(
+          `Unable to retrieve ${prop.toString()}, synthetic package created, package.json does not exist.`
+        );
+      },
+    });
   }
 
   getModuleGraph(): Graph<ModuleNode> {
@@ -34,8 +47,8 @@ class SyntheticPackage extends Package implements IPackage {
 }
 
 export type EmberAppPackageGraphOptions = {
-  parent?: GraphNode<PackageNode>;
-  project?: EmberAppProjectGraph;
+  parentNode?: GraphNode<PackageNode>;
+  projectGraph?: EmberAppProjectGraph;
   resolutions?: { services: Record<string, string> };
 } & PackageGraphOptions;
 
@@ -50,8 +63,8 @@ export class EmberAppPackageGraph extends PackageGraph {
     super(pkg, options);
 
     this.package = pkg;
-    this.parent = options.parent;
-    this.project = options?.project;
+    this.parent = options?.parentNode;
+    this.project = options?.projectGraph;
 
     this.serviceLookup = new Map<string, string>();
 
@@ -287,7 +300,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     return graph.addNode({
       key,
-      pkg: new SyntheticPackage(), // We could make pkg optionally undfined but this simplifies iteration
+      pkg: new SyntheticPackage(), // We could make pkg optionally undefined but this simplifies iteration
       synthetic: true,
     });
   }

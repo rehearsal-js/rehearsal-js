@@ -2,7 +2,7 @@ import { ListrTask } from 'listr2';
 import {
   discoverEmberPackages,
   getMigrationStrategy,
-  SourceFile,
+  type SourceFile,
 } from '@rehearsal/migration-graph';
 import { debug } from 'debug';
 
@@ -32,7 +32,7 @@ export function initTask(options: MigrateCommandOptions): ListrTask {
       ctx.userConfig = userConfig;
 
       const projectName = determineProjectName(options.basePath);
-      const packages = discoverEmberPackages(options.basePath);
+      const packages = discoverEmberPackages(options.basePath); // TODO we should ask the migration-strategy for this data.
       DEBUG_CALLBACK('projectName', projectName);
 
       if (options.interactive) {

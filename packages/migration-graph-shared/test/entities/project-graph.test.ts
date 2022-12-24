@@ -1,4 +1,4 @@
-import { create, getFiles, getLibrary } from '@rehearsal/test-support';
+import { create, getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -101,16 +101,17 @@ describe('project-graph', () => {
 
       const files = {
         packages: {
-          'some-package': {
+          branch: {
             'package.json': `{
-              "name": "@some-workspace/some-package",
+              "name": "@some-workspace/branch",
               "version": "1.0.0",
               "main": "index.js",
               "dependencies": {
-                "@something/bar": "*"
+                "@some-workspace/leaf": "*"
               }
             }`,
             'index.js': `
+              import { do } from '@some-workspace/leaf';
               import './lib/a';
             `,
             'build.js': `import '../../some-shared-util';`,
@@ -121,14 +122,15 @@ describe('project-graph', () => {
              `,
             },
           },
-          'another-package': {
+          leaf: {
             'package.json': `{
-              "name": "@some-workspace/another-package",
+              "name": "@some-workspace/leaf",
               "version": "1.0.0",
               "main": "index.js"
             }`,
             'index.js': `
               import './lib/impl';
+              export function do() { console.log(''); }
             `,
             'build.js': `import '../../some-shared-util';`,
             lib: {
@@ -141,7 +143,7 @@ describe('project-graph', () => {
         'some-shared-util.js': '// something-shared',
         'package.json': `
           {
-            "name": "some-library-with-workspace",
+            "name": "root-package",
             "version": "1.0.0",
             "main": "index.js",
             "license": "MIT",
@@ -159,16 +161,35 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(baseDir);
 
       projectGraph.discover();
-      expect(projectGraph.graph.hasNode('@some-workspace/some-package')).toBe(true);
-      expect(projectGraph.graph.hasNode('@some-workspace/another-package')).toBe(true);
 
-      Array.from(projectGraph.graph.topSort()).forEach((node: GraphNode<PackageNode>) => {
-        const somePackage = node.content.pkg;
-        console.log();
-        console.log(flatten(somePackage.getModuleGraph().topSort()));
-      });
+      const rootNode = projectGraph.graph.getNode('root-package');
+      const branchNode = projectGraph.graph.getNode('@some-workspace/branch');
+      const leafNode = projectGraph.graph.getNode('@some-workspace/leaf');
 
-      expect(true).toBe(false);
+      // Validate edges
+      expect(rootNode.adjacent.has(branchNode)).toBe(true);
+      expect(rootNode.adjacent.has(leafNode)).toBe(true);
+      expect(branchNode.adjacent.has(leafNode)).toBe(true);
+
+      // Validate graph order correctness
+      const nodes = projectGraph.graph.topSort().map((node) => node.content.pkg);
+
+      expect(nodes.length).toBe(3);
+
+      expect(nodes[0].packageName).toBe('@some-workspace/leaf');
+      expect(flatten(nodes[0].getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
+        'lib/impl.js',
+        'index.js',
+      ]);
+      expect(nodes[1].packageName).toBe('@some-workspace/branch');
+      expect(flatten(nodes[1].getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
+        'lib/a.js',
+        'index.js',
+      ]);
+      expect(nodes[2].packageName).toBe('root-package');
+      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual(['some-shared-util.js']);
     });
     test.todo('should do something if a cycle is found', () => {
       expect(true).toBe(false);

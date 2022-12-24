@@ -12,24 +12,26 @@ export type EmberPackageOptions = PackageOptions;
 
 export class EmberAppPackage extends Package implements IPackage {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
-    super(pathToPackage, options);
-  }
-
-  get excludePatterns(): Array<string> {
-    // TODO Determine ember-config directory from package.json entry
-    const files = [
+    const excludePatterns = [
+      // files
       '.ember-cli.js',
       'ember-cli-build.js',
       'ember-config.js',
       'index.js',
       'testem.js',
-    ];
-    const directories = ['dist', 'config', 'ember-config', 'tests', '@ember/*', 'public'];
-    return [...directories, ...files];
-  }
 
-  get includePatterns(): Array<string> {
-    return ['app'];
+      // Directories
+      'dist',
+      'config',
+      'ember-config',
+      'tests',
+      '@ember/*',
+      'public',
+    ];
+
+    const includePatterns = ['app'];
+
+    super(pathToPackage, { excludePatterns, includePatterns, ...options });
   }
 
   get addonPaths(): Array<string> {

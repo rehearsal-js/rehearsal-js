@@ -174,7 +174,7 @@ describe('migrate - JS to TS conversion', async () => {
     basePath = prepareTmpDir('basic');
   });
 
-  test('able to migrate from default index.js', async () => {
+  test('able to migrate default most **/*.js files ', async () => {
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
@@ -182,13 +182,15 @@ describe('migrate - JS to TS conversion', async () => {
     // Test logger messages from package/migrate
     expect(result.stdout).toContain('info');
     expect(result.stdout).toContain('Moving: /foo.js to /foo.ts');
+    expect(result.stdout).toContain('Moving: /depends-on-foo.js to /depends-on-foo.ts');
     expect(result.stdout).toContain('Moving: /index.js to /index.ts');
     expect(result.stdout).toContain('Processing:');
 
     // Test summary message
-    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
+    expect(result.stdout).toContain(`3 JS files has been converted to TS`);
 
     expect(readdirSync(basePath)).toContain('index.ts');
+    expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
     expect(readdirSync(basePath)).not.toContain('index.js');
@@ -196,6 +198,7 @@ describe('migrate - JS to TS conversion', async () => {
 
     const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
     expect(config.include).toContain('index.ts');
+    expect(config.include).toContain('depends-on-foo.ts');
     expect(config.include).toContain('foo.ts');
   });
 
