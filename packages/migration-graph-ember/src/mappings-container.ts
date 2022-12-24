@@ -15,14 +15,14 @@ import { EmberAppPackage } from './entities/ember-app-package';
 
 import { isAddon, isApp } from './utils/ember';
 import { getInternalAddonTestFixtures } from './utils/environment';
-import type { EmberPackageContainer as PackageContainer } from './types/package-container';
+import type { EmberPackageContainer as PackageContainer, EmberProjectPackage } from './types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:mappings-container');
 
 type AddonName = string;
 type AddonLocation = string;
-type MappingsByAddonName = Record<AddonName, Package>;
-type MappingsByLocation = Record<AddonLocation, Package>;
+type MappingsByAddonName = Record<AddonName, EmberProjectPackage>;
+type MappingsByLocation = Record<AddonLocation, EmberProjectPackage>;
 
 type MappingsLookup = {
   mappingsByAddonName: MappingsByAddonName;
@@ -88,7 +88,7 @@ type EntityFactoryOptions = {
 export function entityFactory(
   pathToPackage: string,
   options: EntityFactoryOptions
-): EmberAppPackage | EmberAddonPackage | Package {
+): EmberProjectPackage {
   let Klass;
   try {
     const packageJson = readPackageJson(pathToPackage);

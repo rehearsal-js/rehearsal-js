@@ -13,6 +13,7 @@ import { getInternalPackages } from '../mappings-container';
 import { discoverEmberPackages } from '../utils/discover-ember-packages';
 import { EmberAppPackage } from './ember-app-package';
 import { EmberAddonPackage } from './ember-addon-package';
+import type { EmberProjectPackage } from '../types';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -81,17 +82,14 @@ export type EmberAppProjectGraphOptions = {
 } & ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
-  protected discoveredPackages: Record<string, Package | EmberAddonPackage | EmberAppPackage>;
+  protected discoveredPackages: Record<string, EmberProjectPackage>;
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     options = { sourceType: 'Ember Application', ...options };
     super(rootDir, options);
   }
 
-  addPackageToGraph(
-    p: EmberAppPackage | EmberAddonPackage | Package,
-    crawl = true
-  ): GraphNode<PackageNode> {
+  addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
     DEBUG_CALLBACK('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
@@ -187,7 +185,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     });
   }
 
-  discover(): Array<Package | EmberAppPackage | EmberAddonPackage> {
+  discover(): Array<EmberProjectPackage> {
     const entities = discoverEmberPackages(this.rootDir);
 
     this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
