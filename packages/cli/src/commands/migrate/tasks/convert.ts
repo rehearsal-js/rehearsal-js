@@ -2,7 +2,6 @@ import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { debug } from 'debug';
-// import launch from 'launch-editor';
 import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
 import execa = require('execa');
