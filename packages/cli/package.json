@@ -12,11 +12,6 @@
   "bin": {
     "rehearsal": "./bin/rehearsal.js"
   },
-  "files": [
-    "bin",
-    "dist",
-    "src"
-  ],
   "scripts": {
     "build": "tsc -b",
     "docs": "api-extractor run --typescript-compiler-folder ./node_modules/typescript && api-documenter markdown -i ./temp -o ./docs",

@@ -2,13 +2,10 @@
   "name": "@rehearsal/test-support",
   "version": "0.0.39",
   "description": "Test support uitlities for rehearsal",
+  "private": true,
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "files": [
-    "dist",
-    "fixtures"
-  ],
   "scripts": {
     "build": "tsc -b",
     "fixtures:clean": "rm -rf ./fixtures/ember/*/node_modules",

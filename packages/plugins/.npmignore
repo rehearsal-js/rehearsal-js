@@ -1,0 +1,8 @@
+dist/src/__tests__
+dist/tsconfig.tsbuildinfo
+
+src
+tsconfig.json
+vitest.config.ts
+TODO.md
+docs

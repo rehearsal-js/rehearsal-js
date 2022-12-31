@@ -1,0 +1,126 @@
+import { existsSync, readFileSync, rmSync } from 'fs';
+import { resolve } from 'path';
+import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
+import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
+import { mock } from 'vitest-mock-extended';
+
+import { type Report } from '../types';
+
+import { Reporter } from '../reporter';
+import { jsonFormatter } from '../formatters/json-formatter';
+import { mdFormatter } from '../formatters/md-formatter';
+
+describe('Test reporter', function () {
+  const basePath = resolve(__dirname, 'fixtures/reporter');
+
+  let reporter: Reporter | undefined;
+
+  beforeEach(() => {
+    reporter = new Reporter({
+      tsVersion: '',
+      projectName: 'test',
+      basePath,
+      commandName: '@rehearsal/reporter',
+    }).load(resolve(basePath, 'rehearsal-report.json'));
+  });
+
+  afterEach(() => {
+    reporter = undefined;
+  });
+
+  test('load', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const report = (reporter as any).report as Report;
+
+    expect(report.summary.basePath).toMatch(/base/);
+    expect(report.summary.timestamp).toMatch(/\d+/);
+    expect(report).toMatchSnapshot();
+  });
+
+  test('save', async () => {
+    const testSaveFile = resolve(basePath, 'test-save.json');
+
+    reporter!.save(testSaveFile);
+    expect(existsSync(testSaveFile)).toBeTruthy;
+    expect(readFileSync(testSaveFile, 'utf-8')).toMatchSnapshot();
+
+    rmSync(testSaveFile);
+  });
+
+  test('print, json', async () => {
+    const testPrintJsonFile = resolve(basePath, 'test-print-json.json');
+
+    reporter!.print(testPrintJsonFile, jsonFormatter);
+    expect(existsSync(testPrintJsonFile)).toBeTruthy;
+    expect(readFileSync(testPrintJsonFile, 'utf-8')).toMatchSnapshot();
+
+    rmSync(testPrintJsonFile);
+  });
+
+  test('print, pull-request-md', async () => {
+    const testPrintMdFile = resolve(basePath, 'test-print-md.md');
+
+    reporter!.print(testPrintMdFile, mdFormatter);
+    expect(existsSync(testPrintMdFile)).toBeTruthy;
+    expect(readFileSync(testPrintMdFile, 'utf-8')).toMatchSnapshot();
+
+    rmSync(testPrintMdFile);
+  });
+
+  test('addItem', async () => {
+    const mockSourceFile = mock<SourceFile>();
+    mockSourceFile.fileName = 'testFile1.ts';
+    mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
+
+    const mockNode = mock<Node>();
+    mockNode.getText.mockReturnValue('var1');
+    Object.defineProperty(mockNode, 'kind', {
+      value: 'Identifier',
+      configurable: true,
+      writable: true,
+    });
+
+    const mockDiagnostic = mock<DiagnosticWithLocation>();
+    mockDiagnostic.file = mockSourceFile;
+    mockDiagnostic.category = 1;
+    mockDiagnostic.messageText = 'unused variable';
+    mockDiagnostic.code = 1000;
+    mockDiagnostic.length = 5;
+
+    const location = { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 };
+    const hint = 'This is the hint.';
+
+    const files = {
+      '/base/path/testFile.ts': {
+        fileName: '/base/path/testFile.ts',
+        location,
+        fixed: false,
+        newCode: undefined,
+        oldCode: undefined,
+        codeFixAction: undefined,
+        hint,
+        hintAdded: true,
+        roles: ['analysisTarget' as const, 'unmodified' as const],
+      },
+    };
+
+    reporter!.addItem(mockDiagnostic, files, false, mockNode, location, hint);
+
+    const testAddItemFile = resolve(basePath, 'test-add-item.json');
+
+    reporter!.save(testAddItemFile);
+    expect(existsSync(testAddItemFile)).toBeTruthy;
+    expect(readFileSync(testAddItemFile, 'utf-8')).toMatchSnapshot();
+
+    rmSync(testAddItemFile);
+  });
+
+  test('getFileNames', async () => {
+    assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts']);
+  });
+
+  test('getItemsByFile', async () => {
+    const items = reporter!.getItemsByAnalysisTarget('/base/path/file1.ts');
+    expect(items).toMatchSnapshot();
+  });
+});
