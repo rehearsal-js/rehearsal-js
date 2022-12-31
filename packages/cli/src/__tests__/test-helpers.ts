@@ -2,9 +2,9 @@ import { join, resolve } from 'path';
 import execa from 'execa';
 import which from 'which';
 import { rmSync } from 'fs-extra';
-import packageJson from '../package.json';
+import packageJson from '../../package.json';
 
-import { git, gitIsRepoDirty } from '../src/utils';
+import { git, gitIsRepoDirty } from '../utils';
 
 export const PNPM_PATH = which.sync('pnpm');
 
@@ -34,13 +34,13 @@ export function runBin(
   args: string[],
   options: execa.Options = {}
 ): execa.ExecaChildProcess {
-  const cliPath = resolve(__dirname, `../bin/rehearsal.js`);
+  const cliPath = resolve(__dirname, `../../bin/rehearsal.js`);
   return execa(cliPath, [command, ...args], options);
 }
 
 let WORKING_BRANCH = '';
 
-export const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
+export const FIXTURE_APP_PATH = resolve(__dirname, './fixtures/app');
 
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors

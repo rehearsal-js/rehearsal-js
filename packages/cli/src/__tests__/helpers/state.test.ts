@@ -3,7 +3,7 @@ import { readJSONSync, writeJSONSync, existsSync, writeFileSync } from 'fs-extra
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state';
+import { State, calculateTSIgnoreCount, Store } from '../../helpers/state';
 
 setGracefulCleanup();
 

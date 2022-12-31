@@ -4,8 +4,8 @@ import execa from 'execa';
 import { existsSync, readJSONSync, rmSync } from 'fs-extra';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import packageJson from '../../package.json';
-import { getLatestTSVersion, git } from '../../src/utils';
+import packageJson from '../../../package.json';
+import { getLatestTSVersion, git } from '../../utils';
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers';
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');

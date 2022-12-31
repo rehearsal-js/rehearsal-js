@@ -15,7 +15,7 @@ import {
   sleep,
   timestamp,
   getLockfilePath,
-} from '../../src/utils';
+} from '../../utils';
 
 describe('utils', () => {
   describe.each([
