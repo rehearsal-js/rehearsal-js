@@ -897,15 +897,15 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 89,
+            "endColumn": 93,
             "endLine": 47,
             "startColumn": 1,
             "startLine": 47,
           },
           "newCode": "
-function missingFunction(): void {
+  function missingFunction(): void {
     throw new Error('Function not implemented.');
-}
+  }
 ",
           "oldCode": "",
           "roles": [
@@ -920,7 +920,7 @@ function missingFunction(): void {
       "message": "Cannot find name 'missingFunction'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 89,
+        "endColumn": 93,
         "endLine": 47,
         "startColumn": 1,
         "startLine": 47,
@@ -1185,15 +1185,15 @@ function thisFunctionIsACompleteMess(inSeconds = false): string {
           "hint": undefined,
           "hintAdded": false,
           "location": {
-            "endColumn": 77,
+            "endColumn": 81,
             "endLine": 36,
             "startColumn": 1,
             "startLine": 36,
           },
           "newCode": "
-function timestamp() {
+  function timestamp() {
     throw new Error(\\"Function not implemented.\\");
-}
+  }
 ",
           "oldCode": "",
           "roles": [
@@ -1208,7 +1208,7 @@ function timestamp() {
       "message": "Cannot find name 'timestamp'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 77,
+        "endColumn": 81,
         "endLine": 36,
         "startColumn": 1,
         "startLine": 36,
