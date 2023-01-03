@@ -115,7 +115,3 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
     },
   };
 }
-
-// function openFileInEditor(filePath: string, editorBin?: string): void {
-//   launch(filePath, editorBin);
-// }
