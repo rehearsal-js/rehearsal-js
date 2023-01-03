@@ -5,9 +5,13 @@
     "outDir": "../dist/test/"
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
   "include": [".", "../src", "fixtures"]
 =======
   "exclude": ["fixtures"],
   "include": [".", "../src"]
 >>>>>>> 1d490a5 (test: type checking test dir)
+=======
+  "include": [".", "../src", "fixtures"]
+>>>>>>> 4ea0be1 (test: type checking test dir)
 }

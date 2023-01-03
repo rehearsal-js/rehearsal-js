@@ -11,6 +11,30 @@ const addRuleData: Report = {
   items: [
     {
       analysisTarget: "add-rule-1.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-rule-1.ts"]: {
+          fileName: "add-rule-1.ts",
+          location: {
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 1,
+          },
+          fixed: true,
+          oldCode: "import { resolve } from 'path';",
+          newCode: "import { resolve } from 'path';",
+          codeFixAction: "delete",
+          hint: '',
+          hintAdded: false,
+          roles: [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 6133,
       category: "Error",
       message: "'resolve' is declared but its value is never read.",
@@ -26,6 +50,30 @@ const addRuleData: Report = {
     },
     {
       analysisTarget: "add-rule-1.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-rule-1.ts"]: {
+          fileName: "add-rule-1.ts",
+          location: {
+            startLine: 3,
+            startColumn: 1,
+            endLine: 3,
+            endColumn: 2,
+          },
+          fixed: false,
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          hint: "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
+          hintAdded: true,
+          roles: [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2322,
       category: "Error",
       message: "Type 'string' is not assignable to type 'number'.",
@@ -41,6 +89,30 @@ const addRuleData: Report = {
     },
     {
       analysisTarget: "add-rule-2.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-rule-2.ts"]: {
+          fileName: "add-rule-2.ts",
+          location: {
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 5,
+          },
+          fixed: false,
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(6 as string)', or using type guard: 'if (6 instanceof string) { ... }'.",
+          hintAdded: true,
+          roles: [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2345,
       category: "Error",
       message: "Argument of type 'number' is not assignable to parameter of type 'string'.",

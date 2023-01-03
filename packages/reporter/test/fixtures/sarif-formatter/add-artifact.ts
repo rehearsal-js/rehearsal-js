@@ -1,4 +1,4 @@
-import { type Report } from '../../../src';
+import type { Report } from '../../../src';
 
 const addArtifactData: Report = {
   summary: {
@@ -11,6 +11,49 @@ const addArtifactData: Report = {
   items: [
     {
       analysisTarget: "add-artifact-2.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-artifact-2.ts"]: {
+          fileName: "add-artifact-2.ts",
+          location: {
+            startLine: 1,
+            startColumn: 1,
+            endLine: 1,
+            endColumn: 20,
+          },
+          fixed: false,
+          hint: '',
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          hintAdded: false,
+          roles: [
+            "analysisTarget",
+            "unmodified"
+          ]
+        },
+        ["add-artifact-1.ts"]: {
+          fileName: "add-artifact-1.ts",
+          location: {
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 6,
+          },
+          hint: '',
+          fixed: true,
+          newCode: "?",
+          oldCode: "?",
+          codeFixAction: "replace",
+          hintAdded: false,
+          roles: [
+            "tracedFile",
+            "modified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2790,
       category: "Error",
       message: "The operand of a 'delete' operator must be optional.",
@@ -26,6 +69,30 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-2.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-artifact-2.ts"]: {
+          fileName: "add-artifact-2.ts",
+          location: {
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 8,
+          },
+          fixed: false,
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(4 as string)', or using type guard: 'if (4 instanceof string) { ... }'.",
+          hintAdded: true,
+          roles: [
+            "analysisTarget",
+            "unmodified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2345,
       category: "Error",
       message: "Argument of type 'number' is not assignable to parameter of type 'string'.",
@@ -41,6 +108,30 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-4.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-artifact-4.ts"]: {
+          fileName: "add-artifact-4.ts",
+          location: {
+            startLine: 1,
+            startColumn: 5,
+            endLine: 1,
+            endColumn: 8,
+          },
+          fixed: true,
+          hintAdded: false,
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          hint: '',
+          roles: [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2571,
       category: "Error",
       message: "Object is of type 'unknown'.",
@@ -56,6 +147,30 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-4.ts",
+<<<<<<< HEAD
+=======
+      files: {
+        ["add-artifact-4.ts"]: {
+          fileName: "add-artifact-4.ts",
+          location: {
+            startLine: 1,
+            startColumn: 4,
+            endLine: 1,
+            endColumn: 7,
+          },
+          fixed: true,
+          hintAdded: false,
+          hint: '',
+          newCode: '',
+          oldCode: '',
+          codeFixAction: undefined,
+          roles: [
+            "analysisTarget",
+            "modified"
+          ]
+        }
+      },
+>>>>>>> 4ea0be1 (test: type checking test dir)
       errorCode: 2571,
       category: "Error",
       message: "Object is of type 'unknown'.",
