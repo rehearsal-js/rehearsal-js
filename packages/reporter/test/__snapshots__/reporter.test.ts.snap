@@ -12,30 +12,10 @@ exports[`Test reporter > addItem 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 1,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 1
-          },
-          \\"fixed\\": true,
-          \\"code\\": \\"import react from 'react';\\",
-          \\"codeFixAction\\": \\"delete\\",
-          \\"hintAdded\\": false,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"modified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 6133,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
-      \\"fixed\\": true,
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
@@ -47,29 +27,10 @@ exports[`Test reporter > addItem 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 20
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2322,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
@@ -81,29 +42,10 @@ exports[`Test reporter > addItem 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 26
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2345,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {
@@ -115,29 +57,11 @@ exports[`Test reporter > addItem 1`] = `
     },
     {
       \\"analysisTarget\\": \\"testFile1.ts\\",
-      \\"files\\": {
-        \\"/base/path/testFile.ts\\": {
-          \\"fileName\\": \\"/base/path/testFile.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 3,
-            \\"startColumn\\": 7,
-            \\"endLine\\": 3,
-            \\"endColumn\\": 12
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"This is the hint.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 1000,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"unused variable\\",
       \\"hint\\": \\"This is the hint.\\",
-      \\"fixed\\": false,
+      \\"hintAdded\\": true,
       \\"nodeKind\\": 79,
       \\"nodeText\\": \\"var1\\",
       \\"helpUrl\\": \\"\\",
@@ -158,26 +82,6 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
     "errorCode": 6133,
-    "files": {
-      "/base/path/file1.ts": {
-        "code": "import react from 'react';",
-        "codeFixAction": "delete",
-        "fileName": "/base/path/file1.ts",
-        "fixed": true,
-        "hintAdded": false,
-        "location": {
-          "endColumn": 1,
-          "endLine": 1,
-          "startColumn": 1,
-          "startLine": 1,
-        },
-        "roles": [
-          "analysisTarget",
-          "modified",
-        ],
-      },
-    },
-    "fixed": true,
     "hint": "The declaration 'react' is never read or used. Remove the declaration or use it.",
     "message": "'react' is declared but its value is never read.",
     "nodeKind": "ImportDeclaration",
@@ -193,25 +97,6 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
     "errorCode": 2322,
-    "files": {
-      "/base/path/file1.ts": {
-        "fileName": "/base/path/file1.ts",
-        "fixed": false,
-        "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-        "hintAdded": true,
-        "location": {
-          "endColumn": 20,
-          "endLine": 1,
-          "startColumn": 10,
-          "startLine": 1,
-        },
-        "roles": [
-          "analysisTarget",
-          "unmodified",
-        ],
-      },
-    },
-    "fixed": false,
     "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
     "message": "Type 'string' is not assignable to type 'number'.",
     "nodeKind": "Identifier",
@@ -227,25 +112,6 @@ exports[`Test reporter > getItemsByFile 1`] = `
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
     "errorCode": 2345,
-    "files": {
-      "/base/path/file1.ts": {
-        "fileName": "/base/path/file1.ts",
-        "fixed": false,
-        "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
-        "hintAdded": true,
-        "location": {
-          "endColumn": 26,
-          "endLine": 1,
-          "startColumn": 10,
-          "startLine": 1,
-        },
-        "roles": [
-          "analysisTarget",
-          "unmodified",
-        ],
-      },
-    },
-    "fixed": false,
     "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
     "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
     "nodeKind": "ObjectLiteralExpression",
@@ -267,26 +133,6 @@ exports[`Test reporter > load 1`] = `
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
       "errorCode": 6133,
-      "files": {
-        "/base/path/file1.ts": {
-          "code": "import react from 'react';",
-          "codeFixAction": "delete",
-          "fileName": "/base/path/file1.ts",
-          "fixed": true,
-          "hintAdded": false,
-          "location": {
-            "endColumn": 1,
-            "endLine": 1,
-            "startColumn": 1,
-            "startLine": 1,
-          },
-          "roles": [
-            "analysisTarget",
-            "modified",
-          ],
-        },
-      },
-      "fixed": true,
       "hint": "The declaration 'react' is never read or used. Remove the declaration or use it.",
       "message": "'react' is declared but its value is never read.",
       "nodeKind": "ImportDeclaration",
@@ -302,25 +148,6 @@ exports[`Test reporter > load 1`] = `
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
       "errorCode": 2322,
-      "files": {
-        "/base/path/file1.ts": {
-          "fileName": "/base/path/file1.ts",
-          "fixed": false,
-          "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-          "hintAdded": true,
-          "location": {
-            "endColumn": 20,
-            "endLine": 1,
-            "startColumn": 10,
-            "startLine": 1,
-          },
-          "roles": [
-            "analysisTarget",
-            "unmodified",
-          ],
-        },
-      },
-      "fixed": false,
       "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
       "message": "Type 'string' is not assignable to type 'number'.",
       "nodeKind": "Identifier",
@@ -336,25 +163,6 @@ exports[`Test reporter > load 1`] = `
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
       "errorCode": 2345,
-      "files": {
-        "/base/path/file1.ts": {
-          "fileName": "/base/path/file1.ts",
-          "fixed": false,
-          "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
-          "hintAdded": true,
-          "location": {
-            "endColumn": 26,
-            "endLine": 1,
-            "startColumn": 10,
-            "startLine": 1,
-          },
-          "roles": [
-            "analysisTarget",
-            "unmodified",
-          ],
-        },
-      },
-      "fixed": false,
       "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
       "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
       "nodeKind": "ObjectLiteralExpression",
@@ -389,30 +197,10 @@ exports[`Test reporter > print, json 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 1,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 1
-          },
-          \\"fixed\\": true,
-          \\"code\\": \\"import react from 'react';\\",
-          \\"codeFixAction\\": \\"delete\\",
-          \\"hintAdded\\": false,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"modified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 6133,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
-      \\"fixed\\": true,
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
@@ -424,29 +212,10 @@ exports[`Test reporter > print, json 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 20
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2322,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
@@ -458,29 +227,10 @@ exports[`Test reporter > print, json 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 26
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2345,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {
@@ -503,15 +253,15 @@ Files Tested: 1
 
 #### File: /file1.ts, issues: 3:
 
-**Error TS6133**: FIXED
+**Error TS6133**: 'NEED TO BE FIXED MANUALLY'
 The declaration 'react' is never read or used. Remove the declaration or use it.
 Code: \`import react from 'react';\`
 
-**Error TS2322**: NEED TO BE FIXED MANUALLY
+**Error TS2322**: 'NEED TO BE FIXED MANUALLY'
 The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.
 Code: \`a\`
 
-**Error TS2345**: NEED TO BE FIXED MANUALLY
+**Error TS2345**: 'NEED TO BE FIXED MANUALLY'
 Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.
 Code: \`{}\`
 "
@@ -529,30 +279,10 @@ exports[`Test reporter > save 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 1,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 1
-          },
-          \\"fixed\\": true,
-          \\"code\\": \\"import react from 'react';\\",
-          \\"codeFixAction\\": \\"delete\\",
-          \\"hintAdded\\": false,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"modified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 6133,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
-      \\"fixed\\": true,
       \\"nodeKind\\": \\"ImportDeclaration\\",
       \\"nodeText\\": \\"import react from 'react';\\",
       \\"nodeLocation\\": {
@@ -564,29 +294,10 @@ exports[`Test reporter > save 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 20
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2322,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"Identifier\\",
       \\"nodeText\\": \\"a\\",
       \\"nodeLocation\\": {
@@ -598,29 +309,10 @@ exports[`Test reporter > save 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"files\\": {
-        \\"/base/path/file1.ts\\": {
-          \\"fileName\\": \\"/base/path/file1.ts\\",
-          \\"location\\": {
-            \\"startLine\\": 1,
-            \\"startColumn\\": 10,
-            \\"endLine\\": 1,
-            \\"endColumn\\": 26
-          },
-          \\"fixed\\": false,
-          \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-          \\"hintAdded\\": true,
-          \\"roles\\": [
-            \\"analysisTarget\\",
-            \\"unmodified\\"
-          ]
-        }
-      },
       \\"errorCode\\": 2345,
       \\"category\\": \\"Error\\",
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
-      \\"fixed\\": false,
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
       \\"nodeText\\": \\"{}\\",
       \\"nodeLocation\\": {

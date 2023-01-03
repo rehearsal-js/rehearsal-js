@@ -11,31 +11,10 @@ const addRuleData: Report = {
   items: [
     {
       analysisTarget: "add-rule-1.ts",
-      files: {
-        ["add-rule-1.ts"]: {
-          fileName: "add-rule-1.ts",
-          location: {
-            startLine: 1,
-            startColumn: 1,
-            endLine: 1,
-            endColumn: 1,
-          },
-          fixed: true,
-          code: "import { resolve } from 'path';",
-          codeFixAction: "delete",
-          hint: '',
-          hintAdded: false,
-          roles: [
-            "analysisTarget",
-            "modified"
-          ]
-        }
-      },
       errorCode: 6133,
       category: "Error",
       message: "'resolve' is declared but its value is never read.",
       hint: "The declaration 'resolve' is never read or used. Remove the declaration or use it.",
-      fixed: true,
       nodeKind: "ImportDeclaration",
       nodeText: "import { resolve } from 'path';",
       nodeLocation: {
@@ -47,31 +26,10 @@ const addRuleData: Report = {
     },
     {
       analysisTarget: "add-rule-1.ts",
-      files: {
-        ["add-rule-1.ts"]: {
-          fileName: "add-rule-1.ts",
-          location: {
-            startLine: 3,
-            startColumn: 1,
-            endLine: 3,
-            endColumn: 2,
-          },
-          fixed: false,
-          code: '',
-          codeFixAction: undefined,
-          hint: "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-          hintAdded: true,
-          roles: [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
       errorCode: 2322,
       category: "Error",
       message: "Type 'string' is not assignable to type 'number'.",
       hint: "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
-      fixed: false,
       nodeKind: "Identifier",
       nodeText: "a",
       nodeLocation: {
@@ -83,31 +41,10 @@ const addRuleData: Report = {
     },
     {
       analysisTarget: "add-rule-2.ts",
-      files: {
-        ["add-rule-2.ts"]: {
-          fileName: "add-rule-2.ts",
-          location: {
-            startLine: 1,
-            startColumn: 1,
-            endLine: 1,
-            endColumn: 5,
-          },
-          fixed: false,
-          code: '',
-          codeFixAction: undefined,
-          hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(6 as string)', or using type guard: 'if (6 instanceof string) { ... }'.",
-          hintAdded: true,
-          roles: [
-            "analysisTarget",
-            "unmodified"
-          ]
-        }
-      },
       errorCode: 2345,
       category: "Error",
       message: "Argument of type 'number' is not assignable to parameter of type 'string'.",
       hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(6 as string)', or using type guard: 'if (6 instanceof string) { ... }'.",
-      fixed: false,
       nodeKind: "FirstLiteralToken",
       nodeText: "6",
       nodeLocation: {

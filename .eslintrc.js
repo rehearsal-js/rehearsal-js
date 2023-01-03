@@ -56,6 +56,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-non-null-assertion': ['off'],
+    '@typescript-eslint/no-inferrable-types': ['off'],
   },
   ignorePatterns: ['dist', 'node_modules', 'fixtures', '*.config.*'],
 };

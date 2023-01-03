@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { RehearsalService } from '@rehearsal/service';
 import { sync as execaSync } from 'execa';
-import { DiagnosticFixPlugin, LintPlugin } from '@rehearsal/plugins';
+import { DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
@@ -28,7 +28,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
 
-  const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin];
+  const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin, LintPlugin];
 
   logger?.info('Migration started');
   logger?.info(`Base path: ${basePath}`);
