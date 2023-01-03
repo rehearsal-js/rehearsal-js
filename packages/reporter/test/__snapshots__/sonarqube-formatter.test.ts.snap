@@ -15,7 +15,7 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
           \\"startLine\\": 1,
           \\"startColumn\\": 1,
           \\"endLine\\": 1,
-          \\"endColumn\\": 1
+          \\"endColumn\\": 12
         }
       }
     },

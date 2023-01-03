@@ -3,7 +3,7 @@
 /* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
 const dummy_const: number = 'string';
 
-let dummy_var = 0;
+let dummy_var: number = 0;
 /* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
 dummy_var = 'string';
 

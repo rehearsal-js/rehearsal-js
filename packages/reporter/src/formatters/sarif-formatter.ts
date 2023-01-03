@@ -1,6 +1,6 @@
-import { Artifact, Location, Log, PropertyBag, ReportingDescriptor, Result, Run } from 'sarif';
+import { Artifact, Location, Log, ReportingDescriptor, Result, Run } from 'sarif';
 
-import { FileCollection, ProcessedFile, Report, ReportItem } from '../types';
+import { Report, ReportItem } from '../types';
 
 export class SarifFormatter {
   private report: Report;
@@ -34,7 +34,7 @@ export class SarifFormatter {
     for (const item of this.report.items) {
       const ruleId = `TS${item.errorCode}`;
       this.addRule(ruleId, item.message);
-      this.addArtifact(item.files);
+      this.addArtifact(item.analysisTarget);
       this.addResult(item);
     }
 
@@ -73,18 +73,12 @@ export class SarifFormatter {
     }
   }
 
-  private addArtifact(files: FileCollection): void {
-    for (const file in files) {
-      if (!this.artifactExists(file)) {
-        const newArtifact = buildArtifact(files[file]);
-        this.artifacts.push(newArtifact);
+  private addArtifact(fileName: string): void {
+    if (!this.artifactExists(fileName)) {
+      const newArtifact = buildArtifact(fileName);
+      this.artifacts.push(newArtifact);
 
-        this.artifactIndexMap[file] = this.artifacts.length - 1;
-      } else {
-        const index = this.artifactIndexMap![file];
-        const existingArtifact = this.artifacts[index];
-        this.artifacts[index] = updateArtifact(existingArtifact, files[file]);
-      }
+      this.artifactIndexMap[fileName] = this.artifacts.length - 1;
     }
   }
 
@@ -93,10 +87,7 @@ export class SarifFormatter {
   }
 
   private buildResult(item: ReportItem): Result {
-    const { locations, relatedLocations, codeFix } = this.getFilesData(
-      item.files,
-      item.analysisTarget
-    );
+    const location = this.buildLocation(item);
     return {
       ruleId: `TS${item.errorCode}`,
       ruleIndex: this.ruleIndexMap[`TS${item.errorCode}`],
@@ -108,62 +99,23 @@ export class SarifFormatter {
       analysisTarget: {
         uri: item.analysisTarget,
       },
-      locations,
-      relatedLocations,
-      properties: {
-        fixed: item.fixed || false,
-        codeFix,
-      },
+      locations: [location],
     };
   }
 
-  private getFilesData(files: FileCollection, entryFileName: string): PropertyBag {
-    let locations: Location[] = [];
-    let relatedLocations: Location[] = [];
-
-    let codeFix: { [key: string]: string | undefined } | undefined;
-    Object.values(files).forEach((file) => {
-      if (file.fileName === entryFileName) {
-        locations = [...locations, this.buildLocation(file)];
-      } else {
-        relatedLocations = [...relatedLocations, this.buildLocation(file)];
-      }
-      if (file.fixed) {
-        codeFix = {
-          fileName: file.fileName,
-          newCode: file.newCode,
-          oldCode: file.oldCode,
-          codeFixAction: file.codeFixAction || undefined,
-        };
-      }
-    });
-
-    return {
-      locations,
-      relatedLocations,
-      codeFix,
-    };
-  }
-
-  private buildLocation(file: ProcessedFile): Location {
-    const index = this.artifactIndexMap[file.fileName];
+  private buildLocation(item: ReportItem): Location {
+    const index = this.artifactIndexMap[item.analysisTarget];
     return {
       physicalLocation: {
         artifactLocation: {
-          uri: file.fileName,
+          uri: item.analysisTarget,
           index,
         },
         region: {
-          startLine: file.location?.startLine,
-          startColumn: file.location?.startColumn,
-          endLine: file.location?.endLine,
-          endColumn: file.location?.endColumn,
-        },
-        properties: {
-          newCode: file.newCode,
-          oldCode: file.oldCode,
-          codeFixAction: file.codeFixAction,
-          roles: file.roles,
+          startLine: item.nodeLocation?.startLine,
+          startColumn: item.nodeLocation?.startColumn,
+          endLine: item.nodeLocation?.endLine,
+          endColumn: item.nodeLocation?.endColumn,
         },
       },
     };
@@ -178,26 +130,10 @@ export class SarifFormatter {
   }
 }
 
-function updateArtifact(artifact: Artifact, file: ProcessedFile): Artifact {
-  let roles = Array.from(new Set(artifact.roles?.concat(file.roles)));
-  if (roles.includes('modified') && roles.includes('unmodified')) {
-    roles = roles.filter((role) => role !== 'unmodified');
-  }
-  artifact.roles = roles;
-  artifact.properties!.fixed = file.fixed || artifact.properties!.fixed;
-  artifact.properties!.hintAdded = file.hintAdded || artifact.properties!.hintAdded;
-  return artifact;
-}
-
-function buildArtifact(file: ProcessedFile): Artifact {
+function buildArtifact(fileName: string): Artifact {
   return {
     location: {
-      uri: file.fileName,
-    },
-    roles: file.roles,
-    properties: {
-      fixed: file.fixed,
-      hintAdded: file.hintAdded,
+      uri: fileName,
     },
   };
 }

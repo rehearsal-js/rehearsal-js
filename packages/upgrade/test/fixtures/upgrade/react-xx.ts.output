@@ -20,6 +20,7 @@ export class Radio extends Component {
    * @return {string}
    */
   @action
+  /* @ts-expect-error @rehearsal TODO TS2355: A function whose declared type is neither 'void' nor 'any' must return a value. */
   async onRadioChange(value: boolean): Promise<string> {
     this.one = true;
     this.two = false;

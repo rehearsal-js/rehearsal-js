@@ -34,40 +34,11 @@ exports[`Test sarif-formatter > should add an artifact only if it does not exist
   {
     \\"location\\": {
       \\"uri\\": \\"add-artifact-2.ts\\"
-    },
-    \\"roles\\": [
-      \\"analysisTarget\\",
-      \\"unmodified\\"
-    ],
-    \\"properties\\": {
-      \\"fixed\\": false,
-      \\"hintAdded\\": true
-    }
-  },
-  {
-    \\"location\\": {
-      \\"uri\\": \\"add-artifact-1.ts\\"
-    },
-    \\"roles\\": [
-      \\"tracedFile\\",
-      \\"modified\\"
-    ],
-    \\"properties\\": {
-      \\"fixed\\": true,
-      \\"hintAdded\\": false
     }
   },
   {
     \\"location\\": {
       \\"uri\\": \\"add-artifact-4.ts\\"
-    },
-    \\"roles\\": [
-      \\"analysisTarget\\",
-      \\"modified\\"
-    ],
-    \\"properties\\": {
-      \\"fixed\\": true,
-      \\"hintAdded\\": false
     }
   }
 ]"
@@ -97,30 +68,11 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"startLine\\": 1,
             \\"startColumn\\": 1,
             \\"endLine\\": 1,
-            \\"endColumn\\": 1
-          },
-          \\"properties\\": {
-            \\"newCode\\": \\"\\",
-            \\"oldCode\\": \\"import react from 'react';\\",
-            \\"codeFixAction\\": \\"delete\\",
-            \\"roles\\": [
-              \\"analysisTarget\\",
-              \\"modified\\"
-            ]
+            \\"endColumn\\": 20
           }
         }
       }
-    ],
-    \\"relatedLocations\\": [],
-    \\"properties\\": {
-      \\"fixed\\": true,
-      \\"codeFix\\": {
-        \\"fileName\\": \\"add-result-1.ts\\",
-        \\"newCode\\": \\"\\",
-        \\"oldCode\\": \\"import react from 'react';\\",
-        \\"codeFixAction\\": \\"delete\\"
-      }
-    }
+    ]
   },
   {
     \\"ruleId\\": \\"TS2322\\",
@@ -145,22 +97,10 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"startColumn\\": 1,
             \\"endLine\\": 1,
             \\"endColumn\\": 5
-          },
-          \\"properties\\": {
-            \\"newCode\\": \\"\\",
-            \\"oldCode\\": \\"\\",
-            \\"roles\\": [
-              \\"analysisTarget\\",
-              \\"unmodified\\"
-            ]
           }
         }
       }
-    ],
-    \\"relatedLocations\\": [],
-    \\"properties\\": {
-      \\"fixed\\": false
-    }
+    ]
   },
   {
     \\"ruleId\\": \\"TS2345\\",
@@ -181,24 +121,14 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"index\\": 0
           },
           \\"region\\": {
-            \\"startLine\\": 10,
-            \\"startColumn\\": 1,
+            \\"startLine\\": 3,
+            \\"startColumn\\": 10,
             \\"endLine\\": 10,
             \\"endColumn\\": 5
-          },
-          \\"properties\\": {
-            \\"roles\\": [
-              \\"analysisTarget\\",
-              \\"unmodified\\"
-            ]
           }
         }
       }
-    ],
-    \\"relatedLocations\\": [],
-    \\"properties\\": {
-      \\"fixed\\": false
-    }
+    ]
   }
 ]"
 `;

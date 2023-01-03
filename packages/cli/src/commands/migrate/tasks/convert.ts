@@ -100,15 +100,12 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
           const reportOutputPath = resolve(options.basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
 
-          const { totalErrorCount, errorFixedCount, hintAddedCount } = getReportSummary(
-            reporter.report
-          );
+          const { totalErrorCount, hintAddedCount } = getReportSummary(reporter.report);
           const migratedFileCount = migratedFiles.length;
           task.title = `${migratedFileCount} JS ${
             migratedFileCount === 1 ? 'file' : 'files'
-          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal:
-                  - ${errorFixedCount} have been fixed automatically by rehearsal.
-                  - ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
+          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
+                - ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
         }
       } else {
         task.skip(

@@ -1,12 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
-import {
-  type ProcessedFile,
-  type Report,
-  type ReportFormatter,
-  type ReportItem,
-  type Location,
-} from './types';
+import { type Report, type ReportFormatter, type ReportItem, type Location } from './types';
 import { normalizeFilePath } from './normalize-paths';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
@@ -73,27 +67,22 @@ export class Reporter {
    */
   addItem(
     diagnostic: DiagnosticWithLocation,
-    files: { [fileName: string]: ProcessedFile },
-    fixed: boolean,
     node?: Node,
     triggeringLocation?: Location,
     hint = '',
-    helpUrl = ''
+    helpUrl = '',
+    hintAdded = true
   ): void {
     this.report.items.push({
       analysisTarget: normalizeFilePath(this.basePath, diagnostic.file.fileName),
-      files,
       errorCode: diagnostic.code,
       category: DiagnosticCategory[diagnostic.category],
       message: flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
-      fixed,
+      hintAdded,
       nodeKind: node ? SyntaxKind[node.kind] : undefined,
       nodeText: node?.getText(),
       helpUrl,
-      //Original node that triggers the error; may not be the node where the codefix happens
-      //Location in type ProcessedFile is where the codefix happens or the message is added
-      //The two locations in most cases will be the same, but can be different
       nodeLocation: triggeringLocation || undefined,
     });
   }
