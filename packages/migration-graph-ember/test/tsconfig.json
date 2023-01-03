@@ -4,12 +4,5 @@
     "rootDir": "../",
     "outDir": "../dist/test/"
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  "exclude": ["fixtures"],
->>>>>>> 1d490a5 (test: type checking test dir)
-=======
->>>>>>> 4ea0be1 (test: type checking test dir)
   "include": [".", "../src"]
 }
