@@ -24,6 +24,7 @@ export type PackageOptions = {
   type?: string;
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
+  name?: string;
 };
 
 /**
@@ -56,11 +57,17 @@ export class Package implements IPackage {
 
   #packageContainer: PackageContainer;
 
+  #name: string;
+
   protected graph: Graph<ModuleNode>;
 
-  constructor(pathToPackage: string, { type = '', packageContainer }: PackageOptions = {}) {
+  constructor(
+    pathToPackage: string,
+    { type = '', packageContainer, name = '' }: PackageOptions = {}
+  ) {
     this.#path = pathToPackage;
     this.#type = type;
+    this.#name = name;
 
     if (packageContainer) {
       this.#packageContainer = packageContainer;
@@ -113,7 +120,7 @@ export class Package implements IPackage {
   }
 
   get packageName(): string {
-    return this.packageJson?.name;
+    return this.packageJson?.name || this.#name;
   }
 
   get isWorkspace(): any {
@@ -176,6 +183,7 @@ export class Package implements IPackage {
 
   setPackageName(name: string): this {
     this.packageJson.name = name;
+    this.#name = name;
     return this;
   }
 

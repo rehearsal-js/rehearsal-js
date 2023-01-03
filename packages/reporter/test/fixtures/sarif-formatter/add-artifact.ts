@@ -1,4 +1,4 @@
-import { type Report } from '../../../src';
+import type { Report } from '../../../src';
 
 const addArtifactData: Report = {
   summary: {
@@ -22,7 +22,8 @@ const addArtifactData: Report = {
           },
           fixed: false,
           hint: '',
-          code: '',
+          newCode: '',
+          oldCode: '',
           codeFixAction: undefined,
           hintAdded: false,
           roles: [
@@ -40,8 +41,9 @@ const addArtifactData: Report = {
           },
           hint: '',
           fixed: true,
-          code: "?",
-          codeFixAction: "add",
+          newCode: "?",
+          oldCode: "?",
+          codeFixAction: "replace",
           hintAdded: false,
           roles: [
             "tracedFile",
@@ -75,7 +77,8 @@ const addArtifactData: Report = {
             endColumn: 8,
           },
           fixed: false,
-          code: '',
+          newCode: '',
+          oldCode: '',
           codeFixAction: undefined,
           hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(4 as string)', or using type guard: 'if (4 instanceof string) { ... }'.",
           hintAdded: true,
@@ -112,7 +115,8 @@ const addArtifactData: Report = {
           },
           fixed: true,
           hintAdded: false,
-          code: '',
+          newCode: '',
+          oldCode: '',
           codeFixAction: undefined,
           hint: '',
           roles: [
@@ -149,7 +153,8 @@ const addArtifactData: Report = {
           fixed: true,
           hintAdded: false,
           hint: '',
-          code: '',
+          newCode: '',
+          oldCode: '',
           codeFixAction: undefined,
           roles: [
             "analysisTarget",
