@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    "baseUrl": ".",
+
     "paths": {
       "*": ["types/*"]
     },
