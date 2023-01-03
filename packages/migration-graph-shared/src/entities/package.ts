@@ -120,7 +120,7 @@ export class Package implements IPackage {
   }
 
   get packageName(): string {
-    return this.packageJson?.name || this.#name;
+    return this.#name || this.packageJson?.name;
   }
 
   get isWorkspace(): any {
