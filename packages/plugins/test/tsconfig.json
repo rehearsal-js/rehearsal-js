@@ -4,8 +4,6 @@
     "rootDir": "../",
     "outDir": "../dist/test/"
   },
-  "include": [
-    ".",
-    "../src"
-  ]
+  "exclude": ["fixtures"],
+  "include": [".", "../src"]
 }

@@ -8,7 +8,7 @@ describe('node', () => {
     const content = createNodeContent('some-node');
 
     const node = new GraphNode(content);
-    expect(node.content.pkg.name).toEqual('some-node');
+    expect(node.content.pkg.packageName).toEqual('some-node');
     expect(node.content).toEqual(content);
     expect(node.parent).toBe(null);
     expect(node.adjacent.size).toBe(0);
