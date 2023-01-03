@@ -422,8 +422,12 @@ export async function resetFiles(): Promise<void> {
  */
 export async function openInEditor(filePath: string): Promise<void> {
   const defaultEditor = process.env.EDITOR;
+  const editorArgs = [];
   if (defaultEditor) {
-    await execa(defaultEditor, [filePath], { stdio: 'inherit' });
+    if (defaultEditor === 'code') {
+      editorArgs.push('--wait');
+    }
+    await execa(defaultEditor, [filePath, ...editorArgs], { stdio: 'inherit' });
   } else {
     throw new Error(
       'Cannot find default editor in environment variables, please set $EDITOR and try again.'
