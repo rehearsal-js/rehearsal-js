@@ -64,10 +64,6 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
               if (ctx.input === 'Accept') {
                 completed = true;
               } else if (ctx.input === 'Edit') {
-                // TODO: Currently the CLI would be paused if the editor is terminal based (nano, vim, emacs, etc)
-                // If it's a separated GUI editor (like vscode),
-                // The subprocess would exit at 0 once the file is opened in the editor
-                // and the CLI would not be paused in this case.
                 if (!process.env.EDITOR) {
                   logger.warn(
                     'Cannot find default editor in environment variables, please set $EDITOR and try again.'
