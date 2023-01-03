@@ -18,13 +18,13 @@ export class DiagnosticFixPlugin extends Plugin {
   prioritizedCodes = [
     80005, // 'require' call may be converted to an import
     7005, // Variable implicitly has an ___ type
+    2339, // Property does not exist on type
     7006, // Parameter implicitly has an ___ type
     7008, // Member implicitly has an ___ type
     80004, // JSDoc types may be moved to TypeScript types
     90016, // Declare property
     90035, // Declare private property
     90053, // Declare a private field named
-    2339, // Property does not exist on type
     2525, // Initializer provides no value for this binding element and the binding element has no default value
   ];
 
