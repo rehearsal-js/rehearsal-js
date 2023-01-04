@@ -35,7 +35,7 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
           // and ask user for actions: Accept/Edit/Discard
           for (const f of ctx.sourceFilesWithAbsolutePath) {
             const jsFilePath = f;
-            const tsFilePath = f.replace('js', 'ts');
+            const tsFilePath = f.replace(/js$/g, 'ts');
             let completed = false;
 
             const input = {
