@@ -416,3 +416,21 @@ export async function resetFiles(): Promise<void> {
     await git.reset(['--hard']);
   }
 }
+
+/**
+ * Open and Edit file with $EDITOR
+ */
+export async function openInEditor(filePath: string): Promise<void> {
+  const defaultEditor = process.env.EDITOR;
+  const editorArgs = [];
+  if (defaultEditor) {
+    if (defaultEditor === 'code') {
+      editorArgs.push('--wait');
+    }
+    await execa(defaultEditor, [filePath, ...editorArgs], { stdio: 'inherit' });
+  } else {
+    throw new Error(
+      'Cannot find default editor in environment variables, please set $EDITOR and try again.'
+    );
+  }
+}

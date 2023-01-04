@@ -8,7 +8,7 @@ import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
 import { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
-import { determineProjectName, getPathToBinary } from '../../../utils';
+import { determineProjectName, getPathToBinary, openInEditor } from '../../../utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate');
 
@@ -29,29 +29,84 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
       );
 
       if (ctx.sourceFilesWithAbsolutePath) {
-        const input = {
-          basePath: ctx.targetPackagePath,
-          sourceFiles: ctx.sourceFilesWithAbsolutePath,
-          logger: logger,
-          reporter,
-        };
+        if (options.interactive) {
+          // In interactive mode, go through files one by one
+          // and ask user for actions: Accept/Edit/Discard
+          for (const f of ctx.sourceFilesWithAbsolutePath) {
+            const jsFilePath = f;
+            const tsFilePath = f.replace('js', 'ts');
+            let completed = false;
 
-        const { migratedFiles } = await migrate(input);
-        DEBUG_CALLBACK('migratedFiles', migratedFiles);
-        if (ctx.state) {
-          ctx.state.addFilesToPackage(ctx.targetPackagePath, migratedFiles);
-          await ctx.state.addStateFileToGit();
-        }
+            const input = {
+              basePath: ctx.targetPackagePath,
+              sourceFiles: [f],
+              logger: logger,
+              reporter,
+            };
 
-        const reportOutputPath = resolve(options.basePath, options.outputPath);
-        generateReports('migrate', reporter, reportOutputPath, options.format);
+            await migrate(input);
 
-        const { totalErrorCount, hintAddedCount } = getReportSummary(reporter.report);
-        const migratedFileCount = migratedFiles.length;
-        task.title = `${migratedFileCount} JS ${
-          migratedFileCount === 1 ? 'file' : 'files'
-        } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
+            const { stdout: diffOutput } = await execa('git', ['diff', tsFilePath]);
+
+            // TODO: better diff with colors instead of using the output straight from git diff
+            const message = `Please view the migration changes for ${f} and select an option to continue:\n${diffOutput}`;
+
+            while (!completed) {
+              ctx.input = await task.prompt([
+                {
+                  type: 'Select',
+                  name: 'fileActionSelection',
+                  message,
+                  choices: ['Accept', 'Edit', 'Discard'],
+                },
+              ]);
+
+              if (ctx.input === 'Accept') {
+                completed = true;
+              } else if (ctx.input === 'Edit') {
+                if (!process.env.EDITOR) {
+                  logger.warn(
+                    'Cannot find default editor in environment variables, please set $EDITOR and try again.'
+                  );
+                  continue;
+                } else {
+                  await openInEditor(tsFilePath);
+                  completed = true;
+                }
+              } else {
+                // discard
+                await execa('git', ['restore', tsFilePath]);
+                await execa('git', ['mv', tsFilePath, jsFilePath]);
+                completed = true;
+              }
+            }
+          }
+        } else {
+          const input = {
+            basePath: ctx.targetPackagePath,
+            sourceFiles: ctx.sourceFilesWithAbsolutePath,
+            logger: logger,
+            reporter,
+          };
+
+          const { migratedFiles } = await migrate(input);
+
+          DEBUG_CALLBACK('migratedFiles', migratedFiles);
+          if (ctx.state) {
+            ctx.state.addFilesToPackage(ctx.targetPackagePath, migratedFiles);
+            await ctx.state.addStateFileToGit();
+          }
+
+          const reportOutputPath = resolve(options.basePath, options.outputPath);
+          generateReports('migrate', reporter, reportOutputPath, options.format);
+
+          const { totalErrorCount, hintAddedCount } = getReportSummary(reporter.report);
+          const migratedFileCount = migratedFiles.length;
+          task.title = `${migratedFileCount} JS ${
+            migratedFileCount === 1 ? 'file' : 'files'
+          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
                 - ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
+        }
       } else {
         task.skip(
           `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
