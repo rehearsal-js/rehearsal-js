@@ -9,7 +9,7 @@ import {
   sarifFormatter,
   ReportFormatter,
 } from '@rehearsal/reporter';
-import { CliCommand, Formats, MigrationSummary } from '../types';
+import type { CliCommand, Formats, MigrationSummary } from '../types';
 
 export function generateReports(
   command: CliCommand,

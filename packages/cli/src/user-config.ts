@@ -2,8 +2,8 @@ import { resolve } from 'path';
 import execa from 'execa';
 import { readJSONSync } from 'fs-extra';
 
-import { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 import { addDep } from './utils';
+import type { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 
 // Storage and runner for user custom cli config
 export class UserConfig {

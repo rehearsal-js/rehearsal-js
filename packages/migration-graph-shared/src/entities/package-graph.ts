@@ -11,8 +11,8 @@ import {
   IResolveOptions,
 } from 'dependency-cruiser';
 import { Graph, GraphNode } from '../graph';
-import { ModuleNode } from '../types';
 import { Package } from './package';
+import type { ModuleNode } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 

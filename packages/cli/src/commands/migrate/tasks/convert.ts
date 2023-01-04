@@ -7,10 +7,11 @@ import { migrate } from '@rehearsal/migrate';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
-import { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 import { determineProjectName, getPathToBinary, openInEditor } from '../../../utils';
 
-const DEBUG_CALLBACK = debug('rehearsal:migrate');
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+
+const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
 export function convertTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
   return {

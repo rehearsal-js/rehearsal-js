@@ -6,17 +6,17 @@ import {
 } from '@rehearsal/migration-graph';
 import { debug } from 'debug';
 
-import {
+import { UserConfig } from '../../../user-config';
+import { determineProjectName } from '../../../utils';
+import { State } from '../../../helpers/state';
+import type {
   MigrateCommandContext,
   MigrateCommandOptions,
   PackageSelection,
   MenuMap,
 } from '../../../types';
-import { UserConfig } from '../../../userConfig';
-import { determineProjectName } from '../../../utils';
-import { State } from '../../../helpers/state';
 
-const DEBUG_CALLBACK = debug('rehearsal:migrate');
+const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 

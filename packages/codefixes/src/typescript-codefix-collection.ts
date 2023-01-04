@@ -6,8 +6,8 @@ import {
   type UserPreferences,
   type FormatCodeSettings,
 } from 'typescript';
-import { type Options as PrettierOptions } from 'prettier';
-import { CodeFixCollection, type DiagnosticWithContext } from './types';
+import type { Options as PrettierOptions } from 'prettier';
+import type { CodeFixCollection, DiagnosticWithContext } from './types';
 
 /**
  * Provides code fixes based on the Typescript's codefix collection.

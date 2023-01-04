@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
-import { type Report, type ReportFormatter, type ReportItem, type Location } from './types';
 import { normalizeFilePath } from './normalize-paths';
+import type { Report, ReportFormatter, ReportItem, Location } from './types';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
 

@@ -10,14 +10,11 @@ import {
   getTypeDeclarationFromTypeSymbol,
   getTypeNameFromType,
 } from '@rehearsal/utils';
-import {
-  CodeFixAction,
-  isDeleteExpression,
-  isInterfaceDeclaration,
-  isPropertyAccessExpression,
-} from 'typescript';
-import { CodeFix, createCodeFixAction, DiagnosticWithContext } from '../types';
+import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
+import { createCodeFixAction } from '../hints-codefix-collection';
+import type { CodeFix, DiagnosticWithContext } from '../types';
 import type {
+  CodeFixAction,
   InterfaceDeclaration,
   PropertyDeclaration,
   PropertySignature,

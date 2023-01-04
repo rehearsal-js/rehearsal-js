@@ -2,8 +2,9 @@ import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { existsSync, writeJSONSync } from 'fs-extra';
 
-import { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 import { readJSON, writeTSConfig } from '../../../utils';
+
+import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
 export function tsConfigTask(options: MigrateCommandOptions): ListrTask {
   return {

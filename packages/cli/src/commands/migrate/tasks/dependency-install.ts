@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2';
 
-import { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 import { addDep } from '../../../utils';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export function depInstallTask(options: MigrateCommandOptions): ListrTask {
   return {

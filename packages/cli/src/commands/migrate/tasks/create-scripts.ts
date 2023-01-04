@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2';
 
-import { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 import { addPackageJsonScripts } from '../../../utils';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export function createScriptsTask(options: MigrateCommandOptions): ListrTask {
   return {

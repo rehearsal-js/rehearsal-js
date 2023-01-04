@@ -4,8 +4,8 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
-import { CustomConfig } from '../../src/types';
 import { runBin } from '../test-helpers';
+import type { CustomConfig } from '../../src/types';
 
 setGracefulCleanup();
 
