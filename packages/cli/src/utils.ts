@@ -10,7 +10,7 @@ import { InvalidArgumentError } from 'commander';
 import findup = require('findup-sync');
 import execa = require('execa');
 
-import { ScriptMap } from './types';
+import type { ScriptMap } from './types';
 import type { GitDescribe } from './interfaces';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;

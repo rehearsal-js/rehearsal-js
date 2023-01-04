@@ -1,11 +1,11 @@
-import { CodeFixAction, DiagnosticWithLocation, flattenDiagnosticMessageText } from 'typescript';
-import { ChangesFactory } from '@rehearsal/utils';
 import {
-  CodeFixCollection,
-  CodeHintList,
-  createCodeFixAction,
-  type DiagnosticWithContext,
-} from './types';
+  type CodeFixAction,
+  type DiagnosticWithLocation,
+  type FileTextChanges,
+  flattenDiagnosticMessageText,
+} from 'typescript';
+import { ChangesFactory } from '@rehearsal/utils';
+import type { CodeFixCollection, CodeHintList, DiagnosticWithContext } from './types';
 
 /**
  * Don't actually fix the issue but adds a @ts-expect-error comments instead
@@ -85,4 +85,16 @@ export class HintCodeFixCollection implements CodeFixCollection {
 
     return hint;
   }
+}
+
+export function createCodeFixAction(
+  fixName: string,
+  changes: FileTextChanges[],
+  description: string
+): CodeFixAction {
+  return {
+    fixName,
+    description,
+    changes,
+  };
 }

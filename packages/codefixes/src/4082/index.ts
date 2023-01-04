@@ -6,13 +6,14 @@ import {
   isTypeMatched,
 } from '@rehearsal/utils';
 import {
-  CodeFixAction,
   flattenDiagnosticMessageText,
   isExportAssignment,
   isObjectLiteralExpression,
 } from 'typescript';
-import { CodeFix, createCodeFixAction, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../hints-codefix-collection';
+import type { CodeFix, DiagnosticWithContext } from '../types';
 import type {
+  CodeFixAction,
   ExportAssignment,
   Node,
   ObjectLiteralExpression,

@@ -1,7 +1,6 @@
-import { MigrationStrategy } from '@rehearsal/migration-graph';
-
-import { UserConfig } from './userConfig';
-import { State } from './helpers/state';
+import type { MigrationStrategy } from '@rehearsal/migration-graph';
+import type { UserConfig } from './user-config';
+import type { State } from './helpers/state';
 
 export type CliCommand = 'upgrade' | 'migrate';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';

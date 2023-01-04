@@ -13,7 +13,6 @@ import execa = require('execa');
 
 import { version } from '../../package.json';
 import { generateReports } from '../helpers/report';
-import { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 import {
   addDep,
   determineProjectName,
@@ -27,6 +26,7 @@ import {
   parseCommaSeparatedList,
   parseTsVersion,
 } from '../utils';
+import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();

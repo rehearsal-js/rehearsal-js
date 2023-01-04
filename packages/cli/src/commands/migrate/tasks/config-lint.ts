@@ -1,6 +1,5 @@
-import { ListrTask } from 'listr2';
-
-import { MigrateCommandContext } from '../../../types';
+import type { ListrTask } from 'listr2';
+import type { MigrateCommandContext } from '../../../types';
 
 export function lintConfigTask(): ListrTask {
   return {

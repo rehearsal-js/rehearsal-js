@@ -1,7 +1,6 @@
-import {
+import type {
   CodeFixAction,
   DiagnosticWithLocation,
-  FileTextChanges,
   LanguageService,
   Node,
   Program,
@@ -36,16 +35,4 @@ export interface CodeFixCollection {
 
 export interface CodeFix {
   getCodeAction: (diagnostic: DiagnosticWithContext) => CodeFixAction | undefined;
-}
-
-export function createCodeFixAction(
-  fixName: string,
-  changes: FileTextChanges[],
-  description: string
-): CodeFixAction {
-  return {
-    fixName,
-    description,
-    changes,
-  };
 }

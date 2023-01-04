@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import path, { resolve } from 'path';
+import { resolve, join } from 'path';
 import { readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 import { sync as fastGlobSync } from 'fast-glob';
@@ -8,7 +8,7 @@ import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo
 import { getWorkspaceGlobs } from '../utils/workspace';
 import { PackageGraph } from './package-graph';
 
-import { IPackage } from './IPackage';
+import type { IPackage } from './IPackage';
 import type { Graph } from '../graph';
 import type { ModuleNode } from '../types';
 
@@ -242,7 +242,7 @@ export class Package implements IPackage {
    */
   writePackageJsonToDisk(): void {
     const sorted: Record<any, any> = sortPackageJson(this.packageJson);
-    const pathToPackageJson = path.join(this.path, 'package.json');
+    const pathToPackageJson = join(this.path, 'package.json');
     writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
   }
 

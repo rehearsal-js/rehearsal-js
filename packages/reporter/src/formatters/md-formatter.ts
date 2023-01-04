@@ -1,4 +1,4 @@
-import { Report } from '../types';
+import type { Report } from '../types';
 
 export function mdFormatter(report: Report): string {
   const fileNames = [...new Set(report.items.map((item) => item.analysisTarget))];

@@ -1,6 +1,7 @@
 import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
-import { CodeFixAction, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
-import { CodeFix, createCodeFixAction, DiagnosticWithContext } from '../types';
+import { type CodeFixAction, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
+import { createCodeFixAction } from '../hints-codefix-collection';
+import type { CodeFix, DiagnosticWithContext } from '../types';
 
 export class Fix2571 implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {

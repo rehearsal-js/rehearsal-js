@@ -3,17 +3,19 @@
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
+
 import { version } from '../../../package.json';
-
-import { MigrateCommandOptions } from '../../types';
 import { parseCommaSeparatedList, gitIsRepoDirty, resetFiles } from '../../utils';
+import {
+  initTask,
+  depInstallTask,
+  convertTask,
+  tsConfigTask,
+  lintConfigTask,
+  createScriptsTask,
+} from './tasks';
 
-import { initTask } from './tasks/init';
-import { depInstallTask } from './tasks/depInstall';
-import { convertTask } from './tasks/convert';
-import { tsConfigTask } from './tasks/tsConfig';
-import { lintConfigTask } from './tasks/lintConfig';
-import { createScriptsTask } from './tasks/createScripts';
+import type { MigrateCommandOptions } from '../../types';
 
 export const migrateCommand = new Command();
 
@@ -23,22 +25,23 @@ process.on('SIGINT', () => {
 
 migrateCommand
   .name('migrate')
-  .description('Migrate Javascript project to Typescript')
-  .option('-p, --basePath <project base path>', 'Base dir path of your project.', process.cwd())
+  .description('migrate a javascript project to typescript')
+  .option(
+    '-p, --basePath <project base path>',
+    'base directory path of your project',
+    process.cwd()
+  )
   .option('-e, --entrypoint <entrypoint>', 'entrypoint js file for your project')
   .option(
     '-f, --format <format>',
-    'Report format separated by comma, e.g. -f json,sarif,md,sonarqube',
+    'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('-o, --outputPath <outputPath>', 'Reports output path', '.rehearsal')
-  .option(
-    '-u, --userConfig <custom json config for migrate command>',
-    'File path for custom config'
-  )
-  .option('-i, --interactive', 'Interactive mode to help migrate part of large apps')
-  .option('-v, --verbose', 'Print more logs to debug.')
+  .option('-o, --outputPath <outputPath>', 'reports output path', '.rehearsal')
+  .option('-u, --userConfig <custom json config for migrate command>', 'path to a custom config')
+  .option('-i, --interactive', 'interactive mode')
+  .option('-v, --verbose', 'print all logs for debugging')
   .action(async (options: MigrateCommandOptions) => {
     const loggerLevel = options.verbose ? 'debug' : 'info';
     const logger = createLogger({
