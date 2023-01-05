@@ -418,16 +418,43 @@ export async function resetFiles(): Promise<void> {
 }
 
 /**
+ * Get default editor with args
+ */
+export function getEditorBinWithArgs(): string[] {
+  const defaultEditor = process.env.EDITOR;
+  if (!defaultEditor) {
+    return [];
+  }
+
+  const editorBinWithArgs = defaultEditor.split(' ');
+  const editorBin = editorBinWithArgs[0];
+
+  // Specific for vscode use case
+  // Add --wait option if it's not in $EDITOR
+  if (
+    editorBin === 'code' &&
+    !editorBinWithArgs.includes('-w') &&
+    !editorBinWithArgs.includes('--wait')
+  ) {
+    editorBinWithArgs.push('--wait');
+  }
+
+  return editorBinWithArgs;
+}
+
+/**
  * Open and Edit file with $EDITOR
  */
 export async function openInEditor(filePath: string): Promise<void> {
-  const defaultEditor = process.env.EDITOR;
-  const editorArgs = [];
-  if (defaultEditor) {
-    if (defaultEditor === 'code') {
-      editorArgs.push('--wait');
+  const editorBinWithArgs = getEditorBinWithArgs();
+  const editorBin = editorBinWithArgs[0];
+  if (editorBinWithArgs.length) {
+    if (editorBin === 'code') {
+      editorBinWithArgs.push('--wait');
     }
-    await execa(defaultEditor, [filePath, ...editorArgs], { stdio: 'inherit' });
+    await execa(editorBin, [filePath, ...editorBinWithArgs.slice(1)], {
+      stdio: 'inherit',
+    });
   } else {
     throw new Error(
       'Cannot find default editor in environment variables, please set $EDITOR and try again.'

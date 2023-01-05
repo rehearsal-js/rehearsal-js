@@ -15,6 +15,7 @@ import {
   sleep,
   timestamp,
   getLockfilePath,
+  getEditorBinWithArgs,
 } from '../../src/utils';
 
 describe('utils', () => {
@@ -95,5 +96,23 @@ describe('utils', () => {
     const lockfilePath = getLockfilePath();
 
     expect(lockfilePath).toContain('pnpm-lock.yaml');
+  });
+
+  test('getEditorBinWithArgs()', () => {
+    // No $EDITOR defined
+    delete process.env.EDITOR;
+    expect(getEditorBinWithArgs()).toEqual([]);
+
+    process.env.EDITOR = 'code';
+    expect(getEditorBinWithArgs()).toEqual(['code', '--wait']);
+
+    process.env.EDITOR = 'code -w';
+    expect(getEditorBinWithArgs()).toEqual(['code', '-w']);
+
+    process.env.EDITOR = 'code --wait';
+    expect(getEditorBinWithArgs()).toEqual(['code', '--wait']);
+
+    process.env.EDITOR = 'nvim';
+    expect(getEditorBinWithArgs()).toEqual(['nvim']);
   });
 });

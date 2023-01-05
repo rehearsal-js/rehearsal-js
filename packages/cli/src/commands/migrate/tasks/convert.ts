@@ -48,7 +48,7 @@ export async function convertTask(
               task,
             };
 
-            await migrate(input);
+            const { migratedFiles } = await migrate(input);
 
             const { stdout: diffOutput } = await execa('git', ['diff', tsFilePath]);
 
@@ -84,6 +84,9 @@ export async function convertTask(
                 completed = true;
               }
             }
+            const reportOutputPath = resolve(options.basePath, options.outputPath);
+            generateReports('migrate', reporter, reportOutputPath, options.format);
+            task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
         } else {
           const input = {
@@ -101,16 +104,9 @@ export async function convertTask(
             ctx.state.addFilesToPackage(ctx.targetPackagePath, migratedFiles);
             await ctx.state.addStateFileToGit();
           }
-
           const reportOutputPath = resolve(options.basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
-
-          const { totalErrorCount, hintAddedCount } = getReportSummary(reporter.report);
-          const migratedFileCount = migratedFiles.length;
-          task.title = `Migration Complete. ${migratedFileCount} JS ${
-            migratedFileCount === 1 ? 'file' : 'files'
-          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal.\n
-          ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
+          task.title = getReportSummary(reporter.report, migratedFiles.length);
         }
       } else {
         task.skip('Skip JS -> TS conversion task, no JS files detected');
