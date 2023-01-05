@@ -243,7 +243,7 @@ describe('EmberAppPackageGraph', () => {
     expect(appNode.adjacent.has(addonNode)).toBe(true);
   });
 
-  test.only('should stub a GraphNode and backfill for an app and addons ', async () => {
+  test('should stub a GraphNode and backfill for an app and addons ', async () => {
     // app uses a service `date` from `some-addon`
     // └── first-addon exposes `date` and consumes a service `time` from `another-addon`
     //     └── second-addon exposes a service `time`.
