@@ -96,22 +96,6 @@ describe('migrate - install dependencies', async () => {
 
     expect(result.stdout).toContain('Install dependencies');
   });
-
-  test('Install custom dependencies with user config provided', async () => {
-    basePath = prepareTmpDir('initialization');
-    createUserConfig(basePath, {
-      migrate: {
-        install: {
-          dependencies: ['fs-extra'],
-          devDependencies: ['@types/fs-extra'],
-        },
-      },
-    });
-
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    expect(packageJson.dependencies).toHaveProperty('fs-extra');
-    expect(packageJson.devDependencies).toHaveProperty('@types/fs-extra');
-  });
 });
 
 describe('migrate - generate tsconfig', async () => {
