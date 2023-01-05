@@ -1,11 +1,12 @@
 import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { RehearsalService } from '@rehearsal/service';
-import { sync as execaSync } from 'execa';
 import { DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import { sync as execaSync } from 'execa';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
+import type { ListrTaskWrapper, ListrContext, ListrRendererFactory } from 'listr2';
 
 export type MigrateInput = {
   basePath: string;
@@ -13,6 +14,7 @@ export type MigrateInput = {
   configName?: string;
   reporter: Reporter; // Reporter
   logger?: Logger;
+  task?: ListrTaskWrapper<ListrContext, ListrRendererFactory>;
 };
 
 export type MigrateOutput = {
@@ -27,11 +29,13 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const configName = input.configName || 'tsconfig.json';
   const reporter = input.reporter;
   const logger = input.logger;
+  // output is only for tests
+  const listrTask = input.task || { output: '' };
 
   const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin, LintPlugin];
 
-  logger?.info('Migration started');
-  logger?.info(`Base path: ${basePath}`);
+  logger?.debug('migration started');
+  logger?.debug(`Base path: ${basePath}`);
   logger?.debug(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
 
   // Rename files to TS extension.
@@ -44,14 +48,15 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     const dtsFile = `${destFile}.d.ts`;
 
     if (sourceFile === tsFile) {
-      logger?.info(`no-op ${sourceFile} is a .ts file`);
+      logger?.debug(`no-op ${sourceFile} is a .ts file`);
     } else if (existsSync(tsFile)) {
-      logger?.info(`Found ${tsFile} ???`);
+      logger?.debug(`Found ${tsFile} ???`);
     } else if (existsSync(dtsFile)) {
-      logger?.info(`Found ${dtsFile} ???`);
+      logger?.debug(`Found ${dtsFile} ???`);
       // Should prepend d.ts file if it exists to the new ts file.
     } else {
       const destFile = tsFile;
+
       try {
         // use git mv to keep the commit history in each file
         // would fail if the file is not been tracked
@@ -60,9 +65,10 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
         // use simple mv if git mv fails
         execaSync('mv', [sourceFile, destFile]);
       }
-      logger?.info(
-        `Moving: ${sourceFile.replace(basePath, '')} to ${destFile.replace(basePath, '')}`
-      );
+      listrTask.output = `git mv ${sourceFile.replace(basePath, '')} to ${destFile.replace(
+        basePath,
+        ''
+      )}`;
     }
 
     return tsFile;
@@ -76,7 +82,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     throw Error(message);
   }
 
-  logger?.info(`Config file found: ${configFile}`);
+  logger?.debug(`config file: ${configFile}`);
 
   const { config } = readConfigFile(configFile, sys.readFile);
 
@@ -95,7 +101,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const service = new RehearsalService(options, fileNames);
 
   for (const fileName of fileNames) {
-    logger?.info(`Processing: ${fileName.replace(basePath, '')}`);
+    listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
 
     let allChangedFiles: Set<string> = new Set();
 
@@ -108,8 +114,6 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     // Save file to the filesystem
     allChangedFiles.forEach((file) => service.saveFile(file));
   }
-
-  logger?.info(`Conversion finished.`);
 
   return {
     basePath,

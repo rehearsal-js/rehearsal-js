@@ -20,10 +20,10 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 
-export function initTask(options: MigrateCommandOptions): ListrTask {
+export async function initTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
-    title: 'Initialization',
-    task: async (ctx: MigrateCommandContext, task) => {
+    title: 'Initialize',
+    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // get custom config
       const userConfig = options.userConfig
         ? new UserConfig(options.basePath, options.userConfig, 'migrate')
@@ -101,10 +101,10 @@ export function initTask(options: MigrateCommandOptions): ListrTask {
         ]);
         // update basePath based on the selection
         ctx.targetPackagePath = menuMap[ctx.input as string];
-        task.title = `Initialization Completed! Running migration on ${ctx.targetPackagePath}.`;
+        task.output = `Running migration on ${ctx.targetPackagePath}`;
       } else {
         ctx.targetPackagePath = options.basePath;
-        task.title = `Initialization Completed! Running migration on ${projectName}.`;
+        task.output = `Running migration on ${projectName}`;
       }
 
       // construct migration strategy and prepare all the files needs to be migrated
