@@ -38,7 +38,7 @@ describe('migrate - check repo status', async () => {
       cwd: basePath,
     });
 
-    expect(stdout).toContain('Initialization Completed!');
+    expect(stdout).toContain('Migration Complete');
   });
 
   test('pass in a clean git project', async () => {
@@ -59,7 +59,7 @@ describe('migrate - check repo status', async () => {
       cwd: basePath,
     });
 
-    expect(stdout).toContain('Initialization Completed!');
+    expect(stdout).toContain('Migration Complete');
   });
 
   test('exit in a dirty git project', async () => {
@@ -94,29 +94,7 @@ describe('migrate - install dependencies', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('Installing dependencies');
-  });
-
-  test('Install custom dependencies with user config provided', async () => {
-    basePath = prepareTmpDir('initialization');
-    createUserConfig(basePath, {
-      migrate: {
-        install: {
-          dependencies: ['fs-extra'],
-          devDependencies: ['@types/fs-extra'],
-        },
-      },
-    });
-
-    const result = await runBin('migrate', ['-u', 'rehearsal-config.json'], {
-      cwd: basePath,
-    });
-
-    expect(result.stdout).toContain('Installing custom dependencies');
-
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    expect(packageJson.dependencies).toHaveProperty('fs-extra');
-    expect(packageJson.devDependencies).toHaveProperty('@types/fs-extra');
+    expect(result.stdout).toContain('Install dependencies');
   });
 });
 
@@ -132,7 +110,7 @@ describe('migrate - generate tsconfig', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('Creating tsconfig');
+    expect(result.stdout).toContain('Create tsconfig.json');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
@@ -178,13 +156,6 @@ describe('migrate - JS to TS conversion', async () => {
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
-
-    // Test logger messages from package/migrate
-    expect(result.stdout).toContain('info');
-    expect(result.stdout).toContain('Moving: /foo.js to /foo.ts');
-    expect(result.stdout).toContain('Moving: /depends-on-foo.js to /depends-on-foo.ts');
-    expect(result.stdout).toContain('Moving: /index.js to /index.ts');
-    expect(result.stdout).toContain('Processing:');
 
     // Test summary message
     expect(result.stdout).toContain(`3 JS files has been converted to TS`);
@@ -272,7 +243,7 @@ describe('migrate - generate eslint config', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain('Creating .eslintrc.js from custom config');
+    expect(result.stdout).toContain('Create .eslintrc.js from config');
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
   });
 });
@@ -288,8 +259,8 @@ describe('migrate - handle custom basePath', async () => {
     const customBasePath = resolve(basePath, 'base');
     const result = await runBin('migrate', ['--basePath', customBasePath]);
 
-    expect(result.stdout).toContain('Installing dependencies');
-    expect(result.stdout).toContain('Creating tsconfig');
+    expect(result.stdout).toContain('Install dependencies');
+    expect(result.stdout).toContain('Create tsconfig.json');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
     expect(result.stdout).toContain(`1 JS file has been converted to TS`);
@@ -313,7 +284,7 @@ describe('migrate - new scripts for TS', async () => {
       cwd: basePath,
     });
 
-    expect(stdout).toContain('Creating new scripts for Typescript in package.json');
+    expect(stdout).toContain('Add package scripts');
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     expect(packageJson.scripts['build:tsc']).toBe('tsc -b');

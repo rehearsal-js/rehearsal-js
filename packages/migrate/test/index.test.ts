@@ -3,7 +3,6 @@ import { join, resolve } from 'path';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
-
 import { migrate, MigrateInput } from '../src';
 import type { Logger } from 'winston';
 

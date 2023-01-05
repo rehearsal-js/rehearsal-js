@@ -1,16 +1,16 @@
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext } from '../../../types';
 
-export function lintConfigTask(): ListrTask {
+export async function lintConfigTask(): Promise<ListrTask> {
   return {
-    title: 'Creating eslint config',
+    title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (_ctx: MigrateCommandContext, task) => {
+    task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
       if (_ctx.userConfig?.hasLintSetup) {
-        task.title = `Creating .eslintrc.js from custom config`;
+        task.output = `Create .eslintrc.js from config`;
         await _ctx.userConfig.lintSetup();
       } else {
-        task.skip(`Skip creating .eslintrc.js since no custom config is provided.`);
+        task.skip(`Skip creating .eslintrc.js since no custom config is provided`);
       }
     },
   };

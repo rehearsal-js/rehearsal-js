@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { debug } from 'debug';
 import { Reporter } from '@rehearsal/reporter';
@@ -7,23 +6,26 @@ import { migrate } from '@rehearsal/migrate';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
-import { determineProjectName, getPathToBinary, openInEditor } from '../../../utils';
+import { determineProjectName, openInEditor, getPathToBinary } from '../../../utils';
+import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
-export function convertTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
+export async function convertTask(
+  options: MigrateCommandOptions,
+  logger: Logger
+): Promise<ListrTask> {
   return {
-    title: 'Converting JS files to TS',
+    title: 'Convert JS files to TS',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (ctx: MigrateCommandContext, task) => {
+    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       const projectName = determineProjectName() || '';
       const { basePath } = options;
       const tscPath = await getPathToBinary('tsc');
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
-
       const reporter = new Reporter(
         { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
         logger
@@ -35,7 +37,7 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
           // and ask user for actions: Accept/Edit/Discard
           for (const f of ctx.sourceFilesWithAbsolutePath) {
             const jsFilePath = f;
-            const tsFilePath = f.replace('js', 'ts');
+            const tsFilePath = f.replace(/js$/g, 'ts');
             let completed = false;
 
             const input = {
@@ -43,6 +45,7 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
               sourceFiles: [f],
               logger: logger,
               reporter,
+              task,
             };
 
             await migrate(input);
@@ -88,6 +91,7 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
             sourceFiles: ctx.sourceFilesWithAbsolutePath,
             logger: logger,
             reporter,
+            task,
           };
 
           const { migratedFiles } = await migrate(input);
@@ -103,15 +107,13 @@ export function convertTask(options: MigrateCommandOptions, logger: Logger): Lis
 
           const { totalErrorCount, hintAddedCount } = getReportSummary(reporter.report);
           const migratedFileCount = migratedFiles.length;
-          task.title = `${migratedFileCount} JS ${
+          task.title = `Migration Complete. ${migratedFileCount} JS ${
             migratedFileCount === 1 ? 'file' : 'files'
-          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal
-                - ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
+          } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal.\n
+          ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
         }
       } else {
-        task.skip(
-          `Skipping JS -> TS conversion task, since there is no JS file to be converted to TS.`
-        );
+        task.skip('Skip JS -> TS conversion task, no JS files detected');
       }
     },
   };

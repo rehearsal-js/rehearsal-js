@@ -6,26 +6,25 @@ import { readJSON, writeTSConfig } from '../../../utils';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
-export function tsConfigTask(options: MigrateCommandOptions): ListrTask {
+export async function tsConfigTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
-    title: 'Creating tsconfig.json',
+    title: 'Create tsconfig.json',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (ctx: MigrateCommandContext, task) => {
+    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       if (ctx.userConfig?.hasTsSetup) {
-        task.title = `Creating tsconfig from custom config`;
+        task.output = `Create tsconfig from config`;
         await ctx.userConfig.tsSetup();
       } else {
         const configPath = resolve(options.basePath, 'tsconfig.json');
 
         if (existsSync(configPath)) {
-          task.title = `${configPath} already exists, ensuring strict mode is enabled`;
+          task.output = `${configPath} already exists, ensuring strict mode is enabled`;
+          task.title = `Update tsconfig.json`;
 
           const tsConfig = readJSON<TSConfig>(configPath) as TSConfig;
           tsConfig.compilerOptions.strict = true;
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          task.title = `Creating tsconfig`;
-
           writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
         }
       }
