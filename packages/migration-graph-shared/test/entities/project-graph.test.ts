@@ -48,6 +48,16 @@ describe('project-graph', () => {
 
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
+  test('should ignore `.<name>.js files (eg. .babelrc.js or .eslint.config.js)', () => {
+    const baseDir = getLibrary('simple');
+
+    const projectGraph = new ProjectGraph(baseDir);
+    const somePackage = new Package(baseDir);
+    projectGraph.addPackageToGraph(somePackage);
+    projectGraph.discover();
+
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
   test('options.eager', () => {
     const baseDir = getLibrary('simple');
 

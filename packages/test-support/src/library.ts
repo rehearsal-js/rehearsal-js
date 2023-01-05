@@ -34,6 +34,8 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
           console.log(path.join('foo', 'bar', 'baz'));
           console.log(parser, chalk);
         `,
+        '.babelrc.js': '',
+        '.eslint.config.js': '',
         'package.json': `
           {
             "name": "my-package",
