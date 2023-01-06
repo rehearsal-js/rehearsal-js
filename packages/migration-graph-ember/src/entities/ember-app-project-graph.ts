@@ -75,10 +75,7 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
   }
 }
 
-export type EmberAppProjectGraphOptions = {
-  // parent: GraphNode<unknown>;
-  // projectGraph: ProjectGraph;
-} & ProjectGraphOptions;
+export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
   protected discoveredPackages: Record<string, Package | EmberAddonPackage | EmberAppPackage>;
@@ -106,7 +103,6 @@ export class EmberAppProjectGraph extends ProjectGraph {
         }
       }
     }
-
     const node = super.addPackageToGraph(p, crawl);
 
     DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));

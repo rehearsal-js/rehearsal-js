@@ -16,7 +16,6 @@ type LibraryVariants =
   | 'simple'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
-  | 'library-with-loose-files'
   | 'library-with-workspaces';
 
 export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
@@ -34,8 +33,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
           console.log(path.join('foo', 'bar', 'baz'));
           console.log(parser, chalk);
         `,
-        '.babelrc.js': '',
-        '.eslint.config.js': '',
         'package.json': `
           {
             "name": "my-package",
@@ -54,41 +51,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             // a.js
             console.log('foo');        
            `,
-        },
-      };
-      break;
-    case 'library-with-loose-files':
-      files = {
-        'WidgetManager.js': `
-          import './Widget';
-          import './Events'
-        `,
-        'package.json': `
-          {
-            "name": "my-package-with-loose-files",
-            "main": "index.js",
-            "files": [
-              "*.js",
-              "*.lock",
-              "utils/**/*",
-              "dist/**/*"
-            ],
-            "dependencies": {
-            },
-            "devDependencies": {
-              "typescript": "^4.8.3"
-            }
-
-          }
-        `,
-        'Events.js': '',
-        'State.js': `import './utils/Defaults';`,
-        'Widget.js': `import './State';`,
-        utils: {
-          'Defaults.js': ``,
-        },
-        dist: {
-          'ignore-this.js': '',
         },
       };
       break;
@@ -172,9 +134,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             'index.js': `
               import './lib/impl';
             `,
-            'build.js': `
-              import '../../some-util.js';
-            `,
             lib: {
               'impl.js': `
                 // impl.js
@@ -182,7 +141,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             },
           },
         },
-        'some-util.js': '// Shared file',
         'package.json': `
           {
             "name": "some-library-with-workspace",
