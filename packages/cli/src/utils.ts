@@ -452,7 +452,7 @@ export async function openInEditor(filePath: string): Promise<void> {
     if (editorBin === 'code') {
       editorBinWithArgs.push('--wait');
     }
-    await execa(editorBin, [filePath, ...editorBinWithArgs.slice(1)], {
+    await execa(editorBin, [...editorBinWithArgs.slice(1), filePath], {
       stdio: 'inherit',
     });
   } else {
