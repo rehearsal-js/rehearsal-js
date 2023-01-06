@@ -49,7 +49,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         lib: {
           'a.js': `
             // a.js
-            console.log('foo');        
+            console.log('foo');
            `,
         },
       };
@@ -73,7 +73,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         lib: {
           'a.js': `
             // a.js
-            console.log('foo');        
+            console.log('foo');
            `,
         },
         styles: {
@@ -99,7 +99,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             lib: {
               'a.js': `
               // a.js
-              console.log('foo');        
+              console.log('foo');
              `,
             },
           },
