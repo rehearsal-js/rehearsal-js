@@ -175,9 +175,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
         if (maybeAddonPackageNode) {
           DEBUG_CALLBACK('findPackageNodeByAddonName: %O', maybeAddonPackageNode);
-        }
 
-        if (maybeAddonPackageNode) {
           // We've found a package in the migration graph that has the addonName
           const { synthetic, pkg } = maybeAddonPackageNode.content;
 
@@ -188,7 +186,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
             const someServiceInAnInRepoAddon = join(emberAddonPackage.packagePath, key);
 
-            DEBUG_CALLBACK(emberAddonPackage.path);
+            DEBUG_CALLBACK(emberAddonPackage.packagePath);
             DEBUG_CALLBACK(someServiceInAnInRepoAddon);
 
             if (key) {
