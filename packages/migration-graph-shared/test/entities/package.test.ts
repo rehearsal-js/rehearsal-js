@@ -51,7 +51,19 @@ describe('Unit | Entities | Package', function () {
   describe('includ/exclude patterns', () => {
     test('defaults', () => {
       const p = new Package(pathToPackage);
-      expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test', 'tests']));
+      expect(p.excludePatterns).toStrictEqual(
+        new Set([
+          'dist',
+          'test',
+          'tests',
+          'babel.config.*',
+          'prettier.config.*',
+          'karma.config.*',
+          'webpack.config.js',
+          'package-lock.json',
+          'yarn.lock',
+        ])
+      );
       expect(p.includePatterns).toStrictEqual(new Set(['**/*.js']));
     });
     test('options.excludePatterns ', () => {
@@ -67,7 +79,20 @@ describe('Unit | Entities | Package', function () {
     test('addExcludePattern', () => {
       const p = new Package(pathToPackage);
       p.addExcludePattern('test-packages');
-      expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test', 'tests', 'test-packages']));
+      expect(p.excludePatterns).toStrictEqual(
+        new Set([
+          'dist',
+          'test',
+          'tests',
+          'babel.config.*',
+          'prettier.config.*',
+          'karma.config.*',
+          'webpack.config.js',
+          'package-lock.json',
+          'yarn.lock',
+          'test-packages',
+        ])
+      );
     });
 
     test('addIncludePattern', () => {

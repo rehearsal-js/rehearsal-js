@@ -40,7 +40,7 @@ export class PackageGraph {
 
   constructor(p: Package, options: PackageGraphOptions = {}) {
     this.package = p;
-    this.baseDir = p.path;
+    this.baseDir = p.packagePath;
     this.options = options || {};
     this.#graph = new Graph<ModuleNode>();
   }
@@ -96,8 +96,10 @@ export class PackageGraph {
       const sourcePath = resolveRelative(baseDir, m.source);
 
       if (this.isFileExternalToPackage(sourcePath)) {
-        DEBUG_CALLBACK(`${sourcePath} is out of package, not adding to module graph.`);
-        // Should resolve path completely relativeto the project and find which package it belongs to.
+        console.warn(
+          `The import path "${sourcePath}" is external to package "${this.package.packageName}" (${baseDir}), ommitting form package-graph. `
+        );
+        // Should resolve path completely relative to the project and find which package it belongs to.
         // Ask project which package does this belong maybe create an edge?
         return;
       }

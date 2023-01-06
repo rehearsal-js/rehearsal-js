@@ -70,7 +70,17 @@ export class Package implements IPackage {
   constructor(
     pathToPackage: string,
     {
-      excludePatterns = ['dist', 'test', 'tests'],
+      excludePatterns = [
+        'dist',
+        'test',
+        'tests',
+        'babel.config.*', // Babel configs
+        'prettier.config.*', // Prettier configs
+        'karma.config.*',
+        'webpack.config.js',
+        'package-lock.json',
+        'yarn.lock',
+      ],
       includePatterns = ['**/*.js'],
       name = '',
       packageContainer,

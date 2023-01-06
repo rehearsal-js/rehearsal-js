@@ -14,11 +14,41 @@ type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
+  | 'library-with-ignored-files'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
   | 'library-with-loose-files'
   | 'library-with-workspaces';
 
+const FILES_TO_IGNORE = [
+  '.babelrc.js',
+  '.babelrc.json',
+  '.babelrc.cjs',
+  '.babelrc.mjs',
+  'babel.config.js',
+  'babel.config.json',
+  'babel.config.cjs',
+  'babel.config.mjs',
+  '.eslint.config.js',
+  'package-lock.json',
+  'yarn.lock',
+  'npm-shrinkwrap.json',
+  'webpack.config.js',
+  'prettier.config.js',
+  'prettier.config.cjs',
+  'karma.config.js',
+  'yarn.lock',
+];
+
+function getIgnoredFilesFixtureDirectory(): Record<string, string> {
+  const fixtureDir: Record<string, string> = {};
+
+  FILES_TO_IGNORE.forEach((filename) => {
+    fixtureDir[filename] = '';
+  });
+
+  return fixtureDir;
+}
 export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
   let files: fixturify.DirJSON;
 
@@ -34,8 +64,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
           console.log(path.join('foo', 'bar', 'baz'));
           console.log(parser, chalk);
         `,
-        '.babelrc.js': '',
-        '.eslint.config.js': '',
         'package.json': `
           {
             "name": "my-package",
@@ -52,8 +80,35 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         lib: {
           'a.js': `
             // a.js
-            console.log('foo');        
+            console.log('foo');
            `,
+        },
+      };
+      break;
+    case 'library-with-ignored-files':
+      files = {
+        'index.js': `
+          import './lib/a';
+          console.log(path.join('foo', 'bar', 'baz'));
+          console.log(parser, chalk);
+        `,
+        ...getIgnoredFilesFixtureDirectory,
+        config: {
+          ...getIgnoredFilesFixtureDirectory,
+        },
+        'package.json': `
+          {
+            "name": "my-package",
+            "main": "index.js",
+            "dependencies": {
+            },
+            "devDependencies": {
+              "typescript": "^4.8.3"
+            }
+          }
+        `,
+        lib: {
+          'a.js': '',
         },
       };
       break;
@@ -111,7 +166,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         lib: {
           'a.js': `
             // a.js
-            console.log('foo');        
+            console.log('foo');
            `,
         },
         styles: {
@@ -137,7 +192,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             lib: {
               'a.js': `
               // a.js
-              console.log('foo');        
+              console.log('foo');
              `,
             },
           },
