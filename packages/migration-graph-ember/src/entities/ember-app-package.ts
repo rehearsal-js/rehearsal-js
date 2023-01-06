@@ -40,7 +40,7 @@ export class EmberAppPackage extends Package implements IPackage {
 
   hasAddonPath(packageInstance: Package): string | undefined {
     return this.addonPaths?.find(
-      (addonPath: string) => packageInstance.packagePath === resolve(this.path, addonPath)
+      (addonPath: string) => packageInstance.path === resolve(this.path, addonPath)
     );
   }
 
@@ -88,7 +88,7 @@ export class EmberAppPackage extends Package implements IPackage {
         (addonPath) =>
           // get absolute path of desired package (desiredPackage.location)
           // /some/path/to/your-app/lib/msg-data === resolve('/some/path/to/your-app/lib/msg-overlay', '../lib/msg-data'))
-          packageInstance.packagePath === resolve(this.path, addonPath)
+          packageInstance.path === resolve(this.path, addonPath)
       ),
       1
     );

@@ -21,7 +21,7 @@ export type PackageContainer = {
 };
 
 export type PackageOptions = {
-  type?: string;
+  packageType?: string;
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
@@ -46,14 +46,14 @@ export class Package implements IPackage {
   /**
    * path {string} - the path to this package
    */
-  #path: string;
+  #packagePath: string;
 
   /**
    * Internal representation of package.json
    */
-  #pkg: PackageJson | undefined;
+  #packageJson: PackageJson | undefined;
 
-  #type: string;
+  #packageType: string;
 
   #packageContainer: PackageContainer;
 
@@ -66,11 +66,11 @@ export class Package implements IPackage {
   protected graph: Graph<ModuleNode> | undefined;
 
   constructor(
-    pathToPackage: string,
-    { name = '', packageContainer, type = '' }: PackageOptions = {}
+    packagePath: string,
+    { name = '', packageContainer, packageType = '' }: PackageOptions = {}
   ) {
-    this.#path = pathToPackage;
-    this.#type = type;
+    this.#packagePath = packagePath;
+    this.#packageType = packageType;
     this.#name = name;
 
     if (packageContainer) {
@@ -99,20 +99,16 @@ export class Package implements IPackage {
     this.#includePatterns = new Set(patterns);
   }
 
-  set type(_type) {
-    this.#type = _type;
+  get path(): string {
+    return this.#packagePath;
+  }
+
+  set packageType(packageType: string) {
+    this.#packageType = packageType;
   }
 
   get type(): string {
-    return this.#type;
-  }
-
-  set path(_path) {
-    this.#path = _path;
-  }
-
-  get path(): string {
-    return this.#path;
+    return this.#packageType;
   }
 
   set packageContainer(container) {
@@ -121,17 +117,6 @@ export class Package implements IPackage {
 
   get packageContainer(): PackageContainer {
     return this.#packageContainer;
-  }
-
-  /**
-   * @deprecated Use `packagePath()`
-   */
-  get location(): string {
-    return this.#path;
-  }
-
-  get packagePath(): string {
-    return this.#path;
   }
 
   get packageName(): string {
@@ -145,15 +130,15 @@ export class Package implements IPackage {
       );
     }
 
-    return this.#packageContainer.isWorkspace(this.path);
+    return this.#packageContainer.isWorkspace(this.#packagePath);
   }
 
   get packageJson(): PackageJson {
-    if (!this.#pkg) {
-      const packageJsonPath = resolve(this.#path, 'package.json');
-      this.#pkg = readJsonSync(packageJsonPath);
+    if (!this.#packageJson) {
+      const packageJsonPath = resolve(this.#packagePath, 'package.json');
+      this.#packageJson = readJsonSync(packageJsonPath);
     }
-    return this.#pkg as PackageJson;
+    return this.#packageJson as PackageJson;
   }
 
   /**
@@ -184,7 +169,7 @@ export class Package implements IPackage {
    * Return any workspace globs this package might have.
    */
   get workspaceGlobs(): [string] {
-    return getWorkspaceGlobs(this.path);
+    return getWorkspaceGlobs(this.#packagePath);
   }
 
   addWorkspaceGlob(glob: string): this {
@@ -267,14 +252,14 @@ export class Package implements IPackage {
    */
   writePackageJsonToDisk(): void {
     const sorted: Record<any, any> = sortPackageJson(this.packageJson);
-    const pathToPackageJson = join(this.path, 'package.json');
+    const pathToPackageJson = join(this.#packagePath, 'package.json');
     writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
   }
 
   isConvertedToTypescript(conversionLevel?: string): boolean {
     const fastGlobConfig = {
       absolute: true,
-      cwd: this.path,
+      cwd: this.#packagePath,
       ignore: ['**/node_modules/**'],
     };
     // ignore a tests directory if we only want to consider the source
