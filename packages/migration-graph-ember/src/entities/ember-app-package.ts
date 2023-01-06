@@ -40,7 +40,7 @@ export class EmberAppPackage extends Package implements IPackage {
 
   hasAddonPath(packageInstance: Package): string | undefined {
     return this.addonPaths?.find(
-      (addonPath: string) => packageInstance.packagePath === resolve(this.path, addonPath)
+      (addonPath: string) => packageInstance.packagePath === resolve(this.packagePath, addonPath)
     );
   }
 
@@ -62,7 +62,7 @@ export class EmberAppPackage extends Package implements IPackage {
     }
 
     if (!this.hasAddonPath(packageInstance)) {
-      this.addonPaths.push(relative(this.path, packageInstance.path));
+      this.addonPaths.push(relative(this.packagePath, packageInstance.packagePath));
     }
 
     return this;
