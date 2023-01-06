@@ -2,9 +2,8 @@ import { dirname } from 'path';
 import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
-import { isWorkspace } from '../utils/workspace';
-import { Package, PackageOptions } from './package';
-import { RootPackage } from './root-package';
+import { getWorkspaceGlobs, isWorkspace } from '../../src/utils/workspace';
+import { Package } from './package';
 
 import type { PackageNode } from '../types';
 
@@ -12,31 +11,20 @@ const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
 // TODO this package level dependency data should be surfaced in a report
 
-export type ProjectGraphOptions = {
-  eager?: boolean;
-  sourceType?: string;
-  entrypoint?: string;
-};
+export type ProjectGraphOptions = { eager?: boolean; sourceType?: string };
 
 export class ProjectGraph {
   #rootDir: string;
   #graph: Graph<PackageNode>;
   #sourceType: string;
   #eager: boolean;
-  #entrypoint: string;
-
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint } = {
-      eager: false,
-      sourceType: 'JavaScript Library',
-      ...options,
-    };
+    const { eager, sourceType } = { eager: false, sourceType: 'JavaScript Library', ...options };
 
     this.#rootDir = rootDir;
-    this.#entrypoint = entrypoint ?? '';
     this.#eager = eager;
     this.#sourceType = sourceType;
     this.#graph = new Graph<PackageNode>();
@@ -56,10 +44,6 @@ export class ProjectGraph {
     return this.#sourceType;
   }
 
-  getPackageGraph(): Graph<PackageNode> {
-    return this.#graph;
-  }
-
   addPackageToGraph(p: Package, crawl = true): GraphNode<PackageNode> {
     DEBUG_CALLBACK('addPackageToGraph: name: %s, path: %s', p.packageName, p.packagePath);
 
@@ -76,7 +60,7 @@ export class ProjectGraph {
       : this.#graph.addNode(contents);
 
     if (this.#eager) {
-      p.getModuleGraph({ parentNode: node, projectGraph: this });
+      p.getModuleGraph({ parent: node, project: this });
     }
 
     if (isConverted) {
@@ -153,25 +137,14 @@ export class ProjectGraph {
   }
 
   discover(): Array<Package> {
-    const rootOptions: PackageOptions = {};
-    if (this.#entrypoint) {
-      rootOptions.includePatterns = [this.#entrypoint];
-    }
-
-    // Add root package to graph
-    const rootPackage = new RootPackage(this.rootDir, rootOptions);
-
-    const rootPackageNode = this.addPackageToGraph(rootPackage, false);
-
-    const globs = rootPackage.globs;
+    // Get root package.json
+    const globs = getWorkspaceGlobs(this.rootDir);
 
     if (globs.length <= 0) {
-      return [rootPackage];
+      return [];
     }
 
-    DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
-
-    DEBUG_CALLBACK('ProjectGraph.globs %s', globs);
+    DEBUG_CALLBACK('globs %s', globs);
 
     const pathToRoot = this.rootDir;
     const cwd = this.rootDir;
@@ -203,10 +176,7 @@ export class ProjectGraph {
       return acc;
     }, {});
 
-    entities.forEach((p) => {
-      const destNode = this.addPackageToGraph(p);
-      this.graph.addEdge(rootPackageNode, destNode);
-    });
+    entities.forEach((p) => this.addPackageToGraph(p));
 
     return entities;
   }

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { resolve, join } from 'path';
-import { readJsonSync, writeJsonSync, existsSync } from 'fs-extra';
+import { readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 import { sync as fastGlobSync } from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
 import { getWorkspaceGlobs } from '../utils/workspace';
-import { PackageGraph, PackageGraphOptions } from './package-graph';
+import { PackageGraph } from './package-graph';
 
 import type { IPackage } from './IPackage';
 import type { Graph } from '../graph';
@@ -25,8 +25,6 @@ export type PackageOptions = {
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
-  includePatterns?: Array<string>;
-  excludePatterns?: Array<string>;
 };
 
 /**
@@ -48,7 +46,12 @@ export class Package implements IPackage {
   /**
    * path {string} - the path to this package
    */
-  #path: string | undefined;
+  #path: string;
+
+  /**
+   * Internal representation of package.json
+   */
+  #pkg: PackageJson;
 
   #type: string;
 
@@ -56,29 +59,13 @@ export class Package implements IPackage {
 
   #name: string;
 
-  #excludePatterns: Set<string>;
-
-  #includePatterns: Set<string>;
-
-  /**
-   * Internal representation of package.json
-   */
-  protected pkg: PackageJson;
-
   protected graph: Graph<ModuleNode>;
 
   constructor(
     pathToPackage: string,
-    {
-      excludePatterns = ['dist', 'test', 'tests'],
-      includePatterns = ['**/*.js'],
-      name = '',
-      packageContainer,
-      type = '',
-    }: PackageOptions = {}
+    { type = '', packageContainer, name = '' }: PackageOptions = {}
   ) {
     this.#path = pathToPackage;
-
     this.#type = type;
     this.#name = name;
 
@@ -87,24 +74,14 @@ export class Package implements IPackage {
     } else {
       this.#packageContainer = { isWorkspace: () => false };
     }
-
-    this.#excludePatterns = new Set(excludePatterns);
-    this.#includePatterns = new Set(includePatterns);
-
-    // If the #path is defined, we have a package.json file, otherwise it's nullish
-    if (this.existsPackageJson() && this.packageJson?.files) {
-      this.packageJson.files.forEach((pattern: string) => {
-        this.addIncludePattern(pattern);
-      });
-    }
   }
 
-  get excludePatterns(): Set<string> {
-    return this.#excludePatterns;
+  get excludePatterns(): Array<string> {
+    return ['dist', 'test', 'tests'];
   }
 
-  get includePatterns(): Set<string> {
-    return this.#includePatterns;
+  get includePatterns(): Array<string> {
+    return ['index.js', 'index.ts', 'lib', 'src'];
   }
 
   set type(_type) {
@@ -115,18 +92,12 @@ export class Package implements IPackage {
     return this.#type;
   }
 
-  /**
-   * @deprecated
-   */
   set path(_path) {
     this.#path = _path;
   }
 
-  /**
-   * @deprecated Use `packagePath()`
-   */
   get path(): string {
-    return this.packagePath;
+    return this.#path;
   }
 
   set packageContainer(container) {
@@ -141,13 +112,10 @@ export class Package implements IPackage {
    * @deprecated Use `packagePath()`
    */
   get location(): string {
-    return this.packagePath;
+    return this.#path;
   }
 
   get packagePath(): string {
-    if (!this.#path) {
-      throw new Error('package.path is undefined');
-    }
     return this.#path;
   }
 
@@ -165,19 +133,12 @@ export class Package implements IPackage {
     return this.#packageContainer.isWorkspace(this.path);
   }
 
-  get packageJsonPath(): string {
-    return resolve(this.packagePath, 'package.json');
-  }
-
-  existsPackageJson(): boolean {
-    return existsSync(this.packageJsonPath);
-  }
-
   get packageJson(): PackageJson {
-    if (!this.pkg) {
-      this.pkg = readJsonSync(this.packageJsonPath);
+    if (!this.#pkg) {
+      const packageJsonPath = resolve(this.#path, 'package.json');
+      this.#pkg = readJsonSync(packageJsonPath);
     }
-    return this.pkg;
+    return this.#pkg;
   }
 
   /**
@@ -220,16 +181,6 @@ export class Package implements IPackage {
     return this;
   }
 
-  addIncludePattern(pattern: string): this {
-    this.#includePatterns.add(pattern);
-    return this;
-  }
-
-  addExcludePattern(pattern: string): this {
-    this.#excludePatterns.add(pattern);
-    return this;
-  }
-
   setPackageName(name: string): this {
     this.packageJson.name = name;
     this.#name = name;
@@ -256,8 +207,8 @@ export class Package implements IPackage {
     // add to dependencies
     let _dependencies = this.dependencies;
     if (!_dependencies) {
-      this.packageJson.dependencies = {};
-      _dependencies = this.packageJson?.dependencies;
+      this.#pkg.dependencies = {};
+      _dependencies = this.#pkg?.dependencies;
     }
     _dependencies[packageName] = version;
     return this;
@@ -272,8 +223,8 @@ export class Package implements IPackage {
   addDevDependency(packageName: string, version: string): this {
     let _devDependencies = this.devDependencies;
     if (!_devDependencies) {
-      this.packageJson.devDependencies = {};
-      _devDependencies = this.packageJson.devDependencies;
+      this.#pkg.devDependencies = {};
+      _devDependencies = this.#pkg.devDependencies;
     }
     _devDependencies[packageName] = version;
     return this;
@@ -327,7 +278,7 @@ export class Package implements IPackage {
     return this.graph !== undefined;
   }
 
-  getModuleGraph(options: PackageGraphOptions = {}): Graph<ModuleNode> {
+  getModuleGraph(options = {}): Graph<ModuleNode> {
     if (this.graph) {
       return this.graph;
     }
