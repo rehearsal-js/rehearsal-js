@@ -18,17 +18,7 @@ export class EmberAddonPackage extends EmberAppPackage {
   #addonName: string | undefined;
 
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
-    super(pathToPackage, options);
-    this.isAddon = true;
-  }
-
-  get isEngine(): boolean {
-    return isEngine(readPackageJson(this.path));
-  }
-
-  get excludePatterns(): Array<string> {
-    // TODO Determine ember-config from package.json entry
-    return [
+    const excludePatterns = [
       'dist',
       'config',
       'ember-config',
@@ -38,11 +28,15 @@ export class EmberAddonPackage extends EmberAppPackage {
       'public',
       './package',
     ];
+
+    const includePatterns = ['index.js', 'addon/', 'app/'];
+
+    super(pathToPackage, { excludePatterns, includePatterns, ...options });
+    this.isAddon = true;
   }
 
-  get includePatterns(): Array<string> {
-    // TODO Determine ember-config from package.json entry
-    return ['index.js', 'addon/', 'app/'];
+  get isEngine(): boolean {
+    return isEngine(readPackageJson(this.path));
   }
 
   /**

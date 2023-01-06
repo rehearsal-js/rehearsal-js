@@ -171,7 +171,7 @@ describe('EmberAppPackageGraph', () => {
     const m = new EmberAppProjectGraph(project.baseDir);
     const emberPackage = new EmberAppPackage(project.baseDir);
     const source = m.addPackageToGraph(emberPackage);
-    const options: EmberAppPackageGraphOptions = { parent: source, project: m };
+    const options: EmberAppPackageGraphOptions = { parentNode: source, projectGraph: m };
     emberPackage.getModuleGraph(options);
 
     const dest = m.graph.getNode('some-external');
@@ -226,7 +226,10 @@ describe('EmberAppPackageGraph', () => {
     const emberPackage = new EmberAppPackage(project.baseDir);
     const appNode = projectGraph.addPackageToGraph(emberPackage, false);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    const options: EmberAppPackageGraphOptions = {
+      parentNode: appNode,
+      projectGraph: projectGraph,
+    };
     emberPackage.getModuleGraph(options);
 
     const node: GraphNode<PackageNode> = projectGraph.graph.getNode('some-addon');
@@ -314,33 +317,36 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir);
+    const projectGraph = new EmberAppProjectGraph(project.baseDir);
 
     const emberAppPackage = new EmberAppPackage(project.baseDir);
-    const appNode = m.addPackageToGraph(emberAppPackage, false);
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage, false);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
+    const options: EmberAppPackageGraphOptions = {
+      parentNode: appNode,
+      projectGraph: projectGraph,
+    };
     emberAppPackage.getModuleGraph(options);
 
     // Validate that there is a syntehtic node to firstAddon and that there
     // is an edge between the app and the addon
 
-    let firstAddonNode = m.graph.getNode(firstAddonName);
+    let firstAddonNode = projectGraph.graph.getNode(firstAddonName);
     expect(firstAddonNode?.content.synthetic).toBe(true);
 
     const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
 
     // Add firstAddon
-    firstAddonNode = m.addPackageToGraph(firstAddonPackage);
+    firstAddonNode = projectGraph.addPackageToGraph(firstAddonPackage);
     expect(firstAddonNode.content.synthetic).toBeFalsy();
 
     // Force populate the addon's graph by calling IPackage.getModuleGraph, this will
     // force discovery of the edge between firstAddon and secondAddon.
-    const addonOptions = { parent: firstAddonNode, project: m };
+    const addonOptions = { parentNode: firstAddonNode, projectGraph: projectGraph };
     firstAddonPackage.getModuleGraph(addonOptions);
 
     // Get the synthetic secondAddon, validate it's been added and it stubbed out.
-    let secondAddonNode = m.graph.getNode(secondAddonName);
+    let secondAddonNode = projectGraph.graph.getNode(secondAddonName);
     expect(secondAddonNode?.content.synthetic).toBe(true);
     expect(appNode.adjacent.has(firstAddonNode), 'app should depend on some-addon').toBe(true);
     expect(
@@ -352,7 +358,7 @@ describe('EmberAppPackageGraph', () => {
       join(project.baseDir, `lib/${secondAddonName}`)
     );
 
-    secondAddonNode = m.addPackageToGraph(secondAddonPackage);
+    secondAddonNode = projectGraph.addPackageToGraph(secondAddonPackage);
     expect(secondAddonNode.content.synthetic).toBeFalsy();
 
     expect(
@@ -360,11 +366,10 @@ describe('EmberAppPackageGraph', () => {
       'some-addon should depend on another-addon'
     ).toBe(true);
 
-    expect(flatten(m.graph.topSort()), 'package graph should have another-addon first').toEqual([
-      'second-addon',
-      'first-addon',
-      'app-template',
-    ]);
+    expect(
+      flatten(projectGraph.graph.topSort()),
+      'package graph should have another-addon first'
+    ).toEqual(['second-addon', 'first-addon', 'app-template']);
   });
 
   test('should stub a GraphNode and backfill for only addons', async () => {
@@ -429,12 +434,12 @@ describe('EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir, { eager: false });
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, { eager: false });
 
     const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
 
-    const firstAddonNode = m.addPackageToGraph(firstAddonPackage);
-    const addonOptions = { parent: firstAddonNode, project: m };
+    const firstAddonNode = projectGraph.addPackageToGraph(firstAddonPackage);
+    const addonOptions = { parentNode: firstAddonNode, projectGraph: projectGraph };
     firstAddonPackage.getModuleGraph(addonOptions);
 
     expect(firstAddonNode.content.synthetic).toBeFalsy();
@@ -442,14 +447,14 @@ describe('EmberAppPackageGraph', () => {
       firstAddonNode.content.pkg?.getModuleGraph().getNode('addon/services/date.js')?.content.parsed
     ).toBe(true);
 
-    let secondAddonNode = m.graph.getNode(secondAddonName);
+    let secondAddonNode = projectGraph.graph.getNode(secondAddonName);
     expect(secondAddonNode?.content.synthetic).toBe(true);
 
     const secondAddonPackage = new EmberAddonPackage(
       join(project.baseDir, `lib/${secondAddonName}`)
     );
 
-    secondAddonNode = m.addPackageToGraph(secondAddonPackage);
+    secondAddonNode = projectGraph.addPackageToGraph(secondAddonPackage);
     expect(secondAddonNode.content.synthetic).toBeFalsy();
 
     expect(
@@ -457,10 +462,10 @@ describe('EmberAppPackageGraph', () => {
       'some-addon should depend on another-addon'
     ).toBe(true);
 
-    expect(flatten(m.graph.topSort()), 'package graph should have another-addon first').toEqual([
-      'second-addon',
-      'first-addon',
-    ]);
+    expect(
+      flatten(projectGraph.graph.topSort()),
+      'package graph should have another-addon first'
+    ).toEqual(['second-addon', 'first-addon']);
   });
 
   test('should stub a GraphNode and backfill when moduleName differs from packageName', async () => {
@@ -544,7 +549,10 @@ describe('EmberAppPackageGraph', () => {
     const emberAppPackage = new EmberAppPackage(project.baseDir);
     const appNode = projectGraph.addPackageToGraph(emberAppPackage, false);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    const options: EmberAppPackageGraphOptions = {
+      parentNode: appNode,
+      projectGraph: projectGraph,
+    };
     emberAppPackage.getModuleGraph(options);
 
     // Validate that there is a syntehtic node to firstAddon and that there

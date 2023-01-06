@@ -18,6 +18,7 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(rootDir, { entrypoint: 'depends-on-foo.js' });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
+      // Should not include index.js as it is not in the entrypoint's import graph.
       expect(relativePaths).toStrictEqual(['foo.js', 'depends-on-foo.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
@@ -28,10 +29,12 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual([
+        'packages/blorp/build.js',
         'packages/blorp/lib/impl.js',
         'packages/blorp/index.js',
         'packages/foo/lib/a.js',
         'packages/foo/index.js',
+        'some-util.js',
       ]);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });

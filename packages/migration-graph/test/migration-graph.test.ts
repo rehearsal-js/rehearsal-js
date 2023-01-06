@@ -35,6 +35,25 @@ describe('migration-graph', () => {
       ).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
+    test('library with loose files in root', () => {
+      const baseDir = getLibrary('library-with-loose-files');
+      const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
+
+      expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
+      expect(projectGraph.sourceType).toBe(SourceType.Library);
+      expect(sourceType).toBe(SourceType.Library);
+      expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
+      expect(
+        flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+      ).toStrictEqual([
+        'Events.js',
+        'utils/Defaults.js',
+        'State.js',
+        'Widget.js',
+        'WidgetManager.js',
+      ]);
+    });
+
     test('workspace', () => {
       const baseDir = getLibrary('library-with-workspaces');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
@@ -51,23 +70,39 @@ describe('migration-graph', () => {
       const sortedPackages = projectGraph.graph.topSort();
 
       expect(flatten(sortedPackages)).toStrictEqual([
-        'some-library-with-workspace',
         '@something/baz',
         '@something/blorp',
         '@something/bar',
         '@something/foo',
+        'some-library-with-workspace', // root package is last
       ]);
 
-      expect(flatten(sortedPackages[0].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[1].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[2].content.pkg.getModuleGraph().topSort())).toStrictEqual([
+      const [packageNodeBaz, packageNodeBlorp, packageNodeBar, packageNodeFoo, packageNodeRoot] =
+        sortedPackages;
+
+      expect(packageNodeBaz.content.pkg.packageName).toBe('@something/baz');
+      expect(flatten(packageNodeBaz.content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
+
+      expect(packageNodeBlorp.content.pkg.packageName).toBe('@something/blorp');
+      expect(flatten(packageNodeBlorp.content.pkg.getModuleGraph().topSort())).toStrictEqual([
+        'build.js', // file contains out of package file dendency from root package.
         'lib/impl.js',
         'index.js',
       ]);
-      expect(flatten(sortedPackages[3].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[4].content.pkg.getModuleGraph().topSort())).toStrictEqual([
+
+      expect(packageNodeBar.adjacent.has(packageNodeBaz)).toBeTruthy();
+      expect(packageNodeBar.content.pkg.packageName).toBe('@something/bar');
+      expect(flatten(packageNodeBar.content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
+
+      expect(packageNodeFoo.content.pkg.packageName).toBe('@something/foo');
+      expect(flatten(packageNodeFoo.content.pkg.getModuleGraph().topSort())).toStrictEqual([
         'lib/a.js',
         'index.js',
+      ]);
+
+      expect(packageNodeRoot.content.pkg.packageName).toBe('some-library-with-workspace');
+      expect(flatten(packageNodeRoot.content.pkg.getModuleGraph().topSort())).toStrictEqual([
+        'some-util.js',
       ]);
     });
   });

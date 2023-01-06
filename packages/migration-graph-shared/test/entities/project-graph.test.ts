@@ -1,4 +1,4 @@
-import { getLibrary } from '@rehearsal/test-support';
+import { create, getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -44,6 +44,16 @@ describe('project-graph', () => {
     const somePackage = new Package(baseDir);
     projectGraph.addPackageToGraph(somePackage);
 
+    projectGraph.discover();
+
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
+  test('should ignore `.<name>.js files (eg. .babelrc.js or .eslint.config.js)', () => {
+    const baseDir = getLibrary('simple');
+
+    const projectGraph = new ProjectGraph(baseDir);
+    const somePackage = new Package(baseDir);
+    projectGraph.addPackageToGraph(somePackage);
     projectGraph.discover();
 
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
@@ -95,6 +105,101 @@ describe('project-graph', () => {
       expect(fooNode.adjacent.has(barNode)).toBe(true);
       expect(barNode.adjacent.has(bazNode)).toBe(true);
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
+    });
+    test('should not include a file out of the package scope', () => {
+      // const files = getFiles('library-with-workspaces');
+
+      const files = {
+        packages: {
+          branch: {
+            'package.json': `{
+              "name": "@some-workspace/branch",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": {
+                "@some-workspace/leaf": "*"
+              }
+            }`,
+            'index.js': `
+              import { do } from '@some-workspace/leaf';
+              import './lib/a';
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'a.js': `
+              // a.js
+              console.log('foo');        
+             `,
+            },
+          },
+          leaf: {
+            'package.json': `{
+              "name": "@some-workspace/leaf",
+              "version": "1.0.0",
+              "main": "index.js"
+            }`,
+            'index.js': `
+              import './lib/impl';
+              export function do() { console.log(''); }
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'impl.js': `
+                // impl.js
+              `,
+            },
+          },
+        },
+        'some-shared-util.js': '// something-shared',
+        'package.json': `
+          {
+            "name": "root-package",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT",
+            "workspaces": [
+              "packages/*"
+            ]
+          }    
+        `,
+      };
+
+      // mutate a file to include a file from the root directory.
+
+      const baseDir = create(files);
+
+      const projectGraph = new ProjectGraph(baseDir);
+
+      projectGraph.discover();
+
+      const rootNode = projectGraph.graph.getNode('root-package');
+      const branchNode = projectGraph.graph.getNode('@some-workspace/branch');
+      const leafNode = projectGraph.graph.getNode('@some-workspace/leaf');
+
+      // Validate edges
+      expect(rootNode.adjacent.has(branchNode)).toBe(true);
+      expect(rootNode.adjacent.has(leafNode)).toBe(true);
+      expect(branchNode.adjacent.has(leafNode)).toBe(true);
+
+      // Validate graph order correctness
+      const nodes = projectGraph.graph.topSort().map((node) => node.content.pkg);
+
+      expect(nodes.length).toBe(3);
+
+      expect(nodes[0].packageName).toBe('@some-workspace/leaf');
+      expect(flatten(nodes[0].getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
+        'lib/impl.js',
+        'index.js',
+      ]);
+      expect(nodes[1].packageName).toBe('@some-workspace/branch');
+      expect(flatten(nodes[1].getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
+        'lib/a.js',
+        'index.js',
+      ]);
+      expect(nodes[2].packageName).toBe('root-package');
+      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual(['some-shared-util.js']);
     });
     test.todo('should do something if a cycle is found', () => {
       expect(true).toBe(false);

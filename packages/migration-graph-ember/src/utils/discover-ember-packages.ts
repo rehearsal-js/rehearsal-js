@@ -1,7 +1,7 @@
-import { Package } from '@rehearsal/migration-graph-shared';
-import { EmberAddonPackage } from '../entities/ember-addon-package';
-import { EmberAppPackage } from '../entities/ember-app-package';
 import { getInternalPackages } from '../mappings-container';
+import type { Package } from '@rehearsal/migration-graph-shared';
+import type { EmberAddonPackage } from '../entities/ember-addon-package';
+import type { EmberAppPackage } from '..//entities/ember-app-package';
 
 export function discoverEmberPackages(
   rootDir: string

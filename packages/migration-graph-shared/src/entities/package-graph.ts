@@ -12,7 +12,8 @@ import {
 } from 'dependency-cruiser';
 import { Graph, GraphNode } from '../graph';
 import { Package } from './package';
-import type { ModuleNode } from '../types';
+import type { ModuleNode, PackageNode } from '../types';
+import type { ProjectGraph } from './project-graph';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 
@@ -27,6 +28,8 @@ function resolveRelative(baseDir: string, somePath: string): string {
 
 export type PackageGraphOptions = {
   entrypoint?: string;
+  parentNode?: GraphNode<PackageNode>;
+  projectGraph?: ProjectGraph;
 };
 
 export class PackageGraph {
@@ -48,9 +51,7 @@ export class PackageGraph {
 
   discover(): Graph<ModuleNode> {
     const baseDir = this.baseDir;
-    const { entrypoint } = {
-      ...this.options,
-    };
+    const { entrypoint } = this.options;
 
     const include = this.package.includePatterns || ['index.js'];
     const exclude = this.package.excludePatterns || [];
@@ -83,6 +84,7 @@ export class PackageGraph {
 
     output.modules.forEach((m: IModule) => {
       DEBUG_CALLBACK(m);
+
       if (isExternalModule(m)) {
         return;
       }
@@ -92,6 +94,13 @@ export class PackageGraph {
       // baseDir helps ensure we always get a file path relative to the baseDir.
 
       const sourcePath = resolveRelative(baseDir, m.source);
+
+      if (this.isFileExternalToPackage(sourcePath)) {
+        DEBUG_CALLBACK(`${sourcePath} is out of package, not adding to module graph.`);
+        // Should resolve path completely relativeto the project and find which package it belongs to.
+        // Ask project which package does this belong maybe create an edge?
+        return;
+      }
 
       // If a node exists we need to update it.
 
@@ -111,6 +120,13 @@ export class PackageGraph {
 
         const relativePath = resolveRelative(baseDir, d.resolved);
 
+        if (this.isFileExternalToPackage(relativePath)) {
+          DEBUG_CALLBACK(`${relativePath} is out of package, not adding to module graph.`);
+          // TODO Should resolve this path to a package in the project?
+          // Potential issues could be circulars within the project.
+          return;
+        }
+
         const dest = this.addNode({ key: relativePath, path: relativePath });
 
         this.#graph.addEdge(source, dest);
@@ -118,6 +134,10 @@ export class PackageGraph {
     });
 
     return this.#graph;
+  }
+
+  isFileExternalToPackage(relativePath: string): boolean {
+    return relativePath.startsWith('..');
   }
 
   get resolveOptions(): IResolveOptions {
