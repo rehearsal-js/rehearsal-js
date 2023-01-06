@@ -38,7 +38,7 @@ describe('EmberAppProjectGraph', () => {
   test('options.eager=true should create a synethic node and then backfill when packageName differs from addonName', async () => {
     // If a parent app is crawled first eagerly, it may create some synthetic nodes.
 
-    // Create an app where the app uses a service with ambigous coordinates
+    // Create an app where the app users a service with ambigous coordinates
 
     // package.name is @some-org/some-addon
 
