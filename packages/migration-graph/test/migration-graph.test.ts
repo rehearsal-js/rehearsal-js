@@ -51,24 +51,25 @@ describe('migration-graph', () => {
       const sortedPackages = projectGraph.graph.topSort();
 
       expect(flatten(sortedPackages)).toStrictEqual([
-        'some-library-with-workspace',
         '@something/baz',
         '@something/blorp',
         '@something/bar',
         '@something/foo',
+        'some-library-with-workspace', // Root Pacakge is last.
       ]);
 
-      expect(flatten(sortedPackages[0].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[1].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[2].content.pkg.getModuleGraph().topSort())).toStrictEqual([
+      const [package0, package1, package2, package3, package4] = sortedPackages.map(
+        (node) => node.content.pkg
+      );
+
+      expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
         'lib/impl.js',
         'index.js',
       ]);
-      expect(flatten(sortedPackages[3].content.pkg.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(sortedPackages[4].content.pkg.getModuleGraph().topSort())).toStrictEqual([
-        'lib/a.js',
-        'index.js',
-      ]);
+      expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([]);
     });
   });
 
