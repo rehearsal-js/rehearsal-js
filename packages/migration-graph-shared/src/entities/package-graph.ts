@@ -52,8 +52,8 @@ export class PackageGraph {
       ...this.options,
     };
 
-    const include = this.package.includePatterns || ['index.js'];
-    const exclude = this.package.excludePatterns || [];
+    const include = this.package.includePatterns ? Array.from(this.package.includePatterns) : ['index.js'];
+    const exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
 
     const cruiseOptions: ICruiseOptions = {
       baseDir,
