@@ -93,8 +93,9 @@ export function getReportSummary(report: Report, migratedFileCount: number): str
     }
   });
   const totalErrorCount = report.items.length;
-  return `Migration Complete. ${migratedFileCount} JS ${
-    migratedFileCount === 1 ? 'file' : 'files'
-  } has been converted to TS. There are ${totalErrorCount} errors caught by rehearsal.\n
-  ${hintAddedCount} have been updated with @ts-expect-error @rehearsal TODO which need further manual check.`;
+
+  return `Migration Complete\n\n
+  ${migratedFileCount} JS ${migratedFileCount === 1 ? 'file' : 'files'} converted to TS\n
+  ${totalErrorCount} errors caught by rehearsal\n
+  ${hintAddedCount} @ts-expect-error @rehearsal TODO which need further manual check`;
 }

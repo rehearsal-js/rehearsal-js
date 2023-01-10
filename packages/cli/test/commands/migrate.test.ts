@@ -158,7 +158,7 @@ describe('migrate - JS to TS conversion', async () => {
     });
 
     // Test summary message
-    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
+    expect(result.stdout).toContain(`2 JS files converted to TS`);
 
     expect(readdirSync(basePath)).toContain('index.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
@@ -176,7 +176,7 @@ describe('migrate - JS to TS conversion', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toContain(`2 JS files has been converted to TS`);
+    expect(result.stdout).toContain(`2 JS files converted to TS`);
     expect(readdirSync(basePath)).toContain('depends-on-foo.ts');
     expect(readdirSync(basePath)).toContain('foo.ts');
 
@@ -261,7 +261,7 @@ describe('migrate - handle custom basePath', async () => {
     expect(result.stdout).toContain('Create tsconfig.json');
     expect(readdirSync(customBasePath)).toContain('tsconfig.json');
 
-    expect(result.stdout).toContain(`1 JS file has been converted to TS`);
+    expect(result.stdout).toContain(`1 JS file converted to TS`);
     expect(readdirSync(customBasePath)).toContain('index.ts');
     expect(readdirSync(customBasePath)).not.toContain('index.js');
 
