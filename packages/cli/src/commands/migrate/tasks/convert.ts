@@ -3,10 +3,11 @@ import { Logger } from 'winston';
 import { debug } from 'debug';
 import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
+import chalk from 'chalk';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
-import { determineProjectName, openInEditor, getPathToBinary } from '../../../utils';
+import { determineProjectName, openInEditor, getPathToBinary, prettyGitDiff } from '../../../utils';
 import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
@@ -58,7 +59,9 @@ export async function convertTask(
             const { stdout: diffOutput } = await execa('git', ['diff', tsFilePath]);
 
             // TODO: better diff with colors instead of using the output straight from git diff
-            const message = `Please view the migration changes for ${f} and select an option to continue:\n${diffOutput}`;
+            const message = `${chalk.yellow(
+              `Please view the migration changes for ${f} and select an option to continue:`
+            )}\n${prettyGitDiff(diffOutput)}`;
 
             while (!completed) {
               ctx.input = await task.prompt([
