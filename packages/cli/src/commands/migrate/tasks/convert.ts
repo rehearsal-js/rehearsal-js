@@ -15,12 +15,17 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
 export async function convertTask(
   options: MigrateCommandOptions,
-  logger: Logger
+  logger: Logger,
+  context?: MigrateCommandContext
 ): Promise<ListrTask> {
   return {
     title: 'Convert JS files to TS',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      // During interactive mode, if context is provide via external parameter, merge with existed
+      if (context) {
+        ctx = { ...ctx, ...context };
+      }
       const projectName = determineProjectName() || '';
       const { basePath } = options;
       const tscPath = await getPathToBinary('tsc');

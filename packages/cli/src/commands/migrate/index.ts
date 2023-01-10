@@ -57,21 +57,42 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     process.exit(0);
   }
 
+  const defaultListrOption = {
+    concurrent: false,
+    exitOnError: true,
+  };
+
   try {
-    await new Listr(
-      [
-        await initTask(options),
-        await depInstallTask(options),
-        await tsConfigTask(options),
-        await lintConfigTask(),
-        await createScriptsTask(options),
-        await convertTask(options, logger),
-      ],
-      {
-        concurrent: false,
-        exitOnError: true,
-      }
-    ).run();
+    if (options.interactive) {
+      const ctx = await new Listr(
+        [
+          await initTask(options),
+          await depInstallTask(options),
+          await tsConfigTask(options),
+          await lintConfigTask(),
+          await createScriptsTask(options),
+        ],
+        defaultListrOption
+      ).run();
+      // For issue #549, have to use simple renderer for the interactive edit flow
+      // previous ctx is needed for the isolated convertTask
+      await new Listr([await convertTask(options, logger, ctx)], {
+        renderer: 'simple',
+        ...defaultListrOption,
+      }).run();
+    } else {
+      await new Listr(
+        [
+          await initTask(options),
+          await depInstallTask(options),
+          await tsConfigTask(options),
+          await lintConfigTask(),
+          await createScriptsTask(options),
+          await convertTask(options, logger),
+        ],
+        defaultListrOption
+      ).run();
+    }
   } catch (e) {
     await resetFiles();
     logger.error(`${e}`);
