@@ -48,6 +48,36 @@ describe('Unit | Entities | Package', function () {
     });
   });
 
+  describe('includ/exclude patterns', () => {
+    test('defaults', () => {
+      const p = new Package(pathToPackage);
+      expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test', 'tests']));
+      expect(p.includePatterns).toStrictEqual(new Set(['index.js']));
+    });
+    test('options.excludePatterns ', () => {
+      const p = new Package(pathToPackage, { excludePatterns: ['dist', 'test-packages'] });
+      expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test-packages']));
+    });
+
+    test('options.includePatterns ', () => {
+      const p = new Package(pathToPackage, { includePatterns: ['src/**/*.js'] });
+      expect(p.includePatterns).toStrictEqual(new Set(['src/**/*.js']));
+    });
+
+    test('addExcludePattern', () => {
+      const p = new Package(pathToPackage);
+      p.addExcludePattern('test-packages');
+      expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test', 'tests', 'test-packages']));
+    });
+
+    test('addIncludePattern', () => {
+      const p = new Package(pathToPackage);
+      p.addIncludePattern('foo.js');
+      expect(p.includePatterns.has('foo.js')).toBeTruthy();
+      expect(p.includePatterns).toStrictEqual(new Set(['index.js', 'foo.js']));
+    });
+  });
+
   describe('mutation', function () {
     test('set packageName', () => {
       const p = new Package(pathToPackage);
