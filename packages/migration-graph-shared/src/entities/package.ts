@@ -80,7 +80,7 @@ export class Package implements IPackage {
     }
 
     this.#excludePatterns = new Set(['dist', 'test', 'tests']);
-    this.#includePatterns = new Set(['index.js']);
+    this.#includePatterns = new Set(['.']);
   }
 
   get excludePatterns(): Set<string> {

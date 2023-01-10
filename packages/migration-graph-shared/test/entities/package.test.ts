@@ -48,11 +48,11 @@ describe('Unit | Entities | Package', function () {
     });
   });
 
-  describe('includ/exclude patterns', () => {
+  describe('include/exclude patterns', () => {
     test('defaults', () => {
       const p = new Package(pathToPackage);
       expect(p.excludePatterns).toStrictEqual(new Set(['dist', 'test', 'tests']));
-      expect(p.includePatterns).toStrictEqual(new Set(['index.js']));
+      expect(p.includePatterns).toStrictEqual(new Set(['.']));
     });
 
     test('options.excludePatterns ', () => {
@@ -82,10 +82,10 @@ describe('Unit | Entities | Package', function () {
       const p = new Package(pathToPackage);
       p.addIncludePattern('foo.js');
       expect(p.includePatterns.has('foo.js')).toBeTruthy();
-      expect(p.includePatterns).toStrictEqual(new Set(['index.js', 'foo.js']));
+      expect(p.includePatterns).toStrictEqual(new Set(['.', 'foo.js']));
 
       p.addIncludePattern('file1', 'file2');
-      expect(p.includePatterns).toStrictEqual(new Set(['index.js', 'foo.js', 'file1', 'file2']));
+      expect(p.includePatterns).toStrictEqual(new Set(['.', 'foo.js', 'file1', 'file2']));
     });
   });
 
