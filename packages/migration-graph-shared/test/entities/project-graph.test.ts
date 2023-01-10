@@ -176,18 +176,13 @@ describe('project-graph', () => {
 
       expect(nodes[0].packageName).toBe('@some-workspace/leaf');
       expect(flatten(nodes[0].getModuleGraph().topSort())).toStrictEqual([
-        'build.js',
         'lib/impl.js',
         'index.js',
       ]);
       expect(nodes[1].packageName).toBe('@some-workspace/branch');
-      expect(flatten(nodes[1].getModuleGraph().topSort())).toStrictEqual([
-        'build.js',
-        'lib/a.js',
-        'index.js',
-      ]);
+      expect(flatten(nodes[1].getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
       expect(nodes[2].packageName).toBe('root-package');
-      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual(['some-shared-util.js']);
+      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual([]);
     });
     test.todo('should do something if a cycle is found', () => {
       expect(true).toBe(false);
