@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { execSync } from 'child_process';
@@ -23,6 +24,24 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
+type MigratePlugins = Array<
+  typeof LintPlugin | typeof DiagnosticFixPlugin | typeof DiagnosticCheckPlugin
+>;
+
+type ProcessFilesInput = {
+  fileNames: string[];
+  basePath: string;
+  plugins: MigratePlugins;
+  reporter: Reporter;
+  listrTask: ListrContext;
+  service: RehearsalService;
+  logger?: Logger;
+};
+
+const noop = (): void => {
+  // noop
+};
+
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || ['index.js'];
@@ -30,9 +49,15 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
   // output is only for tests
-  const listrTask = input.task || { output: '' };
+  const listrTask: ListrContext = input.task || { output: '' };
 
-  const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin, LintPlugin];
+  const plugins: MigratePlugins = [
+    LintPlugin,
+    DiagnosticFixPlugin,
+    LintPlugin,
+    DiagnosticCheckPlugin,
+    LintPlugin,
+  ];
 
   logger?.debug('migration started');
   logger?.debug(`Base path: ${basePath}`);
@@ -66,6 +91,37 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const service = new RehearsalService(options, fileNames);
 
+  for await (const _ of processFiles({
+    fileNames,
+    basePath,
+    plugins,
+    listrTask,
+    service,
+    reporter,
+    logger,
+  })) {
+    noop();
+  }
+
+  return {
+    basePath,
+    configFile,
+    migratedFiles: fileNames,
+  };
+}
+
+// async generator to process files
+// since this is a long running process, we need to yield to the event loop
+// so we dont block the main thread and can handle SIGINT
+async function* processFiles({
+  fileNames,
+  basePath,
+  plugins,
+  listrTask,
+  service,
+  reporter,
+  logger,
+}: ProcessFilesInput): AsyncGenerator<void> {
   for (const fileName of fileNames) {
     listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
 
@@ -79,17 +135,13 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
     // Save file to the filesystem
     allChangedFiles.forEach((file) => service.saveFile(file));
-  }
 
-  return {
-    basePath,
-    configFile,
-    migratedFiles: fileNames,
-  };
+    yield;
+  }
 }
 
 // Rename files to TS extension.
-export function gitMove(
+function gitMove(
   sourceFiles: string[],
   listrTask: ListrContext,
   basePath: string,
