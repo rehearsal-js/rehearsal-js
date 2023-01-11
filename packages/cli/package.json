@@ -33,6 +33,7 @@
     "@rehearsal/migration-graph": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/upgrade": "workspace:*",
+    "chalk": "^4.1.2",
     "commander": "^9.4.0",
     "compare-versions": "^5.0.1",
     "debug": "^4.3.2",

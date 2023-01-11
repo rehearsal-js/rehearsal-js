@@ -110,6 +110,7 @@ importers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/upgrade': workspace:*
       '@types/which': ^2.0.1
+      chalk: ^4.1.2
       commander: ^9.4.0
       compare-versions: ^5.0.1
       debug: ^4.3.2
@@ -133,6 +134,7 @@ importers:
       '@rehearsal/migration-graph': link:../migration-graph
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/upgrade': link:../upgrade
+      chalk: 4.1.2
       commander: 9.4.0
       compare-versions: 5.0.1
       debug: 4.3.4
