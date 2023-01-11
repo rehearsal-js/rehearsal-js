@@ -9,6 +9,7 @@ exports[`Test reporter > addItem 1`] = `
     \\"basePath\\": \\"/base/path\\",
     \\"commandName\\": \\"@rehearsal/reporter\\"
   },
+  \\"fixedItemCount\\": 4,
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
@@ -151,6 +152,7 @@ exports[`Test reporter > getItemsByFile 1`] = `
 
 exports[`Test reporter > load 1`] = `
 {
+  "fixedItemCount": 4,
   "items": [
     {
       "analysisTarget": "/base/path/file1.ts",
@@ -236,6 +238,7 @@ exports[`Test reporter > print, json 1`] = `
     \\"basePath\\": \\"/base/path\\",
     \\"commandName\\": \\"@rehearsal/reporter\\"
   },
+  \\"fixedItemCount\\": 4,
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
@@ -343,6 +346,7 @@ exports[`Test reporter > save 1`] = `
     \\"basePath\\": \\"/base/path\\",
     \\"commandName\\": \\"@rehearsal/reporter\\"
   },
+  \\"fixedItemCount\\": 4,
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",

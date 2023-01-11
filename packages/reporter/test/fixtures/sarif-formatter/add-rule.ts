@@ -8,6 +8,7 @@ const addRuleData: Report = {
     basePath: "/reporter/test/sarif-formatter",
     commandName: "@rehearsal/reporter"
   },
+  fixedItemCount: 5,
   items: [
     {
       analysisTarget: "add-rule-1.ts",

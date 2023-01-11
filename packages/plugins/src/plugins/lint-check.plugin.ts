@@ -3,7 +3,7 @@ import { ESLint } from 'eslint';
 import { debug } from 'debug';
 import { setProcessTTYto } from '../helpers';
 
-const DEBUG_CALLBACK = debug('rehearsal:plugins:no-any');
+const DEBUG_CALLBACK = debug('rehearsal:plugins:lint-check');
 
 export class LintCheckPlugin extends Plugin {
   async run(fileName: string): PluginResult {

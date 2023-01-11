@@ -51,6 +51,7 @@ export interface LintErrorLike {
 export type Report = {
   summary: ReportSummary;
   items: ReportItem[];
+  fixedItemCount: number;
 };
 
 export type ReportFormatter = (report: Report) => string;

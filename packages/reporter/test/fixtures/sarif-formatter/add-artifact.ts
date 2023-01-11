@@ -8,6 +8,7 @@ const addArtifactData: Report = {
     basePath: "/reporter/test/sarif-formatter",
     commandName: "@rehearsal/reporter"
   },
+  fixedItemCount: 5,
   items: [
     {
       analysisTarget: "add-artifact-2.ts",
