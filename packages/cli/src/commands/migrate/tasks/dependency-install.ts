@@ -13,8 +13,20 @@ export async function depInstallTask(options: MigrateCommandOptions): Promise<Li
         task.output = `Install dependencies from config`;
         await ctx.userConfig.install();
       }
-      // even if typescript is installed, exec this and get the latest patch
-      await addDep(['typescript'], true, { cwd: options.basePath });
+      // even if dependencies are installed, exec this and get the latest patch
+      await addDep(
+        [
+          'typescript',
+          '@typescript-eslint/eslint-plugin',
+          '@typescript-eslint/parser',
+          'eslint-plugin-prettier',
+          'prettier',
+          'eslint',
+          'eslint-config-prettier',
+        ],
+        true,
+        { cwd: options.basePath }
+      );
     },
   };
 }

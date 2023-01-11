@@ -1,6 +1,7 @@
 import { type PluginResult, Plugin } from '@rehearsal/service';
 import { debug } from 'debug';
 import {
+  DiagnosticCategory,
   findAncestor,
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
@@ -40,8 +41,8 @@ export class DiagnosticCheckPlugin extends Plugin {
 
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+      this.reporter.addTSItem(diagnostic, diagnostic.node, location, hint, helpUrl, this.addHints);
 
-      this.reporter.addItem(diagnostic, diagnostic.node, location, hint, helpUrl, this.addHints);
       diagnostics = this.getDiagnostics(fileName, this.commentTag);
     }
     return Array.from(allFixedFiles);
@@ -71,7 +72,9 @@ export class DiagnosticCheckPlugin extends Plugin {
       }))
       .filter(
         (diagnostic) =>
-          this.isValidDiagnostic(diagnostic) && this.hasNotAddedDiagnosticComment(diagnostic, tag)
+          this.isValidDiagnostic(diagnostic) &&
+          this.isErrorDiagnostic(diagnostic) &&
+          this.hasNotAddedDiagnosticComment(diagnostic, tag)
       );
   }
 
@@ -168,5 +171,9 @@ export class DiagnosticCheckPlugin extends Plugin {
 
   isValidDiagnostic(diagnostic: DiagnosticWithContext): boolean {
     return !!diagnostic.node;
+  }
+
+  isErrorDiagnostic(diagnostic: DiagnosticWithContext): boolean {
+    return diagnostic.category === DiagnosticCategory.Error;
   }
 }

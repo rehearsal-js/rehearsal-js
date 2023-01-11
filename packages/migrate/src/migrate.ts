@@ -2,7 +2,12 @@ import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { execSync } from 'child_process';
 import { RehearsalService } from '@rehearsal/service';
-import { DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin } from '@rehearsal/plugins';
+import {
+  DiagnosticFixPlugin,
+  LintFixPlugin,
+  DiagnosticCheckPlugin,
+  LintCheckPlugin,
+} from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
@@ -32,7 +37,14 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   // output is only for tests
   const listrTask = input.task || { output: '' };
 
-  const plugins = [LintPlugin, DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin, LintPlugin];
+  const plugins = [
+    LintFixPlugin,
+    DiagnosticFixPlugin,
+    LintFixPlugin,
+    DiagnosticCheckPlugin,
+    LintFixPlugin,
+    LintCheckPlugin,
+  ];
 
   logger?.debug('migration started');
   logger?.debug(`Base path: ${basePath}`);

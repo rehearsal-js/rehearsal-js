@@ -12,14 +12,15 @@ export type EmberPackageOptions = PackageOptions;
 
 export class EmberAppPackage extends Package implements IPackage {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
-    const excludePatterns = [
+    super(pathToPackage, { ...options });
+
+    this.excludePatterns = new Set([
       // files
       '.ember-cli.js',
       'ember-cli-build.js',
       'ember-config.js',
       'index.js',
       'testem.js',
-
       // Directories
       'dist',
       'config',
@@ -27,11 +28,9 @@ export class EmberAppPackage extends Package implements IPackage {
       'tests',
       '@ember/*',
       'public',
-    ];
+    ]);
 
-    const includePatterns = ['app'];
-
-    super(pathToPackage, { excludePatterns, includePatterns, ...options });
+    this.includePatterns = new Set(['app']);
   }
 
   get addonPaths(): Array<string> {

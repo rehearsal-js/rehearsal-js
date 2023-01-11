@@ -6,6 +6,7 @@ import { valid } from 'semver';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
+import chalk from 'chalk';
 
 import findup = require('findup-sync');
 import execa = require('execa');
@@ -460,4 +461,21 @@ export async function openInEditor(filePath: string): Promise<void> {
       'Cannot find default editor in environment variables, please set $EDITOR and try again.'
     );
   }
+}
+
+/**
+ * Simple git diff prettier, red for deletion and green for addition
+ */
+export function prettyGitDiff(text: string): string {
+  const lines = text.split('\n');
+  return lines
+    .map((line) => {
+      if (line[0] === '+') {
+        return chalk.bgGreen(line);
+      } else if (line[0] === '-') {
+        return chalk.bgRed(line);
+      }
+      return line;
+    })
+    .join('\n');
 }

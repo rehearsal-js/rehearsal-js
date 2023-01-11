@@ -1,0 +1,15 @@
+function capitalize(str: string): string {
+  return str[0].toUpperCase() + str.substring(1);
+}
+
+export function doSomething(args, name){
+  if (!name) {
+    return;
+  }
+  if (args && args.length < 2) {
+    return;
+  }
+  return capitalize(name);
+}
+
+

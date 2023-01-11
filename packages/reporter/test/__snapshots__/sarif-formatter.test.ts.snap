@@ -25,6 +25,14 @@ exports[`Test sarif-formatter > should add a rule only if the rule does not exis
       \\"text\\": \\"Argument of type 'number' is not assignable to parameter of type 'string'.\\"
     },
     \\"helpUri\\": \\"\\"
+  },
+  {
+    \\"id\\": \\"@typescript-eslint/no-explicit-any\\",
+    \\"name\\": \\"@typescript-eslint/no-explicit-any\\",
+    \\"shortDescription\\": {
+      \\"text\\": \\"Unexpected any. Specify a different type.\\"
+    },
+    \\"helpUri\\": \\"\\"
   }
 ]"
 `;
@@ -125,6 +133,34 @@ exports[`Test sarif-formatter > should have the correct number of results in ord
             \\"startColumn\\": 10,
             \\"endLine\\": 10,
             \\"endColumn\\": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+    \\"ruleIndex\\": 3,
+    \\"level\\": \\"error\\",
+    \\"kind\\": \\"fail\\",
+    \\"message\\": {
+      \\"text\\": \\"Unexpected any. Specify a different type.\\"
+    },
+    \\"analysisTarget\\": {
+      \\"uri\\": \\"add-rule-5.ts\\"
+    },
+    \\"locations\\": [
+      {
+        \\"physicalLocation\\": {
+          \\"artifactLocation\\": {
+            \\"uri\\": \\"add-rule-5.ts\\",
+            \\"index\\": 1
+          },
+          \\"region\\": {
+            \\"startLine\\": 7,
+            \\"startColumn\\": 1,
+            \\"endLine\\": 4,
+            \\"endColumn\\": 7
           }
         }
       }

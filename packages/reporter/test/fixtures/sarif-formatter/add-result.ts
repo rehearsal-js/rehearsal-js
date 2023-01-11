@@ -11,8 +11,9 @@ const addResultData: Report = {
   items: [
     {
       analysisTarget: "add-result-1.ts",
-      errorCode: 6133,
+      ruleId: "TS6133",
       category: "Error",
+      type: 0,
       message: "'react' is declared but its value is never read.",
       hint: "The declaration 'react' is never read or used. Remove the declaration or use it.",
       nodeKind: "ImportDeclaration",
@@ -26,8 +27,9 @@ const addResultData: Report = {
     },
     {
       analysisTarget: "add-result-1.ts",
-      errorCode: 2322,
+      ruleId: "TS2322",
       category: "Error",
+      type: 0,
       message: "Type 'string' is not assignable to type 'number'.",
       hint: "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
       nodeKind: "Identifier",
@@ -41,8 +43,9 @@ const addResultData: Report = {
     },
     {
       analysisTarget: "add-result-1.ts",
-      errorCode: 2345,
+      ruleId: "TS2345",
       category: "Error",
+      type: 0,
       message: "Argument of type '{}' is not assignable to parameter of type 'string'.",
       hint: "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
       nodeKind: "ObjectLiteralExpression",
@@ -52,6 +55,22 @@ const addResultData: Report = {
         startColumn: 10,
         endLine: 10,
         endColumn: 5,
+      }
+    },
+    {
+      analysisTarget: "add-rule-5.ts",
+      ruleId: "@typescript-eslint/no-explicit-any",
+      category: "Error",
+      type: 1,
+      message: "Unexpected any. Specify a different type.",
+      hint: "Unexpected any. Specify a different type.",
+      nodeKind: "TSAnyKeyword",
+      nodeText: "",
+      nodeLocation: {
+        startLine: 7,
+        startColumn: 1,
+        endLine: 4,
+        endColumn: 7,
       }
     }
   ]

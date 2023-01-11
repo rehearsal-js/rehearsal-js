@@ -86,7 +86,7 @@ describe('Test reporter', function () {
     const location = { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 };
     const hint = 'This is the hint.';
 
-    reporter!.addItem(mockDiagnostic, mockNode, location, hint);
+    reporter!.addTSItem(mockDiagnostic, mockNode, location, hint);
 
     const testAddItemFile = resolve(basePath, 'test-add-item.json');
 
@@ -98,7 +98,7 @@ describe('Test reporter', function () {
   });
 
   test('getFileNames', async () => {
-    assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts']);
+    assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts', '/base/path/file2.ts']);
   });
 
   test('getItemsByFile', async () => {

@@ -4,7 +4,7 @@ import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
 import { isWorkspace } from '../../src/utils/workspace';
 import { RootPackage } from './root-package';
-import { Package, PackageOptions } from './package';
+import { Package } from './package';
 
 import type { PackageNode } from '../types';
 
@@ -144,14 +144,12 @@ export class ProjectGraph {
   }
 
   discover(): Array<Package> {
-    const rootOptions: PackageOptions = {};
+    // Add root package to graph
+    const rootPackage = new RootPackage(this.rootDir);
 
     if (this.#entrypoint) {
-      rootOptions.includePatterns = [this.#entrypoint];
+      rootPackage.includePatterns = new Set([this.#entrypoint]);
     }
-
-    // Add root package to graph
-    const rootPackage = new RootPackage(this.rootDir, rootOptions);
 
     const rootPackageNode = this.addPackageToGraph(rootPackage, false);
 

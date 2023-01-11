@@ -37,8 +37,8 @@ type InternalAddonPackages = MappingsLookup;
 
 interface InternalState {
   addonPackages: any;
-  externalAddonPackages: ExternalAddonPackages;
-  internalAddonPackages: InternalAddonPackages;
+  externalAddonPackages?: ExternalAddonPackages;
+  internalAddonPackages?: InternalAddonPackages;
 }
 
 class InternalState implements InternalState {
@@ -46,15 +46,11 @@ class InternalState implements InternalState {
   moduleName: string | undefined;
   emberAddonName: string | undefined;
   packageMain: string | undefined;
-  externalAddonPackages: ExternalAddonPackages;
-  internalAddonPackages: InternalAddonPackages;
+  externalAddonPackages?: ExternalAddonPackages;
+  internalAddonPackages?: InternalAddonPackages;
 
   constructor() {
     this.addonPackages = {};
-    this.externalAddonPackages = {
-      mappingsByAddonName: {},
-      mappingsByLocation: {},
-    };
   }
 
   reset(): void {
@@ -63,6 +59,10 @@ class InternalState implements InternalState {
     this.emberAddonName = undefined;
     this.addonPackages = {};
     this.externalAddonPackages = {
+      mappingsByAddonName: {},
+      mappingsByLocation: {},
+    };
+    this.internalAddonPackages = {
       mappingsByAddonName: {},
       mappingsByLocation: {},
     };
