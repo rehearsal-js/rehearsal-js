@@ -5,9 +5,9 @@ import { execSync } from 'child_process';
 import { RehearsalService } from '@rehearsal/service';
 import { DiagnosticFixPlugin, LintPlugin, DiagnosticCheckPlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import { ListrContext } from 'listr2';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
-import type { ListrContext } from 'listr2';
 
 export type MigrateInput = {
   basePath: string;
@@ -35,6 +35,15 @@ type ProcessFilesInput = {
   reporter: Reporter;
   listrTask: ListrContext;
   service: RehearsalService;
+  logger?: Logger;
+};
+
+type ProcessPluginsInput = {
+  allChangedFiles: Set<string>;
+  fileName: string;
+  plugins: MigratePlugins;
+  service: RehearsalService;
+  reporter: Reporter;
   logger?: Logger;
 };
 
@@ -91,7 +100,9 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const service = new RehearsalService(options, fileNames);
 
-  for await (const _ of processFiles({
+  // implement an iterator with next() for processFiles
+  // so we can yield to the event loop
+  const fileProcesser = processFiles({
     fileNames,
     basePath,
     plugins,
@@ -99,8 +110,23 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     service,
     reporter,
     logger,
-  })) {
-    noop();
+  });
+
+  // drain the iterator to process all files so we can yield to the event loop
+  for await (const _ of fileProcesser) {
+    // noop();
+    const next = async (): Promise<void> => {
+      const { done } = await fileProcesser.next();
+
+      // before we yield to the event loop we need to handle SIGINT
+      // so we can exit gracefully
+
+      if (!done) {
+        setImmediate(next);
+      }
+    };
+
+    await next();
   }
 
   return {
@@ -125,12 +151,17 @@ async function* processFiles({
   for (const fileName of fileNames) {
     listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
 
-    let allChangedFiles: Set<string> = new Set();
+    const allChangedFiles: Set<string> = new Set();
 
-    for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, reporter, logger);
-      const changedFiles = await plugin.run(fileName);
-      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
+    for await (const _ of processPlugins({
+      allChangedFiles,
+      fileName,
+      plugins,
+      service,
+      reporter,
+      logger,
+    })) {
+      noop();
     }
 
     // Save file to the filesystem
@@ -138,6 +169,25 @@ async function* processFiles({
 
     yield;
   }
+}
+
+async function* processPlugins({
+  allChangedFiles,
+  fileName,
+  plugins,
+  service,
+  reporter,
+  logger,
+}: ProcessPluginsInput): AsyncGenerator<void> {
+  for (const pluginClass of plugins) {
+    const plugin = new pluginClass(service, reporter, logger);
+    const changedFiles = await plugin.run(fileName);
+    allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
+
+    yield;
+  }
+
+  return allChangedFiles;
 }
 
 // Rename files to TS extension.

@@ -18,10 +18,6 @@ import type { MigrateCommandOptions } from '../../types';
 
 export const migrateCommand = new Command();
 
-process.on('SIGINT', () => {
-  console.log('Received SIGINT. Press Control-D to exit.');
-});
-
 migrateCommand
   .name('migrate')
   .description('migrate a javascript project to typescript')
