@@ -9,6 +9,10 @@ import { ListrContext } from 'listr2';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
 
+const noop = (): void => {
+  // noop
+};
+
 export type MigrateInput = {
   basePath: string;
   sourceFiles: Array<string>;
@@ -28,7 +32,7 @@ type MigratePlugins = Array<
   typeof LintPlugin | typeof DiagnosticFixPlugin | typeof DiagnosticCheckPlugin
 >;
 
-type ProcessFilesInput = {
+export type ProcessFilesInput = {
   fileNames: string[];
   basePath: string;
   plugins: MigratePlugins;
@@ -45,10 +49,6 @@ type ProcessPluginsInput = {
   service: RehearsalService;
   reporter: Reporter;
   logger?: Logger;
-};
-
-const noop = (): void => {
-  // noop
 };
 
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
@@ -100,9 +100,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const service = new RehearsalService(options, fileNames);
 
-  // implement an iterator with next() for processFiles
-  // so we can yield to the event loop
-  const fileProcesser = processFiles({
+  await processFilesIterator({
     fileNames,
     basePath,
     plugins,
@@ -112,23 +110,6 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     logger,
   });
 
-  // drain the iterator to process all files so we can yield to the event loop
-  for await (const _ of fileProcesser) {
-    // noop();
-    const next = async (): Promise<void> => {
-      const { done } = await fileProcesser.next();
-
-      // before we yield to the event loop we need to handle SIGINT
-      // so we can exit gracefully
-
-      if (!done) {
-        setImmediate(next);
-      }
-    };
-
-    await next();
-  }
-
   return {
     basePath,
     configFile,
@@ -136,10 +117,42 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   };
 }
 
+// drain the iterator to process all files so we can yield to the event loop
+export async function processFilesIterator({
+  fileNames,
+  basePath,
+  plugins,
+  listrTask,
+  service,
+  reporter,
+  logger,
+}: ProcessFilesInput): Promise<void> {
+  const fileIteratorProcesser = processFilesGenerator({
+    fileNames,
+    basePath,
+    plugins,
+    listrTask,
+    service,
+    reporter,
+    logger,
+  });
+
+  for await (const _ of fileIteratorProcesser) {
+    const next = async (): Promise<void> => {
+      const { done } = await fileIteratorProcesser.next();
+      if (!done) {
+        setImmediate(next);
+      }
+    };
+
+    await next();
+  }
+}
+
 // async generator to process files
 // since this is a long running process, we need to yield to the event loop
-// so we dont block the main thread and can handle SIGINT
-async function* processFiles({
+// so we dont block the main thread
+export async function* processFilesGenerator({
   fileNames,
   basePath,
   plugins,
@@ -153,15 +166,26 @@ async function* processFiles({
 
     const allChangedFiles: Set<string> = new Set();
 
-    for await (const _ of processPlugins({
+    const pluginIteratorProcesser = processPlugins({
       allChangedFiles,
       fileName,
       plugins,
       service,
       reporter,
       logger,
-    })) {
-      noop();
+    });
+
+    for await (const _ of pluginIteratorProcesser) {
+      // noop();
+      const next = async (): Promise<void> => {
+        const { done } = await pluginIteratorProcesser.next();
+
+        if (!done) {
+          setImmediate(next);
+        }
+      };
+
+      await next();
     }
 
     // Save file to the filesystem
@@ -179,9 +203,14 @@ async function* processPlugins({
   reporter,
   logger,
 }: ProcessPluginsInput): AsyncGenerator<void> {
+  setTimeout(() => {
+    noop();
+  }, 10);
+
   for (const pluginClass of plugins) {
     const plugin = new pluginClass(service, reporter, logger);
     const changedFiles = await plugin.run(fileName);
+
     allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
 
     yield;
