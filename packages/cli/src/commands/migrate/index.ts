@@ -66,7 +66,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     await initTask(options),
     await depInstallTask(options),
     await tsConfigTask(options),
-    await lintConfigTask(),
+    await lintConfigTask(options),
     await createScriptsTask(options),
   ];
 

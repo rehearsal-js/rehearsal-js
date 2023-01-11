@@ -50,6 +50,22 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
           \\"endColumn\\": 26
         }
       }
+    },
+    {
+      \\"engineId\\": \\"rehearsal-ts\\",
+      \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+      \\"severity\\": \\"BLOCKER\\",
+      \\"type\\": \\"BUG\\",
+      \\"primaryLocation\\": {
+        \\"message\\": \\"Unexpected any. Specify a different type.\\",
+        \\"filePath\\": \\"/base/path/file2.ts\\",
+        \\"textRange\\": {
+          \\"startLine\\": 1,
+          \\"startColumn\\": 1,
+          \\"endLine\\": 1,
+          \\"endColumn\\": 12
+        }
+      }
     }
   ]
 }"

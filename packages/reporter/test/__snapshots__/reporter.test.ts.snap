@@ -12,8 +12,9 @@ exports[`Test reporter > addItem 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 6133,
+      \\"ruleId\\": \\"TS6133\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
       \\"nodeKind\\": \\"ImportDeclaration\\",
@@ -27,8 +28,9 @@ exports[`Test reporter > addItem 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2322,
+      \\"ruleId\\": \\"TS2322\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
       \\"nodeKind\\": \\"Identifier\\",
@@ -42,8 +44,9 @@ exports[`Test reporter > addItem 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2345,
+      \\"ruleId\\": \\"TS2345\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
@@ -56,8 +59,25 @@ exports[`Test reporter > addItem 1`] = `
       }
     },
     {
+      \\"analysisTarget\\": \\"/base/path/file2.ts\\",
+      \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+      \\"category\\": \\"Error\\",
+      \\"type\\": 1,
+      \\"message\\": \\"Unexpected any. Specify a different type.\\",
+      \\"hint\\": \\"Unexpected any. Specify a different type.\\",
+      \\"nodeKind\\": \\"TSAnyKeyword\\",
+      \\"nodeText\\": \\"\\",
+      \\"nodeLocation\\": {
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
+      }
+    },
+    {
       \\"analysisTarget\\": \\"testFile1.ts\\",
-      \\"errorCode\\": 1000,
+      \\"type\\": 0,
+      \\"ruleId\\": \\"TS1000\\",
       \\"category\\": \\"Error\\",
       \\"message\\": \\"unused variable\\",
       \\"hint\\": \\"This is the hint.\\",
@@ -81,7 +101,6 @@ exports[`Test reporter > getItemsByFile 1`] = `
   {
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
-    "errorCode": 6133,
     "hint": "The declaration 'react' is never read or used. Remove the declaration or use it.",
     "message": "'react' is declared but its value is never read.",
     "nodeKind": "ImportDeclaration",
@@ -92,11 +111,12 @@ exports[`Test reporter > getItemsByFile 1`] = `
       "startLine": 1,
     },
     "nodeText": "import react from 'react';",
+    "ruleId": "TS6133",
+    "type": 0,
   },
   {
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
-    "errorCode": 2322,
     "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
     "message": "Type 'string' is not assignable to type 'number'.",
     "nodeKind": "Identifier",
@@ -107,11 +127,12 @@ exports[`Test reporter > getItemsByFile 1`] = `
       "startLine": 1,
     },
     "nodeText": "a",
+    "ruleId": "TS2322",
+    "type": 0,
   },
   {
     "analysisTarget": "/base/path/file1.ts",
     "category": "Error",
-    "errorCode": 2345,
     "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
     "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
     "nodeKind": "ObjectLiteralExpression",
@@ -122,6 +143,8 @@ exports[`Test reporter > getItemsByFile 1`] = `
       "startLine": 1,
     },
     "nodeText": "{}",
+    "ruleId": "TS2345",
+    "type": 0,
   },
 ]
 `;
@@ -132,7 +155,6 @@ exports[`Test reporter > load 1`] = `
     {
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
-      "errorCode": 6133,
       "hint": "The declaration 'react' is never read or used. Remove the declaration or use it.",
       "message": "'react' is declared but its value is never read.",
       "nodeKind": "ImportDeclaration",
@@ -143,11 +165,12 @@ exports[`Test reporter > load 1`] = `
         "startLine": 1,
       },
       "nodeText": "import react from 'react';",
+      "ruleId": "TS6133",
+      "type": 0,
     },
     {
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
-      "errorCode": 2322,
       "hint": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
       "message": "Type 'string' is not assignable to type 'number'.",
       "nodeKind": "Identifier",
@@ -158,11 +181,12 @@ exports[`Test reporter > load 1`] = `
         "startLine": 1,
       },
       "nodeText": "a",
+      "ruleId": "TS2322",
+      "type": 0,
     },
     {
       "analysisTarget": "/base/path/file1.ts",
       "category": "Error",
-      "errorCode": 2345,
       "hint": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
       "message": "Argument of type '{}' is not assignable to parameter of type 'string'.",
       "nodeKind": "ObjectLiteralExpression",
@@ -173,6 +197,24 @@ exports[`Test reporter > load 1`] = `
         "startLine": 1,
       },
       "nodeText": "{}",
+      "ruleId": "TS2345",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "/base/path/file2.ts",
+      "category": "Error",
+      "hint": "Unexpected any. Specify a different type.",
+      "message": "Unexpected any. Specify a different type.",
+      "nodeKind": "TSAnyKeyword",
+      "nodeLocation": {
+        "endColumn": 12,
+        "endLine": 1,
+        "startColumn": 1,
+        "startLine": 1,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "type": 1,
     },
   ],
   "summary": {
@@ -197,8 +239,9 @@ exports[`Test reporter > print, json 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 6133,
+      \\"ruleId\\": \\"TS6133\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
       \\"nodeKind\\": \\"ImportDeclaration\\",
@@ -212,8 +255,9 @@ exports[`Test reporter > print, json 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2322,
+      \\"ruleId\\": \\"TS2322\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
       \\"nodeKind\\": \\"Identifier\\",
@@ -227,8 +271,9 @@ exports[`Test reporter > print, json 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2345,
+      \\"ruleId\\": \\"TS2345\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
@@ -239,6 +284,22 @@ exports[`Test reporter > print, json 1`] = `
         \\"endLine\\": 1,
         \\"endColumn\\": 26
       }
+    },
+    {
+      \\"analysisTarget\\": \\"/base/path/file2.ts\\",
+      \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+      \\"category\\": \\"Error\\",
+      \\"type\\": 1,
+      \\"message\\": \\"Unexpected any. Specify a different type.\\",
+      \\"hint\\": \\"Unexpected any. Specify a different type.\\",
+      \\"nodeKind\\": \\"TSAnyKeyword\\",
+      \\"nodeText\\": \\"\\",
+      \\"nodeLocation\\": {
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
+      }
     }
   ]
 }"
@@ -247,7 +308,7 @@ exports[`Test reporter > print, json 1`] = `
 exports[`Test reporter > print, pull-request-md 1`] = `
 "### Summary:
 Typescript Version: 4.7.4
-Files Tested: 1
+Files Tested: 2
 
 ### Results:
 
@@ -264,6 +325,12 @@ Code: \`a\`
 **Error TS2345**: 'NEED TO BE FIXED MANUALLY'
 Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.
 Code: \`{}\`
+
+#### File: /file2.ts, issues: 1:
+
+**Error @typescript-eslint/no-explicit-any**: 'NEED TO BE FIXED MANUALLY'
+Unexpected any. Specify a different type.
+Code: \`\`
 "
 `;
 
@@ -279,8 +346,9 @@ exports[`Test reporter > save 1`] = `
   \\"items\\": [
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 6133,
+      \\"ruleId\\": \\"TS6133\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"'react' is declared but its value is never read.\\",
       \\"hint\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
       \\"nodeKind\\": \\"ImportDeclaration\\",
@@ -294,8 +362,9 @@ exports[`Test reporter > save 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2322,
+      \\"ruleId\\": \\"TS2322\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Type 'string' is not assignable to type 'number'.\\",
       \\"hint\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
       \\"nodeKind\\": \\"Identifier\\",
@@ -309,8 +378,9 @@ exports[`Test reporter > save 1`] = `
     },
     {
       \\"analysisTarget\\": \\"/base/path/file1.ts\\",
-      \\"errorCode\\": 2345,
+      \\"ruleId\\": \\"TS2345\\",
       \\"category\\": \\"Error\\",
+      \\"type\\": 0,
       \\"message\\": \\"Argument of type '{}' is not assignable to parameter of type 'string'.\\",
       \\"hint\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
       \\"nodeKind\\": \\"ObjectLiteralExpression\\",
@@ -320,6 +390,22 @@ exports[`Test reporter > save 1`] = `
         \\"startColumn\\": 10,
         \\"endLine\\": 1,
         \\"endColumn\\": 26
+      }
+    },
+    {
+      \\"analysisTarget\\": \\"/base/path/file2.ts\\",
+      \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+      \\"category\\": \\"Error\\",
+      \\"type\\": 1,
+      \\"message\\": \\"Unexpected any. Specify a different type.\\",
+      \\"hint\\": \\"Unexpected any. Specify a different type.\\",
+      \\"nodeKind\\": \\"TSAnyKeyword\\",
+      \\"nodeText\\": \\"\\",
+      \\"nodeLocation\\": {
+        \\"startLine\\": 1,
+        \\"startColumn\\": 1,
+        \\"endLine\\": 1,
+        \\"endColumn\\": 12
       }
     }
   ]

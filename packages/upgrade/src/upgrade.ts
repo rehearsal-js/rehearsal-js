@@ -1,9 +1,10 @@
 import { dirname, resolve } from 'path';
 import {
   DiagnosticFixPlugin,
-  LintPlugin,
+  LintFixPlugin,
   ReRehearsePlugin,
   DiagnosticCheckPlugin,
+  LintCheckPlugin,
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
 import { RehearsalService } from '@rehearsal/service';
@@ -37,11 +38,12 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   const plugins = [
     ReRehearsePlugin,
-    LintPlugin,
+    LintFixPlugin,
     DiagnosticFixPlugin,
-    LintPlugin,
+    LintFixPlugin,
     DiagnosticCheckPlugin,
-    LintPlugin,
+    LintFixPlugin,
+    LintCheckPlugin,
   ];
 
   DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);

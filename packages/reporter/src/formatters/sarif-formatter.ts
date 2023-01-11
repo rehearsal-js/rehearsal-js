@@ -31,8 +31,7 @@ export class SarifFormatter {
     const run = createRun(this.report);
 
     for (const item of this.report.items) {
-      const ruleId = `TS${item.errorCode}`;
-      this.addRule(ruleId, item.message);
+      this.addRule(item.ruleId, item.message);
       this.addArtifact(item.analysisTarget);
       this.addResult(item);
     }
@@ -88,8 +87,8 @@ export class SarifFormatter {
   private buildResult(item: ReportItem): Result {
     const location = this.buildLocation(item);
     return {
-      ruleId: `TS${item.errorCode}`,
-      ruleIndex: this.ruleIndexMap[`TS${item.errorCode}`],
+      ruleId: item.ruleId,
+      ruleIndex: this.ruleIndexMap[item.ruleId],
       level: levelConverter(item.category),
       kind: kindConverter(item.category),
       message: {

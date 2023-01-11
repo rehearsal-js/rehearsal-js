@@ -1,13 +1,14 @@
 import { type PluginResult, Plugin } from '@rehearsal/service';
 import { ESLint } from 'eslint';
 import { debug } from 'debug';
+import { setProcessTTYto } from '../helpers';
 
-const DEBUG_CALLBACK = debug('rehearsal:plugins:lint');
+const DEBUG_CALLBACK = debug('rehearsal:plugins:formatting');
 
 /**
  * Lint the text
  */
-export class LintPlugin extends Plugin {
+export class LintFixPlugin extends Plugin {
   async run(fileName: string): PluginResult {
     const text = this.service.getFileText(fileName);
 
@@ -18,26 +19,20 @@ export class LintPlugin extends Plugin {
       const [report] = await eslint.lintText(text, { filePath: fileName });
       setProcessTTYto(true);
 
-      DEBUG_CALLBACK('Lint report: %O', report);
+      DEBUG_CALLBACK('LintFix report: %O', report);
 
       if (report && report.output && report.output !== text) {
-        DEBUG_CALLBACK(`Plugin 'Lint' run on %O:`, fileName);
+        DEBUG_CALLBACK(`Plugin 'LintFix' run on %O:`, fileName);
 
         this.service.setFileText(fileName, report.output);
         return [fileName];
       }
     } catch (e) {
-      DEBUG_CALLBACK(`Plugin 'Lint' failed on ${fileName}: ${(e as Error).message}`);
+      DEBUG_CALLBACK(`Plugin 'LintFix' failed on ${fileName}: ${(e as Error).message}`);
     }
 
-    DEBUG_CALLBACK(`Plugin 'Lint' run with no changes on: %O`, fileName);
+    DEBUG_CALLBACK(`Plugin 'LintFix' run with no changes on: %O`, fileName);
 
     return [];
-  }
-}
-
-function setProcessTTYto(setting: boolean): void {
-  if (typeof process !== 'undefined') {
-    process.stdout.isTTY = setting;
   }
 }
