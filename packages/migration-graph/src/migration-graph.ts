@@ -1,4 +1,4 @@
-import { Package, ProjectGraph, readPackageJson } from '@rehearsal/migration-graph-shared';
+import { ProjectGraph, readPackageJson } from '@rehearsal/migration-graph-shared';
 import {
   EmberAddonProjectGraph,
   EmberAppProjectGraph,
@@ -16,24 +16,6 @@ export type MigrationGraphOptions = {
   entrypoint?: string;
   filterByPackageName?: Array<string>;
 };
-
-function buildMigrationGraphForLibrary(
-  projectGraph: ProjectGraph,
-  options?: MigrationGraphOptions
-): ProjectGraph {
-  const rootDir = projectGraph.rootDir;
-  const p = new Package(rootDir);
-
-  projectGraph.addPackageToGraph(p);
-
-  p.getModuleGraph({
-    entrypoint: options?.entrypoint,
-  });
-
-  projectGraph.discover();
-
-  return projectGraph;
-}
 
 function buildMigrationGraphForEmber(
   projectGraph: EmberAppProjectGraph | EmberAddonProjectGraph,
@@ -108,10 +90,8 @@ export function buildMigrationGraph(
     );
   } else {
     sourceType = SourceType.Library;
-    projectGraph = buildMigrationGraphForLibrary(
-      new ProjectGraph(rootDir, { sourceType }),
-      options
-    );
+    projectGraph = new ProjectGraph(rootDir, { sourceType, ...options });
+    projectGraph.discover();
   }
 
   return { projectGraph, sourceType };

@@ -70,7 +70,7 @@ export class Package implements IPackage {
     pathToPackage: string,
     {
       excludePatterns = ['dist', 'test', 'tests'],
-      includePatterns = ['index.js'],
+      includePatterns = ['index.js'], // TODO Update to '.' for root files
       name = '',
       packageContainer,
       type = '',
