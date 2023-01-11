@@ -1,5 +1,5 @@
 import { join, resolve } from 'path';
-import { PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
+import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
 import { writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 
@@ -21,7 +21,7 @@ function hasKeyword(packageJson: PackageJson, keyword: string): boolean {
  * @param {string} pathToPackage - the path to the addon directory
  * @returns {boolean}
  */
-export function isAddon(packageJson: Record<string, any>): boolean {
+export function isAddon(packageJson: PackageJson): boolean {
   return hasKeyword(packageJson, 'ember-addon');
 }
 
