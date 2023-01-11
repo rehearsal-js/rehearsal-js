@@ -9,7 +9,7 @@ import {
   sarifFormatter,
   ReportFormatter,
 } from '@rehearsal/reporter';
-import type { CliCommand, Formats, MigrationSummary } from '../types';
+import type { CliCommand, Formats } from '../types';
 
 export function generateReports(
   command: CliCommand,
@@ -83,7 +83,7 @@ export function reportFormatter(report: Report): string {
 /**
  * Reads report and generate migration summary
  */
-export function getReportSummary(report: Report): MigrationSummary {
+export function getReportSummary(report: Report, migratedFileCount: number): string {
   const fileMap = new Set<string>();
   let hintAddedCount = 0;
   report.items.forEach((item) => {
@@ -92,8 +92,10 @@ export function getReportSummary(report: Report): MigrationSummary {
       hintAddedCount++;
     }
   });
-  return {
-    totalErrorCount: report.items.length,
-    hintAddedCount,
-  };
+  const totalErrorCount = report.items.length;
+
+  return `Migration Complete\n\n
+  ${migratedFileCount} JS ${migratedFileCount === 1 ? 'file' : 'files'} converted to TS\n
+  ${totalErrorCount} errors caught by rehearsal\n
+  ${hintAddedCount} @ts-expect-error @rehearsal TODO which need further manual check`;
 }

@@ -25,6 +25,8 @@ export type PackageOptions = {
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
+  includePatterns?: Array<string>;
+  excludePatterns?: Array<string>;
 };
 
 /**
@@ -59,11 +61,20 @@ export class Package implements IPackage {
 
   #name: string;
 
+  #excludePatterns: Set<string>;
+
+  #includePatterns: Set<string>;
   protected graph: Graph<ModuleNode>;
 
   constructor(
     pathToPackage: string,
-    { type = '', packageContainer, name = '' }: PackageOptions = {}
+    {
+      excludePatterns = ['dist', 'test', 'tests'],
+      includePatterns = ['index.js'], // TODO Update to '.' for root files
+      name = '',
+      packageContainer,
+      type = '',
+    }: PackageOptions = {}
   ) {
     this.#path = pathToPackage;
     this.#type = type;
@@ -74,14 +85,17 @@ export class Package implements IPackage {
     } else {
       this.#packageContainer = { isWorkspace: () => false };
     }
+
+    this.#excludePatterns = new Set(excludePatterns);
+    this.#includePatterns = new Set(includePatterns);
   }
 
-  get excludePatterns(): Array<string> {
-    return ['dist', 'test', 'tests'];
+  get excludePatterns(): Set<string> {
+    return this.#excludePatterns;
   }
 
-  get includePatterns(): Array<string> {
-    return ['index.js', 'index.ts', 'lib', 'src'];
+  get includePatterns(): Set<string> {
+    return this.#includePatterns;
   }
 
   set type(_type) {
@@ -178,6 +192,16 @@ export class Package implements IPackage {
       pkg.workspaces = [];
     }
     pkg.workspaces.push(glob);
+    return this;
+  }
+
+  addIncludePattern(pattern: string): this {
+    this.#includePatterns.add(pattern);
+    return this;
+  }
+
+  addExcludePattern(pattern: string): this {
+    this.#excludePatterns.add(pattern);
     return this;
   }
 

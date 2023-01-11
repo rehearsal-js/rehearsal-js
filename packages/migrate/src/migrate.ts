@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
+import { execSync } from 'child_process';
 import { RehearsalService } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
@@ -8,10 +9,9 @@ import {
   LintCheckPlugin,
 } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
-import { sync as execaSync } from 'execa';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
-import type { ListrTaskWrapper, ListrContext, ListrRendererFactory } from 'listr2';
+import type { ListrContext } from 'listr2';
 
 export type MigrateInput = {
   basePath: string;
@@ -19,7 +19,7 @@ export type MigrateInput = {
   configName?: string;
   reporter: Reporter; // Reporter
   logger?: Logger;
-  task?: ListrTaskWrapper<ListrContext, ListrRendererFactory>;
+  task?: ListrContext;
 };
 
 export type MigrateOutput = {
@@ -50,41 +50,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   logger?.debug(`Base path: ${basePath}`);
   logger?.debug(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
 
-  // Rename files to TS extension.
-
-  const targetFiles = sourceFiles.map((sourceFile) => {
-    const ext = extname(sourceFile);
-    const pos = sourceFile.lastIndexOf(ext);
-    const destFile = `${sourceFile.substring(0, pos)}`;
-    const tsFile = `${destFile}.ts`;
-    const dtsFile = `${destFile}.d.ts`;
-
-    if (sourceFile === tsFile) {
-      logger?.debug(`no-op ${sourceFile} is a .ts file`);
-    } else if (existsSync(tsFile)) {
-      logger?.debug(`Found ${tsFile} ???`);
-    } else if (existsSync(dtsFile)) {
-      logger?.debug(`Found ${dtsFile} ???`);
-      // Should prepend d.ts file if it exists to the new ts file.
-    } else {
-      const destFile = tsFile;
-
-      try {
-        // use git mv to keep the commit history in each file
-        // would fail if the file is not been tracked
-        execaSync('git', ['mv', sourceFile, destFile]);
-      } catch (e) {
-        // use simple mv if git mv fails
-        execaSync('mv', [sourceFile, destFile]);
-      }
-      listrTask.output = `git mv ${sourceFile.replace(basePath, '')} to ${destFile.replace(
-        basePath,
-        ''
-      )}`;
-    }
-
-    return tsFile;
-  });
+  const targetFiles = gitMove(sourceFiles, listrTask, basePath, logger);
 
   const configFile = findConfigFile(basePath, sys.fileExists, configName);
 
@@ -132,4 +98,46 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     configFile,
     migratedFiles: fileNames,
   };
+}
+
+// Rename files to TS extension.
+export function gitMove(
+  sourceFiles: string[],
+  listrTask: ListrContext,
+  basePath: string,
+  logger?: Logger
+): string[] {
+  return sourceFiles.map((sourceFile) => {
+    const ext = extname(sourceFile);
+    const pos = sourceFile.lastIndexOf(ext);
+    const destFile = `${sourceFile.substring(0, pos)}`;
+    const tsFile = `${destFile}.ts`;
+    const dtsFile = `${destFile}.d.ts`;
+
+    if (sourceFile === tsFile) {
+      logger?.debug(`no-op ${sourceFile} is a .ts file`);
+    } else if (existsSync(tsFile)) {
+      logger?.debug(`Found ${tsFile} ???`);
+    } else if (existsSync(dtsFile)) {
+      logger?.debug(`Found ${dtsFile} ???`);
+      // Should prepend d.ts file if it exists to the new ts file.
+    } else {
+      const destFile = tsFile;
+
+      try {
+        // use git mv to keep the commit history in each file
+        // would fail if the file is not been tracked
+        execSync(`git mv ${sourceFile} ${tsFile}`);
+      } catch (e) {
+        // use simple mv if git mv fails
+        execSync(`mv ${sourceFile} ${tsFile}`);
+      }
+      listrTask.output = `git mv ${sourceFile.replace(basePath, '')} to ${destFile.replace(
+        basePath,
+        ''
+      )}`;
+    }
+
+    return tsFile;
+  });
 }
