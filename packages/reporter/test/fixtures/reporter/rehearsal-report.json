@@ -6,6 +6,7 @@
     "basePath": "/base/path",
     "commandName": "@rehearsal/reporter"
   },
+  "fixedItemCount": 4,
   "items": [
     {
       "analysisTarget": "/base/path/file1.ts",

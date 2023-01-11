@@ -2,6 +2,7 @@
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
+  "fixedItemCount": 44,
   "items": [
     {
       "analysisTarget": "react-processed.tsx",

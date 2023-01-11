@@ -8,6 +8,7 @@ const addResultData: Report = {
     basePath: "/reporter/test/sarif-formatter",
     commandName: "@rehearsal/reporter"
   },
+  fixedItemCount: 3,
   items: [
     {
       analysisTarget: "add-result-1.ts",

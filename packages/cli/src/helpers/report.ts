@@ -85,17 +85,25 @@ export function reportFormatter(report: Report): string {
  */
 export function getReportSummary(report: Report, migratedFileCount: number): string {
   const fileMap = new Set<string>();
-  let hintAddedCount = 0;
+  let tsErrorCount = 0;
+  let lintErrorCount = 0;
+
   report.items.forEach((item) => {
     fileMap.add(item.analysisTarget);
     if (item.hintAdded) {
-      hintAddedCount++;
+      tsErrorCount++;
+    } else {
+      lintErrorCount++;
     }
   });
-  const totalErrorCount = report.items.length;
+  const totalUnfixedCount = report.items.length;
+  const totalErrorCount = totalUnfixedCount + report.fixedItemCount;
 
   return `Migration Complete\n\n
   ${migratedFileCount} JS ${migratedFileCount === 1 ? 'file' : 'files'} converted to TS\n
   ${totalErrorCount} errors caught by rehearsal\n
-  ${hintAddedCount} @ts-expect-error @rehearsal TODO which need further manual check`;
+  ${report.fixedItemCount} have been fixed by rehearsal\n
+  ${totalUnfixedCount} errors need to be fixed manually\n
+  \t\t-- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
+  \t\t-- ${lintErrorCount} eslint errors, with details in the report\n`;
 }

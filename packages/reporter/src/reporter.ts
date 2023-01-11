@@ -51,6 +51,7 @@ export class Reporter {
         commandName: commandName,
       },
       items: [],
+      fixedItemCount: 0,
     };
   }
 
@@ -114,6 +115,10 @@ export class Reporter {
         endColumn: lintError.endColumn ?? 0,
       },
     });
+  }
+
+  incrementFixedItemCount(): void {
+    this.report.fixedItemCount++;
   }
 
   /**
