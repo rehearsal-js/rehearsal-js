@@ -13,9 +13,15 @@ export interface Location {
   endColumn: number;
 }
 
+export enum ReportItemType {
+  ts = 0,
+  lint = 1,
+}
+
 export type ReportItem = {
   analysisTarget: string;
-  errorCode: number;
+  type: ReportItemType;
+  ruleId: string;
   category: string;
   message: string;
   hint?: string;
@@ -30,6 +36,17 @@ export type ReportItem = {
     endColumn: number;
   };
 };
+
+export interface LintErrorLike {
+  message: string;
+  ruleId: string | null;
+  line: number;
+  column: number;
+  nodeType?: string;
+  messageId?: string;
+  endLine?: number | undefined;
+  endColumn?: number | undefined;
+}
 
 export type Report = {
   summary: ReportSummary;

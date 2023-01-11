@@ -1,7 +1,14 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
+import {
+  type Report,
+  type ReportFormatter,
+  type ReportItem,
+  type Location,
+  type LintErrorLike,
+  ReportItemType,
+} from './types';
 import { normalizeFilePath } from './normalize-paths';
-import type { Report, ReportFormatter, ReportItem, Location } from './types';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
 
@@ -65,7 +72,7 @@ export class Reporter {
   /**
    * Appends am information about provided diagnostic and related node to the report
    */
-  addItem(
+  addTSItem(
     diagnostic: DiagnosticWithLocation,
     node?: Node,
     triggeringLocation?: Location,
@@ -75,7 +82,8 @@ export class Reporter {
   ): void {
     this.report.items.push({
       analysisTarget: normalizeFilePath(this.basePath, diagnostic.file.fileName),
-      errorCode: diagnostic.code,
+      type: ReportItemType.ts,
+      ruleId: `TS${diagnostic.code}`,
       category: DiagnosticCategory[diagnostic.category],
       message: flattenDiagnosticMessageText(diagnostic.messageText, '. '),
       hint: hint,
@@ -84,6 +92,27 @@ export class Reporter {
       nodeText: node?.getText(),
       helpUrl,
       nodeLocation: triggeringLocation || undefined,
+    });
+  }
+
+  addLintItem(fileName: string, lintError: LintErrorLike): void {
+    this.report.items.push({
+      analysisTarget: normalizeFilePath(this.basePath, fileName),
+      type: ReportItemType.lint,
+      ruleId: lintError.ruleId || '',
+      category: 'Error',
+      message: lintError.message,
+      hint: lintError.message,
+      hintAdded: false,
+      nodeKind: lintError.nodeType,
+      nodeText: '',
+      helpUrl: '',
+      nodeLocation: {
+        startLine: lintError.line,
+        startColumn: lintError.column,
+        endLine: lintError.line,
+        endColumn: lintError.endColumn ?? 0,
+      },
     });
   }
 

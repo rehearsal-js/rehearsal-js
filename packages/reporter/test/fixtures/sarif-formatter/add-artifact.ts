@@ -11,8 +11,9 @@ const addArtifactData: Report = {
   items: [
     {
       analysisTarget: "add-artifact-2.ts",
-      errorCode: 2790,
+      ruleId: "TS2790",
       category: "Error",
+      type: 0,
       message: "The operand of a 'delete' operator must be optional.",
       hint: "The operand of a 'delete' operator must be optional.",
       nodeKind: "PropertyAccessExpression",
@@ -26,8 +27,9 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-2.ts",
-      errorCode: 2345,
+      ruleId: "TS2345",
       category: "Error",
+      type: 0,
       message: "Argument of type 'number' is not assignable to parameter of type 'string'.",
       hint: "Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(4 as string)', or using type guard: 'if (4 instanceof string) { ... }'.",
       nodeKind: "FirstLiteralToken",
@@ -41,8 +43,9 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-4.ts",
-      errorCode: 2571,
+      ruleId: "TS2571",
       category: "Error",
+      type: 0,
       message: "Object is of type 'unknown'.",
       hint: "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
       nodeKind: "Identifier",
@@ -56,8 +59,9 @@ const addArtifactData: Report = {
     },
     {
       analysisTarget: "add-artifact-4.ts",
-      errorCode: 2571,
+      ruleId: "TS2571",
       category: "Error",
+      type: 0,
       message: "Object is of type 'unknown'.",
       hint: "Object is of type 'unknown'. Specify a type of variable, use type assertion: `(variable as DesiredType)` or type guard: `if (variable instanceof DesiredType) { ... }`",
       nodeKind: "Identifier",
