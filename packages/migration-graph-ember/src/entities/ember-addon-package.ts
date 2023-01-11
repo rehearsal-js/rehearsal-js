@@ -11,14 +11,18 @@ import {
 import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package';
 
 export class EmberAddonPackage extends EmberAppPackage {
-  isAddon: boolean;
+  isAddon: boolean = true;
 
   #name: string | undefined;
   #moduleName: string | undefined;
   #addonName: string | undefined;
 
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
-    const excludePatterns = [
+    super(pathToPackage, {
+      ...options,
+    });
+
+    this.excludePatterns = new Set([
       'dist',
       'config',
       'ember-config',
@@ -27,12 +31,9 @@ export class EmberAddonPackage extends EmberAppPackage {
       '@ember/*',
       'public',
       './package',
-    ];
+    ]);
 
-    const includePatterns = ['index.js', 'addon/', 'app/'];
-
-    super(pathToPackage, { excludePatterns, includePatterns, ...options });
-    this.isAddon = true;
+    this.includePatterns = new Set(['index.js', 'addon', 'app']);
   }
 
   get isEngine(): boolean {

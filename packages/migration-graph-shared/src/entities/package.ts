@@ -25,8 +25,6 @@ export type PackageOptions = {
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
-  includePatterns?: Array<string>;
-  excludePatterns?: Array<string>;
 };
 
 /**
@@ -53,7 +51,7 @@ export class Package implements IPackage {
   /**
    * Internal representation of package.json
    */
-  #pkg: PackageJson;
+  #pkg: PackageJson | undefined;
 
   #type: string;
 
@@ -64,17 +62,12 @@ export class Package implements IPackage {
   #excludePatterns: Set<string>;
 
   #includePatterns: Set<string>;
-  protected graph: Graph<ModuleNode>;
+
+  protected graph: Graph<ModuleNode> | undefined;
 
   constructor(
     pathToPackage: string,
-    {
-      excludePatterns = ['dist', 'test', 'tests'],
-      includePatterns = ['index.js'], // TODO Update to '.' for root files
-      name = '',
-      packageContainer,
-      type = '',
-    }: PackageOptions = {}
+    { name = '', packageContainer, type = '' }: PackageOptions = {}
   ) {
     this.#path = pathToPackage;
     this.#type = type;
@@ -86,16 +79,24 @@ export class Package implements IPackage {
       this.#packageContainer = { isWorkspace: () => false };
     }
 
-    this.#excludePatterns = new Set(excludePatterns);
-    this.#includePatterns = new Set(includePatterns);
+    this.#excludePatterns = new Set(['dist', 'test', 'tests']);
+    this.#includePatterns = new Set(['index.js']);
   }
 
   get excludePatterns(): Set<string> {
     return this.#excludePatterns;
   }
 
+  set excludePatterns(patterns: Set<string>) {
+    this.#excludePatterns = new Set(patterns);
+  }
+
   get includePatterns(): Set<string> {
     return this.#includePatterns;
+  }
+
+  set includePatterns(patterns: Set<string>) {
+    this.#includePatterns = new Set(patterns);
   }
 
   set type(_type) {
@@ -152,7 +153,7 @@ export class Package implements IPackage {
       const packageJsonPath = resolve(this.#path, 'package.json');
       this.#pkg = readJsonSync(packageJsonPath);
     }
-    return this.#pkg;
+    return this.#pkg as PackageJson;
   }
 
   /**
@@ -195,13 +196,13 @@ export class Package implements IPackage {
     return this;
   }
 
-  addIncludePattern(pattern: string): this {
-    this.#includePatterns.add(pattern);
+  addIncludePattern(...patterns: string[]): this {
+    patterns.forEach((pattern) => this.#includePatterns.add(pattern));
     return this;
   }
 
-  addExcludePattern(pattern: string): this {
-    this.#excludePatterns.add(pattern);
+  addExcludePattern(...patterns: string[]): this {
+    patterns.forEach((pattern) => this.#excludePatterns.add(pattern));
     return this;
   }
 
@@ -231,8 +232,8 @@ export class Package implements IPackage {
     // add to dependencies
     let _dependencies = this.dependencies;
     if (!_dependencies) {
-      this.#pkg.dependencies = {};
-      _dependencies = this.#pkg?.dependencies;
+      this.packageJson.dependencies = {};
+      _dependencies = this.packageJson.dependencies;
     }
     _dependencies[packageName] = version;
     return this;
@@ -247,8 +248,8 @@ export class Package implements IPackage {
   addDevDependency(packageName: string, version: string): this {
     let _devDependencies = this.devDependencies;
     if (!_devDependencies) {
-      this.#pkg.devDependencies = {};
-      _devDependencies = this.#pkg.devDependencies;
+      this.packageJson.devDependencies = {};
+      _devDependencies = this.packageJson.devDependencies;
     }
     _devDependencies[packageName] = version;
     return this;
