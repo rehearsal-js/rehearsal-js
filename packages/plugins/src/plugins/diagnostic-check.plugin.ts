@@ -9,7 +9,7 @@ import {
 } from 'typescript';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { getLocation } from '../data/utils';
+import { getLocation } from '../helpers';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
