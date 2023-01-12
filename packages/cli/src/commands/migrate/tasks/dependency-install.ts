@@ -4,14 +4,14 @@ import { addDep } from '../../../utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export const REQUIRED_DEPENDENCIES = [
-  'typescript',
+  '@types/node',
   '@typescript-eslint/eslint-plugin',
   '@typescript-eslint/parser',
-  'eslint-plugin-prettier',
-  'prettier',
   'eslint',
   'eslint-config-prettier',
-  '@types/node',
+  'eslint-plugin-prettier',
+  'prettier',
+  'typescript',
 ];
 
 export async function depInstallTask(options: MigrateCommandOptions): Promise<ListrTask> {
