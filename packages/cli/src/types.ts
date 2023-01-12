@@ -14,6 +14,7 @@ export type MigrateCommandOptions = {
   verbose: boolean | undefined;
   userConfig: string | undefined;
   interactive: boolean | undefined;
+  dryRun: boolean;
 };
 
 export type MigrateCommandContext = {
