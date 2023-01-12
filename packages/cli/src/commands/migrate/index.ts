@@ -37,7 +37,7 @@ migrateCommand
   .option('-u, --userConfig <custom json config for migrate command>', 'path to rehearsal config')
   .option('-i, --interactive', 'interactive mode')
   .option('-v, --verbose', 'print debugging logs')
-  .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
+  .option('--checkFiles', 'print files that will be attempted to migrate', false)
   .action(async (options: MigrateCommandOptions) => {
     await migrate(options);
   });
@@ -50,7 +50,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
 
   console.log(`@rehearsal/migrate ${version.trim()}`);
 
-  if (!options.dryRun) {
+  if (!options.checkFiles) {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(
