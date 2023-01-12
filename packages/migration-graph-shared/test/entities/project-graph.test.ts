@@ -96,7 +96,7 @@ describe('project-graph', () => {
       expect(barNode.adjacent.has(bazNode)).toBe(true);
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
     });
-    test.todo('should not include a file out of the package scope', () => {
+    test('should not include a file out of the package scope', () => {
       const files = {
         packages: {
           branch: {
