@@ -38,6 +38,35 @@ describe('migration-strategy', () => {
       ]);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
+
+    test('logger', () => {
+      const rootDir = getLibrary('workspace-with-package-scope-issue');
+      const strategy = getMigrationStrategy(rootDir);
+      const files: Array<SourceFile> = strategy.getMigrationOrder();
+      const relativePaths: Array<string> = files.map((f) => f.relativePath);
+      expect(relativePaths).toStrictEqual([
+        'packages/leaf/build.js', // This file should emit a warning
+        'packages/leaf/lib/impl.js',
+        'packages/leaf/index.js',
+        'packages/branch/build.js', // This file should emit a warning
+        'packages/branch/lib/a.js',
+        'packages/branch/index.js',
+        'some-shared-util.js',
+      ]);
+      expect(strategy.sourceType).toBe(SourceType.Library);
+      const actual = strategy.report;
+
+      const someDir = strategy.rootDir;
+
+      const expected = [
+        `[warn] The source file "build.js" is importing a file "../../some-shared-util.js" that is external to "@some-workspace/leaf" package directory (${someDir}/packages/leaf), omitting target file ("../../some-shared-util.js") form package-graph.`,
+        `[warn] The target file "../../some-shared-util.js" is external to package "@some-workspace/leaf" (${someDir}/packages/leaf), omitting target file form package-graph.`,
+        `[warn] The source file "build.js" is importing a file "../../some-shared-util.js" that is external to "@some-workspace/branch" package directory (${someDir}/packages/branch), omitting target file ("../../some-shared-util.js") form package-graph.`,
+        `[warn] The target file "../../some-shared-util.js" is external to package "@some-workspace/branch" (${someDir}/packages/branch), omitting target file form package-graph.`,
+      ];
+
+      expect(actual).toStrictEqual(expected);
+    });
   });
 
   describe('ember', () => {

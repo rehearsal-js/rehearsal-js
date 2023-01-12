@@ -16,6 +16,7 @@ import type {
   NamedImportSpecifier,
   StringLiteral,
 } from '@swc/core';
+import type { Logger } from '@rehearsal/migration-graph-shared';
 
 type EmberInferredServiceDependency = {
   addonName?: string;
@@ -26,11 +27,18 @@ const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:discover-ember-ser
 
 const EMPTY_RESULT: EmberInferredServiceDependency[] = [];
 
+export type DiscoverServiceDependenciesOptions = {
+  logger?: Logger;
+};
+
 export function discoverServiceDependencies(
   baseDir: string,
-  pathToFile: string
+  pathToFile: string,
+  options?: DiscoverServiceDependenciesOptions
 ): EmberInferredServiceDependency[] {
   const filePath = join(baseDir, pathToFile);
+
+  const logger = options?.logger;
 
   // TODO Evaluate if we need service discovery of TS files. Currently this parser doesn't work for typescript source.
   if (extname(filePath) !== '.js') {
@@ -46,7 +54,8 @@ export function discoverServiceDependencies(
       decoratorsBeforeExport: true,
     });
   } catch (e) {
-    console.warn(`Ember service discovery failed. Unable to parse: ${filePath}`);
+    // Push into project messages;
+    logger?.error(`Ember service discovery failed. Unable to parse: ${filePath}`);
     DEBUG_CALLBACK(`Error: %0`, e);
   }
 

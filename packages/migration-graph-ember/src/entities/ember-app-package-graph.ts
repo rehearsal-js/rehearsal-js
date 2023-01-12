@@ -105,7 +105,9 @@ export class EmberAppPackageGraph extends PackageGraph {
       return n;
     }
 
-    const services = discoverServiceDependencies(this.baseDir, n.content.path);
+    const services = discoverServiceDependencies(this.baseDir, n.content.path, {
+      logger: this.logger,
+    });
 
     DEBUG_CALLBACK('>>> SERVICES DISCOVERD', services);
 

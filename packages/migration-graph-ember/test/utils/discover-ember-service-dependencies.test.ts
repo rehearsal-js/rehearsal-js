@@ -1,11 +1,12 @@
+import { join } from 'path';
 import fixturify from 'fixturify';
 import tmp from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
+import { Logger } from '@rehearsal/migration-graph-shared';
 
 import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies';
 
 tmp.setGracefulCleanup();
-
 describe('discoverServiceDependencies', () => {
   let tmpDir: string;
 
@@ -27,6 +28,28 @@ describe('discoverServiceDependencies', () => {
     const results = discoverServiceDependencies(tmpDir, 'component.js');
 
     expect(results).toBeFalsy;
+  });
+
+  test('should optionally log an error if  afile cannot be parsed', () => {
+    const logger = new Logger();
+
+    const files = {
+      'component.js': `
+        import Component form '@glimmer/component';
+        export default klass Salutation extends Component {}
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.js', { logger });
+
+    expect(results).toBeFalsy;
+
+    expect(logger.entries[0]).toStrictEqual({
+      severity: 'error',
+      message: `Ember service discovery failed. Unable to parse: ${join(tmpDir, 'component.js')}`,
+    });
   });
 
   test('should return empty array when no services decorators are used', () => {
@@ -174,11 +197,11 @@ describe('discoverServiceDependencies', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    const resultss = discoverServiceDependencies(tmpDir, 'component.js');
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
 
-    expect(resultss).toBeTruthy();
-    expect(resultss.length).toBe(1);
-    expect(resultss[0].serviceName).toBe('locale');
+    expect(results).toBeTruthy();
+    expect(results.length).toBe(1);
+    expect(results[0].serviceName).toBe('locale');
   });
 
   test('should handle multiple imports of @ember/service', () => {
@@ -217,11 +240,11 @@ describe('discoverServiceDependencies', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    const resultss = discoverServiceDependencies(tmpDir, 'service.js');
+    const results = discoverServiceDependencies(tmpDir, 'service.js');
 
-    expect(resultss).toBeTruthy();
-    expect(resultss.length).toBe(1);
-    expect(resultss[0].serviceName).toBe('request');
+    expect(results).toBeTruthy();
+    expect(results.length).toBe(1);
+    expect(results[0].serviceName).toBe('request');
   });
 
   test('should ignore @classic decorator', () => {

@@ -12,7 +12,9 @@ import {
 } from 'dependency-cruiser';
 import { Graph, GraphNode } from '../graph';
 import { Package } from './package';
-import type { ModuleNode } from '../types';
+import type { Logger } from '../utils/logger';
+import type { ModuleNode, PackageNode } from '../types';
+import type { ProjectGraph } from './project-graph';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 
@@ -27,19 +29,29 @@ function resolveRelative(baseDir: string, somePath: string): string {
 
 export type PackageGraphOptions = {
   entrypoint?: string;
+  logger?: Logger;
+  parent?: GraphNode<PackageNode>;
+  project?: ProjectGraph;
 };
 
 export class PackageGraph {
-  protected options: PackageGraphOptions;
   protected baseDir: string;
   protected package: Package;
+  protected entrypoint?: string;
+  protected parentNode?: GraphNode<PackageNode>;
+  protected projectGraph?: ProjectGraph;
+  protected logger?: Logger;
+
   #graph: Graph<ModuleNode>;
 
   constructor(p: Package, options: PackageGraphOptions = {}) {
     this.package = p;
     this.baseDir = p.path;
-    this.options = options || {};
     this.#graph = new Graph<ModuleNode>();
+    this.entrypoint = options.entrypoint;
+    this.logger = options.logger;
+    this.parentNode = options.parent;
+    this.projectGraph = options.project;
   }
 
   get graph(): Graph<ModuleNode> {
@@ -48,7 +60,7 @@ export class PackageGraph {
 
   discover(): Graph<ModuleNode> {
     const baseDir = this.baseDir;
-    const { entrypoint } = this.options;
+    const entrypoint = this.entrypoint;
 
     const include = this.package.includePatterns
       ? Array.from(this.package.includePatterns)
@@ -96,7 +108,7 @@ export class PackageGraph {
       const sourcePath = resolveRelative(baseDir, m.source);
 
       if (this.isFileExternalToPackage(sourcePath)) {
-        console.warn(
+        this.logger?.warn(
           `The target file "${sourcePath}" is external to package "${this.package.packageName}" (${baseDir}), omitting target file form package-graph.`
         );
         // Should resolve path completely relativeto the project and find which package it belongs to.
@@ -124,7 +136,7 @@ export class PackageGraph {
         const packageName = this.package.packageName;
 
         if (this.isFileExternalToPackage(targetPath)) {
-          console.warn(
+          this.logger?.warn(
             `The source file "${sourcePath}" is importing a file "${targetPath}" that is external to "${packageName}" package directory (${baseDir}), omitting target file ("${targetPath}") form package-graph.`
           );
           // TODO Should resolve this path to a package in the project?

@@ -1,4 +1,4 @@
-import { create, getLibrary } from '@rehearsal/test-support';
+import { getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import { Package } from '../../src/entities/package';
@@ -97,64 +97,7 @@ describe('project-graph', () => {
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
     });
     test('should not include a file out of the package scope', () => {
-      const files = {
-        packages: {
-          branch: {
-            'package.json': `{
-              "name": "@some-workspace/branch",
-              "version": "1.0.0",
-              "main": "index.js",
-              "dependencies": {
-                "@some-workspace/leaf": "*"
-              }
-            }`,
-            'index.js': `
-              import { do } from '@some-workspace/leaf';
-              import './lib/a';
-            `,
-            'build.js': `import '../../some-shared-util';`,
-            lib: {
-              'a.js': `
-              // a.js
-              console.log('foo');
-             `,
-            },
-          },
-          leaf: {
-            'package.json': `{
-              "name": "@some-workspace/leaf",
-              "version": "1.0.0",
-              "main": "index.js"
-            }`,
-            'index.js': `
-              import './lib/impl';
-              export function do() { console.log(''); }
-            `,
-            'build.js': `import '../../some-shared-util';`,
-            lib: {
-              'impl.js': `
-                // impl.js
-              `,
-            },
-          },
-        },
-        'some-shared-util.js': '// something-shared',
-        'package.json': `
-          {
-            "name": "root-package",
-            "version": "1.0.0",
-            "main": "index.js",
-            "license": "MIT",
-            "workspaces": [
-              "packages/*"
-            ]
-          }    
-        `,
-      };
-
-      // mutate a file to include a file from the root directory.
-
-      const baseDir = create(files);
+      const baseDir = getLibrary('workspace-with-package-scope-issue');
 
       const projectGraph = new ProjectGraph(baseDir);
 

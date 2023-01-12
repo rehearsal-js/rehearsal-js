@@ -3,6 +3,7 @@ import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
 import { isWorkspace } from '../../src/utils/workspace';
+import { Logger } from '../utils/logger';
 import { RootPackage } from './root-package';
 import { Package } from './package';
 
@@ -22,6 +23,7 @@ export class ProjectGraph {
   #eager: boolean;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
+  logger: Logger;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
     const { eager, sourceType, entrypoint } = {
@@ -37,6 +39,7 @@ export class ProjectGraph {
     this.#graph = new Graph<PackageNode>();
     this.visited = new Set<Package>();
     this.discoveredPackages = {};
+    this.logger = new Logger();
   }
 
   get rootDir(): string {
@@ -67,7 +70,7 @@ export class ProjectGraph {
       : this.#graph.addNode(contents);
 
     if (this.#eager) {
-      p.getModuleGraph({ parent: node, project: this });
+      p.getModuleGraph({ parent: node, project: this, logger: this.logger });
     }
 
     if (isConverted) {
