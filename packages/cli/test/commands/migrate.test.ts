@@ -5,6 +5,7 @@ import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { runBin } from '../test-helpers';
+import { REQUIRED_DEPENDENCIES } from '../../src/commands/migrate/tasks/dependency-install';
 import type { CustomConfig } from '../../src/types';
 
 setGracefulCleanup();
@@ -89,12 +90,16 @@ describe('migrate - install dependencies', async () => {
     basePath = prepareTmpDir('initialization');
   });
 
-  test('Do install typescript dependency if project dose not have one', async () => {
+  test('Install required dependencies', async () => {
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const devDeps = packageJson.devDependencies;
+
     expect(result.stdout).toContain('Install dependencies');
+    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
   });
 });
 
