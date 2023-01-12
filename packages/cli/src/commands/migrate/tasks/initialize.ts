@@ -22,7 +22,7 @@ const COMPLETION_MARK = '✅';
 
 export async function initTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
-    title: 'Initialize',
+    title: `Initialize${options.dryRun ? ' -- Dry Run Mode' : ''}`,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // get custom config
       const userConfig = options.userConfig
@@ -119,21 +119,18 @@ export async function initTask(options: MigrateCommandOptions): Promise<ListrTas
       ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
       ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
 
-      if (options.checkFiles) {
+      if (options.dryRun) {
         // Skip the rest of tasks
         task.output = `List of files will be attempted to migrate:\n ${ctx.sourceFilesWithRelativePath.join(
           '\n'
         )}`;
-        // The reason to set skip here instead of using "skip => !option.checkFiles"
-        // in other tasks is that we may have more complex logic to control skip in tasks
-        // in different scenario in the future
         ctx.skip = true;
       }
     },
     options: {
       // options for dryRun, since we need to keep the output to see the list of files
-      bottomBar: options.checkFiles ? true : false,
-      persistentOutput: options.checkFiles ? true : false,
+      bottomBar: options.dryRun ? true : false,
+      persistentOutput: options.dryRun ? true : false,
     },
   };
 }

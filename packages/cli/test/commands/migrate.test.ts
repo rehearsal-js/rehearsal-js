@@ -81,7 +81,7 @@ describe('migrate - check repo status', async () => {
     );
   });
 
-  test('pass in a dirty git project with --checkFiles', async () => {
+  test('pass in a dirty git project with --dryRun', async () => {
     // simulate clean git project
     const git: SimpleGit = simpleGit({
       baseDir: basePath,
@@ -91,11 +91,11 @@ describe('migrate - check repo status', async () => {
     await git.init();
     await git.add('package.json');
 
-    const { stdout } = await runBin('migrate', ['--checkFiles'], {
+    const { stdout } = await runBin('migrate', ['-d'], {
       cwd: basePath,
     });
 
-    expect(stdout).toContain('Initialize');
+    expect(stdout).toContain('Initialize -- Dry Run Mode');
     expect(stdout).toContain('List of files will be attempted to migrate:');
   });
 });
@@ -107,8 +107,8 @@ describe('migrate - initialization', async () => {
     basePath = prepareTmpDir('basic');
   });
 
-  test('print files will be attempted to migrate with --checkFiles', async () => {
-    const result = await runBin('migrate', ['--checkFiles'], {
+  test('print files will be attempted to migrate with --dryRun', async () => {
+    const result = await runBin('migrate', ['-d'], {
       cwd: basePath,
     });
 
