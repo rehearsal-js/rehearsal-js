@@ -6,6 +6,7 @@ exports[`migrate - initialization > print files will be attempted to migrate wit
 [DATA] Running migration on basic
 [DATA] List of files will be attempted to migrate:
 [DATA]  foo.js
+[DATA] depends-on-foo.js
 [DATA] index.js
 [SUCCESS] Initialize -- Dry Run Mode"
 `;
