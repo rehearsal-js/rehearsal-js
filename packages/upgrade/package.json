@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/upgrade",
-  "version": "0.0.39",
+  "version": "1.0.0-beta",
   "description": "Rehearsal Dependency Upgrade Tool",
   "keywords": [
     "upgrade",
