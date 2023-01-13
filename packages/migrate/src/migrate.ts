@@ -28,6 +28,31 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
+type MigratePlugins =
+  | typeof LintFixPlugin[]
+  | typeof DiagnosticFixPlugin[]
+  | typeof LintCheckPlugin[]
+  | typeof DiagnosticCheckPlugin[];
+
+type ProcessFilesInput = {
+  fileNames: string[];
+  basePath: string;
+  plugins: MigratePlugins;
+  reporter: Reporter;
+  listrTask: ListrContext;
+  service: RehearsalService;
+  logger?: Logger;
+};
+
+type ProcessPluginsInput = {
+  allChangedFiles: Set<string>;
+  fileName: string;
+  plugins: MigratePlugins;
+  service: RehearsalService;
+  reporter: Reporter;
+  logger?: Logger;
+};
+
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || ['index.js'];
@@ -35,9 +60,9 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
   // output is only for tests
-  const listrTask = input.task || { output: '' };
+  const listrTask: ListrContext = input.task || { output: '' };
 
-  const plugins = [
+  const plugins: MigratePlugins = [
     LintFixPlugin,
     DiagnosticFixPlugin,
     LintFixPlugin,
@@ -78,26 +103,114 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const service = new RehearsalService(options, fileNames);
 
-  for (const fileName of fileNames) {
-    listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
-
-    let allChangedFiles: Set<string> = new Set();
-
-    for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, reporter, logger);
-      const changedFiles = await plugin.run(fileName);
-      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
-    }
-
-    // Save file to the filesystem
-    allChangedFiles.forEach((file) => service.saveFile(file));
-  }
+  await processFilesIterator({
+    fileNames,
+    basePath,
+    plugins,
+    listrTask,
+    service,
+    reporter,
+    logger,
+  });
 
   return {
     basePath,
     configFile,
     migratedFiles: fileNames,
   };
+}
+
+// drain the iterator to process all files so we can yield to the event loop
+export async function processFilesIterator({
+  fileNames,
+  basePath,
+  plugins,
+  listrTask,
+  service,
+  reporter,
+  logger,
+}: ProcessFilesInput): Promise<void> {
+  const fileIteratorProcesser = processFilesGenerator({
+    fileNames,
+    basePath,
+    plugins,
+    listrTask,
+    service,
+    reporter,
+    logger,
+  });
+
+  for await (const _ of fileIteratorProcesser) {
+    const next = async (): Promise<void> => {
+      const { done } = await fileIteratorProcesser.next();
+      if (!done) {
+        setImmediate(next);
+      }
+    };
+
+    await next();
+  }
+}
+
+// async generator to process files
+// since this is a long running process, we need to yield to the event loop
+// so we dont block the main thread
+export async function* processFilesGenerator({
+  fileNames,
+  basePath,
+  plugins,
+  listrTask,
+  service,
+  reporter,
+  logger,
+}: ProcessFilesInput): AsyncGenerator<void> {
+  for (const fileName of fileNames) {
+    listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
+
+    const allChangedFiles: Set<string> = new Set();
+    const pluginIteratorProcesser = processPlugins({
+      allChangedFiles,
+      fileName,
+      plugins,
+      service,
+      reporter,
+      logger,
+    });
+
+    for await (const changedFile of pluginIteratorProcesser) {
+      const next = async (): Promise<void> => {
+        const { done } = await pluginIteratorProcesser.next();
+        // Save file to the filesystem
+        changedFile.forEach((file) => service.saveFile(file));
+
+        if (!done) {
+          setImmediate(next);
+        }
+      };
+
+      await next();
+    }
+
+    yield;
+  }
+}
+
+async function* processPlugins({
+  allChangedFiles,
+  fileName,
+  plugins,
+  service,
+  reporter,
+  logger,
+}: ProcessPluginsInput): AsyncGenerator<Set<string>> {
+  for (const pluginClass of plugins) {
+    const plugin = new pluginClass(service, reporter, logger);
+    const changedFiles = await plugin.run(fileName);
+
+    allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
+
+    yield allChangedFiles;
+  }
 }
 
 // Rename files to TS extension.
