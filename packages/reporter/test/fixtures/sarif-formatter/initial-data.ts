@@ -8,7 +8,8 @@ const initialData: Report = {
     basePath: "/reporter/test/sarif-formatter",
     commandName: "@rehearsal/reporter"
   },
-  items: []
+  items: [],
+  fixedItemCount: 0
 };
 
 export { initialData };

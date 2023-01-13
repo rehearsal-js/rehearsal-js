@@ -60,6 +60,7 @@ export class DiagnosticFixPlugin extends Plugin {
 
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         }
+        this.reporter.incrementFixedItemCount();
       }
 
       // Get updated list of diagnostics

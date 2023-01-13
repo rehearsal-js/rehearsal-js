@@ -5,6 +5,7 @@ import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { runBin } from '../test-helpers';
+import { REQUIRED_DEPENDENCIES } from '../../src/commands/migrate/tasks/dependency-install';
 import type { CustomConfig } from '../../src/types';
 
 setGracefulCleanup();
@@ -80,6 +81,43 @@ describe('migrate - check repo status', async () => {
       'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
     );
   });
+
+  test('pass in a dirty git project with --dryRun', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+      binary: 'git',
+      maxConcurrentProcesses: 6,
+    } as Partial<SimpleGitOptions>);
+    await git.init();
+    await git.add('package.json');
+
+    const { stdout } = await runBin('migrate', ['-d'], {
+      cwd: basePath,
+    });
+
+    expect(stdout).toContain('Initialize -- Dry Run Mode');
+    expect(stdout).toContain('List of files will be attempted to migrate:');
+  });
+});
+
+describe('migrate - initialization', async () => {
+  let basePath = '';
+
+  beforeAll(() => {
+    basePath = prepareTmpDir('basic');
+  });
+
+  test('print files will be attempted to migrate with --dryRun', async () => {
+    const result = await runBin('migrate', ['-d'], {
+      cwd: basePath,
+    });
+
+    expect(result.stdout).toMatchSnapshot();
+  });
+
+  // TODO: add tests for other cases
+  // figure out a way to test the ctx result in other scenario during initialization
 });
 
 describe('migrate - install dependencies', async () => {
@@ -89,12 +127,16 @@ describe('migrate - install dependencies', async () => {
     basePath = prepareTmpDir('initialization');
   });
 
-  test('Do install typescript dependency if project dose not have one', async () => {
+  test('Install required dependencies', async () => {
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
 
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const devDeps = packageJson.devDependencies;
+
     expect(result.stdout).toContain('Install dependencies');
+    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
   });
 });
 

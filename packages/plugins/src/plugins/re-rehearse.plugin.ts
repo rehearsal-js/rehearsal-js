@@ -1,6 +1,6 @@
+import { isLineBreak } from 'typescript';
 import { type PluginResult, Plugin } from '@rehearsal/service';
 import { debug } from 'debug';
-import { getBoundaryOfCommentBlock } from '../data/utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
 
@@ -26,7 +26,7 @@ export class ReRehearsePlugin extends Plugin {
       }
 
       // Remove comment, together with the {} that wraps around comments in React, and  `\n`
-      const boundary = getBoundaryOfCommentBlock(commentSpan.start, commentSpan.length, text);
+      const boundary = this.getBoundaryOfCommentBlock(commentSpan.start, commentSpan.length, text);
       text = text.substring(0, boundary.start) + text.substring(boundary.end + 1);
     }
 
@@ -35,5 +35,23 @@ export class ReRehearsePlugin extends Plugin {
     DEBUG_CALLBACK(`Plugin 'ReRehearse' run on %O:`, fileName);
 
     return [fileName];
+  }
+
+  getBoundaryOfCommentBlock(
+    start: number,
+    length: number,
+    text: string
+  ): { start: number; end: number } {
+    const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
+
+    let end = start + length - 1;
+
+    end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
+    end = isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
+
+    return {
+      start: newStart,
+      end,
+    };
   }
 }

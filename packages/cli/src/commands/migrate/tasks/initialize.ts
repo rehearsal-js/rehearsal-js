@@ -22,7 +22,7 @@ const COMPLETION_MARK = '✅';
 
 export async function initTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
-    title: 'Initialize',
+    title: `Initialize${options.dryRun ? ' -- Dry Run Mode' : ''}`,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // get custom config
       const userConfig = options.userConfig
@@ -118,6 +118,19 @@ export async function initTask(options: MigrateCommandOptions): Promise<ListrTas
       ctx.strategy = strategy;
       ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
       ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
+
+      if (options.dryRun) {
+        // Skip the rest of tasks
+        task.output = `List of files will be attempted to migrate:\n ${ctx.sourceFilesWithRelativePath.join(
+          '\n'
+        )}`;
+        ctx.skip = true;
+      }
+    },
+    options: {
+      // options for dryRun, since we need to keep the output to see the list of files
+      bottomBar: options.dryRun ? true : false,
+      persistentOutput: options.dryRun ? true : false,
     },
   };
 }

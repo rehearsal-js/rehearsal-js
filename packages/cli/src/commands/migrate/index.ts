@@ -37,6 +37,7 @@ migrateCommand
   .option('-u, --userConfig <custom json config for migrate command>', 'path to rehearsal config')
   .option('-i, --interactive', 'interactive mode')
   .option('-v, --verbose', 'print debugging logs')
+  .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
   .action(async (options: MigrateCommandOptions) => {
     await migrate(options);
   });
@@ -49,12 +50,14 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
 
   console.log(`@rehearsal/migrate ${version.trim()}`);
 
-  const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
-  if (hasUncommittedFiles) {
-    logger.warn(
-      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
-    );
-    process.exit(0);
+  if (!options.dryRun) {
+    const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
+    if (hasUncommittedFiles) {
+      logger.warn(
+        'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+      );
+      process.exit(0);
+    }
   }
 
   const defaultListrOption = {
