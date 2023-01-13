@@ -1,0 +1,17 @@
+// Vitest Snapshot v1
+
+exports[`Task: initialization > able to get files that will be migrated 1`] = `
+[
+  "foo.js",
+  "index.js",
+]
+`;
+
+exports[`Task: initialization > able to get files that will be migrated 2`] = `
+"[STARTED] Task without title.
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[SUCCESS] Task without title.
+"
+`;
