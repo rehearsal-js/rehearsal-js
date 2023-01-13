@@ -1,26 +1,14 @@
 import { resolve } from 'path';
-import { copySync, readdirSync, readJSONSync, writeJSONSync, realpathSync } from 'fs-extra';
-import { dirSync, setGracefulCleanup } from 'tmp';
+import { readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
+import { setGracefulCleanup } from 'tmp';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
-import { runBin } from '../test-helpers';
+import { runBin, prepareTmpDir } from '../test-helpers';
 import { REQUIRED_DEPENDENCIES } from '../../src/commands/migrate/tasks/dependency-install';
 import type { CustomConfig } from '../../src/types';
 
 setGracefulCleanup();
-
-// TODO migrate this to fixturify
-const FIXTURE_APP_DIR = resolve(__dirname, '../fixtures/app_for_migrate');
-const TEST_SRC_DIR = resolve(FIXTURE_APP_DIR, 'src');
-
-function prepareTmpDir(dir: string): string {
-  const srcDir = resolve(TEST_SRC_DIR, dir);
-  const { name: targetDir } = dirSync();
-  copySync(srcDir, targetDir);
-  // /var is a symlink to /private/var, use realpath to return /private/var
-  return realpathSync(targetDir);
-}
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');

@@ -1,10 +1,13 @@
 import { join, resolve } from 'path';
 import execa from 'execa';
 import which from 'which';
-import { rmSync } from 'fs-extra';
-import packageJson from '../package.json';
+import { rmSync, copySync, realpathSync } from 'fs-extra';
+import { dirSync } from 'tmp';
+import packageJson from '../../package.json';
 
-import { git, gitIsRepoDirty } from '../src/utils';
+import { git, gitIsRepoDirty } from '../../src/utils';
+
+export * from './task-manager-helper';
 
 export const PNPM_PATH = which.sync('pnpm');
 
@@ -34,7 +37,7 @@ export function runBin(
   args: string[],
   options: execa.Options = {}
 ): execa.ExecaChildProcess {
-  const cliPath = resolve(__dirname, `../bin/rehearsal.js`);
+  const cliPath = resolve(__dirname, `../../bin/rehearsal.js`);
   return execa(cliPath, [command, ...args], options);
 }
 
@@ -61,3 +64,14 @@ export const beforeEachPrep = async (): Promise<void> => {
 export const afterEachCleanup = async (): Promise<void> => {
   await gitDeleteLocalBranch(WORKING_BRANCH);
 };
+
+// Create tmp dir for migrate test based on fixture selection
+export function prepareTmpDir(dir: string): string {
+  const migrateFixturesDir = resolve(__dirname, '../fixtures/app_for_migrate');
+  const testSrcDir = resolve(migrateFixturesDir, 'src');
+  const srcDir = resolve(testSrcDir, dir);
+  const { name: targetDir } = dirSync();
+  copySync(srcDir, targetDir);
+  // /var is a symlink to /private/var, use realpath to return /private/var
+  return realpathSync(targetDir);
+}
