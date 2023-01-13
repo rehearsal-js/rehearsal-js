@@ -131,6 +131,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
               "version": "1.0.0",
               "main": "index.js"
             }`,
+            'build.js': `import '../../some-shared-util';`,
             'index.js': `
               import './lib/impl';
             `,
@@ -152,6 +153,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             ]
           }    
         `,
+        'some-util.js': '// Some useful util file shared across packages.',
       };
       break;
     case 'library-with-entrypoint':
