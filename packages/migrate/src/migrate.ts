@@ -28,12 +28,11 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
-type MigratePlugins = Array<
-  | typeof LintFixPlugin
-  | typeof DiagnosticFixPlugin
-  | typeof DiagnosticCheckPlugin
-  | typeof LintCheckPlugin
->;
+type MigratePlugins =
+  | typeof LintFixPlugin[]
+  | typeof DiagnosticFixPlugin[]
+  | typeof LintCheckPlugin[]
+  | typeof DiagnosticCheckPlugin[];
 
 type ProcessFilesInput = {
   fileNames: string[];
