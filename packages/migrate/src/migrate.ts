@@ -177,9 +177,11 @@ export async function* processFilesGenerator({
       logger,
     });
 
-    for await (const _ of pluginIteratorProcesser) {
+    for await (const changedFile of pluginIteratorProcesser) {
       const next = async (): Promise<void> => {
         const { done } = await pluginIteratorProcesser.next();
+        // Save file to the filesystem
+        changedFile.forEach((file) => service.saveFile(file));
 
         if (!done) {
           setImmediate(next);
@@ -188,9 +190,6 @@ export async function* processFilesGenerator({
 
       await next();
     }
-
-    // Save file to the filesystem
-    allChangedFiles.forEach((file) => service.saveFile(file));
 
     yield;
   }
@@ -203,17 +202,15 @@ async function* processPlugins({
   service,
   reporter,
   logger,
-}: ProcessPluginsInput): AsyncGenerator<void> {
+}: ProcessPluginsInput): AsyncGenerator<Set<string>> {
   for (const pluginClass of plugins) {
     const plugin = new pluginClass(service, reporter, logger);
     const changedFiles = await plugin.run(fileName);
 
     allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
 
-    yield;
+    yield allChangedFiles;
   }
-
-  return allChangedFiles;
 }
 
 // Rename files to TS extension.
