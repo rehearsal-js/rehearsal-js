@@ -48,9 +48,7 @@ export class PackageGraph {
 
   discover(): Graph<ModuleNode> {
     const baseDir = this.baseDir;
-    const { entrypoint } = {
-      ...this.options,
-    };
+    const { entrypoint } = this.options;
 
     const include = this.package.includePatterns
       ? Array.from(this.package.includePatterns)
@@ -86,6 +84,7 @@ export class PackageGraph {
 
     output.modules.forEach((m: IModule) => {
       DEBUG_CALLBACK(m);
+
       if (isExternalModule(m)) {
         return;
       }
@@ -95,6 +94,15 @@ export class PackageGraph {
       // baseDir helps ensure we always get a file path relative to the baseDir.
 
       const sourcePath = resolveRelative(baseDir, m.source);
+
+      if (this.isFileExternalToPackage(sourcePath)) {
+        console.warn(
+          `The target file "${sourcePath}" is external to package "${this.package.packageName}" (${baseDir}), omitting target file form package-graph.`
+        );
+        // Should resolve path completely relativeto the project and find which package it belongs to.
+        // Ask project which package does this belong maybe create an edge?
+        return;
+      }
 
       // If a node exists we need to update it.
 
@@ -112,15 +120,29 @@ export class PackageGraph {
           return;
         }
 
-        const relativePath = resolveRelative(baseDir, d.resolved);
+        const targetPath = resolveRelative(baseDir, d.resolved);
+        const packageName = this.package.packageName;
 
-        const dest = this.addNode({ key: relativePath, path: relativePath });
+        if (this.isFileExternalToPackage(targetPath)) {
+          console.warn(
+            `The source file "${sourcePath}" is importing a file "${targetPath}" that is external to "${packageName}" package directory (${baseDir}), omitting target file ("${targetPath}") form package-graph.`
+          );
+          // TODO Should resolve this path to a package in the project?
+          // Potential issues could be circulars within the project.
+          return;
+        }
+
+        const dest = this.addNode({ key: targetPath, path: targetPath });
 
         this.#graph.addEdge(source, dest);
       });
     });
 
     return this.#graph;
+  }
+
+  isFileExternalToPackage(relativePath: string): boolean {
+    return relativePath.startsWith('..');
   }
 
   get resolveOptions(): IResolveOptions {
