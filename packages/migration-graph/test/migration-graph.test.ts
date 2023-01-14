@@ -35,6 +35,25 @@ describe('migration-graph', () => {
       ).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
+    test('library with loose files in root', () => {
+      const baseDir = getLibrary('library-with-loose-files');
+      const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
+
+      expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
+      expect(projectGraph.sourceType).toBe(SourceType.Library);
+      expect(sourceType).toBe(SourceType.Library);
+      expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
+      expect(
+        flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+      ).toStrictEqual([
+        'Events.js',
+        'utils/Defaults.js',
+        'State.js',
+        'Widget.js',
+        'WidgetManager.js',
+      ]);
+    });
+
     test('workspace', () => {
       const baseDir = getLibrary('library-with-workspaces');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
