@@ -83,12 +83,13 @@ describe('migration-graph', () => {
 
       expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
         'lib/impl.js',
         'index.js',
       ]);
       expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual(['some-util.js']);
     });
   });
 
