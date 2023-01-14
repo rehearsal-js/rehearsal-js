@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`migrate - initialization > print files will be attempted to migrate with --dryRun 1`] = `
-"@rehearsal/migrate 1.0.0-beta
+"@rehearsal/migrate 1.0.1-beta
 [STARTED] Initialize -- Dry Run Mode
 [DATA] Running migration on basic
 [DATA] List of files will be attempted to migrate:

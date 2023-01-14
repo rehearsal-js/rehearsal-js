@@ -1,3 +1,10 @@
+## v1.0.1-beta
+
+* chore: test for loose files in a package (#615) ([0705760](https://github.com/rehearsal-js/rehearsal-js/commit/0705760)), closes [#615](https://github.com/rehearsal-js/rehearsal-js/issues/615)
+* chore(migration-graph): improve workspace test with out-of-scope file (#616) ([af04522](https://github.com/rehearsal-js/rehearsal-js/commit/af04522)), closes [#616](https://github.com/rehearsal-js/rehearsal-js/issues/616)
+
+
+
 ##  v1.0.0-beta
 
 * BREAKING CHANGE(migration-graph): include all files in package dir by default (#595) ([38257d6](https://github.com/rehearsal-js/rehearsal-js/commit/38257d6)), closes [#595](https://github.com/rehearsal-js/rehearsal-js/issues/595)
