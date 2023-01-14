@@ -79,7 +79,7 @@ function debugAnalysis(entry: GraphNode<PackageNode>): void {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
-  protected discoveredPackages: Record<string, EmberProjectPackage>;
+  protected discoveredPackages: Record<string, EmberProjectPackage> = {};
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     super(rootDir, { sourceType: 'Ember Application', ...options });
