@@ -138,6 +138,26 @@ describe('migrate - install dependencies', async () => {
     expect(result.stdout).toContain('Install dependencies');
     expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
   });
+
+  test('Install custom dependencies', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: [],
+          devDependencies: ['fs-extra'],
+        },
+      },
+    });
+    const result = await runBin('migrate', ['-u', 'rehearsal-config.json'], {
+      cwd: basePath,
+    });
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const devDeps = packageJson.devDependencies;
+
+    expect(result.stdout).toContain('Install dependencies from config');
+    expect(devDeps).toHaveProperty('fs-extra');
+  });
 });
 
 describe('migrate - generate tsconfig', async () => {
@@ -169,7 +189,7 @@ describe('migrate - generate tsconfig', async () => {
     expect(tsConfig.compilerOptions.strict).toBeTruthy;
   });
 
-  test('runBin custom ts config command with user config provided', async () => {
+  test('Custom ts config command with user config provided', async () => {
     basePath = prepareTmpDir('initialization');
     createUserConfig(basePath, {
       migrate: {
