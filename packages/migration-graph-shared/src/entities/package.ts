@@ -79,7 +79,25 @@ export class Package implements IPackage {
       this.#packageContainer = { isWorkspace: () => false };
     }
 
-    this.#excludePatterns = new Set(['dist', 'test', 'tests']);
+    const excludeDirs = [
+      '.yarn', // yarn3 directory
+      'dist',
+      'test',
+      'tests',
+    ];
+
+    const excludeFiles = [
+      '.eslintrc.*',
+      '.babelrc.*',
+      'babel.config.*', // Babel configs
+      'Brocfile.js',
+      'prettier.config.*', // Prettier configs
+      'karma.config.*',
+      'webpack.config.js',
+      'vite.config.ts',
+    ];
+
+    this.#excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
     this.#includePatterns = new Set(['.']);
   }
 
