@@ -59,7 +59,7 @@ describe('project-graph', () => {
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
 
-  test.only('should ignore .lock files', () => {
+  test('should ignore .lock files', () => {
     const baseDir = getLibrary('library-with-ignored-files');
 
     // Add dummy lock files package-lock.json, npm-shrinkwrap.json package-lock.json, yarn.lock, pnpm-lock.yaml
