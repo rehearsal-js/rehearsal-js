@@ -1,5 +1,12 @@
 import { describe, expect, test } from 'vitest';
-import { getLibrary, getEmberProjectFixture } from '@rehearsal/test-support';
+import {
+  getLibrary,
+  getEmberProjectFixture,
+  getFiles,
+  getLibraryProject,
+  create,
+  setupProject,
+} from '@rehearsal/test-support';
 import { SourceType } from '../src/source-type';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
 
@@ -13,7 +20,8 @@ describe('migration-strategy', () => {
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
-    test('simple with entrypoint', () => {
+
+    test('options.entrypoint', () => {
       const rootDir = getLibrary('library-with-entrypoint');
       const strategy = getMigrationStrategy(rootDir, { entrypoint: 'depends-on-foo.js' });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
@@ -23,20 +31,78 @@ describe('migration-strategy', () => {
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
 
-    test('workspaces', () => {
-      const rootDir = getLibrary('library-with-workspaces');
-      const strategy = getMigrationStrategy(rootDir);
-      const files: Array<SourceFile> = strategy.getMigrationOrder();
-      const relativePaths: Array<string> = files.map((f) => f.relativePath);
-      expect(relativePaths).toStrictEqual([
-        'packages/blorp/build.js',
-        'packages/blorp/lib/impl.js',
-        'packages/blorp/index.js',
-        'packages/foo/lib/a.js',
-        'packages/foo/index.js',
-        'some-util.js',
-      ]);
-      expect(strategy.sourceType).toBe(SourceType.Library);
+    test('options.include', () => {
+      const files = getFiles('simple');
+      const rootDir = create(files);
+      const strategy = getMigrationStrategy(rootDir, { include: ['test'] });
+
+      const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
+
+      const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
+
+      expect(actual).toStrictEqual(['lib/a.js', 'index.js', 'test/some.test.js']);
+    });
+
+    test('options.exclude', () => {
+      const files = getFiles('simple');
+      const rootDir = create(files);
+      const strategy = getMigrationStrategy(rootDir, { exclude: ['index.js'] });
+
+      const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
+
+      const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
+
+      expect(actual).toStrictEqual(['lib/a.js']);
+    });
+
+    describe('workspaces', () => {
+      test('should create migration strategy for a project with workspaces', () => {
+        const rootDir = getLibrary('library-with-workspaces');
+        const strategy = getMigrationStrategy(rootDir);
+        const files: Array<SourceFile> = strategy.getMigrationOrder();
+        const relativePaths: Array<string> = files.map((f) => f.relativePath);
+        expect(relativePaths).toStrictEqual([
+          'packages/blorp/build.js',
+          'packages/blorp/lib/impl.js',
+          'packages/blorp/index.js',
+          'packages/foo/lib/a.js',
+          'packages/foo/index.js',
+          'some-util.js',
+        ]);
+        expect(strategy.sourceType).toBe(SourceType.Library);
+      });
+
+      test('options.exclude should filter out a file in a workspace package', async () => {
+        const project = getLibraryProject('library-with-workspaces');
+
+        project.mergeFiles({
+          packages: {
+            blorp: {
+              'should-have': { 'index.js': 'console.log(1);' },
+              'should-ignore': { 'index.js': 'console.log(1);' },
+            },
+          },
+        });
+
+        await setupProject(project);
+
+        const options = { exclude: ['packages/blorp/should-ignore'] };
+
+        const strategy = getMigrationStrategy(project.baseDir, options);
+
+        const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
+        const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
+        expect(relativePaths).toStrictEqual([
+          'packages/blorp/build.js',
+          'packages/blorp/lib/impl.js',
+          'packages/blorp/index.js',
+          'packages/blorp/should-have/index.js',
+          'packages/foo/lib/a.js',
+          'packages/foo/index.js',
+          'some-util.js',
+        ]);
+        expect(strategy.sourceType).toBe(SourceType.Library);
+      });
     });
   });
 

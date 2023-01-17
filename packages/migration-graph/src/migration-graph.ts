@@ -23,9 +23,9 @@ export function buildMigrationGraph(
   options?: MigrationGraphOptions
 ): { projectGraph: ProjectGraph; sourceType: SourceType } {
   // Determine what kind of MigrationGraph should be created.
-  // Library
   // Ember App
   // Ember Addon
+  // Library
 
   const packageJson = readPackageJson(rootDir);
 

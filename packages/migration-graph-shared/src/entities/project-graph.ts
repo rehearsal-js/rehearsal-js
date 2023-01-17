@@ -12,7 +12,13 @@ const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
 // TODO this package level dependency data should be surfaced in a report
 
-export type ProjectGraphOptions = { eager?: boolean; sourceType?: string; entrypoint?: string };
+export type ProjectGraphOptions = {
+  eager?: boolean;
+  sourceType?: string;
+  entrypoint?: string;
+  include?: Array<string>;
+  exclude?: Array<string>;
+};
 
 export class ProjectGraph {
   #rootDir: string;
@@ -20,16 +26,22 @@ export class ProjectGraph {
   #graph: Graph<PackageNode>;
   #sourceType: string;
   #eager: boolean;
+
+  include: Set<string>;
+  exclude: Set<string>;
+
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint } = {
+    const { eager, sourceType, entrypoint, exclude, include } = {
       eager: false,
       sourceType: 'JavaScript Library',
       ...options,
     };
 
+    this.include = new Set(include);
+    this.exclude = new Set(exclude);
     this.#rootDir = rootDir;
     this.#entrypoint = entrypoint;
     this.#eager = eager;
@@ -147,9 +159,15 @@ export class ProjectGraph {
     // Add root package to graph
     const rootPackage = new RootPackage(this.rootDir);
 
+    rootPackage.addExcludePattern(...this.exclude);
+    rootPackage.addIncludePattern(...this.include);
+
     if (this.#entrypoint) {
       rootPackage.includePatterns = new Set([this.#entrypoint]);
     }
+
+    DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
+    DEBUG_CALLBACK('RootPackage.includePatterns', rootPackage.includePatterns);
 
     const rootPackageNode = this.addPackageToGraph(rootPackage, false);
 
@@ -158,8 +176,6 @@ export class ProjectGraph {
     if (globs.length <= 0) {
       return [rootPackage];
     }
-
-    DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
 
     DEBUG_CALLBACK('ProjectGraph.globs %s', globs);
 

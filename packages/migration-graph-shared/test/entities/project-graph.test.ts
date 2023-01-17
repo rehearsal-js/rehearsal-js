@@ -115,6 +115,26 @@ describe('project-graph', () => {
     expect(somePackage.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
   });
 
+  test('options.include', () => {
+    const baseDir = getLibrary('simple');
+
+    const projectGraph = new ProjectGraph(baseDir, { include: ['test'] });
+    const [somePackage] = projectGraph.discover();
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
+      'lib/a.js',
+      'index.js',
+      'test/some.test.js',
+    ]);
+  });
+
+  test('options.exclude', () => {
+    const baseDir = getLibrary('simple');
+
+    const projectGraph = new ProjectGraph(baseDir, { exclude: ['lib'] });
+    const [somePackage] = projectGraph.discover();
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['index.js']);
+  });
+
   describe('workspaces', () => {
     test('should discover all packages in the project', () => {
       const baseDir = getLibrary('library-with-workspaces');
