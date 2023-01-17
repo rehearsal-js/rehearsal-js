@@ -65,8 +65,6 @@ describe('migration-strategy', () => {
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
         'lib/some-addon/addon/components/greet.js',
-        'lib/some-addon/app/components/greet.js',
-        'lib/some-addon/index.js',
         ...EXPECTED_APP_FILES,
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
@@ -82,7 +80,6 @@ describe('migration-strategy', () => {
         'lib/some-engine/addon/resolver.js',
         'lib/some-engine/addon/engine.js',
         'lib/some-engine/addon/routes.js',
-        'lib/some-engine/index.js',
         ...EXPECTED_APP_FILES,
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
@@ -94,11 +91,7 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
-      expect(actual).toStrictEqual([
-        'addon/components/greet.js',
-        'app/components/greet.js',
-        'index.js',
-      ]);
+      expect(actual).toStrictEqual(['addon/components/greet.js']);
       expect(strategy.sourceType).toBe(SourceType.EmberAddon);
     });
   });

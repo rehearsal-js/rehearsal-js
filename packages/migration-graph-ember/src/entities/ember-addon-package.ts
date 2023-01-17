@@ -22,7 +22,7 @@ export class EmberAddonPackage extends EmberAppPackage {
       ...options,
     });
 
-    this.excludePatterns = new Set([
+    const excludeDirs = [
       'dist',
       'config',
       'ember-config',
@@ -31,9 +31,16 @@ export class EmberAddonPackage extends EmberAppPackage {
       '@ember/*',
       'public',
       './package',
-    ]);
+      'app', // Addons app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
+    ];
 
-    this.includePatterns = new Set(['index.js', 'addon', 'app']);
+    const excludeFiles = [
+      'index.js', // Ignore index.js because it's a CJS use to interact with the build pipeline.
+    ];
+
+    this.excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
+
+    this.includePatterns = new Set(['addon']);
   }
 
   get isEngine(): boolean {
