@@ -130,12 +130,12 @@ export class Package implements IPackage {
       );
     }
 
-    return this.#packageContainer.isWorkspace(this.#packagePath);
+    return this.#packageContainer.isWorkspace(this.path);
   }
 
   get packageJson(): PackageJson {
     if (!this.#packageJson) {
-      const packageJsonPath = resolve(this.#packagePath, 'package.json');
+      const packageJsonPath = resolve(this.path, 'package.json');
       this.#packageJson = readJsonSync(packageJsonPath);
     }
     return this.#packageJson as PackageJson;
@@ -169,7 +169,7 @@ export class Package implements IPackage {
    * Return any workspace globs this package might have.
    */
   get workspaceGlobs(): [string] {
-    return getWorkspaceGlobs(this.#packagePath);
+    return getWorkspaceGlobs(this.path);
   }
 
   addWorkspaceGlob(glob: string): this {
@@ -252,14 +252,14 @@ export class Package implements IPackage {
    */
   writePackageJsonToDisk(): void {
     const sorted: Record<any, any> = sortPackageJson(this.packageJson);
-    const pathToPackageJson = join(this.#packagePath, 'package.json');
+    const pathToPackageJson = join(this.path, 'package.json');
     writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
   }
 
   isConvertedToTypescript(conversionLevel?: string): boolean {
     const fastGlobConfig = {
       absolute: true,
-      cwd: this.#packagePath,
+      cwd: this.path,
       ignore: ['**/node_modules/**'],
     };
     // ignore a tests directory if we only want to consider the source
