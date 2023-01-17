@@ -61,18 +61,18 @@ cd my-js-project
 #   -- 99 eslint errors, with details in the report
 ```
 
-Rehearsal Migrate just performed the following tasks:
+Rehearsal Migrate has performed the following tasks:
 
-- Initialize: Rehearsal will scan the project and determine the proper mgiration order, from leaf to root. This is critical for proper type inference. Rehearsal will handle file extension changes from .js to .ts via a git mv command. For partial migrations, Rehearsal will manage the migration state in a generated file which you can checkin for migration handoff.
+- Initialize: Rehearsal will scan the project dependency graph and determine the proper migration order, from leaf to root. This is critical for proper type inference. Rehearsal will handle file extension changes from .js to .ts via a git mv command. For partial migrations, Rehearsal will manage the migration state in a generated file which you can checkin for migration handoff.
 - Install dev-dependencies: Rehearsal requires the following [dev-dependencies](https://github.com/rehearsal-js/rehearsal-js/blob/1f1b5f9499c9a2b93999dd0da274110c184a104b/packages/cli/src/commands/migrate/tasks/dependency-install.ts#L6-L15) to be installed for proper type inference and will handle this work for you.
 - Create tsconfig.json: Rehearsal will create a tsconfig.json file with the proper settings for your project with strictness enabled. If an tsconfig.json file already exists, Rehearsal will add the appropriate settings to it for strictness.
 - Create eslint config: Rehearsal will create an eslint config file with the proper settings for your project. If an eslint config file already exists, Rehearsal will extend it into a new file called ".rehearsal-eslintrc.js" in the root directory.
-- Add package scripts: Rehearsal will add package.json scripts to handle the typescript compiler and linting.
+- Add package scripts: Rehearsal will add package.json scripts for tsc build `'build:tsc': 'tsc -b'` and lint `'lint:tsc': 'tsc --noEmit'`.
 - Migration Complete: Rehearsal has completed the migration process. It will report the number of files converted to TypeScript, the number of errors caught by Rehearsal, the number of errors fixed by Rehearsal, and the number of errors that need to be fixed manually. All of this information is also available in the report file in the "./rehearsal/" directory.
 
 ## Interactive Mode - Migrate
 
-With the interactive mode flag `--interactive` or `-i`, Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing them eg:
+With the interactive mode flag `--interactive` or `-i`, Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing.
 
 ## Rehearsal Reports
 
@@ -82,7 +82,7 @@ In combination with the VSCode SARIF Viewer extension, you can view the SARIF re
 
 ## Optional Config File
 
-Rehearsal also can read from a custom user confi file. This is useful if you want to customize the migration process. For example, you can add additional dependencies to be installed during the migration process. You can also add custom setup tasks to be run during the migration process. The config file is a JSON file with the following structure:
+Rehearsal also can read from a custom user config file. This is useful if you want to customize the migration process. For example, you can add additional dependencies to be installed during the migration process. You can also add custom setup tasks to be run during the migration process. The config file is a JSON file with the following structure:
 
 ```json
 // rehearsal-config.json
@@ -109,7 +109,7 @@ Rehearsal also can read from a custom user confi file. This is useful if you wan
 
 ## Known Limitations
 
-Rehearsal will do its best to propertly infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types that Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
+Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types that Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 
 # Packages
 
