@@ -1,7 +1,14 @@
 import { resolve } from 'path';
-import { copySync, readdirSync, readJSONSync, writeJSONSync, realpathSync } from 'fs-extra';
+import {
+  copySync,
+  readdirSync,
+  readJSONSync,
+  writeJSONSync,
+  realpathSync,
+  writeFileSync,
+} from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 
 import { runBin } from '../test-helpers';
@@ -104,7 +111,7 @@ describe('migrate - check repo status', async () => {
 describe('migrate - initialization', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('basic');
   });
 
@@ -123,7 +130,7 @@ describe('migrate - initialization', async () => {
 describe('migrate - install dependencies', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('initialization');
   });
 
@@ -143,7 +150,7 @@ describe('migrate - install dependencies', async () => {
 describe('migrate - generate tsconfig', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('initialization');
   });
 
@@ -152,12 +159,36 @@ describe('migrate - generate tsconfig', async () => {
       cwd: basePath,
     });
 
+    console.log(basePath);
+
+    expect(result.stdout).toContain('Create tsconfig.json');
+    expect(readdirSync(basePath)).toContain('tsconfig.json');
+  });
+
+  test('stage tsconfig if in git repo', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    // Init git, add and commit existed files, to make it a clean state
+    await git.init();
+    await git.add(resolve(basePath, 'package.json'));
+    await git.commit('foo');
+
+    const result = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    const gitStatus = await git.status();
+    expect(gitStatus.staged).toContain('tsconfig.json');
+
     expect(result.stdout).toContain('Create tsconfig.json');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
 
   test('On tsconfig exists, ensure strict mode', async () => {
-    // tsconfig already created from previous test
+    const oldConfig = { compilerOptions: { strict: false } };
+    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldConfig);
     const result = await runBin('migrate', [], {
       cwd: basePath,
     });
@@ -170,7 +201,6 @@ describe('migrate - generate tsconfig', async () => {
   });
 
   test('runBin custom ts config command with user config provided', async () => {
-    basePath = prepareTmpDir('initialization');
     createUserConfig(basePath, {
       migrate: {
         setup: {
@@ -251,6 +281,32 @@ describe('migrate - JS to TS conversion', async () => {
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
   });
 
+  test('stage report if in a git repo', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    // Init git, add and commit existed files, to make it a clean state
+    await git.init();
+    await git.add(readdirSync(basePath));
+    await git.commit('foo');
+
+    await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    const reportPath = resolve(basePath, '.rehearsal');
+    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
+
+    const gitStatus = await git.status();
+    expect(gitStatus.staged).toStrictEqual([
+      '.eslintrc.js',
+      '.rehearsal-eslintrc.js',
+      '.rehearsal/migrate-report.sarif',
+      'tsconfig.json',
+    ]);
+  });
+
   test('Generate report in different formats with -f flag', async () => {
     await runBin('migrate', ['-f', 'json,md,sarif,foo'], {
       cwd: basePath,
@@ -268,8 +324,65 @@ describe('migrate - JS to TS conversion', async () => {
 describe('migrate - generate eslint config', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('initialization');
+  });
+
+  test('create .eslintrc.js if not existed', async () => {
+    const result = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(result.stdout).toContain(
+      'Create .eslintrc.js, extending Rehearsal default typescript-related config'
+    );
+    expect(readdirSync(basePath)).toContain('.eslintrc.js');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
+
+    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+    const eslintConfig = require(resolve(basePath, '.eslintrc.js'));
+    expect(eslintConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.js']);
+  });
+
+  test('extends .eslintrc.js if existed', async () => {
+    const oldConfig = `
+    module.exports = {extends: ['foo']};
+  `;
+    writeFileSync(resolve(basePath, '.eslintrc.js'), oldConfig);
+
+    const result = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(result.stdout).toContain('extending Rehearsal default typescript-related config');
+    expect(readdirSync(basePath)).toContain('.eslintrc.js');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
+
+    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+    const newConfig = require(resolve(basePath, '.eslintrc.js'));
+    expect(newConfig.extends).toStrictEqual(['foo', './.rehearsal-eslintrc.js']);
+  });
+
+  test('stage lint configs if in git repo', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    // Init git, add and commit existed files, to make it a clean state
+    await git.init();
+    await git.add(resolve(basePath, 'package.json'));
+    await git.commit('foo');
+
+    await runBin('migrate', [], {
+      cwd: basePath,
+    });
+
+    expect(readdirSync(basePath)).toContain('.eslintrc.js');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
+
+    const gitStatus = await git.status();
+    expect(gitStatus.staged).toContain('.eslintrc.js');
+    expect(gitStatus.staged).toContain('.rehearsal-eslintrc.js');
   });
 
   test('Run custom lint config command with user config provided', async () => {
@@ -294,7 +407,7 @@ describe('migrate - generate eslint config', async () => {
 describe('migrate - handle custom basePath', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('custom_basepath');
   });
 
@@ -318,7 +431,7 @@ describe('migrate - handle custom basePath', async () => {
 describe('migrate - new scripts for TS', async () => {
   let basePath = '';
 
-  beforeAll(() => {
+  beforeEach(() => {
     basePath = prepareTmpDir('basic');
   });
 

@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { existsSync, outputFileSync } from 'fs-extra';
 import defaultConfig from '../../../configs/default-eslint';
+import { gitAddIfInRepo } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
@@ -31,6 +32,7 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
         task.output = `Create .eslintrc.js, extending Rehearsal default typescript-related config`;
         extendsRehearsalInNewConfig(configPath, REHEARSAL_CONFIG_RELATIVE_PATH);
       }
+      gitAddIfInRepo(configPath); // stage .eslintrc.js if in a git repo
     },
   };
 }
@@ -39,6 +41,7 @@ function createRehearsalConfig(basePath: string): void {
   const rehearsalConfigStr = 'module.exports = ' + JSON.stringify(defaultConfig, null, 2);
   const rehearsalConfigPath = resolve(basePath, REHEARSAL_CONFIG_FILENAME);
   outputFileSync(rehearsalConfigPath, rehearsalConfigStr);
+  gitAddIfInRepo(rehearsalConfigPath); // stage '.rehearsal-eslintrc.js'; if in a git repo
 }
 
 async function extendsRehearsalInCurrentConfig(

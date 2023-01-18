@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { existsSync, writeJSONSync } from 'fs-extra';
 
-import { readJSON, writeTSConfig } from '../../../utils';
+import { readJSON, writeTSConfig, gitAddIfInRepo } from '../../../utils';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
@@ -11,12 +11,12 @@ export async function tsConfigTask(options: MigrateCommandOptions): Promise<List
     title: 'Create tsconfig.json',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      const configPath = resolve(options.basePath, 'tsconfig.json');
+
       if (ctx.userConfig?.hasTsSetup) {
         task.output = `Create tsconfig from config`;
         await ctx.userConfig.tsSetup();
       } else {
-        const configPath = resolve(options.basePath, 'tsconfig.json');
-
         if (existsSync(configPath)) {
           task.output = `${configPath} already exists, ensuring strict mode is enabled`;
           task.title = `Update tsconfig.json`;
@@ -28,6 +28,7 @@ export async function tsConfigTask(options: MigrateCommandOptions): Promise<List
           writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
         }
       }
+      gitAddIfInRepo(configPath); // stage tsconfig.json if in a git repo
     },
   };
 }
