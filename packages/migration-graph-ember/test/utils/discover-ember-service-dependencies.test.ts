@@ -30,7 +30,7 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeFalsy;
   });
 
-  test('should optionally log an error if  afile cannot be parsed', () => {
+  test('should optionally log an error if a file cannot be parsed', () => {
     const logger = new Logger();
 
     const files = {
