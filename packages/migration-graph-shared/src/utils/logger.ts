@@ -26,10 +26,3 @@ export class Logger {
     this.#logs.push({ severity: 'log', message });
   }
 }
-
-// Module scoped logger;
-const logger: Logger = new Logger();
-
-export function getLogger(): Logger {
-  return logger;
-}
