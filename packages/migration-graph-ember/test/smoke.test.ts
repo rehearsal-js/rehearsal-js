@@ -52,19 +52,19 @@ describe('Smoke Test', () => {
 
       expect(simpleEngine, `module mappings '${FIXTURE_NAMES.SIMPLE_ENGINE}'`).toBeTruthy();
 
-      expect(simpleAddon, 'to have an associated mapping by location for `foo`').toBe(
-        mappingsByLocation[simpleAddon.location]
+      expect(simpleAddon, 'to have an associated mapping by path for `foo`').toBe(
+        mappingsByLocation[simpleAddon.path]
       );
 
-      expect(simpleEngine, 'to have an associated mapping by location for `bar`').toBe(
-        mappingsByLocation[simpleEngine.location]
+      expect(simpleEngine, 'to have an associated mapping by path for `bar`').toBe(
+        mappingsByLocation[simpleEngine.path]
       );
 
-      expect(simpleAddon.location, `${simpleAddon.packageName}'s location is correct`).toBe(
+      expect(simpleAddon.path, `${simpleAddon.packageName}'s path is correct`).toBe(
         resolve(pathToRoot, FIXTURE_NAMES.SIMPLE_ADDON)
       );
 
-      expect(simpleEngine.location, `${simpleEngine.packageName}'s location is correct`).toBe(
+      expect(simpleEngine.path, `${simpleEngine.packageName}'s path is correct`).toBe(
         resolve(pathToRoot, FIXTURE_NAMES.SIMPLE_ENGINE)
       );
     });
@@ -169,11 +169,11 @@ describe('Smoke Test', () => {
 
       expect(
         fooExternalAddon,
-        'an associated mapping by location exists for `foo-external-addon`'
-      ).toEqual(mappingsByLocation[fooExternalAddon.location]);
+        'an associated mapping by path exists for `foo-external-addon`'
+      ).toEqual(mappingsByLocation[fooExternalAddon.path]);
 
       expect(
-        realpathSync(fooExternalAddon.location),
+        realpathSync(fooExternalAddon.path),
         "`foo-external-addon`'s location is correct"
       ).toEqual(realpathSync(resolve(pathToRoot, 'node_modules', 'foo-external-addon')));
     });

@@ -5,15 +5,15 @@ import { Package, PackageOptions } from './package';
 export class RootPackage extends Package {
   #globs: Array<string>;
 
-  constructor(rootDir: string, options?: PackageOptions) {
-    super(rootDir, options);
+  constructor(packagePath: string, options?: PackageOptions) {
+    super(packagePath, options);
 
     // Determine if this package.json has a workspace entry
-    const globs = getWorkspaceGlobs(this.packagePath);
+    const globs = getWorkspaceGlobs(this.path);
 
     // Add the workspace globs to the exclude pattern for the root package
     // so it doesn't attempt to add them to the root package's graph.
-    globs.forEach((glob) => this.addExcludePattern(relative(this.packagePath, glob)));
+    globs.forEach((glob) => this.addExcludePattern(relative(this.path, glob)));
 
     this.#globs = globs;
   }

@@ -173,7 +173,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
             const key = `app/services/${s.serviceName}.js`;
 
-            const someServiceInAnInRepoAddon = join(emberAddonPackage.packagePath, key);
+            const someServiceInAnInRepoAddon = join(emberAddonPackage.path, key);
 
             DEBUG_CALLBACK(emberAddonPackage.path);
             DEBUG_CALLBACK(someServiceInAnInRepoAddon);

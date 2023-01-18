@@ -156,11 +156,11 @@ class MappingsContainer {
     return this.internalState?.rootPackage;
   }
 
-  public isWorkspace(pathToPackage: string): boolean {
+  public isWorkspace(packagePath: string): boolean {
     if (!this.internalState?.rootPackage) {
       throw new Error('Unable check isWorkspace; rootPackage is not defined');
     }
-    return isWorkspace(this.internalState.rootPackage.path, pathToPackage);
+    return isWorkspace(this.internalState.rootPackage.path, packagePath);
   }
 
   public addWorkspaceGlob(glob: string): MappingsContainer {
@@ -228,7 +228,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
         }
       }
 
@@ -280,7 +280,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
         }
       }
 
@@ -365,7 +365,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
       }
 
       this.internalState.internalAddonPackages = {
@@ -404,7 +404,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
       }
       this.internalState.internalAddonPackages = {
         mappingsByAddonName,

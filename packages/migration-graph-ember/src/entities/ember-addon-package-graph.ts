@@ -18,7 +18,7 @@ export class EmberAddonPackageGraph extends EmberAppPackageGraph {
   }
 
   get resolveOptions(): IResolveOptions {
-    const addonName = getEmberAddonName(this.package.packagePath);
+    const addonName = getEmberAddonName(this.package.path);
 
     if (!addonName) {
       console.warn('addonName is undefined, unable to create alias from app directory');
