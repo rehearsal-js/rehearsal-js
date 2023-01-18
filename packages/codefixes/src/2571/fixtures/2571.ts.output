@@ -5,18 +5,27 @@ const test = ['dummy'];
 try {
   console.log('success');
 } catch (e) {
-  console.log((e as Error).message);
-  console.log((e as any).notErrorMember);
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  console.log(e.message);
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  console.log(e.notErrorMember);
 
-  if ((e as Error).name === 'Test') {
-    console.log((e as Error).name);
-    console.log((e as Error).name);
-    console.log((e as Error).name);
-    console.log((e as Error).name);
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  if (e.name === 'Test') {
+    /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.name);
+    /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.name);
+    /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.name);
+    /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.name);
   }
 
-  if (test[1] === undefined && (e as Error).name === 'Test') {
-    console.log((e as Error).name);
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  if (test[1] === undefined && e.name === 'Test') {
+    /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.name);
   }
 }
 
@@ -29,5 +38,5 @@ function getObject<T>(): T {
 
 const dummy = getObject();
 
-/* @ts-expect-error @rehearsal TODO TS2571: Object is of type 'unknown'. Specify a type of dummy, use type assertion: `(dummy as DesiredType)` or type guard: `if (dummy instanceof DesiredType) { ... }` */
+/* @ts-expect-error @rehearsal TODO TS18046: 'dummy' is of type 'unknown'. */
 dummy.key;
