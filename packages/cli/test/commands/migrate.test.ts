@@ -179,8 +179,6 @@ describe('migrate - generate tsconfig', async () => {
       cwd: basePath,
     });
 
-    console.log(basePath);
-
     expect(result.stdout).toContain('Create tsconfig.json');
     expect(readdirSync(basePath)).toContain('tsconfig.json');
   });
