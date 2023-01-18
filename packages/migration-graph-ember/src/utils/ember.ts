@@ -36,8 +36,14 @@ export function isEngine(packageJson: PackageJson): boolean {
 }
 
 export function getPackageMainFileName(pathToPackage: string): string {
-  const { main, 'ember-addon': emberAddon = {} } = readPackageJson(pathToPackage);
-  return emberAddon?.main ?? main ?? 'index.js';
+  const packageMain = readPackageJson(pathToPackage) as {
+    main?: string;
+    emberAddon?: {
+      main: string;
+    };
+  };
+
+  return packageMain.emberAddon?.main ?? packageMain.main ?? 'index.js';
 }
 
 /**
