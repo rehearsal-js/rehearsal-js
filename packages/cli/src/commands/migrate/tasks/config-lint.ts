@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { existsSync, outputFileSync } from 'fs-extra';
 import defaultConfig from '../../../configs/default-eslint';
+import { gitAddIfInRepo } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
@@ -14,14 +15,14 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
     title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
+      const configPath = resolve(options.basePath, CONFIG_FILENAME);
+
       if (_ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
         await _ctx.userConfig.lintSetup();
       } else {
         // only run the default process with no custom config provided
         createRehearsalConfig(options.basePath);
-
-        const configPath = resolve(options.basePath, CONFIG_FILENAME);
 
         if (configExists(configPath)) {
           task.output = `${configPath} already exists, extending Rehearsal default typescript-related config`;
@@ -32,6 +33,7 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
           extendsRehearsalInNewConfig(configPath, REHEARSAL_CONFIG_RELATIVE_PATH);
         }
       }
+      gitAddIfInRepo(configPath); // stage .eslintrc.js if in a git repo
     },
   };
 }
@@ -40,6 +42,7 @@ function createRehearsalConfig(basePath: string): void {
   const rehearsalConfigStr = 'module.exports = ' + JSON.stringify(defaultConfig, null, 2);
   const rehearsalConfigPath = resolve(basePath, REHEARSAL_CONFIG_FILENAME);
   outputFileSync(rehearsalConfigPath, rehearsalConfigStr);
+  gitAddIfInRepo(rehearsalConfigPath); // stage '.rehearsal-eslintrc.js'; if in a git repo
 }
 
 async function extendsRehearsalInCurrentConfig(

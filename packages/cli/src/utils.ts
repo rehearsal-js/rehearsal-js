@@ -56,6 +56,13 @@ export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
   return false; // false if it's not a git repo
 }
 
+// Stage files in a git repo
+export async function gitAddIfInRepo(fileList: string[] | string): Promise<void> {
+  if (await git.checkIsRepo()) {
+    git.add(fileList);
+  }
+}
+
 /**
  * Function to introduce a wait
  *
