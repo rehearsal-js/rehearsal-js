@@ -191,6 +191,9 @@ describe('migrate - generate tsconfig', async () => {
     // Init git, add and commit existed files, to make it a clean state
     await git.init();
     await git.add(resolve(basePath, 'package.json'));
+    // GH CI would require git name and email
+    await git.addConfig('user.name', 'tester');
+    await git.addConfig('user.email', 'tester@tester.com');
     await git.commit('foo');
 
     const result = await runBin('migrate', [], {
@@ -307,6 +310,9 @@ describe('migrate - JS to TS conversion', async () => {
     // Init git, add and commit existed files, to make it a clean state
     await git.init();
     await git.add(readdirSync(basePath));
+    // GH CI would require git name and email
+    await git.addConfig('user.name', 'tester');
+    await git.addConfig('user.email', 'tester@tester.com');
     await git.commit('foo');
 
     await runBin('migrate', [], {
@@ -389,6 +395,9 @@ describe('migrate - generate eslint config', async () => {
     // Init git, add and commit existed files, to make it a clean state
     await git.init();
     await git.add(resolve(basePath, 'package.json'));
+    // GH CI would require git name and email
+    await git.addConfig('user.name', 'tester');
+    await git.addConfig('user.email', 'tester@tester.com');
     await git.commit('foo');
 
     await runBin('migrate', [], {
