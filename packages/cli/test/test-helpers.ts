@@ -45,13 +45,14 @@ export const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 export const TEST_TSC_VERSION = '4.5.5';
-export const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
+export const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
 
+// we bundle typescript in deps
 export const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', '-D', '-w', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-w', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
