@@ -14,10 +14,53 @@ type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
+  | 'library-with-ignored-files'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
   | 'library-with-loose-files'
   | 'library-with-workspaces';
+
+const DIRS_TO_IGNORE = ['.yarn'];
+
+const FILES_TO_IGNORE = [
+  '.babelrc.js',
+  '.babelrc.json',
+  '.babelrc.cjs',
+  '.babelrc.mjs',
+  'babel.config.js',
+  'babel.config.json',
+  'babel.config.cjs',
+  'babel.config.mjs',
+  '.eslintrc.js',
+  'package-lock.json',
+  'yarn.lock',
+  'npm-shrinkwrap.json',
+  'webpack.config.js',
+  'prettier.config.js',
+  'prettier.config.cjs',
+  'karma.config.js',
+  'yarn.lock',
+];
+
+function getIgnoredFilesFixture(): fixturify.DirJSON {
+  const fixtureDir: fixturify.DirJSON = {};
+
+  FILES_TO_IGNORE.forEach((filename) => {
+    fixtureDir[filename] = '';
+  });
+
+  return fixtureDir;
+}
+
+function getIgnoredDirectoriesFixture(): fixturify.DirJSON {
+  const fixtureDir: fixturify.DirJSON = {};
+
+  DIRS_TO_IGNORE.forEach((dirname) => {
+    fixtureDir[dirname] = { 'should-not-include.js': '// Should not be included' };
+  });
+
+  return fixtureDir;
+}
 
 export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
   let files: fixturify.DirJSON;
@@ -52,6 +95,34 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             // a.js
             console.log('foo');
            `,
+        },
+      };
+      break;
+    case 'library-with-ignored-files':
+      files = {
+        'index.js': `
+          import './lib/a';
+          console.log(path.join('foo', 'bar', 'baz'));
+          console.log(parser, chalk);
+        `,
+        ...getIgnoredFilesFixture(),
+        ...getIgnoredDirectoriesFixture(),
+        config: {
+          ...getIgnoredFilesFixture(),
+        },
+        'package.json': `
+          {
+            "name": "my-package",
+            "main": "index.js",
+            "dependencies": {
+            },
+            "devDependencies": {
+              "typescript": "^4.8.3"
+            }
+          }
+        `,
+        lib: {
+          'a.js': '',
         },
       };
       break;

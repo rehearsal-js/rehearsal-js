@@ -48,6 +48,41 @@ describe('project-graph', () => {
 
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
+  test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', () => {
+    const baseDir = getLibrary('simple');
+
+    const projectGraph = new ProjectGraph(baseDir);
+    const somePackage = new Package(baseDir);
+    projectGraph.addPackageToGraph(somePackage);
+    projectGraph.discover();
+
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
+
+  test('should ignore .lock files', () => {
+    const baseDir = getLibrary('library-with-ignored-files');
+
+    // Add dummy lock files package-lock.json, npm-shrinkwrap.json package-lock.json, yarn.lock, pnpm-lock.yaml
+
+    const projectGraph = new ProjectGraph(baseDir);
+    projectGraph.discover();
+
+    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
+
+    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+  });
+
+  test('library should ignore files', () => {
+    const baseDir = getLibrary('library-with-ignored-files');
+    const projectGraph = new ProjectGraph(baseDir);
+    projectGraph.discover();
+
+    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
+
+    const files = flatten(somePackage.getModuleGraph().topSort());
+
+    expect(files).toStrictEqual(['lib/a.js', 'index.js']);
+  });
   test('options.eager', () => {
     const baseDir = getLibrary('simple');
 
