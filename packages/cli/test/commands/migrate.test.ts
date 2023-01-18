@@ -325,6 +325,7 @@ describe('migrate - JS to TS conversion', async () => {
     const gitStatus = await git.status();
     expect(gitStatus.staged).toStrictEqual([
       '.rehearsal-eslintrc.js',
+      '.eslintrc.js',
       '.rehearsal/migrate-report.sarif',
       'tsconfig.json',
     ]);
