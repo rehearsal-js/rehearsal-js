@@ -36,12 +36,9 @@
     "@types/sarif": "^2.1.4",
     "fs-extra": "^10.1.0",
     "lodash.get": "^4.4.2",
-    "typescript": "4.7.4",
+    "typescript": "^4.9.4",
     "vitest": "^0.23.4",
     "vitest-mock-extended": "^0.1.15"
-  },
-  "peerDependencies": {
-    "typescript": ">4.0"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {
