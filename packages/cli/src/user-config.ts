@@ -35,11 +35,11 @@ export class UserConfig {
   async install(): Promise<void> {
     if (this.config && this.config.install) {
       const { dependencies, devDependencies } = this.config.install;
-      if (dependencies) {
+      if (dependencies && dependencies.length) {
         await addDep(dependencies, false, { cwd: this.basePath });
       }
 
-      if (devDependencies) {
+      if (devDependencies && devDependencies.length) {
         await addDep(devDependencies, true, { cwd: this.basePath });
       }
     }
