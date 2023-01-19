@@ -1,7 +1,7 @@
 /* Existing comment */
 
 export function usesMissingFunction(): void {
-  return missingFunction();
+  return whereAmI();
 }
 
 export function usesMissingVariable(): boolean {
@@ -25,7 +25,7 @@ export function usesMissingVarWithLongName(): boolean {
 // The next function call is not properly formatted
 timestamp();
 
-function missingFunction(): void {
+function whereAmI(): void {
   throw new Error('Function not implemented.');
 }
 

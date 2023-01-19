@@ -85,11 +85,15 @@ describe('utils', () => {
   });
 
   test('getLatestTSVersion()', async () => {
-    const latestVersionTagged = compare(await getLatestTSVersion('beta'), '1.0.0', '>');
-    const latestVersion = compare(await getLatestTSVersion('latestBeta'), '1.0.0', '>');
+    const betaVersionTagged = compare(await getLatestTSVersion('beta'), '4.0.0', '>');
+    const latestBetaVersion = compare(await getLatestTSVersion('latestBeta'), '4.0.0', '>');
+    const latestVersion = compare(await getLatestTSVersion('latest'), '4.0.0', '>');
+    const rcVersion = compare(await getLatestTSVersion('rc'), '4.0.0', '>');
 
-    expect(latestVersionTagged).toBeTruthy();
+    expect(betaVersionTagged).toBeTruthy();
     expect(latestVersion).toBeTruthy();
+    expect(latestBetaVersion).toBeTruthy();
+    expect(rcVersion).toBeTruthy();
   });
 
   test('getLockfilePath()', () => {

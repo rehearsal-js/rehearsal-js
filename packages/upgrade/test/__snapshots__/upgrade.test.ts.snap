@@ -2,7 +2,7 @@
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 44,
+  "fixedItemCount": 42,
   "items": [
     {
       "analysisTarget": "react-processed.tsx",
@@ -567,20 +567,38 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-processed.ts",
       "category": "Error",
-      "helpUrl": "",
-      "hint": "Unexpected any. Specify a different type.",
-      "hintAdded": false,
-      "message": "Unexpected any. Specify a different type.",
-      "nodeKind": "TSAnyKeyword",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts18046}",
+      "hint": "'e' is of type 'unknown'.",
+      "hintAdded": true,
+      "message": "'e' is of type 'unknown'.",
+      "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 24,
+        "endColumn": 16,
         "endLine": 19,
-        "startColumn": 21,
+        "startColumn": 15,
         "startLine": 19,
       },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/no-explicit-any",
-      "type": 1,
+      "nodeText": "e",
+      "ruleId": "TS18046",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-processed.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts18046}",
+      "hint": "'e' is of type 'unknown'.",
+      "hintAdded": true,
+      "message": "'e' is of type 'unknown'.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 21,
+        "startColumn": 15,
+        "startLine": 21,
+      },
+      "nodeText": "e",
+      "ruleId": "TS18046",
+      "type": 0,
     },
     {
       "analysisTarget": "ts-types.ts",

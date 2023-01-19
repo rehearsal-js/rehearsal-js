@@ -12,14 +12,15 @@ const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
-const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
+// we bundle the latest version of typescript with the cli
+const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
@@ -32,7 +33,7 @@ const afterEachCleanup = async (): Promise<void> => {
 
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });
 
@@ -115,7 +116,7 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript version already tested`, async () => {
     // this will test the version already installed
-    await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+    await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
     await execa(PNPM_PATH, ['install']);
 
     const result = await runBin(
