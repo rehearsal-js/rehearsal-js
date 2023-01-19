@@ -11,6 +11,8 @@ import {
   getPathToBinary,
   isPnpmManager,
   isYarnManager,
+  isBinExisted,
+  getManagerBinPath,
   normalizeVersionString,
   sleep,
   timestamp,
@@ -69,6 +71,24 @@ describe('utils', () => {
     const isPnpm = isPnpmManager();
 
     expect(isPnpm).equal(true);
+  });
+
+  test('isBinExisted()', () => {
+    expect(isBinExisted('ls')).equal(true);
+    expect(isBinExisted('this-should-not-exist')).equal(false);
+  });
+
+  test('getManagerBinPath()', () => {
+    // TODO: Add test scenarios if volta exists
+    // Haven't came up with a quick and good way to do it
+    const npmBinPath = execa.sync('which', ['npm']).stdout;
+    expect(getManagerBinPath('npm', false)).toBe(npmBinPath);
+
+    const yarnBinPath = execa.sync('which', ['yarn']).stdout;
+    expect(getManagerBinPath('yarn', false)).toBe(yarnBinPath);
+
+    const pnpmBinPath = execa.sync('which', ['pnpm']).stdout;
+    expect(getManagerBinPath('pnpm', false)).toBe(pnpmBinPath);
   });
 
   test('getModuleManager()', () => {
