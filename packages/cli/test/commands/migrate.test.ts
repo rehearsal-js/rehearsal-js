@@ -34,7 +34,7 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
-describe.skip('migrate - check repo status', async () => {
+describe('migrate - check repo status', async () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -108,7 +108,7 @@ describe.skip('migrate - check repo status', async () => {
   });
 });
 
-describe.skip('migrate - initialization', async () => {
+describe('migrate - initialization', async () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -127,7 +127,7 @@ describe.skip('migrate - initialization', async () => {
   // figure out a way to test the ctx result in other scenario during initialization
 });
 
-describe.skip('migrate - install dependencies', async () => {
+describe('migrate - install dependencies', async () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -167,7 +167,7 @@ describe.skip('migrate - install dependencies', async () => {
   });
 });
 
-describe.skip('migrate - generate tsconfig', async () => {
+describe('migrate - generate tsconfig', async () => {
   let basePath = '';
 
   beforeEach(() => {
