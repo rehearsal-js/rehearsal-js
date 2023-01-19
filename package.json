@@ -65,7 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
     "@vitest/coverage-c8": "^0.22.1",
-    "commander": "^9.4.0",
+    "commander": "^10.0.0",
     "conventional-changelog-cli": "^2.1.1",
     "eslint": "8.22.0",
     "eslint-config-prettier": "^8.5.0",
