@@ -50,7 +50,7 @@
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.4.1",
     "@types/findup-sync": "^4.0.2",
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.0.0",
     "@types/json5": "*",
     "@types/lodash.get": "^4.4.7",
