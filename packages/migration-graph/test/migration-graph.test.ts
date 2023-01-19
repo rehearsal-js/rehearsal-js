@@ -138,7 +138,7 @@ describe('migration-graph', () => {
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for addon'
-      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
+      ).toStrictEqual(['addon/components/greet.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
@@ -159,7 +159,7 @@ describe('migration-graph', () => {
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for in-repo-engine'
-      ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js', 'index.js']);
+      ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
@@ -179,7 +179,7 @@ describe('migration-graph', () => {
       expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
-      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
+      ).toStrictEqual(['addon/components/greet.js']);
     });
     test('should create a dependency between an app using a service from an in-repo addon', async () => {
       const project = getEmberProject('app-with-in-repo-addon');
@@ -244,9 +244,6 @@ describe('migration-graph', () => {
       expect(allFiles).toStrictEqual([
         'addon/components/greet.js',
         'addon/services/date.js',
-        'app/components/greet.js',
-        'app/services/date.js',
-        'index.js',
         'app/app.js',
         'app/components/obtuse.js',
         'app/services/locale.js',

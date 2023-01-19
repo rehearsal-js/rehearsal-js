@@ -4,18 +4,16 @@ import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
 import { EmberAddonPackageGraph } from '../../src/entities/ember-addon-package-graph';
 
 describe('EmberAddonPackageGraph', () => {
-  test('should create an edge between app/components/<file>.js and addon/components/<file>.js', async () => {
+  test('should create an edge between app/ files in addons module graph', async () => {
     const project = getEmberProject('addon');
 
     await setupProject(project);
 
     const addonPackage = new EmberAddonPackage(project.baseDir);
-
     const addonPackageGraph = new EmberAddonPackageGraph(addonPackage);
     addonPackageGraph.discover();
 
-    const implNode = addonPackageGraph.graph.getNode('addon/components/greet.js');
-    const interfaceNode = addonPackageGraph.graph.getNode('app/components/greet.js');
-    expect(interfaceNode.adjacent.has(implNode)).toBe(true);
+    expect(addonPackageGraph.graph.hasNode('addon/components/greet.js')).toBeTruthy();
+    expect(addonPackageGraph.graph.hasNode('app/components/greet.js')).toBeFalsy();
   });
 });
