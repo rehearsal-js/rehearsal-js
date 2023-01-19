@@ -46,7 +46,7 @@ cd my-js-project
 
 # ... rehearsal does some magic
 
-# @rehearsal/migrate 1.0.1-beta
+# @rehearsal/migrate 1.0.2-beta
 # ✔ Initialize
 # ✔ Install dependencies
 # ✔ Create tsconfig.json

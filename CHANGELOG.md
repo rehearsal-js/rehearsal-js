@@ -1,3 +1,17 @@
+## v1.0.2-beta
+
+* fix: bundle typescript and bump (#634) ([2f7dd21](https://github.com/rehearsal-js/rehearsal-js/commit/2f7dd21)), closes [#634](https://github.com/rehearsal-js/rehearsal-js/issues/634)
+* fix: issue with custom config (#625) ([a28986c](https://github.com/rehearsal-js/rehearsal-js/commit/a28986c)), closes [#625](https://github.com/rehearsal-js/rehearsal-js/issues/625)
+* fix(migration-graph-ember): addon; ignore app and index.js (#627) ([2746e64](https://github.com/rehearsal-js/rehearsal-js/commit/2746e64)), closes [#627](https://github.com/rehearsal-js/rehearsal-js/issues/627)
+* feat: commit all the config files during migration (#629) ([96e4384](https://github.com/rehearsal-js/rehearsal-js/commit/96e4384)), closes [#629](https://github.com/rehearsal-js/rehearsal-js/issues/629)
+* feat(migration-graph): ignore more files (#626) ([263c37b](https://github.com/rehearsal-js/rehearsal-js/commit/263c37b)), closes [#626](https://github.com/rehearsal-js/rehearsal-js/issues/626)
+* chore: refactor to use Package.path (#618) ([2697170](https://github.com/rehearsal-js/rehearsal-js/commit/2697170)), closes [#618](https://github.com/rehearsal-js/rehearsal-js/issues/618)
+* chore: remove `src` from tarballs (#617) ([8fe2717](https://github.com/rehearsal-js/rehearsal-js/commit/8fe2717)), closes [#617](https://github.com/rehearsal-js/rehearsal-js/issues/617)
+* chore(migration-graph-ember): tidy types (#619) ([7f05b8a](https://github.com/rehearsal-js/rehearsal-js/commit/7f05b8a)), closes [#619](https://github.com/rehearsal-js/rehearsal-js/issues/619)
+* Update README.md ([322a8bf](https://github.com/rehearsal-js/rehearsal-js/commit/322a8bf))
+
+
+
 ## v1.0.1-beta
 
 * chore: test for loose files in a package (#615) ([0705760](https://github.com/rehearsal-js/rehearsal-js/commit/0705760)), closes [#615](https://github.com/rehearsal-js/rehearsal-js/issues/615)
