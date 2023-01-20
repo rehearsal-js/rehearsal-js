@@ -26,7 +26,8 @@
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run",
-    "test:watch": "vitest --coverage --watch"
+    "test:watch": "vitest --coverage --watch",
+    "version": "pnpm version"
   },
   "dependencies": {
     "@rehearsal/reporter": "workspace:*",
