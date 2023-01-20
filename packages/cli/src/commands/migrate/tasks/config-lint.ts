@@ -15,7 +15,7 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
     title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
-      // glob against the following file extension pattern js,yml,json,yaml
+      // glob against the following file extension pattern js,yml,json,yaml and return the first match
       const configPath = glob.sync(join(options.basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
 
       if (_ctx.userConfig?.hasLintSetup) {
