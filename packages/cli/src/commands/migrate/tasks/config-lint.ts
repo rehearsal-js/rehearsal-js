@@ -1,12 +1,12 @@
 import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { existsSync, outputFileSync } from 'fs-extra';
+import findupSync from 'findup-sync';
 import defaultConfig from '../../../configs/default-eslint';
 import { gitAddIfInRepo } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
-const CONFIG_FILENAME = '.eslintrc.js';
 const REHEARSAL_CONFIG_FILENAME = '.rehearsal-eslintrc.js';
 const REHEARSAL_CONFIG_RELATIVE_PATH = `./${REHEARSAL_CONFIG_FILENAME}`;
 
@@ -15,7 +15,9 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
     title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
-      const configPath = resolve(options.basePath, CONFIG_FILENAME);
+      const configPath =
+        findupSync('eslintrc.{js,yml,json,yaml}', { cwd: options.basePath }) ??
+        resolve(options.basePath, '.eslintrc.js');
 
       if (_ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
