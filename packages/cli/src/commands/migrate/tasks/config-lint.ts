@@ -16,7 +16,7 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
       const configPath =
-        findupSync('eslintrc.{js,yml,json,yaml}', { cwd: options.basePath }) ??
+        findupSync('.eslintrc.{js,yml,json,yaml}', { cwd: options.basePath }) ??
         resolve(options.basePath, '.eslintrc.js');
 
       if (_ctx.userConfig?.hasLintSetup) {
