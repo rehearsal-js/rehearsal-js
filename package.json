@@ -13,7 +13,8 @@
     "test": "pnpm recursive run test",
     "changelog": "pnpm conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
-    "reset": "pnpm clean && pnpm install"
+    "reset": "pnpm clean && pnpm install",
+    "release": "node release.js"
   },
   "commitlint": {
     "extends": [
