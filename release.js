@@ -42,7 +42,7 @@ const rl = require('node:readline').createInterface({
 
 rl.question('Is this correct? YES will publish. NO will abort. (y/n) ', (answer) => {
   if (answer.toLocaleLowerCase() === 'y' || answer.toLocaleLowerCase() === 'yes') {
-    console.log('Releasing...');
+    console.log('Releasing...\n\n');
     publish();
   } else {
     console.log('Aborting release');
@@ -52,14 +52,14 @@ rl.question('Is this correct? YES will publish. NO will abort. (y/n) ', (answer)
 
 function publish() {
   // git reset
-  // const gitReset = `git reset --hard`;
-  // console.log(gitReset);
-  // execSync(gitReset);
+  const gitReset = `git reset --hard`;
+  console.log(gitReset);
+  execSync(gitReset);
 
-  // // git clean
-  // const gitClean = `git clean -fdx`;
-  // console.log(gitClean);
-  // execSync(gitClean);
+  // git clean
+  const gitClean = `git clean -fdx`;
+  console.log(gitClean);
+  execSync(gitClean);
 
   // replace the version in package json on all packages with version
   const bumpVersion = `pnpm -r version ${newVersion} --exact --no-git-tag-version`;
@@ -67,50 +67,50 @@ function publish() {
   execSync(bumpVersion);
 
   // pnpm install recursive
-  // const pnpmInstall = `pnpm -r install`;
-  // console.log(pnpmInstall);
-  // execSync(pnpmInstall);
+  const pnpmInstall = `pnpm -r install`;
+  console.log(pnpmInstall);
+  execSync(pnpmInstall);
 
   // pnpm build recursive
-  // const pnpmBuild = `pnpm -r build`;
-  // console.log(pnpmBuild);
-  // execSync(pnpmBuild);
+  const pnpmBuild = `pnpm -r build`;
+  console.log(pnpmBuild);
+  execSync(pnpmBuild);
 
   // pnpm test
-  // const pnpmTest = `pnpm test`;
-  // console.log(pnpmTest);
-  // execSync(pnpmTest);
+  const pnpmTest = `pnpm test`;
+  console.log(pnpmTest);
+  execSync(pnpmTest);
 
   // generate a changelog
-  // const pnpmChangelog = `pnpm changelog`;
-  // console.log(pnpmChangelog);
-  // execSync(pnpmChangelog);
+  const pnpmChangelog = `pnpm changelog`;
+  console.log(pnpmChangelog);
+  execSync(pnpmChangelog);
 
   // commit everything
-  // const gitCommit = `git commit -am "release: ${newVersion}"`;
-  // console.log(gitCommit);
-  // execSync(gitCommit);
+  const gitCommit = `git commit -am "release: ${newVersion}"`;
+  console.log(gitCommit);
+  execSync(gitCommit);
 
   // push it
-  // const gitPush = `git push`;
-  // console.log(gitPush);
-  // execSync(gitPush);
+  const gitPush = `git push`;
+  console.log(gitPush);
+  execSync(gitPush);
 
   // git tag
-  // const gitTag = `git tag ${version}`;
-  // console.log(gitTag);
-  // execSync(gitTag);
+  const gitTag = `git tag ${version}`;
+  console.log(gitTag);
+  execSync(gitTag);
 
   // push tags
-  // const gitPushTags = `git push origin --tags`;
-  // console.log(gitPushTags);
-  // execSync(gitPushTags);
+  const gitPushTags = `git push origin --tags`;
+  console.log(gitPushTags);
+  execSync(gitPushTags);
 
   // publish
-  // const pnpmPublish = `pnpm -r publish`;
-  // console.log(pnpmPublish);
-  // execSync(pnpmPublish);
+  const pnpmPublish = `pnpm -r publish`;
+  console.log(pnpmPublish);
+  execSync(pnpmPublish);
 
   // done
-  console.log(`Released ${newVersion}`);
+  console.log(`Released ${newVersion} has been published`);
 }
