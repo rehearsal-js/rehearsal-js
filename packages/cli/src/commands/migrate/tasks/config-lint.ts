@@ -1,7 +1,7 @@
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { ESLint } from 'eslint';
+import { glob } from 'glob';
 import { outputFileSync } from 'fs-extra';
-import findupSync from 'findup-sync';
 import defaultConfig from '../../../configs/default-eslint';
 import { gitAddIfInRepo } from '../../../utils';
 import type { ListrTask } from 'listr2';
@@ -15,8 +15,8 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
     title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
-      // look for an existing .eslintrc file
-      const configPath = findupSync('.eslintrc.{js,yml,json,yaml}', { cwd: options.basePath });
+      // glob against the following file extension pattern js,yml,json,yaml
+      const configPath = glob.sync(join(options.basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
 
       if (_ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
@@ -26,15 +26,13 @@ export async function lintConfigTask(options: MigrateCommandOptions): Promise<Li
         // create .rehearsal-eslintrc.js
         createRehearsalConfig(options.basePath);
 
-        // if an existing .eslintrc file is found, extend it with the newly created .rehearsal-eslintrc.js
-        // otherwise, create a new .eslintrc.js file and extend it with the newly created .rehearsal-eslintrc.js
         if (configPath) {
           task.output = `${configPath} already exists, extending Rehearsal default typescript-related config`;
           task.title = `Update eslintrc.js`;
           await extendsRehearsalInCurrentConfig(configPath, REHEARSAL_CONFIG_RELATIVE_PATH);
         } else {
           task.output = `Create .eslintrc.js, extending Rehearsal default typescript-related config`;
-          extendsRehearsalInNewConfig(options.basePath);
+          extendsRehearsalInNewConfig(options.basePath, REHEARSAL_CONFIG_RELATIVE_PATH);
         }
       }
     },
@@ -64,20 +62,24 @@ async function extendsRehearsalInCurrentConfig(
   await writeLintConfig(configPath, configStr);
 }
 
-async function extendsRehearsalInNewConfig(basePath: string): Promise<void> {
+async function extendsRehearsalInNewConfig(
+  basePath: string,
+  rehearsalConfigRelativePath: string
+): Promise<void> {
+  const configPath = resolve(basePath, '.eslintrc.js');
   const configStr = `
   module.exports = {
-    extends: ['${REHEARSAL_CONFIG_RELATIVE_PATH}']
+    extends: ['${rehearsalConfigRelativePath}']
   }
   `;
-  await writeLintConfig(basePath, configStr);
+  await writeLintConfig(configPath, configStr);
 }
 
 async function writeLintConfig(path: string, config: string): Promise<void> {
   outputFileSync(path, config);
   const formattedConfig = await formatLintConfig(config, path);
   outputFileSync(path, formattedConfig);
-  gitAddIfInRepo(path); // stage '.eslintrc.js'; if in a git repo
+  gitAddIfInRepo(path); // stage .eslintrc.js if in a git repo
 }
 
 async function formatLintConfig(configStr: string, filePath: string): Promise<string | undefined> {
