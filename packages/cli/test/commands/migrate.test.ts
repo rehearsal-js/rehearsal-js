@@ -3,13 +3,13 @@ import {
   copySync,
   readdirSync,
   readJSONSync,
-  writeJSONSync,
   realpathSync,
   writeFileSync,
+  writeJSONSync,
 } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
+import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { runBin } from '../test-helpers';
 import { REQUIRED_DEPENDENCIES } from '../../src/commands/migrate/tasks/dependency-install';
@@ -120,7 +120,10 @@ describe('migrate - initialization', async () => {
       cwd: basePath,
     });
 
-    expect(result.stdout).toMatchSnapshot();
+    // remove first line that contains rehearsal version
+    const stdoutWithoutFirstLine = result.stdout.split('\n').slice(1).join('\n');
+
+    expect(stdoutWithoutFirstLine).toMatchSnapshot();
   });
 
   // TODO: add tests for other cases
