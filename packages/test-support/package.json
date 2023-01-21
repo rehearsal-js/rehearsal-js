@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/test-support",
-  "version": "1.0.2-beta",
+  "version": "1.0.3-beta",
   "description": "Test support utilities for rehearsal",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",

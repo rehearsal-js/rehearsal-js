@@ -112,15 +112,15 @@ function publish() {
   console.log(gitCommit);
   execSync(gitCommit);
 
+  // git tag
+  const gitTag = `git tag v${newVersion}`;
+  console.log(gitTag);
+  execSync(gitTag);
+
   // push it
   const gitPush = `git push`;
   console.log(gitPush);
   execSync(gitPush);
-
-  // git tag
-  const gitTag = `git tag ${version}`;
-  console.log(gitTag);
-  execSync(gitTag);
 
   // push tags
   const gitPushTags = `git push origin --tags`;
