@@ -61,15 +61,15 @@ function publish() {
   console.log(gitClean);
   execSync(gitClean);
 
-  // replace the version in package json on all packages with version
-  const bumpVersion = `pnpm -r version ${newVersion} --exact --no-git-tag-version`;
-  console.log(bumpVersion);
-  execSync(bumpVersion);
-
-  // pnpm install recursive
-  const pnpmInstall = `pnpm -r install`;
+  // pnpm install
+  const pnpmInstall = `pnpm install`;
   console.log(pnpmInstall);
   execSync(pnpmInstall);
+
+  // pnpm prepare
+  const pnpmPrepare = `pnpm prepare`;
+  console.log(pnpmPrepare);
+  execSync(pnpmPrepare);
 
   // pnpm build recursive
   const pnpmBuild = `pnpm -r build`;
@@ -81,13 +81,23 @@ function publish() {
   console.log(pnpmTest);
   execSync(pnpmTest);
 
+  // replace the version in the main package json (needed for changelog)
+  const bumpVersion = `pnpm version ${newVersion} --exact --no-git-tag-version`;
+  console.log(bumpVersion);
+  execSync(bumpVersion);
+
+  // replace the version in package json on all packages with version
+  const bumpVersionRecursive = `pnpm -r version ${newVersion} --exact --no-git-tag-version`;
+  console.log(bumpVersionRecursive);
+  execSync(bumpVersionRecursive);
+
   // generate a changelog
   const pnpmChangelog = `pnpm changelog`;
   console.log(pnpmChangelog);
   execSync(pnpmChangelog);
 
   // commit everything
-  const gitCommit = `git commit -am "release: ${newVersion}"`;
+  const gitCommit = `git commit -am "chore(release): ${newVersion}"`;
   console.log(gitCommit);
   execSync(gitCommit);
 
