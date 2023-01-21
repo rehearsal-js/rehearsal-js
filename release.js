@@ -51,10 +51,21 @@ rl.question('Is this correct? YES will publish. NO will abort. (y/n) ', (answer)
 });
 
 function publish() {
+  // git checkout master
+  const gitCheckoutMaster = `git checkout master --force`;
+  console.log(gitCheckoutMaster);
+  execSync(gitCheckoutMaster);
+
   // git reset
   const gitReset = `git reset --hard`;
   console.log(gitReset);
   execSync(gitReset);
+
+  // git pull all latest changes from origin
+  const gitPull = `git pull`;
+  console.log(gitPull);
+  execSync(gitPull);
+
 
   // git clean
   const gitClean = `git clean -fdx`;
