@@ -16,7 +16,7 @@ export const REQUIRED_DEPENDENCIES = [
 
 export async function depInstallTask(
   options: MigrateCommandOptions,
-  context?: MigrateCommandContext
+  context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: 'Install dependencies',

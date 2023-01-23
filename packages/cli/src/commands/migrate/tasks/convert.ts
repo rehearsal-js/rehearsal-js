@@ -23,7 +23,7 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 export async function convertTask(
   options: MigrateCommandOptions,
   logger: Logger,
-  context?: MigrateCommandContext
+  context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: 'Convert JS files to TS',

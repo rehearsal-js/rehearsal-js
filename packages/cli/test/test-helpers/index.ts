@@ -6,6 +6,7 @@ import { dirSync } from 'tmp';
 import packageJson from '../../package.json';
 
 import { git, gitIsRepoDirty } from '../../src/utils';
+import { MigrateCommandOptions, Formats } from '../../src/types';
 
 export * from './task-manager-helper';
 
@@ -75,4 +76,22 @@ export function prepareTmpDir(dir: string): string {
   copySync(srcDir, targetDir);
   // /var is a symlink to /private/var, use realpath to return /private/var
   return realpathSync(targetDir);
+}
+
+// create default options for migrate cli
+export function createMigrateOptions(
+  basePath: string,
+  options?: Partial<MigrateCommandOptions>
+): MigrateCommandOptions {
+  return {
+    basePath,
+    entrypoint: '',
+    format: ['sarif' as Formats],
+    outputPath: '.rehearsal',
+    verbose: false,
+    userConfig: undefined,
+    interactive: undefined,
+    dryRun: false,
+    ...options,
+  };
 }

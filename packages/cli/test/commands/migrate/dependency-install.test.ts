@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra';
 
 import { depInstallTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner } from '../../test-helpers';
-import { Formats, CustomConfig, MigrateCommandContext } from '../../../src/types';
+import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { CustomConfig, MigrateCommandContext } from '../../../src/types';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 import { UserConfig } from '../../../src/user-config';
 
@@ -33,16 +33,7 @@ describe('Task: dependency-install', async () => {
   });
 
   test('install required dependencies', async () => {
-    const options = {
-      basePath,
-      entrypoint: '',
-      format: ['sarif' as Formats],
-      outputPath: '.rehearsal',
-      verbose: false,
-      userConfig: undefined,
-      interactive: undefined,
-      dryRun: false,
-    };
+    const options = createMigrateOptions(basePath);
     const tasks = [await depInstallTask(options)];
     const runner = new ListrTaskRunner(tasks);
     await runner.run();
@@ -64,16 +55,7 @@ describe('Task: dependency-install', async () => {
       },
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const options = {
-      basePath,
-      entrypoint: '',
-      format: ['sarif' as Formats],
-      outputPath: '.rehearsal',
-      verbose: false,
-      userConfig: 'rehearsal-config.json',
-      interactive: undefined,
-      dryRun: false,
-    };
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const tasks = [await depInstallTask(options, { userConfig } as MigrateCommandContext)];
     const runner = new ListrTaskRunner(tasks);
     await runner.run();

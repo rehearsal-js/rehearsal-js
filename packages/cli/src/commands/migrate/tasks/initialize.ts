@@ -22,7 +22,7 @@ const COMPLETION_MARK = '✅';
 
 export async function initTask(
   options: MigrateCommandOptions,
-  context?: MigrateCommandContext
+  context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: `Initialize${options.dryRun ? ' -- Dry Run Mode' : ''}`,

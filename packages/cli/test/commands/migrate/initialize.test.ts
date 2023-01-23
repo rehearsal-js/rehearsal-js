@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra';
 
 import { initTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner } from '../../test-helpers';
-import { CustomConfig, Formats } from '../../../src/types';
+import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { CustomConfig } from '../../../src/types';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');
@@ -31,21 +31,10 @@ describe('Task: initialize', async () => {
   });
 
   test('get files that will be migrated', async () => {
-    const options = {
-      basePath,
-      entrypoint: '',
-      format: ['sarif' as Formats],
-      outputPath: '.rehearsal',
-      verbose: false,
-      userConfig: undefined,
-      interactive: undefined,
-      dryRun: false,
-    };
+    const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
     const runner = new ListrTaskRunner(tasks);
     const ctx = await runner.run();
-
-    // console.warn(ctx.sourceFilesWithAbsolutePath);
 
     expect(ctx.targetPackagePath).toBe(`${basePath}`);
     expect(ctx.sourceFilesWithAbsolutePath).toContain(`${basePath}/index.js`);
@@ -69,16 +58,7 @@ describe('Task: initialize', async () => {
       },
     });
 
-    const options = {
-      basePath,
-      entrypoint: '',
-      format: ['sarif' as Formats],
-      outputPath: '.rehearsal',
-      verbose: false,
-      userConfig: 'rehearsal-config.json',
-      interactive: undefined,
-      dryRun: true,
-    };
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const tasks = [await initTask(options)];
     const runner = new ListrTaskRunner(tasks);
     const ctx = await runner.run();
@@ -94,16 +74,7 @@ describe('Task: initialize', async () => {
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
-    const options = {
-      basePath,
-      entrypoint: '',
-      format: ['sarif' as Formats],
-      outputPath: '.rehearsal',
-      verbose: false,
-      userConfig: undefined,
-      interactive: undefined,
-      dryRun: true,
-    };
+    const options = createMigrateOptions(basePath, { dryRun: true });
     const tasks = [await initTask(options)];
     const runner = new ListrTaskRunner(tasks);
     const ctx = await runner.run();
