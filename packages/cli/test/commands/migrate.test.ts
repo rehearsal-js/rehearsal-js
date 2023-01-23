@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { runBin, prepareTmpDir } from '../test-helpers';
-import { REQUIRED_DEPENDENCIES } from '../../src/commands/migrate/tasks/dependency-install';
 import type { CustomConfig } from '../../src/types';
 
 setGracefulCleanup();
@@ -86,68 +85,6 @@ describe('migrate - check repo status', async () => {
 
     expect(stdout).toContain('Initialize -- Dry Run Mode');
     expect(stdout).toContain('List of files will be attempted to migrate:');
-  });
-});
-
-describe('migrate - initialization', async () => {
-  let basePath = '';
-
-  beforeEach(() => {
-    basePath = prepareTmpDir('basic');
-  });
-
-  test('print files will be attempted to migrate with --dryRun', async () => {
-    const result = await runBin('migrate', ['-d'], {
-      cwd: basePath,
-    });
-
-    // remove first line that contains rehearsal version
-    const stdoutWithoutFirstLine = result.stdout.split('\n').slice(1).join('\n');
-
-    expect(stdoutWithoutFirstLine).toMatchSnapshot();
-  });
-
-  // TODO: add tests for other cases
-  // figure out a way to test the ctx result in other scenario during initialization
-});
-
-describe('migrate - install dependencies', async () => {
-  let basePath = '';
-
-  beforeEach(() => {
-    basePath = prepareTmpDir('initialization');
-  });
-
-  test('Install required dependencies', async () => {
-    const result = await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    const devDeps = packageJson.devDependencies;
-
-    expect(result.stdout).toContain('Install dependencies');
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
-  });
-
-  test('Install custom dependencies', async () => {
-    createUserConfig(basePath, {
-      migrate: {
-        install: {
-          dependencies: [],
-          devDependencies: ['fs-extra'],
-        },
-      },
-    });
-    const result = await runBin('migrate', ['-u', 'rehearsal-config.json'], {
-      cwd: basePath,
-    });
-
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    const devDeps = packageJson.devDependencies;
-
-    expect(result.stdout).toContain('Install dependencies from config');
-    expect(devDeps).toHaveProperty('fs-extra');
   });
 });
 

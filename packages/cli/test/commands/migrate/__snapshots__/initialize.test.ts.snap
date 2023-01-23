@@ -1,17 +1,58 @@
 // Vitest Snapshot v1
 
-exports[`Task: initialization > able to get files that will be migrated 1`] = `
+exports[`Task: initialize > get files that will be migrated 1`] = `
 [
   "foo.js",
+  "depends-on-foo.js",
   "index.js",
 ]
 `;
 
-exports[`Task: initialization > able to get files that will be migrated 2`] = `
+exports[`Task: initialize > get files that will be migrated 2`] = `
 "[STARTED] Task without title.
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
 [SUCCESS] Task without title.
 "
+`;
+
+exports[`Task: initialize > print files will be attempted to migrate with --dryRun 1`] = `
+"[STARTED] Task without title.
+[STARTED] Initialize -- Dry Run Mode
+[DATA] Running migration on basic
+[DATA] List of files will be attempted to migrate:
+[DATA]  foo.js
+[DATA] depends-on-foo.js
+[DATA] index.js
+[SUCCESS] Initialize -- Dry Run Mode
+[SUCCESS] Task without title.
+"
+`;
+
+exports[`Task: initialize > store custom config in context 1`] = `
+{
+  "install": {
+    "dependencies": [
+      "foo",
+    ],
+    "devDependencies": [
+      "bat",
+    ],
+  },
+  "setup": {
+    "lint": {
+      "args": [
+        "lint-setup-arg",
+      ],
+      "command": "lint-setup",
+    },
+    "ts": {
+      "args": [
+        "ts-setup-arg",
+      ],
+      "command": "ts-setup",
+    },
+  },
+}
 `;

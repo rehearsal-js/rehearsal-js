@@ -7,8 +7,8 @@ import type { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 
 // Storage and runner for user custom cli config
 export class UserConfig {
-  private basePath: string;
-  private config: CustomCommandConfig;
+  public basePath: string;
+  public config: CustomCommandConfig;
 
   public get hasDependencies(): boolean {
     return (
