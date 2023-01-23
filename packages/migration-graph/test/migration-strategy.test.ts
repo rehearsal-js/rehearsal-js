@@ -18,6 +18,7 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(rootDir, { entrypoint: 'depends-on-foo.js' });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
+      // Should not include index.js as it is not in the entrypoint's import graph.
       expect(relativePaths).toStrictEqual(['foo.js', 'depends-on-foo.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
@@ -28,10 +29,12 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual([
+        'packages/blorp/build.js',
         'packages/blorp/lib/impl.js',
         'packages/blorp/index.js',
         'packages/foo/lib/a.js',
         'packages/foo/index.js',
+        'some-util.js',
       ]);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
@@ -62,8 +65,6 @@ describe('migration-strategy', () => {
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
         'lib/some-addon/addon/components/greet.js',
-        'lib/some-addon/app/components/greet.js',
-        'lib/some-addon/index.js',
         ...EXPECTED_APP_FILES,
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
@@ -79,7 +80,6 @@ describe('migration-strategy', () => {
         'lib/some-engine/addon/resolver.js',
         'lib/some-engine/addon/engine.js',
         'lib/some-engine/addon/routes.js',
-        'lib/some-engine/index.js',
         ...EXPECTED_APP_FILES,
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
@@ -91,11 +91,7 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
-      expect(actual).toStrictEqual([
-        'addon/components/greet.js',
-        'app/components/greet.js',
-        'index.js',
-      ]);
+      expect(actual).toStrictEqual(['addon/components/greet.js']);
       expect(strategy.sourceType).toBe(SourceType.EmberAddon);
     });
   });

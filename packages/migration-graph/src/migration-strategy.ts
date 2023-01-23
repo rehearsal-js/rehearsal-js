@@ -82,7 +82,7 @@ export function getMigrationStrategy(
     .topSort()
     // Iterate through each package
     .forEach((packageNode: GraphNode<PackageNode>) => {
-      const packagePath = packageNode.content?.pkg?.packagePath;
+      const packagePath = packageNode.content?.pkg?.path;
 
       if (!packagePath) {
         return;

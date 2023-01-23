@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { readJsonSync } from 'fs-extra';
 
-export function readPackageJson(pathToPackage: string): Record<string, any> {
+export function readPackageJson(pathToPackage: string): Record<string, unknown> {
   return readJsonSync(resolve(pathToPackage, 'package.json'));
 }
 

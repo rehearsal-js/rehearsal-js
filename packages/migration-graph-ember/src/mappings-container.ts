@@ -15,14 +15,14 @@ import { EmberAppPackage } from './entities/ember-app-package';
 
 import { isAddon, isApp } from './utils/ember';
 import { getInternalAddonTestFixtures } from './utils/environment';
-import type { EmberPackageContainer as PackageContainer } from './types/package-container';
+import type { EmberPackageContainer as PackageContainer, EmberProjectPackage } from './types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:mappings-container');
 
 type AddonName = string;
 type AddonLocation = string;
-type MappingsByAddonName = Record<AddonName, Package>;
-type MappingsByLocation = Record<AddonLocation, Package>;
+type MappingsByAddonName = Record<AddonName, EmberProjectPackage>;
+type MappingsByLocation = Record<AddonLocation, EmberProjectPackage>;
 
 type MappingsLookup = {
   mappingsByAddonName: MappingsByAddonName;
@@ -88,7 +88,7 @@ type EntityFactoryOptions = {
 export function entityFactory(
   pathToPackage: string,
   options: EntityFactoryOptions
-): EmberAppPackage | EmberAddonPackage | Package {
+): EmberProjectPackage {
   let Klass;
   try {
     const packageJson = readPackageJson(pathToPackage);
@@ -156,11 +156,11 @@ class MappingsContainer {
     return this.internalState?.rootPackage;
   }
 
-  public isWorkspace(pathToPackage: string): boolean {
+  public isWorkspace(packagePath: string): boolean {
     if (!this.internalState?.rootPackage) {
       throw new Error('Unable check isWorkspace; rootPackage is not defined');
     }
-    return isWorkspace(this.internalState.rootPackage.path, pathToPackage);
+    return isWorkspace(this.internalState.rootPackage.path, packagePath);
   }
 
   public addWorkspaceGlob(glob: string): MappingsContainer {
@@ -228,7 +228,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
         }
       }
 
@@ -280,7 +280,7 @@ class MappingsContainer {
       for (const emberAddonPackage of emberAddons) {
         if (emberAddonPackage) {
           mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-          mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+          mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
         }
       }
 
@@ -365,7 +365,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
       }
 
       this.internalState.internalAddonPackages = {
@@ -404,7 +404,7 @@ class MappingsContainer {
 
       for (const emberAddonPackage of internalEmberAddons) {
         mappingsByAddonName[emberAddonPackage.packageName] = emberAddonPackage;
-        mappingsByLocation[emberAddonPackage.packagePath] = emberAddonPackage;
+        mappingsByLocation[emberAddonPackage.path] = emberAddonPackage;
       }
       this.internalState.internalAddonPackages = {
         mappingsByAddonName,

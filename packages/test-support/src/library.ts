@@ -14,9 +14,53 @@ type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
+  | 'library-with-ignored-files'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
+  | 'library-with-loose-files'
   | 'library-with-workspaces';
+
+const DIRS_TO_IGNORE = ['.yarn'];
+
+const FILES_TO_IGNORE = [
+  '.babelrc.js',
+  '.babelrc.json',
+  '.babelrc.cjs',
+  '.babelrc.mjs',
+  'babel.config.js',
+  'babel.config.json',
+  'babel.config.cjs',
+  'babel.config.mjs',
+  '.eslintrc.js',
+  'package-lock.json',
+  'yarn.lock',
+  'npm-shrinkwrap.json',
+  'webpack.config.js',
+  'prettier.config.js',
+  'prettier.config.cjs',
+  'karma.config.js',
+  'yarn.lock',
+];
+
+function getIgnoredFilesFixture(): fixturify.DirJSON {
+  const fixtureDir: fixturify.DirJSON = {};
+
+  FILES_TO_IGNORE.forEach((filename) => {
+    fixtureDir[filename] = '';
+  });
+
+  return fixtureDir;
+}
+
+function getIgnoredDirectoriesFixture(): fixturify.DirJSON {
+  const fixtureDir: fixturify.DirJSON = {};
+
+  DIRS_TO_IGNORE.forEach((dirname) => {
+    fixtureDir[dirname] = { 'should-not-include.js': '// Should not be included' };
+  });
+
+  return fixtureDir;
+}
 
 export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
   let files: fixturify.DirJSON;
@@ -51,6 +95,69 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             // a.js
             console.log('foo');
            `,
+        },
+      };
+      break;
+    case 'library-with-ignored-files':
+      files = {
+        'index.js': `
+          import './lib/a';
+          console.log(path.join('foo', 'bar', 'baz'));
+          console.log(parser, chalk);
+        `,
+        ...getIgnoredFilesFixture(),
+        ...getIgnoredDirectoriesFixture(),
+        config: {
+          ...getIgnoredFilesFixture(),
+        },
+        'package.json': `
+          {
+            "name": "my-package",
+            "main": "index.js",
+            "dependencies": {
+            },
+            "devDependencies": {
+              "typescript": "^4.8.3"
+            }
+          }
+        `,
+        lib: {
+          'a.js': '',
+        },
+      };
+      break;
+    case 'library-with-loose-files':
+      files = {
+        'WidgetManager.js': `
+          import './Widget';
+          import './Events'
+        `,
+        'package.json': `
+          {
+            "name": "my-package-with-loose-files",
+            "main": "index.js",
+            "files": [
+              "*.js",
+              "*.lock",
+              "utils/**/*",
+              "dist/**/*"
+            ],
+            "dependencies": {
+            },
+            "devDependencies": {
+              "typescript": "^4.8.3"
+            }
+
+          }
+        `,
+        'Events.js': '',
+        'State.js': `import './utils/Defaults';`,
+        'Widget.js': `import './State';`,
+        utils: {
+          'Defaults.js': ``,
+        },
+        dist: {
+          'ignore-this.js': '',
         },
       };
       break;
@@ -131,6 +238,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
               "version": "1.0.0",
               "main": "index.js"
             }`,
+            'build.js': `import '../../some-shared-util';`,
             'index.js': `
               import './lib/impl';
             `,
@@ -152,6 +260,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             ]
           }    
         `,
+        'some-util.js': '// Some useful util file shared across packages.',
       };
       break;
     case 'library-with-entrypoint':

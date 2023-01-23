@@ -1,13 +1,12 @@
 {
   "name": "@rehearsal/migration-graph-ember",
-  "version": "0.0.39",
+  "version": "1.0.3-beta",
   "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsc -b",
@@ -15,7 +14,8 @@
     "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "version": "pnpm version"
   },
   "dependencies": {
     "@rehearsal/migration-graph-shared": "workspace:*",
@@ -43,7 +43,7 @@
     "walk-sync": "^3"
   },
   "peerDependencies": {
-    "typescript": ">4.0"
+    "typescript": "^4.9 || ^5.0"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {

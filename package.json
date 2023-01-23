@@ -1,5 +1,6 @@
 {
   "name": "rehearsal-workspace",
+  "version": "1.0.3-beta",
   "private": true,
   "repository": {
     "type": "git",
@@ -13,7 +14,8 @@
     "test": "pnpm recursive run test",
     "changelog": "pnpm conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
-    "reset": "pnpm clean && pnpm install"
+    "reset": "pnpm clean && pnpm install",
+    "release": "node release.js"
   },
   "commitlint": {
     "extends": [
@@ -81,10 +83,11 @@
     "pre-commit": "^1.2.2",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
+    "semver": "^7.3.8",
     "sort-package-json": "^1.57.0",
     "tmp": "^0.2.1",
     "ts-node": "^10.4.0",
-    "typescript": "4.7.4",
+    "typescript": "^4.9.4",
     "vite": "^3.1.3",
     "vitest": "^0.23.4",
     "walk-sync": "^3"

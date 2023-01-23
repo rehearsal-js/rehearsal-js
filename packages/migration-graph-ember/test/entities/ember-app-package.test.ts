@@ -13,7 +13,7 @@ import {
   resetInternalAddonTestFixtures,
 } from '../../src/utils/environment';
 import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
-import type { EmberPackageContainer } from '../../src/types/package-container';
+import type { EmberPackageContainer } from '../../src/types';
 
 setGracefulCleanup();
 

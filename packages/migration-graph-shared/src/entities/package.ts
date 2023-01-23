@@ -21,7 +21,7 @@ export type PackageContainer = {
 };
 
 export type PackageOptions = {
-  type?: string;
+  packageType?: string;
   packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
@@ -46,14 +46,14 @@ export class Package implements IPackage {
   /**
    * path {string} - the path to this package
    */
-  #path: string;
+  #packagePath: string;
 
   /**
    * Internal representation of package.json
    */
-  #pkg: PackageJson | undefined;
+  #packageJson: PackageJson | undefined;
 
-  #type: string;
+  #packageType: string;
 
   #packageContainer: PackageContainer;
 
@@ -66,11 +66,11 @@ export class Package implements IPackage {
   protected graph: Graph<ModuleNode> | undefined;
 
   constructor(
-    pathToPackage: string,
-    { name = '', packageContainer, type = '' }: PackageOptions = {}
+    packagePath: string,
+    { name = '', packageContainer, packageType = '' }: PackageOptions = {}
   ) {
-    this.#path = pathToPackage;
-    this.#type = type;
+    this.#packagePath = packagePath;
+    this.#packageType = packageType;
     this.#name = name;
 
     if (packageContainer) {
@@ -79,8 +79,26 @@ export class Package implements IPackage {
       this.#packageContainer = { isWorkspace: () => false };
     }
 
-    this.#excludePatterns = new Set(['dist', 'test', 'tests']);
-    this.#includePatterns = new Set(['index.js']);
+    const excludeDirs = [
+      '.yarn', // yarn3 directory
+      'dist',
+      'test',
+      'tests',
+    ];
+
+    const excludeFiles = [
+      '.eslintrc.*',
+      '.babelrc.*',
+      'babel.config.*', // Babel configs
+      'Brocfile.js',
+      'prettier.config.*', // Prettier configs
+      'karma.config.*',
+      'webpack.config.js',
+      'vite.config.ts',
+    ];
+
+    this.#excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
+    this.#includePatterns = new Set(['.']);
   }
 
   get excludePatterns(): Set<string> {
@@ -99,20 +117,16 @@ export class Package implements IPackage {
     this.#includePatterns = new Set(patterns);
   }
 
-  set type(_type) {
-    this.#type = _type;
+  get path(): string {
+    return this.#packagePath;
+  }
+
+  set packageType(packageType: string) {
+    this.#packageType = packageType;
   }
 
   get type(): string {
-    return this.#type;
-  }
-
-  set path(_path) {
-    this.#path = _path;
-  }
-
-  get path(): string {
-    return this.#path;
+    return this.#packageType;
   }
 
   set packageContainer(container) {
@@ -121,17 +135,6 @@ export class Package implements IPackage {
 
   get packageContainer(): PackageContainer {
     return this.#packageContainer;
-  }
-
-  /**
-   * @deprecated Use `packagePath()`
-   */
-  get location(): string {
-    return this.#path;
-  }
-
-  get packagePath(): string {
-    return this.#path;
   }
 
   get packageName(): string {
@@ -149,11 +152,11 @@ export class Package implements IPackage {
   }
 
   get packageJson(): PackageJson {
-    if (!this.#pkg) {
-      const packageJsonPath = resolve(this.#path, 'package.json');
-      this.#pkg = readJsonSync(packageJsonPath);
+    if (!this.#packageJson) {
+      const packageJsonPath = resolve(this.path, 'package.json');
+      this.#packageJson = readJsonSync(packageJsonPath);
     }
-    return this.#pkg as PackageJson;
+    return this.#packageJson as PackageJson;
   }
 
   /**

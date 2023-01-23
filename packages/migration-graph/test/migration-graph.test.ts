@@ -35,6 +35,25 @@ describe('migration-graph', () => {
       ).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
+    test('library with loose files in root', () => {
+      const baseDir = getLibrary('library-with-loose-files');
+      const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
+
+      expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
+      expect(projectGraph.sourceType).toBe(SourceType.Library);
+      expect(sourceType).toBe(SourceType.Library);
+      expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
+      expect(
+        flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+      ).toStrictEqual([
+        'Events.js',
+        'utils/Defaults.js',
+        'State.js',
+        'Widget.js',
+        'WidgetManager.js',
+      ]);
+    });
+
     test('workspace', () => {
       const baseDir = getLibrary('library-with-workspaces');
       const { projectGraph, sourceType } = buildMigrationGraph(baseDir);
@@ -64,12 +83,13 @@ describe('migration-graph', () => {
 
       expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
         'lib/impl.js',
         'index.js',
       ]);
       expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual(['some-util.js']);
     });
   });
 
@@ -118,7 +138,7 @@ describe('migration-graph', () => {
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for addon'
-      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
+      ).toStrictEqual(['addon/components/greet.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
@@ -139,7 +159,7 @@ describe('migration-graph', () => {
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for in-repo-engine'
-      ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js', 'index.js']);
+      ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
@@ -159,7 +179,7 @@ describe('migration-graph', () => {
       expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
       expect(
         flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
-      ).toStrictEqual(['addon/components/greet.js', 'app/components/greet.js', 'index.js']);
+      ).toStrictEqual(['addon/components/greet.js']);
     });
     test('should create a dependency between an app using a service from an in-repo addon', async () => {
       const project = getEmberProject('app-with-in-repo-addon');
@@ -224,9 +244,6 @@ describe('migration-graph', () => {
       expect(allFiles).toStrictEqual([
         'addon/components/greet.js',
         'addon/services/date.js',
-        'app/components/greet.js',
-        'app/services/date.js',
-        'index.js',
         'app/app.js',
         'app/components/obtuse.js',
         'app/services/locale.js',

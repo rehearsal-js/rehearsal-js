@@ -56,6 +56,13 @@ export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
   return false; // false if it's not a git repo
 }
 
+// Stage files in a git repo
+export async function gitAddIfInRepo(fileList: string[] | string): Promise<void> {
+  if (await git.checkIsRepo()) {
+    git.add(fileList);
+  }
+}
+
 /**
  * Function to introduce a wait
  *
@@ -184,6 +191,28 @@ export function isPnpmManager(): boolean {
   return !!pnpmPath;
 }
 
+// Check if a binary exists and if it's executable
+export function isBinExisted(binName: string): boolean {
+  try {
+    which.sync(binName);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Get the binary path for a package manager
+export function getManagerBinPath(
+  manager: 'yarn' | 'npm' | 'pnpm',
+  hasVolta: boolean = isBinExisted('volta')
+): string {
+  if (hasVolta && manager !== 'pnpm') {
+    return execa.sync('volta', ['which', manager]).stdout;
+  } else {
+    return which.sync(manager);
+  }
+}
+
 export function getLockfilePath(): string | null {
   const yarnPath = findup('yarn.lock', {
     cwd: process.cwd(),
@@ -232,7 +261,7 @@ export function getModuleManagerInstaller(
   depList: string[],
   isDev: boolean
 ): { bin: string; args: string[] } {
-  const bin = which.sync(manager);
+  const bin = getManagerBinPath(manager);
 
   switch (manager) {
     case 'yarn':
@@ -292,7 +321,7 @@ export async function getPathToBinary(
   const moduleManager = getModuleManager();
   // /Users/foo/.volta/bin/yarn
   // /usr/local/bin/pnpm
-  const moduleManagerBin = which.sync(moduleManager);
+  const moduleManagerBin = getManagerBinPath(moduleManager);
 
   let stdoutMsg;
 

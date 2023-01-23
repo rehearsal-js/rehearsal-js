@@ -6,6 +6,7 @@ import {
   ModuleNode,
   IPackage,
 } from '@rehearsal/migration-graph-shared';
+import { EmberProjectPackage } from '../types';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
 
 export type EmberPackageOptions = PackageOptions;
@@ -39,29 +40,25 @@ export class EmberAppPackage extends Package implements IPackage {
 
   hasAddonPath(packageInstance: Package): string | undefined {
     return this.addonPaths?.find(
-      (addonPath: string) => packageInstance.packagePath === resolve(this.path, addonPath)
+      (addonPath: string) => packageInstance.path === resolve(this.path, addonPath)
     );
   }
 
   /**
-   * The `packageInstance` is package representing the desired in-repo addon to add
+   * `p` package representing the desired in-repo addon to add
    * to `ember-addon.paths` of the current package. It will add the relative path
    * between this location and the desired package to `ember-addon.paths`.
    *
-   * @param {EmberAddonPackage} packageInstance The `EmberAddonPackage` instance
-   * @return instance of EmberPackage
+   * @param {EmberProjectPackage} p The `EmberAppPackage` or `EmberAddonPackage` instance
+   * @return this EmberAppPackage
    */
-  addAddonPath(packageInstance: Package): this {
-    if (!packageInstance) {
-      throw new Error('`packageInstance` must be provided as an argument to `addAddonPath`');
-    }
-
+  addAddonPath(p: EmberProjectPackage): EmberAppPackage {
     if (!this.addonPaths) {
       this.addPackageJsonKey('ember-addon.paths', []);
     }
 
-    if (!this.hasAddonPath(packageInstance)) {
-      this.addonPaths.push(relative(this.path, packageInstance.path));
+    if (!this.hasAddonPath(p)) {
+      this.addonPaths.push(relative(this.path, p.path));
     }
 
     return this;
@@ -91,7 +88,7 @@ export class EmberAppPackage extends Package implements IPackage {
         (addonPath) =>
           // get absolute path of desired package (desiredPackage.location)
           // /some/path/to/your-app/lib/msg-data === resolve('/some/path/to/your-app/lib/msg-overlay', '../lib/msg-data'))
-          packageInstance.packagePath === resolve(this.path, addonPath)
+          packageInstance.path === resolve(this.path, addonPath)
       ),
       1
     );

@@ -52,7 +52,7 @@ export class ProjectGraph {
   }
 
   addPackageToGraph(p: Package, crawl = true): GraphNode<PackageNode> {
-    DEBUG_CALLBACK('addPackageToGraph: name: %s, path: %s', p.packageName, p.packagePath);
+    DEBUG_CALLBACK('addPackageToGraph: name: %s, path: %s', p.packageName, p.path);
 
     const isConverted = p.isConvertedToTypescript('source-only');
 
