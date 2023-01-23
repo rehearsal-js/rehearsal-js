@@ -291,7 +291,7 @@ describe('migrate - generate eslint config', async () => {
 
   test('extends .eslintrc.js if existed', async () => {
     const oldConfig = `
-    module.exports = {extends: ['foo']};
+    module.exports = {extends: []};
   `;
     writeFileSync(resolve(basePath, '.eslintrc.js'), oldConfig);
 

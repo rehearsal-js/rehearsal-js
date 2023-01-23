@@ -1,0 +1,12 @@
+// Vitest Snapshot v1
+
+exports[`Task: config-lint > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Task without title.
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[SUCCESS] Create eslint config
+[SUCCESS] Task without title.
+"
+`;
