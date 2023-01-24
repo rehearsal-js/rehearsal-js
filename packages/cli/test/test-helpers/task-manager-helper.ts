@@ -19,9 +19,9 @@ function TaskManagerFactory<T>(override?: ListrBaseClassOptions): Manager<T> {
 export class ListrTaskRunner {
   private tasks = TaskManagerFactory<MigrateCommandContext>();
 
-  constructor(tasks: ListrTask[], ctx?: MigrateCommandContext) {
+  constructor(tasks: ListrTask[], ctx?: Partial<MigrateCommandContext>) {
     if (ctx) {
-      this.tasks.ctx = ctx;
+      this.tasks.ctx = { ...this.tasks.ctx, ...ctx };
     }
     this.tasks.add(tasks);
   }

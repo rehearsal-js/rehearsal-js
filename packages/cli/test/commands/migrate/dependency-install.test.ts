@@ -56,8 +56,8 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig } as MigrateCommandContext)];
-    const runner = new ListrTaskRunner(tasks);
+    const tasks = [await depInstallTask(options)];
+    const runner = new ListrTaskRunner(tasks, { userConfig } as MigrateCommandContext);
     await runner.run();
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));

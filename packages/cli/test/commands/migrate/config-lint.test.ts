@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync, readdirSync, writeFileSync } from 'fs-extra';
+import { writeJSONSync, readdirSync, writeFileSync } from 'fs-extra';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { depInstallTask, lintConfigTask } from '../../../src/commands/migrate/tasks';
@@ -32,7 +32,7 @@ describe('Task: config-lint', async () => {
     vi.clearAllMocks();
   });
 
-  test('create .eslintrc.js if not existed', async () => {
+  test('create .eslintrc if not existed', async () => {
     const options = createMigrateOptions(basePath);
     // lint task requires dependencies installed first
     const tasks = [await depInstallTask(options), await lintConfigTask(options)];
@@ -44,7 +44,7 @@ describe('Task: config-lint', async () => {
     expect(output).matchSnapshot();
   });
 
-  test('extends .eslintrc.js if existed', async () => {
+  test('extends .eslintrc if existed', async () => {
     // prepare old .eslintrc.js
     const oldConfig = `
     module.exports = {extends: []};
@@ -67,66 +67,50 @@ describe('Task: config-lint', async () => {
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.js']);
   });
 
-  // test('update tsconfig if exists', async () => {
-  //   // Prepare old tsconfig
-  //   const oldTsConfig = { compilerOptions: { strict: false } };
-  //   writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+  test('run custom config command with user config provided', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        setup: {
+          lint: { command: 'touch', args: ['custom-lint-config-script'] },
+        },
+      },
+    });
 
-  //   const options = createMigrateOptions(basePath);
-  //   const context = { sourceFilesWithRelativePath: [] };
-  //   const tasks = [await tsConfigTask(options, context)];
-  //   const runner = new ListrTaskRunner(tasks);
-  //   await runner.run();
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks, { userConfig });
+    await runner.run();
 
-  //   const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    // This proves the custom command works
+    expect(readdirSync(basePath)).toContain('custom-lint-config-script');
+    expect(output).toMatchSnapshot();
+  });
 
-  //   expect(tsConfig.compilerOptions.strict).toBeTruthy();
-  //   // Do not use snapshot here since there is absolute path in output
-  //   expect(output).toContain('ensuring strict mode is enabled');
-  // });
+  test('stage .eslintrc if in git repo', async () => {
+    // simulate clean git project
+    const git: SimpleGit = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    // Init git, add and commit existed files, to make it a clean state
+    await git.init();
+    await git.add(resolve(basePath, 'package.json'));
+    // GH CI would require git name and email
+    await git.addConfig('user.name', 'tester');
+    await git.addConfig('user.email', 'tester@tester.com');
+    await git.commit('foo');
 
-  // test('run custom config command with user config provided', async () => {
-  //   createUserConfig(basePath, {
-  //     migrate: {
-  //       setup: {
-  //         ts: { command: 'touch', args: ['custom-ts-config-script'] },
-  //       },
-  //     },
-  //   });
+    const options = createMigrateOptions(basePath);
+    // lint task requires dependencies installed first
+    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks);
+    await runner.run();
 
-  //   const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-  //   const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-  //   const tasks = [await tsConfigTask(options, { userConfig })];
-  //   const runner = new ListrTaskRunner(tasks);
-  //   await runner.run();
+    expect(readdirSync(basePath)).toContain('.eslintrc.js');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
 
-  //   // This proves the custom command works
-  //   expect(readdirSync(basePath)).toContain('custom-ts-config-script');
-  //   expect(output).toMatchSnapshot();
-  // });
-
-  // test('stage tsconfig if in git repo', async () => {
-  //   // simulate clean git project
-  //   const git: SimpleGit = simpleGit({
-  //     baseDir: basePath,
-  //   } as Partial<SimpleGitOptions>);
-  //   // Init git, add and commit existed files, to make it a clean state
-  //   await git.init();
-  //   await git.add(resolve(basePath, 'package.json'));
-  //   // GH CI would require git name and email
-  //   await git.addConfig('user.name', 'tester');
-  //   await git.addConfig('user.email', 'tester@tester.com');
-  //   await git.commit('foo');
-
-  //   const options = createMigrateOptions(basePath);
-  //   const context = { sourceFilesWithRelativePath: [] };
-  //   const tasks = [await tsConfigTask(options, context)];
-  //   const runner = new ListrTaskRunner(tasks);
-  //   await runner.run();
-
-  //   const gitStatus = await git.status();
-  //   expect(gitStatus.staged).toContain('tsconfig.json');
-
-  //   expect(output).matchSnapshot();
-  // });
+    const gitStatus = await git.status();
+    expect(gitStatus.staged).toContain('.eslintrc.js');
+    expect(gitStatus.staged).toContain('.rehearsal-eslintrc.js');
+  });
 });

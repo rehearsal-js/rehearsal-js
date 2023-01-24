@@ -35,8 +35,8 @@ describe('Task: config-ts', async () => {
   test('create tsconfig if not existed', async () => {
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
-    const runner = new ListrTaskRunner(tasks);
+    const tasks = [await tsConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks, context);
     await runner.run();
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
@@ -52,8 +52,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
-    const runner = new ListrTaskRunner(tasks);
+    const tasks = [await tsConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks, context);
     await runner.run();
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
@@ -74,8 +74,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
-    const runner = new ListrTaskRunner(tasks);
+    const tasks = [await tsConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks, { userConfig });
     await runner.run();
 
     // This proves the custom command works
@@ -98,8 +98,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
-    const runner = new ListrTaskRunner(tasks);
+    const tasks = [await tsConfigTask(options)];
+    const runner = new ListrTaskRunner(tasks, context);
     await runner.run();
 
     const gitStatus = await git.status();
