@@ -12,17 +12,21 @@ export class CodeFixesProvider {
   }
 
   /**
-   * Returns a code action contains text changes to fix the diagnosed issue
+   * Returns all available to user code actions containing text changes to fix the diagnosed issue
    */
-  getCodeFixes(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+  getCodeFixes(
+    diagnostic: DiagnosticWithContext,
+    onlySafeFixes: boolean,
+    strictTyping: boolean
+  ): CodeFixAction[] {
+    let fixActions: CodeFixAction[] = [];
     for (const collection of this.collections) {
-      const action = collection.getFixForDiagnostic(diagnostic);
-      // Return the first available CodeFixAction
-      if (action !== undefined) {
-        return action;
-      }
+      fixActions = [
+        ...fixActions,
+        ...collection.getFixesForDiagnostic(diagnostic, onlySafeFixes, strictTyping),
+      ];
     }
 
-    return undefined;
+    return fixActions;
   }
 }

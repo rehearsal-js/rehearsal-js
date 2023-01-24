@@ -11,8 +11,7 @@ import {
   getTypeNameFromType,
 } from '@rehearsal/utils';
 import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
-import { createCodeFixAction } from '../hints-codefix-collection';
-import type { CodeFix, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../../hints-codefix-collection';
 import type {
   CodeFixAction,
   InterfaceDeclaration,
@@ -22,6 +21,7 @@ import type {
   TypeAliasDeclaration,
   TypeElement,
 } from 'typescript';
+import type { CodeFix, DiagnosticWithContext } from '../../types';
 
 const OPTIONAL_TOKEN = '?';
 

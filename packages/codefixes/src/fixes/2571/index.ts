@@ -1,7 +1,7 @@
 import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
 import { type CodeFixAction, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
-import { createCodeFixAction } from '../hints-codefix-collection';
-import type { CodeFix, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../../hints-codefix-collection';
+import type { CodeFix, DiagnosticWithContext } from '../../types';
 
 export class Fix2571 implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
@@ -10,11 +10,11 @@ export class Fix2571 implements CodeFix {
       return undefined;
     }
 
-    let codeReplacement = `(${errorNode.getText()} as Error)`;
-
     if (!this.isPropertyOfErrorInterface(errorNode.parent)) {
-      codeReplacement = `(${errorNode.getText()} as any)`;
+      return undefined;
     }
+
+    const codeReplacement = `(${errorNode.getText()} as Error)`;
 
     const changes = ChangesFactory.replaceText(
       diagnostic.file,

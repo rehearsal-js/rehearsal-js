@@ -2,9 +2,9 @@ import { BaseCodeFixCollection } from './base-codefix-collection';
 import { CodeFixesProvider } from './codefixes-provider';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection';
 
-import { Fix2571 } from './2571';
-import { Fix2790 } from './2790';
-import { Fix4082 } from './4082';
+import { Fix2571 } from './fixes/2571';
+import { Fix2790 } from './fixes/2790';
+import { Fix4082 } from './fixes/4082';
 
 export const codefixes = new CodeFixesProvider([
   new BaseCodeFixCollection({

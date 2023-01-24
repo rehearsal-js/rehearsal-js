@@ -30,7 +30,11 @@ export interface CodeHint {
 }
 
 export interface CodeFixCollection {
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined;
+  getFixesForDiagnostic(
+    diagnostic: DiagnosticWithContext,
+    returnOnlySafeFixes: boolean,
+    strictTyping: boolean
+  ): CodeFixAction[];
 }
 
 export interface CodeFix {
