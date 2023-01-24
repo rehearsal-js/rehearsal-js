@@ -17,7 +17,8 @@ export function generateReports(
   command: CliCommand,
   reporter: Reporter,
   outputPath: string,
-  formats: Formats[]
+  formats: Formats[],
+  basePath: string = process.cwd()
 ): string[] {
   const generatedReports: string[] = [];
 
@@ -48,7 +49,7 @@ export function generateReports(
     }
 
     reporter.print(reportPath, formatter);
-    gitAddIfInRepo(reportPath); // stage report if in git repo
+    gitAddIfInRepo(reportPath, basePath); // stage report if in git repo
     generatedReports.push(reportPath);
   });
 
