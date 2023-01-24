@@ -1,8 +1,56 @@
+/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAny(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {string | any} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveSomethingOrAny(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - A string
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+export function returnTypeHasGenericAny(a: string) {
+  return Promise.resolve(a);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAnyAndReturnHasGenericAny(a: string, b) {
+  return Promise.resolve([a, b]);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @returns {any} - just return something
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAnyAndReturnIsAny(a: string, b) {
+  console.log(a);
+  return b;
+}
+
 function capitalize(str: string): string {
   return str[0].toUpperCase() + str.substring(1);
 }
 
-export function doSomething(args: string | any[], name: string) {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'args' implicitly has an 'any' type. */
+export function doSomething(args, name: string) {
   if (!name) {
     return;
   }

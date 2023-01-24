@@ -1,5 +1,5 @@
 import type { CodeFixAction } from 'typescript';
-import type { CodeFixCollection, DiagnosticWithContext } from './types';
+import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types';
 
 /**
  * Provides
@@ -12,17 +12,17 @@ export class CodeFixesProvider {
   }
 
   /**
-   * Returns a code action contains text changes to fix the diagnosed issue
+   * Returns all available to user code actions containing text changes to fix the diagnosed issue
    */
-  getCodeFixes(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+  getCodeFixes(
+    diagnostic: DiagnosticWithContext,
+    filter: CodeFixCollectionFilter
+  ): CodeFixAction[] {
+    let fixActions: CodeFixAction[] = [];
     for (const collection of this.collections) {
-      const action = collection.getFixForDiagnostic(diagnostic);
-      // Return the first available CodeFixAction
-      if (action !== undefined) {
-        return action;
-      }
+      fixActions = [...fixActions, ...collection.getFixesForDiagnostic(diagnostic, filter)];
     }
 
-    return undefined;
+    return fixActions;
   }
 }

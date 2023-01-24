@@ -15,8 +15,7 @@ fs.existsSync('@rehearsal');
 try {
   console.log('success');
 } catch (e) {
-  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
-  console.log(e.message);
+  console.log((e as Error).message);
   /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
   console.log(e.notErrorMember);
 }

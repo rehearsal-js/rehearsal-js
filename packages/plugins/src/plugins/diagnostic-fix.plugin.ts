@@ -16,26 +16,29 @@ export class DiagnosticFixPlugin extends Plugin {
 
   /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
   prioritizedCodes = [
-    80005, // 'require' call may be converted to an import
-    7005, // Variable implicitly has an ___ type
-    2339, // Property does not exist on type
-    7006, // Parameter implicitly has an ___ type
-    7008, // Member implicitly has an ___ type
-    80004, // JSDoc types may be moved to TypeScript types
-    90016, // Declare property
-    90035, // Declare private property
-    90053, // Declare a private field named
-    2525, // Initializer provides no value for this binding element and the binding element has no default value
+    80002, // convertFunctionToEs6Class
+    80005, // requireInTs
+    80004, // annotateWithTypeFromJSDoc
+    7005, // inferFromUsage
+    7006, // inferFromUsage
+    7008, // inferFromUsage
+    7010, // inferFromUsa
+    7043, // inferFromUsage
+    7044, // inferFromUsage
+    7045, // inferFromUsage
+    7046, // inferFromUsage
+    7050, // inferFromUsage
+    2612, // addMissingDeclareProperty
   ];
 
   async run(fileName: string): PluginResult {
     let diagnostics = this.getDiagnostics(fileName);
-    let tries = diagnostics.length + 1;
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
-    while (diagnostics.length > 0 && tries-- > 0) {
+
+    while (diagnostics.length > 0) {
       const diagnostic = diagnostics.shift()!;
 
       if (!diagnostic.node) {
@@ -43,25 +46,36 @@ export class DiagnosticFixPlugin extends Plugin {
         continue;
       }
 
-      const fix = codefixes.getCodeFixes(diagnostic);
-      if (!fix) {
+      const fixes = codefixes.getCodeFixes(diagnostic, {
+        safeFixes: true,
+        strictTyping: true,
+      });
+
+      if (fixes.length === 0) {
         continue;
-      } else {
-        for (const fileTextChange of fix.changes) {
-          let text = this.service.getFileText(fileTextChange.fileName);
-
-          const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
-          for (const textChange of textChanges) {
-            text = applyTextChange(text, textChange);
-          }
-
-          this.service.setFileText(fileTextChange.fileName, text);
-          allFixedFiles.add(fileTextChange.fileName);
-
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
-        }
-        this.reporter.incrementFixedItemCount();
       }
+
+      // Use the first available codefix in automatic mode,
+      // TODO: User should be able to choose one of the fixes form this list in interactive mode
+      const fix = fixes.shift()!;
+
+      for (const fileTextChange of fix.changes) {
+        let text = this.service.getFileText(fileTextChange.fileName);
+
+        const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
+        for (const textChange of textChanges) {
+          DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
+
+          text = applyTextChange(text, textChange);
+        }
+
+        this.service.setFileText(fileTextChange.fileName, text);
+        allFixedFiles.add(fileTextChange.fileName);
+
+        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+      }
+
+      this.reporter.incrementFixedItemCount();
 
       // Get updated list of diagnostics
       diagnostics = this.getDiagnostics(fileName);

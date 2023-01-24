@@ -1,4 +1,4 @@
-import { type PluginResult, Plugin } from '@rehearsal/service';
+import { Plugin, type PluginResult } from '@rehearsal/service';
 import { debug } from 'debug';
 import {
   DiagnosticCategory,
@@ -23,9 +23,8 @@ export class DiagnosticCheckPlugin extends Plugin {
     DEBUG_CALLBACK(`Plugin 'DiagnosticCheck' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
-    let tries = diagnostics.length + 1;
 
-    while (diagnostics.length > 0 && tries-- > 0) {
+    while (diagnostics.length > 0) {
       const diagnostic = diagnostics.shift()!;
       const hint = hints.getHint(diagnostic);
 

@@ -11,8 +11,7 @@ import {
   getTypeNameFromType,
 } from '@rehearsal/utils';
 import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
-import { createCodeFixAction } from '../hints-codefix-collection';
-import type { CodeFix, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../../hints-codefix-collection';
 import type {
   CodeFixAction,
   InterfaceDeclaration,
@@ -22,10 +21,11 @@ import type {
   TypeAliasDeclaration,
   TypeElement,
 } from 'typescript';
+import type { CodeFix, DiagnosticWithContext } from '../../types';
 
 const OPTIONAL_TOKEN = '?';
 
-export class Fix2790 implements CodeFix {
+export class MakeMemberOptionalCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
 
