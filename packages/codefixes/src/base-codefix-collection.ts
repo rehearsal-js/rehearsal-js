@@ -11,11 +11,17 @@ export class BaseCodeFixCollection implements CodeFixCollection {
     this.list = list;
   }
 
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
-    if (this.list[diagnostic.code] !== undefined) {
-      return this.list[diagnostic.code].getCodeAction(diagnostic);
+  getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[] {
+    if (this.list[diagnostic.code] === undefined) {
+      return [];
     }
 
-    return undefined;
+    const codeFixAction = this.list[diagnostic.code].getCodeAction(diagnostic);
+
+    if (codeFixAction === undefined) {
+      return [];
+    }
+
+    return [codeFixAction];
   }
 }

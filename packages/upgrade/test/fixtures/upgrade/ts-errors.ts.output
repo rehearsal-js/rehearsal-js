@@ -1,6 +1,7 @@
 /* Existing comment */
 
 export function usesMissingFunction(): void {
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'whereAmI'. */
   return whereAmI();
 }
 
@@ -23,12 +24,5 @@ export function usesMissingVarWithLongName(): boolean {
 }
 
 // The next function call is not properly formatted
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'timestamp'. */
 timestamp();
-
-function whereAmI(): void {
-  throw new Error('Function not implemented.');
-}
-
-function timestamp() {
-  throw new Error('Function not implemented.');
-}

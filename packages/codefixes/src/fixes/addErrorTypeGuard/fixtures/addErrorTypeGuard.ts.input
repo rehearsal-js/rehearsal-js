@@ -22,7 +22,7 @@ try {
 }
 
 
-// Case #3: not a try catch
+// Case #2: not a try catch
 
 function getObject<T>(): T {
   const object = ['dummy'];

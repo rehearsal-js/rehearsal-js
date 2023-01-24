@@ -27,7 +27,7 @@ export class Foo {
    * Viewport Width
    * @type {string}
    */
-  @action viewportWidth: number | undefined;
+  @action viewportWidth: string | undefined;
 
   /**
    * Foo Method
@@ -62,7 +62,7 @@ export class Foo {
    * @param {string} size
    * @returns {boolean}
    */
-  isLess(size: string | number): boolean {
+  isLess(size: string): boolean {
     /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
     return this.viewportWidth < breakpointMap[size];
   }

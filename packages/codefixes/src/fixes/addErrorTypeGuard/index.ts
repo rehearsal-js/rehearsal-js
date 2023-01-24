@@ -1,20 +1,20 @@
 import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
 import { type CodeFixAction, isIdentifier, isPropertyAccessExpression, Node } from 'typescript';
-import { createCodeFixAction } from '../hints-codefix-collection';
-import type { CodeFix, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../../hints-codefix-collection';
+import type { CodeFix, DiagnosticWithContext } from '../../types';
 
-export class Fix2571 implements CodeFix {
+export class AddErrorTypeGuardCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !isIdentifier(errorNode) || !isVariableOfCatchClause(errorNode)) {
       return undefined;
     }
 
-    let codeReplacement = `(${errorNode.getText()} as Error)`;
-
     if (!this.isPropertyOfErrorInterface(errorNode.parent)) {
-      codeReplacement = `(${errorNode.getText()} as any)`;
+      return undefined;
     }
+
+    const codeReplacement = `(${errorNode.getText()} as Error)`;
 
     const changes = ChangesFactory.replaceText(
       diagnostic.file,
@@ -23,7 +23,11 @@ export class Fix2571 implements CodeFix {
       codeReplacement
     );
 
-    return createCodeFixAction('addTypeGuard', [changes], 'Add type guard for an Error object');
+    return createCodeFixAction(
+      'addErrorTypeGuard',
+      [changes],
+      'Add type guard for an Error object'
+    );
   }
 
   /**

@@ -10,8 +10,7 @@ import {
   isExportAssignment,
   isObjectLiteralExpression,
 } from 'typescript';
-import { createCodeFixAction } from '../hints-codefix-collection';
-import type { CodeFix, DiagnosticWithContext } from '../types';
+import { createCodeFixAction } from '../../hints-codefix-collection';
 import type {
   CodeFixAction,
   ExportAssignment,
@@ -22,10 +21,11 @@ import type {
   TypeChecker,
   TypeReference,
 } from 'typescript';
+import type { CodeFix, DiagnosticWithContext } from '../../types';
 
 const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 
-export class Fix4082 implements CodeFix {
+export class AddMissingExportCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !isExportAssignment(errorNode)) {
