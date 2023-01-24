@@ -45,8 +45,6 @@ export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
   const gitClient = cwd
     ? simpleGit({
         baseDir: cwd,
-        binary: 'git',
-        maxConcurrentProcesses: 6,
       } as Partial<SimpleGitOptions>)
     : git;
   if (await gitClient.checkIsRepo()) {
@@ -62,8 +60,6 @@ export async function gitAddIfInRepo(fileList: string[] | string, cwd?: string):
   const gitClient = cwd
     ? simpleGit({
         baseDir: cwd,
-        binary: 'git',
-        maxConcurrentProcesses: 6,
       } as Partial<SimpleGitOptions>)
     : git;
   if (await gitClient.checkIsRepo()) {
