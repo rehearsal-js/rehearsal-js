@@ -77,8 +77,8 @@ export async function initTask(options: MigrateCommandOptions): Promise<ListrTas
             }
           }
           return {
-            name: `${p.name}(${progressText}) ${icon}`,
-            message: `${p.name}(${progressText}) ${icon}`,
+            name: `${p.name}(${progressText})${icon}`,
+            message: `${p.name}(${progressText})${icon}`,
             value: p.path,
             disabled: isOptionDisabled,
           };

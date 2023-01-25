@@ -56,7 +56,13 @@ export async function convertTask(
 
             const { migratedFiles } = await migrate(input);
 
-            const { stdout: diffOutput } = await execa('git', ['diff', tsFilePath]);
+            // show git diff in a git repo
+            let diffOutput: string = '';
+            try {
+              diffOutput = (await execa('git', ['diff', tsFilePath])).stdout;
+            } catch (e) {
+              // no-ops
+            }
 
             // TODO: better diff with colors instead of using the output straight from git diff
             const message = `${chalk.yellow(
