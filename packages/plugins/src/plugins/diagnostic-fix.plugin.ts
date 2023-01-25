@@ -46,7 +46,15 @@ export class DiagnosticFixPlugin extends Plugin {
         continue;
       }
 
-      const fixes = codefixes.getCodeFixes(diagnostic, true, false);
+      if (diagnostic.code === 80004) {
+        // this diagnostic code is going to continue to be at the front of the diagnostics array
+        // its because its "category" is "Suggestion" and we threw away the `: Promise<any>` annotation
+        // We will never run any of the other diagnostics and will simply countdown tries to 0
+        console.log(diagnostic.category);
+        debugger;
+      }
+
+      const fixes = codefixes.getCodeFixes(diagnostic, true, true);
 
       if (fixes.length === 0) {
         continue;

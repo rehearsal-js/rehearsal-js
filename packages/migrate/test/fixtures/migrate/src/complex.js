@@ -14,3 +14,11 @@ export function findGreeting(someGreeting) {
 export default function say(name = 'World') {
   return `Hello ${name}`;
 }
+
+/**
+ * @param {String} a - A string
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+export function jsdoc(a) {
+  return Promise.resolve()
+}

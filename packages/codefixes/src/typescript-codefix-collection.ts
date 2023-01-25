@@ -131,6 +131,14 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
             return false;
           }
 
+          const typeWithAnyRegex = /[a-zA-Z0-9_$?]<any>/;
+
+          debugger;
+
+          if (typeWithAnyRegex.test(textChanges.newText)) {
+            return false;
+          }
+
           // Cleaning out `: any` types
           const anyTypeRegex = /[a-zA-Z0-9_$?]: any/;
           if (anyTypeRegex.test(textChanges.newText)) {

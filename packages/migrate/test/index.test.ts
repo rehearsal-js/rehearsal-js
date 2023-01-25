@@ -109,7 +109,8 @@ describe('migrate', () => {
     rmSync(jsonReport);
   });
 
-  test('should infer argument type (complex) mixed extensions js and ts', async () => {
+  test.only('should infer argument type (complex) mixed extensions js and ts', async () => {
+    debugger;
     const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
 
