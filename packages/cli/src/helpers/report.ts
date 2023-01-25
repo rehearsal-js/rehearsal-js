@@ -16,8 +16,7 @@ export function generateReports(
   command: CliCommand,
   reporter: Reporter,
   outputPath: string,
-  formats: Formats[],
-  basePath: string = process.cwd()
+  formats: Formats[]
 ): string[] {
   const generatedReports: string[] = [];
 

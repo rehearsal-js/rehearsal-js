@@ -7,7 +7,13 @@ import chalk from 'chalk';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
-import { determineProjectName, openInEditor, getPathToBinary, prettyGitDiff, gitAddIfInRepo } from '../../../utils';
+import {
+  determineProjectName,
+  openInEditor,
+  getPathToBinary,
+  prettyGitDiff,
+  gitAddIfInRepo,
+} from '../../../utils';
 import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
@@ -99,13 +105,7 @@ export async function convertTask(
               }
             }
             const reportOutputPath = resolve(options.basePath, options.outputPath);
-            generateReports(
-              'migrate',
-              reporter,
-              reportOutputPath,
-              options.format,
-              options.basePath
-            );
+            generateReports('migrate', reporter, reportOutputPath, options.format);
             gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
             task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
@@ -126,7 +126,7 @@ export async function convertTask(
             await ctx.state.addStateFileToGit();
           }
           const reportOutputPath = resolve(options.basePath, options.outputPath);
-          generateReports('migrate', reporter, reportOutputPath, options.format, options.basePath);
+          generateReports('migrate', reporter, reportOutputPath, options.format);
           gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
           task.title = getReportSummary(reporter.report, migratedFiles.length);
         }
