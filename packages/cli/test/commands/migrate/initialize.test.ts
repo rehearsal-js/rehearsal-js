@@ -10,8 +10,8 @@ import { sleep } from '../../../src/utils';
 enum KEYS {
   ENTER = '\x0D',
   CTRL_C = '\x03',
-  UP = '\x26',
-  DOWN = '\x28',
+  UP = '\u001b[A',
+  DOWN = '\u001b[B',
 }
 
 function sendKey(key: KEYS): void {
@@ -95,11 +95,11 @@ describe('Task: initialize', async () => {
     expect(output).matchSnapshot();
   });
 
-  test('show package selection in interactive mode', async () => {
+  test('single package selection in interactive mode', async () => {
     // send keycode after runner.run()
     setTimeout(async () => {
       sendKey(KEYS.ENTER);
-    }, 5000);
+    }, 2000);
 
     const options = createMigrateOptions(basePath, { interactive: true });
     const tasks = [await initTask(options)];
@@ -113,7 +113,7 @@ describe('Task: initialize', async () => {
     expect(output).toContain('basic(no progress found)');
 
     // migration would continue after sending "enter" key
-    expect(output).toContain('[DATA] Running migration');
+    expect(output).toContain(`[DATA] Running migration on ${basePath}`);
     expect(output).toContain('[SUCCESS] Initialize');
 
     // check context
@@ -125,5 +125,42 @@ describe('Task: initialize', async () => {
     expect(ctx.targetPackagePath).toBe(basePath);
     expect(ctx.sourceFilesWithRelativePath).toStrictEqual(expectedRellativePaths);
     expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual(expectedAbsolutePaths);
+  });
+
+  test('multi package selection in interactive mode', async () => {
+    basePath = prepareTmpDir('multi_packages');
+    // send keycode after runner.run()
+    setTimeout(async () => {
+      // move down twice to select module-b
+      sendKey(KEYS.DOWN);
+      sendKey(KEYS.DOWN);
+      await sleep(200);
+      sendKey(KEYS.ENTER);
+    }, 2000);
+
+    const options = createMigrateOptions(basePath, { interactive: true });
+    const tasks = [await initTask(options)];
+    const runner = new ListrTaskRunner(tasks, { input: 'basic' });
+    const ctx = await runner.run();
+
+    // test message and package selection prompt
+    expect(output).toContain(
+      'We have found multiple packages in your project, select the one to migrate'
+    );
+    expect(output).toContain('multi-package(no progress found)');
+    expect(output).toContain('module-a(no progress found)');
+    expect(output).toContain('module-b(no progress found)');
+
+    // migration would continue after sending "enter" key
+    expect(output).toContain(`[DATA] Running migration on ${resolve(basePath, 'module-b')}`);
+    expect(output).toContain('[SUCCESS] Initialize');
+
+    // check context
+    expect(ctx.input).toBe('module-b(no progress found)');
+    expect(ctx.targetPackagePath).toBe(resolve(basePath, 'module-b'));
+    expect(ctx.sourceFilesWithRelativePath).toStrictEqual(['index.js']);
+    expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual([
+      resolve(basePath, 'module-b/', 'index.js'),
+    ]);
   });
 });
