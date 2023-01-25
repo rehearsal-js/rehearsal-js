@@ -20,7 +20,7 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
 
   // only restore files in fixtures
   if (await gitIsRepoDirty()) {
-    await execa('git', ['restore', '--', resolve(__dirname, './fixtures/app')]);
+    await execa('git', ['restore', '--', resolve(__dirname, '../fixtures/app')]);
   }
 
   await git.checkout(branch);
