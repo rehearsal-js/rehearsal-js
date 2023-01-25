@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra';
 
 import { depInstallTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
-import { CustomConfig, MigrateCommandContext } from '../../../src/types';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { CustomConfig } from '../../../src/types';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 import { UserConfig } from '../../../src/user-config';
 
@@ -35,8 +35,7 @@ describe('Task: dependency-install', async () => {
   test('install required dependencies', async () => {
     const options = createMigrateOptions(basePath);
     const tasks = [await depInstallTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    await runner.run();
+    await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
@@ -56,9 +55,8 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options)];
-    const runner = new ListrTaskRunner(tasks, { userConfig } as MigrateCommandContext);
-    await runner.run();
+    const tasks = [await depInstallTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;

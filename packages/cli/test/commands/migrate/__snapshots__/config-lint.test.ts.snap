@@ -1,23 +1,19 @@
 // Vitest Snapshot v1
 
 exports[`Task: config-lint > create .eslintrc if not existed 1`] = `
-"[STARTED] Task without title.
-[STARTED] Install dependencies
+"[STARTED] Install dependencies
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
 [SUCCESS] Create eslint config
-[SUCCESS] Task without title.
 "
 `;
 
 exports[`Task: config-lint > run custom config command with user config provided 1`] = `
-"[STARTED] Task without title.
-[STARTED] Install dependencies
+"[STARTED] Install dependencies
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from config
 [SUCCESS] Create eslint config
-[SUCCESS] Task without title.
 "
 `;

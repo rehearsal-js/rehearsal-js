@@ -9,24 +9,20 @@ exports[`Task: initialize > get files that will be migrated 1`] = `
 `;
 
 exports[`Task: initialize > get files that will be migrated 2`] = `
-"[STARTED] Task without title.
-[STARTED] Initialize
+"[STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
-[SUCCESS] Task without title.
 "
 `;
 
 exports[`Task: initialize > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Task without title.
-[STARTED] Initialize -- Dry Run Mode
+"[STARTED] Initialize -- Dry Run Mode
 [DATA] Running migration on basic
 [DATA] List of files will be attempted to migrate:
 [DATA]  foo.js
 [DATA] depends-on-foo.js
 [DATA] index.js
 [SUCCESS] Initialize -- Dry Run Mode
-[SUCCESS] Task without title.
 "
 `;
 

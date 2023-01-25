@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra';
 
 import { initTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 import { sleep } from '../../../src/utils';
 
@@ -45,8 +45,7 @@ describe('Task: initialize', async () => {
   test('get files that will be migrated', async () => {
     const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    const ctx = await runner.run();
+    const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.targetPackagePath).toBe(`${basePath}`);
     expect(ctx.sourceFilesWithAbsolutePath).toContain(`${basePath}/index.js`);
@@ -72,8 +71,7 @@ describe('Task: initialize', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const tasks = [await initTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    const ctx = await runner.run();
+    const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.userConfig).toBeTruthy();
     if (ctx.userConfig) {
@@ -88,8 +86,7 @@ describe('Task: initialize', async () => {
   test('print files will be attempted to migrate with --dryRun', async () => {
     const options = createMigrateOptions(basePath, { dryRun: true });
     const tasks = [await initTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    const ctx = await runner.run();
+    const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.skip).toBe(true);
     expect(output).matchSnapshot();
@@ -103,8 +100,7 @@ describe('Task: initialize', async () => {
 
     const options = createMigrateOptions(basePath, { interactive: true });
     const tasks = [await initTask(options)];
-    const runner = new ListrTaskRunner(tasks, { input: 'basic' });
-    const ctx = await runner.run();
+    const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
     expect(output).toContain(
@@ -140,8 +136,7 @@ describe('Task: initialize', async () => {
 
     const options = createMigrateOptions(basePath, { interactive: true });
     const tasks = [await initTask(options)];
-    const runner = new ListrTaskRunner(tasks, { input: 'basic' });
-    const ctx = await runner.run();
+    const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
     expect(output).toContain(

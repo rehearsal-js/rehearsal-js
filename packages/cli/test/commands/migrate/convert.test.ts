@@ -1,33 +1,64 @@
 import { resolve } from 'path';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readdirSync, readJSONSync } from 'fs-extra';
-import { setGracefulCleanup } from 'tmp';
-import { beforeEach, describe, expect, test } from 'vitest';
-import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
+import { simpleGit, type SimpleGitOptions } from 'simple-git';
 
-import { runBin, prepareTmpDir } from '../../test-helpers';
+import {
+  initTask,
+  depInstallTask,
+  convertTask,
+  tsConfigTask,
+  lintConfigTask,
+} from '../../../src/commands/migrate/tasks';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { sleep } from '../../../src/utils';
 
-setGracefulCleanup();
+enum KEYS {
+  ENTER = '\x0D',
+  CTRL_C = '\x03',
+  UP = '\u001b[A',
+  DOWN = '\u001b[B',
+}
 
-// These tests are using `runBin` to call the entire `migrate` command instead of testing the individual convert task
-// Since there are a lot of context needs to be injected
-// And it does make sense to run the whole cli for this case
+function sendKey(key: KEYS): void {
+  process.stdin.emit('data', key);
+}
+
 describe('Task: convert', async () => {
   let basePath = '';
+  let output = '';
+  vi.spyOn(console, 'info').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+  });
+  vi.spyOn(console, 'log').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+  });
 
   beforeEach(() => {
+    output = '';
     basePath = prepareTmpDir('basic');
   });
 
-  test('able to migrate from default all files .js in root', async () => {
-    const result = await runBin('migrate', [], {
-      cwd: basePath,
-    });
+  afterEach(() => {
+    output = '';
+    vi.clearAllMocks();
+  });
 
-    // Test summary message
-    expect(result.stdout).toContain(`3 JS files converted to TS`);
+  test('migrate from default all files .js in root', async () => {
+    const options = createMigrateOptions(basePath);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+    await listrTaskRunner(tasks);
+
+    expect(output).toMatchSnapshot();
 
     const fileList = readdirSync(basePath);
-
     expect(fileList).toContain('index.ts');
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('depends-on-foo.ts');
@@ -41,12 +72,19 @@ describe('Task: convert', async () => {
     expect(config.include).toContain('depends-on-foo.ts');
   });
 
-  test('able to migrate from specific entrypoint', async () => {
-    const result = await runBin('migrate', ['--entrypoint', 'depends-on-foo.js'], {
-      cwd: basePath,
-    });
+  test('migrate from specific entrypoint', async () => {
+    const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js' });
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+    await listrTaskRunner(tasks);
 
-    expect(result.stdout).toContain(`2 JS files converted to TS`);
+    expect(output).toMatchSnapshot();
 
     const fileList = readdirSync(basePath);
     expect(fileList).toContain('depends-on-foo.ts');
@@ -60,85 +98,231 @@ describe('Task: convert', async () => {
     expect(config.include).toContain('foo.ts');
   });
 
-  test('Print debug messages with verbose', async () => {
-    const result = await runBin('migrate', ['--verbose'], {
-      cwd: basePath,
-    });
-
-    expect(result.stdout).toContain(`\x1B[34mdebug\x1B[39m`);
-  });
-
-  test('Generate sarif report by default', async () => {
-    await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    const reportPath = resolve(basePath, '.rehearsal');
-
-    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
-  });
-
-  test('stage report if in a git repo', async () => {
-    // simulate clean git project
-    const git: SimpleGit = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    // Init git, add and commit existed files, to make it a clean state
-    await git.init();
-    await git.add(readdirSync(basePath));
-    // GH CI would require git name and email
-    await git.addConfig('user.name', 'tester');
-    await git.addConfig('user.email', 'tester@tester.com');
-    await git.commit('foo');
-
-    await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    const reportPath = resolve(basePath, '.rehearsal');
-    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
-
-    const gitStatus = await git.status();
-    expect(gitStatus.staged).toStrictEqual([
-      '.eslintrc.js',
-      '.rehearsal-eslintrc.js',
-      '.rehearsal/migrate-report.sarif',
-      'tsconfig.json',
-    ]);
-  });
-
-  test('Generate report in different formats with -f flag', async () => {
-    await runBin('migrate', ['-f', 'json,md,sarif,foo'], {
-      cwd: basePath,
-    });
-
-    const reportPath = resolve(basePath, '.rehearsal');
-
-    const reportList = readdirSync(reportPath);
-
-    expect(reportList).toContain('migrate-report.json');
-    expect(reportList).toContain('migrate-report.md');
-    expect(reportList).toContain('migrate-report.sarif');
-    expect(reportList).not.toContain('migrate-report.foo');
-  });
-
-  test('Run cli againt specific basePath via -basePath option', async () => {
+  test('againt specific basePath via -basePath option', async () => {
     basePath = prepareTmpDir('custom_basepath');
-
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath]);
+    const options = createMigrateOptions(customBasePath);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+    await listrTaskRunner(tasks);
+
+    expect(output).toMatchSnapshot();
 
     const fileList = readdirSync(customBasePath);
-
-    expect(result.stdout).toContain('Install dependencies');
-    expect(result.stdout).toContain('Create tsconfig.json');
     expect(fileList).toContain('tsconfig.json');
-
-    expect(result.stdout).toContain(`1 JS file converted to TS`);
     expect(fileList).toContain('index.ts');
     expect(fileList).not.toContain('index.js');
 
     const config = readJSONSync(resolve(customBasePath, 'tsconfig.json'));
     expect(config.include).toContain('index.ts');
+  });
+
+  test('generate reports', async () => {
+    const options = createMigrateOptions(basePath, {
+      format: ['json', 'md', 'sarif'],
+    });
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+    await listrTaskRunner(tasks);
+
+    expect(output).toMatchSnapshot();
+
+    const reportPath = resolve(basePath, '.rehearsal');
+    const reportList = readdirSync(reportPath);
+
+    expect(reportList).toContain('migrate-report.json');
+    expect(reportList).toContain('migrate-report.md');
+    expect(reportList).toContain('migrate-report.sarif');
+  });
+
+  test('accept changes without git', async () => {
+    const options = createMigrateOptions(basePath, { interactive: true });
+
+    setTimeout(async () => {
+      // At selection for packages
+      sendKey(KEYS.ENTER); // selection package
+      await sleep(10000);
+
+      // At action selection for foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for depends-on-foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for index.js
+      sendKey(KEYS.ENTER); // accept
+    }, 3000);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+
+    await listrTaskRunner(tasks);
+
+    const pathReg = new RegExp(basePath, 'g');
+    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    expect(outputWithoutTmpPath).toMatchSnapshot();
+
+    const fileList = readdirSync(basePath);
+    expect(fileList).toContain('index.ts');
+    expect(fileList).toContain('foo.ts');
+    expect(fileList).toContain('depends-on-foo.ts');
+    expect(fileList).not.toContain('index.js');
+    expect(fileList).not.toContain('foo.js');
+    expect(fileList).not.toContain('depends-on-foo.js');
+  });
+
+  test('accept and discard changes with git', async () => {
+    // simulate clean git project
+    const git = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    await git
+      .init()
+      .addConfig('user.name', 'tester')
+      .addConfig('user.email', 'tester@tester.com')
+      .add('./*')
+      .commit('first commit!');
+
+    const options = createMigrateOptions(basePath, { interactive: true });
+
+    setTimeout(async () => {
+      // At selection for packages
+      sendKey(KEYS.ENTER); // selection package
+      await sleep(10000);
+
+      // At action selection for foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for depends-on-foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for index.js
+      sendKey(KEYS.DOWN);
+      sendKey(KEYS.DOWN);
+      sendKey(KEYS.ENTER); // discard
+    }, 3000);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+
+    await listrTaskRunner(tasks);
+
+    const pathReg = new RegExp(basePath, 'g');
+    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    expect(outputWithoutTmpPath).toMatchSnapshot();
+
+    const fileList = readdirSync(basePath);
+    // index.ts should been discarded
+    expect(fileList).toContain('index.js');
+    expect(fileList).toContain('foo.ts');
+    expect(fileList).toContain('depends-on-foo.ts');
+    expect(fileList).not.toContain('index.ts');
+    expect(fileList).not.toContain('foo.js');
+    expect(fileList).not.toContain('depends-on-foo.js');
+  });
+
+  test('view changes in $EDITOR', async () => {
+    // TODO: It is super complicated to test this in real editor
+    // 1. It is not promised that every machine has the editor defined here
+    // 2. Haven't figured out how to pass key command/press to editor, to edit file and quit the edit
+    // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
+    // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
+    process.env.EDITOR = 'rm';
+    const options = createMigrateOptions(basePath, { interactive: true });
+
+    setTimeout(async () => {
+      // At selection for packages
+      sendKey(KEYS.ENTER); // selection package
+      await sleep(10000);
+
+      // At action selection for foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for depends-on-foo.js
+      sendKey(KEYS.ENTER); // accept
+      await sleep(2000);
+
+      // At action selection for index.js
+      sendKey(KEYS.DOWN);
+      sendKey(KEYS.ENTER); // edit
+    }, 3000);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+
+    await listrTaskRunner(tasks);
+
+    const pathReg = new RegExp(basePath, 'g');
+    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    expect(outputWithoutTmpPath).toMatchSnapshot();
+
+    const fileList = readdirSync(basePath);
+    // // index.ts should been removed
+    expect(fileList).not.toContain('index.ts');
+    expect(fileList).toContain('foo.ts');
+    expect(fileList).toContain('depends-on-foo.ts');
+    expect(fileList).not.toContain('index.js');
+    expect(fileList).not.toContain('foo.js');
+    expect(fileList).not.toContain('depends-on-foo.js');
+  });
+
+  test('cancel prompt in interactive mode', async () => {
+    const options = createMigrateOptions(basePath, { interactive: true });
+
+    setTimeout(async () => {
+      // At selection for packages
+      sendKey(KEYS.ENTER); // selection package
+      await sleep(10000);
+      // At action selection for foo.js
+      sendKey(KEYS.CTRL_C); // cancel
+    }, 3000);
+    // Get context for convert task from previous tasks
+    const tasks = [
+      await initTask(options),
+      await depInstallTask(options),
+      await tsConfigTask(options),
+      await lintConfigTask(options),
+      await convertTask(options),
+    ];
+
+    // use try catch since it would be killed via ctrl c
+    await listrTaskRunner(tasks).catch(() => {
+      // replace random tmp path for consistent snapshot
+      const pathReg = new RegExp(basePath, 'g');
+      const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+      expect(outputWithoutTmpPath).toMatchSnapshot();
+    });
   });
 });

@@ -1,18 +1,14 @@
 // Vitest Snapshot v1
 
 exports[`Task: dependency-install > install custom dependencies 1`] = `
-"[STARTED] Task without title.
-[STARTED] Install dependencies
+"[STARTED] Install dependencies
 [DATA] Install dependencies from config
 [SUCCESS] Install dependencies
-[SUCCESS] Task without title.
 "
 `;
 
 exports[`Task: dependency-install > install required dependencies 1`] = `
-"[STARTED] Task without title.
-[STARTED] Install dependencies
+"[STARTED] Install dependencies
 [SUCCESS] Install dependencies
-[SUCCESS] Task without title.
 "
 `;

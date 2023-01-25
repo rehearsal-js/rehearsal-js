@@ -1,9 +1,9 @@
 import { resolve } from 'path';
-import { Logger } from 'winston';
 import { debug } from 'debug';
 import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
 import chalk from 'chalk';
+import { createLogger, format, transports } from 'winston';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
@@ -22,17 +22,22 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
 export async function convertTask(
   options: MigrateCommandOptions,
-  logger: Logger,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: 'Convert JS files to TS',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
-      // During interactive mode, if context is provide via external parameter, merge with existed
+      // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
       }
+
+      const loggerLevel = options.verbose ? 'debug' : 'info';
+      const logger = createLogger({
+        transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
+      });
+
       const projectName = determineProjectName() || '';
       const { basePath } = options;
       const tscPath = await getPathToBinary('tsc');
@@ -99,8 +104,15 @@ export async function convertTask(
                 }
               } else {
                 // discard
-                await execa('git', ['restore', tsFilePath]);
-                await execa('git', ['mv', tsFilePath, jsFilePath]);
+                try {
+                  await execa('git', ['restore', tsFilePath], { cwd: ctx.targetPackagePath });
+                  await execa('git', ['mv', tsFilePath, jsFilePath], {
+                    cwd: ctx.targetPackagePath,
+                  });
+                } catch (e) {
+                  // do nothing if does not have git
+                }
+
                 completed = true;
               }
             }

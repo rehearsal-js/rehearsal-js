@@ -10,17 +10,24 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 const REHEARSAL_CONFIG_FILENAME = '.rehearsal-eslintrc.js';
 const REHEARSAL_CONFIG_RELATIVE_PATH = `./${REHEARSAL_CONFIG_FILENAME}`;
 
-export async function lintConfigTask(options: MigrateCommandOptions): Promise<ListrTask> {
+export async function lintConfigTask(
+  options: MigrateCommandOptions,
+  context?: Partial<MigrateCommandContext>
+): Promise<ListrTask> {
   return {
     title: 'Create eslint config',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (_ctx: MigrateCommandContext, task): Promise<void> => {
+    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      // If context is provide via external parameter, merge with existed
+      if (context) {
+        ctx = { ...ctx, ...context };
+      }
       // glob against the following file extension pattern js,yml,json,yaml and return the first match
       const configPath = glob.sync(join(options.basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
 
-      if (_ctx.userConfig?.hasLintSetup) {
+      if (ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
-        await _ctx.userConfig.lintSetup();
+        await ctx.userConfig.lintSetup();
       } else {
         // only run the default process with no custom config provided
         // create .rehearsal-eslintrc.js

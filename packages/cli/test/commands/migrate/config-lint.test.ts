@@ -4,7 +4,7 @@ import { writeJSONSync, readdirSync, writeFileSync } from 'fs-extra';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { depInstallTask, lintConfigTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 import { UserConfig } from '../../../src/user-config';
 
@@ -36,8 +36,7 @@ describe('Task: config-lint', async () => {
     const options = createMigrateOptions(basePath);
     // lint task requires dependencies installed first
     const tasks = [await depInstallTask(options), await lintConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    await runner.run();
+    await listrTaskRunner(tasks);
 
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
@@ -54,8 +53,7 @@ describe('Task: config-lint', async () => {
     const options = createMigrateOptions(basePath);
     // lint task requires dependencies installed first
     const tasks = [await depInstallTask(options), await lintConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    await runner.run();
+    await listrTaskRunner(tasks);
 
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
@@ -78,9 +76,8 @@ describe('Task: config-lint', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks, { userConfig });
-    await runner.run();
+    const tasks = [await depInstallTask(options), await lintConfigTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
 
     // This proves the custom command works
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
@@ -103,8 +100,7 @@ describe('Task: config-lint', async () => {
     const options = createMigrateOptions(basePath);
     // lint task requires dependencies installed first
     const tasks = [await depInstallTask(options), await lintConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks);
-    await runner.run();
+    await listrTaskRunner(tasks);
 
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');

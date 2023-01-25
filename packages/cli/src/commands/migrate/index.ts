@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { Listr } from 'listr2';
-import { createLogger, format, transports } from 'winston';
 
 import { version } from '../../../package.json';
 import { parseCommaSeparatedList, gitIsRepoDirty, resetFiles } from '../../utils';
@@ -43,17 +42,12 @@ migrateCommand
   });
 
 async function migrate(options: MigrateCommandOptions): Promise<void> {
-  const loggerLevel = options.verbose ? 'debug' : 'info';
-  const logger = createLogger({
-    transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
-  });
-
   console.log(`@rehearsal/migrate ${version.trim()}`);
 
   if (!options.dryRun) {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
-      logger.warn(
+      console.warn(
         'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
       );
       process.exit(0);
@@ -78,15 +72,15 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
-      await new Listr([await convertTask(options, logger, ctx)], {
+      await new Listr([await convertTask(options, ctx)], {
         renderer: 'simple',
         ...defaultListrOption,
       }).run();
     } else {
-      await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
+      await new Listr([...tasks, await convertTask(options)], defaultListrOption).run();
     }
   } catch (e) {
     await resetFiles();
-    logger.error(`${e}`);
+    console.error(`${e}`);
   }
 }

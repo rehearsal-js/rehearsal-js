@@ -3,12 +3,11 @@ import execa from 'execa';
 import which from 'which';
 import { rmSync, copySync, realpathSync } from 'fs-extra';
 import { dirSync } from 'tmp';
+import { ListrTask, Listr } from 'listr2';
 import packageJson from '../../package.json';
 
 import { git, gitIsRepoDirty } from '../../src/utils';
-import { MigrateCommandOptions, Formats } from '../../src/types';
-
-export * from './task-manager-helper';
+import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types';
 
 export const PNPM_PATH = which.sync('pnpm');
 
@@ -94,4 +93,18 @@ export function createMigrateOptions(
     dryRun: false,
     ...options,
   };
+}
+
+// Task runner for test
+export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateCommandContext> {
+  const defaultListrOption = {
+    concurrent: false,
+    exitOnError: true,
+    renderer: 'verbose',
+    rendererOptions: {
+      collapse: false,
+      collapseSkips: false,
+    },
+  };
+  return await new Listr(tasks, defaultListrOption).run();
 }

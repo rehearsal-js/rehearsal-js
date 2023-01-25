@@ -4,7 +4,7 @@ import { readJSONSync, writeJSONSync, readdirSync } from 'fs-extra';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { tsConfigTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, ListrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 import { UserConfig } from '../../../src/user-config';
 
@@ -35,9 +35,8 @@ describe('Task: config-ts', async () => {
   test('create tsconfig if not existed', async () => {
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks, context);
-    await runner.run();
+    const tasks = [await tsConfigTask(options, context)];
+    await listrTaskRunner(tasks);
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
 
@@ -52,9 +51,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks, context);
-    await runner.run();
+    const tasks = [await tsConfigTask(options, context)];
+    await listrTaskRunner(tasks);
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
 
@@ -74,9 +72,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks, { userConfig });
-    await runner.run();
+    const tasks = [await tsConfigTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
 
     // This proves the custom command works
     expect(readdirSync(basePath)).toContain('custom-ts-config-script');
@@ -98,9 +95,8 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options)];
-    const runner = new ListrTaskRunner(tasks, context);
-    await runner.run();
+    const tasks = [await tsConfigTask(options, context)];
+    await listrTaskRunner(tasks);
 
     const gitStatus = await git.status();
     expect(gitStatus.staged).toContain('tsconfig.json');
