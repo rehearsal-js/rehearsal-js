@@ -243,3 +243,21 @@ exports[`migrate: e2e > default migrate command 7`] = `
   ]
 }"
 `;
+
+exports[`migrate: e2e > regen result after the first pass 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Regenerating report for TS errors and Eslint errors
+[DATA] processing file: /foo.ts
+[DATA] processing file: /depends-on-foo.ts
+[DATA] processing file: /index.ts
+[TITLE] Migration Report Generated
+[TITLE]   3 ts files have been scanned
+[TITLE]   1 errors caught by rehearsal
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 1 eslint errors, with details in the report
+[SUCCESS] Migration Report Generated
+[SUCCESS]   3 ts files have been scanned
+[SUCCESS]   1 errors caught by rehearsal
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 1 eslint errors, with details in the report"
+`;

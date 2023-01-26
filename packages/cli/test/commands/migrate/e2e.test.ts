@@ -6,16 +6,9 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 
-import { runBin, prepareTmpDir, removeSpecialChars } from '../../test-helpers';
+import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers';
 
 setGracefulCleanup();
-
-// CLI would print current version, need to replace it for snapshot test
-// @rehearsal/migrate @x.x.x -> @rehearsal/migrate<test-version>
-function replaceCliVersion(input: string): string {
-  const versionRegex = /(@rehearsal\/migrate)(.+)/g;
-  return input.replace(versionRegex, '$1<test-version>');
-}
 
 describe('migrate - validation', async () => {
   let basePath = '';
@@ -81,6 +74,20 @@ describe('migrate - validation', async () => {
     expect(stdout).toContain('Initialize -- Dry Run Mode');
     expect(stdout).toContain('List of files will be attempted to migrate:');
   });
+
+  test('pass in a dirty git project with --regen', async () => {
+    const git = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    await git.init();
+
+    const { stdout } = await runBin('migrate', ['-r'], {
+      cwd: basePath,
+    });
+    expect(stdout).not.toContain(
+      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+    );
+  });
 });
 
 describe('migrate: e2e', async () => {
@@ -102,15 +109,12 @@ describe('migrate: e2e', async () => {
       .addConfig('user.email', 'tester@tester.com')
       .commit('test');
 
-    const result = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', [], {
       cwd: basePath,
     });
 
     // summary message
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
-    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(basePath);
@@ -166,27 +170,21 @@ describe('migrate: e2e', async () => {
   });
 
   test('Print debug messages with verbose', async () => {
-    const result = await runBin('migrate', ['--verbose'], {
+    const { stdout } = await runBin('migrate', ['--verbose'], {
       cwd: basePath,
     });
 
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
-    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 
   test('againt specific basePath via -basePath option', async () => {
     basePath = prepareTmpDir('custom_basepath');
 
     const customBasePath = resolve(basePath, 'base');
-    const result = await runBin('migrate', ['--basePath', customBasePath]);
+    const { stdout } = await runBin('migrate', ['--basePath', customBasePath]);
 
     // summary message
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
-    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(customBasePath);
@@ -224,5 +222,35 @@ describe('migrate: e2e', async () => {
     // new scripts
     expect(packageJson.scripts['build:tsc']).toBe('tsc -b');
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+  });
+
+  test('show warning message for missing config with --regen', async () => {
+    const { stdout } = await runBin('migrate', ['-r'], {
+      cwd: basePath,
+    });
+    expect(stdout).toContain('Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist');
+    expect(stdout).toContain('tsconfig.json does not exist');
+  });
+
+  test('regen result after the first pass', async () => {
+    // simulate clean git project
+    const git = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    await git
+      .init()
+      .add('./*')
+      .addConfig('user.name', 'tester')
+      .addConfig('user.email', 'tester@tester.com')
+      .commit('test');
+
+    // first run without --regen
+    await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    const { stdout } = await runBin('migrate', ['-r'], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 });

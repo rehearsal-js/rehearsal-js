@@ -91,6 +91,7 @@ export function createMigrateOptions(
     userConfig: undefined,
     interactive: undefined,
     dryRun: false,
+    regen: false,
     ...options,
   };
 }
@@ -138,4 +139,16 @@ export function removeSpecialChars(input: string): string {
     })
     .filter((line) => line.trim())
     .join('\n');
+}
+
+// clean special chars and variables for output message snapshot:
+// 1. replace CLI version
+// 2. remove unicode, color chars
+// 3. remove tmp paths
+export function cleanOutput(output: string, basePath: string): string {
+  const pathRegex = new RegExp(basePath, 'g');
+  const versionRegex = /(@rehearsal\/migrate)(.+)/g;
+  return removeSpecialChars(
+    output.replace(pathRegex, '<tmp-path>').replace(versionRegex, '$1<test-version>')
+  );
 }

@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
+import { existsSync } from 'fs-extra';
 
 import { version } from '../../../package.json';
 import {
@@ -93,11 +94,11 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       const lintConfigPath = getLintConfigPath(options.basePath);
       if (!lintConfigPath) {
         logger.warn(
-          `${lintConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+          `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
         );
       }
       const tsConfigPath = resolve(options.basePath, 'tsconfig.json');
-      if (!tsConfigPath) {
+      if (!existsSync(tsConfigPath)) {
         logger.warn(
           `${tsConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
         );
