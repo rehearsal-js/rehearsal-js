@@ -21,7 +21,7 @@ describe('state', async () => {
 
   test('constructor should init state to disk', async () => {
     const configPath = resolve(basePath, 'state.json');
-    const { packages, files } = new State('foo', [], configPath);
+    const { packages, files } = new State('foo', basePath, [], configPath);
 
     expect(packages).toEqual({});
     expect(files).toEqual({});
@@ -35,14 +35,14 @@ describe('state', async () => {
     const existedStore: Store = {
       name: 'bar',
       packageMap: {
-        bar: [fooPath],
+        bar: ['./foo'],
       },
       files: {},
     };
-    existedStore.files[fooPath] = {
+    existedStore.files['./foo'] = {
       origin: 'foo',
       current: 'foo',
-      package: 'bar',
+      package: './bar',
       errorCount: 2,
     };
 
@@ -51,36 +51,39 @@ describe('state', async () => {
     // write foo file
     writeFileSync(fooPath, '');
 
-    const { packages, files } = new State('foo', [], configPath);
+    const { packages, files } = new State('foo', basePath, [], configPath);
 
-    expect(packages.bar).toEqual([fooPath]);
-    expect(files[fooPath].package).toBe('bar');
+    expect(packages.bar).toEqual(['./foo']);
+    expect(files['./foo'].package).toBe('./bar');
+    expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
   test('getVerifiedStore', async () => {
     const configPath = resolve(basePath, 'state.json');
-    const fooPath = resolve(basePath, 'foo');
     const existedStore: Store = {
       name: 'bar',
       packageMap: {
-        bar: [fooPath],
+        './bar': ['./foo'],
       },
       files: {},
     };
-    existedStore.files[fooPath] = {
+    existedStore.files['./foo'] = {
       origin: 'foo',
       current: 'foo',
-      package: 'bar',
+      package: './bar',
       errorCount: 2,
     };
 
     // write existed state
     writeJSONSync(configPath, existedStore);
 
-    const { packages, files } = new State('foo', [], configPath);
+    const { packages, files } = new State('foo', basePath, [], configPath);
 
-    expect(packages.bar).toEqual([fooPath]);
-    expect(files[fooPath].current).toBe(null);
+    expect(packages['./bar']).toEqual(['./foo']);
+    // there is no actual .foo existed on disk
+    // stage would be updated when loading the old state file
+    expect(files['./foo'].current).toBe(null);
+    expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
   test('addFilesToPackages', async () => {
@@ -90,12 +93,13 @@ describe('state', async () => {
     // write foo file
     writeFileSync(fooPath, '');
 
-    const state = new State('bar', ['bar'], configPath);
+    const state = new State('bar', basePath, ['./bar'], configPath);
 
-    state.addFilesToPackage('bar', [fooPath]);
+    state.addFilesToPackage('./bar', ['./foo']);
 
-    expect(state.packages.bar).toEqual([fooPath]);
-    expect(state.files[fooPath].package).toBe('bar');
+    expect(state.packages['./bar']).toEqual(['./foo']);
+    expect(state.files['./foo'].package).toBe('./bar');
+    expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
   test('calculateTSIgnoreCount', async () => {
@@ -116,23 +120,22 @@ describe('state', async () => {
     const configPath = resolve(basePath, 'state.json');
 
     const fooPath = resolve(basePath, 'foo.ts');
-    const barPath = resolve(basePath, 'bar.ts');
 
     const store: Store = {
       name: 'bar',
       packageMap: {
-        bar: [fooPath, barPath],
+        bar: ['./foo.ts', './bar.ts'],
       },
       files: {},
     };
-    store.files[fooPath] = {
-      origin: fooPath,
-      current: fooPath,
+    store.files['./foo.ts'] = {
+      origin: './foo.ts',
+      current: './foo.ts',
       package: 'bar',
       errorCount: 2,
     };
-    store.files[barPath] = {
-      origin: barPath,
+    store.files['./bar.ts'] = {
+      origin: './bar.ts',
       current: null,
       package: 'bar',
       errorCount: 2,
@@ -142,11 +145,11 @@ describe('state', async () => {
     // only have fooPath on disk, so state should know only foo is migrated
     writeFileSync(fooPath, '', 'utf-8');
 
-    let state = new State('bar', ['sample-package'], configPath);
-    state.addFilesToPackage('sample-package', [fooPath, barPath]);
+    let state = new State('bar', basePath, ['sample-package'], configPath);
+    state.addFilesToPackage('sample-package', ['./foo.ts', './bar.ts']);
     // here create the state again, to simulate loading previous state
     // the getVerifiedStore would be triggered here to update files' state
-    state = new State('bar', ['sample-package'], configPath);
+    state = new State('bar', basePath, ['sample-package'], configPath);
 
     const expected = {
       migratedFileCount: 1,
@@ -155,6 +158,7 @@ describe('state', async () => {
     };
 
     expect(state.getPackageMigrateProgress('sample-package')).toStrictEqual(expected);
+    expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
   test('getPackageErrorCount', async () => {
@@ -166,7 +170,7 @@ describe('state', async () => {
     const bar = '@rehearsal TODO foo\n@rehearsal TODO bar';
     const barPath = resolve(basePath, 'bar');
 
-    const state = new State('bar', ['sample-package'], configPath);
+    const state = new State('bar', basePath, ['sample-package'], configPath);
 
     writeFileSync(fooPath, foo, 'utf-8');
     writeFileSync(barPath, bar, 'utf-8');
@@ -174,5 +178,20 @@ describe('state', async () => {
     state.addFilesToPackage('sample-package', [fooPath, barPath]);
 
     expect(state.getPackageErrorCount('sample-package')).toStrictEqual(3);
+  });
+
+  test('does not contain absolute paths in state file', async () => {
+    const configPath = resolve(basePath, 'state.json');
+    const fooPath = resolve(basePath, 'foo');
+    const barPath = resolve(basePath, 'bar');
+    const packagePath = resolve(basePath, 'sample-package');
+
+    const state = new State('bar', basePath, [packagePath], configPath);
+    // check state file after init
+    expect(readJSONSync(configPath)).toMatchSnapshot();
+
+    state.addFilesToPackage(packagePath, [fooPath, barPath]);
+    // check state file again after addFilesToPackage
+    expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 });

@@ -46,7 +46,8 @@ export async function initTask(
         // Init state and store
         const state = new State(
           projectName,
-          packages.map((p) => p.path)
+          options.basePath,
+          packages.map((p) => p.path) // use relative path
         );
         ctx.state = state;
 

@@ -35,19 +35,25 @@ type PackageMigrateProgress = {
   isCompleted: boolean;
 };
 
-const DEFAULT_REHEARSAL_PATH = resolve(process.cwd(), '.rehearsal');
-const DEFAULT_CONFIG_PATH = resolve(DEFAULT_REHEARSAL_PATH, 'migrate-state.json');
 const REHEARSAL_TODO_REGEX = /@rehearsal TODO/g;
+
+function getRelativePath(basePath: string, filePath: string): string {
+  return filePath.replace(basePath, '.');
+}
+
+function getAbsolutePath(basePath: string, filePath: string): string {
+  return resolve(basePath, filePath);
+}
 
 export class State {
   private configPath: string;
+  private basePath: string;
   private store: Store;
-  constructor(
-    name: string | null,
-    packages: string[] = [],
-    configPath: string = DEFAULT_CONFIG_PATH
-  ) {
-    this.configPath = configPath;
+  constructor(name: string | null, basePath: string, packages: string[] = [], configPath?: string) {
+    this.configPath = configPath
+      ? configPath
+      : resolve(basePath, '.rehearsal', 'migrate-state.json');
+    this.basePath = basePath;
     let store;
     if (this.isStateExists()) {
       // every time loading a previous state, need to check if files on disk matches the state
@@ -55,7 +61,7 @@ export class State {
     } else {
       const initPackageMap: PackageMap = {};
       const packageMap: PackageMap = packages.reduce((map, current) => {
-        map[current] = [];
+        map[getRelativePath(this.basePath, current)] = [];
         return map;
       }, initPackageMap);
       store = { name: name ? name : '', packageMap, files: {} };
@@ -77,19 +83,23 @@ export class State {
     const store: Store = readJSONSync(this.configPath);
     for (const f in store.files) {
       const status = store.files[f];
-      if (status.current && !existsSync(status.current)) {
-        // if a ts file in state doesn't exist on disk, mark it as un-migrated
-        store.files[f].current = null;
+      if (status.current) {
+        const absoluteTsPath = getAbsolutePath(this.basePath, status.current);
+        if (!existsSync(absoluteTsPath)) {
+          // if a ts file in state doesn't exist on disk, mark it as un-migrated
+          store.files[f].current = null;
+        } else {
+          // if ts is on disk, update ts-expect-error count
+          store.files[f].errorCount = calculateTSIgnoreCount(absoluteTsPath);
+        }
       }
-      // update ts-expect-error count
-      store.files[f].errorCount = calculateTSIgnoreCount(f);
     }
     return store;
   }
 
   isStateExists(): boolean {
-    if (!existsSync(DEFAULT_REHEARSAL_PATH)) {
-      mkdirSync(DEFAULT_REHEARSAL_PATH);
+    if (!existsSync(resolve(this.basePath, '.rehearsal'))) {
+      mkdirSync(resolve(this.basePath, '.rehearsal'));
     }
     return existsSync(this.configPath);
   }
@@ -98,26 +108,32 @@ export class State {
     writeJSONSync(this.configPath, this.store, { spaces: 2 });
   }
 
+  // files should be JS files
   addFilesToPackage(packageName: string, files: string[]): void {
     const fileMap: FileStateMap = {};
+    const relativePackageName = getRelativePath(this.basePath, packageName);
+    const fileListWithRelateivePath = files.map((f) => getRelativePath(this.basePath, f));
     // save files to package map for easier retrieve
-    this.store.packageMap[packageName] = files;
+    this.store.packageMap[relativePackageName] = fileListWithRelateivePath;
 
-    files.forEach(
-      (f) =>
-        (fileMap[f] = {
-          origin: f.replace('.ts', '.js'),
-          current: f,
-          package: packageName,
-          errorCount: calculateTSIgnoreCount(f as string),
-        })
-    );
+    fileListWithRelateivePath.forEach((f) => {
+      const relativeTsPath = f.replace(/js$/g, 'ts');
+      const absoluteTsPath = getAbsolutePath(this.basePath, relativeTsPath);
+      const isConverted = existsSync(absoluteTsPath);
+      fileMap[f] = {
+        origin: f,
+        current: isConverted ? relativeTsPath : null,
+        package: relativePackageName,
+        errorCount: isConverted ? calculateTSIgnoreCount(absoluteTsPath) : 0,
+      };
+    });
     this.store.files = { ...this.store.files, ...fileMap };
     this.saveState();
   }
 
-  getPackageMigrateProgress(packageName: string): PackageMigrateProgress {
-    const fileList = this.store.packageMap[packageName] || [];
+  getPackageMigrateProgress(packageFullPath: string): PackageMigrateProgress {
+    const packageRelativePath = getRelativePath(this.basePath, packageFullPath);
+    const fileList = this.store.packageMap[packageRelativePath] || [];
 
     let migratedFileCount = 0;
     fileList.forEach((f) => {
@@ -134,8 +150,9 @@ export class State {
     };
   }
 
-  getPackageErrorCount(packageName: string): number {
-    const fileList = this.store.packageMap[packageName] || [];
+  getPackageErrorCount(packageFullPath: string): number {
+    const packageRelativePath = getRelativePath(this.basePath, packageFullPath);
+    const fileList = this.store.packageMap[packageRelativePath] || [];
     let errorCount = 0;
     fileList.forEach((f) => {
       const fileState = this.store.files[f];
@@ -151,6 +168,7 @@ export class State {
   }
 }
 
+// filePath is absolute path
 export function calculateTSIgnoreCount(filePath: string): number {
   if (existsSync(filePath)) {
     const content = readFileSync(filePath, 'utf-8');

@@ -71,6 +71,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const defaultListrOption = {
     concurrent: false,
     exitOnError: true,
+    renderer: 'simple',
   };
 
   const tasks = [
@@ -87,7 +88,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
       await new Listr([await convertTask(options, logger, ctx)], {
-        renderer: 'simple',
+        // renderer: 'simple',
         ...defaultListrOption,
       }).run();
     } else if (options.regen) {
