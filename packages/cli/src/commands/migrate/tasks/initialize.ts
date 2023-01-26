@@ -20,10 +20,17 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 
-export async function initTask(options: MigrateCommandOptions): Promise<ListrTask> {
+export async function initTask(
+  options: MigrateCommandOptions,
+  context?: Partial<MigrateCommandContext>
+): Promise<ListrTask> {
   return {
     title: `Initialize${options.dryRun ? ' -- Dry Run Mode' : ''}`,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      // If context is provide via external parameter, merge with existed
+      if (context) {
+        ctx = { ...ctx, ...context };
+      }
       // get custom config
       const userConfig = options.userConfig
         ? new UserConfig(options.basePath, options.userConfig, 'migrate')
@@ -77,8 +84,8 @@ export async function initTask(options: MigrateCommandOptions): Promise<ListrTas
             }
           }
           return {
-            name: `${p.name}(${progressText}) ${icon}`,
-            message: `${p.name}(${progressText}) ${icon}`,
+            name: `${p.name}(${progressText})${icon}`,
+            message: `${p.name}(${progressText})${icon}`,
             value: p.path,
             disabled: isOptionDisabled,
           };

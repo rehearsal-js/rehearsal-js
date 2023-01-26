@@ -8,7 +8,6 @@ export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
-  files: string;
   format: Formats[];
   outputPath: string;
   verbose: boolean | undefined;

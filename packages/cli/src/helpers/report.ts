@@ -10,7 +10,6 @@ import {
   ReportFormatter,
 } from '@rehearsal/reporter';
 
-import { gitAddIfInRepo } from '../utils';
 import type { CliCommand, Formats } from '../types';
 
 export function generateReports(
@@ -48,7 +47,6 @@ export function generateReports(
     }
 
     reporter.print(reportPath, formatter);
-    gitAddIfInRepo(reportPath); // stage report if in git repo
     generatedReports.push(reportPath);
   });
 

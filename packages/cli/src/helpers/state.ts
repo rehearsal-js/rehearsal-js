@@ -117,7 +117,8 @@ export class State {
   }
 
   getPackageMigrateProgress(packageName: string): PackageMigrateProgress {
-    const fileList = this.store.packageMap[packageName];
+    const fileList = this.store.packageMap[packageName] || [];
+
     let migratedFileCount = 0;
     fileList.forEach((f) => {
       const fileState = this.store.files[f];
@@ -134,7 +135,7 @@ export class State {
   }
 
   getPackageErrorCount(packageName: string): number {
-    const fileList = this.store.packageMap[packageName];
+    const fileList = this.store.packageMap[packageName] || [];
     let errorCount = 0;
     fileList.forEach((f) => {
       const fileState = this.store.files[f];

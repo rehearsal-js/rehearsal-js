@@ -240,7 +240,7 @@ export function gitMove(
       try {
         // use git mv to keep the commit history in each file
         // would fail if the file is not been tracked
-        execSync(`git mv ${sourceFile} ${tsFile}`);
+        execSync(`git mv ${sourceFile} ${tsFile}`, { cwd: basePath });
       } catch (e) {
         // use simple mv if git mv fails
         execSync(`mv ${sourceFile} ${tsFile}`);

@@ -46,8 +46,6 @@ export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
   const gitClient = cwd
     ? simpleGit({
         baseDir: cwd,
-        binary: 'git',
-        maxConcurrentProcesses: 6,
       } as Partial<SimpleGitOptions>)
     : git;
   if (await gitClient.checkIsRepo()) {
@@ -58,9 +56,15 @@ export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
 }
 
 // Stage files in a git repo
-export async function gitAddIfInRepo(fileList: string[] | string): Promise<void> {
-  if (await git.checkIsRepo()) {
-    git.add(fileList);
+export async function gitAddIfInRepo(fileList: string[] | string, cwd?: string): Promise<void> {
+  // if cwd is provided, create a new git instance with the correct cwd
+  const gitClient = cwd
+    ? simpleGit({
+        baseDir: cwd,
+      } as Partial<SimpleGitOptions>)
+    : git;
+  if (await gitClient.checkIsRepo()) {
+    await gitClient.add(fileList);
   }
 }
 

@@ -6,11 +6,18 @@ import { readJSON, writeTSConfig, gitAddIfInRepo } from '../../../utils';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
-export async function tsConfigTask(options: MigrateCommandOptions): Promise<ListrTask> {
+export async function tsConfigTask(
+  options: MigrateCommandOptions,
+  context?: Partial<MigrateCommandContext>
+): Promise<ListrTask> {
   return {
     title: 'Create tsconfig.json',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      // If context is provide via external parameter, merge with existed
+      if (context) {
+        ctx = { ...ctx, ...context };
+      }
       const configPath = resolve(options.basePath, 'tsconfig.json');
 
       if (ctx.userConfig?.hasTsSetup) {
@@ -28,7 +35,7 @@ export async function tsConfigTask(options: MigrateCommandOptions): Promise<List
           writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
         }
       }
-      gitAddIfInRepo(configPath); // stage tsconfig.json if in a git repo
+      await gitAddIfInRepo(configPath, options.basePath); // stage tsconfig.json if in a git repo
     },
   };
 }

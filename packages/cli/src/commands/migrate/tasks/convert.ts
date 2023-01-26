@@ -23,16 +23,17 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 export async function convertTask(
   options: MigrateCommandOptions,
   logger: Logger,
-  context?: MigrateCommandContext
+  context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: 'Convert JS files to TS',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
-      // During interactive mode, if context is provide via external parameter, merge with existed
+      // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
       }
+
       const projectName = determineProjectName() || '';
       const { basePath } = options;
       const tscPath = await getPathToBinary('tsc');
@@ -62,7 +63,13 @@ export async function convertTask(
 
             const { migratedFiles } = await migrate(input);
 
-            const { stdout: diffOutput } = await execa('git', ['diff', tsFilePath]);
+            // show git diff in a git repo
+            let diffOutput: string = '';
+            try {
+              diffOutput = (await execa('git', ['diff', tsFilePath])).stdout;
+            } catch (e) {
+              // no-ops
+            }
 
             // TODO: better diff with colors instead of using the output straight from git diff
             const message = `${chalk.yellow(
@@ -93,14 +100,21 @@ export async function convertTask(
                 }
               } else {
                 // discard
-                await execa('git', ['restore', tsFilePath]);
-                await execa('git', ['mv', tsFilePath, jsFilePath]);
+                try {
+                  await execa('git', ['restore', tsFilePath], { cwd: ctx.targetPackagePath });
+                  await execa('git', ['mv', tsFilePath, jsFilePath], {
+                    cwd: ctx.targetPackagePath,
+                  });
+                } catch (e) {
+                  // do nothing if does not have git
+                }
+
                 completed = true;
               }
             }
             const reportOutputPath = resolve(options.basePath, options.outputPath);
             generateReports('migrate', reporter, reportOutputPath, options.format);
-            gitAddIfInRepo(reportOutputPath); // stage report if in a git repo
+            gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
             task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
         } else {
@@ -121,6 +135,7 @@ export async function convertTask(
           }
           const reportOutputPath = resolve(options.basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
+          gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
           task.title = getReportSummary(reporter.report, migratedFiles.length);
         }
       } else {
