@@ -122,7 +122,20 @@ export function sendKey(key: KEYS): void {
 // especially in interactive mode, the enquirer prompt would produce difference chars in different environment
 // which makes snapshot test improssible
 export function removeSpecialChars(input: string): string {
-  const regex = /[^.[\]\w\s<>\-/\n:,@]/g;
+  const specialCharRegex = /[^A-Za-z 0-9 .,?""!@#$%^&*()-_=+;:<>/\\|}{[\]`~\n]*/g;
   const colorCharRegex = /\[\d+m/g;
-  return input.replace(regex, '').replace(colorCharRegex, '');
+  const outputIgnoreTitles = ['[TITLE]', '[ERROR]', '[DATA]', '[SUCCESS]'];
+  return input
+    .replace(specialCharRegex, '')
+    .replace(colorCharRegex, '')
+    .split('\n')
+    .map((line) => {
+      // remove all empty lines which has outputIgnoreTitles
+      if (!line.trim() || outputIgnoreTitles.includes(line.trim())) {
+        return '';
+      }
+      return line;
+    })
+    .filter((line) => line.trim())
+    .join('\n');
 }

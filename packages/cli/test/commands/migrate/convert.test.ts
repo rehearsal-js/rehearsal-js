@@ -24,10 +24,10 @@ describe('Task: convert', async () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
-    output += `${chunk}`;
+    output += `${chunk}\n`;
   });
   vi.spyOn(console, 'log').mockImplementation((chunk) => {
-    output += `${chunk}`;
+    output += `${chunk}\n`;
   });
 
   beforeEach(() => {
