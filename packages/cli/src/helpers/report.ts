@@ -107,6 +107,28 @@ export function getReportSummary(report: Report, migratedFileCount: number): str
   ${totalErrorCount} errors caught by rehearsal\n
   ${report.fixedItemCount} have been fixed by rehearsal\n
   ${totalUnfixedCount} errors need to be fixed manually\n
-  \t\t-- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
-  \t\t-- ${lintErrorCount} eslint errors, with details in the report\n`;
+    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
+    -- ${lintErrorCount} eslint errors, with details in the report\n`;
+}
+
+export function getRegenSummary(report: Report, scannedFileCount: number): string {
+  const fileMap = new Set<string>();
+  let tsErrorCount = 0;
+  let lintErrorCount = 0;
+
+  report.items.forEach((item) => {
+    fileMap.add(item.analysisTarget);
+    if (item.hintAdded) {
+      tsErrorCount++;
+    } else {
+      lintErrorCount++;
+    }
+  });
+  const totalErrorCount = report.items.length;
+
+  return `Migration Report Generated\n\n
+  ${scannedFileCount} ts files have been scanned\n
+  ${totalErrorCount} errors caught by rehearsal\n
+    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
+    -- ${lintErrorCount} eslint errors, with details in the report\n`;
 }

@@ -1,0 +1,85 @@
+// Vitest Snapshot v1
+
+exports[`regen > should generate correct rehearsal comments for a group of files 1`] = `
+"[
+  {
+    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"type\\": 0,
+    \\"ruleId\\": \\"TS2345\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"Argument of type 'string' is not assignable to parameter of type 'number'.\\",
+    \\"hint\\": \\"Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('5' as string)', or using type guard: 'if ('5' instanceof string) { ... }'.\\",
+    \\"hintAdded\\": true,
+    \\"nodeKind\\": \\"StringLiteral\\",
+    \\"nodeText\\": \\"'5'\\",
+    \\"helpUrl\\": \\"https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 6,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 6,
+      \\"endColumn\\": 8
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"type\\": 0,
+    \\"ruleId\\": \\"TS2322\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"Type 'number' is not assignable to type 'string'.\\",
+    \\"hint\\": \\"The variable 'baz' has type 'string', but 'number' is assigned. Please convert 'number' to 'string' or change variable's type.\\",
+    \\"hintAdded\\": true,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"baz\\",
+    \\"helpUrl\\": \\"https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 10,
+      \\"startColumn\\": 1,
+      \\"endLine\\": 10,
+      \\"endColumn\\": 4
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"@typescript-eslint/no-unused-vars\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'baz' is assigned a value but never used.\\",
+    \\"hint\\": \\"'baz' is assigned a value but never used.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 10,
+      \\"startColumn\\": 1,
+      \\"endLine\\": 10,
+      \\"endColumn\\": 4
+    }
+  }
+]"
+`;
+
+exports[`regen > should report lint errors 1`] = `
+"[
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"Unexpected any. Specify a different type.\\",
+    \\"hint\\": \\"Unexpected any. Specify a different type.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"TSAnyKeyword\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 1,
+      \\"startColumn\\": 26,
+      \\"endLine\\": 1,
+      \\"endColumn\\": 29
+    }
+  }
+]"
+`;
+
+exports[`regen > should scan ts files but ignore js files 1`] = `"[]"`;
