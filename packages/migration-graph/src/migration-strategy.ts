@@ -48,13 +48,6 @@ export class MigrationStrategy {
     return this.#rootDir;
   }
 
-  get report(): Array<string> {
-    return this.#messages;
-  }
-
-  set report(messages: Array<string>) {
-    this.#messages = messages;
-  }
 
   addFile(file: SourceFile): void {
     this.#files.push(file);
