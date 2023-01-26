@@ -167,30 +167,30 @@ exports[`Task: convert > againt specific basePath via -basePath option 1`] = `
 [TITLE] 
 [TITLE]   1 JS file converted to TS
 [TITLE] 
-[TITLE]   7 errors caught by rehearsal
+[TITLE]   3 errors caught by rehearsal
 [TITLE] 
-[TITLE]   3 have been fixed by rehearsal
+[TITLE]   0 have been fixed by rehearsal
 [TITLE] 
-[TITLE]   4 errors need to be fixed manually
+[TITLE]   3 errors need to be fixed manually
 [TITLE] 
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]     -- 4 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
 [SUCCESS] 
 [SUCCESS]   1 JS file converted to TS
 [SUCCESS] 
-[SUCCESS]   7 errors caught by rehearsal
+[SUCCESS]   3 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
 [SUCCESS] 
-[SUCCESS]   4 errors need to be fixed manually
+[SUCCESS]   3 errors need to be fixed manually
 [SUCCESS] 
-[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]     -- 4 eslint errors, with details in the report
+[SUCCESS]     -- 1 eslint errors, with details in the report
 [SUCCESS] 
 "
 `;
