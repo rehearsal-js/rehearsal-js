@@ -127,5 +127,6 @@ export function sendKey(key: KEYS): void {
 // which makes snapshot test improssible
 export function removeSpecialChars(input: string): string {
   const regex = /[^.[\]\w\s<>\-/\n:,@]/g;
-  return input.replace(regex, '');
+  const colorCharRegex = /\[\d+m/g;
+  return input.replace(regex, '').replace(colorCharRegex, '');
 }
