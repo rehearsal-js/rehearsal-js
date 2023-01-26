@@ -1,3 +1,10 @@
+## <small>1.0.4-beta (2023-01-24)</small>
+
+* fix: bump version before running `npm build` (#656) ([f53cc77](https://github.com/rehearsal-js/rehearsal-js/commit/f53cc77)), closes [#656](https://github.com/rehearsal-js/rehearsal-js/issues/656)
+* fix: cli find eslint (#648) ([3542d6e](https://github.com/rehearsal-js/rehearsal-js/commit/3542d6e)), closes [#648](https://github.com/rehearsal-js/rehearsal-js/issues/648)
+
+
+
 ## <small>1.0.3-beta (2023-01-21)</small>
 
 * chore: make sure the repo is on master with all latest changes before starting release ([cfcb5a1](https://github.com/rehearsal-js/rehearsal-js/commit/cfcb5a1))

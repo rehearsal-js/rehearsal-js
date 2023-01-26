@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "1.0.3-beta",
+  "version": "1.0.4-beta",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "@microsoft/api-documenter": "^7.13.68",
     "@rehearsal/migrate": "workspace:*",
     "@rehearsal/migration-graph": "workspace:*",
+    "@rehearsal/regen": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/upgrade": "workspace:*",
     "chalk": "^4.1.2",

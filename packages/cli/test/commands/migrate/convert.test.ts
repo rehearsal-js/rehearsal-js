@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readdirSync, readJSONSync } from 'fs-extra';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
+import { createLogger, format, transports } from 'winston';
 
 import {
   initTask,
@@ -19,6 +20,10 @@ import {
   removeSpecialChars,
 } from '../../test-helpers';
 import { sleep } from '../../../src/utils';
+
+const logger = createLogger({
+  transports: [new transports.Console({ format: format.cli() })],
+});
 
 describe('Task: convert', async () => {
   let basePath = '';
@@ -48,7 +53,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -76,7 +81,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -104,7 +109,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -129,7 +134,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -168,7 +173,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -224,7 +229,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -275,7 +280,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -310,7 +315,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
-      await convertTask(options),
+      await convertTask(options, logger),
     ];
 
     // use try catch since it would be killed via ctrl c

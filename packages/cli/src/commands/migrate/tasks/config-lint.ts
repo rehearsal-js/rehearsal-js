@@ -1,9 +1,8 @@
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 import { ESLint } from 'eslint';
-import { glob } from 'glob';
 import { outputFileSync } from 'fs-extra';
 import defaultConfig from '../../../configs/default-eslint';
-import { gitAddIfInRepo } from '../../../utils';
+import { gitAddIfInRepo, getLintConfigPath } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
@@ -22,8 +21,7 @@ export async function lintConfigTask(
       if (context) {
         ctx = { ...ctx, ...context };
       }
-      // glob against the following file extension pattern js,yml,json,yaml and return the first match
-      const configPath = glob.sync(join(options.basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
+      const configPath = getLintConfigPath(options.basePath);
 
       if (ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
@@ -66,7 +64,7 @@ async function extendsRehearsalInCurrentConfig(
   const oldConfig = require(configPath);
   const newConfig = {
     ...oldConfig,
-    extends: [...oldConfig.extends, rehearsalConfigRelativePath],
+    extends: Array.from(new Set([...oldConfig.extends, rehearsalConfigRelativePath])),
   };
   const configStr = `
   module.exports = ${JSON.stringify(newConfig, null, 2)}

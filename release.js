@@ -66,7 +66,6 @@ function publish() {
   console.log(gitPull);
   execSync(gitPull);
 
-
   // git clean
   const gitClean = `git clean -fdx`;
   console.log(gitClean);
@@ -82,16 +81,6 @@ function publish() {
   console.log(pnpmPrepare);
   execSync(pnpmPrepare);
 
-  // pnpm build recursive
-  const pnpmBuild = `pnpm -r build`;
-  console.log(pnpmBuild);
-  execSync(pnpmBuild);
-
-  // pnpm test
-  const pnpmTest = `pnpm test`;
-  console.log(pnpmTest);
-  execSync(pnpmTest);
-
   // replace the version in the main package json (needed for changelog)
   const bumpVersion = `pnpm version ${newVersion} --exact --no-git-tag-version`;
   console.log(bumpVersion);
@@ -101,6 +90,16 @@ function publish() {
   const bumpVersionRecursive = `pnpm -r version ${newVersion} --exact --no-git-tag-version`;
   console.log(bumpVersionRecursive);
   execSync(bumpVersionRecursive);
+
+  // pnpm build recursive
+  const pnpmBuild = `pnpm -r build`;
+  console.log(pnpmBuild);
+  execSync(pnpmBuild);
+
+  // pnpm test
+  const pnpmTest = `pnpm test`;
+  console.log(pnpmTest);
+  execSync(pnpmTest);
 
   // generate a changelog
   const pnpmChangelog = `pnpm changelog`;

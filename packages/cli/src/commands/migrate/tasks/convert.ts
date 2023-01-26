@@ -1,9 +1,9 @@
 import { resolve } from 'path';
+import { Logger } from 'winston';
 import { debug } from 'debug';
 import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
 import chalk from 'chalk';
-import { createLogger, format, transports } from 'winston';
 import execa = require('execa');
 
 import { generateReports, getReportSummary } from '../../../helpers/report';
@@ -22,6 +22,7 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
 export async function convertTask(
   options: MigrateCommandOptions,
+  logger: Logger,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
@@ -32,11 +33,6 @@ export async function convertTask(
       if (context) {
         ctx = { ...ctx, ...context };
       }
-
-      const loggerLevel = options.verbose ? 'debug' : 'info';
-      const logger = createLogger({
-        transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
-      });
 
       const projectName = determineProjectName() || '';
       const { basePath } = options;

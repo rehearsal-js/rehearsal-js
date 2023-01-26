@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`migrate: e2e > Print debug messages with verbose 1`] = `
-"
+"[32minfo[39m:    
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -37,9 +37,9 @@ exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
-[TITLE]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]   		-- 1 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
@@ -52,14 +52,14 @@ exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 
-[SUCCESS]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]   		-- 1 eslint errors, with details in the report
+[SUCCESS]     -- 1 eslint errors, with details in the report
 [SUCCESS] "
 `;
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
-"
+"[32minfo[39m:    
 [STARTED] Initialize
 [DATA] Running migration on base
 [SUCCESS] Initialize
@@ -86,9 +86,9 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [TITLE] 
 [TITLE]   4 errors need to be fixed manually
 [TITLE] 
-[TITLE]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]   		-- 4 eslint errors, with details in the report
+[TITLE]     -- 4 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
@@ -101,9 +101,9 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [SUCCESS] 
 [SUCCESS]   4 errors need to be fixed manually
 [SUCCESS] 
-[SUCCESS]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]   		-- 4 eslint errors, with details in the report
+[SUCCESS]     -- 4 eslint errors, with details in the report
 [SUCCESS] "
 `;
 
@@ -167,7 +167,7 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 5`] = `
 `;
 
 exports[`migrate: e2e > default migrate command 1`] = `
-"
+"[32minfo[39m:    
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -198,9 +198,9 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
-[TITLE]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]   		-- 1 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
@@ -213,9 +213,9 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 
-[SUCCESS]   		-- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]   		-- 1 eslint errors, with details in the report
+[SUCCESS]     -- 1 eslint errors, with details in the report
 [SUCCESS] "
 `;
 
