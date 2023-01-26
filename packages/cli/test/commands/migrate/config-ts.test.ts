@@ -17,10 +17,10 @@ describe('Task: config-ts', async () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
-    output += `${chunk}\n`;
+    output += `${chunk}`;
   });
   vi.spyOn(console, 'log').mockImplementation((chunk) => {
-    output += `${chunk}\n`;
+    output += `${chunk}`;
   });
 
   beforeEach(() => {

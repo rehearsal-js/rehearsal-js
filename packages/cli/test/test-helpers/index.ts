@@ -101,10 +101,6 @@ export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateComman
     concurrent: false,
     exitOnError: true,
     renderer: 'verbose',
-    rendererOptions: {
-      collapse: false,
-      collapseSkips: false,
-    },
   };
   return await new Listr(tasks, defaultListrOption).run();
 }

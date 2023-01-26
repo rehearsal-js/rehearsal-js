@@ -1,14 +1,5 @@
 // Vitest Snapshot v1
 
-exports[`Task: dependency-install > install custom dependencies 1`] = `
-"[STARTED] Install dependencies
-[DATA] Install dependencies from config
-[SUCCESS] Install dependencies
-"
-`;
+exports[`Task: dependency-install > install custom dependencies 1`] = `"[STARTED] Install dependencies[DATA] Install dependencies from config[SUCCESS] Install dependencies"`;
 
-exports[`Task: dependency-install > install required dependencies 1`] = `
-"[STARTED] Install dependencies
-[SUCCESS] Install dependencies
-"
-`;
+exports[`Task: dependency-install > install required dependencies 1`] = `"[STARTED] Install dependencies[SUCCESS] Install dependencies"`;
