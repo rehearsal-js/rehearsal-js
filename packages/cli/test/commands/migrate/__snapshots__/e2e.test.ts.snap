@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`migrate: e2e > Print debug messages with verbose 1`] = `
-"[32minfo[39m:    
+"info:    @rehearsal/migrate<test-version>
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -15,51 +15,35 @@ exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 [STARTED] Add package scripts
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
-[34mdebug[39m:   migration started
-[34mdebug[39m:   Base path: <tmp-path>
-[34mdebug[39m:   sourceFiles: [\\"<tmp-path>/foo.js\\",\\"<tmp-path>/depends-on-foo.js\\",\\"<tmp-path>/index.js\\"]
+debug:   migration started
+debug:   Base path: <tmp-path>
+debug:   sourceFiles: [\\"<tmp-path>/foo.js\\",\\"<tmp-path>/depends-on-foo.js\\",\\"<tmp-path>/index.js\\"]
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
 [DATA] git mv /index.js to /index.ts
-[34mdebug[39m:   config file: <tmp-path>/tsconfig.json
-[34mdebug[39m:   fileNames: [\\"<tmp-path>/foo.ts\\",\\"<tmp-path>/depends-on-foo.ts\\",\\"<tmp-path>/index.ts\\"]
+debug:   config file: <tmp-path>/tsconfig.json
+debug:   fileNames: [\\"<tmp-path>/foo.ts\\",\\"<tmp-path>/depends-on-foo.ts\\",\\"<tmp-path>/index.ts\\"]
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts
 [TITLE] Migration Complete
-[TITLE] 
-[TITLE] 
 [TITLE]   3 JS files converted to TS
-[TITLE] 
 [TITLE]   2 errors caught by rehearsal
-[TITLE] 
 [TITLE]   1 have been fixed by rehearsal
-[TITLE] 
 [TITLE]   1 errors need to be fixed manually
-[TITLE] 
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE] 
 [TITLE]     -- 1 eslint errors, with details in the report
-[TITLE] 
 [SUCCESS] Migration Complete
-[SUCCESS] 
-[SUCCESS] 
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS] 
 [SUCCESS]   2 errors caught by rehearsal
-[SUCCESS] 
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
-[SUCCESS] 
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS] 
-[SUCCESS]     -- 1 eslint errors, with details in the report
-[SUCCESS] "
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
-"[32minfo[39m:    
+"info:    @rehearsal/migrate<test-version>
 [STARTED] Initialize
 [DATA] Running migration on base
 [SUCCESS] Initialize
@@ -76,35 +60,19 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [DATA] git mv /index.js to /index.ts
 [DATA] processing file: /index.ts
 [TITLE] Migration Complete
-[TITLE] 
-[TITLE] 
 [TITLE]   1 JS file converted to TS
-[TITLE] 
 [TITLE]   7 errors caught by rehearsal
-[TITLE] 
 [TITLE]   3 have been fixed by rehearsal
-[TITLE] 
 [TITLE]   4 errors need to be fixed manually
-[TITLE] 
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE] 
 [TITLE]     -- 4 eslint errors, with details in the report
-[TITLE] 
 [SUCCESS] Migration Complete
-[SUCCESS] 
-[SUCCESS] 
 [SUCCESS]   1 JS file converted to TS
-[SUCCESS] 
 [SUCCESS]   7 errors caught by rehearsal
-[SUCCESS] 
 [SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS] 
 [SUCCESS]   4 errors need to be fixed manually
-[SUCCESS] 
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS] 
-[SUCCESS]     -- 4 eslint errors, with details in the report
-[SUCCESS] "
+[SUCCESS]     -- 4 eslint errors, with details in the report"
 `;
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 2`] = `
@@ -167,7 +135,7 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 5`] = `
 `;
 
 exports[`migrate: e2e > default migrate command 1`] = `
-"[32minfo[39m:    
+"info:    @rehearsal/migrate<test-version>
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -188,35 +156,19 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts
 [TITLE] Migration Complete
-[TITLE] 
-[TITLE] 
 [TITLE]   3 JS files converted to TS
-[TITLE] 
 [TITLE]   2 errors caught by rehearsal
-[TITLE] 
 [TITLE]   1 have been fixed by rehearsal
-[TITLE] 
 [TITLE]   1 errors need to be fixed manually
-[TITLE] 
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE] 
 [TITLE]     -- 1 eslint errors, with details in the report
-[TITLE] 
 [SUCCESS] Migration Complete
-[SUCCESS] 
-[SUCCESS] 
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS] 
 [SUCCESS]   2 errors caught by rehearsal
-[SUCCESS] 
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
-[SUCCESS] 
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS] 
-[SUCCESS]     -- 1 eslint errors, with details in the report
-[SUCCESS] "
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`migrate: e2e > default migrate command 2`] = `

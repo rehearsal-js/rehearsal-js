@@ -6,15 +6,15 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 
-import { runBin, prepareTmpDir } from '../../test-helpers';
-import { version } from '../../../package.json';
+import { runBin, prepareTmpDir, removeSpecialChars } from '../../test-helpers';
 
 setGracefulCleanup();
 
-// CLI would print current version, need to remove it for snapshot test
-function removeVersionMessage(input: string): string {
-  const versionMsg = `@rehearsal/migrate ${version.trim()}`;
-  return input.replace(versionMsg, '');
+// CLI would print current version, need to replace it for snapshot test
+// @rehearsal/migrate @x.x.x -> @rehearsal/migrate<test-version>
+function replaceCliVersion(input: string): string {
+  const versionRegex = /(@rehearsal\/migrate)(.+)/g;
+  return input.replace(versionRegex, '$1<test-version>');
 }
 
 describe('migrate - validation', async () => {
@@ -58,11 +58,11 @@ describe('migrate - validation', async () => {
     } as Partial<SimpleGitOptions>);
     await git.init().add('package.json');
 
-    const { stderr } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', [], {
       cwd: basePath,
     });
 
-    expect(stderr).toContain(
+    expect(stdout).toContain(
       'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
     );
   });
@@ -109,7 +109,8 @@ describe('migrate: e2e', async () => {
     // summary message
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
+    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
+    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(basePath);
@@ -171,7 +172,8 @@ describe('migrate: e2e', async () => {
 
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
+    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
+    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
   });
 
   test('againt specific basePath via -basePath option', async () => {
@@ -183,7 +185,8 @@ describe('migrate: e2e', async () => {
     // summary message
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
+    const outputWithTestVersion = replaceCliVersion(outputWithoutTmpPath);
+    expect(removeSpecialChars(outputWithTestVersion)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(customBasePath);
