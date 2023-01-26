@@ -38,7 +38,6 @@ export class MigrationStrategy {
   #rootDir: string;
   #sourceType: SourceType;
   #files: Array<SourceFile> = [];
-  #messages: Array<string> = [];
 
   constructor(rootDir: string, sourceType: SourceType) {
     this.#rootDir = rootDir;
