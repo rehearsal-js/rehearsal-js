@@ -108,3 +108,24 @@ export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateComman
   };
   return await new Listr(tasks, defaultListrOption).run();
 }
+
+// keycode for interactive mode test
+export enum KEYS {
+  ENTER = '\x0D',
+  CTRL_C = '\x03',
+  UP = '\u001b[A',
+  DOWN = '\u001b[B',
+}
+
+// send key/command in interactive mode test
+export function sendKey(key: KEYS): void {
+  process.stdin.emit('data', key);
+}
+
+// clear all special chars for snapshot test
+// especially in interactive mode, the enquirer prompt would produce difference chars in different environment
+// which makes snapshot test improssible
+export function removeSpecialChars(input: string): string {
+  const regex = /[^.[\]\w\s<>\-/\n:,@]/g;
+  return input.replace(regex, '');
+}

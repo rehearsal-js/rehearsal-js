@@ -3,20 +3,15 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra';
 
 import { initTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import {
+  prepareTmpDir,
+  listrTaskRunner,
+  createMigrateOptions,
+  KEYS,
+  sendKey,
+} from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 import { sleep } from '../../../src/utils';
-
-enum KEYS {
-  ENTER = '\x0D',
-  CTRL_C = '\x03',
-  UP = '\u001b[A',
-  DOWN = '\u001b[B',
-}
-
-function sendKey(key: KEYS): void {
-  process.stdin.emit('data', key);
-}
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');

@@ -7,8 +7,15 @@ import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 
 import { runBin, prepareTmpDir } from '../../test-helpers';
+import { version } from '../../../package.json';
 
 setGracefulCleanup();
+
+// CLI would print current version, need to remove it for snapshot test
+function removeVersionMessage(input: string): string {
+  const versionMsg = `@rehearsal/migrate ${version.trim()}`;
+  return input.replace(versionMsg, '');
+}
 
 describe('migrate - validation', async () => {
   let basePath = '';
@@ -102,7 +109,7 @@ describe('migrate: e2e', async () => {
     // summary message
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(basePath);
@@ -164,7 +171,7 @@ describe('migrate: e2e', async () => {
 
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
   });
 
   test('againt specific basePath via -basePath option', async () => {
@@ -176,7 +183,7 @@ describe('migrate: e2e', async () => {
     // summary message
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = result.stdout.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeVersionMessage(outputWithoutTmpPath)).toMatchSnapshot();
 
     // file structures
     const fileList = readdirSync(customBasePath);

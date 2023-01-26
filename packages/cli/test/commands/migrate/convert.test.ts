@@ -10,19 +10,15 @@ import {
   tsConfigTask,
   lintConfigTask,
 } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import {
+  prepareTmpDir,
+  listrTaskRunner,
+  createMigrateOptions,
+  KEYS,
+  sendKey,
+  removeSpecialChars,
+} from '../../test-helpers';
 import { sleep } from '../../../src/utils';
-
-enum KEYS {
-  ENTER = '\x0D',
-  CTRL_C = '\x03',
-  UP = '\u001b[A',
-  DOWN = '\u001b[B',
-}
-
-function sendKey(key: KEYS): void {
-  process.stdin.emit('data', key);
-}
 
 describe('Task: convert', async () => {
   let basePath = '';
@@ -179,7 +175,7 @@ describe('Task: convert', async () => {
 
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
     const fileList = readdirSync(basePath);
     expect(fileList).toContain('index.ts');
@@ -207,7 +203,7 @@ describe('Task: convert', async () => {
     setTimeout(async () => {
       // At selection for packages
       sendKey(KEYS.ENTER); // selection package
-      await sleep(10000);
+      await sleep(15000);
 
       // At action selection for foo.js
       sendKey(KEYS.ENTER); // accept
@@ -235,7 +231,7 @@ describe('Task: convert', async () => {
 
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
     const fileList = readdirSync(basePath);
     // index.ts should been discarded
@@ -259,7 +255,7 @@ describe('Task: convert', async () => {
     setTimeout(async () => {
       // At selection for packages
       sendKey(KEYS.ENTER); // selection package
-      await sleep(10000);
+      await sleep(15000);
 
       // At action selection for foo.js
       sendKey(KEYS.ENTER); // accept
@@ -286,7 +282,7 @@ describe('Task: convert', async () => {
 
     const pathReg = new RegExp(basePath, 'g');
     const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
-    expect(outputWithoutTmpPath).toMatchSnapshot();
+    expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
     const fileList = readdirSync(basePath);
     // // index.ts should been removed
@@ -307,7 +303,7 @@ describe('Task: convert', async () => {
       await sleep(10000);
       // At action selection for foo.js
       sendKey(KEYS.CTRL_C); // cancel
-    }, 3000);
+    }, 2000);
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -322,7 +318,7 @@ describe('Task: convert', async () => {
       // replace random tmp path for consistent snapshot
       const pathReg = new RegExp(basePath, 'g');
       const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
-      expect(outputWithoutTmpPath).toMatchSnapshot();
+      expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
     });
   });
 });

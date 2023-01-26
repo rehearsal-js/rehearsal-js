@@ -2,9 +2,9 @@
 
 exports[`Task: convert > accept and discard changes with git 1`] = `
 "[STARTED] Initialize
-[DATA] [36m?[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m…[22m 
-[DATA] [36m❯[39m [36m[4mbasic(no progress found)[24m[39m
-[DATA] [32m✔[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m·[22m [36mbasic(no progress found)[39m
+[DATA] [36m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m 
+[DATA] [36m[39m [36m[4mbasicno progress found[24m[39m
+[DATA] [32m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m [36mbasicno progress found[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -20,13 +20,13 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -48,13 +48,13 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -78,17 +78,17 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mDiscard[39m
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mDiscard[39m
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mDiscard[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mDiscard[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mDiscard[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mDiscard[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -128,9 +128,9 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 
 exports[`Task: convert > accept changes without git 1`] = `
 "[STARTED] Initialize
-[DATA] [36m?[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m…[22m 
-[DATA] [36m❯[39m [36m[4mbasic(no progress found)[24m[39m
-[DATA] [32m✔[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m·[22m [36mbasic(no progress found)[39m
+[DATA] [36m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m 
+[DATA] [36m[39m [36m[4mbasicno progress found[24m[39m
+[DATA] [32m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m [36mbasicno progress found[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -146,13 +146,13 @@ exports[`Task: convert > accept changes without git 1`] = `
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -174,13 +174,13 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -204,13 +204,13 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -297,9 +297,9 @@ exports[`Task: convert > againt specific basePath via -basePath option 1`] = `
 
 exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 "[STARTED] Initialize
-[DATA] [36m?[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m…[22m 
-[DATA] [36m❯[39m [36m[4mbasic(no progress found)[24m[39m
-[DATA] [32m✔[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m·[22m [36mbasic(no progress found)[39m
+[DATA] [36m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m 
+[DATA] [36m[39m [36m[4mbasicno progress found[24m[39m
+[DATA] [32m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m [36mbasicno progress found[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -315,13 +315,13 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [35m✖[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m 
+[DATA] [35m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
 [DATA] 
 [DATA] 
 [DATA] 
@@ -481,9 +481,9 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 
 exports[`Task: convert > view changes in $EDITOR 1`] = `
 "[STARTED] Initialize
-[DATA] [36m?[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m…[22m 
-[DATA] [36m❯[39m [36m[4mbasic(no progress found)[24m[39m
-[DATA] [32m✔[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m·[22m [36mbasic(no progress found)[39m
+[DATA] [36m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m 
+[DATA] [36m[39m [36m[4mbasicno progress found[24m[39m
+[DATA] [32m[39m [1mWe have found multiple packages in your project, select the one to migrate:[22m [2m[22m [36mbasicno progress found[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -499,13 +499,13 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -527,13 +527,13 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mAccept[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mAccept[39m
 [DATA] 
 [DATA] 
 [DATA] 
@@ -557,15 +557,15 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts
-[DATA] [36m?[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m…[22m 
-[DATA] [36m❯[39m [36m[4mAccept[24m[39m
+[DATA] [36m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m 
+[DATA] [36m[39m [36m[4mAccept[24m[39m
 [DATA]   Edit
 [DATA]   Discard
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mEdit[39m
-[DATA] [32m✔[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
-[DATA]  [2m·[22m [36mEdit[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mEdit[39m
+[DATA] [32m[39m [33mPlease view the migration changes for <tmp-path>/index.js and select an option to continue:[39m
+[DATA]  [2m[22m [36mEdit[39m
 [DATA] 
 [DATA] 
 [DATA] 

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1
 
 exports[`migrate: e2e > Print debug messages with verbose 1`] = `
-"@rehearsal/migrate 1.0.3-beta
+"
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -59,7 +59,7 @@ exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 `;
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
-"@rehearsal/migrate 1.0.3-beta
+"
 [STARTED] Initialize
 [DATA] Running migration on base
 [SUCCESS] Initialize
@@ -167,7 +167,7 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 5`] = `
 `;
 
 exports[`migrate: e2e > default migrate command 1`] = `
-"@rehearsal/migrate 1.0.3-beta
+"
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
