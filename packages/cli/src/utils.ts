@@ -7,6 +7,7 @@ import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
+import { glob } from 'glob';
 
 import findup = require('findup-sync');
 import execa = require('execa');
@@ -507,4 +508,10 @@ export function prettyGitDiff(text: string): string {
       return line;
     })
     .join('\n');
+}
+
+export function getLintConfigPath(basePath: string): string {
+  // glob against the following file extension pattern js,yml,json,yaml and return the first match
+  const configPath = glob.sync(join(basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
+  return configPath;
 }

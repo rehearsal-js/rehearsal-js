@@ -3,22 +3,21 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src", "package.json"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
-      "path": "../migrate"
-    },
-    {
-      "path": "../migration-graph"
+      "path": "../plugins",
     },
     {
       "path": "../reporter"
     },
     {
-      "path": "../upgrade"
+      "path": "../service"
     },
     {
-      "path": "../regen"
+      "path": "../utils"
     }
   ]
 }
