@@ -19,8 +19,21 @@ exports[`Task: config-ts > create tsconfig if not existed 1`] = `
 }
 `;
 
-exports[`Task: config-ts > create tsconfig if not existed 2`] = `"[STARTED] Create tsconfig.json[SUCCESS] Create tsconfig.json"`;
+exports[`Task: config-ts > create tsconfig if not existed 2`] = `
+"[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+"
+`;
 
-exports[`Task: config-ts > run custom config command with user config provided 1`] = `"[STARTED] Create tsconfig.json[DATA] Create tsconfig from config[SUCCESS] Create tsconfig.json"`;
+exports[`Task: config-ts > run custom config command with user config provided 1`] = `
+"[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[SUCCESS] Create tsconfig.json
+"
+`;
 
-exports[`Task: config-ts > stage tsconfig if in git repo 1`] = `"[STARTED] Create tsconfig.json[SUCCESS] Create tsconfig.json"`;
+exports[`Task: config-ts > stage tsconfig if in git repo 1`] = `
+"[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+"
+`;
