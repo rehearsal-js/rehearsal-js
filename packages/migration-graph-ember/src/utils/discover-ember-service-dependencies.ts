@@ -47,7 +47,7 @@ export function discoverServiceDependencies(
     });
   } catch (e) {
     // Push into project messages;
-    DEBUG_CALLBACK(`Ember service discovery failed. Unable to parse: %s\n%s`, filePath);
+    DEBUG_CALLBACK(`Ember service discovery failed. Unable to parse: %s`, filePath);
   }
 
   if (!parsed) {
