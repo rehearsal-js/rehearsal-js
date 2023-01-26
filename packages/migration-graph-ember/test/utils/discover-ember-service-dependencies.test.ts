@@ -1,8 +1,6 @@
-import { join } from 'path';
 import fixturify from 'fixturify';
 import tmp from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { Logger } from '@rehearsal/migration-graph-shared';
 
 import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies';
 
@@ -30,9 +28,7 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeFalsy;
   });
 
-  test('should optionally log an error if a file cannot be parsed', () => {
-    const logger = new Logger();
-
+  test('should return nothing if a file cannot be parsed', () => {
     const files = {
       'component.js': `
         import Component form '@glimmer/component';
@@ -42,14 +38,9 @@ describe('discoverServiceDependencies', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    const results = discoverServiceDependencies(tmpDir, 'component.js', { logger });
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
 
-    expect(results).toBeFalsy;
-
-    expect(logger.entries[0]).toStrictEqual({
-      severity: 'error',
-      message: `Ember service discovery failed. Unable to parse: ${join(tmpDir, 'component.js')}`,
-    });
+    expect(results).toStrictEqual([]);
   });
 
   test('should return empty array when no services decorators are used', () => {

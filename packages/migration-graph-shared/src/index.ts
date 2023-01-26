@@ -22,5 +22,3 @@ export { PackageGraph, PackageGraphOptions } from './entities/package-graph';
 export { ProjectGraph, ProjectGraphOptions } from './entities/project-graph';
 
 export { IPackage } from './entities/IPackage';
-
-export * from './utils/logger';

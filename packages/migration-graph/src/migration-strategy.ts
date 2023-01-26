@@ -92,8 +92,6 @@ export function getMigrationStrategy(
 
   const strategy = new MigrationStrategy(rootDir, sourceType);
 
-  const logger = projectGraph.logger;
-
   projectGraph.graph
     .topSort()
     // Iterate through each package
@@ -108,7 +106,7 @@ export function getMigrationStrategy(
         throw new Error('WTF');
       }
 
-      const moduleGraph = packageNode.content.pkg?.getModuleGraph({ logger });
+      const moduleGraph = packageNode.content.pkg?.getModuleGraph();
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = moduleGraph
@@ -124,10 +122,6 @@ export function getMigrationStrategy(
         strategy.addFile(f);
       });
     });
-
-  strategy.report = logger.entries.map(
-    (logMessage) => `[${logMessage.severity}] ${logMessage.message}`
-  );
 
   return strategy;
 }

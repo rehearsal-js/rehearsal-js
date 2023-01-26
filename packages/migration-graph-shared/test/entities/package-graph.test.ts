@@ -8,7 +8,6 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { Package } from '../../src/entities/package';
 import { Graph, GraphNode } from '../../src/graph';
 import { PackageGraph } from '../../src/entities/package-graph';
-import { Logger } from '../../src/utils/logger';
 import type { ModuleNode, PackageNode } from '../../src/types';
 
 setGracefulCleanup();
@@ -276,27 +275,11 @@ describe('PackageGraph', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    const logger = new Logger();
-
     const baseDir = join(tmpDir, 'some-dir');
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir), { logger }).discover();
-
-    expect.assertions(3);
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
 
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['index.js']);
-
-    const sourcePath = 'index.js';
-    const targetPath = '../out-of-package.js';
-
-    expect(logger.entries[0]).toStrictEqual({
-      severity: 'warn',
-      message: `The source file "${sourcePath}" is importing a file "${targetPath}" that is external to "${packageName}" package directory (${baseDir}), omitting target file ("${targetPath}") form package-graph.`,
-    });
-    expect(logger.entries[1]).toStrictEqual({
-      severity: 'warn',
-      message: `The target file "${targetPath}" is external to package "${packageName}" (${baseDir}), omitting target file form package-graph.`,
-    });
   });
 });
