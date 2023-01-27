@@ -62,4 +62,12 @@ export class UserConfig {
       await execa(command, args, { cwd: this.basePath });
     }
   }
+
+  get exclude(): Array<string> | undefined {
+    return this.config?.exclude;
+  }
+
+  get include(): Array<string> | undefined {
+    return this.config?.include;
+  }
 }

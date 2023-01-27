@@ -1,7 +1,6 @@
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
-
 import { initTask } from '../../../src/commands/migrate/tasks';
 import {
   prepareTmpDir,
