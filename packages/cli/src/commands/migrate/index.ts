@@ -10,7 +10,7 @@ import {
   parseCommaSeparatedList,
   gitIsRepoDirty,
   resetFiles,
-  getLintConfigPath,
+  getEsLintConfigPath,
 } from '../../utils';
 import {
   initTask,
@@ -91,7 +91,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         ...defaultListrOption,
       }).run();
     } else if (options.regen) {
-      const lintConfigPath = getLintConfigPath(options.basePath);
+      const lintConfigPath = getEsLintConfigPath(options.basePath);
       if (!lintConfigPath) {
         logger.warn(
           `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
