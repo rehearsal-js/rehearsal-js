@@ -1,8 +1,9 @@
 import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra';
+import { cosmiconfigSync } from 'cosmiconfig';
 import defaultConfig from '../../../configs/default-eslint';
-import { gitAddIfInRepo, getLintConfigPath } from '../../../utils';
+import { gitAddIfInRepo, getEsLintConfigPath, determineProjectName } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
@@ -21,7 +22,7 @@ export async function lintConfigTask(
       if (context) {
         ctx = { ...ctx, ...context };
       }
-      const configPath = getLintConfigPath(options.basePath);
+      const relativeConfigPath = getEsLintConfigPath(options.basePath);
 
       if (ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
@@ -31,11 +32,14 @@ export async function lintConfigTask(
         // create .rehearsal-eslintrc.js
         await createRehearsalConfig(options.basePath);
 
-        if (configPath) {
-          task.output = `${configPath} already exists, extending Rehearsal default typescript-related config`;
+        if (relativeConfigPath) {
+          task.output = `${relativeConfigPath} already exists, extending Rehearsal default typescript-related config`;
           task.title = `Update eslintrc.js`;
+
+          const absoluteConfigPath = resolve(relativeConfigPath);
+
           await extendsRehearsalInCurrentConfig(
-            configPath,
+            absoluteConfigPath,
             REHEARSAL_CONFIG_RELATIVE_PATH,
             options.basePath
           );
@@ -60,12 +64,25 @@ async function extendsRehearsalInCurrentConfig(
   rehearsalConfigRelativePath: string,
   basePath: string = process.cwd()
 ): Promise<void> {
-  /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-  const oldConfig = require(configPath);
-  const newConfig = {
-    ...oldConfig,
-    extends: Array.from(new Set([...oldConfig.extends, rehearsalConfigRelativePath])),
-  };
+  const projectName = determineProjectName(basePath);
+  const explorerSync = cosmiconfigSync(projectName || '');
+  const loaded = explorerSync.load(configPath);
+  const oldConfig = loaded?.config;
+
+  let newConfig;
+  if (oldConfig) {
+    newConfig = {
+      ...oldConfig,
+      extends: Array.from(new Set([...(oldConfig.extends || []), rehearsalConfigRelativePath])),
+    };
+  } else {
+    newConfig = `
+    module.exports = {
+      extends: ['${rehearsalConfigRelativePath}']
+    }
+    `;
+  }
+
   const configStr = `
   module.exports = ${JSON.stringify(newConfig, null, 2)}
   `;
