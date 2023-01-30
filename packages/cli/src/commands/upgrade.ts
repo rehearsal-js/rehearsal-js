@@ -11,8 +11,6 @@ import { createLogger, format, transports } from 'winston';
 
 import execa = require('execa');
 
-import { version } from '../../package.json';
-import { generateReports } from '../helpers/report';
 import {
   addDep,
   determineProjectName,
@@ -25,7 +23,9 @@ import {
   gitIsRepoDirty,
   parseCommaSeparatedList,
   parseTsVersion,
-} from '../utils';
+} from '@rehearsal/utils';
+import { version } from '../../package.json';
+import { generateReports } from '../helpers/report';
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');

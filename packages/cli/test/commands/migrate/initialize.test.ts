@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
 
+import { sleep } from '@rehearsal/utils';
 import { initTask } from '../../../src/commands/migrate/tasks';
 import {
   prepareTmpDir,
@@ -11,7 +12,6 @@ import {
   sendKey,
 } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
-import { sleep } from '../../../src/utils';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');

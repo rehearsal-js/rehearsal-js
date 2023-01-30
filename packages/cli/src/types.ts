@@ -83,7 +83,3 @@ export type TSConfig = {
     strict: boolean;
   };
 };
-
-export type ScriptMap = {
-  [key: string]: string;
-};

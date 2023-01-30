@@ -4,6 +4,7 @@ import { readdirSync, readJSONSync } from 'fs-extra';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { createLogger, format, transports } from 'winston';
 
+import { sleep } from '@rehearsal/utils';
 import {
   initTask,
   depInstallTask,
@@ -19,7 +20,6 @@ import {
   sendKey,
   removeSpecialChars,
 } from '../../test-helpers';
-import { sleep } from '../../../src/utils';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

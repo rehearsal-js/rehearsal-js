@@ -4,8 +4,8 @@ import { Reporter } from '@rehearsal/reporter';
 import { regen } from '@rehearsal/regen';
 import execa = require('execa');
 
+import { determineProjectName, getPathToBinary } from '@rehearsal/utils';
 import { generateReports, getRegenSummary } from '../../../helpers/report';
-import { determineProjectName, getPathToBinary } from '../../../utils';
 import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';

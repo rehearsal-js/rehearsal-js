@@ -1,4 +1,14 @@
-import { getDefaultLibFilePath, LanguageServiceHost, ScriptSnapshot, sys } from 'typescript';
+import { dirname } from 'path';
+import {
+  ApplyCodeActionCommandResult,
+  getDefaultLibFilePath,
+  InstallPackageOptions,
+  LanguageServiceHost,
+  ScriptSnapshot,
+  sys,
+} from 'typescript';
+import { addDep } from '@rehearsal/utils';
+import findupSync from 'findup-sync';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 /**
@@ -14,6 +24,8 @@ export class RehearsalServiceHost implements LanguageServiceHost {
   private readonly currentDirectory: string;
   private readonly fileNames: string[];
   private readonly files: MapLike<{ snapshot: IScriptSnapshot; version: number }> = {};
+  private seenTypingsRequest = new Map<string, string>();
+  private typeRootVersion = 0;
 
   constructor(compilerOptions: CompilerOptions, fileNames: string[]) {
     this.compilerOptions = compilerOptions;
@@ -21,6 +33,9 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     this.fileNames = fileNames;
   }
 
+  getTypeRootsVersion(): number {
+    return this.typeRootVersion;
+  }
   /**
    * Updates a snapshot state in memory and increases its version.
    */
@@ -31,6 +46,34 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     };
 
     return this.files[fileName].snapshot;
+  }
+
+  async installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult> {
+    if (this.seenTypingsRequest.has(options.fileName)) {
+      return { successMessage: `Succussfully installed ${options.packageName}` };
+    }
+
+    // Save the intall request information so we don't continuously download
+    this.seenTypingsRequest.set(options.fileName, options.packageName);
+
+    const nearestPackageJSON = findupSync('package.json', {
+      cwd: dirname(options.fileName),
+    });
+
+    if (nearestPackageJSON) {
+      // Note: the TSServer is going to swallow the success and failures
+      // @see https://github.com/microsoft/TypeScript/blob/10941888dca8dc68a64fe1729258cf9ffef861ec/src/server/session.ts#L2804
+      await addDep([options.packageName], true, { cwd: dirname(nearestPackageJSON) });
+
+      // We must increment this version here so that when the language server
+      // synchronizes it knows that we need re-create the program with the new
+      // types we just downloaded
+      this.typeRootVersion++;
+
+      return { successMessage: `Succussfully installed ${options.packageName}` };
+    }
+
+    return Promise.reject({ error: `Could not install ${options.packageName}` });
   }
 
   /**
@@ -46,6 +89,11 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     }
 
     return this.files[fileName].snapshot;
+  }
+
+  isKnownTypesPackageName(_name: string): boolean {
+    // try all packages that come through here
+    return true;
   }
 
   getCompilationSettings = (): CompilerOptions => this.compilerOptions;

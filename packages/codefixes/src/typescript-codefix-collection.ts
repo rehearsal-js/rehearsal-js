@@ -7,6 +7,7 @@ import {
   SemicolonPreference,
   TextChange,
   type UserPreferences,
+  type CodeActionCommand,
 } from 'typescript';
 import { CodeFixCollectionFilter } from './types';
 import type { CodeFixCollection, DiagnosticWithContext } from './types';
@@ -42,6 +43,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     'disableJsDiagnostics', // disableJsDiagnostics.ts
     'extendsInterfaceBecomesImplements', // fixExtendsInterfaceBecomesImplements.ts
     'fixAwaitInSyncFunction', // fixAwaitInSyncFunction.ts
+    'fixCannotFindModule', // fixCannotFindModule.js
     'fixEnableJsxFlag', // fixEnableJsxFlag.ts
     'fixImportNonExportedMember', // fixImportNonExportedMember.ts
     'fixMissingAttributes', // fixAddMissingMember.ts
@@ -94,7 +96,12 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       }
 
       if (filter.strictTyping) {
-        const strictCodeFix = this.makeCodeFixStrict(fix);
+        let strictCodeFix = this.makeCodeFixStrict(fix);
+
+        if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
+          strictCodeFix = fix;
+        }
+
         if (!strictCodeFix) {
           continue;
         }
@@ -211,4 +218,10 @@ function getPackageInfo(packageName: string, fromPath: string): { path: string }
   return {
     path: dirname(packageJSONPath),
   };
+}
+
+export function isInstallPackageCommand(
+  fix: CodeFixAction
+): fix is CodeFixAction & { commands: CodeActionCommand } {
+  return fix.fixId === 'installTypesPackage' && !!fix.commands;
 }

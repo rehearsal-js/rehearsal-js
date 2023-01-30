@@ -1,7 +1,11 @@
-import { type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
 
-import { codefixes, type DiagnosticWithContext } from '@rehearsal/codefixes';
+import {
+  codefixes,
+  isInstallPackageCommand,
+  type DiagnosticWithContext,
+} from '@rehearsal/codefixes';
 import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
 import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
 
@@ -61,6 +65,10 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       // TODO: User should be able to choose one of the fixes form this list in interactive mode
       const fix = fixes.shift()!;
 
+      if (isInstallPackageCommand(fix)) {
+        await this.applyCommandAction(fix.commands, options);
+      }
+
       for (const fileTextChange of fix.changes) {
         let text = options.service.getFileText(fileTextChange.fileName);
 
@@ -114,6 +122,22 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
           },
         }))
     );
+  }
+
+  private async applyCommandAction(
+    command: CodeActionCommand[],
+    options: DiagnosticFixPluginOptions
+  ): Promise<boolean> {
+    const result = await options.service.getLanguageService().applyCodeActionCommand(command);
+    const ls = options.service.getLanguageService();
+
+    if (result) {
+      return true;
+    }
+
+    ls.dispose();
+
+    return false;
   }
 
   /**
