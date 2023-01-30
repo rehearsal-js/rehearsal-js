@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { existsSync, writeJSONSync, readJSONSync, readFileSync, mkdirSync } from 'fs-extra';
 
-import { git } from '../utils';
+import { git } from '@rehearsal/utils';
 
 // The reaosn to have packageMap is getting all files in a package faster
 // than loop through everyhing in the files

@@ -11,9 +11,7 @@ import { glob } from 'glob';
 
 import findup = require('findup-sync');
 import execa = require('execa');
-
-import type { ScriptMap } from './types';
-import type { GitDescribe } from './interfaces';
+import { GitDescribe } from './types';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
@@ -436,7 +434,7 @@ export function isTypescriptInDevdep(basePath: string): boolean {
 /**
  * Add/Update scripts in package.json
  */
-export function addPackageJsonScripts(basePath: string, scriptMap: ScriptMap): void {
+export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
   const packageJSONPath = resolve(basePath, 'package.json');
   const packageJSON = readJSONSync(packageJSONPath);
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };

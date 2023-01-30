@@ -2,8 +2,8 @@ import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra';
 import { cosmiconfigSync } from 'cosmiconfig';
+import { gitAddIfInRepo, getEsLintConfigPath, determineProjectName } from '@rehearsal/utils';
 import defaultConfig from '../../../configs/default-eslint';
-import { gitAddIfInRepo, getEsLintConfigPath, determineProjectName } from '../../../utils';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 

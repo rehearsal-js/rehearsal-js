@@ -112,7 +112,7 @@ importers:
       '@rehearsal/regen': workspace:*
       '@rehearsal/reporter': workspace:*
       '@rehearsal/upgrade': workspace:*
-      '@types/which': ^2.0.1
+      '@rehearsal/utils': workspace:*
       chalk: ^4.1.2
       commander: ^9.4.0
       compare-versions: ^5.0.1
@@ -121,17 +121,12 @@ importers:
       enquirer: ^2.3.6
       eslint: ^8.31.0
       execa: ^5.1.1
-      findup-sync: ^5.0.0
       fs-extra: ^10.0.0
-      glob: ^8.0.3
-      json5: ^2.2.0
       listr2: ^5.0.5
-      semver: ^7.3.5
       simple-git: ^3.10.0
       tmp: ^0.2.1
       typescript: ^4.9.4
       vitest: ^0.23.4
-      which: ^2.0.2
       winston: ^3.3.3
     dependencies:
       '@microsoft/api-documenter': 7.19.14
@@ -140,6 +135,7 @@ importers:
       '@rehearsal/regen': link:../regen
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/upgrade': link:../upgrade
+      '@rehearsal/utils': link:../utils
       chalk: 4.1.2
       commander: 9.4.0
       compare-versions: 5.0.1
@@ -148,19 +144,13 @@ importers:
       enquirer: 2.3.6
       eslint: 8.31.0
       execa: 5.1.1
-      findup-sync: 5.0.0
       fs-extra: 10.1.0
-      glob: 8.0.3
-      json5: 2.2.1
       listr2: 5.0.5_enquirer@2.3.6
-      semver: 7.3.7
       simple-git: 3.14.1
       tmp: 0.2.1
       typescript: 4.9.4
-      which: 2.0.2
       winston: 3.8.2
     devDependencies:
-      '@types/which': 2.0.1
       vitest: 0.23.4
 
   packages/codefixes:
@@ -184,6 +174,7 @@ importers:
       '@rehearsal/utils': workspace:*
       execa: ^5.1.1
       listr2: ^5.0.5
+      uuid: 8.3.2
       vitest: ^0.23.4
       winston: ^3.6.0
     dependencies:
@@ -195,6 +186,7 @@ importers:
       winston: 3.8.2
     devDependencies:
       listr2: 5.0.5
+      uuid: 8.3.2
       vitest: 0.23.4
 
   packages/migration-graph:
@@ -386,10 +378,12 @@ importers:
   packages/service:
     specifiers:
       '@rehearsal/reporter': workspace:*
+      '@rehearsal/utils': workspace:*
       vitest: ^0.23.4
       winston: ^3.6.0
     dependencies:
       '@rehearsal/reporter': link:../reporter
+      '@rehearsal/utils': link:../utils
       winston: 3.8.2
     devDependencies:
       vitest: 0.23.4
@@ -452,8 +446,33 @@ importers:
 
   packages/utils:
     specifiers:
+      '@types/which': ^2.0.1
+      chalk: ^4.1.2
+      commander: ^9.4.0
+      compare-versions: ^5.0.1
+      execa: ^5.1.1
+      findup-sync: ^5.0.0
+      fs-extra: ^10.0.0
+      glob: ^8.0.3
+      json5: ^2.2.0
+      semver: ^7.3.5
+      simple-git: ^3.10.0
       vitest: ^0.23.4
+      which: ^2.0.2
+    dependencies:
+      chalk: 4.1.2
+      commander: 9.4.0
+      compare-versions: 5.0.1
+      execa: 5.1.1
+      findup-sync: 5.0.0
+      fs-extra: 10.1.0
+      glob: 8.0.3
+      json5: 2.2.1
+      semver: 7.3.8
+      simple-git: 3.14.1
+      which: 2.0.2
     devDependencies:
+      '@types/which': 2.0.1
       vitest: 0.23.4
 
 packages:
@@ -5235,6 +5254,11 @@ packages:
   /uuid/3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+    dev: true
+
+  /uuid/8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
     dev: true
 

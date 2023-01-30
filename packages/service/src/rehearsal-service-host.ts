@@ -1,4 +1,12 @@
-import { getDefaultLibFilePath, LanguageServiceHost, ScriptSnapshot, sys } from 'typescript';
+import {
+  ApplyCodeActionCommandResult,
+  getDefaultLibFilePath,
+  InstallPackageOptions,
+  LanguageServiceHost,
+  ScriptSnapshot,
+  sys,
+} from 'typescript';
+import { addDep } from '@rehearsal/utils';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 /**
@@ -33,6 +41,13 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     return this.files[fileName].snapshot;
   }
 
+  async installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult> {
+    // Note: the TSServer is going to swallow the success and failures
+    // @see https://github.com/microsoft/TypeScript/blob/10941888dca8dc68a64fe1729258cf9ffef861ec/src/server/session.ts#L2804
+    await addDep([options.packageName], true);
+    return { successMessage: `Succussfully installed ${options.packageName}` };
+  }
+
   /**
    * Gets the latest snapshot
    * If a snapshot doesn't exist yet - reads its content from file as the first version
@@ -46,6 +61,11 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     }
 
     return this.files[fileName].snapshot;
+  }
+
+  isKnownTypesPackageName(_name: string): boolean {
+    // try all packages that come through here
+    return true;
   }
 
   getCompilationSettings = (): CompilerOptions => this.compilerOptions;

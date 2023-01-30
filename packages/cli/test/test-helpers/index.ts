@@ -4,9 +4,9 @@ import which from 'which';
 import { rmSync, copySync, realpathSync } from 'fs-extra';
 import { dirSync } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
+import { git, gitIsRepoDirty } from '@rehearsal/utils';
 import packageJson from '../../package.json';
 
-import { git, gitIsRepoDirty } from '../../src/utils';
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types';
 
 export const PNPM_PATH = which.sync('pnpm');

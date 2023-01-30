@@ -6,8 +6,8 @@ import {
 } from '@rehearsal/migration-graph';
 import { debug } from 'debug';
 
+import { determineProjectName } from '@rehearsal/utils';
 import { UserConfig } from '../../../user-config';
-import { determineProjectName } from '../../../utils';
 import { State } from '../../../helpers/state';
 import type {
   MigrateCommandContext,

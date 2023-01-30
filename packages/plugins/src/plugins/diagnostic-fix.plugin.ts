@@ -1,4 +1,4 @@
-import { type DiagnosticWithLocation } from 'typescript';
+import { CodeFixAction, type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
 
 import { codefixes, type DiagnosticWithContext } from '@rehearsal/codefixes';
@@ -70,11 +70,21 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
           text = applyTextChange(text, textChange);
         }
+      } else {
+        for (const fileTextChange of fix.changes) {
+          let text = this.service.getFileText(fileTextChange.fileName);
 
         options.service.setFileText(fileTextChange.fileName, text);
         allFixedFiles.add(fileTextChange.fileName);
 
-        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+            text = applyTextChange(text, textChange);
+          }
+
+          this.service.setFileText(fileTextChange.fileName, text);
+          allFixedFiles.add(fileTextChange.fileName);
+
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+        }
       }
 
       options.reporter.incrementFixedItemCount();
@@ -144,4 +154,10 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       return left.start - right.start;
     });
   }
+}
+
+function isInstallPackageCommand(
+  fix: CodeFixAction
+): fix is CodeFixAction & { commands: [{ packageName: string }] } {
+  return fix.commands?.length === 1 && 'packageName' in fix.commands[0];
 }

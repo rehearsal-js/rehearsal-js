@@ -18,7 +18,7 @@ import {
   timestamp,
   getLockfilePath,
   getEditorBinWithArgs,
-} from '../../src/utils';
+} from '../src/cli';
 
 describe('utils', () => {
   describe.each([

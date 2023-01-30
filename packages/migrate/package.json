@@ -38,6 +38,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
+    "uuid": "8.3.2",
     "listr2": "^5.0.5",
     "vitest": "^0.23.4"
   },

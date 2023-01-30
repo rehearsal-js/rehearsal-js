@@ -1,8 +1,8 @@
 import { resolve } from 'path';
+import { addDep } from '@rehearsal/utils';
 import execa from 'execa';
 import { readJSONSync } from 'fs-extra';
 
-import { addDep } from './utils';
 import type { CliCommand, CustomCommandConfig, CustomConfig } from './types';
 
 // Storage and runner for user custom cli config

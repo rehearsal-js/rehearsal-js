@@ -1,6 +1,6 @@
 import { ListrTask } from 'listr2';
 
-import { addDep } from '../../../utils';
+import { addDep } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export const REQUIRED_DEPENDENCIES = [

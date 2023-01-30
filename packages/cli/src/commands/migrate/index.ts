@@ -3,8 +3,8 @@ import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
+import { parseCommaSeparatedList, gitIsRepoDirty, resetFiles } from '@rehearsal/utils';
 import { version } from '../../../package.json';
-import { parseCommaSeparatedList, resetFiles, gitIsRepoDirty } from '../../utils';
 import {
   initTask,
   depInstallTask,
