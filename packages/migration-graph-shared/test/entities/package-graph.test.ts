@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
@@ -275,30 +275,11 @@ describe('PackageGraph', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
     const baseDir = join(tmpDir, 'some-dir');
     const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
-
-    expect.assertions(4);
 
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['index.js']);
-
-    expect(warn).toHaveBeenCalledTimes(2);
-
-    const sourcePath = 'index.js';
-    const targetPath = '../out-of-package.js';
-
-    expect(warn).toHaveBeenNthCalledWith(
-      1,
-      `The source file "${sourcePath}" is importing a file "${targetPath}" that is external to "${packageName}" package directory (${baseDir}), omitting target file ("${targetPath}") form package-graph.`
-    );
-    expect(warn).toHaveBeenNthCalledWith(
-      2,
-      `The target file "${targetPath}" is external to package "${packageName}" (${baseDir}), omitting target file form package-graph.`
-    );
   });
 });

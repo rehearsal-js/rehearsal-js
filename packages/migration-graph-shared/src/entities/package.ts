@@ -6,7 +6,7 @@ import { sync as fastGlobSync } from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
 import { getWorkspaceGlobs } from '../utils/workspace';
-import { PackageGraph } from './package-graph';
+import { PackageGraph, PackageGraphOptions } from './package-graph';
 
 import type { IPackage } from './IPackage';
 import type { Graph } from '../graph';
@@ -306,7 +306,7 @@ export class Package implements IPackage {
     return this.graph !== undefined;
   }
 
-  getModuleGraph(options = {}): Graph<ModuleNode> {
+  getModuleGraph(options: PackageGraphOptions = {}): Graph<ModuleNode> {
     if (this.graph) {
       return this.graph;
     }

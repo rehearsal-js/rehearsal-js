@@ -1,11 +1,10 @@
 import { join, relative } from 'path';
 import fs from 'fs-extra';
 
+import { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph';
 
 import { type SourceType } from './source-type';
-
-import type { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 
 export class SourceFile {
   #packageName: string;
@@ -36,12 +35,19 @@ export class SourceFile {
 }
 
 export class MigrationStrategy {
-  #files: Array<SourceFile> = [];
+  #rootDir: string;
   #sourceType: SourceType;
+  #files: Array<SourceFile> = [];
 
-  constructor(sourceType: SourceType) {
+  constructor(rootDir: string, sourceType: SourceType) {
+    this.#rootDir = rootDir;
     this.#sourceType = sourceType;
   }
+
+  get rootDir(): string {
+    return this.#rootDir;
+  }
+
 
   addFile(file: SourceFile): void {
     this.#files.push(file);
@@ -76,7 +82,7 @@ export function getMigrationStrategy(
   rootDir = fs.realpathSync(rootDir);
   const { projectGraph, sourceType } = buildMigrationGraph(rootDir, options);
 
-  const strategy = new MigrationStrategy(sourceType);
+  const strategy = new MigrationStrategy(rootDir, sourceType);
 
   projectGraph.graph
     .topSort()
@@ -92,10 +98,10 @@ export function getMigrationStrategy(
         throw new Error('WTF');
       }
 
-      const modules = packageNode.content.pkg?.getModuleGraph();
+      const moduleGraph = packageNode.content.pkg?.getModuleGraph();
 
       // For this package, get a list of modules (files)
-      const ordered: Array<ModuleNode> = modules
+      const ordered: Array<ModuleNode> = moduleGraph
         .topSort()
         .filter((node) => !node.content?.synthetic) // Remove synthetic nodes
         .map((node) => node.content);

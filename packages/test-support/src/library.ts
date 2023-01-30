@@ -18,7 +18,8 @@ type LibraryVariants =
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
   | 'library-with-loose-files'
-  | 'library-with-workspaces';
+  | 'library-with-workspaces'
+  | 'workspace-with-package-scope-issue';
 
 const DIRS_TO_IGNORE = ['.yarn'];
 
@@ -288,6 +289,62 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             "version": "1.0.0",
             "main": "index.js",
             "license": "MIT"
+          }    
+        `,
+      };
+      break;
+    case 'workspace-with-package-scope-issue':
+      files = {
+        packages: {
+          branch: {
+            'package.json': `{
+              "name": "@some-workspace/branch",
+              "version": "1.0.0",
+              "main": "index.js",
+              "dependencies": {
+                "@some-workspace/leaf": "*"
+              }
+            }`,
+            'index.js': `
+              import { do } from '@some-workspace/leaf';
+              import './lib/a';
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'a.js': `
+              // a.js
+              console.log('foo');
+             `,
+            },
+          },
+          leaf: {
+            'package.json': `{
+              "name": "@some-workspace/leaf",
+              "version": "1.0.0",
+              "main": "index.js"
+            }`,
+            'index.js': `
+              import './lib/impl';
+              export function do() { console.log(''); }
+            `,
+            'build.js': `import '../../some-shared-util';`,
+            lib: {
+              'impl.js': `
+                // impl.js
+              `,
+            },
+          },
+        },
+        'some-shared-util.js': '// something-shared',
+        'package.json': `
+          {
+            "name": "root-package",
+            "version": "1.0.0",
+            "main": "index.js",
+            "license": "MIT",
+            "workspaces": [
+              "packages/*"
+            ]
           }    
         `,
       };

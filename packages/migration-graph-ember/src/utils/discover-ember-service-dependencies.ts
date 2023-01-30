@@ -46,8 +46,7 @@ export function discoverServiceDependencies(
       decoratorsBeforeExport: true,
     });
   } catch (e) {
-    console.warn(`Ember service discovery failed. Unable to parse: ${filePath}`);
-    DEBUG_CALLBACK(`Error: %0`, e);
+    DEBUG_CALLBACK(`Ember service discovery failed. Unable to parse: %s`, filePath);
   }
 
   if (!parsed) {

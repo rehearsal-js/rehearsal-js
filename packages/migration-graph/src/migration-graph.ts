@@ -25,6 +25,8 @@ function buildMigrationGraphForEmber(
   // Evaluate the directory to see if it has any internal packages e.g. in-repo-addon or in-repo-engines
   const packages = projectGraph.discover();
 
+  // The following should be moved into EmberAppProjectGraph.discover();
+
   // If there no packages, we dont' have to do much.
   if (packages && packages.length > 1) {
     DEBUG_CALLBACK(`Discovered ${packages.length} packages: `);
