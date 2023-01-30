@@ -29,8 +29,16 @@ export interface CodeHint {
   hint: string;
 }
 
+export interface CodeFixCollectionFilter {
+  safeFixes?: boolean;
+  strictTyping?: boolean;
+}
+
 export interface CodeFixCollection {
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined;
+  getFixesForDiagnostic(
+    diagnostic: DiagnosticWithContext,
+    filter: CodeFixCollectionFilter
+  ): CodeFixAction[];
 }
 
 export interface CodeFix {

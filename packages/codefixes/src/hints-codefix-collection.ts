@@ -17,12 +17,9 @@ export class HintCodeFixCollection implements CodeFixCollection {
     this.list = list;
   }
 
-  getFixForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+  getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[] {
     const hint = this.getHint(diagnostic);
     const comment = `@ts-expect-error @rehearsal TODO TS${diagnostic.code}: ${hint}`;
-
-    console.log(diagnostic.node?.getText());
-    console.log(diagnostic.node?.getStart());
 
     const changes = ChangesFactory.insertCommentAtLineBeforeNode(
       diagnostic.file,
@@ -30,7 +27,7 @@ export class HintCodeFixCollection implements CodeFixCollection {
       comment
     );
 
-    return createCodeFixAction('hint', [changes], 'Add hint comment to help solve the issue');
+    return [createCodeFixAction('hint', [changes], 'Add hint comment to help solve the issue')];
   }
 
   getHint(diagnostic: DiagnosticWithContext): string {

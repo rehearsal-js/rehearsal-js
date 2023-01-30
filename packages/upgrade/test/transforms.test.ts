@@ -7,7 +7,7 @@ import { upgrade } from '../src';
 
 describe('Test transform', function () {
   const basePath = resolve(__dirname, 'fixtures', 'transforms');
-  const transformsPath = resolve(__dirname, '../../codefixes/src');
+  const transformsPath = resolve(__dirname, '../../codefixes/src/fixes');
   const transforms = readdirSync(transformsPath, { withFileTypes: true })
     .filter((file) => file.isDirectory())
     .map((file) => file.name);
@@ -17,7 +17,7 @@ describe('Test transform', function () {
     cleanupTsFiles(basePath, originalFixturesFiles);
   });
 
-  test.each(transforms)('%i', async (code) => {
+  test.each(transforms)('%s', async (code) => {
     const transformPath = resolve(transformsPath, code, 'fixtures');
     const transformFiles = prepareListOfTestFiles(transformPath);
 

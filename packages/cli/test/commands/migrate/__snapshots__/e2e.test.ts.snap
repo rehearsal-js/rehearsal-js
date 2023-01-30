@@ -61,27 +61,25 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [DATA] processing file: /index.ts
 [TITLE] Migration Complete
 [TITLE]   1 JS file converted to TS
-[TITLE]   7 errors caught by rehearsal
-[TITLE]   3 have been fixed by rehearsal
-[TITLE]   4 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 4 eslint errors, with details in the report
+[TITLE]   3 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   3 errors need to be fixed manually
+[TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   1 JS file converted to TS
-[SUCCESS]   7 errors caught by rehearsal
-[SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS]   4 errors need to be fixed manually
-[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 4 eslint errors, with details in the report"
+[SUCCESS]   3 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   3 errors need to be fixed manually
+[SUCCESS]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 2`] = `
-"export function run(baz: any) {
+"/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'baz' implicitly has an 'any' type. */
+export function run(baz) {
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'foo'. */
   return foo(baz);
-}
-
-function foo(_baz: any) {
-  throw new Error(\\"Function not implemented.\\");
 }
 "
 `;
