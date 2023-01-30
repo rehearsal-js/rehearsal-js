@@ -1,15 +1,17 @@
 import { dirname, resolve } from 'path';
-import { RehearsalService } from '@rehearsal/service';
+import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
 import {
-  ReRehearsePlugin,
-  LintFixPlugin,
   DiagnosticCheckPlugin,
-  LintCheckPlugin,
+  DiagnosticCheckPluginOptions,
+  LintPlugin,
+  LintPluginOption,
+  ReRehearsePlugin,
+  ReRehearsePluginOptions,
 } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
-import type { Reporter } from '@rehearsal/reporter';
-import type { Logger } from 'winston';
 import type { ListrContext } from 'listr2';
+import type { Logger } from 'winston';
+import type { Reporter } from '@rehearsal/reporter';
 
 export type RegenInput = {
   basePath: string;
@@ -33,12 +35,43 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   // output is only for tests
   const listrTask = input.task || { output: '' };
 
-  const plugins = [
-    ReRehearsePlugin,
-    LintFixPlugin,
-    DiagnosticCheckPlugin,
-    LintFixPlugin,
-    LintCheckPlugin,
+  const commentTag = '@rehearsal';
+
+  // TODO: Wrap into PluginRunner
+  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
+    {
+      plugin: new ReRehearsePlugin(),
+      options: {
+        commentTag,
+      } as ReRehearsePluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new DiagnosticCheckPlugin(),
+      options: {
+        commentTag,
+      } as DiagnosticCheckPluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: false, useEslintrc: true },
+        reportErrors: true,
+      } as LintPluginOption,
+    },
   ];
 
   logger?.debug('migration regen started');
@@ -73,9 +106,13 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
     let allChangedFiles: Set<string> = new Set();
 
-    for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, reporter, logger);
-      const changedFiles = await plugin.run(fileName);
+    for (const plugin of plugins) {
+      const changedFiles = await plugin.plugin.run(fileName, {
+        ...plugin.options,
+        service: service,
+        reporter: reporter,
+        logger: logger,
+      });
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 

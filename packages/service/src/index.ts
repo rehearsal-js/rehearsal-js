@@ -1,4 +1,4 @@
-export { Plugin } from './plugin';
+export { Plugin, PluginOptions } from './plugin';
 export { RehearsalService } from './rehearsal-service';
 export { RehearsalServiceHost } from './rehearsal-service-host';
 

@@ -1,23 +1,27 @@
 import { isLineBreak } from 'typescript';
-import { type PluginResult, Plugin } from '@rehearsal/service';
+import { Plugin, PluginOptions, type PluginResult } from '@rehearsal/service';
 import { debug } from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
 
+export interface ReRehearsePluginOptions extends PluginOptions {
+  commentTag: string;
+}
+
 /**
  * Removes all comments with `@rehearsal` tag inside
  */
-export class ReRehearsePlugin extends Plugin {
-  async run(fileName: string): PluginResult {
+export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
+  async run(fileName: string, options: ReRehearsePluginOptions): PluginResult {
     const tag = '@rehearsal';
 
-    let text = this.service.getFileText(fileName);
-    const sourceFile = this.service.getSourceFile(fileName);
+    let text = options.service.getFileText(fileName);
+    const sourceFile = options.service.getSourceFile(fileName);
     const tagStarts = [...text.matchAll(new RegExp(tag, 'g'))].map((m) => m.index!);
 
     // Walk through all comments with a tag in it from the bottom of the file
     for (const tagStart of tagStarts.reverse()) {
-      const commentSpan = this.service
+      const commentSpan = options.service
         .getLanguageService()
         .getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
 
@@ -30,7 +34,7 @@ export class ReRehearsePlugin extends Plugin {
       text = text.substring(0, boundary.start) + text.substring(boundary.end + 1);
     }
 
-    this.service.setFileText(fileName, text);
+    options.service.setFileText(fileName, text);
 
     DEBUG_CALLBACK(`Plugin 'ReRehearse' run on %O:`, fileName);
 

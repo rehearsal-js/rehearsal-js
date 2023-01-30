@@ -1,15 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { RehearsalService } from '@rehearsal/service';
-import { Reporter } from '@rehearsal/reporter';
 import { DiagnosticFixPlugin } from '../src';
 import { mockDiagnosticWithLocations } from './utils';
-
-const REPORTER = new Reporter({
-  projectName: '',
-  basePath: '',
-  commandName: '',
-  tsVersion: '',
-});
 
 describe('Test DiagnosticFixPlugin', function () {
   test('sort', async () => {
@@ -21,7 +12,7 @@ describe('Test DiagnosticFixPlugin', function () {
       { start: 4, code: 200 },
     ]);
 
-    const plugin = new DiagnosticFixPlugin(new RehearsalService({}, []), REPORTER);
+    const plugin = new DiagnosticFixPlugin();
 
     plugin.sort(diagnostics, []);
 
@@ -50,7 +41,7 @@ describe('Test DiagnosticFixPlugin', function () {
       { start: 4, code: 100 },
     ]);
 
-    const plugin = new DiagnosticFixPlugin(new RehearsalService({}, []), REPORTER);
+    const plugin = new DiagnosticFixPlugin();
 
     plugin.sort(diagnostics, [300, 200]);
 
