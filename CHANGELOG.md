@@ -1,3 +1,11 @@
+## <small>1.0.5-beta (2023-01-30)</small>
+
+* feat: add --regen option for migrate (#661) ([28942a8](https://github.com/rehearsal-js/rehearsal-js/commit/28942a8)), closes [#661](https://github.com/rehearsal-js/rehearsal-js/issues/661)
+* feat: limit a list of typescript provided codefixes + exclude fixes that add :any (#653) ([300b39f](https://github.com/rehearsal-js/rehearsal-js/commit/300b39f)), closes [#653](https://github.com/rehearsal-js/rehearsal-js/issues/653)
+* refactor: migrate cli test (#614) ([42afc2e](https://github.com/rehearsal-js/rehearsal-js/commit/42afc2e)), closes [#614](https://github.com/rehearsal-js/rehearsal-js/issues/614)
+
+
+
 ## <small>1.0.4-beta (2023-01-24)</small>
 
 * fix: bump version before running `npm build` (#656) ([f53cc77](https://github.com/rehearsal-js/rehearsal-js/commit/f53cc77)), closes [#656](https://github.com/rehearsal-js/rehearsal-js/issues/656)
