@@ -71,7 +71,6 @@ export async function convertTask(
               // no-ops
             }
 
-            // TODO: better diff with colors instead of using the output straight from git diff
             const message = `${chalk.yellow(
               `Please view the migration changes for ${f} and select an option to continue:`
             )}\n${prettyGitDiff(diffOutput)}`;
@@ -117,6 +116,10 @@ export async function convertTask(
             gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
             task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
+          if (ctx.state) {
+            ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
+            await ctx.state.addStateFileToGit();
+          }
         } else {
           const input = {
             basePath: ctx.targetPackagePath,
@@ -129,10 +132,6 @@ export async function convertTask(
           const { migratedFiles } = await migrate(input);
 
           DEBUG_CALLBACK('migratedFiles', migratedFiles);
-          if (ctx.state) {
-            ctx.state.addFilesToPackage(ctx.targetPackagePath, migratedFiles);
-            await ctx.state.addStateFileToGit();
-          }
           const reportOutputPath = resolve(options.basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
           gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo

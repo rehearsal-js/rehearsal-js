@@ -1,5 +1,26 @@
 // Vitest Snapshot v1
 
+exports[`Task: initialize > disable package selection if completed 1`] = `
+{
+  ".": [],
+  "./module-a": [
+    "./module-a/index.js",
+  ],
+  "./module-b": [],
+}
+`;
+
+exports[`Task: initialize > disable package selection if completed 2`] = `
+{
+  "./module-a/index.js": {
+    "current": "./module-a/index.ts",
+    "errorCount": 0,
+    "origin": "./module-a/index.js",
+    "package": "./module-a",
+  },
+}
+`;
+
 exports[`Task: initialize > get files that will be migrated 1`] = `
 [
   "foo.js",
@@ -24,6 +45,27 @@ exports[`Task: initialize > print files will be attempted to migrate with --dryR
 [DATA] index.js
 [SUCCESS] Initialize -- Dry Run Mode
 "
+`;
+
+exports[`Task: initialize > show package progress in interactive mode 1`] = `
+{
+  ".": [],
+  "./module-a": [
+    "./module-a/index.js",
+  ],
+  "./module-b": [],
+}
+`;
+
+exports[`Task: initialize > show package progress in interactive mode 2`] = `
+{
+  "./module-a/index.js": {
+    "current": "./module-a/index.ts",
+    "errorCount": 2,
+    "origin": "./module-a/index.js",
+    "package": "./module-a",
+  },
+}
 `;
 
 exports[`Task: initialize > store custom config in context 1`] = `

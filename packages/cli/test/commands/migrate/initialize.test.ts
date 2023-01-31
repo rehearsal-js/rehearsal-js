@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync } from 'fs-extra';
+import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
 
 import { initTask } from '../../../src/commands/migrate/tasks';
 import {
@@ -152,5 +152,104 @@ describe('Task: initialize', async () => {
     expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual([
       resolve(basePath, 'module-b/', 'index.js'),
     ]);
+  });
+
+  test('show package progress in interactive mode', async () => {
+    basePath = prepareTmpDir('multi_packages');
+    // send keycode after runner.run()
+    setTimeout(async () => {
+      sendKey(KEYS.ENTER);
+    }, 2000);
+
+    // write previous state
+    const previousState = {
+      name: 'multi-package',
+      packageMap: {
+        '.': [],
+        './module-a': ['./module-a/index.js'],
+        './module-b': [],
+      },
+      files: {
+        './module-a/index.js': {
+          origin: './module-a/index.js',
+          current: './module-a/index.ts',
+          package: './module-a',
+          errorCount: 0,
+        },
+      },
+    };
+
+    // simulate a converted index.ts with 2 error
+    writeFileSync(
+      resolve(basePath, 'module-a', 'index.ts'),
+      '@rehearsal TODO\nfoo\bar\n@rehearsal TODO'
+    );
+    mkdirSync(resolve(basePath, '.rehearsal'));
+    writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
+
+    const options = createMigrateOptions(basePath, { interactive: true });
+    const tasks = [await initTask(options)];
+    const ctx = await listrTaskRunner(tasks);
+
+    // test message and package selection prompt
+    expect(output).toContain(
+      'We have found multiple packages in your project, select the one to migrate'
+    );
+    expect(output).toContain('multi-package(no progress found)');
+    expect(output).toContain(
+      'module-a(1 of 1 files migrated, 2 @ts-expect-error(s) need to be fixed)'
+    );
+    expect(output).toContain('module-b(no progress found)');
+
+    // check state
+    expect(ctx.state.packages).toMatchSnapshot();
+    expect(ctx.state.files).toMatchSnapshot();
+  });
+
+  test('disable package selection if completed', async () => {
+    basePath = prepareTmpDir('multi_packages');
+    // send keycode after runner.run()
+    setTimeout(async () => {
+      sendKey(KEYS.ENTER);
+    }, 2000);
+
+    // write previous state
+    const previousState = {
+      name: 'multi-package',
+      packageMap: {
+        '.': [],
+        './module-a': ['./module-a/index.js'],
+        './module-b': [],
+      },
+      files: {
+        './module-a/index.js': {
+          origin: './module-a/index.js',
+          current: './module-a/index.ts',
+          package: './module-a',
+          errorCount: 0,
+        },
+      },
+    };
+
+    // simulate a converted index.ts
+    writeFileSync(resolve(basePath, 'module-a', 'index.ts'), '');
+    mkdirSync(resolve(basePath, '.rehearsal'));
+    writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
+
+    const options = createMigrateOptions(basePath, { interactive: true });
+    const tasks = [await initTask(options)];
+    const ctx = await listrTaskRunner(tasks);
+
+    // test message and package selection prompt
+    expect(output).toContain(
+      'We have found multiple packages in your project, select the one to migrate'
+    );
+    expect(output).toContain('multi-package(no progress found)');
+    expect(output).toContain('module-a(Fully migrated)');
+    expect(output).toContain('module-b(no progress found)');
+
+    // check state
+    expect(ctx.state.packages).toMatchSnapshot();
+    expect(ctx.state.files).toMatchSnapshot();
   });
 });
