@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { createFileSync, rmSync } from 'fs-extra';
+import { createFileSync, rmSync, writeFileSync } from 'fs-extra';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
@@ -46,7 +46,7 @@ describe('Task: validate', async () => {
     vi.clearAllMocks();
   });
 
-  test('pass with paackage.json', async () => {
+  test('pass with package.json', async () => {
     const options = createMigrateOptions(basePath);
     const tasks = [await validateTask(options, logger)];
 
@@ -61,6 +61,19 @@ describe('Task: validate', async () => {
     rmSync(resolve(basePath, 'package.json'));
 
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(`package.json does not exists`);
+  });
+
+  test('error if .gitignore has .rehearsal', async () => {
+    const options = createMigrateOptions(basePath);
+    const tasks = [await validateTask(options, logger)];
+
+    const gitignore = `.rehearsal\nfoo\nbar`;
+    const gitignorePath = resolve(basePath, '.gitignore');
+    writeFileSync(gitignorePath, gitignore, 'utf-8');
+
+    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
+      `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
+    );
   });
 
   test('show warning message for missing files in --regen', async () => {
