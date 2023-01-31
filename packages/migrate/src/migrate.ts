@@ -1,17 +1,19 @@
 import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { execSync } from 'child_process';
-import { RehearsalService } from '@rehearsal/service';
+import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
 import {
-  DiagnosticFixPlugin,
-  LintFixPlugin,
   DiagnosticCheckPlugin,
-  LintCheckPlugin,
+  DiagnosticCheckPluginOptions,
+  DiagnosticFixPlugin,
+  DiagnosticFixPluginOptions,
+  LintPlugin,
+  LintPluginOption,
 } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
-import type { Reporter } from '@rehearsal/reporter';
-import type { Logger } from 'winston';
 import type { ListrContext } from 'listr2';
+import type { Logger } from 'winston';
+import type { Reporter } from '@rehearsal/reporter';
 
 export type MigrateInput = {
   basePath: string;
@@ -28,11 +30,7 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
-type MigratePlugins =
-  | typeof LintFixPlugin[]
-  | typeof DiagnosticFixPlugin[]
-  | typeof LintCheckPlugin[]
-  | typeof DiagnosticCheckPlugin[];
+type MigratePlugins = { plugin: Plugin<PluginOptions>; options?: PluginOptions }[];
 
 type ProcessFilesInput = {
   fileNames: string[];
@@ -62,13 +60,50 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   // output is only for tests
   const listrTask: ListrContext = input.task || { output: '' };
 
-  const plugins: MigratePlugins = [
-    LintFixPlugin,
-    DiagnosticFixPlugin,
-    LintFixPlugin,
-    DiagnosticCheckPlugin,
-    LintFixPlugin,
-    LintCheckPlugin,
+  const commentTag = '@rehearsal';
+
+  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new DiagnosticFixPlugin(),
+      options: {
+        safeFixes: true,
+        strictTyping: true,
+      } as DiagnosticFixPluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new DiagnosticCheckPlugin(),
+      options: {
+        commentTag,
+      } as DiagnosticCheckPluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: false, useEslintrc: true },
+        reportErrors: true,
+      } as LintPluginOption,
+    },
   ];
 
   logger?.debug('migration started');
@@ -203,9 +238,13 @@ async function* processPlugins({
   reporter,
   logger,
 }: ProcessPluginsInput): AsyncGenerator<Set<string>> {
-  for (const pluginClass of plugins) {
-    const plugin = new pluginClass(service, reporter, logger);
-    const changedFiles = await plugin.run(fileName);
+  for (const plugin of plugins) {
+    const changedFiles = await plugin.plugin.run(fileName, {
+      ...plugin.options,
+      service: service,
+      reporter: reporter,
+      logger: logger,
+    });
 
     allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
 

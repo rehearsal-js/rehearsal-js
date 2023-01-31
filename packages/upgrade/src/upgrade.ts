@@ -1,13 +1,16 @@
 import { dirname, resolve } from 'path';
 import {
-  DiagnosticFixPlugin,
-  LintFixPlugin,
-  ReRehearsePlugin,
   DiagnosticCheckPlugin,
-  LintCheckPlugin,
+  DiagnosticCheckPluginOptions,
+  DiagnosticFixPlugin,
+  DiagnosticFixPluginOptions,
+  LintPlugin,
+  LintPluginOption,
+  ReRehearsePlugin,
+  ReRehearsePluginOptions,
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
-import { RehearsalService } from '@rehearsal/service';
+import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import { debug } from 'debug';
 import type { Logger } from 'winston';
@@ -36,14 +39,57 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
 
-  const plugins = [
-    ReRehearsePlugin,
-    LintFixPlugin,
-    DiagnosticFixPlugin,
-    LintFixPlugin,
-    DiagnosticCheckPlugin,
-    LintFixPlugin,
-    LintCheckPlugin,
+  const commentTag = '@rehearsal';
+
+  // TODO: Wrap into PluginRunner
+  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
+    {
+      plugin: new ReRehearsePlugin(),
+      options: {
+        commentTag,
+      } as ReRehearsePluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new DiagnosticFixPlugin(),
+      options: {
+        safeFixes: true,
+        strictTyping: true,
+      } as DiagnosticFixPluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new DiagnosticCheckPlugin(),
+      options: {
+        commentTag,
+      } as DiagnosticCheckPluginOptions,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: true, useEslintrc: true },
+        reportErrors: false,
+      } as LintPluginOption,
+    },
+    {
+      plugin: new LintPlugin(),
+      options: {
+        eslintOptions: { fix: false, useEslintrc: true },
+        reportErrors: true,
+      } as LintPluginOption,
+    },
   ];
 
   DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);
@@ -76,9 +122,13 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
     let allChangedFiles: Set<string> = new Set();
 
-    for (const pluginClass of plugins) {
-      const plugin = new pluginClass(service, reporter, logger);
-      const changedFiles = await plugin.run(fileName);
+    for (const plugin of plugins) {
+      const changedFiles = await plugin.plugin.run(fileName, {
+        ...plugin.options,
+        service: service,
+        reporter: reporter,
+        logger: logger,
+      });
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
     }
 

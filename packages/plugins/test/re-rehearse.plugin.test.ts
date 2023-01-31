@@ -32,10 +32,10 @@ describe('Test ReRehearsalPlugin', function () {
       commandName: '@rehearsal/migrate',
     });
 
-    const plugin = new ReRehearsePlugin(service, reporter);
+    const plugin = new ReRehearsePlugin();
 
     for (const fileName of fileNames) {
-      const result = await plugin.run(fileName);
+      const result = await plugin.run(fileName, { service, reporter, commentTag: '@rehearsal' });
       const resultText = service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);

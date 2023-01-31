@@ -1,4 +1,4 @@
-import { Plugin, type PluginResult } from '@rehearsal/service';
+import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
 import { debug } from 'debug';
 import {
   DiagnosticCategory,
@@ -6,6 +6,7 @@ import {
   getLineAndCharacterOfPosition,
   getPositionOfLineAndCharacter,
   isTemplateLiteral,
+  LanguageService,
 } from 'typescript';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
@@ -13,12 +14,17 @@ import { getLocation } from '../helpers';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
-export class DiagnosticCheckPlugin extends Plugin {
+export interface DiagnosticCheckPluginOptions extends PluginOptions {
+  commentTag: string;
+  addHints: boolean;
+}
+
+export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOptions> {
   commentTag = '@rehearsal';
   addHints = true;
 
-  async run(fileName: string): PluginResult {
-    let diagnostics = this.getDiagnostics(fileName, this.commentTag);
+  async run(fileName: string, options: DiagnosticCheckPluginOptions): PluginResult {
+    let diagnostics = this.getDiagnostics(options.service, fileName, this.commentTag);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticCheck' run on %O:`, fileName);
 
@@ -30,7 +36,7 @@ export class DiagnosticCheckPlugin extends Plugin {
 
       if (this.addHints) {
         const text = this.addHintComment(diagnostic, hint, this.commentTag);
-        this.service.setFileText(fileName, text);
+        options.service.setFileText(fileName, text);
 
         allFixedFiles.add(fileName);
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
@@ -40,21 +46,32 @@ export class DiagnosticCheckPlugin extends Plugin {
 
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-      this.reporter.addTSItem(diagnostic, diagnostic.node, location, hint, helpUrl, this.addHints);
+      options.reporter.addTSItem(
+        diagnostic,
+        diagnostic.node,
+        location,
+        hint,
+        helpUrl,
+        this.addHints
+      );
 
-      diagnostics = this.getDiagnostics(fileName, this.commentTag);
+      diagnostics = this.getDiagnostics(options.service, fileName, this.commentTag);
     }
     return Array.from(allFixedFiles);
   }
 
-  getDiagnostics(fileName: string, tag: string): DiagnosticWithContext[] {
-    const service = this.service.getLanguageService();
+  getDiagnostics(
+    rehearsalService: RehearsalService,
+    fileName: string,
+    tag: string
+  ): DiagnosticWithContext[] {
+    const service = rehearsalService.getLanguageService();
     const program = service.getProgram()!;
     const checker = program!.getTypeChecker();
 
     const diagnostics = [
-      ...this.service.getSemanticDiagnosticsWithLocation(fileName),
-      ...this.service.getSuggestionDiagnostics(fileName),
+      ...rehearsalService.getSemanticDiagnosticsWithLocation(fileName),
+      ...rehearsalService.getSuggestionDiagnostics(fileName),
     ];
 
     //Sort diagnostics from top to bottom, so that we add comments from top to bottom
@@ -73,7 +90,7 @@ export class DiagnosticCheckPlugin extends Plugin {
         (diagnostic) =>
           this.isValidDiagnostic(diagnostic) &&
           this.isErrorDiagnostic(diagnostic) &&
-          this.hasNotAddedDiagnosticComment(diagnostic, tag)
+          this.hasNotAddedDiagnosticComment(diagnostic, tag, service)
       );
   }
 
@@ -81,7 +98,11 @@ export class DiagnosticCheckPlugin extends Plugin {
    * Tries to find a `@rehearsal` on the first non-empty line above the affected node
    * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
    */
-  hasNotAddedDiagnosticComment(diagnostic: DiagnosticWithContext, tag: string): boolean {
+  hasNotAddedDiagnosticComment(
+    diagnostic: DiagnosticWithContext,
+    tag: string,
+    service: LanguageService
+  ): boolean {
     // Search for a position to add comment - the first element at the line with affected node
     const sourceFile = diagnostic.file;
 
@@ -121,9 +142,7 @@ export class DiagnosticCheckPlugin extends Plugin {
     const tagStart = lineAboveStart + tagIndex;
 
     // Make sure the tag within a comment (not a part of string value)
-    const commentSpan = this.service
-      .getLanguageService()
-      .getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
+    const commentSpan = service.getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
 
     if (commentSpan === undefined) {
       return true;

@@ -2,18 +2,20 @@ import { type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
 
 import { codefixes, type DiagnosticWithContext } from '@rehearsal/codefixes';
-import { Plugin, type PluginResult } from '@rehearsal/service';
+import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
 import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
+export interface DiagnosticFixPluginOptions extends PluginOptions {
+  safeFixes?: boolean;
+  strictTyping?: boolean;
+}
+
 /**
  * Diagnose issues in the file and applied transforms to fix them
  */
-export class DiagnosticFixPlugin extends Plugin {
-  // TODO: Move next 1 line to constructor options
-  commentTag = '@rehearsal';
-
+export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
   /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
   prioritizedCodes = [
     80002, // convertFunctionToEs6Class
@@ -31,8 +33,8 @@ export class DiagnosticFixPlugin extends Plugin {
     2612, // addMissingDeclareProperty
   ];
 
-  async run(fileName: string): PluginResult {
-    let diagnostics = this.getDiagnostics(fileName);
+  async run(fileName: string, options: DiagnosticFixPluginOptions): PluginResult {
+    let diagnostics = this.getDiagnostics(options.service, fileName);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
@@ -60,7 +62,7 @@ export class DiagnosticFixPlugin extends Plugin {
       const fix = fixes.shift()!;
 
       for (const fileTextChange of fix.changes) {
-        let text = this.service.getFileText(fileTextChange.fileName);
+        let text = options.service.getFileText(fileTextChange.fileName);
 
         const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
         for (const textChange of textChanges) {
@@ -69,16 +71,16 @@ export class DiagnosticFixPlugin extends Plugin {
           text = applyTextChange(text, textChange);
         }
 
-        this.service.setFileText(fileTextChange.fileName, text);
+        options.service.setFileText(fileTextChange.fileName, text);
         allFixedFiles.add(fileTextChange.fileName);
 
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       }
 
-      this.reporter.incrementFixedItemCount();
+      options.reporter.incrementFixedItemCount();
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(fileName);
+      diagnostics = this.getDiagnostics(options.service, fileName);
     }
 
     return Array.from(allFixedFiles);
@@ -87,14 +89,14 @@ export class DiagnosticFixPlugin extends Plugin {
   /**
    * Returns the list of diagnostics with location and additional context of the application
    */
-  getDiagnostics(fileName: string): DiagnosticWithContext[] {
-    const service = this.service.getLanguageService();
+  getDiagnostics(rehearsalService: RehearsalService, fileName: string): DiagnosticWithContext[] {
+    const service = rehearsalService.getLanguageService();
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
 
     const diagnostics = [
-      ...this.service.getSemanticDiagnosticsWithLocation(fileName),
-      ...this.service.getSuggestionDiagnostics(fileName),
+      ...rehearsalService.getSemanticDiagnosticsWithLocation(fileName),
+      ...rehearsalService.getSuggestionDiagnostics(fileName),
     ];
 
     this.sort(diagnostics, this.prioritizedCodes);
