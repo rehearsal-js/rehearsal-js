@@ -36,7 +36,7 @@ export function generateReports(
       reportPath = resolve(outputPath, `${reportBaseName}.json`);
       formatter = jsonFormatter;
     } else if (format === 'sonarqube') {
-      reportPath = resolve(outputPath, `${reportBaseName}.json`);
+      reportPath = resolve(outputPath, `${reportBaseName}.sonarqube.json`);
       formatter = sonarqubeFormatter;
     } else if (format === 'md') {
       reportPath = resolve(outputPath, `${reportBaseName}.md`);
