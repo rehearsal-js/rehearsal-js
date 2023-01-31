@@ -5,7 +5,7 @@ exports[`Task: validate > pass with all config files in --regen 1`] = `
 [SUCCESS] Validate project"
 `;
 
-exports[`Task: validate > pass with paackage.json 1`] = `
+exports[`Task: validate > pass with package.json 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project"
 `;

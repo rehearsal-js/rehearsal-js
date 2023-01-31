@@ -1,10 +1,58 @@
 import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
-import { existsSync } from 'fs-extra';
+import { existsSync, readFileSync } from 'fs-extra';
 
 import { getEsLintConfigPath } from '../../../utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+
+function checkLintConfig(basePath: string, logger: Logger): boolean {
+  const lintConfigPath = getEsLintConfigPath(basePath);
+  if (!lintConfigPath) {
+    logger.warn(
+      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+    );
+    return false;
+  }
+  return true;
+}
+
+function checkTsConfig(basePath: string, logger: Logger): boolean {
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
+  if (!existsSync(tsConfigPath)) {
+    logger.warn(
+      `${tsConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+    );
+    return false;
+  }
+  return true;
+}
+
+function checkPackageJson(basePath: string): boolean {
+  const packageJsonPath = resolve(basePath, 'package.json');
+  if (!existsSync(packageJsonPath)) {
+    throw new Error(
+      `${packageJsonPath} does not exists. Please run rehearsal migrate inside a project with a valid package.json.`
+    );
+  }
+  return true;
+}
+
+function checkGitIgnore(basePath: string): boolean {
+  const gitignorePath = resolve(basePath, '.gitignore');
+  if (!existsSync(gitignorePath)) {
+    return true;
+  }
+
+  const gitignore = readFileSync(gitignorePath, 'utf-8');
+  const rehearsalRegex = /\.rehearsal.*/g;
+  if (rehearsalRegex.test(gitignore)) {
+    throw new Error(
+      `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
+    );
+  }
+  return true;
+}
 
 export async function validateTask(
   options: MigrateCommandOptions,
@@ -14,25 +62,11 @@ export async function validateTask(
     title: 'Validate project',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (): Promise<void> => {
-      const packageJsonPath = resolve(options.basePath, 'package.json');
-      if (!existsSync(packageJsonPath)) {
-        throw new Error(
-          `${packageJsonPath} does not exists. Please run rehearsal migrate inside a project with a valid package.json.`
-        );
-      }
+      checkPackageJson(options.basePath);
+      checkGitIgnore(options.basePath);
       if (options.regen) {
-        const lintConfigPath = getEsLintConfigPath(options.basePath);
-        if (!lintConfigPath) {
-          logger.warn(
-            `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-          );
-        }
-        const tsConfigPath = resolve(options.basePath, 'tsconfig.json');
-        if (!existsSync(tsConfigPath)) {
-          logger.warn(
-            `${tsConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-          );
-        }
+        checkLintConfig(options.basePath, logger);
+        checkTsConfig(options.basePath, logger);
       }
     },
   };
