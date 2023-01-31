@@ -1,7 +1,11 @@
-import { CodeFixAction, type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
 
-import { codefixes, type DiagnosticWithContext } from '@rehearsal/codefixes';
+import {
+  codefixes,
+  isInstallPackageCommand,
+  type DiagnosticWithContext,
+} from '@rehearsal/codefixes';
 import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
 import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
 
@@ -61,6 +65,9 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       // TODO: User should be able to choose one of the fixes form this list in interactive mode
       const fix = fixes.shift()!;
 
+      if (isInstallPackageCommand(fix)) {
+        await this.applyCommandAction(fix.commands, options);
+      }
       for (const fileTextChange of fix.changes) {
         let text = options.service.getFileText(fileTextChange.fileName);
 
@@ -70,21 +77,11 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
           text = applyTextChange(text, textChange);
         }
-      } else {
-        for (const fileTextChange of fix.changes) {
-          let text = this.service.getFileText(fileTextChange.fileName);
 
         options.service.setFileText(fileTextChange.fileName, text);
         allFixedFiles.add(fileTextChange.fileName);
 
-            text = applyTextChange(text, textChange);
-          }
-
-          this.service.setFileText(fileTextChange.fileName, text);
-          allFixedFiles.add(fileTextChange.fileName);
-
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
-        }
+        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       }
 
       options.reporter.incrementFixedItemCount();
@@ -126,6 +123,19 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     );
   }
 
+  private async applyCommandAction(
+    command: CodeActionCommand[],
+    options: DiagnosticFixPluginOptions
+  ): Promise<boolean> {
+    const result = await options.service.getLanguageService().applyCodeActionCommand(command);
+
+    if (result) {
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Sorts diagnostics by the `start` position with prioritization of diagnostic have codes in `prioritizedCodes`.
    * If the diagnostic has the code mentioned in the `prioritizedCodes` list, it will be moved to the start and will
@@ -154,10 +164,4 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       return left.start - right.start;
     });
   }
-}
-
-function isInstallPackageCommand(
-  fix: CodeFixAction
-): fix is CodeFixAction & { commands: [{ packageName: string }] } {
-  return fix.commands?.length === 1 && 'packageName' in fix.commands[0];
 }
