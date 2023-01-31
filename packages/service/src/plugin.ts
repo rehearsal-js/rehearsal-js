@@ -9,7 +9,6 @@ export interface Plugin<PluginOptions> {
 
 export interface PluginOptions {
   [key: string]: unknown;
-
   service: RehearsalService;
   reporter: Reporter;
   logger?: Logger;

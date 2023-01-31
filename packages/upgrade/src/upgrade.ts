@@ -52,7 +52,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     {
       plugin: new LintPlugin(),
       options: {
-        eslintOptions: { fix: true, useEslintrc: true },
+        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
         reportErrors: false,
       } as LintPluginOption,
     },
@@ -66,7 +66,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     {
       plugin: new LintPlugin(),
       options: {
-        eslintOptions: { fix: true, useEslintrc: true },
+        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
         reportErrors: false,
       } as LintPluginOption,
     },
@@ -79,14 +79,14 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     {
       plugin: new LintPlugin(),
       options: {
-        eslintOptions: { fix: true, useEslintrc: true },
+        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
         reportErrors: false,
       } as LintPluginOption,
     },
     {
       plugin: new LintPlugin(),
       options: {
-        eslintOptions: { fix: false, useEslintrc: true },
+        eslintOptions: { fix: false, useEslintrc: true, cwd: basePath },
         reportErrors: true,
       } as LintPluginOption,
     },
