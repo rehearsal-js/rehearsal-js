@@ -2,6 +2,8 @@
 
 exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 "info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -44,6 +46,8 @@ debug:   fileNames: [\\"<tmp-path>/foo.ts\\",\\"<tmp-path>/depends-on-foo.ts\\",
 
 exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 "info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
 [STARTED] Initialize
 [DATA] Running migration on base
 [SUCCESS] Initialize
@@ -134,6 +138,8 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 5`] = `
 
 exports[`migrate: e2e > default migrate command 1`] = `
 "info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
 [STARTED] Initialize
 [DATA] Running migration on basic
 [SUCCESS] Initialize
@@ -244,6 +250,8 @@ exports[`migrate: e2e > default migrate command 7`] = `
 
 exports[`migrate: e2e > regen result after the first pass 1`] = `
 "info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
 [STARTED] Regenerating report for TS errors and Eslint errors
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
