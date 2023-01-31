@@ -1,17 +1,10 @@
 #!/usr/bin/env node
-import { resolve } from 'path';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import { existsSync } from 'fs-extra';
 
 import { version } from '../../../package.json';
-import {
-  parseCommaSeparatedList,
-  gitIsRepoDirty,
-  resetFiles,
-  getEsLintConfigPath,
-} from '../../utils';
+import { parseCommaSeparatedList, resetFiles, gitIsRepoDirty } from '../../utils';
 import {
   initTask,
   depInstallTask,
@@ -20,6 +13,7 @@ import {
   lintConfigTask,
   createScriptsTask,
   regenTask,
+  validateTask,
 } from './tasks';
 
 import type { MigrateCommandOptions } from '../../types';
@@ -56,6 +50,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const logger = createLogger({
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
   });
+
   logger.info(`@rehearsal/migrate ${version.trim()}`);
 
   if (!options.dryRun && !options.regen) {
@@ -74,6 +69,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   };
 
   const tasks = [
+    await validateTask(options, logger),
     await initTask(options),
     await depInstallTask(options),
     await tsConfigTask(options),
@@ -91,20 +87,10 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         ...defaultListrOption,
       }).run();
     } else if (options.regen) {
-      const lintConfigPath = getEsLintConfigPath(options.basePath);
-      if (!lintConfigPath) {
-        logger.warn(
-          `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-        );
-      }
-      const tsConfigPath = resolve(options.basePath, 'tsconfig.json');
-      if (!existsSync(tsConfigPath)) {
-        logger.warn(
-          `${tsConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-        );
-      }
-
-      const tasks = new Listr([await regenTask(options, logger)], defaultListrOption);
+      const tasks = new Listr(
+        [await validateTask(options, logger), await regenTask(options, logger)],
+        defaultListrOption
+      );
       await tasks.run();
     } else {
       await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
