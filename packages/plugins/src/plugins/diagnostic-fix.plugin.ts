@@ -68,6 +68,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       if (isInstallPackageCommand(fix)) {
         await this.applyCommandAction(fix.commands, options);
       }
+
       for (const fileTextChange of fix.changes) {
         let text = options.service.getFileText(fileTextChange.fileName);
 
@@ -128,10 +129,15 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     options: DiagnosticFixPluginOptions
   ): Promise<boolean> {
     const result = await options.service.getLanguageService().applyCodeActionCommand(command);
+    const ls = options.service.getLanguageService();
 
     if (result) {
+      ls.cleanupSemanticCache();
+      ls.dispose();
       return true;
     }
+
+    ls.dispose();
 
     return false;
   }

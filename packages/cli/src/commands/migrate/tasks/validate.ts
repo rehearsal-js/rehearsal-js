@@ -3,7 +3,7 @@ import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { existsSync, readFileSync } from 'fs-extra';
 
-import { getEsLintConfigPath } from '../../../utils';
+import { getEsLintConfigPath } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 function checkLintConfig(basePath: string, logger: Logger): boolean {

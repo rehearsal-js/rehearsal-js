@@ -42,7 +42,7 @@ describe('utils', () => {
 
   test('determineProjectName()', () => {
     const projectName = determineProjectName();
-    expect(projectName).toEqual('@rehearsal/cli');
+    expect(projectName).toEqual('@rehearsal/utils');
   });
 
   test('timestamp(true)', async () => {

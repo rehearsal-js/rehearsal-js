@@ -113,6 +113,7 @@ importers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/upgrade': workspace:*
       '@rehearsal/utils': workspace:*
+      '@types/which': ^2.0.1
       chalk: ^4.1.2
       commander: ^9.4.0
       compare-versions: ^5.0.1
@@ -127,6 +128,7 @@ importers:
       tmp: ^0.2.1
       typescript: ^4.9.4
       vitest: ^0.23.4
+      which: ^3.0.0
       winston: ^3.3.3
     dependencies:
       '@microsoft/api-documenter': 7.19.14
@@ -149,8 +151,10 @@ importers:
       simple-git: 3.14.1
       tmp: 0.2.1
       typescript: 4.9.4
+      which: 3.0.0
       winston: 3.8.2
     devDependencies:
+      '@types/which': 2.0.1
       vitest: 0.23.4
 
   packages/codefixes:
@@ -379,11 +383,13 @@ importers:
     specifiers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/utils': workspace:*
+      findup-sync: ^5.0.0
       vitest: ^0.23.4
       winston: ^3.6.0
     dependencies:
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/utils': link:../utils
+      findup-sync: 5.0.0
       winston: 3.8.2
     devDependencies:
       vitest: 0.23.4
@@ -457,6 +463,7 @@ importers:
       json5: ^2.2.0
       semver: ^7.3.5
       simple-git: ^3.10.0
+      typescript: ^4.9.5
       vitest: ^0.23.4
       which: ^2.0.2
     dependencies:
@@ -473,6 +480,7 @@ importers:
       which: 2.0.2
     devDependencies:
       '@types/which': 2.0.1
+      typescript: 4.9.5
       vitest: 0.23.4
 
 packages:
@@ -589,11 +597,11 @@ packages:
       '@types/node': 14.18.29
       chalk: 4.1.2
       cosmiconfig: 7.0.1
-      cosmiconfig-typescript-loader: 4.1.0_ai4x64adgq6mr3veeye5bkb3ke
+      cosmiconfig-typescript-loader: 4.1.0_2uclxasecupgvdn72amnhmyg7y
       lodash: 4.17.21
       resolve-from: 5.0.0
-      ts-node: 10.9.1_lmcauzbjtgmfabsylmujigwkbm
-      typescript: 4.9.4
+      ts-node: 10.9.1_yxpazyh7n5pql7jdaglasgwqki
+      typescript: 4.9.5
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -2087,7 +2095,7 @@ packages:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
     dev: true
 
-  /cosmiconfig-typescript-loader/4.1.0_ai4x64adgq6mr3veeye5bkb3ke:
+  /cosmiconfig-typescript-loader/4.1.0_2uclxasecupgvdn72amnhmyg7y:
     resolution: {integrity: sha512-HbWIuR5O+XO5Oj9SZ5bzgrD4nN+rfhrm2PMb0FVx+t+XIvC45n8F0oTNnztXtspWGw0i2IzHaUWFD5LzV1JB4A==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -2098,8 +2106,8 @@ packages:
     dependencies:
       '@types/node': 14.18.29
       cosmiconfig: 7.0.1
-      ts-node: 10.9.1_lmcauzbjtgmfabsylmujigwkbm
-      typescript: 4.9.4
+      ts-node: 10.9.1_yxpazyh7n5pql7jdaglasgwqki
+      typescript: 4.9.5
     dev: true
 
   /cosmiconfig/7.0.1:
@@ -5078,7 +5086,7 @@ packages:
       yn: 3.1.1
     dev: true
 
-  /ts-node/10.9.1_lmcauzbjtgmfabsylmujigwkbm:
+  /ts-node/10.9.1_yxpazyh7n5pql7jdaglasgwqki:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -5104,7 +5112,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.9.4
+      typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -5212,6 +5220,12 @@ packages:
     resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+
+  /typescript/4.9.5:
+    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
 
   /uglify-js/3.17.1:
     resolution: {integrity: sha512-+juFBsLLw7AqMaqJ0GFvlsGZwdQfI2ooKQB39PSBgMnMakcFosi9O8jCwE+2/2nMNcc0z63r9mwjoDG8zr+q0Q==}
@@ -5462,6 +5476,14 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
+
+  /which/3.0.0:
+    resolution: {integrity: sha512-nla//68K9NU6yRiwDY/Q8aU6siKlSs64aEC7+IV56QoAuyQT2ovsJcgGYGyqMOmI/CGN1BOR6mM5EN0FBO+zyQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    hasBin: true
+    dependencies:
+      isexe: 2.0.0
+    dev: false
 
   /winston-transport/4.5.0:
     resolution: {integrity: sha512-YpZzcUzBedhlTAfJg6vJDlyEai/IFMIVcaEZZyl3UXIl4gmqRpU7AE89AHLkbzLUsv0NVmw7ts+iztqKxxPW1Q==}

@@ -1,3 +1,4 @@
+import { dirname } from 'path';
 import {
   ApplyCodeActionCommandResult,
   getDefaultLibFilePath,
@@ -7,6 +8,7 @@ import {
   sys,
 } from 'typescript';
 import { addDep } from '@rehearsal/utils';
+import findupSync from 'findup-sync';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 /**
@@ -22,6 +24,7 @@ export class RehearsalServiceHost implements LanguageServiceHost {
   private readonly currentDirectory: string;
   private readonly fileNames: string[];
   private readonly files: MapLike<{ snapshot: IScriptSnapshot; version: number }> = {};
+  private seenTypingsRequest = new Map<string, string>();
 
   constructor(compilerOptions: CompilerOptions, fileNames: string[]) {
     this.compilerOptions = compilerOptions;
@@ -42,10 +45,25 @@ export class RehearsalServiceHost implements LanguageServiceHost {
   }
 
   async installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult> {
-    // Note: the TSServer is going to swallow the success and failures
-    // @see https://github.com/microsoft/TypeScript/blob/10941888dca8dc68a64fe1729258cf9ffef861ec/src/server/session.ts#L2804
-    await addDep([options.packageName], true);
-    return { successMessage: `Succussfully installed ${options.packageName}` };
+    if (this.seenTypingsRequest.has(options.fileName)) {
+      return { successMessage: `Succussfully installed ${options.packageName}` };
+    }
+
+    // Save the intall request information so we don't continuously download
+    this.seenTypingsRequest.set(options.fileName, options.packageName);
+
+    const nearestPackageJSON = findupSync('package.json', {
+      cwd: dirname(options.fileName),
+    });
+
+    if (nearestPackageJSON) {
+      // Note: the TSServer is going to swallow the success and failures
+      // @see https://github.com/microsoft/TypeScript/blob/10941888dca8dc68a64fe1729258cf9ffef861ec/src/server/session.ts#L2804
+      await addDep([options.packageName], true, { cwd: dirname(nearestPackageJSON) });
+      return { successMessage: `Succussfully installed ${options.packageName}` };
+    }
+
+    return Promise.reject({ error: `Could not install ${options.packageName}` });
   }
 
   /**

@@ -35,10 +35,10 @@
     "chalk": "^4.1.2",
     "commander": "^9.4.0",
     "compare-versions": "^5.0.1",
-    "glob": "^8.0.3",
     "execa": "^5.1.1",
     "findup-sync": "^5.0.0",
     "fs-extra": "^10.0.0",
+    "glob": "^8.0.3",
     "json5": "^2.2.0",
     "semver": "^7.3.5",
     "simple-git": "^3.10.0",
@@ -46,7 +46,8 @@
   },
   "devDependencies": {
     "@types/which": "^2.0.1",
-    "vitest": "^0.23.4"
+    "vitest": "^0.23.4",
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"
