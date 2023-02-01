@@ -176,6 +176,7 @@ importers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/service': workspace:*
       '@rehearsal/utils': workspace:*
+      '@types/uuid': ^9.0.0
       execa: ^5.1.1
       listr2: ^5.0.5
       uuid: 8.3.2
@@ -189,6 +190,7 @@ importers:
       execa: 5.1.1
       winston: 3.8.2
     devDependencies:
+      '@types/uuid': 9.0.0
       listr2: 5.0.5
       uuid: 8.3.2
       vitest: 0.23.4
@@ -1297,6 +1299,10 @@ packages:
 
   /@types/toposort/2.0.3:
     resolution: {integrity: sha512-jRtyvEu0Na/sy0oIxBW0f6wPQjidgVqlmCTJVHEGTNEUdL1f0YSvdPzHY7nX7MUWAZS6zcAa0KkqofHjy/xDZQ==}
+    dev: true
+
+  /@types/uuid/9.0.0:
+    resolution: {integrity: sha512-kr90f+ERiQtKWMz5rP32ltJ/BtULDI5RVO0uavn1HQUOwjx0R1h0rnDYNL0CepF1zL5bSY6FISAfd9tOdDhU5Q==}
     dev: true
 
   /@types/which/2.0.1:
