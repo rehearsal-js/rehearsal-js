@@ -128,16 +128,12 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     command: CodeActionCommand[],
     options: DiagnosticFixPluginOptions
   ): Promise<boolean> {
-    const result = await options.service.getLanguageService().applyCodeActionCommand(command);
-    const ls = options.service.getLanguageService();
-
-    if (result) {
+    try {
+      await options.service.getLanguageService().applyCodeActionCommand(command);
       return true;
+    } catch (e) {
+      return false;
     }
-
-    ls.dispose();
-
-    return false;
   }
 
   /**
