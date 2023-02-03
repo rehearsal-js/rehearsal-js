@@ -38,15 +38,20 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
   ];
 
   async run(fileName: string, options: DiagnosticFixPluginOptions): PluginResult {
-    let diagnostics = this.getDiagnostics(options.service, fileName);
-
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
 
-    while (diagnostics.length > 0) {
-      const diagnostic = diagnostics.shift()!;
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const queue = new Queue();
 
+    this.getDiagnostics(options.service, fileName).forEach((d) => {
+      queue.enqueue(d);
+    });
+
+    let diagnostic: DiagnosticWithContext | undefined;
+
+    while ((diagnostic = queue.dequeue())) {
       if (!diagnostic.node) {
         DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
         continue;
@@ -88,7 +93,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       options.reporter.incrementFixedItemCount();
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(options.service, fileName);
+      this.getDiagnostics(options.service, fileName).forEach((d) => queue.enqueue(d));
     }
 
     return Array.from(allFixedFiles);
@@ -163,5 +168,91 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
       return left.start - right.start;
     });
+  }
+}
+
+type StartsAndCodes = [start: number, codes: number[]];
+
+class Queue {
+  private diagnostics: DiagnosticWithContext[] = [];
+  private codesAndStart: StartsAndCodes = [NaN, []];
+  private proccessed: StartsAndCodes = [NaN, []];
+
+  enqueue(diagnostic: DiagnosticWithContext): void {
+    const hasDiagnosticAtOffset = this.hasDiagnosticAtOffset(diagnostic);
+    const hasProccessed = this.hasProccessed(diagnostic);
+
+    if (hasDiagnosticAtOffset && !hasProccessed) {
+      const startOffset = this.codesAndStart.indexOf(diagnostic.start);
+
+      const codes = this.codesAndStart[startOffset + 1];
+
+      if (Array.isArray(codes)) {
+        codes.push(diagnostic.code);
+        this.diagnostics.push(diagnostic);
+      } else {
+        throw Error('Invariant reached, diagnostic queue is out of sync. Please create an issue.');
+      }
+    } else if (!hasDiagnosticAtOffset) {
+      this.codesAndStart.push(diagnostic.start, [diagnostic.code]);
+    }
+  }
+
+  dequeue(): DiagnosticWithContext | undefined {
+    const diagnostic = this.diagnostics.shift();
+
+    if (diagnostic) {
+      const index = this.codesAndStart.indexOf(diagnostic.start);
+
+      const codes = this.codesAndStart[index + 1];
+
+      if (Array.isArray(codes)) {
+        if (codes.length === 0) {
+          // remove the tuple
+          this.codesAndStart.splice(index, 2);
+        } else {
+          // just remove the code from the array
+          const codeIndex = codes.indexOf(diagnostic.code);
+          codes.splice(codeIndex);
+        }
+      } else {
+        throw Error('Invariant reached, diagnostic queue is out of sync. Please create an issue.');
+      }
+
+      const proccessedIndex = this.proccessed.indexOf(diagnostic.start);
+
+      if (proccessedIndex === -1) {
+        // first time we have processed at this offset
+        this.proccessed.push(diagnostic.start, [diagnostic.code]);
+      } else {
+        // multiple diagnostics at the offset track them so we don't loop forever
+        const codes = this.proccessed[proccessedIndex + 1];
+
+        if (Array.isArray(codes)) {
+          codes.push(diagnostic.code);
+        } else {
+          throw Error(
+            'Invariant reached, diagnostic queue is out of sync. Please create an issue.'
+          );
+        }
+      }
+
+      return diagnostic;
+    }
+  }
+
+  private hasProccessed(diagnostic: DiagnosticWithContext): boolean {
+    const index = this.proccessed.indexOf(diagnostic.start);
+    if (index === -1) {
+      return false;
+    }
+
+    const codes = this.proccessed[index + 1];
+
+    return Array.isArray(codes) && codes.includes(diagnostic.code);
+  }
+
+  private hasDiagnosticAtOffset(diagnostic: DiagnosticWithContext): boolean {
+    return this.codesAndStart.includes(diagnostic.start);
   }
 }
