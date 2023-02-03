@@ -1,7 +1,6 @@
 Typescript doesn't provide a functionality to get lists all of available fixIds or fixNames.
 You can find hints on how to get those lists below.
 
-
 ### fixNames
 
 The way to get all fixNames is to walk through TypeScript source code codefix files:
@@ -48,6 +47,7 @@ export const availableCodeFixNames = [
   'fixClassIncorrectlyImplementsInterface', // fixClassIncorrectlyImplementsInterface.ts
   'classSuperMustPrecedeThisAccess', // fixClassSuperMustPrecedeThisAccess.ts
   'constructorForDerivedNeedSuperCall', // fixConstructorForDerivedNeedSuperCall.ts
+  'fixCannotFindModule', // fixCannotFindModule.ts
   'fixEnableJsxFlag', // fixEnableJsxFlag.ts
   'fixExpectedComma', // fixExpectedComma.ts
   'extendsInterfaceBecomesImplements', // fixExtendsInterfaceBecomesImplements.ts
@@ -89,7 +89,6 @@ export const availableCodeFixNames = [
 ];
 ```
 
-
 ### fixIds to error codes map
 
 You can find the map of all available fixIds with corresponding errors below.
@@ -111,13 +110,12 @@ function getSupportedErrorCodes() {
 then create a .ts file with the content below and run it:
 
 ```typescript
-  import { getSupportedCodeFixes } from 'typescript';
-  const map = getSupportedCodeFixes();
-  console.log(map);
+import { getSupportedCodeFixes } from 'typescript';
+const map = getSupportedCodeFixes();
+console.log(map);
 ```
 
 Don't forget to revert getSupportedErrorCodes content.
-
 
 ```typescript
 export const codeFixIdToCodesMap: { [key: string]: number[] } = {

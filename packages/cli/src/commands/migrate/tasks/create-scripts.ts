@@ -1,6 +1,6 @@
 import { ListrTask } from 'listr2';
 
-import { addPackageJsonScripts } from '../../../utils';
+import { addPackageJsonScripts } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export async function createScriptsTask(options: MigrateCommandOptions): Promise<ListrTask> {

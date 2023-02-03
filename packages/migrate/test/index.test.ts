@@ -1,8 +1,9 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import findupSync from 'findup-sync';
 import { migrate, MigrateInput } from '../src';
 import type { Logger } from 'winston';
 
@@ -113,6 +114,20 @@ describe('migrate', () => {
     const files = ['complex.js', 'salutations.ts'];
     const sourceFiles = prepareInputFiles(files);
 
+    const pkgJSONPath = findupSync('package.json', {
+      cwd: __dirname,
+    });
+
+    const lockFilePath = findupSync('pnpm-lock.yaml', {
+      cwd: __dirname,
+    });
+
+    expect(pkgJSONPath).toBeTruthy();
+    expect(lockFilePath).toBeTruthy();
+
+    const originalPackageJSON = readFileSync(pkgJSONPath!, 'utf-8');
+    const originalLockFile = readFileSync(lockFilePath!, 'utf-8');
+
     const input: MigrateInput = {
       basePath: join(basePath, 'tmp'),
       sourceFiles,
@@ -138,5 +153,13 @@ describe('migrate', () => {
 
     expect(report.summary.basePath).toMatch(/migrate/);
     rmSync(jsonReport);
+
+    const pkgJSON = JSON.parse(readFileSync(pkgJSONPath!, 'utf-8'));
+
+    expect(pkgJSON.devDependencies['@types/uuid']).toBeTruthy();
+
+    // cleanup
+    writeFileSync(pkgJSONPath!, originalPackageJSON);
+    writeFileSync(lockFilePath!, originalLockFile);
   });
 });

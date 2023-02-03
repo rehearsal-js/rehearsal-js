@@ -38,7 +38,9 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
+    "findup-sync": "^5.0.0",
     "listr2": "^5.0.5",
+    "uuid": "8.3.2",
     "vitest": "^0.23.4"
   },
   "peerDependencies": {

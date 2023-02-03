@@ -5,5 +5,10 @@
     "outDir": "../dist/test/"
   },
   "exclude": ["fixtures"],
-  "include": [".", "../src", "../package.json"]
+  "include": [".", "../src", "../package.json"],
+  "references": [
+    {
+      "path": "../../utils"
+    }
+  ]
 }

@@ -6,14 +6,14 @@ import { migrate } from '@rehearsal/migrate';
 import chalk from 'chalk';
 import execa = require('execa');
 
-import { generateReports, getReportSummary } from '../../../helpers/report';
 import {
   determineProjectName,
   openInEditor,
   getPathToBinary,
   prettyGitDiff,
   gitAddIfInRepo,
-} from '../../../utils';
+} from '@rehearsal/utils';
+import { generateReports, getReportSummary } from '../../../helpers/report';
 import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';

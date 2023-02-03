@@ -18,7 +18,7 @@ import {
   timestamp,
   getLockfilePath,
   getEditorBinWithArgs,
-} from '../../src/utils';
+} from '../src/cli';
 
 describe('utils', () => {
   describe.each([
@@ -42,7 +42,7 @@ describe('utils', () => {
 
   test('determineProjectName()', () => {
     const projectName = determineProjectName();
-    expect(projectName).toEqual('@rehearsal/cli');
+    expect(projectName).toEqual('@rehearsal/utils');
   });
 
   test('timestamp(true)', async () => {

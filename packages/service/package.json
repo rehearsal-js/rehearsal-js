@@ -31,6 +31,8 @@
   },
   "dependencies": {
     "@rehearsal/reporter": "workspace:*",
+    "@rehearsal/utils": "workspace:*",
+    "findup-sync": "^5.0.0",
     "winston": "^3.6.0"
   },
   "devDependencies": {

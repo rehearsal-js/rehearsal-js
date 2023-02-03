@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { existsSync, writeJSONSync } from 'fs-extra';
 
-import { readJSON, writeTSConfig, gitAddIfInRepo } from '../../../utils';
+import { readJSON, writeTSConfig, gitAddIfInRepo } from '@rehearsal/utils';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
