@@ -1,16 +1,12 @@
 import { dirname, resolve } from 'path';
 import {
   DiagnosticCheckPlugin,
-  DiagnosticCheckPluginOptions,
   DiagnosticFixPlugin,
-  DiagnosticFixPluginOptions,
   LintPlugin,
-  LintPluginOption,
   ReRehearsePlugin,
-  ReRehearsePluginOptions,
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
-import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
+import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import { debug } from 'debug';
 import type { Logger } from 'winston';
@@ -39,59 +35,6 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
 
-  const commentTag = '@rehearsal';
-
-  // TODO: Wrap into PluginRunner
-  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
-    {
-      plugin: new ReRehearsePlugin(),
-      options: {
-        commentTag,
-      } as ReRehearsePluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new DiagnosticFixPlugin(),
-      options: {
-        safeFixes: true,
-        strictTyping: true,
-      } as DiagnosticFixPluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new DiagnosticCheckPlugin(),
-      options: {
-        commentTag,
-      } as DiagnosticCheckPluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: false, useEslintrc: true, cwd: basePath },
-        reportErrors: true,
-      } as LintPluginOption,
-    },
-  ];
-
   DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);
 
   const configFile = findConfigFile(basePath, sys.fileExists, configName);
@@ -115,30 +58,39 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   DEBUG_CALLBACK('Config file content: %O', { options, fileNames });
 
-  const service = new RehearsalService(options, fileNames);
+  const commentTag = '@rehearsal';
 
-  for (const fileName of fileNames) {
-    DEBUG_CALLBACK('Processing file: %O', fileName);
+  const rehearsal = new RehearsalService(options, fileNames);
 
-    let allChangedFiles: Set<string> = new Set();
+  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
+    .queue(new ReRehearsePlugin(), {
+      commentTag,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new DiagnosticFixPlugin(), {
+      safeFixes: true,
+      strictTyping: true,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new DiagnosticCheckPlugin(), {
+      commentTag,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
+      reportErrors: true,
+    });
 
-    for (const plugin of plugins) {
-      const changedFiles = await plugin.plugin.run(fileName, {
-        ...plugin.options,
-        service: service,
-        reporter: reporter,
-        logger: logger,
-      });
-      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
-    }
-
-    DEBUG_CALLBACK('Plugins Complete on: %O', fileName);
-
-    // Save file to the filesystem
-    allChangedFiles.forEach((file) => service.saveFile(file));
-    DEBUG_CALLBACK('Files Saved: %O', allChangedFiles);
-  }
-  DEBUG_CALLBACK('Upgrade finished');
+  await runner.run(fileNames);
 
   return {
     basePath,

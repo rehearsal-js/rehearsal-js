@@ -1,13 +1,6 @@
 import { dirname, resolve } from 'path';
-import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
-import {
-  DiagnosticCheckPlugin,
-  DiagnosticCheckPluginOptions,
-  LintPlugin,
-  LintPluginOption,
-  ReRehearsePlugin,
-  ReRehearsePluginOptions,
-} from '@rehearsal/plugins';
+import { PluginsRunner, RehearsalService } from '@rehearsal/service';
+import { DiagnosticCheckPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
@@ -32,47 +25,8 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   const configName = input.configName || 'tsconfig.json';
   const reporter = input.reporter;
   const logger = input.logger;
-  // output is only for tests
+
   const listrTask = input.task || { output: '' };
-
-  const commentTag = '@rehearsal';
-
-  // TODO: Wrap into PluginRunner
-  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
-    {
-      plugin: new ReRehearsePlugin(),
-      options: {
-        commentTag,
-      } as ReRehearsePluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new DiagnosticCheckPlugin(),
-      options: {
-        commentTag,
-      } as DiagnosticCheckPluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: false, useEslintrc: true, cwd: basePath },
-        reportErrors: true,
-      } as LintPluginOption,
-    },
-  ];
 
   logger?.debug('migration regen started');
   logger?.debug(`Base path: ${basePath}`);
@@ -99,25 +53,31 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
-  const service = new RehearsalService(options, fileNames);
+  const commentTag = '@rehearsal';
 
-  for (const fileName of fileNames) {
-    listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
+  const rehearsal = new RehearsalService(options, fileNames);
 
-    let allChangedFiles: Set<string> = new Set();
+  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
+    .queue(new ReRehearsePlugin(), {
+      commentTag,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new DiagnosticCheckPlugin(), {
+      commentTag,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
+      reportErrors: true,
+    });
 
-    for (const plugin of plugins) {
-      const changedFiles = await plugin.plugin.run(fileName, {
-        ...plugin.options,
-        service: service,
-        reporter: reporter,
-        logger: logger,
-      });
-      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
-    }
-
-    allChangedFiles.forEach((file) => service.saveFile(file));
-  }
+  await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
 
   return {
     basePath,
