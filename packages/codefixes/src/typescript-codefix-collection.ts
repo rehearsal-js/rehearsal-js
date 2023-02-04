@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'path';
 import {
+  type CodeActionCommand,
   type CodeFixAction,
   FileTextChanges,
   type FormatCodeSettings,
@@ -7,7 +8,6 @@ import {
   SemicolonPreference,
   TextChange,
   type UserPreferences,
-  type CodeActionCommand,
 } from 'typescript';
 import { CodeFixCollectionFilter } from './types';
 import type { CodeFixCollection, DiagnosticWithContext } from './types';
@@ -139,9 +139,15 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
           continue;
         }
 
-        // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and sane cases with `any[]`
+        // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and same cases with `any[]`
         const anyTypeUsageRegex = /[:<|]\s*any|any(\[])*\s*[|>]/i;
         if (anyTypeUsageRegex.test(textChanges.newText)) {
+          continue;
+        }
+
+        // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, and same cases with `object[]`
+        const objectTypeUsageRegex = /[:<|]\s*object|object(\[])*\s*[|>]/i;
+        if (objectTypeUsageRegex.test(textChanges.newText)) {
           continue;
         }
 
