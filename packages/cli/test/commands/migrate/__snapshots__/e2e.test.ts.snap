@@ -12,7 +12,7 @@ exports[`migrate: e2e > Print debug messages with verbose 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [SUCCESS] Add package scripts
@@ -56,7 +56,7 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [SUCCESS] Add package scripts
@@ -148,7 +148,7 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [SUCCESS] Add package scripts

@@ -1,14 +1,25 @@
-import { resolve } from 'path';
+import { resolve, extname } from 'path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra';
 import { cosmiconfigSync } from 'cosmiconfig';
 import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
-import defaultConfig from '../../../configs/default-eslint';
+import { stringify as yamlStringify } from 'yaml';
+import defaultConfig from '../../../configs/eslint-default';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
-const REHEARSAL_CONFIG_FILENAME = '.rehearsal-eslintrc.js';
-const REHEARSAL_CONFIG_RELATIVE_PATH = `./${REHEARSAL_CONFIG_FILENAME}`;
+enum REHEARSAL_CONFIG_FILENAMES {
+  JS = '.rehearsal-eslintrc.js',
+  YAML = '.rehearsal-eslintrc.yml',
+  JSON = '.rehearsal-eslintrc.json',
+}
+
+enum FORMAT {
+  JS = 'js',
+  JSON = 'json',
+  YAML = 'yaml',
+  YML = 'yml',
+}
 
 export async function lintConfigTask(
   options: MigrateCommandOptions,
@@ -22,39 +33,46 @@ export async function lintConfigTask(
       if (context) {
         ctx = { ...ctx, ...context };
       }
-      const relativeConfigPath = getEsLintConfigPath(options.basePath);
 
       if (ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
         await ctx.userConfig.lintSetup();
       } else {
         // only run the default process with no custom config provided
+        const relativeConfigPath = getEsLintConfigPath(options.basePath);
+        const format = getFormat(relativeConfigPath);
+        const rehearsalConfigPath = getRehearsalFilename(format);
+
         // create .rehearsal-eslintrc.js
-        await createRehearsalConfig(options.basePath);
+        await createRehearsalConfig(options.basePath, format);
 
         if (relativeConfigPath) {
-          task.output = `${relativeConfigPath} already exists, extending Rehearsal default typescript-related config`;
-          task.title = `Update eslintrc.js`;
+          task.output = `${relativeConfigPath} already exists, extending Rehearsal default eslint-related config`;
+          task.title = `Update eslintrc.${format}`;
 
           const absoluteConfigPath = resolve(relativeConfigPath);
 
           await extendsRehearsalInCurrentConfig(
             absoluteConfigPath,
-            REHEARSAL_CONFIG_RELATIVE_PATH,
+            rehearsalConfigPath,
+            format,
             options.basePath
           );
         } else {
-          task.output = `Create .eslintrc.js, extending Rehearsal default typescript-related config`;
-          await extendsRehearsalInNewConfig(options.basePath, REHEARSAL_CONFIG_RELATIVE_PATH);
+          task.output = `Create .eslintrc.${FORMAT.JS}, extending Rehearsal default eslint-related config`;
+          await extendsRehearsalInNewConfig(options.basePath, `.eslintrc.${FORMAT.JS}`);
         }
       }
     },
   };
 }
 
-async function createRehearsalConfig(basePath: string): Promise<void> {
-  const rehearsalConfigStr = 'module.exports = ' + JSON.stringify(defaultConfig, null, 2);
-  const rehearsalConfigPath = resolve(basePath, REHEARSAL_CONFIG_FILENAME);
+async function createRehearsalConfig(basePath: string, format: FORMAT): Promise<void> {
+  const filename = getRehearsalFilename(format);
+
+  const rehearsalConfigStr = getRehearsalConfigStr(format);
+  const rehearsalConfigPath = resolve(basePath, filename);
+
   outputFileSync(rehearsalConfigPath, rehearsalConfigStr);
   await gitAddIfInRepo(rehearsalConfigPath, basePath); // stage '.rehearsal-eslintrc.js'; if in a git repo
 }
@@ -62,6 +80,7 @@ async function createRehearsalConfig(basePath: string): Promise<void> {
 async function extendsRehearsalInCurrentConfig(
   configPath: string,
   rehearsalConfigRelativePath: string,
+  format: FORMAT,
   basePath: string = process.cwd()
 ): Promise<void> {
   const projectName = determineProjectName(basePath);
@@ -73,48 +92,124 @@ async function extendsRehearsalInCurrentConfig(
   if (oldConfig) {
     newConfig = {
       ...oldConfig,
-      extends: Array.from(new Set([...(oldConfig.extends || []), rehearsalConfigRelativePath])),
+      extends: Array.from(
+        new Set([...(oldConfig.extends || []), `./${rehearsalConfigRelativePath}`])
+      ),
     };
+    const configStr = formatConfig(newConfig, format);
+    await writeLintConfig(configPath, configStr, basePath, format);
   } else {
-    newConfig = `
-    module.exports = {
-      extends: ['${rehearsalConfigRelativePath}']
-    }
-    `;
+    extendsRehearsalInNewConfig(basePath, `.eslintrc.${FORMAT.JS}`);
   }
-
-  const configStr = `
-  module.exports = ${JSON.stringify(newConfig, null, 2)}
-  `;
-  await writeLintConfig(configPath, configStr, basePath);
 }
 
 async function extendsRehearsalInNewConfig(
   basePath: string,
-  rehearsalConfigRelativePath: string
+  configRelativePath: string
 ): Promise<void> {
-  const configPath = resolve(basePath, '.eslintrc.js');
+  const configPath = resolve(basePath, configRelativePath);
   const configStr = `
   module.exports = {
-    extends: ['${rehearsalConfigRelativePath}']
+    extends: ['./${REHEARSAL_CONFIG_FILENAMES.JS}']
   }
   `;
-  await writeLintConfig(configPath, configStr, basePath);
+  await writeLintConfig(configPath, configStr, basePath, FORMAT.JS);
 }
 
 async function writeLintConfig(
   configPath: string,
   config: string,
-  basePath: string = process.cwd()
+  basePath: string = process.cwd(),
+  format: FORMAT
 ): Promise<void> {
   outputFileSync(configPath, config);
-  const formattedConfig = await formatLintConfig(config, configPath);
-  outputFileSync(configPath, formattedConfig);
+
+  //yml and ymal don't need formatting. yamlStringify does the formatting already.
+  if (format === FORMAT.JS || format === FORMAT.JSON) {
+    const formattedConfig = await lintConfig(config, configPath, basePath);
+    outputFileSync(configPath, formattedConfig);
+  }
   await gitAddIfInRepo(configPath, basePath); // stage .eslintrc.js if in a git repo
 }
 
-async function formatLintConfig(configStr: string, filePath: string): Promise<string> {
-  const eslint = new ESLint({ fix: true, useEslintrc: true });
+async function lintConfig(
+  configStr: string,
+  filePath: string,
+  basePath: string
+): Promise<string | undefined> {
+  const eslint = new ESLint({ fix: true, useEslintrc: true, cwd: basePath });
   const [report] = await eslint.lintText(configStr, { filePath: filePath });
   return report.output ?? '';
+}
+
+function getRehearsalFilename(format: FORMAT): string {
+  switch (format) {
+    case FORMAT.JS:
+      return REHEARSAL_CONFIG_FILENAMES.JS;
+    case FORMAT.JSON:
+      return REHEARSAL_CONFIG_FILENAMES.JSON;
+    case FORMAT.YAML:
+    case FORMAT.YML:
+      return REHEARSAL_CONFIG_FILENAMES.YAML;
+    default:
+      return REHEARSAL_CONFIG_FILENAMES.JS;
+  }
+}
+
+function formatConfig(configObj: { [key: string]: unknown }, extension: string): string {
+  let configStr = '';
+  switch (extension) {
+    case FORMAT.JS:
+      configStr = `
+      module.exports = ${JSON.stringify(configObj, null, 2)}
+      `;
+      break;
+    case FORMAT.JSON:
+      configStr = JSON.stringify(configObj, null, 2);
+      break;
+    case FORMAT.YAML:
+    case FORMAT.YML:
+      configStr = yamlStringify(configObj);
+      break;
+    default:
+  }
+  return configStr;
+}
+
+function getFormat(configPath: string | undefined): FORMAT {
+  if (!configPath) {
+    return FORMAT.JS;
+  }
+  const extension = extname(configPath).replace(/\./, '');
+  return extension as FORMAT;
+}
+
+function getRehearsalConfigStr(format: FORMAT): string {
+  switch (format) {
+    case FORMAT.YAML:
+    case FORMAT.YML:
+      return getYAMLConfigStr();
+    case FORMAT.JSON:
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      return JSON.stringify(require('../../../configs/eslint.json'), null, 2);
+    default:
+      return `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`;
+  }
+}
+
+function getYAMLConfigStr(): string {
+  return `
+  parser: '@typescript-eslint/parser'
+  parserOptions: 
+    sourceType: module
+  plugins: 
+    - '@typescript-eslint'
+    - prettier
+  extends: 
+    - 'plugin:@typescript-eslint/eslint-recommended'
+    - 'plugin:@typescript-eslint/recommended'
+    - 'eslint:recommended'
+    - 'plugin:prettier/recommended'
+    - prettier
+  `;
 }

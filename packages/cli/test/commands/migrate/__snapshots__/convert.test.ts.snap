@@ -12,7 +12,7 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -88,7 +88,7 @@ exports[`Task: convert > accept changes without git 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -157,7 +157,7 @@ exports[`Task: convert > againt specific basePath via -basePath option 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /index.js to /index.ts
@@ -207,7 +207,7 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -228,7 +228,7 @@ exports[`Task: convert > generate reports 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -279,7 +279,7 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -330,7 +330,7 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -382,7 +382,7 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
