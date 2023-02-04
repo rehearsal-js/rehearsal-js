@@ -35,8 +35,8 @@
   },
   "devDependencies": {
     "@types/prettier": "^2.7.2",
-    "prettier": "^2.8.1",
-    "vitest": "^0.23.4"
+    "prettier": "^2.8.3",
+    "vitest": "^0.28.4"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"

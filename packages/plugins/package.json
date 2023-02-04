@@ -34,13 +34,13 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "debug": "^4.3.2",
-    "eslint": "^8.26.0"
+    "debug": "^4.3.4",
+    "eslint": "^8.33.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.4.1",
-    "fixturify-project": "^5.0.3",
-    "vitest": "^0.23.4"
+    "@types/eslint": "^8.21.0",
+    "fixturify-project": "^5.2.0",
+    "vitest": "^0.28.4"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"

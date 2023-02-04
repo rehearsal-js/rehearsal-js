@@ -35,12 +35,12 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "commander": "^9.4.0",
-    "debug": "^4.3.2",
-    "winston": "^3.6.0"
+    "commander": "^10.0.0",
+    "debug": "^4.3.4",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.23.4"
+    "vitest": "^0.28.4"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"
