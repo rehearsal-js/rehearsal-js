@@ -121,7 +121,10 @@ export async function initTask(
         filterByPackageName: [],
       });
       const files: SourceFile[] = strategy.getMigrationOrder();
-      DEBUG_CALLBACK('migrationOrder', files);
+      DEBUG_CALLBACK(
+        'migrationOrder',
+        files.map((file) => file.relativePath)
+      );
 
       ctx.strategy = strategy;
       ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
