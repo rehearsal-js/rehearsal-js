@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "1.0.5-beta",
+  "version": "1.0.6-beta",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -52,8 +52,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.28.4",
-    "@types/which": "^2.0.1"
+    "@types/which": "^2.0.1",
+    "vitest": "^0.28.4"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {

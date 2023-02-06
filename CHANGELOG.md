@@ -1,3 +1,24 @@
+## <small>1.0.6-beta (2023-02-06)</small>
+
+* chore: release script ([3e5ef38](https://github.com/rehearsal-js/rehearsal-js/commit/3e5ef38))
+* chore: update dependencies (#701) ([e0d686a](https://github.com/rehearsal-js/rehearsal-js/commit/e0d686a)), closes [#701](https://github.com/rehearsal-js/rehearsal-js/issues/701)
+* feat: attempt to download types (#666) ([17dc23a](https://github.com/rehearsal-js/rehearsal-js/commit/17dc23a)), closes [#666](https://github.com/rehearsal-js/rehearsal-js/issues/666)
+* feat: ignore fixes with `object` type, same was as `any` (#700) ([50d755c](https://github.com/rehearsal-js/rehearsal-js/commit/50d755c)), closes [#700](https://github.com/rehearsal-js/rehearsal-js/issues/700)
+* feat: plugin options (#675) ([a27cfb7](https://github.com/rehearsal-js/rehearsal-js/commit/a27cfb7)), closes [#675](https://github.com/rehearsal-js/rehearsal-js/issues/675)
+* feat: validate task (#681) ([7ad6fb0](https://github.com/rehearsal-js/rehearsal-js/commit/7ad6fb0)), closes [#681](https://github.com/rehearsal-js/rehearsal-js/issues/681)
+* feat(migration-graph): refactor console.warn statements to debug (#628) ([5940432](https://github.com/rehearsal-js/rehearsal-js/commit/5940432)), closes [#628](https://github.com/rehearsal-js/rehearsal-js/issues/628)
+* fix: .rehearsal in .gitignore (#682) ([e784abb](https://github.com/rehearsal-js/rehearsal-js/commit/e784abb)), closes [#682](https://github.com/rehearsal-js/rehearsal-js/issues/682)
+* fix: fetch eslint config error (#672) ([6069210](https://github.com/rehearsal-js/rehearsal-js/commit/6069210)), closes [#672](https://github.com/rehearsal-js/rehearsal-js/issues/672)
+* fix: fix `regen` version (#687) ([6856657](https://github.com/rehearsal-js/rehearsal-js/commit/6856657)), closes [#687](https://github.com/rehearsal-js/rehearsal-js/issues/687)
+* fix: logging of migration order (#704) ([c075a08](https://github.com/rehearsal-js/rehearsal-js/commit/c075a08)), closes [#704](https://github.com/rehearsal-js/rehearsal-js/issues/704)
+* fix: print sonarqube report (#676) ([5ff57d5](https://github.com/rehearsal-js/rehearsal-js/commit/5ff57d5)), closes [#676](https://github.com/rehearsal-js/rehearsal-js/issues/676)
+* fix: provide cwd to lint plugin (#685) ([735ad1d](https://github.com/rehearsal-js/rehearsal-js/commit/735ad1d)), closes [#685](https://github.com/rehearsal-js/rehearsal-js/issues/685)
+* fix: refactor blocking code from all plugins (#699) ([1e4c0ae](https://github.com/rehearsal-js/rehearsal-js/commit/1e4c0ae)), closes [#699](https://github.com/rehearsal-js/rehearsal-js/issues/699)
+* fix: use relative path in state file (#677) ([2d51570](https://github.com/rehearsal-js/rehearsal-js/commit/2d51570)), closes [#677](https://github.com/rehearsal-js/rehearsal-js/issues/677)
+* fix: when packages aren't found we need to swallow the error (#694) ([31433a5](https://github.com/rehearsal-js/rehearsal-js/commit/31433a5)), closes [#694](https://github.com/rehearsal-js/rehearsal-js/issues/694)
+
+
+
 ## <small>1.0.5-beta (2023-01-30)</small>
 
 * feat: add --regen option for migrate (#661) ([28942a8](https://github.com/rehearsal-js/rehearsal-js/commit/28942a8)), closes [#661](https://github.com/rehearsal-js/rehearsal-js/issues/661)
