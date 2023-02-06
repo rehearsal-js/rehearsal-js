@@ -127,9 +127,9 @@ function publish() {
   execSync(gitPushTags);
 
   // publish
-  const pnpmPublish = `pnpm -r publish`;
-  console.log(pnpmPublish);
-  execSync(pnpmPublish);
+  // const pnpmPublish = `pnpm -r publish`;
+  // console.log(pnpmPublish);
+  // execSync(pnpmPublish);
 
   // done
   console.log(`Released ${newVersion} has been published`);
