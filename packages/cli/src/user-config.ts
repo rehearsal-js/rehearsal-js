@@ -2,19 +2,25 @@ import { resolve } from 'path';
 import { addDep } from '@rehearsal/utils';
 import execa from 'execa';
 import { readJSONSync } from 'fs-extra';
-
-import type { CliCommand, CustomCommandConfig, CustomConfig } from './types';
+import type { MigrateCommandConfig, UpgradeCommandConfig, CliCommand, CustomConfig } from './types';
 
 // Storage and runner for user custom cli config
 export class UserConfig {
   public basePath: string;
-  public config: CustomCommandConfig;
+  public config?: MigrateCommandConfig | UpgradeCommandConfig;
+
+  constructor(basePath: string, configPath: string, command: CliCommand) {
+    const config: CustomConfig = readJSONSync(resolve(basePath, configPath));
+
+    this.config = config[command];
+
+    this.basePath = basePath;
+  }
 
   public get hasDependencies(): boolean {
     return (
-      this.config.install !== undefined &&
-      (this.config.install.dependencies !== undefined ||
-        this.config.install.devDependencies !== undefined)
+      !!this.config?.install &&
+      (!!this.config?.install?.dependencies || !!this.config?.install?.devDependencies)
     );
   }
 
@@ -24,12 +30,6 @@ export class UserConfig {
 
   public get hasLintSetup(): boolean {
     return !!this.config?.setup?.lint;
-  }
-
-  constructor(basePath: string, configPath: string, command: CliCommand) {
-    const config: CustomConfig = readJSONSync(resolve(basePath, configPath));
-    this.config = config[command]!;
-    this.basePath = basePath;
   }
 
   async install(): Promise<void> {
@@ -63,11 +63,11 @@ export class UserConfig {
     }
   }
 
-  get exclude(): Array<string> | undefined {
-    return this.config?.exclude;
+  get exclude(): string[] | undefined {
+    return (this.config as MigrateCommandConfig)?.exclude;
   }
 
-  get include(): Array<string> | undefined {
-    return this.config?.include;
+  get include(): string[] | undefined {
+    return (this.config as MigrateCommandConfig)?.include;
   }
 }
