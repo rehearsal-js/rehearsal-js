@@ -5,6 +5,8 @@ import type { State } from './helpers/state';
 export type CliCommand = 'upgrade' | 'migrate';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 
+export * from './configs/rehearsal-config';
+
 export type MigrateCommandOptions = {
   basePath: string;
   entrypoint: string;
@@ -42,31 +44,6 @@ export type UpgradeCommandOptions = {
   outputPath: string;
   tsVersion: string;
   dryRun: boolean;
-};
-
-export type DependencyConfig = {
-  dependencies?: string[];
-  devDependencies?: string[];
-};
-
-export type SetupConfigCommand = {
-  command: string;
-  args: string[];
-};
-
-export type SetupConfig = {
-  ts?: SetupConfigCommand;
-  lint?: SetupConfigCommand;
-};
-
-export type CustomCommandConfig = {
-  install?: DependencyConfig;
-  setup?: SetupConfig;
-};
-
-export type CustomConfig = {
-  upgrade?: CustomCommandConfig;
-  migrate?: CustomCommandConfig;
 };
 
 export type PackageSelection = {
