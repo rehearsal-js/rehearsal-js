@@ -1,4 +1,4 @@
-export { Plugin, PluginOptions } from './plugin';
+export { Plugin, PluginOptions, PluginsRunnerContext, PluginsRunner } from './plugin';
 export { RehearsalService } from './rehearsal-service';
 export { RehearsalServiceHost } from './rehearsal-service-host';
 

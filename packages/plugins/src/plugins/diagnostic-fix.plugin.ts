@@ -3,10 +3,16 @@ import { debug } from 'debug';
 
 import {
   codefixes,
-  isInstallPackageCommand,
   type DiagnosticWithContext,
+  isInstallPackageCommand,
 } from '@rehearsal/codefixes';
-import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
+import {
+  Plugin,
+  PluginOptions,
+  type PluginResult,
+  PluginsRunnerContext,
+  RehearsalService,
+} from '@rehearsal/service';
 import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
@@ -37,8 +43,15 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     2612, // addMissingDeclareProperty
   ];
 
-  async run(fileName: string, options: DiagnosticFixPluginOptions): PluginResult {
-    let diagnostics = this.getDiagnostics(options.service, fileName);
+  async run(
+    fileName: string,
+    context: PluginsRunnerContext,
+    options: DiagnosticFixPluginOptions
+  ): PluginResult {
+    options.safeFixes ??= true;
+    options.strictTyping ??= true;
+
+    let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
@@ -53,8 +66,8 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       }
 
       const fixes = codefixes.getCodeFixes(diagnostic, {
-        safeFixes: true,
-        strictTyping: true,
+        safeFixes: options.safeFixes,
+        strictTyping: options.strictTyping,
       });
 
       if (fixes.length === 0) {
@@ -66,11 +79,11 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       const fix = fixes.shift()!;
 
       if (isInstallPackageCommand(fix)) {
-        await this.applyCommandAction(fix.commands, options);
+        await this.applyCommandAction(fix.commands, context);
       }
 
       for (const fileTextChange of fix.changes) {
-        let text = options.service.getFileText(fileTextChange.fileName);
+        let text = context.rehearsal.getFileText(fileTextChange.fileName);
 
         const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
         for (const textChange of textChanges) {
@@ -79,16 +92,16 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
           text = applyTextChange(text, textChange);
         }
 
-        options.service.setFileText(fileTextChange.fileName, text);
+        context.rehearsal.setFileText(fileTextChange.fileName, text);
         allFixedFiles.add(fileTextChange.fileName);
 
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       }
 
-      options.reporter.incrementFixedItemCount();
+      context.reporter.incrementFixedItemCount();
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(options.service, fileName);
+      diagnostics = this.getDiagnostics(context.rehearsal, fileName);
     }
 
     return Array.from(allFixedFiles);
@@ -126,10 +139,10 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
   private async applyCommandAction(
     command: CodeActionCommand[],
-    options: DiagnosticFixPluginOptions
+    context: PluginsRunnerContext
   ): Promise<boolean> {
     try {
-      await options.service.getLanguageService().applyCodeActionCommand(command);
+      await context.rehearsal.getLanguageService().applyCodeActionCommand(command);
       return true;
     } catch (e) {
       return false;

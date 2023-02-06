@@ -1,15 +1,8 @@
 import { existsSync } from 'fs';
 import { dirname, extname, resolve } from 'path';
 import { execSync } from 'child_process';
-import { Plugin, PluginOptions, RehearsalService } from '@rehearsal/service';
-import {
-  DiagnosticCheckPlugin,
-  DiagnosticCheckPluginOptions,
-  DiagnosticFixPlugin,
-  DiagnosticFixPluginOptions,
-  LintPlugin,
-  LintPluginOption,
-} from '@rehearsal/plugins';
+import { PluginsRunner, RehearsalService } from '@rehearsal/service';
+import { DiagnosticCheckPlugin, DiagnosticFixPlugin, LintPlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
@@ -30,27 +23,6 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
-type MigratePlugins = { plugin: Plugin<PluginOptions>; options?: PluginOptions }[];
-
-type ProcessFilesInput = {
-  fileNames: string[];
-  basePath: string;
-  plugins: MigratePlugins;
-  reporter: Reporter;
-  listrTask: ListrContext;
-  service: RehearsalService;
-  logger?: Logger;
-};
-
-type ProcessPluginsInput = {
-  allChangedFiles: Set<string>;
-  fileName: string;
-  plugins: MigratePlugins;
-  service: RehearsalService;
-  reporter: Reporter;
-  logger?: Logger;
-};
-
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || ['index.js'];
@@ -59,52 +31,6 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const logger = input.logger;
   // output is only for tests
   const listrTask: ListrContext = input.task || { output: '' };
-
-  const commentTag = '@rehearsal';
-
-  const plugins: { plugin: Plugin<PluginOptions>; options?: PluginOptions }[] = [
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new DiagnosticFixPlugin(),
-      options: {
-        safeFixes: true,
-        strictTyping: true,
-      } as DiagnosticFixPluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new DiagnosticCheckPlugin(),
-      options: {
-        commentTag,
-      } as DiagnosticCheckPluginOptions,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: true, useEslintrc: true, cwd: basePath },
-        reportErrors: false,
-      } as LintPluginOption,
-    },
-    {
-      plugin: new LintPlugin(),
-      options: {
-        eslintOptions: { fix: false, useEslintrc: true, cwd: basePath },
-        reportErrors: true,
-      } as LintPluginOption,
-    },
-  ];
 
   logger?.debug('migration started');
   logger?.debug(`Base path: ${basePath}`);
@@ -136,120 +62,40 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
-  const service = new RehearsalService(options, fileNames);
+  const rehearsal = new RehearsalService(options, fileNames);
 
-  await processFilesIterator({
-    fileNames,
-    basePath,
-    plugins,
-    listrTask,
-    service,
-    reporter,
-    logger,
-  });
+  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new DiagnosticFixPlugin(), {
+      safeFixes: true,
+      strictTyping: true,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new DiagnosticCheckPlugin(), {
+      commentTag: '@rehearsal',
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
+      reportErrors: true,
+    });
+
+  await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
 
   return {
     basePath,
     configFile,
     migratedFiles: fileNames,
   };
-}
-
-// drain the iterator to process all files so we can yield to the event loop
-export async function processFilesIterator({
-  fileNames,
-  basePath,
-  plugins,
-  listrTask,
-  service,
-  reporter,
-  logger,
-}: ProcessFilesInput): Promise<void> {
-  const fileIteratorProcesser = processFilesGenerator({
-    fileNames,
-    basePath,
-    plugins,
-    listrTask,
-    service,
-    reporter,
-    logger,
-  });
-
-  for await (const _ of fileIteratorProcesser) {
-    const next = async (): Promise<void> => {
-      const { done } = await fileIteratorProcesser.next();
-      if (!done) {
-        setImmediate(next);
-      }
-    };
-
-    await next();
-  }
-}
-
-// async generator to process files
-// since this is a long running process, we need to yield to the event loop
-// so we dont block the main thread
-export async function* processFilesGenerator({
-  fileNames,
-  basePath,
-  plugins,
-  listrTask,
-  service,
-  reporter,
-  logger,
-}: ProcessFilesInput): AsyncGenerator<void> {
-  for (const fileName of fileNames) {
-    listrTask.output = `processing file: ${fileName.replace(basePath, '')}`;
-
-    const allChangedFiles: Set<string> = new Set();
-    const pluginIteratorProcesser = processPlugins({
-      allChangedFiles,
-      fileName,
-      plugins,
-      service,
-      reporter,
-      logger,
-    });
-
-    for await (const changedFile of pluginIteratorProcesser) {
-      const next = async (): Promise<void> => {
-        const { done } = await pluginIteratorProcesser.next();
-        // Save file to the filesystem
-        changedFile.forEach((file) => service.saveFile(file));
-
-        if (!done) {
-          setImmediate(next);
-        }
-      };
-
-      await next();
-    }
-
-    yield;
-  }
-}
-
-async function* processPlugins({
-  allChangedFiles,
-  fileName,
-  plugins,
-  service,
-  reporter,
-  logger,
-}: ProcessPluginsInput): AsyncGenerator<Set<string>> {
-  for (const plugin of plugins) {
-    const changedFiles = await plugin.plugin.run(fileName, {
-      ...plugin.options,
-      service: service,
-      reporter: reporter,
-      logger: logger,
-    });
-
-    allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
-
-    yield allChangedFiles;
-  }
 }
 
 // Rename files to TS extension.
@@ -278,7 +124,7 @@ export function gitMove(
 
       try {
         // use git mv to keep the commit history in each file
-        // would fail if the file is not been tracked
+        // would fail if the file has not been tracked
         execSync(`git mv ${sourceFile} ${tsFile}`, { cwd: basePath });
       } catch (e) {
         // use simple mv if git mv fails

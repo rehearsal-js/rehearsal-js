@@ -1,4 +1,10 @@
-import { Plugin, PluginOptions, type PluginResult, RehearsalService } from '@rehearsal/service';
+import {
+  Plugin,
+  PluginOptions,
+  type PluginResult,
+  PluginsRunnerContext,
+  RehearsalService,
+} from '@rehearsal/service';
 import { debug } from 'debug';
 import {
   DiagnosticCategory,
@@ -15,16 +21,20 @@ import { getLocation } from '../helpers';
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
 export interface DiagnosticCheckPluginOptions extends PluginOptions {
-  commentTag: string;
-  addHints: boolean;
+  addHints?: boolean;
+  commentTag?: string;
 }
 
 export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOptions> {
-  commentTag = '@rehearsal';
-  addHints = true;
+  async run(
+    fileName: string,
+    context: PluginsRunnerContext,
+    options: DiagnosticCheckPluginOptions
+  ): PluginResult {
+    options.addHints ??= true;
+    options.commentTag ??= `@rehearsal`;
 
-  async run(fileName: string, options: DiagnosticCheckPluginOptions): PluginResult {
-    let diagnostics = this.getDiagnostics(options.service, fileName, this.commentTag);
+    let diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticCheck' run on %O:`, fileName);
 
@@ -34,9 +44,9 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
       const diagnostic = diagnostics.shift()!;
       const hint = hints.getHint(diagnostic);
 
-      if (this.addHints) {
-        const text = this.addHintComment(diagnostic, hint, this.commentTag);
-        options.service.setFileText(fileName, text);
+      if (options.addHints) {
+        const text = this.addHintComment(diagnostic, hint, options.commentTag);
+        context.rehearsal.setFileText(fileName, text);
 
         allFixedFiles.add(fileName);
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
@@ -46,16 +56,16 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-      options.reporter.addTSItem(
+      context.reporter.addTSItem(
         diagnostic,
         diagnostic.node,
         location,
         hint,
         helpUrl,
-        this.addHints
+        options.addHints
       );
 
-      diagnostics = this.getDiagnostics(options.service, fileName, this.commentTag);
+      diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
     }
     return Array.from(allFixedFiles);
   }

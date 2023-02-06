@@ -1,4 +1,4 @@
-import { createLanguageService, resolveModuleName, ScriptSnapshot, sys } from 'typescript';
+import { createLanguageService, ScriptSnapshot } from 'typescript';
 
 import { RehearsalServiceHost } from './rehearsal-service-host';
 import type {
@@ -75,18 +75,5 @@ export class RehearsalService {
    */
   getSuggestionDiagnostics(fileName: string): DiagnosticWithLocation[] {
     return this.service.getSuggestionDiagnostics(fileName);
-  }
-
-  /**
-   * Provides a path to a module file by its name
-   */
-  resolveModuleName(moduleName: string, containingFile: string): string | undefined {
-    const result = resolveModuleName(
-      moduleName,
-      containingFile,
-      this.host.getCompilationSettings(),
-      sys
-    );
-    return result?.resolvedModule?.resolvedFileName;
   }
 }

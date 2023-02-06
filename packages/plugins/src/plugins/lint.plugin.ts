@@ -1,20 +1,27 @@
-import { Plugin, PluginOptions, type PluginResult } from '@rehearsal/service';
+import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
 import { ESLint } from 'eslint';
 import { debug } from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:formatting');
 
-export interface LintPluginOption extends PluginOptions {
-  eslintOptions: ESLint.Options;
+export interface LintPluginOptions extends PluginOptions {
+  eslintOptions?: ESLint.Options;
   reportErrors?: boolean;
 }
 
 /**
  * Source code formatting
  */
-export class LintPlugin implements Plugin<LintPluginOption> {
-  async run(fileName: string, options: LintPluginOption): PluginResult {
-    const text = options.service.getFileText(fileName);
+export class LintPlugin implements Plugin<LintPluginOptions> {
+  async run(
+    fileName: string,
+    context: PluginsRunnerContext,
+    options: LintPluginOptions
+  ): PluginResult {
+    options.eslintOptions ??= {};
+    options.reportErrors ??= false;
+
+    const text = context.rehearsal.getFileText(fileName);
 
     try {
       const eslint = new ESLint(options.eslintOptions);
@@ -26,7 +33,7 @@ export class LintPlugin implements Plugin<LintPluginOption> {
       if (options.reportErrors) {
         const { messages: errors } = report;
         for (const error of errors) {
-          options.reporter.addLintItem(fileName, error);
+          context.reporter.addLintItem(fileName, error);
         }
       }
 
@@ -35,7 +42,8 @@ export class LintPlugin implements Plugin<LintPluginOption> {
       if (report && report.output && report.output !== text) {
         DEBUG_CALLBACK(`Plugin 'Lint' run on %O:`, fileName);
 
-        options.service.setFileText(fileName, report.output);
+        context.rehearsal.setFileText(fileName, report.output);
+
         return [fileName];
       }
     } catch (e) {
@@ -43,7 +51,6 @@ export class LintPlugin implements Plugin<LintPluginOption> {
     }
 
     DEBUG_CALLBACK(`Plugin 'Lint' run with no changes on: %O`, fileName);
-
     return [];
   }
 

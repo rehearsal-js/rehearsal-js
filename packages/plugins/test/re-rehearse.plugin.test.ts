@@ -24,7 +24,7 @@ describe('Test ReRehearsalPlugin', function () {
     project.write();
     const fileNames = Object.keys(project.files).map((file) => resolve(project.baseDir, file));
 
-    const service = new RehearsalService({ baseUrl: project.baseDir }, fileNames);
+    const rehearsal = new RehearsalService({ baseUrl: project.baseDir }, fileNames);
     const reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
@@ -35,8 +35,12 @@ describe('Test ReRehearsalPlugin', function () {
     const plugin = new ReRehearsePlugin();
 
     for (const fileName of fileNames) {
-      const result = await plugin.run(fileName, { service, reporter, commentTag: '@rehearsal' });
-      const resultText = service.getFileText(fileName).trim();
+      const result = await plugin.run(
+        fileName,
+        { basePath: '', rehearsal, reporter },
+        { commentTag: '@rehearsal' }
+      );
+      const resultText = rehearsal.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
       expect(resultText).toMatchSnapshot();
