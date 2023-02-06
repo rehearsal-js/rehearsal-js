@@ -24,6 +24,8 @@ describe('Task: config-lint', async () => {
     output += `${chunk}\n`;
   });
 
+  let explorerSync;
+
   beforeEach(() => {
     output = '';
     basePath = prepareTmpDir('initialization');
@@ -31,6 +33,7 @@ describe('Task: config-lint', async () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    explorerSync = null;
   });
 
   test('create .eslintrc.js if not existed', async () => {
@@ -66,6 +69,27 @@ describe('Task: config-lint', async () => {
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.js']);
   });
 
+  test('extends .eslintrc if existed', async () => {
+    const oldConfig = `
+    {"extends": []}
+  `;
+    writeFileSync(resolve(basePath, '.eslintrc'), oldConfig);
+
+    const options = createMigrateOptions(basePath);
+    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
+    await listrTaskRunner(tasks);
+
+    expect(readdirSync(basePath)).toContain('.eslintrc');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc');
+    // Do not use snapshot here since there is absolute path in output
+    expect(output).toContain('extending Rehearsal default eslint-related config');
+
+    explorerSync = cosmiconfigSync('');
+    const loaded = explorerSync.load(resolve(basePath, '.eslintrc'));
+    const newConfig = loaded?.config;
+    expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc']);
+  });
+
   test('extends .eslintrc.json if existed', async () => {
     const oldConfig = `
     {"extends": []}
@@ -81,8 +105,9 @@ describe('Task: config-lint', async () => {
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
-    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-    const newConfig = require(resolve(basePath, '.eslintrc.json'));
+    explorerSync = cosmiconfigSync('');
+    const loaded = explorerSync.load(resolve(basePath, '.eslintrc.json'));
+    const newConfig = loaded?.config;
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.json']);
   });
 
@@ -101,12 +126,35 @@ describe('Task: config-lint', async () => {
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
-    const explorerSync = cosmiconfigSync('');
+    explorerSync = cosmiconfigSync('');
     const loaded = explorerSync.load(resolve(basePath, '.eslintrc.yml'));
     const config = loaded?.config;
 
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
     expect(config.extends).toStrictEqual(['./.rehearsal-eslintrc.yml']);
+  });
+
+  test('extends .eslintrc.yaml if existed', async () => {
+    const oldConfig = `
+    extends: []
+  `;
+    writeFileSync(resolve(basePath, '.eslintrc.yaml'), oldConfig);
+
+    const options = createMigrateOptions(basePath);
+    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
+    await listrTaskRunner(tasks);
+
+    expect(readdirSync(basePath)).toContain('.eslintrc.yaml');
+    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.yaml');
+    // Do not use snapshot here since there is absolute path in output
+    expect(output).toContain('extending Rehearsal default eslint-related config');
+
+    explorerSync = cosmiconfigSync('');
+    const loaded = explorerSync.load(resolve(basePath, '.eslintrc.yaml'));
+    const config = loaded?.config;
+
+    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+    expect(config.extends).toStrictEqual(['./.rehearsal-eslintrc.yaml']);
   });
 
   test('run custom config command with user config provided', async () => {

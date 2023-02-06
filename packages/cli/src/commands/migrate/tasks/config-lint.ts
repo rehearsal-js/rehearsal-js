@@ -10,8 +10,10 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 enum REHEARSAL_CONFIG_FILENAMES {
   JS = '.rehearsal-eslintrc.js',
-  YAML = '.rehearsal-eslintrc.yml',
+  YML = '.rehearsal-eslintrc.yml',
+  YAML = '.rehearsal-eslintrc.yaml',
   JSON = '.rehearsal-eslintrc.json',
+  NO_EXTENSION = '.rehearsal-eslintrc',
 }
 
 enum FORMAT {
@@ -19,6 +21,7 @@ enum FORMAT {
   JSON = 'json',
   YAML = 'yaml',
   YML = 'yml',
+  NO_EXTENSION = '',
 }
 
 export async function lintConfigTask(
@@ -48,7 +51,7 @@ export async function lintConfigTask(
 
         if (relativeConfigPath) {
           task.output = `${relativeConfigPath} already exists, extending Rehearsal default eslint-related config`;
-          task.title = `Update eslintrc.${format}`;
+          task.title = `Update .eslintrc${format === FORMAT.NO_EXTENSION ? '' : '.' + format}`;
 
           const absoluteConfigPath = resolve(relativeConfigPath);
 
@@ -127,7 +130,7 @@ async function writeLintConfig(
   //yml and ymal don't need formatting. yamlStringify does the formatting already.
   if (format === FORMAT.JS || format === FORMAT.JSON) {
     const formattedConfig = await lintConfig(config, configPath, basePath);
-    outputFileSync(configPath, formattedConfig);
+    formattedConfig && outputFileSync(configPath, formattedConfig);
   }
   await gitAddIfInRepo(configPath, basePath); // stage .eslintrc.js if in a git repo
 }
@@ -149,8 +152,11 @@ function getRehearsalFilename(format: FORMAT): string {
     case FORMAT.JSON:
       return REHEARSAL_CONFIG_FILENAMES.JSON;
     case FORMAT.YAML:
-    case FORMAT.YML:
       return REHEARSAL_CONFIG_FILENAMES.YAML;
+    case FORMAT.YML:
+      return REHEARSAL_CONFIG_FILENAMES.YML;
+    case FORMAT.NO_EXTENSION:
+      return REHEARSAL_CONFIG_FILENAMES.NO_EXTENSION;
     default:
       return REHEARSAL_CONFIG_FILENAMES.JS;
   }
@@ -165,6 +171,7 @@ function formatConfig(configObj: { [key: string]: unknown }, extension: string):
       `;
       break;
     case FORMAT.JSON:
+    case FORMAT.NO_EXTENSION:
       configStr = JSON.stringify(configObj, null, 2);
       break;
     case FORMAT.YAML:
@@ -185,18 +192,45 @@ function getFormat(configPath: string | undefined): FORMAT {
 }
 
 function getRehearsalConfigStr(format: FORMAT): string {
+  let str = '';
   switch (format) {
     case FORMAT.YAML:
     case FORMAT.YML:
-      return getYAMLConfigStr();
+      str = getYAMLConfigStr();
+      break;
+    case FORMAT.NO_EXTENSION:
     case FORMAT.JSON:
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return JSON.stringify(require('../../../configs/eslint.json'), null, 2);
+      str = getJsonConfigStr();
+      break;
+    case FORMAT.JS:
+      str = `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`;
+      break;
     default:
-      return `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`;
   }
+  return str;
 }
 
+//TODO: find a better way to import json file
+function getJsonConfigStr(): string {
+  return `
+  {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "plugins": ["@typescript-eslint", "prettier"],
+    "extends": [
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "eslint:recommended",
+      "plugin:prettier/recommended",
+      "prettier"
+    ]
+  }
+  `;
+}
+
+//TODO: find a better way to import yaml file
 function getYAMLConfigStr(): string {
   return `
   parser: '@typescript-eslint/parser'

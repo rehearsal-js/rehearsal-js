@@ -514,6 +514,6 @@ export function prettyGitDiff(text: string): string {
 
 export function getEsLintConfigPath(basePath: string): string {
   // glob against the following file extension pattern js,yml,json,yaml and return the first match
-  const configPath = glob.sync(join(basePath, '.eslintrc.{js,yml,json,yaml}'))[0];
+  const configPath = glob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml})'))[0];
   return configPath;
 }
