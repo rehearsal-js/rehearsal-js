@@ -35,13 +35,13 @@
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "execa": "^5.1.1",
-    "winston": "^3.6.0"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "findup-sync": "^5.0.0",
-    "listr2": "^5.0.5",
-    "uuid": "8.3.2",
-    "vitest": "^0.23.4"
+    "listr2": "^5.0.7",
+    "uuid": "^9.0.0",
+    "vitest": "^0.28.4"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"

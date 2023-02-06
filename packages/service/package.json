@@ -33,10 +33,10 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "findup-sync": "^5.0.0",
-    "winston": "^3.6.0"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.23.4"
+    "vitest": "^0.28.4"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"

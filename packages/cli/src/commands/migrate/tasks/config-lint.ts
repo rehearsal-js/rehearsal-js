@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra';
 import { cosmiconfigSync } from 'cosmiconfig';
-import { gitAddIfInRepo, getEsLintConfigPath, determineProjectName } from '@rehearsal/utils';
+import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
 import defaultConfig from '../../../configs/default-eslint';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
@@ -113,8 +113,8 @@ async function writeLintConfig(
   await gitAddIfInRepo(configPath, basePath); // stage .eslintrc.js if in a git repo
 }
 
-async function formatLintConfig(configStr: string, filePath: string): Promise<string | undefined> {
+async function formatLintConfig(configStr: string, filePath: string): Promise<string> {
   const eslint = new ESLint({ fix: true, useEslintrc: true });
   const [report] = await eslint.lintText(configStr, { filePath: filePath });
-  return report.output;
+  return report.output ?? '';
 }
