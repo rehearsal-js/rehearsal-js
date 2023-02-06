@@ -237,7 +237,7 @@ describe('migrate: e2e', async () => {
     expect(eslint).toMatchSnapshot();
   });
 
-  test('Print debug messages with verbose', async () => {
+  test('Print debug messages with --verbose', async () => {
     const { stdout } = await runBin('migrate', ['--verbose'], {
       cwd: basePath,
     });
@@ -321,13 +321,13 @@ describe('migrate: e2e', async () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 
-  describe('rehearsal-config.json', async () => {
+  describe('user defined options passed by --user-config -u', async () => {
     function createUserConfig(basePath: string, config: CustomConfig): void {
       const configPath = resolve(basePath, 'rehearsal-config.json');
       writeJSONSync(configPath, config);
     }
 
-    test('exclude path defined in config', async () => {
+    test('migrate.exclude', async () => {
       const files = getFiles('simple');
       // Add a directory that we don't want to ignore
       files['some-dir'] = { 'index.js': '// I should be excluded ' };
@@ -349,7 +349,7 @@ describe('migrate: e2e', async () => {
       expect(result.stdout).toMatchSnapshot();
     });
 
-    test('include path defined in config', async () => {
+    test('migrate.include', async () => {
       const files = getFiles('simple');
 
       // test is a default ignored directory in Package.ts
