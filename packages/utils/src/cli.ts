@@ -167,28 +167,28 @@ export function determineProjectName(directory = process.cwd()): string | null {
   return packageJSON?.name ?? null;
 }
 
-export function isYarnManager(): boolean {
+export function isYarnManager(basePath: string = process.cwd()): boolean {
   const yarnPath = findup('yarn.lock', {
-    cwd: process.cwd(),
+    cwd: basePath,
   });
 
   return !!yarnPath;
 }
 
-export function isYarnBerryManager(): boolean {
+export function isYarnBerryManager(basePath: string = process.cwd()): boolean {
   const lockFilePath = findup('yarn.lock', {
-    cwd: process.cwd(),
+    cwd: basePath,
   });
   const berryConfigPath = findup('.yarnrc.yml', {
-    cwd: process.cwd(),
+    cwd: basePath,
   });
 
   return !!lockFilePath && !!berryConfigPath;
 }
 
-export function isPnpmManager(): boolean {
+export function isPnpmManager(basePath: string = process.cwd()): boolean {
   const pnpmPath = findup('pnpm-lock.yaml', {
-    cwd: process.cwd(),
+    cwd: basePath,
   });
 
   return !!pnpmPath;
@@ -244,9 +244,9 @@ export function getLockfilePath(): string | null {
   return null;
 }
 
-export function getModuleManager(): 'yarn' | 'npm' | 'pnpm' {
-  const isYarn = isYarnManager();
-  const isPnpm = isPnpmManager();
+export function getModuleManager(basePath: string = process.cwd()): 'yarn' | 'npm' | 'pnpm' {
+  const isYarn = isYarnManager(basePath);
+  const isPnpm = isPnpmManager(basePath);
 
   if (isYarn) {
     return 'yarn';
@@ -297,7 +297,8 @@ export async function addDep(
   isDev: boolean,
   options: execa.Options = {}
 ): Promise<void> {
-  const moduleManager = getModuleManager();
+  const basePath = options.cwd ? options.cwd : process.cwd();
+  const moduleManager = getModuleManager(basePath);
   const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
   await execa(binAndArgs.bin, [...binAndArgs.args], options);
@@ -379,6 +380,13 @@ export function isValidSemver(input: string): boolean {
  */
 export function parseCommaSeparatedList(value: string): string[] {
   return value.split(',');
+}
+
+/**
+ * Ensure a path is absolute based on process.cwd()
+ */
+export function ensureAbsolutePath(p: string): string {
+  return p === process.cwd() ? p : resolve(p);
 }
 
 /**
