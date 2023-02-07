@@ -41,7 +41,7 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default typescript-related config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts

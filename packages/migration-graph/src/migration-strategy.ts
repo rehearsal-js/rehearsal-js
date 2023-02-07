@@ -48,7 +48,6 @@ export class MigrationStrategy {
     return this.#rootDir;
   }
 
-
   addFile(file: SourceFile): void {
     this.#files.push(file);
   }
