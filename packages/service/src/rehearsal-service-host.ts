@@ -91,7 +91,7 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     return this.files[fileName].snapshot;
   }
 
-  isKnownTypesPackageName(_name: string): boolean {
+  isKnownTypesPackageName(): boolean {
     // try all packages that come through here
     return true;
   }

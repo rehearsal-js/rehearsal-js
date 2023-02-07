@@ -1,5 +1,6 @@
-import { CodeActionCommand, type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, CodeFixAction, type DiagnosticWithLocation } from 'typescript';
 import { debug } from 'debug';
+import hash from 'object-hash';
 
 import {
   codefixes,
@@ -43,6 +44,8 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     2612, // addMissingDeclareProperty
   ];
 
+  attemptedToFix: string[] = [];
+
   async run(
     fileName: string,
     context: PluginsRunnerContext,
@@ -57,6 +60,8 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
     const allFixedFiles: Set<string> = new Set();
 
+    this.resetAttemptedToFix();
+
     while (diagnostics.length > 0) {
       const diagnostic = diagnostics.shift()!;
 
@@ -65,18 +70,12 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
         continue;
       }
 
-      const fixes = codefixes.getCodeFixes(diagnostic, {
-        safeFixes: options.safeFixes,
-        strictTyping: options.strictTyping,
-      });
+      const fix = this.getCodeFix(diagnostic, options);
 
-      if (fixes.length === 0) {
+      if (!fix) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
         continue;
       }
-
-      // Use the first available codefix in automatic mode,
-      // TODO: User should be able to choose one of the fixes form this list in interactive mode
-      const fix = fixes.shift()!;
 
       if (isInstallPackageCommand(fix)) {
         await this.applyCommandAction(fix.commands, context);
@@ -176,5 +175,52 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
       return left.start - right.start;
     });
+  }
+
+  /**
+   * Returns a code fix that expected to fix provided diagnostic
+   */
+  getCodeFix(
+    diagnostic: DiagnosticWithContext,
+    options: DiagnosticFixPluginOptions
+  ): CodeFixAction | undefined {
+    const fixes = codefixes.getCodeFixes(diagnostic, {
+      safeFixes: options.safeFixes,
+      strictTyping: options.strictTyping,
+    });
+
+    if (fixes.length === 0) {
+      return undefined;
+    }
+
+    // Use the first available codefix in automatic mode
+    let fix = fixes.shift();
+
+    while (fix && this.wasAttemptedToFix(diagnostic, fix)) {
+      // Try the next fix if we already tried the first one
+      fix = fixes.shift();
+    }
+
+    if (fix === undefined) {
+      DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t fixes didn't work`);
+    }
+
+    return fix;
+  }
+
+  private resetAttemptedToFix(): void {
+    this.attemptedToFix = [];
+  }
+
+  private wasAttemptedToFix(diagnostic: DiagnosticWithContext, fix: CodeFixAction): boolean {
+    const diagnosticFixHash = hash([diagnostic.code, diagnostic.start, fix]);
+
+    if (!this.attemptedToFix.includes(diagnosticFixHash)) {
+      this.attemptedToFix.push(diagnosticFixHash);
+
+      return false;
+    }
+
+    return true;
   }
 }

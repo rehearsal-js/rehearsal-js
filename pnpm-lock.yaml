@@ -307,17 +307,21 @@ importers:
       '@rehearsal/service': workspace:*
       '@rehearsal/utils': workspace:*
       '@types/eslint': ^8.21.0
+      '@types/object-hash': ^3.0.2
       debug: ^4.3.4
       eslint: ^8.33.0
       fixturify-project: ^5.2.0
+      object-hash: ^3.0.0
       vitest: ^0.28.4
     dependencies:
       '@rehearsal/codefixes': link:../codefixes
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/service': link:../service
       '@rehearsal/utils': link:../utils
+      '@types/object-hash': 3.0.2
       debug: 4.3.4
       eslint: 8.33.0
+      object-hash: 3.0.0
     devDependencies:
       '@types/eslint': 8.21.0
       fixturify-project: 5.2.0
@@ -1392,6 +1396,10 @@ packages:
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: true
+
+  /@types/object-hash/3.0.2:
+    resolution: {integrity: sha512-tfyXl1JPCf2hzIDK29gO7qGqJjThKBzg/Cn3bA68R9NmWdOx+f7k5mm4to/n43BHspCwcoUC6FU4NpUoK/h9bQ==}
+    dev: false
 
   /@types/prettier/2.7.2:
     resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
@@ -4224,6 +4232,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       path-key: 3.1.1
+
+  /object-hash/3.0.0:
+    resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
+    engines: {node: '>= 6'}
+    dev: false
 
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
