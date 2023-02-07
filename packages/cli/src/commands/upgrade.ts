@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 import { resolve } from 'path';
-import { Reporter } from '@rehearsal/reporter';
-import { upgrade } from '@rehearsal/upgrade';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
 import { debug } from 'debug';
@@ -25,7 +23,6 @@ import {
   parseTsVersion,
 } from '@rehearsal/utils';
 import { version } from '../../package.json';
-import { generateReports } from '../helpers/report';
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
@@ -54,6 +51,11 @@ upgradeCommand
     const logger = createLogger({
       transports: [new transports.Console({ format: format.cli() })],
     });
+
+    // We lazily load these modules because the commands are eagerly loaded and we may
+    // or may not have installed typescript yet
+    const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
+    const upgrade = await import('@rehearsal/upgrade').then((m) => m.upgrade);
 
     basePath = resolve(basePath);
 
@@ -236,6 +238,8 @@ upgradeCommand
       await tasks.run().then(async (ctx) => {
         DEBUG_CALLBACK('ctx: %O', ctx);
       });
+
+      const generateReports = await import('../helpers/report').then((m) => m.generateReports);
 
       const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('upgrade', reporter, reportOutputPath, options.format);

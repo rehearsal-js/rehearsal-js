@@ -1,8 +1,6 @@
 import { resolve } from 'path';
 import { Logger } from 'winston';
 import { debug } from 'debug';
-import { Reporter } from '@rehearsal/reporter';
-import { migrate } from '@rehearsal/migrate';
 import chalk from 'chalk';
 import execa = require('execa');
 
@@ -13,7 +11,7 @@ import {
   prettyGitDiff,
   gitAddIfInRepo,
 } from '@rehearsal/utils';
-import { generateReports, getReportSummary } from '../../../helpers/report';
+
 import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
@@ -29,6 +27,11 @@ export async function convertTask(
     title: 'Convert JS files to TS',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+      // Because we have to eagerly import all the tasks we need tolazily load these
+      // modules because they refer to typescript which may or may not be installed
+      const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
+      const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
+      const { generateReports, getReportSummary } = await import('../../../helpers/report');
       // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
