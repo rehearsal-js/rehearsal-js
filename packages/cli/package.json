@@ -48,7 +48,6 @@
     "listr2": "^5.0.7",
     "simple-git": "^3.16.0",
     "tmp": "^0.2.1",
-    "typescript": "^4.9.5",
     "which": "^3.0.0",
     "winston": "^3.8.2",
     "yaml": "^2.2.1"
@@ -56,7 +55,8 @@
   "devDependencies": {
     "@types/which": "^2.0.1",
     "typescript-json-schema": "^0.55.0",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.4",
+    "typescript": "^4.9.5"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {

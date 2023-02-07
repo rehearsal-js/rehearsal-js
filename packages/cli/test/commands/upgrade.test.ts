@@ -13,7 +13,7 @@ const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
 // we bundle the latest version of typescript with the cli
-const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
+const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeEachPrep = async (): Promise<void> => {
