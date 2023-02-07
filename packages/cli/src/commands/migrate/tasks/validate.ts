@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
-import { existsSync, readFileSync } from 'fs-extra';
+import { existsSync, readFileSync, readdirSync } from 'fs-extra';
 
 import { getEsLintConfigPath } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
@@ -54,6 +54,15 @@ function checkGitIgnore(basePath: string): boolean {
   return true;
 }
 
+export function reportExisted(basePath: string, outputPath?: string): boolean {
+  const reportRegex = /migrate-report\.(json|md|sarif|sonarqube)/g;
+  const reportDir = outputPath ? resolve(basePath, outputPath) : resolve(basePath, '.rehearsal');
+  return (
+    existsSync(reportDir) &&
+    readdirSync(reportDir).filter((d: string) => reportRegex.test(d)).length > 0
+  );
+}
+
 export async function validateTask(
   options: MigrateCommandOptions,
   logger: Logger
@@ -61,9 +70,16 @@ export async function validateTask(
   return {
     title: 'Validate project',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (): Promise<void> => {
+    task: async (ctx: MigrateCommandContext): Promise<void> => {
       checkPackageJson(options.basePath);
       checkGitIgnore(options.basePath);
+      // If any report exists, skip all of the config tasks
+      if (reportExisted(options.basePath, options.outputPath)) {
+        ctx.skipDepInstall = true;
+        ctx.skipTsConfig = true;
+        ctx.skipLintConfig = true;
+        ctx.skipScriptConfig = true;
+      }
       if (options.regen) {
         checkLintConfig(options.basePath, logger);
         checkTsConfig(options.basePath, logger);

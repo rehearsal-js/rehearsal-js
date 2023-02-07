@@ -6,7 +6,7 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 export async function createScriptsTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
     title: 'Add package scripts',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipScriptConfig,
     task: async (): Promise<void> => {
       addPackageJsonScripts(options.basePath, {
         'build:tsc': 'tsc -b',

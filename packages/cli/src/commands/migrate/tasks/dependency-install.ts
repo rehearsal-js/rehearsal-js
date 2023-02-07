@@ -20,7 +20,7 @@ export async function depInstallTask(
 ): Promise<ListrTask> {
   return {
     title: 'Install dependencies',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipDepInstall,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {
