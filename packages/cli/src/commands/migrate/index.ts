@@ -14,6 +14,7 @@ import {
   createScriptsTask,
   regenTask,
   validateTask,
+  reportExisted,
 } from './tasks';
 
 import type { MigrateCommandOptions } from '../../types';
@@ -53,7 +54,11 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
 
   logger.info(`@rehearsal/migrate ${version.trim()}`);
 
-  if (!options.dryRun && !options.regen) {
+  // Show git warning if:
+  // 1. Not --dryRun
+  // 2. Not --regen
+  // 3. First time run (check if any report exists)
+  if (!options.dryRun && !options.regen && !reportExisted(options.basePath, options.outputPath)) {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(

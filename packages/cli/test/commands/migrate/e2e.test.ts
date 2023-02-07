@@ -88,6 +88,32 @@ describe('migrate - validation', async () => {
       'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
     );
   });
+
+  test('pass in a dirty git in multi runs', async () => {
+    // simulate clean git project
+    const git = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    await git
+      .init()
+      .add('package.json')
+      .addConfig('user.name', 'tester')
+      .addConfig('user.email', 'tester@tester.com')
+      .commit('test');
+
+    const { stdout: firstRunStdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(firstRunStdout).not.toContain(
+      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+    );
+    expect(firstRunStdout).toContain('Migration Complete');
+
+    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+  });
 });
 
 describe('migrate: e2e', async () => {

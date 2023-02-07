@@ -21,6 +21,10 @@ export type MigrateCommandOptions = {
 
 export type MigrateCommandContext = {
   skip: boolean;
+  skipTsConfig: boolean;
+  skipLintConfig: boolean;
+  skipDepInstall: boolean;
+  skipScriptConfig: boolean;
   userConfig: UserConfig | undefined;
   strategy: MigrationStrategy;
   sourceFilesWithAbsolutePath: string[];

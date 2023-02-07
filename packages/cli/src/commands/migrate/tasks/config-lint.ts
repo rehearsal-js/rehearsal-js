@@ -30,7 +30,7 @@ export async function lintConfigTask(
 ): Promise<ListrTask> {
   return {
     title: 'Create eslint config',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipLintConfig,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {
