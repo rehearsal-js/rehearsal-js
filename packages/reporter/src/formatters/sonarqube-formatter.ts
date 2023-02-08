@@ -4,6 +4,13 @@ import { PhysicalLocation, Result } from 'sarif';
 import { SarifFormatter } from './sarif-formatter';
 import type { Report } from '../types';
 
+interface TextRange {
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
+}
+
 type ErrorLevel = Extract<Result.level, 'error' | 'warning' | 'note'>;
 
 const SONARQUBE_SEVERITY: Record<Result.kind, string> = {
@@ -41,6 +48,7 @@ export function sonarqubeFormatter(report: Report): string {
       const physicalLocation = getPhysicalLocation(result);
       const filePath = physicalLocation ? getFilePath(physicalLocation) : '';
       const absolutePath = isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+      const textRange = getTextRange(physicalLocation);
 
       issues.push({
         engineId: 'rehearsal-ts',
@@ -50,16 +58,32 @@ export function sonarqubeFormatter(report: Report): string {
         primaryLocation: {
           message: result.message.text ?? '',
           filePath: absolutePath,
-          textRange: {
-            startLine: physicalLocation?.region?.startLine ?? 0,
-            startColumn: physicalLocation?.region?.startColumn ?? 0,
-            endLine: physicalLocation?.region?.endLine ?? 0,
-            endColumn: physicalLocation?.region?.endColumn ?? 0,
-          },
+          textRange,
         },
       });
     }
   }
 
   return JSON.stringify({ issues }, null, 2) || '';
+}
+
+function getTextRange(location: PhysicalLocation | undefined): TextRange {
+  return {
+    startLine: getNumber(location, 'startLine'),
+    startColumn: getNumber(location, 'startColumn'),
+    endLine: getNumber(location, 'endLine'),
+    endColumn: getNumber(location, 'endColumn'),
+  };
+}
+
+//We bump column and line numbers by 1 for sarif reader. Now we revert back the numbers for sonarqube.
+function getNumber(
+  location: PhysicalLocation | undefined,
+  key: 'startLine' | 'startColumn' | 'endLine' | 'endColumn'
+): number {
+  const region = location?.region;
+  if (region && Number.isInteger(region[key]) && region[key]! > 1) {
+    return region[key]! - 1;
+  }
+  return 0;
 }
