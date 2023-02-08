@@ -3,7 +3,12 @@ import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
-import { parseCommaSeparatedList, gitIsRepoDirty, resetFiles } from '@rehearsal/utils';
+import {
+  parseCommaSeparatedList,
+  gitIsRepoDirty,
+  resetFiles,
+  ensureAbsolutePath,
+} from '@rehearsal/utils';
 import { version } from '../../../package.json';
 import {
   initTask,
@@ -28,7 +33,12 @@ process.on('SIGINT', () => {
 migrateCommand
   .name('migrate')
   .description('migrate a javascript project to typescript')
-  .option('-p, --basePath <project base path>', 'base directory of your project', process.cwd())
+  .option(
+    '-p, --basePath <project base path>',
+    'base directory of your project',
+    ensureAbsolutePath,
+    process.cwd()
+  )
   .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project')
   .option(
     '-f, --format <format>',
