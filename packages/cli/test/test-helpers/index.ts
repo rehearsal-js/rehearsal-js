@@ -1,4 +1,5 @@
 import { join, resolve } from 'path';
+import { Readable } from 'stream';
 import execa from 'execa';
 import which from 'which';
 import { rmSync, copySync, realpathSync } from 'fs-extra';
@@ -150,5 +151,35 @@ export function cleanOutput(output: string, basePath: string): string {
   const versionRegex = /(@rehearsal\/migrate)(.+)/g;
   return removeSpecialChars(
     output.replace(pathRegex, '<tmp-path>').replace(versionRegex, '$1<test-version>')
+  );
+}
+
+// create readable stream for console messages
+export function createOutputStream(): Readable {
+  const outputStream = new Readable({
+    read() {
+      // no-ops
+    },
+  });
+  outputStream.setEncoding('utf-8');
+  return outputStream;
+}
+
+// check if current line is the prompt message for selecting packages
+export function isPackageSelection(currentLine: string): boolean {
+  return currentLine.includes(
+    'We have found multiple packages in your project, select the one to migrate'
+  );
+}
+
+// check if current line is the prompt message for selecting Accept/Edit/Discard in interactive mode
+export function isActionSelection(currentLine: string): boolean {
+  const promptRegex =
+    /Please view the migration changes for .+\.js and select an option to continue:/gm;
+  return (
+    promptRegex.test(currentLine) &&
+    currentLine.includes('Accept') &&
+    currentLine.includes('Edit') &&
+    currentLine.includes('Discard')
   );
 }

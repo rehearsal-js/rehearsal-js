@@ -2,7 +2,6 @@ import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
 
-import { sleep } from '@rehearsal/utils';
 import { initTask } from '../../../src/commands/migrate/tasks';
 import {
   prepareTmpDir,
@@ -10,6 +9,9 @@ import {
   createMigrateOptions,
   KEYS,
   sendKey,
+  createOutputStream,
+  isPackageSelection,
+  isActionSelection,
 } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 
@@ -21,20 +23,26 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
 describe('Task: initialize', async () => {
   let basePath = '';
   let output = '';
+  let outputStream = createOutputStream();
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
   });
   vi.spyOn(console, 'log').mockImplementation((chunk) => {
     output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
   });
 
   beforeEach(() => {
     output = '';
     basePath = prepareTmpDir('basic');
+    outputStream = createOutputStream();
   });
 
   afterEach(() => {
+    output = '';
     vi.clearAllMocks();
+    outputStream.destroy();
   });
 
   test('get files that will be migrated', async () => {
@@ -88,10 +96,17 @@ describe('Task: initialize', async () => {
   });
 
   test('single package selection in interactive mode', async () => {
-    // send keycode after runner.run()
-    setTimeout(async () => {
-      sendKey(KEYS.ENTER);
-    }, 2000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        // select Accept for all 3 files
+        sendKey(KEYS.ENTER); // selection package
+      }
+    });
 
     const options = createMigrateOptions(basePath, { interactive: true });
     const tasks = [await initTask(options)];
@@ -120,14 +135,21 @@ describe('Task: initialize', async () => {
 
   test('multi package selection in interactive mode', async () => {
     basePath = prepareTmpDir('multi_packages');
-    // send keycode after runner.run()
-    setTimeout(async () => {
-      // move down twice to select module-b
-      sendKey(KEYS.DOWN);
-      sendKey(KEYS.DOWN);
-      await sleep(200);
-      sendKey(KEYS.ENTER);
-    }, 2000);
+
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        // move down twice to select module-b
+        sendKey(KEYS.DOWN);
+        sendKey(KEYS.DOWN);
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        // select Accept for all 3 files
+        sendKey(KEYS.ENTER); // selection package
+      }
+    });
 
     const options = createMigrateOptions(basePath, { interactive: true });
     const tasks = [await initTask(options)];
@@ -156,10 +178,14 @@ describe('Task: initialize', async () => {
 
   test('show package progress in interactive mode', async () => {
     basePath = prepareTmpDir('multi_packages');
-    // send keycode after runner.run()
-    setTimeout(async () => {
-      sendKey(KEYS.ENTER);
-    }, 2000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        // select
+        sendKey(KEYS.ENTER);
+      }
+    });
 
     // write previous state
     const previousState = {
@@ -208,10 +234,14 @@ describe('Task: initialize', async () => {
 
   test('disable package selection if completed', async () => {
     basePath = prepareTmpDir('multi_packages');
-    // send keycode after runner.run()
-    setTimeout(async () => {
-      sendKey(KEYS.ENTER);
-    }, 2000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        // select
+        sendKey(KEYS.ENTER);
+      }
+    });
 
     // write previous state
     const previousState = {
