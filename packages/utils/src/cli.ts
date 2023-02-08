@@ -262,31 +262,48 @@ export function getModuleManager(basePath: string = process.cwd()): 'yarn' | 'np
 export function getModuleManagerInstaller(
   manager: 'yarn' | 'npm' | 'pnpm',
   depList: string[],
-  isDev: boolean
+  isDev: boolean,
+  hasVolta: boolean = isBinExisted('volta')
 ): { bin: string; args: string[] } {
-  const bin = getManagerBinPath(manager);
+  const executablePath = getManagerBinPath(manager);
+
+  const voltaYarnArgs = hasVolta ? ['run', 'yarn'] : [];
+  const voltaNpmArgs = hasVolta ? ['run', 'npm'] : [];
 
   switch (manager) {
     case 'yarn':
       // since yarn@3 doesn't have --ignore-scripts anymore
+      // If there is volta, call volta run yarn xxx instead of <path-to-yarn> xxx
       return {
-        bin,
+        bin: hasVolta ? 'volta' : executablePath,
         args: isDev
-          ? ['add', '-D', ...depList, ...(isYarnBerryManager() ? [] : ['--ignore-scripts'])]
-          : ['add', ...depList, ...(isYarnBerryManager() ? [] : ['--ignore-scripts'])],
+          ? [
+              ...voltaYarnArgs,
+              'add',
+              '-D',
+              ...depList,
+              ...(isYarnBerryManager() ? [] : ['--ignore-scripts']),
+            ]
+          : [
+              ...voltaYarnArgs,
+              'add',
+              ...depList,
+              ...(isYarnBerryManager() ? [] : ['--ignore-scripts']),
+            ],
       };
     case 'pnpm':
       return {
-        bin,
+        bin: executablePath,
         args: isDev ? ['add', '-D', ...depList] : ['add', ...depList],
       };
     case 'npm':
     default:
+      // If there is volta, call volta run npm xxx instead of <path-to-npm> xxx
       return {
-        bin,
+        bin: hasVolta ? 'volta' : executablePath,
         args: isDev
-          ? ['install', ...depList, '--save-dev', '--ignore-scripts']
-          : ['install', ...depList, '--ignore-scripts'],
+          ? [...voltaNpmArgs, 'install', ...depList, '--save-dev', '--ignore-scripts']
+          : [...voltaNpmArgs, 'install', ...depList, '--ignore-scripts'],
       };
   }
 }
