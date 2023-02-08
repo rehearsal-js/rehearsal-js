@@ -216,7 +216,8 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 [DATA]  Accept
 [DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:"
+[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
+[FAILED] Cancelled prompt."
 `;
 
 exports[`Task: convert > generate reports 1`] = `

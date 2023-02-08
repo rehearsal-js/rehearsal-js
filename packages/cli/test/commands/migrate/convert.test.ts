@@ -4,7 +4,6 @@ import { readdirSync, readJSONSync } from 'fs-extra';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { createLogger, format, transports } from 'winston';
 
-import { sleep } from '@rehearsal/utils';
 import {
   initTask,
   depInstallTask,
@@ -19,6 +18,9 @@ import {
   KEYS,
   sendKey,
   removeSpecialChars,
+  createOutputStream,
+  isPackageSelection,
+  isActionSelection,
 } from '../../test-helpers';
 
 const logger = createLogger({
@@ -28,21 +30,30 @@ const logger = createLogger({
 describe('Task: convert', async () => {
   let basePath = '';
   let output = '';
+  let outputStream = createOutputStream();
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
   });
   vi.spyOn(console, 'log').mockImplementation((chunk) => {
     output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(console, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
   });
 
   beforeEach(() => {
     output = '';
     basePath = prepareTmpDir('basic');
+    outputStream = createOutputStream();
   });
 
   afterEach(() => {
     output = '';
     vi.clearAllMocks();
+    outputStream.destroy();
   });
 
   test('migrate from default all files .js in root', async () => {
@@ -151,22 +162,17 @@ describe('Task: convert', async () => {
   test('accept changes without git', async () => {
     const options = createMigrateOptions(basePath, { interactive: true });
 
-    setTimeout(async () => {
-      // At selection for packages
-      sendKey(KEYS.ENTER); // selection package
-      await sleep(10000);
-
-      // At action selection for foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for depends-on-foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for index.js
-      sendKey(KEYS.ENTER); // accept
-    }, 3000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        // select Accept for all 3 files
+        sendKey(KEYS.ENTER); // selection package
+      }
+    });
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -204,25 +210,35 @@ describe('Task: convert', async () => {
       .commit('first commit!');
 
     const options = createMigrateOptions(basePath, { interactive: true });
+    let fileCount = 1; // file counter in prompt selection
 
-    setTimeout(async () => {
-      // At selection for packages
-      sendKey(KEYS.ENTER); // selection package
-      await sleep(15000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      if (isPackageSelection(line)) {
+        // selection package
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        switch (fileCount) {
+          case 1:
+            // At action selection for foo.js
+            sendKey(KEYS.ENTER); // accept
+            break;
+          case 2:
+            // At action selection for depends-on-foo.js
+            sendKey(KEYS.ENTER); // accept
+            break;
+          case 3:
+            // At action selection for index.js
+            sendKey(KEYS.DOWN);
+            sendKey(KEYS.DOWN);
+            sendKey(KEYS.ENTER); // discard
+            break;
+        }
+        fileCount++;
+      }
+    });
 
-      // At action selection for foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for depends-on-foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for index.js
-      sendKey(KEYS.DOWN);
-      sendKey(KEYS.DOWN);
-      sendKey(KEYS.ENTER); // discard
-    }, 3000);
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -257,23 +273,33 @@ describe('Task: convert', async () => {
     process.env.EDITOR = 'rm';
     const options = createMigrateOptions(basePath, { interactive: true });
 
-    setTimeout(async () => {
-      // At selection for packages
-      sendKey(KEYS.ENTER); // selection package
-      await sleep(15000);
+    let fileCount = 1; // file counter in prompt selection
 
-      // At action selection for foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for depends-on-foo.js
-      sendKey(KEYS.ENTER); // accept
-      await sleep(2000);
-
-      // At action selection for index.js
-      sendKey(KEYS.DOWN);
-      sendKey(KEYS.ENTER); // edit
-    }, 3000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      if (isPackageSelection(line)) {
+        // selection package
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        switch (fileCount) {
+          case 1:
+            // At action selection for foo.js
+            sendKey(KEYS.ENTER); // accept
+            break;
+          case 2:
+            // At action selection for depends-on-foo.js
+            sendKey(KEYS.ENTER); // accept
+            break;
+          case 3:
+            // At action selection for index.js
+            sendKey(KEYS.DOWN);
+            sendKey(KEYS.ENTER); // edit
+            break;
+        }
+        fileCount++;
+      }
+    });
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -302,13 +328,18 @@ describe('Task: convert', async () => {
   test('cancel prompt in interactive mode', async () => {
     const options = createMigrateOptions(basePath, { interactive: true });
 
-    setTimeout(async () => {
-      // At selection for packages
-      sendKey(KEYS.ENTER); // selection package
-      await sleep(10000);
-      // At action selection for foo.js
-      sendKey(KEYS.CTRL_C); // cancel
-    }, 2000);
+    // prompt control flow
+    outputStream.on('data', (line: string) => {
+      // selection package
+      if (isPackageSelection(line)) {
+        sendKey(KEYS.ENTER);
+      }
+      if (isActionSelection(line)) {
+        // At action selection for foo.js
+        sendKey(KEYS.CTRL_C); // cancel
+      }
+    });
+
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
