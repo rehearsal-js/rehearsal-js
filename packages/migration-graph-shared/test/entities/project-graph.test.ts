@@ -1,5 +1,5 @@
 import { getLibrary } from '@rehearsal/test-support';
-import { describe, expect, test, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
 import type { GraphNode } from '../../src/graph/node';
 import type { ModuleNode, PackageNode } from '../../src/types';
