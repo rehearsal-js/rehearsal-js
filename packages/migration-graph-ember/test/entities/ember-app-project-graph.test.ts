@@ -155,7 +155,7 @@ export default class Salutation extends Component {
     ).toBe(true);
   });
 
-  test.only('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
+  test('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
     const project = getEmberProject('app-with-in-repo-addon');
 
     // Augment the app and addon code to have component that uses a service from the addon.
