@@ -6,16 +6,17 @@ import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
 
-import { getExternalModuleMappings, getInternalModuleMappings } from '../src/index';
+import { getExternalModuleMappings, getInternalModuleMappings } from '../src/mappings-container';
 import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,
 } from '../src/utils/environment';
+
 import { FIXTURE_NAMES, FIXTURES } from './fixtures/package-fixtures';
 
 setGracefulCleanup();
 
-describe('Smoke Test', () => {
+describe('mappings-container', () => {
   describe('getInternalModuleMappings', () => {
     let pathToRoot: string;
 
