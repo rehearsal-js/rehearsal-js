@@ -1,7 +1,6 @@
 import { getLibrary } from '@rehearsal/test-support';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, beforeEach } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph';
-import { Package } from '../../src/entities/package';
 import type { GraphNode } from '../../src/graph/node';
 import type { ModuleNode, PackageNode } from '../../src/types';
 
@@ -16,10 +15,7 @@ describe('project-graph', () => {
     const baseDir = getLibrary('simple');
 
     const projectGraph = new ProjectGraph(baseDir);
-
-    const somePackage = new Package(baseDir);
-
-    projectGraph.addPackageToGraph(somePackage);
+    projectGraph.discover();
 
     expect.assertions(6);
 
@@ -33,16 +29,15 @@ describe('project-graph', () => {
     expect(somePackage.hasModuleGraph()).toBe(false);
     const moduleGraphForPackage = somePackage?.getModuleGraph(); // Forces creation of moduleGraph
     expect(somePackage.hasModuleGraph()).toBe(true);
-      expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+    expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
   test('should ignore css imports', () => {
     const baseDir = getLibrary('library-with-css-imports');
 
     const projectGraph = new ProjectGraph(baseDir);
-    const somePackage = new Package(baseDir);
-    projectGraph.addPackageToGraph(somePackage);
-
     projectGraph.discover();
+
+    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
@@ -50,8 +45,6 @@ describe('project-graph', () => {
     const baseDir = getLibrary('simple');
 
     const projectGraph = new ProjectGraph(baseDir);
-    const somePackage = new Package(baseDir);
-    projectGraph.addPackageToGraph(somePackage);
     projectGraph.discover();
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
@@ -127,7 +120,6 @@ describe('project-graph', () => {
       const baseDir = getLibrary('library-with-workspaces');
 
       const projectGraph = new ProjectGraph(baseDir);
-
       projectGraph.discover();
 
       expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
@@ -164,7 +156,6 @@ describe('project-graph', () => {
       const baseDir = getLibrary('library-with-workspaces');
 
       const projectGraph = new ProjectGraph(baseDir);
-
       projectGraph.discover();
 
       const fooNode = projectGraph.graph.getNode('@something/foo');
@@ -180,7 +171,6 @@ describe('project-graph', () => {
       const baseDir = getLibrary('workspace-with-package-scope-issue');
 
       const projectGraph = new ProjectGraph(baseDir);
-
       projectGraph.discover();
 
       const rootNode = projectGraph.graph.getNode('root-package');
