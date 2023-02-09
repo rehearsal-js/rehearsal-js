@@ -1,14 +1,3 @@
-export {
-  getRootPackage,
-  getInternalPackages,
-  getExternalPackages,
-  getAddonPackages,
-  getInternalAddonPackages,
-  getModuleMappings,
-  getInternalModuleMappings,
-  getExternalModuleMappings,
-} from './mappings-container';
-
 export { EmberAppPackage } from './entities/ember-app-package';
 export { EmberAddonPackage } from './entities/ember-addon-package';
 
@@ -31,5 +20,11 @@ export {
   EmberAddonPackageGraphOptions,
 } from './entities/ember-addon-package-graph';
 
-export { EmberAppProjectGraph } from './entities/ember-app-project-graph';
-export { EmberAddonProjectGraph } from './entities/ember-addon-project-graph';
+export {
+  EmberAppProjectGraph,
+  EmberAppProjectGraphOptions,
+} from './entities/ember-app-project-graph';
+export {
+  EmberAddonProjectGraph,
+  EmberAddonProjectGraphOptions,
+} from './entities/ember-addon-project-graph';

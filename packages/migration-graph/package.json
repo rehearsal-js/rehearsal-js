@@ -20,12 +20,10 @@
     "@rehearsal/migration-graph-shared": "workspace:*",
     "debug": "^4.3.4",
     "fs-extra": "^11.1.0",
-    "minimatch": "^6.1.6",
     "path": "^0.12.7"
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",
-    "@types/minimatch": "^5.1.2",
     "vitest": "^0.28.4"
   },
   "peerDependencies": {

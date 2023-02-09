@@ -23,7 +23,7 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   });
 }
 
-describe('EmberAppPackageGraph', () => {
+describe('Unit | EmberAppPackageGraph', () => {
   test('should determine what graph to create (e.g. library | app | addon)', async () => {
     const project = await getEmberProjectFixture('app');
 

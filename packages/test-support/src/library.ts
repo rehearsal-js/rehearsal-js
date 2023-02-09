@@ -1,5 +1,7 @@
 import fixturify from 'fixturify';
+import { Project } from 'fixturify-project';
 import { dirSync, setGracefulCleanup } from 'tmp';
+import { setupProject } from './project';
 
 setGracefulCleanup();
 
@@ -358,4 +360,14 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
 
 export function getLibrary(variant: LibraryVariants): FixtureDir {
   return create(getFiles(variant));
+}
+
+export function getLibraryProject(variant: LibraryVariants): Project {
+  const project = new Project(variant);
+  project.files = getFiles(variant); // Explicitly set files, if passed in Project constructor a index.js is stubbed out.
+  return project;
+}
+
+export async function getLibraryProjectFixture(variant: LibraryVariants): Promise<Project> {
+  return setupProject(getLibraryProject(variant));
 }

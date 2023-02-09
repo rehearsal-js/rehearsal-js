@@ -28,14 +28,12 @@ describe('project-graph', () => {
     const ordered = projectGraph.graph.topSort();
     expect(flatten(ordered)).toStrictEqual(['my-package']);
     const packageNode = ordered[0];
-    const maybePackage = packageNode.content.pkg;
+    const somePackage = packageNode.content.pkg;
 
-    if (maybePackage) {
-      expect(maybePackage.hasModuleGraph()).toBe(false);
-      const moduleGraphForPackage = maybePackage?.getModuleGraph(); // Forces creation of moduleGraph
-      expect(maybePackage.hasModuleGraph()).toBe(true);
+    expect(somePackage.hasModuleGraph()).toBe(false);
+    const moduleGraphForPackage = somePackage?.getModuleGraph(); // Forces creation of moduleGraph
+    expect(somePackage.hasModuleGraph()).toBe(true);
       expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-    }
   });
   test('should ignore css imports', () => {
     const baseDir = getLibrary('library-with-css-imports');
@@ -55,6 +53,7 @@ describe('project-graph', () => {
     const somePackage = new Package(baseDir);
     projectGraph.addPackageToGraph(somePackage);
     projectGraph.discover();
+    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
@@ -83,37 +82,83 @@ describe('project-graph', () => {
 
     expect(files).toStrictEqual(['lib/a.js', 'index.js']);
   });
+
+  test('should include loose files in rootDir', () => {
+    const baseDir = getLibrary('library-with-loose-files');
+
+    const projectGraph = new ProjectGraph(baseDir);
+    projectGraph.discover();
+
+    expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
+    expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
+    expect(
+      flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+    ).toStrictEqual([
+      'Events.js',
+      'utils/Defaults.js',
+      'State.js',
+      'Widget.js',
+      'WidgetManager.js',
+    ]);
+  });
+
   test('options.eager', () => {
     const baseDir = getLibrary('simple');
 
-    const projectGraph = new ProjectGraph(baseDir, { eager: true });
-    const somePackage = new Package(baseDir);
-    projectGraph.addPackageToGraph(somePackage);
+    let projectGraph, somePackage;
 
-    expect.assertions(6);
+    // In the eager test, we're not trying to validate discover() logic
+    // We're trying to see once a package is added, that it's source moduleGraph
+    // is created before access via somePackage.moduleGraph();
 
-    expect(projectGraph.graph.hasNode('my-package')).toBe(true);
-    expect(projectGraph.sourceType).toBe('JavaScript Library');
-    const ordered = projectGraph.graph.topSort();
-    expect(flatten(ordered)).toStrictEqual(['my-package']);
-    const packageNode = ordered[0];
-    const maybePackage = packageNode.content.pkg;
+    projectGraph = new ProjectGraph(baseDir);
+    projectGraph.discover();
+    somePackage = projectGraph.graph.getNode('my-package').content.pkg;
+    expect(somePackage.hasModuleGraph(), 'should not exist by default').toBe(false);
 
-    expect(maybePackage.hasModuleGraph()).toBe(true);
-    const moduleGraphForPackage = maybePackage?.getModuleGraph(); // Forces creation of moduleGraph
-    expect(maybePackage.hasModuleGraph()).toBe(true);
-    expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+    projectGraph = new ProjectGraph(baseDir, { eager: true });
+    projectGraph.discover();
+    somePackage = projectGraph.graph.getNode('my-package').content.pkg;
+    expect(somePackage.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
   });
+
   describe('workspaces', () => {
-    test('should discover packages defined in workspaces in package.json', () => {
+    test('should discover all packages in the project', () => {
       const baseDir = getLibrary('library-with-workspaces');
 
       const projectGraph = new ProjectGraph(baseDir);
 
       projectGraph.discover();
+
+      expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
       expect(projectGraph.graph.hasNode('@something/foo')).toBe(true);
       expect(projectGraph.graph.hasNode('@something/bar')).toBe(true);
       expect(projectGraph.graph.hasNode('@something/baz')).toBe(true);
+      expect(projectGraph.graph.hasNode('@something/blorp')).toBe(true);
+
+      const sortedPackages = projectGraph.graph.topSort();
+
+      expect(flatten(sortedPackages)).toStrictEqual([
+        '@something/baz',
+        '@something/blorp',
+        '@something/bar',
+        '@something/foo',
+        'some-library-with-workspace', // Root Pacakge is last.
+      ]);
+
+      const [package0, package1, package2, package3, package4] = sortedPackages.map(
+        (node) => node.content.pkg
+      );
+
+      expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
+        'build.js',
+        'lib/impl.js',
+        'index.js',
+      ]);
+      expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
+      expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual(['some-util.js']);
     });
     test('should find edges between packages', () => {
       const baseDir = getLibrary('library-with-workspaces');

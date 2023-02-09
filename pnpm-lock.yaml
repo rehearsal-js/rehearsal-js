@@ -204,10 +204,8 @@ importers:
       '@rehearsal/migration-graph-ember': workspace:*
       '@rehearsal/migration-graph-shared': workspace:*
       '@rehearsal/test-support': workspace:*
-      '@types/minimatch': ^5.1.2
       debug: ^4.3.4
       fs-extra: ^11.1.0
-      minimatch: ^6.1.6
       path: ^0.12.7
       vitest: ^0.28.4
     dependencies:
@@ -215,11 +213,9 @@ importers:
       '@rehearsal/migration-graph-shared': link:../migration-graph-shared
       debug: 4.3.4
       fs-extra: 11.1.0
-      minimatch: 6.1.6
       path: 0.12.7
     devDependencies:
       '@rehearsal/test-support': link:../test-support
-      '@types/minimatch': 5.1.2
       vitest: 0.28.4
 
   packages/migration-graph-ember:
@@ -228,6 +224,7 @@ importers:
       '@rehearsal/test-support': workspace:*
       '@swc/core': ^1.3.32
       '@types/lodash.merge': ^4.6.7
+      '@types/minimatch': ^5.1.2
       debug: ^4.3.4
       dependency-cruiser: ^12.7.0
       enhanced-resolve: ^5.12.0
@@ -237,6 +234,7 @@ importers:
       fs-extra: ^11.1.0
       lodash.merge: ^4.6.2
       micromatch: ^4.0.5
+      minimatch: ^6.1.6
       prettier: ^2.8.3
       resolve-package-path: ^4.0.3
       rimraf: ^4.1.2
@@ -253,12 +251,14 @@ importers:
       find-up: 6.3.0
       fs-extra: 11.1.0
       micromatch: 4.0.5
+      minimatch: 6.1.6
       prettier: 2.8.3
       resolve-package-path: 4.0.3
       sort-package-json: 1.57.0
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/lodash.merge': 4.6.7
+      '@types/minimatch': 5.1.2
       dependency-cruiser: 12.7.0
       fixturify: 3.0.0
       lodash.merge: 4.6.2
