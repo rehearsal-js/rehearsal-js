@@ -157,8 +157,8 @@ importers:
       yaml: 2.2.1
     devDependencies:
       '@types/which': 2.0.1
-      typescript-json-schema: 0.55.0
       typescript: 4.9.5
+      typescript-json-schema: 0.55.0
       vitest: 0.28.4
 
   packages/codefixes:
@@ -224,7 +224,6 @@ importers:
       '@rehearsal/test-support': workspace:*
       '@swc/core': ^1.3.32
       '@types/lodash.merge': ^4.6.7
-      '@types/minimatch': ^5.1.2
       debug: ^4.3.4
       dependency-cruiser: ^12.7.0
       enhanced-resolve: ^5.12.0
@@ -234,7 +233,6 @@ importers:
       fs-extra: ^11.1.0
       lodash.merge: ^4.6.2
       micromatch: ^4.0.5
-      minimatch: ^6.1.6
       prettier: ^2.8.3
       resolve-package-path: ^4.0.3
       rimraf: ^4.1.2
@@ -251,14 +249,12 @@ importers:
       find-up: 6.3.0
       fs-extra: 11.1.0
       micromatch: 4.0.5
-      minimatch: 6.1.6
       prettier: 2.8.3
       resolve-package-path: 4.0.3
       sort-package-json: 1.57.0
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/lodash.merge': 4.6.7
-      '@types/minimatch': 5.1.2
       dependency-cruiser: 12.7.0
       fixturify: 3.0.0
       lodash.merge: 4.6.2
@@ -4111,13 +4107,6 @@ packages:
 
   /minimatch/5.1.0:
     resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
-    engines: {node: '>=10'}
-    dependencies:
-      brace-expansion: 2.0.1
-    dev: false
-
-  /minimatch/6.1.6:
-    resolution: {integrity: sha512-6bR3UIeh/DF8+p6A9Spyuy67ShOq42rOkHWi7eUe3Ua99Zo5lZfGC6lJJWkeoK4k9jQFT3Pl7czhTXimG2XheA==}
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
