@@ -98,10 +98,60 @@ describe('utils', () => {
   });
 
   test('getModuleManagerInstaller()', () => {
-    const { bin, args } = getModuleManagerInstaller('pnpm', ['typescript'], true);
+    const { bin: pnpmBin, args: pnpmArgs } = getModuleManagerInstaller(
+      'pnpm',
+      ['typescript'],
+      true
+    );
+    expect(pnpmBin).toContain('pnpm');
+    expect(pnpmArgs).toEqual(['add', '-D', 'typescript']);
 
-    expect(bin).toContain('pnpm');
-    expect(args).toEqual(['add', '-D', 'typescript']);
+    // yarn without volta
+    const { bin: yarnBin, args: yarnArgs } = getModuleManagerInstaller(
+      'yarn',
+      ['typescript'],
+      true,
+      false
+    );
+    expect(yarnBin).toContain('yarn');
+    expect(yarnArgs).toEqual(['add', '-D', 'typescript', '--ignore-scripts']);
+
+    // yarn with volta
+    const { bin: voltaYarnBin, args: voltaYarnArgs } = getModuleManagerInstaller(
+      'yarn',
+      ['typescript'],
+      true,
+      true
+    );
+    expect(voltaYarnBin).toContain('volta');
+    expect(voltaYarnArgs).toEqual(['run', 'yarn', 'add', '-D', 'typescript', '--ignore-scripts']);
+
+    // npm without volta
+    const { bin: npmBin, args: npmArgs } = getModuleManagerInstaller(
+      'npm',
+      ['typescript'],
+      true,
+      false
+    );
+    expect(npmBin).toContain('npm');
+    expect(npmArgs).toEqual(['install', 'typescript', '--save-dev', '--ignore-scripts']);
+
+    // npm with volta
+    const { bin: voltaNpmBin, args: voltaNpmArgs } = getModuleManagerInstaller(
+      'npm',
+      ['typescript'],
+      true,
+      true
+    );
+    expect(voltaNpmBin).toContain('volta');
+    expect(voltaNpmArgs).toEqual([
+      'run',
+      'npm',
+      'install',
+      'typescript',
+      '--save-dev',
+      '--ignore-scripts',
+    ]);
   });
 
   test('getLatestTSVersion()', async () => {
