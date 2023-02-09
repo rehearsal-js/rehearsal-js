@@ -9,7 +9,7 @@ import {
   ProjectGraph,
   ProjectGraphOptions,
 } from '@rehearsal/migration-graph-shared';
-import { getInternalPackages } from '../mappings-container';
+import { getInternalPackages, getRootPackage } from '../mappings-container';
 import { discoverEmberPackages } from '../utils/discover-ember-packages';
 import { EmberAppPackage } from './ember-app-package';
 import { EmberAddonPackage } from './ember-addon-package';
@@ -183,7 +183,13 @@ export class EmberAppProjectGraph extends ProjectGraph {
   discover(): Array<EmberProjectPackage> {
     const entities = discoverEmberPackages(this.rootDir);
 
+    const rootPackage = getRootPackage(this.rootDir);
+    const rootNode = this.addPackageToGraph(rootPackage);
+
     this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
+      const node = this.addPackageToGraph(pkg);
+      this.graph.addEdge(rootNode, node);
+
       acc[pkg.packageName] = pkg;
       return acc;
     }, {});
