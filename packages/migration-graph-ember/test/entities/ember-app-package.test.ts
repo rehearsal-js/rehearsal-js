@@ -7,7 +7,7 @@ import walkSync from 'walk-sync';
 
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
 // import the container so it can be called with the correct root
-import { getInternalAddonPackages } from '../../src/index';
+import { getInternalAddonPackages } from '../../src/mappings-container';
 import {
   registerInternalAddonTestFixtures,
   resetInternalAddonTestFixtures,

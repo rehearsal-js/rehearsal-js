@@ -157,8 +157,8 @@ importers:
       yaml: 2.2.1
     devDependencies:
       '@types/which': 2.0.1
-      typescript-json-schema: 0.55.0
       typescript: 4.9.5
+      typescript-json-schema: 0.55.0
       vitest: 0.28.4
 
   packages/codefixes:
@@ -204,10 +204,8 @@ importers:
       '@rehearsal/migration-graph-ember': workspace:*
       '@rehearsal/migration-graph-shared': workspace:*
       '@rehearsal/test-support': workspace:*
-      '@types/minimatch': ^5.1.2
       debug: ^4.3.4
       fs-extra: ^11.1.0
-      minimatch: ^6.1.6
       path: ^0.12.7
       vitest: ^0.28.4
     dependencies:
@@ -215,11 +213,9 @@ importers:
       '@rehearsal/migration-graph-shared': link:../migration-graph-shared
       debug: 4.3.4
       fs-extra: 11.1.0
-      minimatch: 6.1.6
       path: 0.12.7
     devDependencies:
       '@rehearsal/test-support': link:../test-support
-      '@types/minimatch': 5.1.2
       vitest: 0.28.4
 
   packages/migration-graph-ember:
@@ -4073,13 +4069,6 @@ packages:
 
   /minimatch/5.1.0:
     resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
-    engines: {node: '>=10'}
-    dependencies:
-      brace-expansion: 2.0.1
-    dev: false
-
-  /minimatch/6.1.6:
-    resolution: {integrity: sha512-6bR3UIeh/DF8+p6A9Spyuy67ShOq42rOkHWi7eUe3Ua99Zo5lZfGC6lJJWkeoK4k9jQFT3Pl7czhTXimG2XheA==}
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
