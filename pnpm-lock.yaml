@@ -152,12 +152,12 @@ importers:
       listr2: 5.0.7_enquirer@2.3.6
       simple-git: 3.16.0
       tmp: 0.2.1
-      typescript: 4.9.5
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
     devDependencies:
       '@types/which': 2.0.1
+      typescript: 4.9.5
       typescript-json-schema: 0.55.0
       vitest: 0.28.4
 
@@ -1102,7 +1102,7 @@ packages:
       jju: 1.4.0
       resolve: 1.22.1
       semver: 7.3.8
-      z-schema: 5.0.5
+      z-schema: 5.0.4
     dev: true
 
   /@rushstack/rig-package/0.3.17:
@@ -2133,14 +2133,6 @@ packages:
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     requiresBuild: true
-    dev: false
-    optional: true
-
-  /commander/9.5.0:
-    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
-    engines: {node: ^12.20.0 || >=14}
-    requiresBuild: true
-    dev: true
     optional: true
 
   /compare-func/2.0.0:
@@ -5376,6 +5368,7 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /ufo/1.0.1:
     resolution: {integrity: sha512-boAm74ubXHY7KJQZLlXrtMz52qFvpsbOxDcZOnw/Wf+LS4Mmyu7JxmzD4tDLtUQtmZECypJ0FrCz4QIe6dvKRA==}
@@ -5453,12 +5446,6 @@ packages:
   /validator/13.7.0:
     resolution: {integrity: sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==}
     engines: {node: '>= 0.10'}
-    dev: false
-
-  /validator/13.9.0:
-    resolution: {integrity: sha512-B+dGG8U3fdtM0/aNK4/X8CXq/EcxU2WPrPEkJGslb47qyHsxmbggTWK0yEA4qnYVNF+nxNlN88o14hIcPmSIEA==}
-    engines: {node: '>= 0.10'}
-    dev: true
 
   /vite-node/0.28.4_@types+node@18.13.0:
     resolution: {integrity: sha512-KM0Q0uSG/xHHKOJvVHc5xDBabgt0l70y7/lWTR7Q0pR5/MrYxadT+y32cJOE65FfjGmJgxpVEEY+69btJgcXOQ==}
@@ -5817,16 +5804,3 @@ packages:
       validator: 13.7.0
     optionalDependencies:
       commander: 2.20.3
-    dev: false
-
-  /z-schema/5.0.5:
-    resolution: {integrity: sha512-D7eujBWkLa3p2sIpJA0d1pr7es+a7m0vFAnZLlCEKq/Ij2k0MLi9Br2UPxoxdYystm5K1yeBGzub0FlYUEWj2Q==}
-    engines: {node: '>=8.0.0'}
-    hasBin: true
-    dependencies:
-      lodash.get: 4.4.2
-      lodash.isequal: 4.5.0
-      validator: 13.9.0
-    optionalDependencies:
-      commander: 9.5.0
-    dev: true
