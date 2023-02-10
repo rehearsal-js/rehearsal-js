@@ -1,6 +1,6 @@
 // Vitest Snapshot v1
 
-exports[`Task: create-scripts > add build:tsc and lint:tsc in package.json 1`] = `
+exports[`Task: create-scripts > add lint:tsc in package.json 1`] = `
 "[STARTED] Add package scripts
 [SUCCESS] Add package scripts
 "

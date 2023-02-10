@@ -24,13 +24,12 @@ describe('Task: create-scripts', async () => {
     vi.clearAllMocks();
   });
 
-  test('add build:tsc and lint:tsc in package.json', async () => {
+  test('add lint:tsc in package.json', async () => {
     const options = createMigrateOptions(basePath);
     const tasks = [await createScriptsTask(options)];
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    expect(packageJson.scripts['build:tsc']).toBe('tsc -b');
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
     expect(output).matchSnapshot();

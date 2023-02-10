@@ -33,6 +33,7 @@ process.on('SIGINT', () => {
 migrateCommand
   .name('migrate')
   .description('migrate a javascript project to typescript')
+  .option('--init', 'only initializes the project', false)
   .option(
     '-p, --basePath <project base path>',
     'base directory of your project',
@@ -93,7 +94,9 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   ];
 
   try {
-    if (options.interactive) {
+    if (options.init) {
+      await new Listr(tasks, defaultListrOption).run();
+    } else if (options.interactive) {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();

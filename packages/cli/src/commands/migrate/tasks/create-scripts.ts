@@ -9,7 +9,6 @@ export async function createScriptsTask(options: MigrateCommandOptions): Promise
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipScriptConfig,
     task: async (): Promise<void> => {
       addPackageJsonScripts(options.basePath, {
-        'build:tsc': 'tsc -b',
         'lint:tsc': 'tsc --noEmit',
       });
     },
