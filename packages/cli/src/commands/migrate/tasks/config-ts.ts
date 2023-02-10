@@ -32,7 +32,7 @@ export async function tsConfigTask(
           tsConfig.compilerOptions.strict = true;
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
+          writeTSConfig(options.basePath, options.init ? [] : ctx.sourceFilesWithRelativePath);
         }
       }
       await gitAddIfInRepo(configPath, options.basePath); // stage tsconfig.json if in a git repo

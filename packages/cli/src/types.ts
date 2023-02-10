@@ -8,6 +8,7 @@ export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 export * from './configs/rehearsal-config';
 
 export type MigrateCommandOptions = {
+  init: boolean;
   basePath: string;
   entrypoint: string;
   format: Formats[];

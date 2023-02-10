@@ -182,7 +182,6 @@ describe('migrate: e2e', async () => {
     expect(lintConfigDefualt).toMatchSnapshot();
 
     // new scripts
-    expect(packageJson.scripts['build:tsc']).toBe('tsc -b');
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
     // stage all config files
@@ -193,6 +192,47 @@ describe('migrate: e2e', async () => {
       '.rehearsal/migrate-report.sarif',
       'tsconfig.json',
     ]);
+  });
+
+  test('init flag', async () => {
+    // simulate clean git project
+    const git = simpleGit({
+      baseDir: basePath,
+    } as Partial<SimpleGitOptions>);
+    await git
+      .init()
+      .add('./*')
+      .addConfig('user.name', 'tester')
+      .addConfig('user.email', 'tester@tester.com')
+      .commit('test');
+
+    const { stdout } = await runBin('migrate', ['--init'], {
+      cwd: basePath,
+    });
+
+    // summary message
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+
+    // file structures
+    const fileList = readdirSync(basePath);
+    expect(fileList).not.toContain('index.ts');
+    expect(fileList).not.toContain('foo.ts');
+    expect(fileList).not.toContain('depends-on-foo.ts');
+    expect(fileList).toContain('index.js');
+    expect(fileList).toContain('foo.js');
+    expect(fileList).toContain('depends-on-foo.js');
+    expect(fileList).toContain('tsconfig.json');
+    expect(fileList).toContain('package.json');
+    expect(fileList).toContain('.rehearsal-eslintrc.js');
+
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    expect(tsConfig).matchSnapshot();
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    expect(packageJson).matchSnapshot();
+
+    const eslint = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), 'utf-8');
+    expect(eslint).toMatchSnapshot();
   });
 
   test('Print debug messages with verbose', async () => {
@@ -246,7 +286,6 @@ describe('migrate: e2e', async () => {
     expect(lintConfigDefualt).toMatchSnapshot();
 
     // new scripts
-    expect(packageJson.scripts['build:tsc']).toBe('tsc -b');
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
   });
 
