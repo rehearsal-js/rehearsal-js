@@ -1,6 +1,5 @@
 // Vitest Snapshot v1
 
-<<<<<<< HEAD
 exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
@@ -23,27 +22,6 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [SUCCESS]   0 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
-=======
-exports[`migrate: e2e >  rehearsal-config.json > exclude path defined in config 1`] = `
-"[32minfo[39m:    @rehearsal/migrate 1.0.4-beta
-[STARTED] Initialize -- Dry Run Mode
-[DATA] Running migration on my-package
-[DATA] List of files will be attempted to migrate:
-[DATA]  lib/a.js
-[DATA] index.js
-[SUCCESS] Initialize -- Dry Run Mode"
-`;
-
-exports[`migrate: e2e >  rehearsal-config.json > include path defined in config 1`] = `
-"[32minfo[39m:    @rehearsal/migrate 1.0.4-beta
-[STARTED] Initialize -- Dry Run Mode
-[DATA] Running migration on my-package
-[DATA] List of files will be attempted to migrate:
-[DATA]  lib/a.js
-[DATA] index.js
-[DATA] test/index.js
-[SUCCESS] Initialize -- Dry Run Mode"
->>>>>>> 9fe5305 (feat(cli): add config for include/exclude of files)
 `;
 
 exports[`migrate: e2e > Print debug messages with verbose 1`] = `
