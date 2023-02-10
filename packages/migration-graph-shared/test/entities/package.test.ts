@@ -121,11 +121,12 @@ describe('Unit | Entities | Package', function () {
       p.addIncludePattern('file1', 'file2');
       expect(p.includePatterns).toStrictEqual(new Set(['.', 'foo.js', 'file1', 'file2']));
 
+      expect(p.excludePatterns.has('tests')).toBe(true);
       p.addIncludePattern('tests');
       expect(
-        p.excludePatterns,
+        p.excludePatterns.has('tests'),
         'should remove tests from excludes if addIncludePattern'
-      ).toStrictEqual(new Set(['dist', 'test']));
+      ).toBe(false);
     });
   });
 
