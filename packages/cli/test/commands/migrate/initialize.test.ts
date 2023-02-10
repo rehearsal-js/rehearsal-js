@@ -57,7 +57,7 @@ describe('Task: initialize', async () => {
     expect(output).matchSnapshot();
   });
 
-  test.only('store custom config in context', async () => {
+  test('store custom config in context', async () => {
     createUserConfig(basePath, {
       migrate: {
         include: ['test'],
@@ -80,13 +80,13 @@ describe('Task: initialize', async () => {
     expect.assertions(8);
 
     expect(ctx.userConfig).toBeTruthy();
-    expect(ctx.userConfig?.basePath).toBe(basePath);
-    expect(ctx.userConfig?.config).toMatchSnapshot();
-    expect(ctx.userConfig?.hasDependencies).toBeTruthy();
-    expect(ctx.userConfig?.hasLintSetup).toBeTruthy();
-    expect(ctx.userConfig?.hasTsSetup).toBeTruthy();
-    expect(ctx.userConfig?.include).toStrictEqual(['test']);
-    expect(ctx.userConfig?.exclude).toStrictEqual(['docs']);
+    expect(ctx?.userConfig?.basePath).toBe(basePath);
+    expect(ctx?.userConfig?.config).toMatchSnapshot();
+    expect(ctx?.userConfig?.hasDependencies).toBeTruthy();
+    expect(ctx?.userConfig?.hasLintSetup).toBeTruthy();
+    expect(ctx?.userConfig?.hasTsSetup).toBeTruthy();
+    expect(ctx?.userConfig?.include).toStrictEqual(['test']);
+    expect(ctx?.userConfig?.exclude).toStrictEqual(['docs']);
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
