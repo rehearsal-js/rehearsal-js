@@ -1,75 +1,13 @@
 // Vitest Snapshot v1
 
-exports[`Task: initialize > disable package selection if completed 1`] = `
-{
-  ".": [],
-  "./module-a": [
-    "./module-a/index.js",
-  ],
-  "./module-b": [],
-}
-`;
-
-exports[`Task: initialize > disable package selection if completed 2`] = `
-{
-  "./module-a/index.js": {
-    "current": "./module-a/index.ts",
-    "errorCount": 0,
-    "origin": "./module-a/index.js",
-    "package": "./module-a",
-  },
-}
-`;
-
-exports[`Task: initialize > get files that will be migrated 1`] = `
-[
-  "foo.js",
-  "depends-on-foo.js",
-  "index.js",
-]
-`;
-
-exports[`Task: initialize > get files that will be migrated 2`] = `
-"[STARTED] Initialize
-[DATA] Running migration on basic
-[SUCCESS] Initialize
-"
-`;
-
-exports[`Task: initialize > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Initialize -- Dry Run Mode
-[DATA] Running migration on basic
-[DATA] List of files will be attempted to migrate:
-[DATA]  foo.js
-[DATA] depends-on-foo.js
-[DATA] index.js
-[SUCCESS] Initialize -- Dry Run Mode
-"
-`;
-
-exports[`Task: initialize > show package progress in interactive mode 1`] = `
-{
-  ".": [],
-  "./module-a": [
-    "./module-a/index.js",
-  ],
-  "./module-b": [],
-}
-`;
-
-exports[`Task: initialize > show package progress in interactive mode 2`] = `
-{
-  "./module-a/index.js": {
-    "current": "./module-a/index.ts",
-    "errorCount": 2,
-    "origin": "./module-a/index.js",
-    "package": "./module-a",
-  },
-}
-`;
-
 exports[`Task: initialize > store custom config in context 1`] = `
 {
+  "exclude": [
+    "docs",
+  ],
+  "include": [
+    "test",
+  ],
   "install": {
     "dependencies": [
       "foo",
