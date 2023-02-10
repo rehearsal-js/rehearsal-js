@@ -20,7 +20,7 @@ const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
@@ -34,7 +34,7 @@ const afterEachCleanup = async (): Promise<void> => {
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
   await execa(PNPM_PATH, ['remove', `typescript`]);
-  await execa(PNPM_PATH, ['add', `typescript@${ORIGIN_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });
 
@@ -117,7 +117,7 @@ describe('upgrade:command tsc version check', async () => {
 
   test(`it is on typescript version already tested`, async () => {
     // this will test the version already installed
-    await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
+    await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
     await execa(PNPM_PATH, ['install']);
 
     const result = await runBin(
