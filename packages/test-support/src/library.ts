@@ -103,7 +103,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
           'some.test.js': '// Should not be included by default',
         },
         tests: {
-          'index.test.js': '// Should not included by default',
+          'index.test.js': '// Should not be included by default',
         },
       };
       break;
