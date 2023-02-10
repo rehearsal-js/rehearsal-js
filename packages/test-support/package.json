@@ -6,8 +6,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
-    "dist",
-    "fixtures"
+    "dist"
   ],
   "scripts": {
     "build": "tsc -b",
