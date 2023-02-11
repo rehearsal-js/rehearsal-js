@@ -117,7 +117,7 @@ function publish() {
   execSync(gitPush);
 
   // push tags
-  const gitPushTags = `git push origin --tags`;
+  const gitPushTags = `git push origin v${newVersion}`;
   console.log(gitPushTags);
   execSync(gitPushTags);
 
