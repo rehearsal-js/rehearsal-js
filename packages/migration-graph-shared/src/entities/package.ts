@@ -91,6 +91,7 @@ export class Package implements IPackage {
       '.babelrc.*',
       'babel.config.*', // Babel configs
       'Brocfile.js',
+      '.prettierrc.*',
       'prettier.config.*', // Prettier configs
       'karma.config.*',
       'webpack.config.js',

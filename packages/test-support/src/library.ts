@@ -39,6 +39,8 @@ const FILES_TO_IGNORE = [
   'yarn.lock',
   'npm-shrinkwrap.json',
   'webpack.config.js',
+  '.prettierrc.js',
+  '.prettierrc.cjs',
   'prettier.config.js',
   'prettier.config.cjs',
   'karma.config.js',
