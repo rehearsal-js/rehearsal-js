@@ -59,8 +59,14 @@ export class UserConfig {
 
   async postInstall(): Promise<void> {
     if (this.config && this.config.postInstall) {
-      const { command, args } = this.config.postInstall;
-      await execa(command, args, { cwd: this.basePath });
+      if (Array.isArray(this.config.postInstall)) {
+        for (const { command, args } of this.config.postInstall) {
+          await execa(command, args, { cwd: this.basePath });
+        }
+      } else {
+        const { command, args } = this.config.postInstall;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
@@ -70,29 +76,57 @@ export class UserConfig {
   // What does upgrade command need for custom config?
   async tsSetup(): Promise<void> {
     if (this.config?.setup?.ts) {
-      const { command, args } = this.config.setup.ts;
-      await execa(command, args, { cwd: this.basePath });
+      const { ts: tsSetup } = this.config.setup;
+      if (Array.isArray(tsSetup)) {
+        for (const { command, args } of tsSetup) {
+          await execa(command, args, { cwd: this.basePath });
+        }
+      } else {
+        const { command, args } = tsSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
   async postTsSetup(): Promise<void> {
     if (this.config?.setup?.postTsSetup) {
-      const { command, args } = this.config.setup.postTsSetup;
-      await execa(command, args, { cwd: this.basePath });
+      const { postTsSetup } = this.config.setup;
+      if (Array.isArray(postTsSetup)) {
+        for (const { command, args } of postTsSetup) {
+          await execa(command, args, { cwd: this.basePath });
+        }
+      } else {
+        const { command, args } = postTsSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
   async lintSetup(): Promise<void> {
     if (this.config?.setup?.lint) {
-      const { command, args } = this.config.setup.lint;
-      await execa(command, args, { cwd: this.basePath });
+      const { lint: lintSetup } = this.config.setup;
+      if (Array.isArray(lintSetup)) {
+        for (const { command, args } of lintSetup) {
+          await execa(command, args, { cwd: this.basePath });
+        }
+      } else {
+        const { command, args } = lintSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
   async postLintSetup(): Promise<void> {
     if (this.config?.setup?.postLintSetup) {
-      const { command, args } = this.config.setup.postLintSetup;
-      await execa(command, args, { cwd: this.basePath });
+      const { postLintSetup } = this.config.setup;
+      if (Array.isArray(postLintSetup)) {
+        for (const { command, args } of postLintSetup) {
+          await execa(command, args, { cwd: this.basePath });
+        }
+      } else {
+        const { command, args } = postLintSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 

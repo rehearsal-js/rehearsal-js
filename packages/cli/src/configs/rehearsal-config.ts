@@ -9,17 +9,17 @@ export type HookCommand = {
 };
 
 export type SetupConfig = {
-  ts?: HookCommand;
-  postTsSetup?: HookCommand;
-  lint?: HookCommand;
-  postLintSetup?: HookCommand;
+  ts?: HookCommand | HookCommand[];
+  postTsSetup?: HookCommand | HookCommand[];
+  lint?: HookCommand | HookCommand[];
+  postLintSetup?: HookCommand | HookCommand[];
 };
 
 export type ValidateConfig = () => Promise<void>;
 
 export type CustomCommandConfig = {
   install?: DependencyConfig;
-  postInstall?: HookCommand;
+  postInstall?: HookCommand | HookCommand[];
   setup?: SetupConfig;
 };
 
