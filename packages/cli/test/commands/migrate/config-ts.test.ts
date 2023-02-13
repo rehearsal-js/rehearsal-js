@@ -80,6 +80,27 @@ describe('Task: config-ts', async () => {
     expect(output).toMatchSnapshot();
   });
 
+  test('postTsSetup hook from user config', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        setup: {
+          ts: { command: 'touch', args: ['custom-ts-config-script'] },
+          postTsSetup: { command: 'mv', args: ['custom-ts-config-script', 'foo'] },
+        },
+      },
+    });
+
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const tasks = [await tsConfigTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
+
+    // This proves the custom command and hook works
+    expect(readdirSync(basePath)).toContain('foo');
+    expect(readdirSync(basePath)).not.toContain('custom-ts-config-script');
+    expect(output).toMatchSnapshot();
+  });
+
   test('stage tsconfig if in git repo', async () => {
     // simulate clean git project
     const git: SimpleGit = simpleGit({

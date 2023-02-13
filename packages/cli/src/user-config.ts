@@ -24,12 +24,24 @@ export class UserConfig {
     );
   }
 
+  public get hasPostInstallHook(): boolean {
+    return !!this.config?.postInstall;
+  }
+
   public get hasTsSetup(): boolean {
     return !!this.config?.setup?.ts;
   }
 
+  public get hasPostTsSetupHook(): boolean {
+    return !!this.config?.setup?.postTsSetup;
+  }
+
   public get hasLintSetup(): boolean {
     return !!this.config?.setup?.lint;
+  }
+
+  public get hasPostLintSetup(): boolean {
+    return !!this.config?.setup?.postLintSetup;
   }
 
   async install(): Promise<void> {
@@ -43,7 +55,9 @@ export class UserConfig {
         await addDep(devDependencies, true, { cwd: this.basePath });
       }
     }
+  }
 
+  async postInstall(): Promise<void> {
     if (this.config && this.config.postInstall) {
       const { command, args } = this.config.postInstall;
       await execa(command, args, { cwd: this.basePath });
@@ -58,11 +72,13 @@ export class UserConfig {
     if (this.config?.setup?.ts) {
       const { command, args } = this.config.setup.ts;
       await execa(command, args, { cwd: this.basePath });
+    }
+  }
 
-      if (this.config.setup.postTsSetup) {
-        const { command, args } = this.config.setup.postTsSetup;
-        await execa(command, args, { cwd: this.basePath });
-      }
+  async postTsSetup(): Promise<void> {
+    if (this.config?.setup?.postTsSetup) {
+      const { command, args } = this.config.setup.postTsSetup;
+      await execa(command, args, { cwd: this.basePath });
     }
   }
 
@@ -70,11 +86,13 @@ export class UserConfig {
     if (this.config?.setup?.lint) {
       const { command, args } = this.config.setup.lint;
       await execa(command, args, { cwd: this.basePath });
+    }
+  }
 
-      if (this.config.setup.postLintSetup) {
-        const { command, args } = this.config.setup.postLintSetup;
-        await execa(command, args, { cwd: this.basePath });
-      }
+  async postLintSetup(): Promise<void> {
+    if (this.config?.setup?.postLintSetup) {
+      const { command, args } = this.config.setup.postLintSetup;
+      await execa(command, args, { cwd: this.basePath });
     }
   }
 
