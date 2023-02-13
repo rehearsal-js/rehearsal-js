@@ -43,6 +43,11 @@ export class UserConfig {
         await addDep(devDependencies, true, { cwd: this.basePath });
       }
     }
+
+    if (this.config && this.config.postInstall) {
+      const { command, args } = this.config.postInstall;
+      await execa(command, args, { cwd: this.basePath });
+    }
   }
 
   // TODO: how to make setup tasks more generic instead of separated functions?
@@ -53,6 +58,11 @@ export class UserConfig {
     if (this.config?.setup?.ts) {
       const { command, args } = this.config.setup.ts;
       await execa(command, args, { cwd: this.basePath });
+
+      if (this.config.setup.postTsSetup) {
+        const { command, args } = this.config.setup.postTsSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
@@ -60,6 +70,11 @@ export class UserConfig {
     if (this.config?.setup?.lint) {
       const { command, args } = this.config.setup.lint;
       await execa(command, args, { cwd: this.basePath });
+
+      if (this.config.setup.postLintSetup) {
+        const { command, args } = this.config.setup.postLintSetup;
+        await execa(command, args, { cwd: this.basePath });
+      }
     }
   }
 
