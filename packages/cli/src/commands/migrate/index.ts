@@ -48,7 +48,11 @@ migrateCommand
     ['sarif']
   )
   .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
-  .option('-u, --userConfig <custom json config for migrate command>', 'path to rehearsal config')
+  .option(
+    '-u, --userConfig <custom json config for migrate command>',
+    'path to rehearsal config',
+    'rehearsal-config.json'
+  )
   .option('-i, --interactive', 'interactive mode')
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)

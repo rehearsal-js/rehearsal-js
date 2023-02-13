@@ -90,7 +90,7 @@ export function createMigrateOptions(
     format: ['sarif' as Formats],
     outputPath: '.rehearsal',
     verbose: false,
-    userConfig: undefined,
+    userConfig: 'rehearsal-config.json',
     interactive: undefined,
     dryRun: false,
     regen: false,

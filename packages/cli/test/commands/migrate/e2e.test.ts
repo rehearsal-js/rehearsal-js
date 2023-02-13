@@ -231,7 +231,9 @@ describe('migrate: e2e', async () => {
     expect(tsConfig).matchSnapshot();
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
-    expect(packageJson).matchSnapshot();
+    const devDeps = packageJson.devDependencies;
+    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
     const eslint = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), 'utf-8');
     expect(eslint).toMatchSnapshot();

@@ -47,28 +47,7 @@ exports[`Task: initialize > print files will be attempted to migrate with --dryR
 "
 `;
 
-exports[`Task: initialize > show package progress in interactive mode 1`] = `
-{
-  ".": [],
-  "./module-a": [
-    "./module-a/index.js",
-  ],
-  "./module-b": [],
-}
-`;
-
-exports[`Task: initialize > show package progress in interactive mode 2`] = `
-{
-  "./module-a/index.js": {
-    "current": "./module-a/index.ts",
-    "errorCount": 2,
-    "origin": "./module-a/index.js",
-    "package": "./module-a",
-  },
-}
-`;
-
-exports[`Task: initialize > store custom config in context 1`] = `
+exports[`Task: initialize > read and store config via --userConfig 1`] = `
 {
   "exclude": [
     "docs",
@@ -97,6 +76,60 @@ exports[`Task: initialize > store custom config in context 1`] = `
       ],
       "command": "ts-setup",
     },
+  },
+}
+`;
+
+exports[`Task: initialize > read and store default config in context 1`] = `
+{
+  "exclude": [
+    "docs",
+  ],
+  "include": [
+    "test",
+  ],
+  "install": {
+    "dependencies": [
+      "foo",
+    ],
+    "devDependencies": [
+      "bat",
+    ],
+  },
+  "setup": {
+    "lint": {
+      "args": [
+        "lint-setup-arg",
+      ],
+      "command": "lint-setup",
+    },
+    "ts": {
+      "args": [
+        "ts-setup-arg",
+      ],
+      "command": "ts-setup",
+    },
+  },
+}
+`;
+
+exports[`Task: initialize > show package progress in interactive mode 1`] = `
+{
+  ".": [],
+  "./module-a": [
+    "./module-a/index.js",
+  ],
+  "./module-b": [],
+}
+`;
+
+exports[`Task: initialize > show package progress in interactive mode 2`] = `
+{
+  "./module-a/index.js": {
+    "current": "./module-a/index.ts",
+    "errorCount": 2,
+    "origin": "./module-a/index.js",
+    "package": "./module-a",
   },
 }
 `;

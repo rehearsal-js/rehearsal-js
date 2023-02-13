@@ -14,8 +14,12 @@ import {
 } from '../../test-helpers';
 import { CustomConfig } from '../../../src/types';
 
-function createUserConfig(basePath: string, config: CustomConfig): void {
-  const configPath = resolve(basePath, 'rehearsal-config.json');
+function createUserConfig(
+  basePath: string,
+  config: CustomConfig,
+  configName: string = 'rehearsal-config.json'
+): void {
+  const configPath = resolve(basePath, configName);
   writeJSONSync(configPath, config);
 }
 
@@ -57,7 +61,7 @@ describe('Task: initialize', async () => {
     expect(output).matchSnapshot();
   });
 
-  test('store custom config in context', async () => {
+  test('read and store default config in context', async () => {
     createUserConfig(basePath, {
       migrate: {
         include: ['test'],
@@ -73,7 +77,43 @@ describe('Task: initialize', async () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const options = createMigrateOptions(basePath);
+    const tasks = [await initTask(options)];
+    const ctx = await listrTaskRunner(tasks);
+
+    expect.assertions(8);
+
+    expect(ctx.userConfig).toBeTruthy();
+    expect(ctx?.userConfig?.basePath).toBe(basePath);
+    expect(ctx?.userConfig?.config).toMatchSnapshot();
+    expect(ctx?.userConfig?.hasDependencies).toBeTruthy();
+    expect(ctx?.userConfig?.hasLintSetup).toBeTruthy();
+    expect(ctx?.userConfig?.hasTsSetup).toBeTruthy();
+    expect(ctx?.userConfig?.include).toStrictEqual(['test']);
+    expect(ctx?.userConfig?.exclude).toStrictEqual(['docs']);
+  });
+
+  test('read and store config via --userConfig', async () => {
+    createUserConfig(
+      basePath,
+      {
+        migrate: {
+          include: ['test'],
+          exclude: ['docs'],
+          install: {
+            dependencies: ['foo'],
+            devDependencies: ['bat'],
+          },
+          setup: {
+            ts: { command: 'ts-setup', args: ['ts-setup-arg'] },
+            lint: { command: 'lint-setup', args: ['lint-setup-arg'] },
+          },
+        },
+      },
+      'another-config.json'
+    );
+
+    const options = createMigrateOptions(basePath, { userConfig: 'another-config.json' });
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
