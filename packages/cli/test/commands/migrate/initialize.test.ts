@@ -1,7 +1,6 @@
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
-
 import { initTask } from '../../../src/commands/migrate/tasks';
 import {
   prepareTmpDir,
@@ -61,6 +60,8 @@ describe('Task: initialize', async () => {
   test('store custom config in context', async () => {
     createUserConfig(basePath, {
       migrate: {
+        include: ['test'],
+        exclude: ['docs'],
         install: {
           dependencies: ['foo'],
           devDependencies: ['bat'],
@@ -76,14 +77,16 @@ describe('Task: initialize', async () => {
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
+    expect.assertions(8);
+
     expect(ctx.userConfig).toBeTruthy();
-    if (ctx.userConfig) {
-      expect(ctx.userConfig.basePath).toBe(basePath);
-      expect(ctx.userConfig.config).toMatchSnapshot();
-      expect(ctx.userConfig.hasDependencies).toBeTruthy();
-      expect(ctx.userConfig.hasLintSetup).toBeTruthy();
-      expect(ctx.userConfig.hasTsSetup).toBeTruthy();
-    }
+    expect(ctx?.userConfig?.basePath).toBe(basePath);
+    expect(ctx?.userConfig?.config).toMatchSnapshot();
+    expect(ctx?.userConfig?.hasDependencies).toBeTruthy();
+    expect(ctx?.userConfig?.hasLintSetup).toBeTruthy();
+    expect(ctx?.userConfig?.hasTsSetup).toBeTruthy();
+    expect(ctx?.userConfig?.include).toStrictEqual(['test']);
+    expect(ctx?.userConfig?.exclude).toStrictEqual(['docs']);
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {

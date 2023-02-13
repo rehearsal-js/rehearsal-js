@@ -118,6 +118,8 @@ export async function initTask(
       // construct migration strategy and prepare all the files needs to be migrated
       const strategy = getMigrationStrategy(ctx.targetPackagePath, {
         entrypoint: options.entrypoint,
+        exclude: userConfig?.exclude,
+        include: userConfig?.include,
       });
       const files: SourceFile[] = strategy.getMigrationOrder();
       DEBUG_CALLBACK(

@@ -200,12 +200,22 @@ export class Package implements IPackage {
   }
 
   addIncludePattern(...patterns: string[]): this {
-    patterns.forEach((pattern) => this.#includePatterns.add(pattern));
+    patterns.forEach((pattern) => {
+      if (this.#excludePatterns.has(pattern)) {
+        this.#excludePatterns.delete(pattern);
+      }
+      this.#includePatterns.add(pattern);
+    });
     return this;
   }
 
   addExcludePattern(...patterns: string[]): this {
-    patterns.forEach((pattern) => this.#excludePatterns.add(pattern));
+    patterns.forEach((pattern) => {
+      if (this.#includePatterns.has(pattern)) {
+        this.#includePatterns.delete(pattern);
+      }
+      this.#excludePatterns.add(pattern);
+    });
     return this;
   }
 

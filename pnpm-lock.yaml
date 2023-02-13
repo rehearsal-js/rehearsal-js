@@ -111,6 +111,7 @@ importers:
       '@rehearsal/migration-graph': workspace:*
       '@rehearsal/regen': workspace:*
       '@rehearsal/reporter': workspace:*
+      '@rehearsal/test-support': workspace:*
       '@rehearsal/upgrade': workspace:*
       '@rehearsal/utils': workspace:*
       '@types/which': ^2.0.1
@@ -156,6 +157,7 @@ importers:
       winston: 3.8.2
       yaml: 2.2.1
     devDependencies:
+      '@rehearsal/test-support': link:../test-support
       '@types/which': 2.0.1
       typescript: 4.9.5
       typescript-json-schema: 0.55.0

@@ -94,10 +94,12 @@ export function getMigrationStrategy(
       }
 
       if (!packageNode.content.pkg) {
-        throw new Error('WTF');
+        throw new Error('Unable to create MigrationStrategy, packageNode has no Package');
       }
 
-      const moduleGraph = packageNode.content.pkg?.getModuleGraph();
+      const somePackage = packageNode.content.pkg;
+
+      const moduleGraph = somePackage.getModuleGraph({ project: projectGraph });
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = moduleGraph

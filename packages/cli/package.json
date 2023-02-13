@@ -53,6 +53,7 @@
     "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "@rehearsal/test-support": "workspace:*",
     "@types/which": "^2.0.1",
     "typescript": "^4.9.5",
     "typescript-json-schema": "^0.55.0",

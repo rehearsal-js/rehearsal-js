@@ -1,12 +1,14 @@
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
-import { readdirSync, readJSONSync } from 'fs-extra';
+import { readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
+import { create, getFiles } from '@rehearsal/test-support';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers';
+import { CustomConfig } from '../../../src/types';
 
 setGracefulCleanup();
 
@@ -235,7 +237,7 @@ describe('migrate: e2e', async () => {
     expect(eslint).toMatchSnapshot();
   });
 
-  test('Print debug messages with verbose', async () => {
+  test('Print debug messages with --verbose', async () => {
     const { stdout } = await runBin('migrate', ['--verbose'], {
       cwd: basePath,
     });
@@ -243,7 +245,7 @@ describe('migrate: e2e', async () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 
-  test('againt specific basePath via -basePath option', async () => {
+  test('againt specific basePath via --basePath option', async () => {
     basePath = prepareTmpDir('custom_basepath');
 
     const customBasePath = resolve(basePath, 'base');
@@ -317,5 +319,58 @@ describe('migrate: e2e', async () => {
       cwd: basePath,
     });
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+  });
+
+  describe('user defined options passed by --user-config -u', async () => {
+    function createUserConfig(basePath: string, config: CustomConfig): void {
+      const configPath = resolve(basePath, 'rehearsal-config.json');
+      writeJSONSync(configPath, config);
+    }
+
+    test('migrate.exclude', async () => {
+      const files = getFiles('simple');
+      // Add a directory that we don't want to ignore
+      files['some-dir'] = { 'index.js': '// I should be excluded ' };
+      const basePath = create(files);
+
+      createUserConfig(basePath, {
+        migrate: {
+          setup: {
+            ts: { command: 'touch', args: ['custom-ts-config-script'] },
+          },
+          exclude: ['some-dir'],
+        },
+      });
+
+      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json'], {
+        cwd: basePath,
+      });
+
+      expect(result.stdout).toMatchSnapshot();
+    });
+
+    test('migrate.include', async () => {
+      const files = getFiles('simple');
+
+      // test is a default ignored directory in Package.ts
+      // adding it to the include list should override that value.
+      files['test'] = { 'index.js': '// I should be included ' };
+      const basePath = create(files);
+
+      createUserConfig(basePath, {
+        migrate: {
+          setup: {
+            ts: { command: 'touch', args: ['custom-ts-config-script'] },
+          },
+          include: ['test'],
+        },
+      });
+
+      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json'], {
+        cwd: basePath,
+      });
+
+      expect(result.stdout).toMatchSnapshot();
+    });
   });
 });

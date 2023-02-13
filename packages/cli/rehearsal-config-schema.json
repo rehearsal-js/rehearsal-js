@@ -1,60 +1,86 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "migrate": {
-            "properties": {
-                "install": {
+    "definitions": {
+        "MigrateCommandConfig": {
+            "allOf": [
+                {
                     "properties": {
-                        "dependencies": {
-                            "items": {
-                                "type": "string"
+                        "install": {
+                            "properties": {
+                                "dependencies": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                },
+                                "devDependencies": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array"
+                                }
                             },
-                            "type": "array"
+                            "type": "object"
                         },
-                        "devDependencies": {
-                            "items": {
-                                "type": "string"
+                        "setup": {
+                            "properties": {
+                                "lint": {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                "ts": {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
                             },
-                            "type": "array"
+                            "type": "object"
                         }
                     },
                     "type": "object"
                 },
-                "setup": {
+                {
                     "properties": {
-                        "lint": {
-                            "properties": {
-                                "args": {
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "type": "array"
-                                },
-                                "command": {
-                                    "type": "string"
-                                }
+                        "exclude": {
+                            "items": {
+                                "type": "string"
                             },
-                            "type": "object"
+                            "type": "array"
                         },
-                        "ts": {
-                            "properties": {
-                                "args": {
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "type": "array"
-                                },
-                                "command": {
-                                    "type": "string"
-                                }
+                        "include": {
+                            "items": {
+                                "type": "string"
                             },
-                            "type": "object"
+                            "type": "array"
                         }
                     },
                     "type": "object"
                 }
-            },
-            "type": "object"
+            ]
+        }
+    },
+    "properties": {
+        "migrate": {
+            "$ref": "#/definitions/MigrateCommandConfig"
         },
         "upgrade": {
             "properties": {

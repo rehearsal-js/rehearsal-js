@@ -24,7 +24,7 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
-exports[`migrate: e2e > Print debug messages with verbose 1`] = `
+exports[`migrate: e2e > Print debug messages with --verbose 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
 [SUCCESS] Validate project
@@ -68,7 +68,7 @@ debug:   fileNames: [\\"<tmp-path>/foo.ts\\",\\"<tmp-path>/depends-on-foo.ts\\",
 [SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
-exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
+exports[`migrate: e2e > againt specific basePath via --basePath option 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
 [SUCCESS] Validate project
@@ -103,7 +103,7 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 1`] = `
 [SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
-exports[`migrate: e2e > againt specific basePath via -basePath option 2`] = `
+exports[`migrate: e2e > againt specific basePath via --basePath option 2`] = `
 "/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'baz' implicitly has an 'any' type. */
 export function run(baz) {
   /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'foo'. */
@@ -112,7 +112,7 @@ export function run(baz) {
 "
 `;
 
-exports[`migrate: e2e > againt specific basePath via -basePath option 3`] = `
+exports[`migrate: e2e > againt specific basePath via --basePath option 3`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -133,14 +133,14 @@ exports[`migrate: e2e > againt specific basePath via -basePath option 3`] = `
 }
 `;
 
-exports[`migrate: e2e > againt specific basePath via -basePath option 4`] = `
+exports[`migrate: e2e > againt specific basePath via --basePath option 4`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate: e2e > againt specific basePath via -basePath option 5`] = `
+exports[`migrate: e2e > againt specific basePath via --basePath option 5`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -373,4 +373,49 @@ exports[`migrate: e2e > regen result after the first pass 1`] = `
 [SUCCESS]   1 errors caught by rehearsal
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
+`;
+
+exports[`migrate: e2e > user defined options passed by --user-config -u > migrate.exclude 1`] = `
+"[32minfo[39m:    @rehearsal/migrate 1.0.7-beta
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize -- Dry Run Mode
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js
+[SUCCESS] Initialize -- Dry Run Mode
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts"
+`;
+
+exports[`migrate: e2e > user defined options passed by --user-config -u > migrate.include 1`] = `
+"[32minfo[39m:    @rehearsal/migrate 1.0.7-beta
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize -- Dry Run Mode
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js
+[DATA] test/index.js
+[SUCCESS] Initialize -- Dry Run Mode
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts"
 `;

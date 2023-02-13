@@ -70,6 +70,12 @@ exports[`Task: initialize > show package progress in interactive mode 2`] = `
 
 exports[`Task: initialize > store custom config in context 1`] = `
 {
+  "exclude": [
+    "docs",
+  ],
+  "include": [
+    "test",
+  ],
   "install": {
     "dependencies": [
       "foo",

@@ -99,6 +99,12 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             console.log('foo');
            `,
         },
+        test: {
+          'some.test.js': '// Should not be included by default',
+        },
+        tests: {
+          'index.test.js': '// Should not be included by default',
+        },
       };
       break;
     case 'library-with-ignored-files':

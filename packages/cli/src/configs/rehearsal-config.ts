@@ -18,9 +18,18 @@ export type CustomCommandConfig = {
   setup?: SetupConfig;
 };
 
+export type MigrateCommandConfig = CustomCommandConfig & {
+  include?: string[];
+  exclude?: string[];
+};
+
+export type UpgradeCommandConfig = CustomCommandConfig;
+
+export type CommandConfig = UpgradeCommandConfig | MigrateCommandConfig;
+
 export interface IRehearsalConfig {
-  upgrade?: CustomCommandConfig;
-  migrate?: CustomCommandConfig;
+  upgrade?: UpgradeCommandConfig;
+  migrate?: MigrateCommandConfig;
 }
 
 export type CustomConfig = IRehearsalConfig;
