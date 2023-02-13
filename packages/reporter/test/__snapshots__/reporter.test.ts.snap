@@ -2,13 +2,16 @@
 
 exports[`Test reporter > addItem 1`] = `
 "{
-  \\"summary\\": {
-    \\"projectName\\": \\"@rehearsal/test\\",
-    \\"tsVersion\\": \\"4.7.4\\",
-    \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\",
-    \\"commandName\\": \\"@rehearsal/reporter\\"
-  },
+  \\"summary\\": [
+    {
+      \\"projectName\\": \\"@rehearsal/test\\",
+      \\"tsVersion\\": \\"4.7.4\\",
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
+      \\"basePath\\": \\"/base/path\\",
+      \\"entrypoint\\": \\"\\",
+      \\"commandName\\": \\"@rehearsal/reporter\\"
+    }
+  ],
   \\"fixedItemCount\\": 4,
   \\"items\\": [
     {
@@ -219,25 +222,31 @@ exports[`Test reporter > load 1`] = `
       "type": 1,
     },
   ],
-  "summary": {
-    "basePath": "/base/path",
-    "commandName": "@rehearsal/reporter",
-    "projectName": "@rehearsal/test",
-    "timestamp": "9/16/2022, 13:24:57",
-    "tsVersion": "4.7.4",
-  },
+  "summary": [
+    {
+      "basePath": "/base/path",
+      "commandName": "@rehearsal/reporter",
+      "entrypoint": "",
+      "projectName": "@rehearsal/test",
+      "timestamp": "9/16/2022, 13:24:57",
+      "tsVersion": "4.7.4",
+    },
+  ],
 }
 `;
 
 exports[`Test reporter > print, json 1`] = `
 "{
-  \\"summary\\": {
-    \\"projectName\\": \\"@rehearsal/test\\",
-    \\"tsVersion\\": \\"4.7.4\\",
-    \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\",
-    \\"commandName\\": \\"@rehearsal/reporter\\"
-  },
+  \\"summary\\": [
+    {
+      \\"projectName\\": \\"@rehearsal/test\\",
+      \\"tsVersion\\": \\"4.7.4\\",
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
+      \\"basePath\\": \\"/base/path\\",
+      \\"entrypoint\\": \\"\\",
+      \\"commandName\\": \\"@rehearsal/reporter\\"
+    }
+  ],
   \\"fixedItemCount\\": 4,
   \\"items\\": [
     {
@@ -310,12 +319,14 @@ exports[`Test reporter > print, json 1`] = `
 
 exports[`Test reporter > print, pull-request-md 1`] = `
 "### Summary:
+Project Name: @rehearsal/test
 Typescript Version: 4.7.4
-Files Tested: 2
+Base path: /base/path
+timestamp: 9/16/2022, 13:24:57
 
 ### Results:
 
-#### File: /file1.ts, issues: 3:
+#### File: /base/path/file1.ts, issues: 3:
 
 **Error TS6133**: 'NEED TO BE FIXED MANUALLY'
 The declaration 'react' is never read or used. Remove the declaration or use it.
@@ -329,7 +340,7 @@ Code: \`a\`
 Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.
 Code: \`{}\`
 
-#### File: /file2.ts, issues: 1:
+#### File: /base/path/file2.ts, issues: 1:
 
 **Error @typescript-eslint/no-explicit-any**: 'NEED TO BE FIXED MANUALLY'
 Unexpected any. Specify a different type.
@@ -339,13 +350,16 @@ Code: \`\`
 
 exports[`Test reporter > save 1`] = `
 "{
-  \\"summary\\": {
-    \\"projectName\\": \\"@rehearsal/test\\",
-    \\"tsVersion\\": \\"4.7.4\\",
-    \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-    \\"basePath\\": \\"/base/path\\",
-    \\"commandName\\": \\"@rehearsal/reporter\\"
-  },
+  \\"summary\\": [
+    {
+      \\"projectName\\": \\"@rehearsal/test\\",
+      \\"tsVersion\\": \\"4.7.4\\",
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
+      \\"basePath\\": \\"/base/path\\",
+      \\"entrypoint\\": \\"\\",
+      \\"commandName\\": \\"@rehearsal/reporter\\"
+    }
+  ],
   \\"fixedItemCount\\": 4,
   \\"items\\": [
     {

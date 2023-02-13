@@ -1,13 +1,13 @@
 import { type Report } from '../../../src';
 
 const addRuleData: Report = {
-  summary: {
+  summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
     timestamp: "9/16/2022, 13:24:52",
     basePath: "/reporter/test/sarif-formatter",
     commandName: "@rehearsal/reporter"
-  },
+  }],
   fixedItemCount: 5,
   items: [
     {

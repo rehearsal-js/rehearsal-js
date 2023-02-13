@@ -6,17 +6,22 @@ export function mdFormatter(report: Report): string {
   let text = ``;
 
   text += `### Summary:\n`;
-  text += `Typescript Version: ${report.summary.tsVersion}\n`;
-  text += `Files Tested: ${fileNames.length}\n`;
-  text += `\n`;
+
+  for (const block of report.summary) {
+    text += `Project Name: ${block.projectName}\n`;
+    text += `Typescript Version: ${block.tsVersion}\n`;
+    text += `Base path: ${block.basePath}\n`;
+    text += `timestamp: ${block.timestamp}\n`;
+    text += `\n`;
+  }
+
   text += `### Results:\n`;
 
   for (const fileName of fileNames) {
     const items = report.items.filter((item) => item.analysisTarget === fileName);
-    const relativeFileName = fileName.replace(report.summary.basePath, '');
 
     text += `\n`;
-    text += `#### File: ${relativeFileName}, issues: ${items.length}:\n`;
+    text += `#### File: ${fileName}, issues: ${items.length}:\n`;
 
     for (const item of items) {
       text += `\n`;

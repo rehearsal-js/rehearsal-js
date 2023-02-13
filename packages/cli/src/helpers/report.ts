@@ -8,9 +8,15 @@ import {
   mdFormatter,
   sarifFormatter,
   ReportFormatter,
+  ReportItem,
 } from '@rehearsal/reporter';
 
 import type { CliCommand, Formats } from '../types';
+
+type ReportLike = {
+  items: ReportItem[];
+  fixedItemCount: number;
+};
 
 export function generateReports(
   command: CliCommand,
@@ -23,6 +29,9 @@ export function generateReports(
   if (formats.length === 0) {
     return generatedReports;
   }
+  //We make sure json report will be printed out whether user specifies it or not.
+  //json report preserves the detailed raw data.
+  formats = Array.from(new Set([...formats, 'json']));
 
   mkdirSync(outputPath, { recursive: true });
 
@@ -46,39 +55,11 @@ export function generateReports(
       formatter = sarifFormatter;
     }
 
-    reporter.print(reportPath, formatter);
+    reporter.printReport(reportPath, formatter);
     generatedReports.push(reportPath);
   });
 
   return generatedReports;
-}
-
-/**
- * Upgrade command result JSON report formatter
- */
-export function reportFormatter(report: Report): string {
-  const fileNames = [
-    ...new Set(
-      report.items.map((item) => item.analysisTarget.replace(report.summary.basePath, ''))
-    ),
-  ];
-
-  const totalErrors: { [key: string]: number } = {};
-
-  // Add statistic info to summary
-  report.summary = {
-    ...report.summary,
-    ...{
-      timestamp: new Date().toISOString(),
-      uniqueErrors: Object.keys(totalErrors).length,
-      totalErrors: totalErrors.length,
-      totalErrorsList: totalErrors,
-      files: fileNames.length,
-      filesList: fileNames,
-    },
-  };
-
-  return JSON.stringify(report, null, 2);
 }
 
 /**
@@ -109,7 +90,11 @@ export function getReportSummary(report: Report, migratedFileCount: number): str
     -- ${lintErrorCount} eslint errors, with details in the report\n`;
 }
 
-export function getRegenSummary(report: Report, scannedFileCount: number): string {
+export function getRegenSummary<T extends ReportLike>(
+  report: T,
+  scannedFileCount: number,
+  isSequential = false
+): string {
   const fileMap = new Set<string>();
   let tsErrorCount = 0;
   let lintErrorCount = 0;
@@ -124,9 +109,19 @@ export function getRegenSummary(report: Report, scannedFileCount: number): strin
   });
   const totalErrorCount = report.items.length;
 
-  return `Migration Report Generated\n\n
-  ${scannedFileCount} ts files have been scanned\n
-  ${totalErrorCount} errors caught by rehearsal\n
-    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
-    -- ${lintErrorCount} eslint errors, with details in the report\n`;
+  let message;
+  if (!isSequential) {
+    message = `Migration Report Generated\n\n
+    ${scannedFileCount} ts files have been scanned\n
+    ${totalErrorCount} errors caught by rehearsal\n
+      -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
+      -- ${lintErrorCount} eslint errors, with details in the report\n`;
+  } else {
+    message = `Rescanning previously migrated files based on existing report:\n
+    ${scannedFileCount} ts files have been scanned\n
+    ${totalErrorCount} errors caught by rehearsal, and will be merged into the migration report\n
+    `;
+  }
+
+  return message;
 }

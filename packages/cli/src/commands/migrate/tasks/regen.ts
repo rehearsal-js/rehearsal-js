@@ -14,7 +14,7 @@ export async function regenTask(
   return {
     title: 'Regenerating report for TS errors and Eslint errors',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (_: MigrateCommandContext, task): Promise<void> => {
+    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // Because we have to eagerly import all the tasks we need tolazily load these
       // modules because they refer to typescript which may or may not be installed
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
@@ -22,17 +22,21 @@ export async function regenTask(
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
 
       const projectName = determineProjectName() || '';
-      const { basePath } = options;
+      // const { basePath, entrypoint } = options;
+      const basePath = ctx.targetPackagePath;
+      const { entrypoint } = options;
       const tscPath = await getPathToBinary('tsc');
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
+        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate', entrypoint },
         logger
       );
 
       const input = {
         basePath,
+        entrypoint,
+        sourceFiles: ctx.sourceFilesWithAbsolutePath,
         logger: logger,
         reporter,
         task,

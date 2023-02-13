@@ -8,6 +8,8 @@ import type { Reporter } from '@rehearsal/reporter';
 
 export type RegenInput = {
   basePath: string;
+  entrypoint: string;
+  sourceFiles: string[];
   configName?: string;
   reporter: Reporter;
   logger?: Logger;
@@ -23,6 +25,7 @@ export type RegenOutput = {
 export async function regen(input: RegenInput): Promise<RegenOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
+  const sourceFiles = input.sourceFiles || ['index.ts'];
   const reporter = input.reporter;
   const logger = input.logger;
 
@@ -43,13 +46,15 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   const { config } = readConfigFile(configFile, sys.readFile);
 
-  const { options, fileNames } = parseJsonConfigFileContent(
+  const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
     sys,
     dirname(configFile),
     {},
     configFile
   );
+
+  const fileNames = [...new Set([...someFiles, ...sourceFiles])];
 
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
@@ -78,6 +83,7 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
     });
 
   await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  reporter.saveCurrentRunToReport(basePath, input.entrypoint);
 
   return {
     basePath,

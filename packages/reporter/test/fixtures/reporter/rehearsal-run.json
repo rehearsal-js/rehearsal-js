@@ -1,12 +1,12 @@
 {
-  "summary": [{
+  "runSummary": {
     "projectName": "@rehearsal/test",
     "tsVersion": "4.7.4",
     "timestamp": "9/16/2022, 13:24:57",
     "basePath": "/base/path",
     "entrypoint": "",
     "commandName": "@rehearsal/reporter"
-  }],
+  },
   "fixedItemCount": 4,
   "items": [
     {

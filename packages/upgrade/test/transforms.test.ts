@@ -58,7 +58,7 @@ async function runAutofixOnTestApp(basePath: string): Promise<void> {
     basePath: '',
     commandName: '@rehearsal/migrate',
   });
-  await upgrade({ basePath, reporter });
+  await upgrade({ basePath, reporter, entrypoint: '' });
 }
 
 /**

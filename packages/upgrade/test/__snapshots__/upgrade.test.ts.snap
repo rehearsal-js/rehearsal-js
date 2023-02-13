@@ -1069,12 +1069,15 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "type": 1,
     },
   ],
-  "summary": {
-    "basePath": "",
-    "commandName": "@rehearsal/upgrade",
-    "projectName": "@rehearsal/test",
-    "timestamp": "9/22/2022, 13:48:38",
-    "tsVersion": "",
-  },
+  "summary": [
+    {
+      "basePath": "",
+      "commandName": "@rehearsal/upgrade",
+      "entrypoint": "",
+      "projectName": "@rehearsal/test",
+      "timestamp": "9/22/2022, 13:48:38",
+      "tsVersion": "",
+    },
+  ],
 }
 `;

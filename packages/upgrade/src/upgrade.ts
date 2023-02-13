@@ -13,6 +13,7 @@ import type { Logger } from 'winston';
 
 export type UpgradeInput = {
   basePath: string;
+  entrypoint: string;
   configName?: string;
   reporter: Reporter;
   logger?: Logger;
@@ -91,6 +92,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     });
 
   await runner.run(fileNames);
+  reporter.saveCurrentRunToReport(basePath, input.entrypoint);
 
   return {
     basePath,

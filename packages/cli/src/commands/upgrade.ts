@@ -81,7 +81,7 @@ upgradeCommand
     const projectName = determineProjectName() || '';
 
     const reporter = new Reporter(
-      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade' },
+      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade', entrypoint: '' },
       logger
     );
 
@@ -144,7 +144,7 @@ upgradeCommand
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
                   await addDep([`typescript@${ctx.tsVersion}`], true);
-                  reporter.report.summary.tsVersion = ctx.tsVersion;
+                  reporter.report.summary[0].tsVersion = ctx.tsVersion;
                 },
               },
               {
@@ -217,7 +217,7 @@ upgradeCommand
           task: async (ctx, task) => {
             const configName = 'tsconfig.json';
 
-            await upgrade({ basePath, configName, reporter, logger });
+            await upgrade({ basePath, entrypoint: '', configName, reporter, logger });
 
             // TODO: Check if code actually been fixed
             task.title = 'Codefixes applied successfully';
