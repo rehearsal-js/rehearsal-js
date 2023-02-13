@@ -76,7 +76,7 @@ export class PackageGraph {
     const cruiseOptions: ICruiseOptions = {
       baseDir,
       exclude: {
-        path: ['node_modules', '\\.css$', ...exclude],
+        path: ['node_modules', '\\.css$', '\\.json$', ...exclude],
       },
     };
 
