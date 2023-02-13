@@ -6,7 +6,7 @@ import {
 } from '@rehearsal/migration-graph';
 import { debug } from 'debug';
 
-import { determineProjectName } from '@rehearsal/utils';
+import { determineProjectName, validateUserConfig } from '@rehearsal/utils';
 import { UserConfig } from '../../../user-config';
 import { State } from '../../../helpers/state';
 import type {
@@ -32,9 +32,10 @@ export async function initTask(
         ctx = { ...ctx, ...context };
       }
       // get custom config
-      const userConfig = options.userConfig
-        ? new UserConfig(options.basePath, options.userConfig, 'migrate')
-        : undefined;
+      const userConfig =
+        options.userConfig && validateUserConfig(options.basePath, options.userConfig)
+          ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+          : undefined;
 
       ctx.userConfig = userConfig;
 

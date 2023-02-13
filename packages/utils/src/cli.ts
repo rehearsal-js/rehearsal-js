@@ -1,5 +1,5 @@
 import { join, resolve } from 'path';
-import { readFileSync, writeJSONSync, readJSONSync } from 'fs-extra';
+import { readFileSync, writeJSONSync, readJSONSync, existsSync } from 'fs-extra';
 import { compare } from 'compare-versions';
 import { parse } from 'json5';
 import { valid } from 'semver';
@@ -404,6 +404,13 @@ export function parseCommaSeparatedList(value: string): string[] {
  */
 export function ensureAbsolutePath(p: string): string {
   return p === process.cwd() ? p : resolve(p);
+}
+
+/**
+ * check if migration-config.json exists in process.cwd()
+ */
+export function validateUserConfig(basePath: string, userConfigPath: string): boolean {
+  return existsSync(resolve(basePath, userConfigPath));
 }
 
 /**
