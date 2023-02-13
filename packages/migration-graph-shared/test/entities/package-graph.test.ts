@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
-import rimraf from 'rimraf';
+import { sync as rimraf } from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { Package } from '../../src/entities/package';
 import { Graph, GraphNode } from '../../src/graph';
@@ -27,12 +27,12 @@ describe('PackageGraph', () => {
   }
 
   beforeAll(() => {
-    rimraf.sync(testSuiteTmpDir);
+    rimraf(testSuiteTmpDir);
     mkdirSync(testSuiteTmpDir);
   });
 
   afterAll(() => {
-    rimraf.sync(testSuiteTmpDir);
+    rimraf(testSuiteTmpDir);
   });
 
   test('should construct a graph; simple', async () => {
@@ -281,5 +281,41 @@ describe('PackageGraph', () => {
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['index.js']);
+  });
+
+  test('should not include *.json files in module graph', () => {
+    const tmpDir = getTmpDir();
+
+    const files = {
+      lib: {
+        'cli.js': `import pkg from '../package.json';`,
+        'config.js': `import conf from './config.json`,
+        'config.json': `{ name: 'my-config' }`,
+      },
+      'index.js': `
+        import path from 'path';
+        export * from './lib/cli';
+        export * from './lib/config';
+  
+        export function power(foo, bar) {
+          return Math.pow(foo, bar);
+        }
+      `,
+      'package.json': `
+        {
+          "name": "basic",
+          "version": "1.0.0",
+          "license": "MIT"
+        }    
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+
+    const actual = flatten(output.topSort());
+
+    expect(actual).toStrictEqual(['lib/cli.js', 'lib/config.js', 'index.js']);
   });
 });
