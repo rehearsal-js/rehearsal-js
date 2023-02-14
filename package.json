@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
+  "type": "module",
   "scripts": {
     "build": "tsc -b",
     "lint": "pnpm lint:package-json && pnpm recursive run lint",
@@ -94,6 +95,6 @@
   },
   "packageManager": "pnpm@7.27.0",
   "volta": {
-    "node": "16.19.0"
+    "node": "18.14.0"
   }
 }

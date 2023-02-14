@@ -1,7 +1,9 @@
+import { fileURLToPath } from 'url';
 import { describe, expect, test } from 'vitest';
-
 import { getInterfaceByName } from '../../src';
 import { setupTest } from '../helpers';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getInterfaceByName', () => {
   const { sourceFile } = setupTest(__filename);

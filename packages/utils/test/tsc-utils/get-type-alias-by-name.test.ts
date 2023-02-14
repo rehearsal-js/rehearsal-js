@@ -1,7 +1,9 @@
+import { fileURLToPath } from 'url';
 import { describe, expect, test } from 'vitest';
-
 import { getTypeAliasByName } from '../../src';
 import { setupTest } from '../helpers';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getTypeAliasByName', () => {
   const { sourceFile } = setupTest(__filename);

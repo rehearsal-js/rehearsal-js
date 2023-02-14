@@ -296,7 +296,7 @@ describe('PackageGraph', () => {
         import path from 'path';
         export * from './lib/cli';
         export * from './lib/config';
-  
+
         export function power(foo, bar) {
           return Math.pow(foo, bar);
         }
@@ -306,7 +306,7 @@ describe('PackageGraph', () => {
           "name": "basic",
           "version": "1.0.0",
           "license": "MIT"
-        }    
+        }
       `,
     };
 

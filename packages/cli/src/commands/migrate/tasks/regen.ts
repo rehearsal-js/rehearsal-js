@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { Logger } from 'winston';
-import execa = require('execa');
+import { execa } from 'execa';
 
 import { determineProjectName, getPathToBinary } from '@rehearsal/utils';
 import type { ListrTask } from 'listr2';

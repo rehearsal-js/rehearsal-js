@@ -1,9 +1,11 @@
+import { fileURLToPath } from 'url';
 import { isClassDeclaration, isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
-
 import { getClassMemberByName } from '../../src';
 import { setupTest } from '../helpers';
 import type { ClassDeclaration } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getClassMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

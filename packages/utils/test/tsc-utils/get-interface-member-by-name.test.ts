@@ -1,9 +1,11 @@
+import { fileURLToPath } from 'url';
 import { isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
-
 import { getInterfaceMemberByName } from '../../src';
 import { setupTest } from '../helpers';
 import type { InterfaceDeclaration } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getInterfaceMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

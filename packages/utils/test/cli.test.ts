@@ -1,7 +1,7 @@
 import { compare } from 'compare-versions';
 import { describe, expect, test } from 'vitest';
 
-import execa = require('execa');
+import { execa, execaSync } from 'execa';
 
 import {
   determineProjectName,
@@ -81,13 +81,13 @@ describe('utils', () => {
   test('getManagerBinPath()', () => {
     // TODO: Add test scenarios if volta exists
     // Haven't came up with a quick and good way to do it
-    const npmBinPath = execa.sync('which', ['npm']).stdout;
+    const npmBinPath = execaSync('which', ['npm']).stdout;
     expect(getManagerBinPath('npm', false)).toBe(npmBinPath);
 
-    const yarnBinPath = execa.sync('which', ['yarn']).stdout;
+    const yarnBinPath = execaSync('which', ['yarn']).stdout;
     expect(getManagerBinPath('yarn', false)).toBe(yarnBinPath);
 
-    const pnpmBinPath = execa.sync('which', ['pnpm']).stdout;
+    const pnpmBinPath = execaSync('which', ['pnpm']).stdout;
     expect(getManagerBinPath('pnpm', false)).toBe(pnpmBinPath);
   });
 

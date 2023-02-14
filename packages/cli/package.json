@@ -7,8 +7,16 @@
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "license": "BSD-2-Clause",
+  "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "bin": {
     "rehearsal": "./bin/rehearsal.js"
   },
@@ -43,7 +51,7 @@
     "debug": "^4.3.4",
     "enquirer": "^2.3.6",
     "eslint": "^8.33.0",
-    "execa": "^5.1.1",
+    "execa": "^7.0.0",
     "fs-extra": "^11.1.0",
     "listr2": "^5.0.7",
     "simple-git": "^3.16.0",

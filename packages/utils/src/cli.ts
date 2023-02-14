@@ -8,11 +8,10 @@ import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
 import { glob } from 'glob';
-
-import findup = require('findup-sync');
-import execa = require('execa');
+import findup from 'findup-sync';
+import { execa, execaSync } from 'execa';
 import { GitDescribe } from './types';
-
+import type { Options } from 'execa';
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
 export const git: SimpleGit = simpleGit({
@@ -210,7 +209,7 @@ export function getManagerBinPath(
   hasVolta: boolean = isBinExisted('volta')
 ): string {
   if (hasVolta && manager !== 'pnpm') {
-    return execa.sync('volta', ['which', manager]).stdout;
+    return execaSync('volta', ['which', manager]).stdout;
   } else {
     return which.sync(manager);
   }
@@ -312,9 +311,9 @@ export function getModuleManagerInstaller(
 export async function addDep(
   depList: string[],
   isDev: boolean,
-  options: execa.Options = {}
+  options: Options = {}
 ): Promise<void> {
-  const basePath = options.cwd ? options.cwd : process.cwd();
+  const basePath = options.cwd ? (options.cwd as string) : process.cwd();
   const moduleManager = getModuleManager(basePath);
   const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
@@ -323,7 +322,7 @@ export async function addDep(
 
 // when executing a command with module manager prefix
 // eg. yarn tsc or pnpm tsc or npm tsc
-export async function runModuleCommand(args: string[], option: execa.Options = {}): Promise<void> {
+export async function runModuleCommand(args: string[], option: Options = {}): Promise<void> {
   const moduleManager = getModuleManager();
   const binAndArgs = {
     bin: moduleManager,
@@ -334,10 +333,7 @@ export async function runModuleCommand(args: string[], option: execa.Options = {
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
 // and volta use case
-export async function getPathToBinary(
-  binaryName: string,
-  options: execa.Options = {}
-): Promise<string> {
+export async function getPathToBinary(binaryName: string, options: Options = {}): Promise<string> {
   // pnpm | yarn | npm
   const moduleManager = getModuleManager();
   // /Users/foo/.volta/bin/yarn

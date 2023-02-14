@@ -1,7 +1,9 @@
+import { fileURLToPath } from 'url';
 import { describe, expect, test } from 'vitest';
-
 import { isTypeMatched } from '../../src';
 import { setupTest } from '../helpers';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test isTypeMatched', () => {
   const { sourceFile, checker } = setupTest(__filename);

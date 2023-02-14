@@ -3,8 +3,16 @@
   "version": "1.0.7-beta",
   "description": "Tool for generating a typescript migration graph",
   "license": "BSD-2-Clause",
+  "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "files": [
     "dist"
   ],

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src", "package.json"],
+  "include": ["src", "package.json", "vitest.config.ts"],
   "references": [
     {
       "path": "../migrate"

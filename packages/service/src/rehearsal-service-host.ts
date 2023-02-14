@@ -1,4 +1,6 @@
 import { dirname } from 'path';
+import { addDep } from '@rehearsal/utils';
+import findupSync from 'findup-sync';
 import {
   ApplyCodeActionCommandResult,
   getDefaultLibFilePath,
@@ -7,8 +9,6 @@ import {
   ScriptSnapshot,
   sys,
 } from 'typescript';
-import { addDep } from '@rehearsal/utils';
-import findupSync from 'findup-sync';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 /**

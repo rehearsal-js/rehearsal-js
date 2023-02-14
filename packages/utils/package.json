@@ -16,8 +16,16 @@
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "license": "BSD-2-Clause",
+  "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "files": [
     "dist"
   ],
@@ -35,7 +43,7 @@
     "chalk": "^4.1.2",
     "commander": "^10.0.0",
     "compare-versions": "^5.0.3",
-    "execa": "^5.1.1",
+    "execa": "^7.0.0",
     "findup-sync": "^5.0.0",
     "fs-extra": "^11.1.0",
     "glob": "^8.1.0",

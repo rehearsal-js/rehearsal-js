@@ -1,8 +1,10 @@
+import { fileURLToPath } from 'url';
 import { describe, expect, test } from 'vitest';
-
 import { getTypeNameFromVariable } from '../../src';
 import { setupTest } from '../helpers';
 import type { VariableStatement } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getTypeNameFromVariable', () => {
   const { sourceFile, checker } = setupTest(__filename);

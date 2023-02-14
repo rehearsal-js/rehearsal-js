@@ -1,10 +1,12 @@
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { Reporter } from '@rehearsal/reporter';
 import { describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
-
 import { upgrade } from '../src';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 describe('Test upgrade', async function () {
   const basePath = resolve(__dirname, 'fixtures', 'upgrade');

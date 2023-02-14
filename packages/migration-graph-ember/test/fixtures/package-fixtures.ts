@@ -1,5 +1,8 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 function json(jsonObj = {}) {
   return JSON.stringify(jsonObj, null, 2);

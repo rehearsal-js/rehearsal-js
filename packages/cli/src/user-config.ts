@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { addDep } from '@rehearsal/utils';
-import execa from 'execa';
+import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra';
 import type { MigrateCommandConfig, UpgradeCommandConfig, CliCommand, CustomConfig } from './types';
 

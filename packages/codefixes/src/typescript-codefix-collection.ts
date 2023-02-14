@@ -1,4 +1,5 @@
 import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import {
   type CodeActionCommand,
   type CodeFixAction,
@@ -12,6 +13,7 @@ import {
 import { CodeFixCollectionFilter } from './types';
 import type { CodeFixCollection, DiagnosticWithContext } from './types';
 import type { Options as PrettierOptions } from 'prettier';
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Provides code fixes based on the Typescript's codefix collection.

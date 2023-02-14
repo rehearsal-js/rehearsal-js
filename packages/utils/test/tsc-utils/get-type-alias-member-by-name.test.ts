@@ -1,9 +1,11 @@
+import { fileURLToPath } from 'url';
 import { isInterfaceDeclaration, isTypeAliasDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
-
 import { getTypeAliasMemberByName } from '../../src';
 import { setupTest } from '../helpers';
 import type { TypeAliasDeclaration, TypeLiteralNode } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getTypeAliasMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

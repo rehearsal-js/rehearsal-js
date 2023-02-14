@@ -1,11 +1,14 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
 import { migrate, MigrateInput } from '../src';
 import type { Logger } from 'winston';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 describe('migrate', () => {
   let sourceFiles: string[] = [];

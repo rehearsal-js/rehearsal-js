@@ -1,12 +1,15 @@
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { type Report } from '@rehearsal/reporter';
-import execa from 'execa';
+import { execa } from 'execa';
 import { existsSync, readJSONSync, rmSync } from 'fs-extra';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getLatestTSVersion, git } from '@rehearsal/utils';
 
 import packageJson from '../../package.json';
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against

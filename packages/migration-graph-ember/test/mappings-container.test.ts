@@ -1,11 +1,11 @@
 import { readFileSync, realpathSync } from 'fs';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { setupTestEnvironment } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import walkSync from 'walk-sync';
-
 import { getExternalModuleMappings, getInternalModuleMappings } from '../src/mappings-container';
 import {
   registerInternalAddonTestFixtures,
@@ -13,6 +13,8 @@ import {
 } from '../src/utils/environment';
 
 import { FIXTURE_NAMES, FIXTURES } from './fixtures/package-fixtures';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 setGracefulCleanup();
 

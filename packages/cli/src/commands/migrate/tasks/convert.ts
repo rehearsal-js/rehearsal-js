@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { Logger } from 'winston';
 import { debug } from 'debug';
 import chalk from 'chalk';
-import execa = require('execa');
+import { execa } from 'execa';
 
 import {
   determineProjectName,

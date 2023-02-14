@@ -6,8 +6,7 @@ import { compare } from 'compare-versions';
 import { debug } from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-
-import execa = require('execa');
+import { execa } from 'execa';
 
 import {
   addDep,

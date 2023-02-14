@@ -1,4 +1,5 @@
 import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { Project } from 'fixturify-project';
 import findupSync from 'findup-sync';
 import tmp from 'tmp';
@@ -8,6 +9,8 @@ import {
   getEmberAddonFiles,
   getEmberAppWithInRepoEngine,
 } from './files';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 tmp.setGracefulCleanup();
 

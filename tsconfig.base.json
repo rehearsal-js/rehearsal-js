@@ -3,18 +3,20 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "composite": true,
-    "declaration": true,
     "declarationMap": true,
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
     "newLine": "LF",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "resolveJsonModule": true,
     "sourceMap": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "lib": ["esnext"],
+    "moduleResolution": "node",
     "strict": true,
-    "target": "es2017",
-    "skipLibCheck": true
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "declaration": true
   }
 }

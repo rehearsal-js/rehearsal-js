@@ -1,4 +1,5 @@
 import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import {
   createProgram,
   findConfigFile,
@@ -7,6 +8,8 @@ import {
   sys,
 } from 'typescript';
 import type { Program, SourceFile, TypeChecker } from 'typescript';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 class TestService {
   private static instance: TestService;
