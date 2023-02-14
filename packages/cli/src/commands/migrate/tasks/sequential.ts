@@ -23,7 +23,9 @@ export async function sequentialTask(
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getReportSummary, getRegenSummary } = await import('../../../helpers/report');
+      const { generateReports, getReportSummary, getRegenSummary } = await import(
+        '../../../helpers/report'
+      );
 
       const projectName = determineProjectName() || '';
       const { basePath } = options;

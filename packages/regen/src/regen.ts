@@ -1,4 +1,4 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve, extname } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import { DiagnosticCheckPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
@@ -29,6 +29,9 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   const reporter = input.reporter;
   const logger = input.logger;
 
+  //regen will only work on ts files
+  const filteredSourceFiles = sourceFiles.filter((file) => extname(file) === '.ts');
+
   const listrTask = input.task || { output: '' };
 
   logger?.debug('migration regen started');
@@ -54,7 +57,7 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
     configFile
   );
 
-  const fileNames = [...new Set([...someFiles, ...sourceFiles])];
+  const fileNames = [...new Set([...someFiles, ...filteredSourceFiles])];
 
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 

@@ -1,5 +1,4 @@
 import { getMigrationStrategy, SourceFile } from '@rehearsal/migration-graph';
-// import { type RunPath } from '../types';
 
 export function getSourceFiles(basePath: string, entrypoint: string): string[] {
   const strategy = getMigrationStrategy(basePath, {

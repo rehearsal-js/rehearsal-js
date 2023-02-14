@@ -62,18 +62,18 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA]   Discard
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   3 errors caught by rehearsal
+[TITLE]   2 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   2 errors need to be fixed manually
+[TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 2 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   3 errors caught by rehearsal
+[SUCCESS]   2 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   2 errors need to be fixed manually
+[SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`Task: convert > accept changes without git 1`] = `
@@ -134,18 +134,18 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   3 errors caught by rehearsal
+[TITLE]   2 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   2 errors need to be fixed manually
+[TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 2 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   3 errors caught by rehearsal
+[SUCCESS]   2 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   2 errors need to be fixed manually
+[SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`Task: convert > againt specific basePath via -basePath option 1`] = `
@@ -431,16 +431,16 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA]   Edit
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   3 errors caught by rehearsal
+[TITLE]   2 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   2 errors need to be fixed manually
+[TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 2 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   3 errors caught by rehearsal
+[SUCCESS]   2 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   2 errors need to be fixed manually
+[SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;

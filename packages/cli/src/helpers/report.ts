@@ -112,14 +112,14 @@ export function getRegenSummary<T extends ReportLike>(
   let message;
   if (!isSequential) {
     message = `Migration Report Generated\n\n
-    ${scannedFileCount} ts files have been scanned\n
-    ${totalErrorCount} errors caught by rehearsal\n
-      -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
-      -- ${lintErrorCount} eslint errors, with details in the report\n`;
+  ${scannedFileCount} ts files have been scanned\n
+  ${totalErrorCount} errors caught by rehearsal\n
+    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
+    -- ${lintErrorCount} eslint errors, with details in the report\n`;
   } else {
     message = `Rescanning previously migrated files based on existing report:\n
-    ${scannedFileCount} ts files have been scanned\n
-    ${totalErrorCount} errors caught by rehearsal, and will be merged into the migration report\n
+  ${scannedFileCount} ts files have been scanned\n
+  ${totalErrorCount} errors caught by rehearsal, and will be merged into the migration report\n
     `;
   }
 

@@ -70,8 +70,8 @@ export class Reporter {
   /**
    * Appends an element to the summary
    */
-  addSummary(key: string, value: unknown): void {
-    this.report.summary[0][key] = value;
+  addToRunSummary(key: string, value: unknown): void {
+    this.currentRun.runSummary[key] = value;
   }
 
   /**

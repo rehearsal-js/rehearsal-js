@@ -69,15 +69,16 @@ describe('migrate', () => {
       sourceFiles,
       logger,
       reporter,
+      entrypoint: '',
     };
 
     const output = await migrate(input);
     migratedFiles = output.migratedFiles;
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
-    reporter.save(jsonReport);
+    reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString());
 
-    expect(report.summary.basePath).toMatch(/migrate/);
+    expect(report.summary[0].basePath).toMatch(/migrate/);
     expect(migratedFiles).includes(`${actualDir}/index.ts`);
     expect(existsSync(`${actualDir}/index.js`)).toBeFalsy();
     rmSync(jsonReport);
@@ -89,6 +90,7 @@ describe('migrate', () => {
       sourceFiles,
       logger,
       reporter,
+      entrypoint: '',
     };
 
     const output = await migrate(input);
@@ -103,10 +105,10 @@ describe('migrate', () => {
     const expected = readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
     expect(actual).toBe(expected);
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
-    reporter.save(jsonReport);
+    reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString());
 
-    expect(report.summary.basePath).toMatch(/migrate/);
+    expect(report.summary[0].basePath).toMatch(/migrate/);
     rmSync(jsonReport);
   });
 
@@ -133,6 +135,7 @@ describe('migrate', () => {
       sourceFiles,
       logger,
       reporter,
+      entrypoint: '',
     };
 
     const output = await migrate(input);
@@ -148,10 +151,10 @@ describe('migrate', () => {
 
     expect(actual).toBe(expected);
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
-    reporter.save(jsonReport);
+    reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString());
 
-    expect(report.summary.basePath).toMatch(/migrate/);
+    expect(report.summary[0].basePath).toMatch(/migrate/);
     rmSync(jsonReport);
 
     const pkgJSON = JSON.parse(readFileSync(pkgJSONPath!, 'utf-8'));

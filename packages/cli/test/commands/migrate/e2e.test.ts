@@ -191,6 +191,7 @@ describe('migrate: e2e', async () => {
     expect(gitStatus.staged).toStrictEqual([
       '.eslintrc.js',
       '.rehearsal-eslintrc.js',
+      '.rehearsal/migrate-report.json',
       '.rehearsal/migrate-report.sarif',
       'tsconfig.json',
     ]);

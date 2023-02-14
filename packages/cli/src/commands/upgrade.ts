@@ -121,7 +121,7 @@ upgradeCommand
                   if (compare(ctx.latestAvailableBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestAvailableBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
-                    reporter.addSummary('tsVersion', ctx.tsVersion);
+                    reporter.addToRunSummary('tsVersion', ctx.tsVersion);
                   } else {
                     parent.title = `This application is already on the latest version of TypeScript@${ctx.currentTSVersion}. Exiting.`;
                     // this is a master skip that will skip the remainder of the tasks
@@ -144,7 +144,7 @@ upgradeCommand
                     await gitCheckoutNewLocalBranch(`${ctx.tsVersion}`);
                   }
                   await addDep([`typescript@${ctx.tsVersion}`], true);
-                  reporter.report.summary[0].tsVersion = ctx.tsVersion;
+                  reporter.addToRunSummary('tsVersion', ctx.tsVersion);
                 },
               },
               {

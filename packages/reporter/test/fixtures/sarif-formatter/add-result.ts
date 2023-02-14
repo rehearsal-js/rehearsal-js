@@ -6,7 +6,8 @@ const addResultData: Report = {
     tsVersion: "4.7.4",
     timestamp: "9/16/2022, 13:24:57",
     basePath: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter"
+    commandName: "@rehearsal/reporter",
+    entrypoint: "",
   }],
   fixedItemCount: 3,
   items: [

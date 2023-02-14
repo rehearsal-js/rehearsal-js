@@ -1,9 +1,9 @@
 #!/usr/bin/env node
+import { resolve } from 'path';
+import { existsSync } from 'fs';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import { resolve } from 'path';
-import { existsSync } from 'fs';
 
 import {
   parseCommaSeparatedList,
@@ -11,22 +11,22 @@ import {
   resetFiles,
   ensureAbsolutePath,
 } from '@rehearsal/utils';
+import { readJsonSync } from 'fs-extra';
 import { version } from '../../../package.json';
 import {
   initTask,
-  // depInstallTask,
+  depInstallTask,
   convertTask,
-  // tsConfigTask,
-  // lintConfigTask,
+  tsConfigTask,
+  lintConfigTask,
   createScriptsTask,
   regenTask,
   validateTask,
   reportExisted,
 } from './tasks';
 
-import type { MigrateCommandOptions, PreviousRuns } from '../../types';
-import { readJsonSync } from 'fs-extra';
 import { sequentialTask } from './tasks/sequential';
+import type { MigrateCommandOptions, PreviousRuns } from '../../types';
 
 export const migrateCommand = new Command();
 
@@ -44,7 +44,7 @@ migrateCommand
     ensureAbsolutePath,
     process.cwd()
   )
-  .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project')
+  .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project', '')
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
@@ -95,9 +95,9 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const tasks = [
     await validateTask(options, logger),
     await initTask(options),
-    // await depInstallTask(options),
-    // await tsConfigTask(options),
-    // await lintConfigTask(options),
+    await depInstallTask(options),
+    await tsConfigTask(options),
+    await lintConfigTask(options),
     await createScriptsTask(options),
   ];
 
@@ -114,11 +114,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       }).run();
     } else if (options.regen) {
       const tasks = new Listr(
-        [
-          await validateTask(options, logger),
-          await initTask(options),
-          await regenTask(options, logger),
-        ],
+        [await validateTask(options, logger), await regenTask(options, logger)],
         defaultListrOption
       );
       await tasks.run();
