@@ -155,6 +155,62 @@ export default class Salutation extends Component {
     ).toBe(true);
   });
 
+  test('options.entrypoint', async () => {
+    const project = getEmberProject('app-with-in-repo-addon');
+
+    // TODO projectGraph should have meta data about how some-addon@date is being used.
+
+    // Augment the app and addon code to have component that uses a service from the addon.
+    project.mergeFiles({
+      app: {
+        components: {
+          'obtuse.js': `
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
+
+            export default class Obtuse extends Component {
+              @service('some-addon@date') myDate;
+            }
+          `,
+        },
+      },
+      lib: {
+        'some-addon': {
+          addon: {
+            services: {
+              'date.js': `
+                    import { inject as service } from '@ember/service';
+                    export default class DateService extends Service {}
+                  `,
+            },
+          },
+          app: {
+            services: {
+              'date.js': `export { default } from 'some-addon/services/date';`,
+            },
+          },
+        },
+      },
+    });
+
+    await setupProject(project);
+
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, {
+      entrypoint: 'app/components/obtuse.js',
+    });
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    const allFiles = Array.from(orderedPackages)
+      .map((pkg) => {
+        const modules = pkg.content.pkg.getModuleGraph();
+        return flatten(modules.topSort());
+      })
+      .flat();
+
+    expect(allFiles).toStrictEqual(['app/components/obtuse.js']);
+  });
   test('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
     const project = getEmberProject('app-with-in-repo-addon');
 

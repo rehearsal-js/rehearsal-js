@@ -23,7 +23,7 @@ type LibraryVariants =
   | 'library-with-workspaces'
   | 'workspace-with-package-scope-issue';
 
-const DIRS_TO_IGNORE = ['.yarn'];
+const DIRS_TO_IGNORE = ['.yarn', 'dist'];
 
 const FILES_TO_IGNORE = [
   '.babelrc.js',
@@ -34,6 +34,7 @@ const FILES_TO_IGNORE = [
   'babel.config.json',
   'babel.config.cjs',
   'babel.config.mjs',
+  'Brocfile.js',
   '.eslintrc.js',
   'package-lock.json',
   'yarn.lock',
@@ -102,10 +103,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
            `,
         },
         test: {
-          'some.test.js': '// Should not be included by default',
-        },
-        tests: {
-          'index.test.js': '// Should not be included by default',
+          'sample.test.js': 'import "../index"',
         },
       };
       break;
@@ -118,9 +116,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         `,
         ...getIgnoredFilesFixture(),
         ...getIgnoredDirectoriesFixture(),
-        config: {
-          ...getIgnoredFilesFixture(),
-        },
         'package.json': `
           {
             "name": "my-package",
@@ -134,6 +129,9 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         `,
         lib: {
           'a.js': '',
+        },
+        test: {
+          'sample.test.js': 'import "../index"',
         },
       };
       break;

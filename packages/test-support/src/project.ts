@@ -26,6 +26,25 @@ export function getEmberAppProject(project: Project = emberAppTemplate()): Proje
   return project;
 }
 
+function addUtilDirectory(project: Project): Project {
+  project.mergeFiles({
+    app: {
+      util: {
+        'entry.js': `import impl from './lib/impl';`,
+        lib: {
+          'impl.js': `
+            import base from './base';
+            export default base;
+            `,
+          'base.js': `export default function () => { console.log(1); }`,
+        },
+      },
+    },
+  });
+
+  return project;
+}
+
 /**
  * Augments the project to have an in-repo addon with an acceptance test to evalute the composition.
  * @param {Project} project
@@ -114,14 +133,21 @@ export async function setupProject(project: Project): Promise<Project> {
   return project;
 }
 
-type EmberProjectFixture = 'app' | 'app-with-in-repo-addon' | 'app-with-in-repo-engine' | 'addon';
-
+type EmberProjectFixture =
+  | 'app'
+  | 'app-with-util'
+  | 'app-with-in-repo-addon'
+  | 'app-with-in-repo-engine'
+  | 'addon';
 export function getEmberProject(variant: EmberProjectFixture): Project {
   let project;
 
   switch (variant) {
     case 'app':
       project = getEmberAppProject();
+      break;
+    case 'app-with-util':
+      project = addUtilDirectory(getEmberAppProject());
       break;
     case 'app-with-in-repo-addon':
       project = getEmberAppWithInRepoAddonProject();

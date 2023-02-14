@@ -26,7 +26,6 @@ export class EmberAppPackage extends Package implements IPackage {
       'dist',
       'config',
       'ember-config',
-      'tests',
       '@ember/*',
       'public',
     ]);

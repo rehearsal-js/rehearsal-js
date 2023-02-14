@@ -210,7 +210,7 @@ describe('PackageGraph', () => {
     const baseDir = getLibrary('simple');
     const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
     const actual = flatten(output.topSort());
-    expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
+    expect(actual).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
   });
 
   test('should detect file extension in moduleName', async () => {

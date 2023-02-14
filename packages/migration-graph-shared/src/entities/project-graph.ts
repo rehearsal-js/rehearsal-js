@@ -7,6 +7,7 @@ import { RootPackage } from './root-package';
 import { Package } from './package';
 
 import type { PackageNode } from '../types';
+import { VoidPackage } from './void-package';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
@@ -22,16 +23,16 @@ export type ProjectGraphOptions = {
 
 export class ProjectGraph {
   #rootDir: string;
-  #entrypoint: string | undefined;
   #graph: Graph<PackageNode>;
   #sourceType: string;
   #eager: boolean;
 
-  include: Set<string>;
-  exclude: Set<string>;
-
+  protected entrypoint: string | undefined;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
+
+  include: Set<string>;
+  exclude: Set<string>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
     const { eager, sourceType, entrypoint, exclude, include } = {
@@ -43,7 +44,7 @@ export class ProjectGraph {
     this.include = new Set(include);
     this.exclude = new Set(exclude);
     this.#rootDir = rootDir;
-    this.#entrypoint = entrypoint;
+    this.entrypoint = entrypoint;
     this.#eager = eager;
     this.#sourceType = sourceType;
     this.#graph = new Graph<PackageNode>();
@@ -155,16 +156,28 @@ export class ProjectGraph {
     return deps;
   }
 
+  protected discoveryByEntrypoint(entrypoint: string): VoidPackage {
+    // Create an adhoc package to make sure things work, but ignore the rest.
+    const p = new VoidPackage(this.#rootDir);
+    p.includePatterns = new Set([entrypoint]);
+    this.addPackageToGraph(p, false);
+    return p;
+  }
+
   discover(): Array<Package> {
+    // If an entrypoint is defined, we forgo any package discovery logic,
+    // and create a stub.
+    if (this.entrypoint) {
+      return [this.discoveryByEntrypoint(this.entrypoint)];
+    }
+
+    // Setup package and return
+
     // Add root package to graph
     const rootPackage = new RootPackage(this.rootDir);
 
     rootPackage.addExcludePattern(...this.exclude);
     rootPackage.addIncludePattern(...this.include);
-
-    if (this.#entrypoint) {
-      rootPackage.includePatterns = new Set([this.#entrypoint]);
-    }
 
     DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
     DEBUG_CALLBACK('RootPackage.includePatterns', rootPackage.includePatterns);

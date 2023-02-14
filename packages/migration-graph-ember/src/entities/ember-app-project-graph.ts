@@ -181,6 +181,12 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   discover(): Array<EmberProjectPackage> {
+    // If an entrypoint is defined, we forgo any package discovery logic,
+    // and create a stub.
+    if (this.entrypoint) {
+      return [this.discoveryByEntrypoint(this.entrypoint)];
+    }
+
     const entities = discoverEmberPackages(this.rootDir);
 
     const rootPackage = getRootPackage(this.rootDir);

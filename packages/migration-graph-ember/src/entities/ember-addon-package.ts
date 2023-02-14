@@ -26,11 +26,8 @@ export class EmberAddonPackage extends EmberAppPackage {
       'dist',
       'config',
       'ember-config',
-      'tests',
-      'test-addon',
       '@ember/*',
       'public',
-      './package',
       'app', // Addons app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
     ];
 

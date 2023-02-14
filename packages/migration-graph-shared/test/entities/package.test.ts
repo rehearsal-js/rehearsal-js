@@ -55,8 +55,6 @@ describe('Unit | Entities | Package', function () {
         new Set([
           '.yarn',
           'dist',
-          'test',
-          'tests',
           '.eslintrc.*',
           '.babelrc.*',
           'babel.config.*',
@@ -90,8 +88,6 @@ describe('Unit | Entities | Package', function () {
         new Set([
           '.yarn',
           'dist',
-          'test',
-          'tests',
           '.eslintrc.*',
           '.babelrc.*',
           'babel.config.*',
@@ -123,6 +119,7 @@ describe('Unit | Entities | Package', function () {
       p.addIncludePattern('file1', 'file2');
       expect(p.includePatterns).toStrictEqual(new Set(['.', 'foo.js', 'file1', 'file2']));
 
+      p.excludePatterns = new Set(['tests']);
       expect(p.excludePatterns.has('tests')).toBe(true);
       p.addIncludePattern('tests');
       expect(

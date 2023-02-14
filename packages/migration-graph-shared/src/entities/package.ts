@@ -82,8 +82,6 @@ export class Package implements IPackage {
     const excludeDirs = [
       '.yarn', // yarn3 directory
       'dist',
-      'test',
-      'tests',
     ];
 
     const excludeFiles = [

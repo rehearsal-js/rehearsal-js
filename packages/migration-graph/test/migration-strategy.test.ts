@@ -17,7 +17,7 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(rootDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
-      expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
+      expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
 
@@ -40,7 +40,7 @@ describe('migration-strategy', () => {
 
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
-      expect(actual).toStrictEqual(['lib/a.js', 'index.js', 'test/some.test.js']);
+      expect(actual).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
     });
 
     test('options.exclude', () => {
@@ -52,7 +52,19 @@ describe('migration-strategy', () => {
 
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
-      expect(actual).toStrictEqual(['lib/a.js']);
+      expect(actual).toStrictEqual(['lib/a.js', 'test/sample.test.js']);
+    });
+
+    test('options.entrypoint', () => {
+      const files = getFiles('simple');
+      const rootDir = create(files);
+      const strategy = getMigrationStrategy(rootDir, { entrypoint: 'index.js' });
+
+      const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
+
+      const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
+
+      expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
     describe('workspaces', () => {
@@ -68,6 +80,24 @@ describe('migration-strategy', () => {
           'packages/foo/lib/a.js',
           'packages/foo/index.js',
           'some-util.js',
+        ]);
+        expect(strategy.sourceType).toBe(SourceType.Library);
+      });
+
+      test('options.entrypoint should only show the graph for a single file', async () => {
+        const project = getLibraryProject('library-with-workspaces');
+
+        await setupProject(project);
+
+        const options = { entrypoint: 'packages/blorp/index.js' };
+
+        const strategy = getMigrationStrategy(project.baseDir, options);
+
+        const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
+        const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
+        expect(relativePaths).toStrictEqual([
+          'packages/blorp/lib/impl.js',
+          'packages/blorp/index.js',
         ]);
         expect(strategy.sourceType).toBe(SourceType.Library);
       });
@@ -113,6 +143,23 @@ describe('migration-strategy', () => {
       'app/components/salutation.js',
       'app/router.js',
     ];
+
+    test.only('options.entrypoint', async () => {
+      const project = await getEmberProjectFixture('app-with-util');
+
+      const strategy = getMigrationStrategy(project.baseDir, {
+        entrypoint: 'app/util/entry.js',
+      });
+      const files: Array<SourceFile> = strategy.getMigrationOrder();
+      const actual: Array<string> = files.map((f) => f.relativePath);
+      expect(actual).toStrictEqual([
+        'app/util/lib/base.js',
+        'app/util/lib/impl.js',
+        'app/util/entry.js',
+      ]);
+      expect(strategy.sourceType).toBe(SourceType.EmberApp);
+    });
+
     test('app should match migration order', async () => {
       const project = await getEmberProjectFixture('app');
 
