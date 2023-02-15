@@ -1,3 +1,20 @@
+## <small>1.0.6-beta (2023-02-15)</small>
+
+* feat: default user config (#738) ([7663abe](https://github.com/rehearsal-js/rehearsal-js/commit/7663abe)), closes [#738](https://github.com/rehearsal-js/rehearsal-js/issues/738)
+* feat: hooks in user config (#739) ([533284b](https://github.com/rehearsal-js/rehearsal-js/commit/533284b)), closes [#739](https://github.com/rehearsal-js/rehearsal-js/issues/739)
+* feat: init flag for migrate (#727) ([61a600f](https://github.com/rehearsal-js/rehearsal-js/commit/61a600f)), closes [#727](https://github.com/rehearsal-js/rehearsal-js/issues/727)
+* feat: reporting for sequential runs (#732) ([2d04909](https://github.com/rehearsal-js/rehearsal-js/commit/2d04909)), closes [#732](https://github.com/rehearsal-js/rehearsal-js/issues/732)
+* feat(migration-graph): include exclude config (#665) ([31396f6](https://github.com/rehearsal-js/rehearsal-js/commit/31396f6)), closes [#665](https://github.com/rehearsal-js/rehearsal-js/issues/665)
+* chore: update use-node-version (#742) ([8b68e09](https://github.com/rehearsal-js/rehearsal-js/commit/8b68e09)), closes [#742](https://github.com/rehearsal-js/rehearsal-js/issues/742)
+* fix: release script (#723) ([22fb409](https://github.com/rehearsal-js/rehearsal-js/commit/22fb409)), closes [#723](https://github.com/rehearsal-js/rehearsal-js/issues/723)
+* fix: return typescript back to devDeps (#724) ([fb09439](https://github.com/rehearsal-js/rehearsal-js/commit/fb09439)), closes [#724](https://github.com/rehearsal-js/rehearsal-js/issues/724)
+* fix: upgrade cli tests (#730) ([ee5193e](https://github.com/rehearsal-js/rehearsal-js/commit/ee5193e)), closes [#730](https://github.com/rehearsal-js/rehearsal-js/issues/730)
+* fix: upgrade cli tests (#730) ([2b2ff38](https://github.com/rehearsal-js/rehearsal-js/commit/2b2ff38)), closes [#730](https://github.com/rehearsal-js/rehearsal-js/issues/730)
+* fix(migration-graph): remove .prettierrc.* from module graph (#736) ([3eecd92](https://github.com/rehearsal-js/rehearsal-js/commit/3eecd92)), closes [#736](https://github.com/rehearsal-js/rehearsal-js/issues/736)
+* fix(migration-graph): remove *.json from module graph (#734) ([7c7c1c1](https://github.com/rehearsal-js/rehearsal-js/commit/7c7c1c1)), closes [#734](https://github.com/rehearsal-js/rehearsal-js/issues/734)
+
+
+
 ## <small>1.0.6-beta (2023-02-06)</small>
 
 * chore: release script ([3e5ef38](https://github.com/rehearsal-js/rehearsal-js/commit/3e5ef38))
