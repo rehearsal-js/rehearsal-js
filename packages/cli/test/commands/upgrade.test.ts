@@ -16,7 +16,7 @@ const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
 // we bundle the latest version of typescript with the cli
-const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
+const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeEachPrep = async (): Promise<void> => {
@@ -37,7 +37,7 @@ const afterEachCleanup = async (): Promise<void> => {
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
   await execa(PNPM_PATH, ['remove', `typescript`]);
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });
 
