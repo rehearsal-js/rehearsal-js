@@ -1,13 +1,14 @@
 import type { Report } from '../../../src';
 
 const addArtifactData: Report = {
-  summary: {
+  summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
     timestamp: "9/16/2022, 13:24:55",
     basePath: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter"
-  },
+    commandName: "@rehearsal/reporter",
+    entrypoint: '',
+  }],
   fixedItemCount: 5,
   items: [
     {

@@ -186,7 +186,7 @@ exports[`Test sarif-formatter > should set the correct version, $schema, and ini
       \\"results\\": [],
       \\"automationDetails\\": {
         \\"description\\": {
-          \\"text\\": \\"This is the run of @rehearsal/reporter on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
+          \\"text\\": \\"This is the result of @rehearsal/reporter on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
         }
       }
     }

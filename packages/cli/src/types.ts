@@ -65,3 +65,13 @@ export type TSConfig = {
     strict: boolean;
   };
 };
+
+export type RunPath = {
+  basePath: string;
+  entrypoint: string;
+};
+
+export type PreviousRuns = {
+  paths: RunPath[];
+  previousFixedCount: number;
+};

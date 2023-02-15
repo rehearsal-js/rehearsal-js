@@ -30,7 +30,9 @@ describe('regen', () => {
 
     regenInput = {
       basePath: resolve(basePath, 'tmp'),
+      sourceFiles: [],
       reporter,
+      entrypoint: '',
     };
   });
 
@@ -44,7 +46,7 @@ describe('regen', () => {
     const { scannedFiles } = await regen(regenInput);
     expect(scannedFiles.length).toBe(1);
 
-    reporter.save(jsonReportPath);
+    reporter.saveReport(jsonReportPath);
     expect(existsSync(jsonReportPath)).toBeTruthy();
   });
 
@@ -55,7 +57,7 @@ describe('regen', () => {
     expect(scannedFiles.length).toBe(1);
     expect(scannedFiles[0].includes('test1.ts')).toBeTruthy();
 
-    reporter.save(jsonReportPath);
+    reporter.saveReport(jsonReportPath);
     const report = JSON.parse(readFileSync(jsonReportPath).toString());
     const { items } = report;
     expect(JSON.stringify(items, null, 2)).toMatchSnapshot();
@@ -69,7 +71,7 @@ describe('regen', () => {
     const { scannedFiles } = await regen(regenInput);
     expect(scannedFiles.length).toBe(2);
 
-    reporter.save(jsonReportPath);
+    reporter.saveReport(jsonReportPath);
 
     const report = JSON.parse(readFileSync(jsonReportPath).toString());
     const { items } = report;
@@ -84,7 +86,7 @@ describe('regen', () => {
 
     const { scannedFiles } = await regen(regenInput);
     expect(scannedFiles.length).toBe(1);
-    reporter.save(jsonReportPath);
+    reporter.saveReport(jsonReportPath);
 
     const report = JSON.parse(readFileSync(jsonReportPath).toString());
     const { items } = report;

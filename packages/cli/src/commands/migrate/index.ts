@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { resolve } from 'path';
+import { existsSync } from 'fs';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
@@ -9,6 +11,7 @@ import {
   resetFiles,
   ensureAbsolutePath,
 } from '@rehearsal/utils';
+import { readJsonSync } from 'fs-extra';
 import { version } from '../../../package.json';
 import {
   initTask,
@@ -22,7 +25,8 @@ import {
   reportExisted,
 } from './tasks';
 
-import type { MigrateCommandOptions } from '../../types';
+import { sequentialTask } from './tasks/sequential';
+import type { MigrateCommandOptions, PreviousRuns } from '../../types';
 
 export const migrateCommand = new Command();
 
@@ -40,7 +44,7 @@ migrateCommand
     ensureAbsolutePath,
     process.cwd()
   )
-  .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project')
+  .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project', '')
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
@@ -114,6 +118,26 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         defaultListrOption
       );
       await tasks.run();
+    } else if (reportExisted(options.basePath, options.outputPath)) {
+      const previousRuns = getPreviousRuns(
+        options.basePath,
+        options.outputPath,
+        options.entrypoint
+      );
+      if (previousRuns.paths.length > 0) {
+        logger.info(
+          `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
+        );
+        await new Listr(
+          [
+            await validateTask(options, logger),
+            await sequentialTask(options, logger, previousRuns),
+          ],
+          defaultListrOption
+        ).run();
+      } else {
+        await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
+      }
     } else {
       await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
     }
@@ -121,4 +145,30 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     await resetFiles();
     logger.error(`${e}`);
   }
+}
+
+function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string): PreviousRuns {
+  const jsonReportPath = resolve(basePath, outputDir, 'migrate-report.json');
+
+  let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
+
+  if (existsSync(jsonReportPath)) {
+    const report = readJsonSync(jsonReportPath);
+    const { summary, fixedItemCount: previousFixedCount } = report;
+    previousRuns = {
+      ...previousRuns,
+      previousFixedCount,
+    };
+
+    for (const s of summary) {
+      // different from current basePath or current entrypoint, need to run regen for previous runs.
+      if (s.basePath !== basePath || s.entrypoint !== entrypoint) {
+        previousRuns = {
+          ...previousRuns,
+          paths: [...previousRuns.paths, { basePath: s.basePath, entrypoint: s.entrypoint }],
+        };
+      }
+    }
+  }
+  return previousRuns;
 }

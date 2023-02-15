@@ -24,7 +24,7 @@ describe('Test upgrade', async function () {
 
   createTsFilesFromInputs(files);
 
-  const result = await upgrade({ basePath, logger, reporter });
+  const result = await upgrade({ basePath, logger, reporter, entrypoint: '' });
 
   test('should fix errors or provide hints for errors in the original files', () => {
     expect(result).toBeDefined();
@@ -42,8 +42,8 @@ describe('Test upgrade', async function () {
   test('should output the correct data from upgrade', () => {
     const { report } = reporter;
 
-    report.summary.timestamp = '9/22/2022, 13:48:38';
-    report.summary.basePath = '';
+    report.summary[0].timestamp = '9/22/2022, 13:48:38';
+    report.summary[0].basePath = '';
 
     expect(report).toMatchSnapshot();
   });

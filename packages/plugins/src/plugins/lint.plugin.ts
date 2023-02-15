@@ -33,7 +33,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
       if (options.reportErrors) {
         const { messages: errors } = report;
         for (const error of errors) {
-          context.reporter.addLintItem(fileName, error);
+          context.reporter.addLintItemToRun(fileName, error);
         }
       }
 

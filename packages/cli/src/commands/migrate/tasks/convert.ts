@@ -38,12 +38,12 @@ export async function convertTask(
       }
 
       const projectName = determineProjectName() || '';
-      const { basePath } = options;
+      const { basePath, entrypoint } = options;
       const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
+        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate', entrypoint },
         logger
       );
 
@@ -58,6 +58,7 @@ export async function convertTask(
 
             const input = {
               basePath: ctx.targetPackagePath,
+              entrypoint: options.entrypoint,
               sourceFiles: [f],
               logger: logger,
               reporter,
@@ -126,6 +127,7 @@ export async function convertTask(
         } else {
           const input = {
             basePath: ctx.targetPackagePath,
+            entrypoint: options.entrypoint,
             sourceFiles: ctx.sourceFilesWithAbsolutePath,
             logger: logger,
             reporter,

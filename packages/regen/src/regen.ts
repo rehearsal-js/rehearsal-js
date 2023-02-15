@@ -1,4 +1,4 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve, extname } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import { DiagnosticCheckPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
@@ -8,6 +8,8 @@ import type { Reporter } from '@rehearsal/reporter';
 
 export type RegenInput = {
   basePath: string;
+  entrypoint: string;
+  sourceFiles: string[];
   configName?: string;
   reporter: Reporter;
   logger?: Logger;
@@ -23,8 +25,12 @@ export type RegenOutput = {
 export async function regen(input: RegenInput): Promise<RegenOutput> {
   const basePath = resolve(input.basePath);
   const configName = input.configName || 'tsconfig.json';
+  const sourceFiles = input.sourceFiles || ['index.ts'];
   const reporter = input.reporter;
   const logger = input.logger;
+
+  //regen will only work on ts files
+  const filteredSourceFiles = sourceFiles.filter((file) => extname(file) === '.ts');
 
   const listrTask = input.task || { output: '' };
 
@@ -43,13 +49,15 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   const { config } = readConfigFile(configFile, sys.readFile);
 
-  const { options, fileNames } = parseJsonConfigFileContent(
+  const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
     sys,
     dirname(configFile),
     {},
     configFile
   );
+
+  const fileNames = [...new Set([...someFiles, ...filteredSourceFiles])];
 
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
@@ -78,6 +86,7 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
     });
 
   await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  reporter.saveCurrentRunToReport(basePath, input.entrypoint);
 
   return {
     basePath,
