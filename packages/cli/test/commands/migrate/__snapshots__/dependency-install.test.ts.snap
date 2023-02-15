@@ -12,3 +12,11 @@ exports[`Task: dependency-install > install required dependencies 1`] = `
 [SUCCESS] Install dependencies
 "
 `;
+
+exports[`Task: dependency-install > postInstall hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Install dependencies from config
+[DATA] Run postInstall hook from config
+[SUCCESS] Install dependencies
+"
+`;

@@ -30,6 +30,11 @@ export async function depInstallTask(
       if (ctx.userConfig?.hasDependencies) {
         task.output = `Install dependencies from config`;
         await ctx.userConfig.install();
+
+        if (ctx.userConfig?.hasPostInstallHook) {
+          task.output = `Run postInstall hook from config`;
+          await ctx.userConfig.postInstall();
+        }
       }
       // even if dependencies are installed, exec this and get the latest patch
       await addDep(REQUIRED_DEPENDENCIES, true, { cwd: options.basePath });

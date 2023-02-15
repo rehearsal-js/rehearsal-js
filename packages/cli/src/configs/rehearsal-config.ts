@@ -3,18 +3,23 @@ export type DependencyConfig = {
   devDependencies?: string[];
 };
 
-export type SetupConfigCommand = {
+export type HookCommand = {
   command: string;
   args: string[];
 };
 
 export type SetupConfig = {
-  ts?: SetupConfigCommand;
-  lint?: SetupConfigCommand;
+  ts?: HookCommand | HookCommand[];
+  postTsSetup?: HookCommand | HookCommand[];
+  lint?: HookCommand | HookCommand[];
+  postLintSetup?: HookCommand | HookCommand[];
 };
+
+export type ValidateConfig = () => Promise<void>;
 
 export type CustomCommandConfig = {
   install?: DependencyConfig;
+  postInstall?: HookCommand | HookCommand[];
   setup?: SetupConfig;
 };
 
