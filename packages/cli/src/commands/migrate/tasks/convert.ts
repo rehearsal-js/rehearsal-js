@@ -43,7 +43,7 @@ export async function convertTask(
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
+        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate', entrypoint },
         logger
       );
 

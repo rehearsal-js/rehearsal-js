@@ -81,7 +81,7 @@ upgradeCommand
     const projectName = determineProjectName() || '';
 
     const reporter = new Reporter(
-      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade' },
+      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade', entrypoint: '' },
       logger
     );
 

@@ -24,6 +24,30 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
+exports[`migrate - validation > pass in a dirty git in multi runs, regenerate past run reports before current run 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on initilization
+[SUCCESS] Initialize
+[STARTED] Convert JS files to TS
+[TITLE] Migration Complete
+[TITLE]   0 JS files converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
 exports[`migrate: e2e > Print debug messages with --verbose 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
