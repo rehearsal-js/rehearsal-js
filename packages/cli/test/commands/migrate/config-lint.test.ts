@@ -176,6 +176,27 @@ describe('Task: config-lint', async () => {
     expect(output).toMatchSnapshot();
   });
 
+  test('postLintSetup hook from user config', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        setup: {
+          lint: { command: 'touch', args: ['custom-lint-config-script'] },
+          postLintSetup: { command: 'mv', args: ['custom-lint-config-script', 'foo'] },
+        },
+      },
+    });
+
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const tasks = [await depInstallTask(options), await lintConfigTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
+
+    // This proves the custom command and hook works
+    expect(readdirSync(basePath)).toContain('foo');
+    expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
+    expect(output).toMatchSnapshot();
+  });
+
   test('stage .eslintrc if in git repo', async () => {
     // simulate clean git project
     const git: SimpleGit = simpleGit({

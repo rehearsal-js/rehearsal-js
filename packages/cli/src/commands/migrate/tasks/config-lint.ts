@@ -40,6 +40,11 @@ export async function lintConfigTask(
       if (ctx.userConfig?.hasLintSetup) {
         task.output = `Create .eslintrc.js from config`;
         await ctx.userConfig.lintSetup();
+
+        if (ctx.userConfig.hasPostLintSetup) {
+          task.output = `Run postLintSetup from config`;
+          await ctx.userConfig.postLintSetup();
+        }
       } else {
         // only run the default process with no custom config provided
         const relativeConfigPath = getEsLintConfigPath(options.basePath);

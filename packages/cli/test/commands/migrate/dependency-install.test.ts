@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync } from 'fs-extra';
+import { readJSONSync, writeJSONSync, existsSync } from 'fs-extra';
 
 import { depInstallTask } from '../../../src/commands/migrate/tasks';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
@@ -62,6 +62,32 @@ describe('Task: dependency-install', async () => {
     const devDeps = packageJson.devDependencies;
 
     expect(devDeps).toHaveProperty('fs-extra');
+    expect(output).matchSnapshot();
+  });
+
+  test('postInstall hook from user config', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: [],
+          devDependencies: ['fs-extra'],
+        },
+        postInstall: {
+          command: 'touch',
+          args: ['foo'],
+        },
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const devDeps = packageJson.devDependencies;
+    expect(devDeps).toHaveProperty('fs-extra');
+
+    expect(existsSync(resolve(basePath, 'foo')));
     expect(output).matchSnapshot();
   });
 });

@@ -23,6 +23,11 @@ export async function tsConfigTask(
       if (ctx.userConfig?.hasTsSetup) {
         task.output = `Create tsconfig from config`;
         await ctx.userConfig.tsSetup();
+
+        if (ctx.userConfig.hasPostTsSetupHook) {
+          task.output = `Run postTsSetup from config`;
+          await ctx.userConfig.postTsSetup();
+        }
       } else {
         if (existsSync(configPath)) {
           task.output = `${configPath} already exists, ensuring strict mode is enabled`;
