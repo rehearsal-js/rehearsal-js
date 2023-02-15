@@ -22,9 +22,9 @@
                             },
                             "type": "object"
                         },
-                        "setup": {
-                            "properties": {
-                                "lint": {
+                        "postInstall": {
+                            "anyOf": [
+                                {
                                     "properties": {
                                         "args": {
                                             "items": {
@@ -38,19 +38,166 @@
                                     },
                                     "type": "object"
                                 },
-                                "ts": {
-                                    "properties": {
-                                        "args": {
-                                            "items": {
+                                {
+                                    "items": {
+                                        "properties": {
+                                            "args": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "command": {
                                                 "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            ]
+                        },
+                        "setup": {
+                            "properties": {
+                                "lint": {
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "args": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "command": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "items": {
+                                                "properties": {
+                                                    "args": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "command": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
                                             },
                                             "type": "array"
-                                        },
-                                        "command": {
-                                            "type": "string"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
+                                },
+                                "postLintSetup": {
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "args": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "command": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "items": {
+                                                "properties": {
+                                                    "args": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "command": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    ]
+                                },
+                                "postTsSetup": {
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "args": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "command": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "items": {
+                                                "properties": {
+                                                    "args": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "command": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    ]
+                                },
+                                "ts": {
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "args": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "command": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "items": {
+                                                "properties": {
+                                                    "args": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "command": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    ]
                                 }
                             },
                             "type": "object"
@@ -101,9 +248,9 @@
                     },
                     "type": "object"
                 },
-                "setup": {
-                    "properties": {
-                        "lint": {
+                "postInstall": {
+                    "anyOf": [
+                        {
                             "properties": {
                                 "args": {
                                     "items": {
@@ -117,19 +264,166 @@
                             },
                             "type": "object"
                         },
-                        "ts": {
-                            "properties": {
-                                "args": {
-                                    "items": {
+                        {
+                            "items": {
+                                "properties": {
+                                    "args": {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "command": {
                                         "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    ]
+                },
+                "setup": {
+                    "properties": {
+                        "lint": {
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                {
+                                    "items": {
+                                        "properties": {
+                                            "args": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "command": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
                                     },
                                     "type": "array"
-                                },
-                                "command": {
-                                    "type": "string"
                                 }
-                            },
-                            "type": "object"
+                            ]
+                        },
+                        "postLintSetup": {
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                {
+                                    "items": {
+                                        "properties": {
+                                            "args": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "command": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            ]
+                        },
+                        "postTsSetup": {
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                {
+                                    "items": {
+                                        "properties": {
+                                            "args": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "command": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            ]
+                        },
+                        "ts": {
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "args": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "command": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
+                                {
+                                    "items": {
+                                        "properties": {
+                                            "args": {
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "command": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            ]
                         }
                     },
                     "type": "object"
