@@ -49,7 +49,7 @@ export const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 export const TEST_TSC_VERSION = '4.5.5';
-export const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
+export const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
 
 // we bundle typescript in deps
 export const beforeEachPrep = async (): Promise<void> => {
