@@ -97,7 +97,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
       }
 
-      context.reporter.incrementFixedItemCount();
+      context.reporter.incrementRunFixedItemCount();
 
       // Get updated list of diagnostics
       diagnostics = this.getDiagnostics(context.rehearsal, fileName);

@@ -63,8 +63,8 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
       const report: Report = readJSONSync(reportFile);
       expect(report).to.exist;
       expect(report).toHaveProperty('summary');
-      expect(report.summary.projectName).toBe('@rehearsal/cli');
-      expect(report.summary.tsVersion).toBe(latestPublishedTSVersion);
+      expect(report.summary[0].projectName).toBe('@rehearsal/cli');
+      expect(report.summary[0].tsVersion).toBe(latestPublishedTSVersion);
     });
   }
 );

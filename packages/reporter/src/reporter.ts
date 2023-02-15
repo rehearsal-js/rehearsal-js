@@ -6,6 +6,7 @@ import {
   type ReportItem,
   type Location,
   type LintErrorLike,
+  type Run,
   ReportItemType,
 } from './types';
 import { normalizeFilePath } from './normalize-paths';
@@ -17,6 +18,8 @@ type ReporterMeta = {
   basePath: string;
   commandName: string;
   tsVersion: string;
+  entrypoint?: string;
+  previousFixedCount?: number;
 };
 
 /**
@@ -27,36 +30,37 @@ export class Reporter {
 
   public report: Report;
   private logger?: Logger;
+  public currentRun: Run;
+  public lastRun: Run | undefined;
+  private uniqueFiles: string[];
 
   constructor(meta: ReporterMeta, logger?: Logger) {
-    const { projectName, basePath, commandName, tsVersion } = meta;
+    const { projectName, basePath, commandName, tsVersion, previousFixedCount } = meta;
 
     this.basePath = basePath;
     this.logger = logger?.child({ service: 'rehearsal-reporter' });
-
     this.report = {
-      summary: {
-        projectName: projectName,
-        tsVersion: tsVersion,
-        timestamp: new Date().toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hourCycle: 'h24',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        }),
-        basePath: basePath,
-        commandName: commandName,
-      },
+      summary: [],
+      fixedItemCount: previousFixedCount || 0,
       items: [],
+    };
+    this.uniqueFiles = [];
+    this.currentRun = {
+      runSummary: {
+        projectName,
+        tsVersion,
+        timestamp: '',
+        basePath: '',
+        entrypoint: '',
+        commandName,
+      },
       fixedItemCount: 0,
+      items: [],
     };
   }
 
-  getFileNames(): string[] {
-    return [...new Set(this.report.items.map((item) => item.analysisTarget))];
+  public getFileNames(): string[] {
+    return this.uniqueFiles;
   }
 
   getItemsByAnalysisTarget(fileName: string): ReportItem[] {
@@ -66,14 +70,14 @@ export class Reporter {
   /**
    * Appends an element to the summary
    */
-  addSummary(key: string, value: unknown): void {
-    this.report.summary[key] = value;
+  addToRunSummary(key: string, value: unknown): void {
+    this.currentRun.runSummary[key] = value;
   }
 
   /**
    * Appends am information about provided diagnostic and related node to the report
    */
-  addTSItem(
+  addTSItemToRun(
     diagnostic: DiagnosticWithLocation,
     node?: Node,
     triggeringLocation?: Location,
@@ -81,7 +85,7 @@ export class Reporter {
     helpUrl = '',
     hintAdded = true
   ): void {
-    this.report.items.push({
+    this.currentRun.items.push({
       analysisTarget: normalizeFilePath(this.basePath, diagnostic.file.fileName),
       type: ReportItemType.ts,
       ruleId: `TS${diagnostic.code}`,
@@ -96,8 +100,8 @@ export class Reporter {
     });
   }
 
-  addLintItem(fileName: string, lintError: LintErrorLike): void {
-    this.report.items.push({
+  addLintItemToRun(fileName: string, lintError: LintErrorLike): void {
+    this.currentRun.items.push({
       analysisTarget: normalizeFilePath(this.basePath, fileName),
       type: ReportItemType.lint,
       ruleId: lintError.ruleId || '',
@@ -117,14 +121,60 @@ export class Reporter {
     });
   }
 
-  incrementFixedItemCount(): void {
-    this.report.fixedItemCount++;
+  incrementRunFixedItemCount(): void {
+    this.currentRun.fixedItemCount++;
+  }
+
+  saveCurrentRunToReport(runBasePath: string, runEntrypoint: string, timestamp?: string): void {
+    timestamp =
+      timestamp ??
+      new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hourCycle: 'h24',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+    this.currentRun.runSummary.timestamp = timestamp;
+    this.currentRun.runSummary.basePath = runBasePath;
+    this.currentRun.runSummary.entrypoint = runEntrypoint || '';
+    this.report.summary = [...this.report.summary, { ...this.currentRun.runSummary }];
+
+    this.report.fixedItemCount += this.currentRun.fixedItemCount;
+
+    const { uniqueFiles, items } = this.mergeItems();
+    this.report.items = items;
+    this.uniqueFiles = uniqueFiles;
+
+    this.lastRun = { ...this.currentRun };
+
+    this.resetCurrentRun();
+  }
+
+  private mergeItems(): { uniqueFiles: string[]; items: ReportItem[] } {
+    const fileSet = new Set<string>();
+    for (const item of this.currentRun.items) {
+      if (!fileSet.has(item.analysisTarget)) {
+        fileSet.add(item.analysisTarget);
+      }
+    }
+    const items = [...this.currentRun.items];
+    for (const item of this.report.items) {
+      if (!fileSet.has(item.analysisTarget)) {
+        fileSet.add(item.analysisTarget);
+        items.push(item);
+      }
+    }
+    const uniqueFiles = Array.from(fileSet);
+    return { uniqueFiles, items };
   }
 
   /**
    * Prints the current report using provided formatter (ex. json, pull-request etc.)
    */
-  print(file: string, formatter: ReportFormatter): string {
+  printReport(file: string, formatter: ReportFormatter): string {
     const report = formatter(this.report);
 
     if (file) {
@@ -138,32 +188,41 @@ export class Reporter {
    * Saves the current report information to the file in simple JSON format
    * to be able to load it later with 'load' function
    */
-  save(file: string): void {
-    this.print(file, (report: Report): string => JSON.stringify(report, null, 2));
+  saveReport(file: string): void {
+    this.printReport(file, (report: Report): string => JSON.stringify(report, null, 2));
     this.logger?.info(`Report saved to: ${file}.`);
   }
 
   /**
    * Loads the report exported by function 'save' from the file
    */
-  load(file: string): Reporter {
+  loadRun(file: string): Reporter {
     if (!existsSync(file)) {
       this.logger?.error(`Report file not found: ${file}.`);
     }
 
     this.logger?.info(`Report file found: ${file}.`);
-    const content = readFileSync(file, 'utf-8');
-    const report: Report = JSON.parse(content);
 
-    if (!Reporter.isReport(report)) {
+    const content = readFileSync(file, 'utf-8');
+    const run: Run = JSON.parse(content);
+    this.currentRun = run;
+
+    if (!Reporter.isReport(this.report)) {
       this.logger?.error(`Report not loaded: wrong file format`);
       return this;
     }
 
-    this.report = report as Report;
     this.logger?.info(`Report loaded from file.`);
 
     return this;
+  }
+
+  private resetCurrentRun(): void {
+    this.currentRun.runSummary.timestamp = '';
+    this.currentRun.runSummary.basePath = '';
+    this.currentRun.runSummary.entrypoint = '';
+    this.currentRun.fixedItemCount = 0;
+    this.currentRun.items = [];
   }
 
   private static isReport(report: Report): report is Report {

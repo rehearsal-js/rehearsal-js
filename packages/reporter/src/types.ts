@@ -1,6 +1,7 @@
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
   basePath: string;
+  entrypoint: string;
   tsVersion: string;
   timestamp: string;
   commandName: string;
@@ -49,9 +50,15 @@ export interface LintErrorLike {
 }
 
 export type Report = {
-  summary: ReportSummary;
-  items: ReportItem[];
+  summary: ReportSummary[];
   fixedItemCount: number;
+  items: ReportItem[];
 };
 
 export type ReportFormatter = (report: Report) => string;
+
+export interface Run {
+  runSummary: ReportSummary;
+  fixedItemCount: number;
+  items: ReportItem[];
+}

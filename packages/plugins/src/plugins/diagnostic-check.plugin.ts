@@ -56,7 +56,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-      context.reporter.addTSItem(
+      context.reporter.addTSItemToRun(
         diagnostic,
         diagnostic.node,
         location,

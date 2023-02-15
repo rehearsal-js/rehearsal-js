@@ -22,17 +22,19 @@ export async function regenTask(
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
 
       const projectName = determineProjectName() || '';
-      const { basePath } = options;
+      const { basePath, entrypoint } = options;
       const tscPath = await getPathToBinary('tsc');
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
+        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate', entrypoint },
         logger
       );
 
       const input = {
         basePath,
+        entrypoint,
+        sourceFiles: [],
         logger: logger,
         reporter,
         task,

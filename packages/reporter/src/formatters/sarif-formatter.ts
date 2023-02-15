@@ -165,7 +165,7 @@ function createRun(report: Report): Run {
   return {
     tool: {
       driver: {
-        name: `${report.summary.commandName}`,
+        name: `${report.summary[0].commandName}`,
         informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
         rules: [],
       },
@@ -174,7 +174,9 @@ function createRun(report: Report): Run {
     results: [],
     automationDetails: {
       description: {
-        text: `This is the run of ${report.summary.commandName} on your product against TypeScript ${report.summary.tsVersion} at ${report.summary.timestamp}`,
+        //For sequential runs, the time difference between each run is minimal, and ts version should be the same.
+        //So printing out the first timestamp and first ts version.
+        text: `This is the result of ${report.summary[0].commandName} on your product against TypeScript ${report.summary[0].tsVersion} at ${report.summary[0].timestamp}`,
       },
     },
   };
