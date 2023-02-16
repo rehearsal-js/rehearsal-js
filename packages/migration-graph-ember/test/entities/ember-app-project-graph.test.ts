@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
-import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 import { SyntheticPackage } from '../../src/entities/ember-app-package-graph';
+import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.key);
