@@ -16,6 +16,7 @@ type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
+  | 'library-with-tests'
   | 'library-with-ignored-files'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
@@ -101,6 +102,38 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             // a.js
             console.log('foo');
            `,
+        },
+      };
+      break;
+    case 'library-with-tests':
+      files = {
+        'index.js': `
+            import * as parser from '@babel/parser';
+            import chalk from 'chalk';
+            import path from 'path';
+            import './lib/a';
+            
+            console.log(path.join('foo', 'bar', 'baz'));
+            console.log(parser, chalk);
+          `,
+        'package.json': `
+            {
+              "name": "my-package",
+              "main": "index.js",
+              "dependencies": {
+                "@babel/parser": "*",
+                "chalk": "*"
+              },
+              "devDependencies": {
+                "typescript": "^4.8.3"
+              }
+            }
+          `,
+        lib: {
+          'a.js': `
+              // a.js
+              console.log('foo');
+             `,
         },
         test: {
           'sample.test.js': 'import "../index"',

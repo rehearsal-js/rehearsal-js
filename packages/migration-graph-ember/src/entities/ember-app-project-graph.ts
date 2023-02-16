@@ -1,16 +1,15 @@
-import { relative, resolve } from 'path';
-
+import { dirname, resolve } from 'path';
+import { sync as fastGlobSync } from 'fast-glob';
 import debug from 'debug';
 import {
-  dfs,
   GraphNode,
   Package,
   PackageNode,
   ProjectGraph,
   ProjectGraphOptions,
+  readPackageJson,
 } from '@rehearsal/migration-graph-shared';
-import { getInternalPackages, getRootPackage } from '../mappings-container';
-import { discoverEmberPackages } from '../utils/discover-ember-packages';
+import { isAddon, isApp } from '../utils/ember';
 import { EmberAppPackage } from './ember-app-package';
 import { EmberAddonPackage } from './ember-addon-package';
 import type { EmberProjectPackage } from '../types';
@@ -19,67 +18,16 @@ const EXCLUDED_PACKAGES = ['test-harness'];
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-project-graph');
 
-function debugAnalysis(entry: GraphNode<PackageNode>): void {
-  // Get this list of dependent nodes in some order
-  const dependencies: GraphNode<PackageNode>[] = dfs(entry);
-  const reportedNodes: Set<string> = new Set();
-
-  if (!dependencies || dependencies.length < 1) {
-    return;
-  }
-
-  if (dependencies[0].content.pkg === entry.content.pkg) {
-    return;
-  }
-
-  DEBUG_CALLBACK('List of dependent packages, that need migration:');
-
-  let taskNumber = 1;
-
-  for (const someNode of dependencies) {
-    if (someNode.content.pkg === entry.content.pkg) {
-      break;
-    }
-
-    const packageData = someNode.content;
-
-    const pkg = packageData?.pkg ?? undefined;
-
-    if (!pkg) {
-      continue;
-    }
-
-    const packageName = pkg.packageName ?? '';
-    const duplicate = reportedNodes.has(packageName) ? 'DUPLICATE' : '';
-
-    if (duplicate.length) {
-      DEBUG_CALLBACK('Duplicate found');
-      return;
-    }
-
-    const relativePath = relative(process.cwd(), pkg.path);
-    const parentPkgName = someNode.parent?.content?.pkg?.packageName;
-
-    let taskString = `${taskNumber++}. ${pkg.packageName} (./${relativePath})`;
-
-    if (parentPkgName) {
-      taskString = taskString.concat(` parent: ${parentPkgName}`);
-    }
-
-    if (packageData.converted) {
-      DEBUG_CALLBACK('[X] DONE %s', taskString);
-    } else {
-      DEBUG_CALLBACK('[ ] TODO %s', taskString);
-    }
-
-    reportedNodes.add(packageName);
-  }
-}
+type EmberPackageLookup = {
+  byAddonName: Record<string, EmberProjectPackage>;
+  byPath: Record<string, EmberProjectPackage>;
+};
 
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
   protected discoveredPackages: Record<string, EmberProjectPackage> = {};
+  private lookup?: EmberPackageLookup;
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     super(rootDir, { sourceType: 'Ember Application', ...options });
@@ -102,8 +50,6 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
     const node = super.addPackageToGraph(p, crawl);
 
-    DEBUG_CALLBACK('debugAnalysis', debugAnalysis(node));
-
     return node;
   }
 
@@ -116,7 +62,8 @@ export class EmberAppProjectGraph extends ProjectGraph {
   findInternalPackageDependencies(pkg: Package): Array<Package> {
     let deps: Array<Package> = [];
 
-    const { mappingsByAddonName, mappingsByLocation } = getInternalPackages(this.rootDir);
+    const { byAddonName: mappingsByAddonName, byPath: mappingsByLocation } =
+      this.getDiscoveredPackages();
 
     if (pkg.dependencies) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
@@ -132,7 +79,11 @@ export class EmberAppProjectGraph extends ProjectGraph {
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg instanceof EmberAppPackage) {
+    // When ever we come across an EmberAppPackage or EmberAddonPackage
+    // We look at the packageJson.ember-addon.paths and resolve those paths for the
+    // We should have all those packages already populated in our mappingsByLocation
+    // via from discovery().
+    if (isApp(pkg.packageJson) || isAddon(pkg.packageJson)) {
       const emberPackage = pkg as EmberAppPackage;
 
       if (emberPackage.addonPaths?.length) {
@@ -180,26 +131,148 @@ export class EmberAppProjectGraph extends ProjectGraph {
     });
   }
 
+  protected discoveryByEntrypoint(entrypoint: string): EmberAppPackage {
+    // Create a package to make sure things work, but ignore the rest.
+    const p = new EmberAppPackage(this.rootDir);
+    p.includePatterns = new Set([entrypoint]);
+    this.addPackageToGraph(p, false);
+    return p;
+  }
+
+  private entityFactory(pathToPackage: string): EmberProjectPackage {
+    let packageJson;
+    try {
+      packageJson = readPackageJson(pathToPackage);
+    } catch (e) {
+      throw new Error(`Failed to readPackageJson in path: ${pathToPackage}`);
+    }
+
+    if (isAddon(packageJson)) {
+      return new EmberAddonPackage(pathToPackage);
+    } else if (isApp(packageJson)) {
+      return new EmberAppPackage(pathToPackage);
+    } else {
+      return new Package(pathToPackage);
+    }
+  }
+
+  private getDiscoveredPackages(): EmberPackageLookup {
+    if (!this.lookup) {
+      const foundPackages = Object.values(this.discoveredPackages);
+
+      this.lookup = {
+        byAddonName: {},
+        byPath: {},
+      };
+
+      for (const pkg of foundPackages) {
+        this.lookup.byAddonName[pkg.packageName] = pkg;
+        this.lookup.byPath[pkg.path] = pkg;
+      }
+    }
+
+    return this.lookup;
+  }
+
+  private findProjectPackages(): { root: EmberProjectPackage; found: Array<EmberProjectPackage> } {
+    const pathToRoot = this.rootDir;
+
+    DEBUG_CALLBACK('findProjectPackages: %s', pathToRoot);
+
+    const cwd = resolve(pathToRoot);
+
+    // There is a bug (feature?) in fast glob where the exclude patterns include the `cwd`
+    // when applying the exclude patterns.
+    //
+    // For example if we have our code checkout out to some directory called:
+    // > `~/Code/tmp`
+    //
+    // The fastglob exclude pattern ``!**/tmp/**` will exclude anything in this directory
+    // because the parent directory contains tmp
+    //
+    // So we must prefix our ignore glob patterns with our `pathToRoot`.
+    //
+    // This issue was discovered during a migration-graph.test.ts because we have a fixtures
+    // directory.
+
+    let pathToPackageJsonList = fastGlobSync(
+      [
+        `**/package.json`,
+        `!${pathToRoot}/**/build/**`,
+        `!${pathToRoot}/**/dist/**`,
+        `!${pathToRoot}/**/blueprints/**`,
+        `!${pathToRoot}/**/fixtures/**`,
+        `!${pathToRoot}/**/node_modules/**`,
+        `!${pathToRoot}/**/tmp/**`,
+      ],
+      {
+        absolute: true,
+        cwd,
+      }
+    );
+
+    DEBUG_CALLBACK('findProjectPackages: %a', pathToPackageJsonList);
+
+    pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+    // In `ProjectGraph.discover()` we filter out by non-workspace package.json files in a project.
+    //
+    // We don't want to do this in ember project. In an ember-project specifically ones that
+    // used ember-engines the relationship between a package is defined by
+    // `ember-addon.paths` in packageJson.
+    // We use this `findInternalPackageDependencies()` above and it is called
+    // in the base class in `ProjectGraph.discoverEdgesFromDependencies()
+    //
+    // This allows for all package.json files when read to construct a complete graph of dependencies.
+    // Regardless of workspaces or ember-engines.
+    //
+    // The downside is that we don't limit the scope of direcotires we crawl. We may need to add more
+    //  exclusions to the fastglob above to constrain packageJson discovery.
+    //
+    // This is why we can ignore workspace data defined in root package.json during discovery.
+
+    const entities = pathToPackageJsonList.map((pathToPackage) =>
+      this.entityFactory(pathToPackage)
+    );
+
+    const root = entities.find((pkg) => this.isRootPackage(pkg));
+
+    if (!root) {
+      throw new Error('Discovery failed, unable to find root package');
+    }
+
+    const found = entities.filter((pkg) => !this.isRootPackage(pkg));
+
+    DEBUG_CALLBACK('findProjectPackages: %s', entities.length);
+
+    return { root, found };
+  }
+
   discover(): Array<EmberProjectPackage> {
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
+
     if (this.entrypoint) {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
-    const entities = discoverEmberPackages(this.rootDir);
+    const { root, found } = this.findProjectPackages();
 
-    const rootPackage = getRootPackage(this.rootDir);
-    const rootNode = this.addPackageToGraph(rootPackage);
+    const rootNode = this.addPackageToGraph(root);
 
-    this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
-      const node = this.addPackageToGraph(pkg);
-      this.graph.addEdge(rootNode, node);
+    // Get rootPackage and add it to the graph.
 
-      acc[pkg.packageName] = pkg;
-      return acc;
-    }, {});
+    this.discoveredPackages = found.reduce(
+      (acc: Record<string, Package>, pkg: EmberProjectPackage) => {
+        const node = this.addPackageToGraph(pkg);
+        this.graph.addEdge(rootNode, node);
 
-    return entities;
+        acc[pkg.packageName] = pkg;
+        return acc;
+      },
+      {}
+    );
+
+    return found;
   }
 }

@@ -20,7 +20,7 @@ import { EmberAppProjectGraph } from './ember-app-project-graph';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-package-graph');
 
-class SyntheticPackage extends Package implements IPackage {
+export class SyntheticPackage extends Package implements IPackage {
   #graph: Graph<ModuleNode>;
 
   constructor() {
@@ -299,7 +299,8 @@ export class EmberAppPackageGraph extends PackageGraph {
     const appName = this.package.packageName;
 
     const alias: Record<string, string> = {};
-    alias[appName] = resolve(this.baseDir, 'app');
+    const appDir = resolve(this.baseDir, 'app');
+    alias[appName] = appDir;
 
     return {
       fileSystem: new CachedInputFileSystem(fs, 4000),

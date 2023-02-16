@@ -3,7 +3,6 @@ import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import { setupTestEnvironment } from '../src/utils/environment';
 import { getWorkspaceGlobs, isWorkspace } from '../src/utils/workspace';
 import { FIXTURE_NAMES, FIXTURES } from './fixtures/workspace-fixtures';
 
@@ -22,7 +21,6 @@ describe('Unit | workspaces', function () {
   }
 
   beforeEach(function () {
-    setupTestEnvironment();
     tmpDir = dirSync({ unsafeCleanup: true });
     setupFixtures(tmpDir.name);
     // Setup re-used test variables

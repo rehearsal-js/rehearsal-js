@@ -1,4 +1,3 @@
-import { relative, resolve } from 'path';
 import {
   type PackageOptions,
   Package,
@@ -6,7 +5,7 @@ import {
   ModuleNode,
   IPackage,
 } from '@rehearsal/migration-graph-shared';
-import { EmberProjectPackage } from '../types';
+import { getEmberAddonPaths } from '../utils/ember';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
 
 export type EmberPackageOptions = PackageOptions;
@@ -28,71 +27,14 @@ export class EmberAppPackage extends Package implements IPackage {
       'ember-config',
       '@ember/*',
       'public',
+      ...this.addonPaths,
     ]);
 
-    this.includePatterns = new Set(['app']);
+    this.includePatterns = new Set(['.']); // No longer isolate this to the app directory, include all files in dir.
   }
 
   get addonPaths(): Array<string> {
-    return this.packageJson['ember-addon']?.paths;
-  }
-
-  hasAddonPath(packageInstance: Package): string | undefined {
-    return this.addonPaths?.find(
-      (addonPath: string) => packageInstance.path === resolve(this.path, addonPath)
-    );
-  }
-
-  /**
-   * `p` package representing the desired in-repo addon to add
-   * to `ember-addon.paths` of the current package. It will add the relative path
-   * between this location and the desired package to `ember-addon.paths`.
-   *
-   * @param {EmberProjectPackage} p The `EmberAppPackage` or `EmberAddonPackage` instance
-   * @return this EmberAppPackage
-   */
-  addAddonPath(p: EmberProjectPackage): EmberAppPackage {
-    if (!this.addonPaths) {
-      this.addPackageJsonKey('ember-addon.paths', []);
-    }
-
-    if (!this.hasAddonPath(p)) {
-      this.addonPaths.push(relative(this.path, p.path));
-    }
-
-    return this;
-  }
-
-  /**
-   * The `packageInstance` is package representing the desired in-repo addon to remove
-   * from `ember-addon.paths` of the current package. It will remove the correct relative
-   * path (if it exists) from `ember-addon.paths`.
-   *
-   * @param {EmberAddonPackage} packageInstance The `EmberAddonPackage` instance
-   * @return instance of EmberPackage
-   */
-  removeAddonPath(packageInstance: Package): this {
-    if (!packageInstance) {
-      throw new Error('`packageInstance` must be provided as an argument to `removeAddonPath`');
-    }
-
-    // bail early if the desired package isn't part of `ember-addon.paths`,
-    // in this case there's nothing to remove
-    if (!this.hasAddonPath(packageInstance)) {
-      return this;
-    }
-
-    this.addonPaths.splice(
-      this.addonPaths.findIndex(
-        (addonPath) =>
-          // get absolute path of desired package (desiredPackage.location)
-          // /some/path/to/your-app/lib/msg-data === resolve('/some/path/to/your-app/lib/msg-overlay', '../lib/msg-data'))
-          packageInstance.path === resolve(this.path, addonPath)
-      ),
-      1
-    );
-
-    return this;
+    return getEmberAddonPaths(this.packageJson);
   }
 
   getModuleGraph(options: EmberAppPackageGraphOptions = {}): Graph<ModuleNode> {

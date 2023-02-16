@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { resolve, join } from 'path';
-import { readJsonSync, writeJsonSync } from 'fs-extra';
+import { resolve, join, relative } from 'path';
+import { existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 import { sync as fastGlobSync } from 'fast-glob';
 
@@ -12,19 +11,14 @@ import type { IPackage } from './IPackage';
 import type { Graph } from '../graph';
 import type { ModuleNode } from '../types';
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export type PackageJson = Record<string, any>;
-
-// TODO evaluate if the packageContainer is actually needed
-export type PackageContainer = {
-  isWorkspace?: (...args: any) => boolean;
-  addWorkspaceGlob?: (...args: any) => unknown;
-};
 
 export type PackageOptions = {
   packageType?: string;
-  packageContainer?: PackageContainer;
   rootPackagePath?: string;
   name?: string;
+  excludeWorkspaces?: boolean;
 };
 
 /**
@@ -55,8 +49,6 @@ export class Package implements IPackage {
 
   #packageType: string;
 
-  #packageContainer: PackageContainer;
-
   #name: string;
 
   #excludePatterns: Set<string>;
@@ -65,19 +57,15 @@ export class Package implements IPackage {
 
   protected graph: Graph<ModuleNode> | undefined;
 
+  #workspaceGlobs?: string[];
+
   constructor(
     packagePath: string,
-    { name = '', packageContainer, packageType = '' }: PackageOptions = {}
+    { name = '', packageType = '', excludeWorkspaces = true }: PackageOptions = {}
   ) {
     this.#packagePath = packagePath;
     this.#packageType = packageType;
     this.#name = name;
-
-    if (packageContainer) {
-      this.#packageContainer = packageContainer;
-    } else {
-      this.#packageContainer = { isWorkspace: () => false };
-    }
 
     const excludeDirs = [
       '.yarn', // yarn3 directory
@@ -98,6 +86,15 @@ export class Package implements IPackage {
 
     this.#excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
     this.#includePatterns = new Set(['.']);
+
+    // Only add the globs if this path contains a package.json
+    if (excludeWorkspaces && existsSync(join(this.path, 'package.json'))) {
+      this.#workspaceGlobs = getWorkspaceGlobs(this.path) || [];
+
+      // Add the workspace globs to the exclude pattern for the root package
+      // so it doesn't attempt to add them to the root package's graph.
+      this.#workspaceGlobs.forEach((glob) => this.addExcludePattern(relative(this.path, glob)));
+    }
   }
 
   get excludePatterns(): Set<string> {
@@ -128,26 +125,8 @@ export class Package implements IPackage {
     return this.#packageType;
   }
 
-  set packageContainer(container) {
-    this.#packageContainer = container;
-  }
-
-  get packageContainer(): PackageContainer {
-    return this.#packageContainer;
-  }
-
   get packageName(): string {
     return this.#name || this.packageJson?.name;
-  }
-
-  get isWorkspace(): any {
-    if (!this.#packageContainer || !this.#packageContainer.isWorkspace) {
-      throw new Error(
-        'Unable to determine if Package.isWorkspace; packageContainer is not defined.'
-      );
-    }
-
-    return this.#packageContainer.isWorkspace(this.path);
   }
 
   get packageJson(): PackageJson {
@@ -185,8 +164,8 @@ export class Package implements IPackage {
   /**
    * Return any workspace globs this package might have.
    */
-  get workspaceGlobs(): [string] {
-    return getWorkspaceGlobs(this.path);
+  get workspaceGlobs(): string[] {
+    return this.#workspaceGlobs || [];
   }
 
   addWorkspaceGlob(glob: string): this {

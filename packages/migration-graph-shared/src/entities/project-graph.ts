@@ -1,13 +1,10 @@
-import { dirname } from 'path';
+import { dirname, resolve } from 'path';
 import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
 import { isWorkspace } from '../../src/utils/workspace';
-import { RootPackage } from './root-package';
 import { Package } from './package';
-
 import type { PackageNode } from '../types';
-import { VoidPackage } from './void-package';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
@@ -156,12 +153,16 @@ export class ProjectGraph {
     return deps;
   }
 
-  protected discoveryByEntrypoint(entrypoint: string): VoidPackage {
+  protected discoveryByEntrypoint(entrypoint: string): Package {
     // Create an adhoc package to make sure things work, but ignore the rest.
-    const p = new VoidPackage(this.#rootDir);
+    const p = new Package(this.#rootDir, { excludeWorkspaces: false });
     p.includePatterns = new Set([entrypoint]);
     this.addPackageToGraph(p, false);
     return p;
+  }
+
+  isRootPackage(somePackage: Package): boolean {
+    return resolve(this.rootDir) === resolve(somePackage.path);
   }
 
   discover(): Array<Package> {
@@ -174,7 +175,7 @@ export class ProjectGraph {
     // Setup package and return
 
     // Add root package to graph
-    const rootPackage = new RootPackage(this.rootDir);
+    const rootPackage = new Package(this.rootDir);
 
     rootPackage.addExcludePattern(...this.exclude);
     rootPackage.addIncludePattern(...this.include);
@@ -184,7 +185,7 @@ export class ProjectGraph {
 
     const rootPackageNode = this.addPackageToGraph(rootPackage, false);
 
-    const globs = rootPackage.globs;
+    const globs = rootPackage.workspaceGlobs;
 
     if (globs.length <= 0) {
       return [rootPackage];
@@ -214,7 +215,9 @@ export class ProjectGraph {
     pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
 
     const entities = pathToPackageJsonList
-      .filter((pathToPackage) => isWorkspace(this.rootDir, pathToPackage)) // Ensures any package found is in the workspace.
+      .filter(
+        (pathToPackage) => !rootPackage.workspaceGlobs || isWorkspace(this.rootDir, pathToPackage)
+      ) // Ensures any package found is in the workspace.
       .map((pathToPackage) => new Package(pathToPackage));
 
     this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {

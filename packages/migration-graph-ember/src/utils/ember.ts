@@ -92,6 +92,10 @@ export function getModuleNameFromMain(pathToPackage: string): string {
   return moduleName;
 }
 
+export function getEmberAddonPaths(packageJson: PackageJson): string[] {
+  return packageJson['ember-addon']?.paths ?? [];
+}
+
 /**
  * Ember addons can specify their "name" in a few ways.
  * All three are defined in the in main entry point of the package (index.js or a custom file)

@@ -5,7 +5,6 @@ import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
 import { Package } from '../../src/entities/package';
-import { setupTestEnvironment } from '../../src/utils/environment';
 import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
 
 setGracefulCleanup();
@@ -23,7 +22,6 @@ describe('Unit | Entities | Package', function () {
   }
 
   beforeEach(function () {
-    setupTestEnvironment();
     tmpDir = dirSync({ unsafeCleanup: true });
     setupFixtures(tmpDir.name);
     // Setup re-used test variables

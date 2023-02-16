@@ -1,7 +1,9 @@
-import { getInternalPackages } from '../mappings-container';
-
+import { EmberAppProjectGraph } from '../entities/ember-app-project-graph';
 import type { EmberProjectPackage } from '../types';
+
 export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackage> {
-  const { mappingsByAddonName } = getInternalPackages(rootDir);
-  return Array.from(Object.values(mappingsByAddonName));
+  const projectGraph = new EmberAppProjectGraph(rootDir);
+  projectGraph.discover();
+  const nodes = projectGraph.graph.topSort();
+  return Array.from(nodes).map((node) => node.content.pkg);
 }

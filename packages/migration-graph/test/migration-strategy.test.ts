@@ -17,6 +17,15 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(rootDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
+      expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
+      expect(strategy.sourceType).toBe(SourceType.Library);
+    });
+
+    test('library w/ tests', () => {
+      const rootDir = getLibrary('library-with-tests');
+      const strategy = getMigrationStrategy(rootDir);
+      const files: Array<SourceFile> = strategy.getMigrationOrder();
+      const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
@@ -32,15 +41,21 @@ describe('migration-strategy', () => {
     });
 
     test('options.include', () => {
-      const files = getFiles('simple');
+      const files = getFiles('library-with-ignored-files');
+
       const rootDir = create(files);
-      const strategy = getMigrationStrategy(rootDir, { include: ['test'] });
+      const strategy = getMigrationStrategy(rootDir, { include: ['webpack.config.js'] });
 
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
 
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
-      expect(actual).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
+      expect(actual).toStrictEqual([
+        'lib/a.js',
+        'index.js',
+        'test/sample.test.js',
+        'webpack.config.js',
+      ]);
     });
 
     test('options.exclude', () => {
@@ -52,7 +67,7 @@ describe('migration-strategy', () => {
 
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
-      expect(actual).toStrictEqual(['lib/a.js', 'test/sample.test.js']);
+      expect(actual).toStrictEqual(['lib/a.js']);
     });
 
     test('options.entrypoint', () => {
@@ -144,18 +159,17 @@ describe('migration-strategy', () => {
       'app/router.js',
     ];
 
-    test.only('options.entrypoint', async () => {
-      const project = await getEmberProjectFixture('app-with-util');
+    test('options.entrypoint', async () => {
+      const project = await getEmberProjectFixture('app-with-utils');
 
       const strategy = getMigrationStrategy(project.baseDir, {
-        entrypoint: 'app/util/entry.js',
+        entrypoint: 'tests/unit/utils/math-test.js',
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
-        'app/util/lib/base.js',
-        'app/util/lib/impl.js',
-        'app/util/entry.js',
+        'app/utils/math.js',
+        'tests/unit/utils/math-test.js', // entrypoint should be last in file order.
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
     });
@@ -166,7 +180,12 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
-      expect(actual).toStrictEqual(EXPECTED_APP_FILES);
+      expect(actual).toStrictEqual([
+        ...EXPECTED_APP_FILES,
+        'tests/acceptance/index-test.js',
+        'tests/test-helper.js',
+        'tests/unit/services/locale-test.js',
+      ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
     });
 
@@ -179,6 +198,9 @@ describe('migration-strategy', () => {
       expect(actual).toStrictEqual([
         'lib/some-addon/addon/components/greet.js',
         ...EXPECTED_APP_FILES,
+        'tests/acceptance/index-test.js',
+        'tests/test-helper.js',
+        'tests/unit/services/locale-test.js',
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
     });
@@ -194,6 +216,10 @@ describe('migration-strategy', () => {
         'lib/some-engine/addon/engine.js',
         'lib/some-engine/addon/routes.js',
         ...EXPECTED_APP_FILES,
+        'tests/acceptance/index-test.js',
+        'tests/acceptance/some-engine-test.js',
+        'tests/test-helper.js',
+        'tests/unit/services/locale-test.js',
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberApp);
     });
@@ -204,7 +230,11 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
-      expect(actual).toStrictEqual(['addon/components/greet.js']);
+      expect(actual).toStrictEqual([
+        'addon/components/greet.js',
+        'tests/acceptance/addon-template-test.js',
+        'tests/test-helper.js',
+      ]);
       expect(strategy.sourceType).toBe(SourceType.EmberAddon);
     });
   });

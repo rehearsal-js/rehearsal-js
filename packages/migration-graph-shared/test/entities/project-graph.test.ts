@@ -13,7 +13,7 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 describe('project-graph', () => {
   const EXPECTED_FILES = ['lib/a.js', 'index.js', 'test/sample.test.js'];
   test('should create a graph', () => {
-    const baseDir = getLibrary('simple');
+    const baseDir = getLibrary('library-with-tests');
 
     const projectGraph = new ProjectGraph(baseDir);
     projectGraph.discover();
@@ -43,7 +43,7 @@ describe('project-graph', () => {
     expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
   });
   test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', () => {
-    const baseDir = getLibrary('simple');
+    const baseDir = getLibrary('library-with-ignored-files');
 
     const projectGraph = new ProjectGraph(baseDir);
     projectGraph.discover();
@@ -154,11 +154,11 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(baseDir, { entrypoint: 'packages/foo/index.js' });
       projectGraph.discover();
 
-      const sortedPackages = Array.from(projectGraph.graph.topSort()).map(
+      const orderedPackages = Array.from(projectGraph.graph.topSort()).map(
         (node) => node.content.pkg
       );
 
-      const orderedFiles = sortedPackages.reduce((allFiles, p) => {
+      const orderedFiles = orderedPackages.reduce((allFiles, p) => {
         const moduleNodes = Array.from(p.getModuleGraph().topSort());
         const files = moduleNodes.map((moduleNode) => moduleNode.content.path);
         return [...allFiles, ...files];

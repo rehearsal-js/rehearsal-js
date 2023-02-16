@@ -32,12 +32,14 @@ export class EmberAddonPackage extends EmberAppPackage {
     ];
 
     const excludeFiles = [
+      'ember-cli-build.js',
+      'testem.js',
       'index.js', // Ignore index.js because it's a CJS use to interact with the build pipeline.
     ];
 
     this.excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
 
-    this.includePatterns = new Set(['addon']);
+    this.includePatterns = new Set(['.']);
   }
 
   get isEngine(): boolean {

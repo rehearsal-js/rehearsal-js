@@ -5,16 +5,10 @@ export function readPackageJson(pathToPackage: string): Record<string, unknown> 
   return readJsonSync(resolve(pathToPackage, 'package.json'));
 }
 
-export {
-  Package,
-  type PackageOptions,
-  type PackageContainer,
-  type PackageJson,
-} from './entities/package';
+export { Package, type PackageOptions, type PackageJson } from './entities/package';
 export { formatter } from './utils/prettier';
-export { isWorkspace } from './utils/workspace';
+export * from './utils/workspace';
 export { setNestedPropertyValue, removeNestedPropertyValue } from './utils/pojo';
-export { isTesting, setupTestEnvironment } from './utils/environment';
 
 export * from './graph';
 export * from './types';
