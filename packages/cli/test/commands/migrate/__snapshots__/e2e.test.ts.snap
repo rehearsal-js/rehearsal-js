@@ -350,7 +350,7 @@ exports[`migrate: e2e > regen result after the first pass 1`] = `
 `;
 
 exports[`migrate: e2e > user defined options passed by --user-config -u > migrate.exclude 1`] = `
-"[32minfo[39m:    @rehearsal/migrate 1.0.8-beta
+"[32minfo[39m:    @rehearsal/migrate 1.0.9-beta
 [STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize -- Dry Run Mode
@@ -372,7 +372,7 @@ exports[`migrate: e2e > user defined options passed by --user-config -u > migrat
 `;
 
 exports[`migrate: e2e > user defined options passed by --user-config -u > migrate.include 1`] = `
-"[32minfo[39m:    @rehearsal/migrate 1.0.8-beta
+"[32minfo[39m:    @rehearsal/migrate 1.0.9-beta
 [STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize -- Dry Run Mode

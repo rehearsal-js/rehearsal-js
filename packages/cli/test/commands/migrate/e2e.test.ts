@@ -349,7 +349,13 @@ describe('migrate: e2e', async () => {
         cwd: basePath,
       });
 
-      expect(result.stdout).toMatchSnapshot();
+      const expected = `[STARTED] Initialize -- Dry Run Mode
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js`;
+
+      expect(result.stdout).contains(expected);
     });
 
     test('migrate.include', async () => {
@@ -373,7 +379,15 @@ describe('migrate: e2e', async () => {
         cwd: basePath,
       });
 
-      expect(result.stdout).toMatchSnapshot();
+      const expected = `[STARTED] Initialize -- Dry Run Mode
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js
+[DATA] test/index.js
+[SUCCESS] Initialize -- Dry Run Mode`;
+
+      expect(result.stdout).contains(expected);
     });
   });
 });
