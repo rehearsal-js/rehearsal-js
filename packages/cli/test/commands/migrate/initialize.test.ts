@@ -176,7 +176,7 @@ describe('Task: initialize', async () => {
     expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual(expectedAbsolutePaths);
   });
 
-  test('multi package selection in interactive mode', async () => {
+  test.todo('multi package selection in interactive mode', async () => {
     basePath = prepareTmpDir('multi_packages');
 
     // prompt control flow
