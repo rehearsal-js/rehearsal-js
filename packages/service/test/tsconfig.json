@@ -5,5 +5,8 @@
     "outDir": "../dist/test/"
   },
   "exclude": ["fixtures"],
-  "include": ["./", "../src"]
+  "include": ["./", "../src"],
+  "glint": {
+    "environment": "glimmerx"
+  }
 }

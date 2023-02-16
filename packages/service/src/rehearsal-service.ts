@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import ts, { createLanguageService, ScriptSnapshot } from 'typescript';
 
 import { RehearsalGlintService, GlintConfigInput } from './glint-service';
@@ -17,17 +18,19 @@ import type {
 export class RehearsalService {
   protected readonly host: RehearsalServiceHost;
   protected readonly service: LanguageService;
-  protected readonly glintService: RehearsalGlintService;
+  protected readonly glintService?: RehearsalGlintService;
 
   constructor(
     tsCompilerOptions: CompilerOptions = {},
     fileNames: string[],
-    configPath: string,
-    glintConfigInput: GlintConfigInput
+    configPath?: string,
+    glintConfigInput?: GlintConfigInput
   ) {
     this.host = new RehearsalServiceHost(tsCompilerOptions, fileNames);
     this.service = createLanguageService(this.host);
-    this.glintService = new RehearsalGlintService(ts, configPath, glintConfigInput);
+    if (configPath && existsSync(configPath) && glintConfigInput) {
+      this.glintService = new RehearsalGlintService(ts, configPath, glintConfigInput);
+    }
   }
 
   private withLocation(diagnostic: Diagnostic): diagnostic is DiagnosticWithLocation {
@@ -86,9 +89,9 @@ export class RehearsalService {
   }
 
   getGlintDiagnostics(fileName: string): DiagnosticWithLocation[] {
-    const glintDiagnostics = this.glintService
-      .getGlintDiagnostics(fileName)
-      .filter(this.withLocation);
-    return glintDiagnostics;
+    if (this.glintService) {
+      return this.glintService.getGlintDiagnostics(fileName).filter(this.withLocation);
+    }
+    return [];
   }
 }
