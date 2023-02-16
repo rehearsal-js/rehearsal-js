@@ -1,5 +1,6 @@
-import { createLanguageService, ScriptSnapshot } from 'typescript';
+import ts, { createLanguageService, ScriptSnapshot } from 'typescript';
 
+import { RehearsalGlintService, GlintConfigInput } from './glint-service';
 import { RehearsalServiceHost } from './rehearsal-service-host';
 import type {
   CompilerOptions,
@@ -16,10 +17,21 @@ import type {
 export class RehearsalService {
   protected readonly host: RehearsalServiceHost;
   protected readonly service: LanguageService;
+  protected readonly glintService: RehearsalGlintService;
 
-  constructor(compilerOptions: CompilerOptions = {}, fileNames: string[]) {
-    this.host = new RehearsalServiceHost(compilerOptions, fileNames);
+  constructor(
+    tsCompilerOptions: CompilerOptions = {},
+    fileNames: string[],
+    configPath: string,
+    glintConfigInput: GlintConfigInput
+  ) {
+    this.host = new RehearsalServiceHost(tsCompilerOptions, fileNames);
     this.service = createLanguageService(this.host);
+    this.glintService = new RehearsalGlintService(ts, configPath, glintConfigInput);
+  }
+
+  private withLocation(diagnostic: Diagnostic): diagnostic is DiagnosticWithLocation {
+    return diagnostic.start !== undefined && diagnostic.length !== undefined;
   }
 
   /**
@@ -63,11 +75,7 @@ export class RehearsalService {
    * Gets a list of semantic diagnostic objects only with location information (those have related node in the AST)
    */
   getSemanticDiagnosticsWithLocation(fileName: string): DiagnosticWithLocation[] {
-    // Type-guard for DiagnosticWithLocation
-    const withLocation = (diagnostic: Diagnostic): diagnostic is DiagnosticWithLocation =>
-      diagnostic.start !== undefined && diagnostic.length !== undefined;
-
-    return this.service.getSemanticDiagnostics(fileName).filter(withLocation);
+    return this.service.getSemanticDiagnostics(fileName).filter(this.withLocation);
   }
 
   /**
@@ -75,5 +83,12 @@ export class RehearsalService {
    */
   getSuggestionDiagnostics(fileName: string): DiagnosticWithLocation[] {
     return this.service.getSuggestionDiagnostics(fileName);
+  }
+
+  getGlintDiagnostics(fileName: string): DiagnosticWithLocation[] {
+    const glintDiagnostics = this.glintService
+      .getGlintDiagnostics(fileName)
+      .filter(this.withLocation);
+    return glintDiagnostics;
   }
 }
