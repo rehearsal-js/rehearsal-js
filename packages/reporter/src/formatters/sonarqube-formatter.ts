@@ -69,17 +69,17 @@ export function sonarqubeFormatter(report: Report): string {
 
 function getTextRange(location: PhysicalLocation | undefined): TextRange {
   return {
-    startLine: getNumber(location, 'startLine'),
-    startColumn: getNumber(location, 'startColumn'),
-    endLine: getNumber(location, 'endLine'),
-    endColumn: getNumber(location, 'endColumn'),
+    startLine: location?.region?.startLine || 0,
+    startColumn: decrementByOne(location, 'startColumn'),
+    endLine: location?.region?.endLine || 0,
+    endColumn: decrementByOne(location, 'endColumn'),
   };
 }
 
-//We bump column and line numbers by 1 for sarif reader. Now we revert back the numbers for sonarqube.
-function getNumber(
+//We bump column and line numbers by 1 for sarif reader. Now we revert back the numbers for sonarqube for column.
+function decrementByOne(
   location: PhysicalLocation | undefined,
-  key: 'startLine' | 'startColumn' | 'endLine' | 'endColumn'
+  key: 'startColumn' | 'endColumn'
 ): number {
   const region = location?.region;
   if (region && Number.isInteger(region[key]) && region[key]! > 1) {
