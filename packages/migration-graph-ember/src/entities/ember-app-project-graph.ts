@@ -80,9 +80,9 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     // When ever we come across an EmberAppPackage or EmberAddonPackage
-    // We look at the packageJson.ember-addon.paths and resolve those paths for the
-    // We should have all those packages already populated in our mappingsByLocation
-    // via from discovery().
+    // We check packageJson.ember-addon.paths for additional dependencies.
+    // This gives us additional dependency data not found from explicit dependency
+    // and devDependency entries in package.json.
     if (isApp(pkg.packageJson) || isAddon(pkg.packageJson)) {
       const emberPackage = pkg as EmberAppPackage;
 
