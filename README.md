@@ -87,7 +87,7 @@ Rehearsal also can read from a custom user config file. This is useful if you wa
 **rehearsal-config.json**
 ```json
 {
-  $schema: "https://raw.githubusercontent.com/rehearsal-js/rehearsal-js/master/packages/cli/rehearsal-config-schema.json",
+  "$schema": "https://raw.githubusercontent.com/rehearsal-js/rehearsal-js/master/packages/cli/rehearsal-config-schema.json",
   "upgrade": {},
   "migrate": {
     "install": {
