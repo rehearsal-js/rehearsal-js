@@ -84,9 +84,10 @@ In combination with the VSCode SARIF Viewer extension, you can view the SARIF re
 
 Rehearsal also can read from a custom user config file. This is useful if you want to customize the migration process. For example, you can add additional dependencies to be installed during the migration process. You can also add custom setup tasks to be run during the migration process. The config file is a JSON file with the following structure:
 
+**rehearsal-config.json**
 ```json
-// rehearsal-config.json
 {
+  "$schema": "https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli/rehearsal-config-schema.json",
   "upgrade": {},
   "migrate": {
     "install": {
