@@ -12,9 +12,9 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
         \\"message\\": \\"The declaration 'react' is never read or used. Remove the declaration or use it.\\",
         \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 0,
+          \\"startLine\\": 1,
           \\"startColumn\\": 0,
-          \\"endLine\\": 0,
+          \\"endLine\\": 1,
           \\"endColumn\\": 11
         }
       }
@@ -28,9 +28,9 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
         \\"message\\": \\"The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.\\",
         \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 0,
+          \\"startLine\\": 1,
           \\"startColumn\\": 9,
-          \\"endLine\\": 0,
+          \\"endLine\\": 1,
           \\"endColumn\\": 19
         }
       }
@@ -44,9 +44,9 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
         \\"message\\": \\"Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.\\",
         \\"filePath\\": \\"/base/path/file1.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 0,
+          \\"startLine\\": 1,
           \\"startColumn\\": 9,
-          \\"endLine\\": 0,
+          \\"endLine\\": 1,
           \\"endColumn\\": 25
         }
       }
@@ -60,9 +60,9 @@ exports[`Test sonarqueFormatter > should transform all fields correctly, irregar
         \\"message\\": \\"Unexpected any. Specify a different type.\\",
         \\"filePath\\": \\"/base/path/file2.ts\\",
         \\"textRange\\": {
-          \\"startLine\\": 0,
+          \\"startLine\\": 1,
           \\"startColumn\\": 0,
-          \\"endLine\\": 0,
+          \\"endLine\\": 1,
           \\"endColumn\\": 11
         }
       }
