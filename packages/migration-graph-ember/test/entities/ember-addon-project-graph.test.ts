@@ -25,6 +25,10 @@ describe('Unit | EmberAddonProjectGraph', () => {
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
       flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
-    ).toStrictEqual(['addon/components/greet.js']);
+    ).toStrictEqual([
+      'addon/components/greet.js',
+      'tests/acceptance/addon-template-test.js',
+      'tests/test-helper.js',
+    ]);
   });
 });

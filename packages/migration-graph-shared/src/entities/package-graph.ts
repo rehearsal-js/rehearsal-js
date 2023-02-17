@@ -58,9 +58,7 @@ export class PackageGraph {
     const baseDir = this.baseDir;
     const entrypoint = this.entrypoint;
 
-    const include = this.package.includePatterns
-      ? Array.from(this.package.includePatterns)
-      : ['index.js'];
+    const include = this.package.includePatterns ? Array.from(this.package.includePatterns) : ['.'];
 
     let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
 

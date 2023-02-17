@@ -1,14 +1,9 @@
 import { resolve } from 'path';
 
-import {
-  PackageJson,
-  readPackageJson,
-  setupTestEnvironment,
-} from '@rehearsal/migration-graph-shared';
+import { PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import walkSync from 'walk-sync';
+import { beforeEach, describe, expect, test } from 'vitest';
 
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
@@ -21,15 +16,12 @@ import {
   isEngine,
   requirePackageMain,
 } from '../../src/utils/ember';
-import {
-  registerInternalAddonTestFixtures,
-  resetInternalAddonTestFixtures,
-} from '../../src/utils/environment';
+
 import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
 
 setGracefulCleanup();
 
-describe('Unit | ember', () => {
+describe('Unit | utils | ember', () => {
   let tmpDir: DirResult;
 
   function getPackageJson(...paths: Array<string>): PackageJson {
@@ -45,23 +37,8 @@ describe('Unit | ember', () => {
   }
 
   beforeEach(function () {
-    setupTestEnvironment();
     tmpDir = dirSync({ unsafeCleanup: true });
-
     setupAddonFixtures(tmpDir.name);
-
-    registerInternalAddonTestFixtures(
-      walkSync(tmpDir.name, {
-        globs: ['**/*/package.json'],
-        ignore: ['node_modules'],
-        includeBasePath: true,
-      })
-    );
-  });
-
-  afterEach(() => {
-    resetInternalAddonTestFixtures();
-    // tmpDir.removeCallback();
   });
 
   describe('simple properties', () => {

@@ -1,11 +1,9 @@
-import { dirname } from 'path';
+import { dirname, resolve } from 'path';
 import debug from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
 import { isWorkspace } from '../../src/utils/workspace';
-import { RootPackage } from './root-package';
 import { Package } from './package';
-
 import type { PackageNode } from '../types';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
@@ -22,16 +20,16 @@ export type ProjectGraphOptions = {
 
 export class ProjectGraph {
   #rootDir: string;
-  #entrypoint: string | undefined;
   #graph: Graph<PackageNode>;
   #sourceType: string;
   #eager: boolean;
 
-  include: Set<string>;
-  exclude: Set<string>;
-
+  protected entrypoint: string | undefined;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
+
+  include: Set<string>;
+  exclude: Set<string>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
     const { eager, sourceType, entrypoint, exclude, include } = {
@@ -43,7 +41,7 @@ export class ProjectGraph {
     this.include = new Set(include);
     this.exclude = new Set(exclude);
     this.#rootDir = rootDir;
-    this.#entrypoint = entrypoint;
+    this.entrypoint = entrypoint;
     this.#eager = eager;
     this.#sourceType = sourceType;
     this.#graph = new Graph<PackageNode>();
@@ -155,23 +153,39 @@ export class ProjectGraph {
     return deps;
   }
 
+  protected discoveryByEntrypoint(entrypoint: string): Package {
+    // Create an adhoc package to make sure things work, but ignore the rest.
+    const p = new Package(this.#rootDir, { excludeWorkspaces: false });
+    p.includePatterns = new Set([entrypoint]);
+    this.addPackageToGraph(p, false);
+    return p;
+  }
+
+  isRootPackage(somePackage: Package): boolean {
+    return resolve(this.rootDir) === resolve(somePackage.path);
+  }
+
   discover(): Array<Package> {
+    // If an entrypoint is defined, we forgo any package discovery logic,
+    // and create a stub.
+    if (this.entrypoint) {
+      return [this.discoveryByEntrypoint(this.entrypoint)];
+    }
+
+    // Setup package and return
+
     // Add root package to graph
-    const rootPackage = new RootPackage(this.rootDir);
+    const rootPackage = new Package(this.rootDir);
 
     rootPackage.addExcludePattern(...this.exclude);
     rootPackage.addIncludePattern(...this.include);
-
-    if (this.#entrypoint) {
-      rootPackage.includePatterns = new Set([this.#entrypoint]);
-    }
 
     DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
     DEBUG_CALLBACK('RootPackage.includePatterns', rootPackage.includePatterns);
 
     const rootPackageNode = this.addPackageToGraph(rootPackage, false);
 
-    const globs = rootPackage.globs;
+    const globs = rootPackage.workspaceGlobs;
 
     if (globs.length <= 0) {
       return [rootPackage];
@@ -201,7 +215,9 @@ export class ProjectGraph {
     pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
 
     const entities = pathToPackageJsonList
-      .filter((pathToPackage) => isWorkspace(this.rootDir, pathToPackage)) // Ensures any package found is in the workspace.
+      .filter(
+        (pathToPackage) => !rootPackage.workspaceGlobs || isWorkspace(this.rootDir, pathToPackage)
+      ) // Ensures any package found is in the workspace.
       .map((pathToPackage) => new Package(pathToPackage));
 
     this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
