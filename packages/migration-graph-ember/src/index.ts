@@ -9,7 +9,6 @@ export {
 } from './utils/ember';
 
 export { discoverEmberPackages } from './utils/discover-ember-packages';
-export { discoverServiceDependencies } from './utils/discover-ember-service-dependencies';
 
 export {
   EmberAppPackageGraph,

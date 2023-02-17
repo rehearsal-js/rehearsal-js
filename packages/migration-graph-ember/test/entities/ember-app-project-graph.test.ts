@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
+import { SyntheticPackage } from '../../src/entities/ember-app-package-graph';
 import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {
@@ -21,9 +22,7 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir);
-
-    const appPackage = new EmberAppPackage(project.baseDir);
-    projectGraph.addPackageToGraph(appPackage);
+    projectGraph.discover();
 
     expect(projectGraph.graph.hasNode('some-addon')).toBe(true);
   });
@@ -34,9 +33,7 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir);
-
-    const appPackage = new EmberAppPackage(project.baseDir);
-    projectGraph.addPackageToGraph(appPackage);
+    projectGraph.discover();
 
     const rootNode = projectGraph.graph.getNode('app-template');
     const addonNode = projectGraph.graph.getNode('some-addon');
@@ -46,7 +43,7 @@ describe('Unit | EmberAppProjectGraph', () => {
     ).toBe(true);
   });
 
-  test('options.eager=true should create a synethic node and then backfill when packageName differs from addonName', async () => {
+  test('options.eager=true should create a synthetic node and then backfill when packageName differs from addonName', async () => {
     // If a parent app is crawled first eagerly, it may create some synthetic nodes.
 
     // Create an app where the app users a service with ambigous coordinates
@@ -127,6 +124,8 @@ export default class Salutation extends Component {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { eager: true });
+
+    // Manualy add the RootPackage or AppPackage for the project, so it will parse the source files.
     const appPackage = new EmberAppPackage(project.baseDir);
     const rootPackageNode = projectGraph.addPackageToGraph(appPackage);
 
@@ -140,13 +139,22 @@ export default class Salutation extends Component {
 
     expect(sourceNode?.content.parsed, 'the component should have been parsed').toBe(true);
 
-    // We should have a synthetic node for some-addon
     const addonFoundByAddonName = projectGraph.graph.getNode('some-addon');
-    expect(addonFoundByAddonName.content.synthetic).toBeFalsy();
+
+    expect(addonFoundByAddonName.content.pkg).instanceOf(SyntheticPackage);
+    expect(addonFoundByAddonName.content.synthetic).toBeTruthy();
     expect(
       rootNode.adjacent.has(addonFoundByAddonName),
       'should have an edge between app and in-repo-addon'
     ).toBe(true);
+
+    projectGraph.discover();
+
+    Array.from(projectGraph.graph.nodes).forEach((node) =>
+      expect(node.content.synthetic).toBeFalsy()
+    );
+
+    expect(projectGraph.graph.getNode('some-addon').content.synthetic).toBeFalsy();
 
     const addonFoundByPackageName = projectGraph.graph.getNode('@some-org/some-addon');
     expect(
@@ -155,6 +163,62 @@ export default class Salutation extends Component {
     ).toBe(true);
   });
 
+  test('options.entrypoint', async () => {
+    const project = getEmberProject('app-with-in-repo-addon');
+
+    // TODO projectGraph should have meta data about how some-addon@date is being used.
+
+    // Augment the app and addon code to have component that uses a service from the addon.
+    project.mergeFiles({
+      app: {
+        components: {
+          'obtuse.js': `
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
+
+            export default class Obtuse extends Component {
+              @service('some-addon@date') myDate;
+            }
+          `,
+        },
+      },
+      lib: {
+        'some-addon': {
+          addon: {
+            services: {
+              'date.js': `
+                    import { inject as service } from '@ember/service';
+                    export default class DateService extends Service {}
+                  `,
+            },
+          },
+          app: {
+            services: {
+              'date.js': `export { default } from 'some-addon/services/date';`,
+            },
+          },
+        },
+      },
+    });
+
+    await setupProject(project);
+
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, {
+      entrypoint: 'app/components/obtuse.js',
+    });
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    const allFiles = Array.from(orderedPackages)
+      .map((pkg) => {
+        const modules = pkg.content.pkg.getModuleGraph();
+        return flatten(modules.topSort());
+      })
+      .flat();
+
+    expect(allFiles).toStrictEqual(['app/components/obtuse.js']);
+  });
   test('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
     const project = getEmberProject('app-with-in-repo-addon');
 
@@ -164,7 +228,7 @@ export default class Salutation extends Component {
         components: {
           'obtuse.js': `
             import Component from '@glimmer/component';
-          import { inject as service } from '@ember/service';
+            import { inject as service } from '@ember/service';
 
             export default class Obtuse extends Component {
               @service('some-addon@date') myDate;
@@ -222,14 +286,25 @@ export default class Salutation extends Component {
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
     ]);
   });
+
+  test.todo('should handle ember packages with relative (../) ember-addon.paths', () => {
+    expect(false).toBe(true);
+  });
+
   describe('variants', () => {
     const EXPECTED_APP_FILES = [
       'app/app.js',
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
     ];
 
     test('app', async () => {
@@ -261,7 +336,7 @@ export default class Salutation extends Component {
         'should have an edge between app and in-repo-addon'
       ).toBe(true);
 
-      expect(addonNode.parent, 'parent should bse rootNode').toBe(rootNode);
+      expect(addonNode.parent, 'parent should be rootNode').toBe(rootNode);
 
       // Package order is leaf to root
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
@@ -294,7 +369,16 @@ export default class Salutation extends Component {
       expect(
         flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
         'expected migraiton order for app'
-      ).toStrictEqual(EXPECTED_APP_FILES);
+      ).toStrictEqual([
+        'app/app.js',
+        'app/services/locale.js',
+        'app/components/salutation.js',
+        'app/router.js',
+        'tests/acceptance/index-test.js',
+        'tests/acceptance/some-engine-test.js',
+        'tests/test-helper.js',
+        'tests/unit/services/locale-test.js',
+      ]);
     });
   });
 });

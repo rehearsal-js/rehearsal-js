@@ -1,6 +1,6 @@
-import { join, resolve } from 'path';
-import { readJsonSync } from 'fs-extra';
+import { join } from 'path';
 import micromatch from 'micromatch';
+import { readPackageJson } from '../index';
 
 /**
  * Gets all workspace globs from the the root `package.json`
@@ -9,9 +9,20 @@ import micromatch from 'micromatch';
  * @param {string} pathToRoot The absolute path to root of the repo
  * @returns {string[]} An array of globs
  */
-export function getWorkspaceGlobs(pathToRoot: string): [string] {
-  const packageJson = readJsonSync(resolve(pathToRoot, 'package.json'));
-  return (packageJson.workspaces || []).map((glob: string) => join(pathToRoot, glob));
+export function getWorkspaceGlobs(pathToRoot: string): string[] {
+  const packageJson = readPackageJson(pathToRoot);
+
+  if (!packageJson) {
+    return [];
+  }
+
+  const workspaces = (packageJson.workspaces as Array<string>) ?? [];
+
+  return workspaces.map((glob: string) => join(pathToRoot, glob));
+}
+
+export function hasWorkspaceGlobs(pathToRoot: string): boolean {
+  return getWorkspaceGlobs(pathToRoot).length > 0;
 }
 
 /**

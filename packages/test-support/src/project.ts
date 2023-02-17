@@ -29,6 +29,70 @@ export function getEmberAppProject(project: Project = emberAppTemplate()): Proje
   return project;
 }
 
+function addUtilDirectory(project: Project): Project {
+  const appName = 'app-template';
+
+  project.mergeFiles({
+    app: {
+      utils: {
+        'math.js': `
+          export function add(a, b) {
+            assert(
+              'arguments must be numbers',
+              typeof a === number && typeof b === number
+            );
+          
+            return a + b;
+          }
+        `,
+        'entry.js': `import impl from './lib/impl';`,
+        lib: {
+          'impl.js': `
+            import base from './base';
+            export default base;
+            `,
+          'base.js': `export default function () => { console.log(1); }`,
+        },
+      },
+    },
+    tests: {
+      unit: {
+        utils: {
+          'math-test.js': `
+          import { module, test } from 'qunit';
+          import { add } from '${appName}/utils/math';
+          
+          module('the \`add\` function', function(hooks) {
+            test('adds numbers correctly', function(assert) {
+              assert.equal('2 + 2 is 4', add(2, 2), 4);
+              assert.notEqual('2 + 2 is a number', add(2, 2), NaN);
+              assert.notEqual('2 + 2 is not infinity', add(2, 2), Infinity);
+            });
+          
+            test('throws an error with strings', function(assert) {
+              assert.throws(
+                'when the first is a string and the second is a number',
+                () => add('hello', 1)
+              );
+              assert.throws(
+                'when the first is a number and the second is a string',
+                () => add(0, 'hello')
+              );
+              assert.throws(
+                'when both are strings',
+                () => add('hello', 'goodbye')
+              );
+            })
+          });
+          `,
+        },
+      },
+    },
+  });
+
+  return project;
+}
+
 /**
  * Augments the project to have an in-repo addon with an acceptance test to evalute the composition.
  * @param {Project} project
@@ -117,14 +181,21 @@ export async function setupProject(project: Project): Promise<Project> {
   return project;
 }
 
-type EmberProjectFixture = 'app' | 'app-with-in-repo-addon' | 'app-with-in-repo-engine' | 'addon';
-
+type EmberProjectFixture =
+  | 'app'
+  | 'app-with-utils'
+  | 'app-with-in-repo-addon'
+  | 'app-with-in-repo-engine'
+  | 'addon';
 export function getEmberProject(variant: EmberProjectFixture): Project {
   let project;
 
   switch (variant) {
     case 'app':
       project = getEmberAppProject();
+      break;
+    case 'app-with-utils':
+      project = addUtilDirectory(getEmberAppProject());
       break;
     case 'app-with-in-repo-addon':
       project = getEmberAppWithInRepoAddonProject();

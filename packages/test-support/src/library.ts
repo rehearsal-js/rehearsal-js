@@ -16,6 +16,7 @@ type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
+  | 'library-with-tests'
   | 'library-with-ignored-files'
   | 'library-with-css-imports'
   | 'library-with-entrypoint'
@@ -23,7 +24,7 @@ type LibraryVariants =
   | 'library-with-workspaces'
   | 'workspace-with-package-scope-issue';
 
-const DIRS_TO_IGNORE = ['.yarn'];
+const DIRS_TO_IGNORE = ['.yarn', 'dist'];
 
 const FILES_TO_IGNORE = [
   '.babelrc.js',
@@ -34,6 +35,7 @@ const FILES_TO_IGNORE = [
   'babel.config.json',
   'babel.config.cjs',
   'babel.config.mjs',
+  'Brocfile.js',
   '.eslintrc.js',
   'package-lock.json',
   'yarn.lock',
@@ -101,11 +103,40 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             console.log('foo');
            `,
         },
-        test: {
-          'some.test.js': '// Should not be included by default',
+      };
+      break;
+    case 'library-with-tests':
+      files = {
+        'index.js': `
+            import * as parser from '@babel/parser';
+            import chalk from 'chalk';
+            import path from 'path';
+            import './lib/a';
+            
+            console.log(path.join('foo', 'bar', 'baz'));
+            console.log(parser, chalk);
+          `,
+        'package.json': `
+            {
+              "name": "my-package",
+              "main": "index.js",
+              "dependencies": {
+                "@babel/parser": "*",
+                "chalk": "*"
+              },
+              "devDependencies": {
+                "typescript": "^4.8.3"
+              }
+            }
+          `,
+        lib: {
+          'a.js': `
+              // a.js
+              console.log('foo');
+             `,
         },
-        tests: {
-          'index.test.js': '// Should not be included by default',
+        test: {
+          'sample.test.js': 'import "../index"',
         },
       };
       break;
@@ -118,9 +149,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         `,
         ...getIgnoredFilesFixture(),
         ...getIgnoredDirectoriesFixture(),
-        config: {
-          ...getIgnoredFilesFixture(),
-        },
         'package.json': `
           {
             "name": "my-package",
@@ -134,6 +162,9 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         `,
         lib: {
           'a.js': '',
+        },
+        test: {
+          'sample.test.js': 'import "../index"',
         },
       };
       break;

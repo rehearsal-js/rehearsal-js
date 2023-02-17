@@ -6,8 +6,13 @@ import {
   getEmptyInRepoAddonFiles,
   setupProject,
 } from '@rehearsal/test-support';
-
 import merge from 'lodash.merge';
+import {
+  type ModuleNode,
+  type PackageNode,
+  type Graph,
+  type GraphNode,
+} from '@rehearsal/migration-graph-shared';
 import { EmberAppPackage } from '../../src/entities/ember-app-package';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
 import {
@@ -15,7 +20,6 @@ import {
   EmberAppPackageGraphOptions,
 } from '../../src/entities/ember-app-package-graph';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
-import type { ModuleNode, PackageNode, Graph, GraphNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {
@@ -24,28 +28,11 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 }
 
 describe('Unit | EmberAppPackageGraph', () => {
-  test('should determine what graph to create (e.g. library | app | addon)', async () => {
-    const project = await getEmberProjectFixture('app');
-
-    const output: Graph<ModuleNode> = new EmberAppPackageGraph(
-      new EmberAppPackage(project.baseDir)
-    ).discover();
-    const actual = flatten(output.topSort());
-
-    expect(actual).toStrictEqual([
-      'app/app.js',
-      'app/services/locale.js',
-      'app/components/salutation.js',
-      'app/router.js',
-    ]);
-  });
-
   test('should produce a graph from an ember app', async () => {
     const project = await getEmberProjectFixture('app');
 
     const p = new EmberAppPackage(project.baseDir);
-    const options = {};
-    const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
+    const output: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual([
@@ -53,7 +40,26 @@ describe('Unit | EmberAppPackageGraph', () => {
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
     ]);
+  });
+
+  test('should create an edge between a test an app non-relative path', async () => {
+    const project = await getEmberProjectFixture('app-with-utils');
+
+    const p = new EmberAppPackage(project.baseDir);
+    const packageGraph = new EmberAppPackageGraph(p);
+    packageGraph.discover();
+
+    const testFileNode = packageGraph.graph.getNode('tests/unit/utils/math-test.js');
+    const implNode = packageGraph.graph.getNode('app/utils/math.js');
+
+    expect(
+      testFileNode.adjacent.has(implNode),
+      'should have an edge between the test and implementation'
+    ).toBeTruthy();
   });
 
   test('should handle nested services', async () => {
@@ -101,6 +107,9 @@ describe('Unit | EmberAppPackageGraph', () => {
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
     ]);
   });
 
@@ -145,6 +154,9 @@ describe('Unit | EmberAppPackageGraph', () => {
       'app/services/locale.js',
       'app/components/salutation.js',
       'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
     ]);
   });
 
