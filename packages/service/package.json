@@ -32,16 +32,19 @@
   },
   "dependencies": {
     "@glint/core": "^1.0.0-beta.3",
+    "@glint/environment-ember-loose": "^0.9.7",
     "@glint/environment-glimmerx": "^0.9.7",
     "@glint/template": "^0.9.7",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
+    "ember-modifier": "^4.0.0",
     "findup-sync": "^5.0.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
     "@glimmerx/component": "^0.6.8",
     "@glimmerx/core": "^0.6.8",
+    "@types/ember__component": "^4.0.12",
     "vitest": "^0.28.4"
   },
   "peerDependencies": {

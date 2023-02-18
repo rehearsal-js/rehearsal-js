@@ -35,9 +35,9 @@ describe('Test service', function () {
   const parsed = parseJsonConfigFileContent(config, sys, dirname(configFile), {}, configFile);
 
   console.log(parsed);
-  const configPath = resolve(basePath, 'tsconfig.json');
+  // const configPath = resolve(basePath, 'tsconfig.json');
 
-  const service = new RehearsalService(parsed.options, parsed.fileNames, configPath, config.glint);
+  const service = new RehearsalService(parsed.options, parsed.fileNames, basePath);
   const diagnostics = service.getGlintDiagnostics(parsed.fileNames[0]);
   console.log(diagnostics);
   test('should pass', () => {

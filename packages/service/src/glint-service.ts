@@ -1,28 +1,17 @@
-import TransformManager from '@glint/core/lib/common/transform-manager';
-import DocumentCache from '@glint/core/lib/common/document-cache';
-import { GlintConfig } from '@glint/core/lib/config';
-import { type Diagnostic as GlintDiagnostic } from '@glint/core/lib/transform';
+import { analyzeProject } from '@glint/core';
+import { Diagnostic } from 'typescript';
 
-export interface GlintConfigInput {
-  environment: string | Array<string> | Record<string, unknown>;
-  checkStandaloneTemplates?: boolean;
-}
-
+type GlintDiagnostic = Diagnostic & { isGlintTransformDiagnostic?: boolean };
+type TransformManager = {
+  getTransformDiagnostics: (fileName: string) => GlintDiagnostic[];
+};
 export class RehearsalGlintService {
   private glintParser: TransformManager;
-  constructor(ts: typeof import('typescript'), configPath: string, config: GlintConfigInput) {
-    const glintConfig = this.getGlintConfig(ts, configPath, config);
-    const documents = new DocumentCache(glintConfig);
-    this.glintParser = new TransformManager(glintConfig, documents);
+  constructor(projectDirectory: string) {
+    const { transformManager } = analyzeProject(projectDirectory);
+    this.glintParser = transformManager;
   }
   getGlintDiagnostics(fileName: string): GlintDiagnostic[] {
     return this.glintParser.getTransformDiagnostics(fileName);
-  }
-  private getGlintConfig(
-    ts: typeof import('typescript'),
-    configPath: string,
-    config: GlintConfigInput
-  ): GlintConfig {
-    return new GlintConfig(ts, configPath, config);
   }
 }

@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
-import ts, { createLanguageService, ScriptSnapshot } from 'typescript';
+import { createLanguageService, ScriptSnapshot } from 'typescript';
 
-import { RehearsalGlintService, GlintConfigInput } from './glint-service';
+import { RehearsalGlintService } from './glint-service';
 import { RehearsalServiceHost } from './rehearsal-service-host';
 import type {
   CompilerOptions,
@@ -23,13 +23,17 @@ export class RehearsalService {
   constructor(
     tsCompilerOptions: CompilerOptions = {},
     fileNames: string[],
-    configPath?: string,
-    glintConfigInput?: GlintConfigInput
+    glintProjectDirectory?: string
   ) {
     this.host = new RehearsalServiceHost(tsCompilerOptions, fileNames);
     this.service = createLanguageService(this.host);
-    if (configPath && existsSync(configPath) && glintConfigInput) {
-      this.glintService = new RehearsalGlintService(ts, configPath, glintConfigInput);
+    if (glintProjectDirectory && existsSync(glintProjectDirectory)) {
+      try {
+        const glintService = new RehearsalGlintService(glintProjectDirectory);
+        this.glintService = glintService;
+      } catch (e) {
+        console.error(`Unable to construct RehearsalGlintService. Error: ${e}`);
+      }
     }
   }
 
