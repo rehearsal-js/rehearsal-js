@@ -39,11 +39,11 @@ export async function convertTask(
 
       const projectName = determineProjectName() || '';
       const { basePath, entrypoint } = options;
-      const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
+      const tscPath = await getPathToBinary('tsc', { cwd: basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate', entrypoint },
+        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
         logger
       );
 
@@ -58,7 +58,7 @@ export async function convertTask(
 
             const input = {
               basePath: ctx.targetPackagePath,
-              entrypoint: options.entrypoint,
+              entrypoint,
               sourceFiles: [f],
               logger: logger,
               reporter,
@@ -115,7 +115,7 @@ export async function convertTask(
                 completed = true;
               }
             }
-            const reportOutputPath = resolve(options.basePath, options.outputPath);
+            const reportOutputPath = resolve(basePath, options.outputPath);
             generateReports('migrate', reporter, reportOutputPath, options.format);
             gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
             task.title = getReportSummary(reporter.report, migratedFiles.length);
@@ -127,7 +127,7 @@ export async function convertTask(
         } else {
           const input = {
             basePath: ctx.targetPackagePath,
-            entrypoint: options.entrypoint,
+            entrypoint,
             sourceFiles: ctx.sourceFilesWithAbsolutePath,
             logger: logger,
             reporter,

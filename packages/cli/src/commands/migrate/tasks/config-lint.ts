@@ -133,14 +133,14 @@ async function writeLintConfig(
   outputFileSync(configPath, config);
 
   //yml and ymal don't need formatting. yamlStringify does the formatting already.
-  if (format === FORMAT.JS || format === FORMAT.JSON) {
-    const formattedConfig = await lintConfig(config, configPath, basePath);
+  if (format === FORMAT.JS) {
+    const formattedConfig = await lintJSConfig(config, configPath, basePath);
     formattedConfig && outputFileSync(configPath, formattedConfig);
   }
   await gitAddIfInRepo(configPath, basePath); // stage .eslintrc.js if in a git repo
 }
 
-async function lintConfig(
+async function lintJSConfig(
   configStr: string,
   filePath: string,
   basePath: string

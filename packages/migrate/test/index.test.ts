@@ -52,7 +52,7 @@ describe('migrate', () => {
       {
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath,
+        basePath: actualDir,
         commandName: '@rehearsal/migrate',
       },
       logger
@@ -65,11 +65,11 @@ describe('migrate', () => {
 
   test('should move js file to ts extension', async () => {
     const input: MigrateInput = {
-      basePath,
+      basePath: actualDir,
       sourceFiles,
       logger,
       reporter,
-      entrypoint: '',
+      entrypoint: 'index.js',
     };
 
     const output = await migrate(input);
@@ -79,6 +79,7 @@ describe('migrate', () => {
     const report = JSON.parse(readFileSync(jsonReport).toString());
 
     expect(report.summary[0].basePath).toMatch(/migrate/);
+    expect(report.summary[0].entrypoint).toMatch('index.ts');
     expect(migratedFiles).includes(`${actualDir}/index.ts`);
     expect(existsSync(`${actualDir}/index.js`)).toBeFalsy();
     rmSync(jsonReport);
