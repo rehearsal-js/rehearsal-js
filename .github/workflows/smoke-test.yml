@@ -18,6 +18,3 @@ jobs:
           github_token: ${{ secrets.G_ACCESS_TOKEN }}
           workflow_file_name: run-smoke-test.yml
           ref: master
-          trigger_workflow: true
-          client_payload: '{}'
-          wait_workflow: true
