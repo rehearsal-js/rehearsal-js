@@ -18,6 +18,7 @@
     "skipLibCheck": true
   },
   "glint": {
-    "environment": "ember-loose"
+    "environment": "ember-loose",
+    "checkStandaloneTemplates": true
   }
 }

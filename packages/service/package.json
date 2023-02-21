@@ -31,7 +31,6 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@glint/core": "^1.0.0-beta.3",
     "@glint/environment-ember-loose": "^0.9.7",
     "@glint/environment-glimmerx": "^0.9.7",
     "@glint/template": "^0.9.7",
@@ -44,8 +43,9 @@
   "devDependencies": {
     "@glimmerx/component": "^0.6.8",
     "@glimmerx/core": "^0.6.8",
+    "@glint/core": "1.0.0-beta.3",
     "@types/ember__component": "^4.0.12",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.5"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"
