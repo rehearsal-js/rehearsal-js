@@ -51,7 +51,7 @@ importers:
       ts-node: ^10.9.1
       typescript: ^4.9.5
       vite: ^4.1.1
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       walk-sync: ^3.0.0
     devDependencies:
       '@commitlint/cli': 17.4.2
@@ -101,7 +101,7 @@ importers:
       ts-node: 10.9.1_4bewfcp2iebiwuold25d6rgcsy
       typescript: 4.9.5
       vite: 4.1.1_@types+node@18.13.0
-      vitest: 0.28.4
+      vitest: 0.28.5
       walk-sync: 3.0.0
 
   packages/cli:
@@ -129,7 +129,7 @@ importers:
       tmp: ^0.2.1
       typescript: ^4.9.5
       typescript-json-schema: ^0.55.0
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       which: ^3.0.0
       winston: ^3.8.2
       yaml: ^2.2.1
@@ -161,20 +161,20 @@ importers:
       '@rehearsal/test-support': link:../test-support
       '@types/which': 2.0.1
       typescript-json-schema: 0.55.0
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/codefixes:
     specifiers:
       '@rehearsal/utils': workspace:*
       '@types/prettier': ^2.7.2
       prettier: ^2.8.3
-      vitest: ^0.28.4
+      vitest: ^0.28.5
     dependencies:
       '@rehearsal/utils': link:../utils
     devDependencies:
       '@types/prettier': 2.7.2
       prettier: 2.8.3
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/migrate:
     specifiers:
@@ -186,7 +186,7 @@ importers:
       findup-sync: ^5.0.0
       listr2: ^5.0.7
       uuid: ^9.0.0
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       winston: ^3.8.2
     dependencies:
       '@rehearsal/plugins': link:../plugins
@@ -199,7 +199,7 @@ importers:
       findup-sync: 5.0.0
       listr2: 5.0.7
       uuid: 9.0.0
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/migration-graph:
     specifiers:
@@ -209,7 +209,7 @@ importers:
       debug: ^4.3.4
       fs-extra: ^11.1.0
       path: ^0.12.7
-      vitest: ^0.28.4
+      vitest: ^0.28.5
     dependencies:
       '@rehearsal/migration-graph-ember': link:../migration-graph-ember
       '@rehearsal/migration-graph-shared': link:../migration-graph-shared
@@ -218,7 +218,7 @@ importers:
       path: 0.12.7
     devDependencies:
       '@rehearsal/test-support': link:../test-support
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/migration-graph-ember:
     specifiers:
@@ -240,7 +240,7 @@ importers:
       rimraf: ^4.1.2
       sort-package-json: ^1.57.0
       tmp: ^0.2.1
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       walk-sync: ^3.0.0
     dependencies:
       '@rehearsal/migration-graph-shared': link:../migration-graph-shared
@@ -262,7 +262,7 @@ importers:
       lodash.merge: 4.6.2
       rimraf: 4.1.2
       tmp: 0.2.1
-      vitest: 0.28.4
+      vitest: 0.28.5
       walk-sync: 3.0.0
 
   packages/migration-graph-shared:
@@ -280,7 +280,7 @@ importers:
       rimraf: ^4.1.2
       sort-package-json: ^1.57.0
       tmp: ^0.2.1
-      vitest: ^0.28.4
+      vitest: ^0.28.5
     dependencies:
       debug: 4.3.4
       dependency-cruiser: 12.7.0
@@ -296,7 +296,7 @@ importers:
       fixturify: 3.0.0
       rimraf: 4.1.2
       tmp: 0.2.1
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/plugins:
     specifiers:
@@ -310,7 +310,7 @@ importers:
       eslint: ^8.33.0
       fixturify-project: ^5.2.0
       object-hash: ^3.0.0
-      vitest: ^0.28.4
+      vitest: ^0.28.5
     dependencies:
       '@rehearsal/codefixes': link:../codefixes
       '@rehearsal/reporter': link:../reporter
@@ -323,7 +323,7 @@ importers:
     devDependencies:
       '@types/eslint': 8.21.0
       fixturify-project: 5.2.0
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/regen:
     specifiers:
@@ -339,7 +339,7 @@ importers:
       fs-extra: ^11.1.0
       listr2: ^5.0.7
       prettier: ^2.8.3
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       winston: ^3.8.2
     dependencies:
       '@rehearsal/plugins': link:../plugins
@@ -356,7 +356,7 @@ importers:
       fs-extra: 11.1.0
       listr2: 5.0.7
       prettier: 2.8.3
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/reporter:
     specifiers:
@@ -367,7 +367,7 @@ importers:
       fs-extra: ^11.1.0
       lodash.get: ^4.4.2
       typescript: ^4.9.5
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       vitest-mock-extended: ^1.0.9
       winston: ^3.8.2
     dependencies:
@@ -380,15 +380,15 @@ importers:
       fs-extra: 11.1.0
       lodash.get: 4.4.2
       typescript: 4.9.5
-      vitest: 0.28.4
-      vitest-mock-extended: 1.0.9_imif6y5teiyszcie2ubl7a73o4
+      vitest: 0.28.5
+      vitest-mock-extended: 1.0.9_vr72464tuoou3wr7saaljb3dke
 
   packages/service:
     specifiers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/utils': workspace:*
       findup-sync: ^5.0.0
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       winston: ^3.8.2
     dependencies:
       '@rehearsal/reporter': link:../reporter
@@ -396,7 +396,7 @@ importers:
       findup-sync: 5.0.0
       winston: 3.8.2
     devDependencies:
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/test-support:
     specifiers:
@@ -412,7 +412,7 @@ importers:
       rimraf: ^4.1.2
       scenario-tester: ^2.1.2
       tmp: ^0.2.1
-      vitest: ^0.28.4
+      vitest: ^0.28.5
     dependencies:
       '@types/lodash.merge': 4.6.7
       '@types/minimatch': 5.1.2
@@ -427,7 +427,7 @@ importers:
       tmp: 0.2.1
     devDependencies:
       '@types/findup-sync': 4.0.2
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/upgrade:
     specifiers:
@@ -438,7 +438,7 @@ importers:
       '@rehearsal/utils': workspace:*
       commander: ^10.0.0
       debug: ^4.3.4
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       winston: ^3.8.2
     dependencies:
       '@rehearsal/codefixes': link:../codefixes
@@ -450,7 +450,7 @@ importers:
       debug: 4.3.4
       winston: 3.8.2
     devDependencies:
-      vitest: 0.28.4
+      vitest: 0.28.5
 
   packages/utils:
     specifiers:
@@ -466,7 +466,7 @@ importers:
       semver: ^7.3.8
       simple-git: ^3.16.0
       typescript: ^4.9.5
-      vitest: ^0.28.4
+      vitest: ^0.28.5
       which: ^3.0.0
     dependencies:
       chalk: 4.1.2
@@ -483,7 +483,7 @@ importers:
     devDependencies:
       '@types/which': 2.0.1
       typescript: 4.9.5
-      vitest: 0.28.4
+      vitest: 0.28.5
 
 packages:
 
@@ -1711,10 +1711,26 @@ packages:
       chai: 4.3.7
     dev: true
 
+  /@vitest/expect/0.28.5:
+    resolution: {integrity: sha512-gqTZwoUTwepwGIatnw4UKpQfnoyV0Z9Czn9+Lo2/jLIt4/AXLTn+oVZxlQ7Ng8bzcNkR+3DqLJ08kNr8jRmdNQ==}
+    dependencies:
+      '@vitest/spy': 0.28.5
+      '@vitest/utils': 0.28.5
+      chai: 4.3.7
+    dev: true
+
   /@vitest/runner/0.28.4:
     resolution: {integrity: sha512-Q8UV6GjDvBSTfUoq0QXVCNpNOUrWu4P2qvRq7ssJWzn0+S0ojbVOxEjMt+8a32X6SdkhF8ak+2nkppsqV0JyNQ==}
     dependencies:
       '@vitest/utils': 0.28.4
+      p-limit: 4.0.0
+      pathe: 1.1.0
+    dev: true
+
+  /@vitest/runner/0.28.5:
+    resolution: {integrity: sha512-NKkHtLB+FGjpp5KmneQjTcPLWPTDfB7ie+MmF1PnUBf/tGe2OjGxWyB62ySYZ25EYp9krR5Bw0YPLS/VWh1QiA==}
+    dependencies:
+      '@vitest/utils': 0.28.5
       p-limit: 4.0.0
       pathe: 1.1.0
     dev: true
@@ -1725,8 +1741,24 @@ packages:
       tinyspy: 1.1.1
     dev: true
 
+  /@vitest/spy/0.28.5:
+    resolution: {integrity: sha512-7if6rsHQr9zbmvxN7h+gGh2L9eIIErgf8nSKYDlg07HHimCxp4H6I/X/DPXktVPPLQfiZ1Cw2cbDIx9fSqDjGw==}
+    dependencies:
+      tinyspy: 1.1.1
+    dev: true
+
   /@vitest/utils/0.28.4:
     resolution: {integrity: sha512-l2QztOLdc2LkR+w/lP52RGh8hW+Ul4KESmCAgVE8q737I7e7bQoAfkARKpkPJ4JQtGpwW4deqlj1732VZD7TFw==}
+    dependencies:
+      cli-truncate: 3.1.0
+      diff: 5.1.0
+      loupe: 2.3.6
+      picocolors: 1.0.0
+      pretty-format: 27.5.1
+    dev: true
+
+  /@vitest/utils/0.28.5:
+    resolution: {integrity: sha512-UyZdYwdULlOa4LTUSwZ+Paz7nBHGTT72jKwdFSV4IjHF1xsokp+CabMdhjvVhYwkLfO88ylJT46YMilnkSARZA==}
     dependencies:
       cli-truncate: 3.1.0
       diff: 5.1.0
@@ -5529,6 +5561,29 @@ packages:
       - terser
     dev: true
 
+  /vite-node/0.28.5_@types+node@18.13.0:
+    resolution: {integrity: sha512-LmXb9saMGlrMZbXTvOveJKwMTBTNUH66c8rJnQ0ZPNX+myPEol64+szRzXtV5ORb0Hb/91yq+/D3oERoyAt6LA==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.4
+      mlly: 1.1.0
+      pathe: 1.1.0
+      picocolors: 1.0.0
+      source-map: 0.6.1
+      source-map-support: 0.5.21
+      vite: 4.1.1_@types+node@18.13.0
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
   /vite/4.1.1_@types+node@18.13.0:
     resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -5563,7 +5618,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest-mock-extended/1.0.9_imif6y5teiyszcie2ubl7a73o4:
+  /vitest-mock-extended/1.0.9_vr72464tuoou3wr7saaljb3dke:
     resolution: {integrity: sha512-avWOwla4xsubFUbL1O2Zvqn8xUucQWai05ryywfhjUIthkjJKk01g5/s4SrjTHZXGZ2/h6NfF51FJ3voix1OAw==}
     peerDependencies:
       typescript: 3.x || 4.x
@@ -5571,7 +5626,7 @@ packages:
     dependencies:
       ts-essentials: 9.3.0_typescript@4.9.5
       typescript: 4.9.5
-      vitest: 0.28.4
+      vitest: 0.28.5
     dev: true
 
   /vitest/0.28.4:
@@ -5619,6 +5674,61 @@ packages:
       tinyspy: 1.1.1
       vite: 4.1.1_@types+node@18.13.0
       vite-node: 0.28.4_@types+node@18.13.0
+      why-is-node-running: 2.2.2
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest/0.28.5:
+    resolution: {integrity: sha512-pyCQ+wcAOX7mKMcBNkzDwEHRGqQvHUl0XnoHR+3Pb1hytAHISgSxv9h0gUiSiYtISXUU3rMrKiKzFYDrI6ZIHA==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@vitest/browser': '*'
+      '@vitest/ui': '*'
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/chai': 4.3.4
+      '@types/chai-subset': 1.3.3
+      '@types/node': 18.13.0
+      '@vitest/expect': 0.28.5
+      '@vitest/runner': 0.28.5
+      '@vitest/spy': 0.28.5
+      '@vitest/utils': 0.28.5
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      cac: 6.7.14
+      chai: 4.3.7
+      debug: 4.3.4
+      local-pkg: 0.4.3
+      pathe: 1.1.0
+      picocolors: 1.0.0
+      source-map: 0.6.1
+      std-env: 3.3.2
+      strip-literal: 1.0.1
+      tinybench: 2.3.1
+      tinypool: 0.3.1
+      tinyspy: 1.1.1
+      vite: 4.1.1_@types+node@18.13.0
+      vite-node: 0.28.5_@types+node@18.13.0
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
