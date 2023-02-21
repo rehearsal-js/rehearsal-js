@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
-          owner: lynchbomb
-          repo: rehearsal-js/smoke-test
-          github_token: ${{ secrets.G_ACCESS_TOKEN }}
+          owner: rehearsal-js
+          repo: smoke-test
+          github_token: ${{ secrets.SMOKE_TEST_SECRET }}
           workflow_file_name: run-smoke-test.yml
           ref: master
           trigger_workflow: true
