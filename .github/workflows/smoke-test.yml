@@ -11,7 +11,7 @@ jobs:
     name: Runs the CLI Smoke Test
     runs-on: ubuntu-latest
     steps:
-      - uses: convictional/trigger-workflow-and-wait
+      - uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: lynchbomb
           repo: rehearsal-js/smoke-test
