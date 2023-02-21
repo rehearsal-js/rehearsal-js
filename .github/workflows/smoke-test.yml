@@ -16,5 +16,7 @@ jobs:
           owner: rehearsal-js
           repo: smoke-test
           github_token: ${{ secrets.SMOKE_TEST_SECRET }}
+          github_user: lynchbomb
           workflow_file_name: run-smoke-test.yml
           ref: master
+          trigger_workflow: true
