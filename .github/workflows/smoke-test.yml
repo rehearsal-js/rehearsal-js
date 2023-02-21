@@ -17,5 +17,5 @@ jobs:
           repo: smoke-test
           github_token: ${{ secrets.SMOKE_TEST_SECRET }}
           github_user: lynchbomb
-          workflow_file_name: run-smoke-test.yml
+          workflow_file_name: 48689645
           ref: master
