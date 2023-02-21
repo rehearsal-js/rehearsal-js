@@ -1,3 +1,16 @@
+## <small>1.0.6-beta (2023-02-21)</small>
+
+* test: smoke test gha (#758) ([678f4aa](https://github.com/rehearsal-js/rehearsal-js/commit/678f4aa)), closes [#758](https://github.com/rehearsal-js/rehearsal-js/issues/758)
+* chore: add $schema to config in README.md ([7413ab0](https://github.com/rehearsal-js/rehearsal-js/commit/7413ab0))
+* chore: update vitest to 0.28.5 (#764) ([7b23883](https://github.com/rehearsal-js/rehearsal-js/commit/7b23883)), closes [#764](https://github.com/rehearsal-js/rehearsal-js/issues/764)
+* fix: again $schema value in README.md ([a53f0f8](https://github.com/rehearsal-js/rehearsal-js/commit/a53f0f8))
+* fix: README.md $schema url ([60c3bec](https://github.com/rehearsal-js/rehearsal-js/commit/60c3bec))
+* fix: revert line number (#757) ([e36d022](https://github.com/rehearsal-js/rehearsal-js/commit/e36d022)), closes [#757](https://github.com/rehearsal-js/rehearsal-js/issues/757)
+* fix(cli): config test; remove snapshot, assert contains (#748) ([9971277](https://github.com/rehearsal-js/rehearsal-js/commit/9971277)), closes [#748](https://github.com/rehearsal-js/rehearsal-js/issues/748)
+* feat(migration-graph): improving --entrypoint cli (#740) ([dec66a2](https://github.com/rehearsal-js/rehearsal-js/commit/dec66a2)), closes [#740](https://github.com/rehearsal-js/rehearsal-js/issues/740)
+
+
+
 ## <small>1.0.6-beta (2023-02-15)</small>
 
 * fix: bundle typescript dep (#745) ([11f5bdd](https://github.com/rehearsal-js/rehearsal-js/commit/11f5bdd)), closes [#745](https://github.com/rehearsal-js/rehearsal-js/issues/745)
