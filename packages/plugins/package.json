@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/eslint": "^8.21.0",
     "fixturify-project": "^5.2.0",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.5"
   },
   "peerDependencies": {
     "typescript": "^4.9 || ^5.0"

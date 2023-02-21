@@ -38,7 +38,7 @@
     "lodash.merge": "^4.6.2",
     "rimraf": "^4.1.2",
     "tmp": "^0.2.1",
-    "vitest": "^0.28.4",
+    "vitest": "^0.28.5",
     "walk-sync": "^3.0.0"
   },
   "peerDependencies": {
