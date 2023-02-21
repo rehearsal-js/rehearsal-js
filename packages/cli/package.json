@@ -57,7 +57,7 @@
     "@rehearsal/test-support": "workspace:*",
     "@types/which": "^2.0.1",
     "typescript-json-schema": "^0.55.0",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.5"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {
