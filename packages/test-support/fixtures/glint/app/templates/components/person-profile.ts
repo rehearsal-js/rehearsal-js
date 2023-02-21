@@ -1,4 +1,5 @@
-import Component from '@glint/environment-ember-loose/glimmer-component';
+import Component from '@glimmer/component';
+import '@glint/environment-ember-loose';
 
 export default class PersonProfileComponent extends Component {
   get displayName() {

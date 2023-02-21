@@ -27,14 +27,9 @@ export class RehearsalService {
   ) {
     this.host = new RehearsalServiceHost(tsCompilerOptions, fileNames);
     this.service = createLanguageService(this.host);
-    console.log('before it');
-    console.log(glintProjectDirectory);
-    console.log(glintProjectDirectory && existsSync(glintProjectDirectory));
     if (glintProjectDirectory && existsSync(glintProjectDirectory)) {
-      console.log('after it');
       try {
         const glintService = new RehearsalGlintService(glintProjectDirectory);
-        console.log('glintService', glintService);
         this.glintService = glintService;
       } catch (e) {
         console.error(`Unable to construct RehearsalGlintService. Error: ${e}`);
@@ -98,7 +93,6 @@ export class RehearsalService {
   }
 
   getGlintDiagnostics(fileName: string): DiagnosticWithLocation[] {
-    console.log('this.glintService', this.glintService);
     if (this.glintService) {
       return this.glintService.getGlintDiagnostics(fileName).filter(this.withLocation);
     }

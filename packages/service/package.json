@@ -31,9 +31,6 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@glint/environment-ember-loose": "^0.9.7",
-    "@glint/environment-glimmerx": "^0.9.7",
-    "@glint/template": "^0.9.7",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "ember-modifier": "^4.0.0",
