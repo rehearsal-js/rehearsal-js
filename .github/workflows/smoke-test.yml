@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  test-and-lint:
+  test:
     name: Runs the CLI Smoke Test
     runs-on: ubuntu-latest
     steps:
@@ -18,3 +18,6 @@ jobs:
           github_token: ${{ secrets.SMOKE_TEST_SECRET }}
           workflow_file_name: run-smoke-test.yml
           ref: master
+          trigger_workflow: true
+          client_payload: '{}'
+          wait_workflow: true
