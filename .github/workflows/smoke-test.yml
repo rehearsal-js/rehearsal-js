@@ -15,6 +15,6 @@ jobs:
         with:
           owner: rehearsal-js
           repo: smoke-test
-          github_token: ${{ secrets.G_ACCESS_TOKEN }}
+          github_token: ${{ secrets.SMOKE_TEST_SECRET }}
           workflow_file_name: run-smoke-test.yml
           ref: master
