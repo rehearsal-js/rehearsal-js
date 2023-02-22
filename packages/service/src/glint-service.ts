@@ -6,12 +6,22 @@ type TransformManager = {
   getTransformDiagnostics: (fileName: string) => GlintDiagnostic[];
 };
 export class RehearsalGlintService {
-  private glintParser: TransformManager;
+  private rootDir: string;
+  private glintParser?: TransformManager;
   constructor(projectDirectory: string) {
-    const { transformManager } = analyzeProject(projectDirectory);
-    this.glintParser = transformManager;
+    this.rootDir = projectDirectory;
+    // if (!this.glintParser) {
+    //   const { transformManager } = analyzeProject(projectDirectory);
+    //   this.glintParser = transformManager;
+    // }
+    // const { transformManager } = analyzeProject(projectDirectory);
+    // this.glintParser = transformManager;
   }
   getGlintDiagnostics(fileName: string): GlintDiagnostic[] {
+    if (!this.glintParser) {
+      const { transformManager } = analyzeProject(this.rootDir);
+      this.glintParser = transformManager;
+    }
     return this.glintParser.getTransformDiagnostics(fileName);
   }
 }

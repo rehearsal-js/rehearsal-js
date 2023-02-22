@@ -94,6 +94,7 @@ export class RehearsalService {
 
   getGlintDiagnostics(fileName: string): DiagnosticWithLocation[] {
     if (this.glintService) {
+      console.log('inside this.glintService');
       return this.glintService.getGlintDiagnostics(fileName).filter(this.withLocation);
     }
     return [];
