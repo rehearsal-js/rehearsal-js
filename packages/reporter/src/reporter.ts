@@ -18,7 +18,6 @@ type ReporterMeta = {
   basePath: string;
   commandName: string;
   tsVersion: string;
-  entrypoint?: string;
   previousFixedCount?: number;
 };
 

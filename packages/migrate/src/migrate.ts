@@ -31,10 +31,11 @@ export type MigrateOutput = {
 
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
-  const sourceFiles = input.sourceFiles || ['index.js'];
+  const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.js')];
   const configName = input.configName || 'tsconfig.json';
   const reporter = input.reporter;
   const logger = input.logger;
+  let entrypoint = input.entrypoint;
   // output is only for tests
   const listrTask: ListrContext = input.task || { output: '' };
 
@@ -43,6 +44,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   logger?.debug(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
 
   const targetFiles = gitMove(sourceFiles, listrTask, basePath, logger);
+
+  const entrypointFullPath = resolve(basePath, entrypoint);
+  if (sourceFiles.includes(entrypointFullPath)) {
+    entrypoint = entrypoint.replace(/js$/, 'ts');
+  }
 
   const configFile = findConfigFile(basePath, sys.fileExists, configName);
 
@@ -101,7 +107,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     });
 
   await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
-  reporter.saveCurrentRunToReport(basePath, input.entrypoint);
+  reporter.saveCurrentRunToReport(basePath, entrypoint);
 
   return {
     basePath,

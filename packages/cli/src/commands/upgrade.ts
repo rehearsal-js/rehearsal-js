@@ -27,6 +27,7 @@ import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
 
+//TODO: add entrypoint option
 upgradeCommand
   .name('upgrade')
   .description('Upgrade typescript dev-dependency with compilation insights and auto-fix options')
@@ -80,7 +81,7 @@ upgradeCommand
     const projectName = determineProjectName() || '';
 
     const reporter = new Reporter(
-      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade', entrypoint: '' },
+      { tsVersion: '', projectName, basePath, commandName: '@rehearsal/upgrade' },
       logger
     );
 
