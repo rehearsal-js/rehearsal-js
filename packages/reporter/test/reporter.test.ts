@@ -22,7 +22,6 @@ describe('Test reporter', function () {
       tsVersion: '',
       projectName: 'test',
       basePath,
-      entrypoint: '',
       commandName: '@rehearsal/reporter',
     }).loadRun(testDataPath);
   });
