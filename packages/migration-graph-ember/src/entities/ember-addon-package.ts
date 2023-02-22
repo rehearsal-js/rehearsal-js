@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { readPackageJson } from '@rehearsal/migration-graph-shared';
+import { Graph, ModuleNode, readPackageJson } from '@rehearsal/migration-graph-shared';
 
 import {
   getEmberAddonName,
@@ -8,6 +8,10 @@ import {
   getNameFromMain,
   isEngine,
 } from '../utils/ember';
+import {
+  EmberAddonPackageGraph,
+  type EmberAddonPackageGraphOptions,
+} from './ember-addon-package-graph';
 import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package';
 
 export class EmberAddonPackage extends EmberAppPackage {
@@ -39,7 +43,7 @@ export class EmberAddonPackage extends EmberAppPackage {
 
     this.excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
 
-    this.includePatterns = new Set(['.']);
+    this.includePatterns = new Set(['.', '**/*.gjs']);
   }
 
   get isEngine(): boolean {
@@ -70,5 +74,15 @@ export class EmberAddonPackage extends EmberAppPackage {
       this.#addonName = getEmberAddonName(this.path);
     }
     return this.#addonName;
+  }
+
+  getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
+    if (this.graph) {
+      return this.graph;
+    }
+
+    this.graph = new EmberAddonPackageGraph(this, options).discover();
+
+    return this.graph;
   }
 }

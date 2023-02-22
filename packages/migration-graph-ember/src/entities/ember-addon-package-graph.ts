@@ -1,7 +1,5 @@
-import fs from 'fs';
 import { resolve } from 'path';
-import { IResolveOptions } from 'dependency-cruiser';
-import { CachedInputFileSystem } from 'enhanced-resolve';
+import { type IResolveOptions } from 'dependency-cruiser';
 import debug from 'debug';
 
 import { getEmberAddonName } from '../utils/ember';
@@ -33,11 +31,9 @@ export class EmberAddonPackageGraph extends EmberAppPackageGraph {
       alias,
     });
 
-    const options = {
-      fileSystem: new CachedInputFileSystem(fs, 4000),
-      resolveDeprecations: false,
-      alias: alias,
-    };
+    const options = super.resolveOptions;
+
+    options.alias = alias;
 
     return options;
   }
