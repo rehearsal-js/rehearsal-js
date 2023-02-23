@@ -41,7 +41,10 @@
     "@glimmerx/component": "^0.6.8",
     "@glimmerx/core": "^0.6.8",
     "@glint/core": "1.0.0-beta.3",
+    "@rehearsal/test-support": "workspace:*",
     "@types/ember__component": "^4.0.12",
+    "fixturify-project": "^5.2.0",
+    "tmp": "^0.2.1",
     "vitest": "^0.28.5"
   },
   "peerDependencies": {

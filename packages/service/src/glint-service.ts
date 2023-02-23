@@ -10,18 +10,15 @@ export class RehearsalGlintService {
   private glintParser?: TransformManager;
   constructor(projectDirectory: string) {
     this.rootDir = projectDirectory;
-    // if (!this.glintParser) {
-    //   const { transformManager } = analyzeProject(projectDirectory);
-    //   this.glintParser = transformManager;
-    // }
-    // const { transformManager } = analyzeProject(projectDirectory);
-    // this.glintParser = transformManager;
   }
   getGlintDiagnostics(fileName: string): GlintDiagnostic[] {
+    console.log('filename', fileName);
     if (!this.glintParser) {
+      console.log('not glintParser');
       const { transformManager } = analyzeProject(this.rootDir);
       this.glintParser = transformManager;
     }
+    console.log('this.glintParser', this.glintParser.getTransformDiagnostics);
     return this.glintParser.getTransformDiagnostics(fileName);
   }
 }

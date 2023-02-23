@@ -20,6 +20,7 @@ if (!maybePackageJson) {
 const ROOT_DIR = dirname(maybePackageJson);
 const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
 const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
+const GLINT_DIR = join(ROOT_DIR, 'fixtures/glint');
 
 export function getEmberAppProject(project: Project = emberAppTemplate()): Project {
   project.mergeFiles(getEmberAppFiles());
@@ -168,6 +169,12 @@ export function emberAddonTemplate(as: 'addon' | 'dummy-app' = 'addon'): Project
 export function emberAppTemplate(): Project {
   return Project.fromDir(EMBER_APP_TEMPLATE_DIR, {
     linkDevDeps: false,
+  });
+}
+
+export function getGlintProject(): Project {
+  return Project.fromDir(GLINT_DIR, {
+    linkDevDeps: true,
   });
 }
 
