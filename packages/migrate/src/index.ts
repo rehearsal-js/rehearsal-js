@@ -1,1 +1,1 @@
-export { migrate, MigrateInput } from './migrate';
+export { migrate, MigrateInput } from './migrate.js';

@@ -1,10 +1,10 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
-import { migrate, MigrateInput } from '../src';
+import { migrate, MigrateInput } from '../src/index.js';
 import type { Logger } from 'winston';
 
 describe('migrate', () => {

@@ -1,6 +1,6 @@
-import { existsSync } from 'fs';
-import { dirname, extname, resolve } from 'path';
-import { execSync } from 'child_process';
+import { existsSync } from 'node:fs';
+import { dirname, extname, resolve } from 'node:path';
+import { execSync } from 'node:child_process';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import {
   DiagnosticCheckPlugin,
