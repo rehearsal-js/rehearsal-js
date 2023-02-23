@@ -1,13 +1,13 @@
 import get from 'lodash.get';
 import { describe, expect, test } from 'vitest';
 
-import { sarifFormatter } from '../src';
+import { sarifFormatter } from '../src/index.js';
 import {
   addArtifactData,
   addResultData,
   addRuleData,
   initialData,
-} from './fixtures/sarif-formatter';
+} from './fixtures/sarif-formatter/index.js';
 
 describe('Test sarif-formatter', () => {
   test('should set the correct version, $schema, and initial data', () => {

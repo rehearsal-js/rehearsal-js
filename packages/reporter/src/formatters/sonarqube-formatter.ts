@@ -1,8 +1,8 @@
-import { isAbsolute, resolve } from 'path';
+import { isAbsolute, resolve } from 'node:path';
 import { PhysicalLocation, Result } from 'sarif';
 
-import { SarifFormatter } from './sarif-formatter';
-import type { Report } from '../types';
+import { SarifFormatter } from './sarif-formatter.js';
+import type { Report } from '../types.js';
 
 interface TextRange {
   startLine: number;

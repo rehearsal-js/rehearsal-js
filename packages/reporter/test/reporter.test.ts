@@ -1,11 +1,11 @@
-import { existsSync, readFileSync, rmSync } from 'fs';
-import { resolve } from 'path';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { readJSONSync } from 'fs-extra';
 import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
 import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
-import { type Report, jsonFormatter, mdFormatter, Reporter } from '../src';
+import { type Report, jsonFormatter, mdFormatter, Reporter } from '../src/index.js';
 
 describe('Test reporter', function () {
   const basePath = resolve(__dirname, 'fixtures/reporter');

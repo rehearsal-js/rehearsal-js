@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
 import {
   type Report,
@@ -8,8 +8,8 @@ import {
   type LintErrorLike,
   type Run,
   ReportItemType,
-} from './types';
-import { normalizeFilePath } from './normalize-paths';
+} from './types.js';
+import { normalizeFilePath } from './normalize-paths.js';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
 

@@ -1,5 +1,5 @@
 import type { Artifact, Location, Log, ReportingDescriptor, Result, Run } from 'sarif';
-import type { Report, ReportItem } from '../types';
+import type { Report, ReportItem } from '../types.js';
 
 export class SarifFormatter {
   private report: Report;
