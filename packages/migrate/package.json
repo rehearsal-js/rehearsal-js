@@ -42,7 +42,7 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "execa": "^5.1.1",
+    "execa": "^7.0.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {

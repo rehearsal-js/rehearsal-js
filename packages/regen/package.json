@@ -45,7 +45,7 @@
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "debug": "^4.3.4",
-    "execa": "^5.1.1",
+    "execa": "^7.0.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
@@ -56,7 +56,8 @@
     "listr2": "^5.0.7",
     "prettier": "^2.8.3",
     "vitest": "^0.28.5",
-    "typescript": "^4.9.0"
+    "typescript": "^4.9.0",
+    "eslint": "^8.0.0"
   },
   "peerDependencies": {
     "typescript": "^4.9.0 || ^5.0.0",
