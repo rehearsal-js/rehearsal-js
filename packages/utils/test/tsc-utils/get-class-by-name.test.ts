@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import { getClassByName } from '../../src';
-import { setupTest } from '../helpers';
+import { getClassByName } from '../../src/index.js';
+import { setupTest } from '../helpers.js';
 
 describe('Test getClassByName', () => {
   const { sourceFile } = setupTest(__filename);

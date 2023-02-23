@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import { getTypeDeclarationFromTypeSymbol } from '../../src';
-import { setupTest } from '../helpers';
+import { getTypeDeclarationFromTypeSymbol } from '../../src/index.js';
+import { setupTest } from '../helpers.js';
 import type { InterfaceDeclaration } from 'typescript';
 
 describe('Test getTypeDeclarationFromSymbol', () => {

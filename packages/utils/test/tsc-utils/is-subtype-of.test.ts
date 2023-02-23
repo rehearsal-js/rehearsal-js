@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import { isSubtypeOf } from '../../src';
-import { setupTest } from '../helpers';
+import { isSubtypeOf } from '../../src/index.js';
+import { setupTest } from '../helpers.js';
 import type { VariableStatement } from 'typescript';
 
 describe('Test isSubtypeOf', () => {

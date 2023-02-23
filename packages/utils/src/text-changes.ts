@@ -6,7 +6,7 @@ import {
   SourceFile,
 } from 'typescript';
 
-import { isNodeInsideJsx } from '.';
+import { isNodeInsideJsx } from './index.js';
 
 /**
  * Collection of functions that produces FileTextChanges for different cases

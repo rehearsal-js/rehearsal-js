@@ -1,8 +1,8 @@
 import { isInterfaceDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
-import { getInterfaceMemberByName } from '../../src';
-import { setupTest } from '../helpers';
+import { getInterfaceMemberByName } from '../../src/index.js';
+import { setupTest } from '../helpers.js';
 import type { InterfaceDeclaration } from 'typescript';
 
 describe('Test getInterfaceMemberByName', () => {

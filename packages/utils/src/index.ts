@@ -10,8 +10,8 @@ export {
   isSubtypeOf,
   getTypeDeclarationFromTypeSymbol,
   isTypeMatched,
-} from './tsc-utils';
+} from './tsc-utils.js';
 
-export * from './helpers';
-export * from './text-changes';
-export * from './cli';
+export * from './helpers/index.js';
+export * from './text-changes.js';
+export * from './cli.js';

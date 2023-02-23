@@ -1,5 +1,5 @@
-import { resolve } from 'path';
-import { testService } from './test-service';
+import { resolve } from 'node:path';
+import { testService } from './test-service.js';
 import type { SourceFile, TypeChecker } from 'typescript';
 
 interface SetupResult {

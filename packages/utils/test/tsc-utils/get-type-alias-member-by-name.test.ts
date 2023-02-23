@@ -1,8 +1,8 @@
 import { isInterfaceDeclaration, isTypeAliasDeclaration } from 'typescript';
 import { describe, expect, test } from 'vitest';
 
-import { getTypeAliasMemberByName } from '../../src';
-import { setupTest } from '../helpers';
+import { getTypeAliasMemberByName } from '../../src/index.js';
+import { setupTest } from '../helpers.js';
 import type { TypeAliasDeclaration, TypeLiteralNode } from 'typescript';
 
 describe('Test getTypeAliasMemberByName', () => {

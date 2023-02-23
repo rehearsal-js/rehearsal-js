@@ -1,7 +1,6 @@
 import { compare } from 'compare-versions';
 import { describe, expect, test } from 'vitest';
-
-import execa = require('execa');
+import { execa, execaSync } from 'execa';
 
 import {
   determineProjectName,
@@ -18,7 +17,7 @@ import {
   timestamp,
   getLockfilePath,
   getEditorBinWithArgs,
-} from '../src/cli';
+} from '../src/cli.js';
 
 describe('utils', () => {
   describe.each([
@@ -81,13 +80,13 @@ describe('utils', () => {
   test('getManagerBinPath()', () => {
     // TODO: Add test scenarios if volta exists
     // Haven't came up with a quick and good way to do it
-    const npmBinPath = execa.sync('which', ['npm']).stdout;
+    const npmBinPath = execaSync('which', ['npm']).stdout;
     expect(getManagerBinPath('npm', false)).toBe(npmBinPath);
 
-    const yarnBinPath = execa.sync('which', ['yarn']).stdout;
+    const yarnBinPath = execaSync('which', ['yarn']).stdout;
     expect(getManagerBinPath('yarn', false)).toBe(yarnBinPath);
 
-    const pnpmBinPath = execa.sync('which', ['pnpm']).stdout;
+    const pnpmBinPath = execaSync('which', ['pnpm']).stdout;
     expect(getManagerBinPath('pnpm', false)).toBe(pnpmBinPath);
   });
 
@@ -174,19 +173,19 @@ describe('utils', () => {
 
   test('getEditorBinWithArgs()', () => {
     // No $EDITOR defined
-    delete process.env.EDITOR;
+    delete process.env['EDITOR'];
     expect(getEditorBinWithArgs()).toEqual([]);
 
-    process.env.EDITOR = 'code';
+    process.env['EDITOR'] = 'code';
     expect(getEditorBinWithArgs()).toEqual(['code', '--wait']);
 
-    process.env.EDITOR = 'code -w';
+    process.env['EDITOR'] = 'code -w';
     expect(getEditorBinWithArgs()).toEqual(['code', '-w']);
 
-    process.env.EDITOR = 'code --wait';
+    process.env['EDITOR'] = 'code --wait';
     expect(getEditorBinWithArgs()).toEqual(['code', '--wait']);
 
-    process.env.EDITOR = 'nvim';
+    process.env['EDITOR'] = 'nvim';
     expect(getEditorBinWithArgs()).toEqual(['nvim']);
   });
 });
