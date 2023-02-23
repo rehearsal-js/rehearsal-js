@@ -1,8 +1,8 @@
-import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-import { RehearsalService } from '../src';
+import { RehearsalService } from '../src/index.js';
 import type { CompilerOptions, DiagnosticWithLocation } from 'typescript';
 
 describe('Test service', function () {

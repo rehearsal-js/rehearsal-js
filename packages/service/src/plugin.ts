@@ -1,6 +1,6 @@
 import { Reporter } from '@rehearsal/reporter';
 import { Logger } from 'winston';
-import { RehearsalService } from './rehearsal-service';
+import { RehearsalService } from './rehearsal-service.js';
 
 export interface Plugin<PluginOptions> {
   run(fileName: string, context: PluginsRunnerContext, options: PluginOptions): PluginResult;

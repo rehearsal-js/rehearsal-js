@@ -1,6 +1,6 @@
 import { createLanguageService, ScriptSnapshot } from 'typescript';
 
-import { RehearsalServiceHost } from './rehearsal-service-host';
+import { RehearsalServiceHost } from './rehearsal-service-host.js';
 import type {
   CompilerOptions,
   Diagnostic,

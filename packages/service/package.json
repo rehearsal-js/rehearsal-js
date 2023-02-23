@@ -9,6 +9,14 @@
     "transforms",
     "typescript"
   ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
