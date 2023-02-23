@@ -1,14 +1,14 @@
-import { resolve } from 'path';
-import { readFileSync } from 'fs';
+import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { create, getFiles } from '@rehearsal/test-support';
-import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
+import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
-import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers';
-import { CustomConfig } from '../../../src/types';
+import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
+import { CustomConfig } from '../../../src/types.js';
 
 setGracefulCleanup();
 

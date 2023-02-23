@@ -1,9 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync } from 'fs-extra';
 
-import { createScriptsTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { createScriptsTask } from '../../../src/commands/migrate/tasks/index.js';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 
 describe('Task: create-scripts', async () => {
   let basePath = '';

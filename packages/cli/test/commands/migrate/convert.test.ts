@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readdirSync, readJSONSync } from 'fs-extra';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
@@ -10,7 +10,7 @@ import {
   convertTask,
   tsConfigTask,
   lintConfigTask,
-} from '../../../src/commands/migrate/tasks';
+} from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,
   listrTaskRunner,
@@ -21,7 +21,7 @@ import {
   createOutputStream,
   isPackageSelection,
   isActionSelection,
-} from '../../test-helpers';
+} from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

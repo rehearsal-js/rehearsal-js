@@ -8,8 +8,8 @@ import {
   tsConfigTask,
   lintConfigTask,
   regenTask,
-} from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+} from '../../../src/commands/migrate/tasks/index.js';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

@@ -1,12 +1,12 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync, existsSync } from 'fs-extra';
 
-import { depInstallTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
-import { CustomConfig } from '../../../src/types';
-import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
-import { UserConfig } from '../../../src/user-config';
+import { depInstallTask } from '../../../src/commands/migrate/tasks/index.js';
+import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { CustomConfig } from '../../../src/types.js';
+import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
+import { UserConfig } from '../../../src/user-config.js';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');

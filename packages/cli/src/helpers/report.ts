@@ -1,5 +1,5 @@
-import { mkdirSync } from 'fs';
-import { resolve } from 'path';
+import { mkdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   jsonFormatter,
   Report,
@@ -11,7 +11,7 @@ import {
   ReportItem,
 } from '@rehearsal/reporter';
 
-import type { CliCommand, Formats } from '../types';
+import type { CliCommand, Formats } from '../types.js';
 
 type ReportLike = {
   items: ReportItem[];

@@ -1,8 +1,13 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { addDep } from '@rehearsal/utils';
-import execa from 'execa';
+import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra';
-import type { MigrateCommandConfig, UpgradeCommandConfig, CliCommand, CustomConfig } from './types';
+import type {
+  MigrateCommandConfig,
+  UpgradeCommandConfig,
+  CliCommand,
+  CustomConfig,
+} from './types.js';
 
 // Storage and runner for user custom cli config
 export class UserConfig {

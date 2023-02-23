@@ -1,9 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { readJSONSync, writeJSONSync, existsSync, writeFileSync } from 'fs-extra';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state';
+import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state.js';
 
 setGracefulCleanup();
 

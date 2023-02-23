@@ -1,6 +1,6 @@
-import { join, resolve } from 'path';
+import { join, resolve } from 'node:path';
 import { Readable } from 'stream';
-import execa from 'execa';
+import { execa } from 'execa';
 import which from 'which';
 import { rmSync, copySync, realpathSync } from 'fs-extra';
 import { dirSync } from 'tmp';
@@ -8,7 +8,8 @@ import { ListrTask, Listr } from 'listr2';
 import { git, gitIsRepoDirty } from '@rehearsal/utils';
 import packageJson from '../../package.json';
 
-import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types';
+import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
+import type { Options, ExecaChildProcess } from 'execa';
 
 export const PNPM_PATH = which.sync('pnpm');
 
@@ -33,11 +34,7 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
 
 // helper funcion to run a command via the actual bin
 // stdout of commands available via ExecaChildProcess.stdout
-export function runBin(
-  command: string,
-  args: string[],
-  options: execa.Options = {}
-): execa.ExecaChildProcess {
+export function runBin(command: string, args: string[], options: Options = {}): ExecaChildProcess {
   const cliPath = resolve(__dirname, `../../bin/rehearsal.js`);
   return execa(cliPath, [command, ...args], options);
 }

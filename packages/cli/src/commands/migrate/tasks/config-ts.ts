@@ -1,10 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { ListrTask } from 'listr2';
 import { existsSync, writeJSONSync } from 'fs-extra';
-
 import { readJSON, writeTSConfig, gitAddIfInRepo } from '@rehearsal/utils';
 
-import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
+import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
 
 export async function tsConfigTask(
   options: MigrateCommandOptions,

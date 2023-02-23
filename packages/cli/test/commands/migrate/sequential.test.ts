@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readdirSync, readJSONSync } from 'fs-extra';
 import { createLogger, format, transports } from 'winston';
@@ -8,14 +8,14 @@ import {
   tsConfigTask,
   lintConfigTask,
   sequentialTask,
-} from '../../../src/commands/migrate/tasks';
+} from '../../../src/commands/migrate/tasks/index.js';
 
 import {
   prepareTmpDir,
   listrTaskRunner,
   createOutputStream,
   createMigrateOptions,
-} from '../../test-helpers';
+} from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
 import { debug } from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-
-import execa = require('execa');
-
+import { execa } from 'execa';
 import {
   addDep,
   determineProjectName,
@@ -23,7 +21,7 @@ import {
   parseTsVersion,
 } from '@rehearsal/utils';
 import { version } from '../../package.json';
-import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
+import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();

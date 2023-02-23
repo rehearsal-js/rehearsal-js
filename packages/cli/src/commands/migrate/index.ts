@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-import { resolve } from 'path';
-import { existsSync } from 'fs';
+import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-
 import {
   parseCommaSeparatedList,
   gitIsRepoDirty,
@@ -23,10 +22,10 @@ import {
   regenTask,
   validateTask,
   reportExisted,
-} from './tasks';
+} from './tasks/index.js';
 
-import { sequentialTask } from './tasks/sequential';
-import type { MigrateCommandOptions, PreviousRuns } from '../../types';
+import { sequentialTask } from './tasks/sequential.js';
+import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
 
 export const migrateCommand = new Command();
 

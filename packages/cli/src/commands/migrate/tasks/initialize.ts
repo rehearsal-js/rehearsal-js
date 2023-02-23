@@ -7,14 +7,14 @@ import {
 import { debug } from 'debug';
 
 import { determineProjectName, validateUserConfig } from '@rehearsal/utils';
-import { UserConfig } from '../../../user-config';
-import { State } from '../../../helpers/state';
+import { UserConfig } from '../../../user-config.js';
+import { State } from '../../../helpers/state.js';
 import type {
   MigrateCommandContext,
   MigrateCommandOptions,
   PackageSelection,
   MenuMap,
-} from '../../../types';
+} from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
 const IN_PROGRESS_MARK = '🚧';

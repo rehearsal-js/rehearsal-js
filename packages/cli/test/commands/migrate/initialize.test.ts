@@ -1,7 +1,7 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra';
-import { initTask } from '../../../src/commands/migrate/tasks';
+import { initTask } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,
   listrTaskRunner,
@@ -11,8 +11,8 @@ import {
   createOutputStream,
   isPackageSelection,
   isActionSelection,
-} from '../../test-helpers';
-import { CustomConfig } from '../../../src/types';
+} from '../../test-helpers/index.js';
+import { CustomConfig } from '../../../src/types.js';
 
 function createUserConfig(
   basePath: string,
