@@ -16,7 +16,7 @@ import {
 } from 'typescript';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { getLocation } from '../helpers';
+import { getLocation } from '../helpers.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
