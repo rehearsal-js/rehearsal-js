@@ -48,7 +48,7 @@ function addUtilDirectory(project: Project): Project {
             import base from './base';
             export default base;
             `,
-          'base.js': `export default function () => { console.log(1); }`,
+          'base.js': `export default function () { console.log(1); }`,
         },
       },
     },
