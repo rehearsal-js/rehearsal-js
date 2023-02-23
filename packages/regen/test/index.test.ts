@@ -1,9 +1,9 @@
-import { resolve } from 'path';
-import { copyFileSync, mkdirSync, rmSync, readFileSync, existsSync } from 'fs';
+import { resolve } from 'node:path';
+import { copyFileSync, mkdirSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { Reporter } from '@rehearsal/reporter';
 import { describe, test, beforeEach, afterEach, expect } from 'vitest';
 import { outputFileSync } from 'fs-extra';
-import { regen, RegenInput } from '../src';
+import { regen, RegenInput } from '../src/index.js';
 
 const basePath = resolve(__dirname);
 const expectedDir = resolve(basePath, 'fixtures', 'output');
