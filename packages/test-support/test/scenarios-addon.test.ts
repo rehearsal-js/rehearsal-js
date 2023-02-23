@@ -1,6 +1,6 @@
 import { PreparedApp, Scenario } from 'scenario-tester';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { addonScenarios, clean } from '../src/scenarios';
+import { addonScenarios, clean } from '../src/scenarios.js';
 
 const TEST_TIMEOUT = 100000;
 

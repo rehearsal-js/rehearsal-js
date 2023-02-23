@@ -1,6 +1,6 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { Scenarios, Scenario, PreparedApp } from 'scenario-tester';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 
 import {
   getEmberAppProject,
@@ -9,7 +9,7 @@ import {
   getEmberAddonProject,
   getEmberAppWithInRepoAddonProject,
   getEmberAppWithInRepoEngineProject,
-} from './project';
+} from './project.js';
 
 export function clean(dir: string): void {
   rimraf.sync(join(dir, 'node_modules'));

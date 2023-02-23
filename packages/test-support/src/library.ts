@@ -1,7 +1,7 @@
 import fixturify from 'fixturify';
 import { Project } from 'fixturify-project';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { setupProject } from './project';
+import { setupProject } from './project.js';
 
 setGracefulCleanup();
 
@@ -80,7 +80,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
           import chalk from 'chalk';
           import path from 'path';
           import './lib/a';
-          
+
           console.log(path.join('foo', 'bar', 'baz'));
           console.log(parser, chalk);
         `,
@@ -112,7 +112,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             import chalk from 'chalk';
             import path from 'path';
             import './lib/a';
-            
+
             console.log(path.join('foo', 'bar', 'baz'));
             console.log(parser, chalk);
           `,
@@ -257,7 +257,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
               "name": "@something/bar",
               "version": "1.0.0",
               "main": "index.js",
-              "dependencies": { 
+              "dependencies": {
                 "@something/baz": "*"
               },
               "devDependencies": {
@@ -300,7 +300,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             "workspaces": [
               "packages/*"
             ]
-          }    
+          }
         `,
         'some-util.js': '// Some useful util file shared across packages.',
       };
@@ -314,12 +314,12 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
         `,
         'depends-on-foo.js': `
           import { say } from './foo';
-    
-          console.log(say('hello'));    
+
+          console.log(say('hello'));
         `,
         'index.js': `
           import path from 'path';
-    
+
           export function power(foo, bar) {
             return Math.pow(foo, bar);
           }
@@ -330,7 +330,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             "version": "1.0.0",
             "main": "index.js",
             "license": "MIT"
-          }    
+          }
         `,
       };
       break;
@@ -386,7 +386,7 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
             "workspaces": [
               "packages/*"
             ]
-          }    
+          }
         `,
       };
       break;
