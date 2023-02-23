@@ -1,10 +1,10 @@
-import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
-import { resolve } from 'path';
+import { copyFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { Reporter } from '@rehearsal/reporter';
 import { describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
-import { upgrade } from '../src';
+import { upgrade } from '../src/index.js';
 
 describe('Test upgrade', async function () {
   const basePath = resolve(__dirname, 'fixtures', 'upgrade');

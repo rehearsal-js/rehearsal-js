@@ -9,6 +9,14 @@
     "rehearsal",
     "typescript"
   ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
