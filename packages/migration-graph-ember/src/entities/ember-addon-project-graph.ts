@@ -1,5 +1,5 @@
 import debug, { type Debugger } from 'debug';
-import { EmberAppProjectGraph, EmberAppProjectGraphOptions } from './ember-app-project-graph';
+import { EmberAppProjectGraph, EmberAppProjectGraphOptions } from './ember-app-project-graph.js';
 
 export type EmberAddonProjectGraphOptions = EmberAppProjectGraphOptions;
 

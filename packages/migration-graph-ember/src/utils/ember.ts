@@ -8,11 +8,13 @@ export function isApp(packageJson: PackageJson): boolean {
 }
 
 function hasDevDependency(packageJson: PackageJson, packageName: string): boolean {
-  return (packageJson?.devDependencies && packageJson?.devDependencies[packageName]) ?? false;
+  return (
+    (packageJson?.['devDependencies'] && packageJson?.['devDependencies'][packageName]) ?? false
+  );
 }
 
 function hasKeyword(packageJson: PackageJson, keyword: string): boolean {
-  return packageJson?.keywords?.includes(keyword) ?? false;
+  return packageJson?.['keywords']?.includes(keyword) ?? false;
 }
 
 /**

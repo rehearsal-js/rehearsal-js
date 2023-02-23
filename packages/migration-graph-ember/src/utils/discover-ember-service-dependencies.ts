@@ -1,5 +1,5 @@
-import { join, extname } from 'path';
-import { readFileSync } from 'fs-extra';
+import { join, extname } from 'node:path';
+import { readFileSync } from 'fs-extra/esm';
 import { parseSync } from '@swc/core';
 import debug from 'debug';
 

@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import {
   getEmberProject,
@@ -13,13 +13,13 @@ import {
   type Graph,
   type GraphNode,
 } from '@rehearsal/migration-graph-shared';
-import { EmberAppPackage } from '../../src/entities/ember-app-package';
-import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
+import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
+import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
 import {
   EmberAppPackageGraph,
   EmberAppPackageGraphOptions,
-} from '../../src/entities/ember-app-package-graph';
-import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
+} from '../../src/entities/ember-app-package-graph.js';
+import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph.js';
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {
@@ -122,7 +122,7 @@ describe('Unit | EmberAppPackageGraph', () => {
           'fancy.js': `
               import Component from '@glimmer/component';
               import { inject as service } from '@ember/service';
-      
+
               export default class Salutation extends Component {
                 @service fastboot;
               }
@@ -169,7 +169,7 @@ describe('Unit | EmberAppPackageGraph', () => {
           'obtuse.js': `
               import Component from '@glimmer/component';
               import { inject as service } from '@ember/service';
-      
+
               export default class Obtuse extends Component {
                 @service('some-external@date') myDate;
               }
@@ -205,7 +205,7 @@ describe('Unit | EmberAppPackageGraph', () => {
           'obtuse.js': `
               import Component from '@glimmer/component';
               import { inject as service } from '@ember/service';
-      
+
               export default class Obtuse extends Component {
                 @service('some-addon@date') myDate;
               }
@@ -306,7 +306,7 @@ describe('Unit | EmberAppPackageGraph', () => {
           'obtuse.js': `
             import Component from '@glimmer/component';
             import { inject as service } from '@ember/service';
-    
+
             export default class Obtuse extends Component {
               @service('${firstAddonName}@date') d;
             }
@@ -316,8 +316,8 @@ describe('Unit | EmberAppPackageGraph', () => {
       lib: {},
     };
 
-    files.lib[firstAddonName] = firstAddonFiles;
-    files.lib[secondAddonName] = secondAddonFiles;
+    files['lib'][firstAddonName] = firstAddonFiles;
+    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -431,8 +431,8 @@ describe('Unit | EmberAppPackageGraph', () => {
       lib: {},
     };
 
-    files.lib[firstAddonName] = firstAddonFiles;
-    files.lib[secondAddonName] = secondAddonFiles;
+    files['lib'][firstAddonName] = firstAddonFiles;
+    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -497,11 +497,11 @@ describe('Unit | EmberAppPackageGraph', () => {
     const someAddonFiles = merge(getEmptyInRepoAddonFiles(someAddonPackageName), {
       'index.js': `
         'use strict';
-    
+
         module.exports = {
           name: '${someAddonModuleName}',
           moduleName: () => '${someAddonModuleName}',
-    
+
           isDevelopingAddon() {
             return true;
           },
@@ -531,7 +531,7 @@ describe('Unit | EmberAppPackageGraph', () => {
           'obtuse.js': `
             import Component from '@glimmer/component';
             import { inject as service } from '@ember/service';
-    
+
             export default class Obtuse extends Component {
               @service('${someAddonModuleName}@date') d;
             }
@@ -541,7 +541,7 @@ describe('Unit | EmberAppPackageGraph', () => {
       lib: {},
     };
 
-    files.lib[someAddonModuleName] = someAddonFiles;
+    files['lib'][someAddonModuleName] = someAddonFiles;
 
     project.mergeFiles(files);
 

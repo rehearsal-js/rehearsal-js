@@ -1,7 +1,6 @@
-import fs from 'fs';
-import { join, resolve } from 'path';
+import fs from 'node:fs';
+import { join, resolve } from 'node:path';
 import { CachedInputFileSystem } from 'enhanced-resolve';
-import { type IResolveOptions } from 'dependency-cruiser';
 import {
   Graph,
   GraphNode,
@@ -13,10 +12,10 @@ import {
   PackageNode,
 } from '@rehearsal/migration-graph-shared';
 import debug, { type Debugger } from 'debug';
-import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies';
-import { EmberAppPackage } from './ember-app-package';
-import { EmberAddonPackage } from './ember-addon-package';
-import { EmberAppProjectGraph } from './ember-app-project-graph';
+import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies.js';
+import { EmberAppPackage } from './ember-app-package.js';
+import { EmberAddonPackage } from './ember-addon-package.js';
+import { EmberAppProjectGraph } from './ember-app-project-graph.js';
 
 export class SyntheticPackage extends Package implements IPackage {
   #graph: Graph<ModuleNode>;
@@ -26,7 +25,7 @@ export class SyntheticPackage extends Package implements IPackage {
     this.#graph = new Graph<ModuleNode>();
   }
 
-  getModuleGraph(): Graph<ModuleNode> {
+  override getModuleGraph(): Graph<ModuleNode> {
     return this.#graph;
   }
 }
@@ -77,7 +76,7 @@ export class EmberAppPackageGraph extends PackageGraph {
    * @param m A `ModuleNode` with the path information
    * @returns Node<ModuleNode> the new or existing Node<ModuleNode>
    */
-  addNode(m: ModuleNode): GraphNode<ModuleNode> {
+  override addNode(m: ModuleNode): GraphNode<ModuleNode> {
     let n: GraphNode<ModuleNode>;
 
     const moduleNodeKey = m.key;
@@ -291,7 +290,7 @@ export class EmberAppPackageGraph extends PackageGraph {
     });
   }
 
-  get resolveOptions(): IResolveOptions {
+  override get resolveOptions(): IResolveOptions {
     // Create resolution for an ember application to itself
     // e.g. 'my-app-name/helpers/to-kebab-case';
 

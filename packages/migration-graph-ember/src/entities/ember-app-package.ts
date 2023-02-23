@@ -5,8 +5,8 @@ import {
   ModuleNode,
   IPackage,
 } from '@rehearsal/migration-graph-shared';
-import { getEmberAddonPaths } from '../utils/ember';
-import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
+import { getEmberAddonPaths } from '../utils/ember.js';
+import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph.js';
 
 export type EmberPackageOptions = PackageOptions;
 
@@ -37,7 +37,7 @@ export class EmberAppPackage extends Package implements IPackage {
     return getEmberAddonPaths(this.packageJson);
   }
 
-  getModuleGraph(options: EmberAppPackageGraphOptions = {}): Graph<ModuleNode> {
+  override getModuleGraph(options: EmberAppPackageGraphOptions = {}): Graph<ModuleNode> {
     if (this.graph) {
       return this.graph;
     }

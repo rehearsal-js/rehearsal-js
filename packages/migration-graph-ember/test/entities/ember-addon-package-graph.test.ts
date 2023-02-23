@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { getEmberProject, setupProject } from '@rehearsal/test-support';
-import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
-import { EmberAddonPackageGraph } from '../../src/entities/ember-addon-package-graph';
+import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
+import { EmberAddonPackageGraph } from '../../src/entities/ember-addon-package-graph.js';
 
 describe('Unit | EmberAddonPackageGraph', () => {
   test('should not include app/ dir in module graph', async () => {

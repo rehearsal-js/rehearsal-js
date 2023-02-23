@@ -2,7 +2,7 @@ import fixturify from 'fixturify';
 import tmp from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies';
+import { discoverServiceDependencies } from '../../src/utils/discover-ember-service-dependencies.js';
 
 tmp.setGracefulCleanup();
 describe('discoverServiceDependencies', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { getEmberProjectFixture } from '@rehearsal/test-support';
-import { EmberAddonProjectGraph } from '../../src/entities/ember-addon-project-graph';
+import { EmberAddonProjectGraph } from '../../src/entities/ember-addon-project-graph.js';
 import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {

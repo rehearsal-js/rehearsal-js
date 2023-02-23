@@ -1,5 +1,5 @@
-import { EmberAppProjectGraph } from '../entities/ember-app-project-graph';
-import type { EmberProjectPackage } from '../types';
+import { EmberAppProjectGraph } from '../entities/ember-app-project-graph.js';
+import type { EmberProjectPackage } from '../types.js';
 
 export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackage> {
   const projectGraph = new EmberAppProjectGraph(rootDir);

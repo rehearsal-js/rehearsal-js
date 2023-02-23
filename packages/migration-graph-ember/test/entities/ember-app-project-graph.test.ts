@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
-import { EmberAppPackage } from '../../src/entities/ember-app-package';
-import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph';
-import { SyntheticPackage } from '../../src/entities/ember-app-package-graph';
+import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
+import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph.js';
+import { SyntheticPackage } from '../../src/entities/ember-app-package-graph.js';
 import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {
@@ -95,7 +95,7 @@ export default class Salutation extends Component {
             services: {
               'some-service.js': `
               import Service from '@ember/service';
-        
+
               export default class SomeService extends Service {}
               `,
             },
@@ -107,10 +107,10 @@ export default class Salutation extends Component {
           },
           'index.js': `
             'use strict';
-        
+
             module.exports = {
               name: 'some-addon',
-        
+
               isDevelopingAddon() {
                 return true;
               },
