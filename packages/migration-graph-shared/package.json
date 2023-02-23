@@ -8,6 +8,14 @@
   "files": [
     "dist"
   ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
@@ -19,7 +27,7 @@
   },
   "dependencies": {
     "debug": "^4.3.4",
-    "dependency-cruiser": "^12.7.0",
+    "dependency-cruiser": "^12.10.0",
     "fast-glob": "^3.2.12",
     "findup-sync": "^5.0.0",
     "fs-extra": "^11.1.0",

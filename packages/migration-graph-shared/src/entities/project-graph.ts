@@ -1,10 +1,10 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
-import { Graph, GraphNode } from '../graph';
-import { isWorkspace } from '../../src/utils/workspace';
-import { Package } from './package';
-import type { PackageNode } from '../types';
+import { Graph, GraphNode } from '../graph/index.js';
+import { isWorkspace } from '../../src/utils/workspace.js';
+import { Package } from './package.js';
+import type { PackageNode } from '../types.js';
 
 // TODO this package level dependency data should be surfaced in a report
 

@@ -1,4 +1,4 @@
-import type { GraphNode } from './node';
+import type { GraphNode } from './node.js';
 
 export function dfs<T>(entry: GraphNode<T>): Array<GraphNode<T>> {
   const visited = new Set<GraphNode<T>>();

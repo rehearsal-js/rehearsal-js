@@ -1,11 +1,11 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { writeSync } from 'fixturify';
 import { readJsonSync } from 'fs-extra';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { Package } from '../../src/entities/package';
-import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
+import { Package } from '../../src/entities/package.js';
+import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures.js';
 
 setGracefulCleanup();
 

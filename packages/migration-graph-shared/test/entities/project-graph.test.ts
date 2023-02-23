@@ -1,8 +1,8 @@
 import { getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
-import { ProjectGraph } from '../../src/entities/project-graph';
-import type { GraphNode } from '../../src/graph/node';
-import type { ModuleNode, PackageNode } from '../../src/types';
+import { ProjectGraph } from '../../src/entities/project-graph.js';
+import type { GraphNode } from '../../src/graph/node.js';
+import type { ModuleNode, PackageNode } from '../../src/types.js';
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { Graph } from '../../src/graph';
-import type { UniqueNode } from '../../src/types';
+import { Graph } from '../../src/graph/index.js';
+import type { UniqueNode } from '../../src/types.js';
 
 export function createNode(key = 'some-name'): UniqueNode {
   return {

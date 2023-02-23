@@ -1,3 +1,3 @@
-export { dfs } from './dfs';
-export { Graph } from './graph';
-export { GraphNode } from './node';
+export { dfs } from './dfs.js';
+export { Graph } from './graph.js';
+export { GraphNode } from './node.js';

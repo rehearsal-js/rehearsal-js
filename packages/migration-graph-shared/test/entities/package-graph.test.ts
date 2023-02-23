@@ -1,14 +1,14 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
 import { mkdirSync } from 'fs-extra';
 import { sync as rimraf } from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { Package } from '../../src/entities/package';
-import { Graph, GraphNode } from '../../src/graph';
-import { PackageGraph } from '../../src/entities/package-graph';
-import type { ModuleNode, PackageNode } from '../../src/types';
+import { Package } from '../../src/entities/package.js';
+import { Graph, GraphNode } from '../../src/graph/index.js';
+import { PackageGraph } from '../../src/entities/package-graph.js';
+import type { ModuleNode, PackageNode } from '../../src/types.js';
 
 setGracefulCleanup();
 
@@ -309,7 +309,7 @@ describe('PackageGraph', () => {
           "name": "basic",
           "version": "1.0.0",
           "license": "MIT"
-        }    
+        }
       `,
     };
 
@@ -339,7 +339,7 @@ describe('PackageGraph', () => {
           "name": "basic",
           "version": "1.0.0",
           "license": "MIT"
-        }    
+        }
       `,
     };
 
@@ -369,7 +369,7 @@ describe('PackageGraph', () => {
           "name": "basic",
           "version": "1.0.0",
           "license": "MIT"
-        }    
+        }
       `,
     };
 

@@ -1,8 +1,12 @@
-import fs from 'fs';
-import { join, relative } from 'path';
+import fs from 'node:fs';
+import { join, relative } from 'node:path';
 import debug, { type Debugger } from 'debug';
-import {
-  cruise,
+import { cruise } from 'dependency-cruiser';
+import { Graph, GraphNode } from '../graph/index.js';
+import { Package } from './package.js';
+import type { ModuleNode, PackageNode } from '../types.js';
+import type { ProjectGraph } from './project-graph.js';
+import type {
   ICruiseOptions,
   ICruiseResult,
   IDependency,
@@ -10,10 +14,6 @@ import {
   IReporterOutput,
   IResolveOptions,
 } from 'dependency-cruiser';
-import { Graph, GraphNode } from '../graph';
-import { Package } from './package';
-import type { ModuleNode, PackageNode } from '../types';
-import type { ProjectGraph } from './project-graph';
 
 const EXCLUDE_FILE_EXTS = ['\\.css$', '\\.json$', '\\.graphql$'];
 

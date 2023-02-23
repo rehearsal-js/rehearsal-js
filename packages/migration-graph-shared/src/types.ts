@@ -1,4 +1,4 @@
-import type { Package } from './entities/package';
+import type { Package } from './entities/package.js';
 
 export type UniqueNode = {
   key: string;

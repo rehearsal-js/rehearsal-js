@@ -1,15 +1,15 @@
-import { resolve, join, relative } from 'path';
+import { resolve, join, relative } from 'node:path';
 import { existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 import { sync as fastGlobSync } from 'fast-glob';
 
-import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo';
-import { getWorkspaceGlobs } from '../utils/workspace';
-import { PackageGraph, PackageGraphOptions } from './package-graph';
+import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo.js';
+import { getWorkspaceGlobs } from '../utils/workspace.js';
+import { PackageGraph, PackageGraphOptions } from './package-graph.js';
 
-import type { IPackage } from './IPackage';
-import type { Graph } from '../graph';
-import type { ModuleNode } from '../types';
+import type { IPackage } from './IPackage.js';
+import type { Graph } from '../graph/index.js';
+import type { ModuleNode } from '../types.js';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export type PackageJson = Record<string, any>;
@@ -126,7 +126,7 @@ export class Package implements IPackage {
   }
 
   get packageName(): string {
-    return this.#name || this.packageJson?.name;
+    return this.#name || this.packageJson?.['name'];
   }
 
   get packageJson(): PackageJson {
@@ -147,7 +147,7 @@ export class Package implements IPackage {
    */
   get dependencies(): Record<string, string> {
     // get the dependencies from package.json
-    return this.packageJson?.dependencies;
+    return this.packageJson?.['dependencies'];
   }
 
   /**
@@ -158,7 +158,7 @@ export class Package implements IPackage {
    */
   get devDependencies(): Record<string, string> {
     // get the dependencies from package.json
-    return this.packageJson?.devDependencies;
+    return this.packageJson?.['devDependencies'];
   }
 
   /**
@@ -170,10 +170,10 @@ export class Package implements IPackage {
 
   addWorkspaceGlob(glob: string): this {
     const pkg = this.packageJson;
-    if (!pkg.workspaces) {
-      pkg.workspaces = [];
+    if (!pkg['workspaces']) {
+      pkg['workspaces'] = [];
     }
-    pkg.workspaces.push(glob);
+    pkg['workspaces'].push(glob);
     return this;
   }
 
@@ -198,7 +198,7 @@ export class Package implements IPackage {
   }
 
   setPackageName(name: string): this {
-    this.packageJson.name = name;
+    this.packageJson['name'] = name;
     this.#name = name;
     return this;
   }
@@ -223,8 +223,8 @@ export class Package implements IPackage {
     // add to dependencies
     let _dependencies = this.dependencies;
     if (!_dependencies) {
-      this.packageJson.dependencies = {};
-      _dependencies = this.packageJson.dependencies;
+      this.packageJson['dependencies'] = {};
+      _dependencies = this.packageJson['dependencies'];
     }
     _dependencies[packageName] = version;
     return this;
@@ -232,15 +232,15 @@ export class Package implements IPackage {
 
   removeDependency(packageName: string): this {
     // remove from dependencies
-    delete this.packageJson?.dependencies?.[packageName];
+    delete this.packageJson?.['dependencies']?.[packageName];
     return this;
   }
 
   addDevDependency(packageName: string, version: string): this {
     let _devDependencies = this.devDependencies;
     if (!_devDependencies) {
-      this.packageJson.devDependencies = {};
-      _devDependencies = this.packageJson.devDependencies;
+      this.packageJson['devDependencies'] = {};
+      _devDependencies = this.packageJson['devDependencies'];
     }
     _devDependencies[packageName] = version;
     return this;
