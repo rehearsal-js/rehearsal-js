@@ -1,4 +1,4 @@
-export { initialData } from './initial-data';
-export { addRuleData } from './add-rule';
-export { addResultData } from './add-result';
-export { addArtifactData } from './add-artifact';
+export { initialData } from './initial-data.js';
+export { addRuleData } from './add-rule.js';
+export { addResultData } from './add-result.js';
+export { addArtifactData } from './add-artifact.js';
