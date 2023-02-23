@@ -39,27 +39,24 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
           continue;
         }
 
-        const ancestorMethodType = checker.getTypeOfSymbolAtLocation(
-          ancestorMethodSymbol,
-          ancestorMethodSymbol.valueDeclaration
-        );
-
-        const ancestorMethodCallSignatures = ancestorMethodType.getCallSignatures();
+        const ancestorMethodCallSignatures = checker
+          .getTypeOfSymbolAtLocation(ancestorMethodSymbol, ancestorMethodSymbol.valueDeclaration)
+          .getCallSignatures();
 
         // Don't support multiple signatures
-        if (ancestorMethodCallSignatures.length > 1) {
+        if (ancestorMethodCallSignatures.length !== 1) {
           continue;
         }
 
         const parameterSymbol = ancestorMethodCallSignatures[0].parameters[currentParameterIndex];
 
         // Additional parameter in a child function won't have param in parent function signature
-        if (!parameterSymbol) {
+        if (!parameterSymbol || !parameterSymbol.valueDeclaration) {
           continue;
         }
 
         const type = checker.typeToString(
-          checker.getTypeOfSymbolAtLocation(parameterSymbol, parameterSymbol.valueDeclaration!)
+          checker.getTypeOfSymbolAtLocation(parameterSymbol, parameterSymbol.valueDeclaration)
         );
 
         if (!type || type === 'any' || type === 'object') {
