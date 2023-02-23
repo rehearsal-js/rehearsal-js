@@ -2,6 +2,14 @@
   "name": "@rehearsal/codefixes",
   "version": "1.0.10-beta",
   "description": "Rehearsal Dependency Codefixes Collection",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "keywords": [
     "transforms",
     "codefixes",

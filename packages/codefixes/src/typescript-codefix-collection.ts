@@ -1,4 +1,4 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'node:path';
 import {
   type CodeActionCommand,
   type CodeFixAction,
@@ -9,8 +9,7 @@ import {
   TextChange,
   type UserPreferences,
 } from 'typescript';
-import { CodeFixCollectionFilter } from './types';
-import type { CodeFixCollection, DiagnosticWithContext } from './types';
+import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
 
 /**

@@ -1,8 +1,8 @@
 import { ChangesFactory, findNodeAtPosition } from '@rehearsal/utils';
 import { findAncestor, isClassDeclaration, isMethodDeclaration, isParameter } from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection';
+import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type { CodeFixAction } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../../types';
+import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {

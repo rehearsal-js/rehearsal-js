@@ -5,7 +5,7 @@ import {
   flattenDiagnosticMessageText,
 } from 'typescript';
 import { ChangesFactory } from '@rehearsal/utils';
-import type { CodeFixCollection, CodeHintList, DiagnosticWithContext } from './types';
+import type { CodeFixCollection, CodeHintList, DiagnosticWithContext } from './types.js';
 
 /**
  * Don't actually fix the issue but adds a @ts-expect-error comments instead

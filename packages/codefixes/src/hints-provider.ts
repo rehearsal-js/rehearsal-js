@@ -1,6 +1,6 @@
 import { type DiagnosticWithLocation, flattenDiagnosticMessageText } from 'typescript';
 
-import type { CodeHintList, DiagnosticWithContext } from './types';
+import type { CodeHintList, DiagnosticWithContext } from './types.js';
 
 /**
  * Provides access to useful hints for Diagnostics
