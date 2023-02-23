@@ -238,7 +238,7 @@ upgradeCommand
         DEBUG_CALLBACK('ctx: %O', ctx);
       });
 
-      const generateReports = await import('../helpers/report').then((m) => m.generateReports);
+      const generateReports = await import('../helpers/report.js').then((m) => m.generateReports);
 
       const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('upgrade', reporter, reportOutputPath, options.format);
