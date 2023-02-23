@@ -1,10 +1,8 @@
-import { join, relative } from 'path';
+import { join, relative } from 'node:path';
 import fs from 'fs-extra';
-
 import { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
-import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph';
-
-import { type SourceType } from './source-type';
+import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph.js';
+import { type SourceType } from './source-type.js';
 
 export class SourceFile {
   #packageName: string;

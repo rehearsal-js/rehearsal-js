@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { getEmberProjectFixture, getLibraryProjectFixture } from '@rehearsal/test-support';
-import { SourceType } from '../src/source-type';
-import { buildMigrationGraph } from '../src/migration-graph';
+import { SourceType } from '../src/source-type.js';
+import { buildMigrationGraph } from '../src/migration-graph.js';
 
 describe('migration-graph', () => {
   test('should create ProjectGraph', async () => {

@@ -11,7 +11,7 @@ import {
   isEmberAddon,
   isEmberApp,
 } from '@rehearsal/migration-graph-ember';
-import { SourceType } from './source-type';
+import { SourceType } from './source-type.js';
 
 export type MigrationGraphOptions =
   | ProjectGraphOptions

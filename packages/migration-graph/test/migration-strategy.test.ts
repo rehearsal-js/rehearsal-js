@@ -7,8 +7,8 @@ import {
   create,
   setupProject,
 } from '@rehearsal/test-support';
-import { SourceType } from '../src/source-type';
-import { getMigrationStrategy, SourceFile } from '../src/migration-strategy';
+import { SourceType } from '../src/source-type.js';
+import { getMigrationStrategy, SourceFile } from '../src/migration-strategy.js';
 
 describe('migration-strategy', () => {
   describe('library', () => {
