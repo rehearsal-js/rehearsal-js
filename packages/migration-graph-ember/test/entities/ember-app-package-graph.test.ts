@@ -46,7 +46,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     ]);
   });
 
-  test('should create an edge between a test an app non-relative path', async () => {
+  test('should create an edge between a test file and app file with appName path', async () => {
     const project = await getEmberProjectFixture('app-with-utils');
 
     const p = new EmberAppPackage(project.baseDir);
