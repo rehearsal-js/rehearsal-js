@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import { join, relative } from 'node:path';
 import debug, { type Debugger } from 'debug';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { cruise } from 'dependency-cruiser';
 import { Graph, GraphNode } from '../graph/index.js';
 import { Package } from './package.js';
@@ -9,11 +11,11 @@ import type { ProjectGraph } from './project-graph.js';
 import type {
   ICruiseOptions,
   ICruiseResult,
-  IDependency,
   IModule,
-  IReporterOutput,
+  IDependency,
   IResolveOptions,
-} from 'dependency-cruiser';
+  IReporterOutput,
+} from '../../types/dependency-cruiser/index.js';
 
 const EXCLUDE_FILE_EXTS = ['\\.css$', '\\.json$', '\\.graphql$'];
 
