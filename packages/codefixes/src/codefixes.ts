@@ -5,6 +5,7 @@ import { TypescriptCodeFixCollection } from './typescript-codefix-collection';
 import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard';
 import { AddMissingExportCodeFix } from './fixes/addMissingExport';
 import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional';
+import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance';
 
 export const codefixes = new CodeFixesProvider([
   new BaseCodeFixCollection({
@@ -14,4 +15,7 @@ export const codefixes = new CodeFixesProvider([
     4082: new AddMissingExportCodeFix(),
   }),
   new TypescriptCodeFixCollection(),
+  new BaseCodeFixCollection({
+    7006: new AddMissingTypesBasedOnInheritanceCodeFix(),
+  }),
 ]);
