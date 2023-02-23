@@ -1,0 +1,25 @@
+// Vitest Snapshot v1
+
+exports[`transformGjs > should support .gjs file extension 1`] = `
+"
+      import Component from '@glimmer/component';
+      import { inject as service } from '@ember/service';
+
+      const Greeting = [GLIMMER_TEMPLATE(\`Hello\`)]
+
+      class Salutation extends Component {
+        @service locale;
+
+
+        get thing() {
+          this.locale.getLocale();
+        }
+
+        [GLIMMER_TEMPLATE(\`
+          <Greeting/> from {{this.thing}}
+        \`)]
+      }
+
+      export default Salutation;
+    "
+`;
