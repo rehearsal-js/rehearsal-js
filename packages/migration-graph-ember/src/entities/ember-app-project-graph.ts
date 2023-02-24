@@ -1,6 +1,6 @@
 import { dirname, resolve } from 'path';
 import { sync as fastGlobSync } from 'fast-glob';
-import debug from 'debug';
+import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
   Package,
@@ -16,8 +16,6 @@ import type { EmberProjectPackage } from '../types';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-project-graph');
-
 type EmberPackageLookup = {
   byAddonName: Record<string, EmberProjectPackage>;
   byPath: Record<string, EmberProjectPackage>;
@@ -26,15 +24,17 @@ type EmberPackageLookup = {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
+  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
   protected discoveredPackages: Record<string, EmberProjectPackage> = {};
   private lookup?: EmberPackageLookup;
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
     super(rootDir, { sourceType: 'Ember Application', ...options });
+    this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
 
   addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
-    DEBUG_CALLBACK('addPackageToGraph: "%s"', p.packageName);
+    this.debug('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
       // Check the graph if it has this node already
@@ -116,7 +116,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
    */
   findPackageByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
-      // DEBUG_CALLBACK('findPackageNodeByAddonName: %O', n.content);
+      // this.debug('findPackageNodeByAddonName: %O', n.content);
 
       const somePackage: Package = n.content.pkg;
 
@@ -124,7 +124,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         n.content.key === addonName ||
         (somePackage instanceof EmberAddonPackage && this.isMatch(addonName, somePackage))
       ) {
-        DEBUG_CALLBACK('Found an EmberAddonPackage %O', somePackage);
+        this.debug('Found an EmberAddonPackage %O', somePackage);
         return true;
       }
       return false;
@@ -177,7 +177,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   private findProjectPackages(): { root: EmberProjectPackage; found: Array<EmberProjectPackage> } {
     const pathToRoot = this.rootDir;
 
-    DEBUG_CALLBACK('findProjectPackages: %s', pathToRoot);
+    this.debug('findProjectPackages: %s', pathToRoot);
 
     const cwd = resolve(pathToRoot);
 
@@ -211,7 +211,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
       }
     );
 
-    DEBUG_CALLBACK('findProjectPackages: %a', pathToPackageJsonList);
+    this.debug('findProjectPackages: %a', pathToPackageJsonList);
 
     pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
 
@@ -243,7 +243,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const found = entities.filter((pkg) => !this.isRootPackage(pkg));
 
-    DEBUG_CALLBACK('findProjectPackages: %s', entities.length);
+    this.debug('findProjectPackages: %s', entities.length);
 
     return { root, found };
   }
