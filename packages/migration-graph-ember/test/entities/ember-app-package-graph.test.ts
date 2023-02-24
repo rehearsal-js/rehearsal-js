@@ -46,7 +46,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     ]);
   });
 
-  test('should create an edge between a test an app non-relative path', async () => {
+  test('should create an edge between a test file and app file with appName path', async () => {
     const project = await getEmberProjectFixture('app-with-utils');
 
     const p = new EmberAppPackage(project.baseDir);
@@ -578,5 +578,98 @@ describe('Unit | EmberAppPackageGraph', () => {
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonPackageName))).toBe(true);
 
     expect(someNode.content.synthetic, 'the node on the graph should be replaced').toBeFalsy();
+  });
+
+  describe('support .gjs file format', () => {
+    test('should parse a .gjs file', async () => {
+      const project = getEmberProject('app');
+
+      project.mergeFiles({
+        app: {
+          components: {
+            'example.gjs': `
+              import Component from '@glimmer/component';
+
+              const divide = () => 4 / 2;
+          
+              const First = <template>Hello</template>
+          
+              class Second extends Component {
+                <template>world</template>
+              }
+          
+              <template>
+                <First/>, <Second/>!
+              </template>
+            `,
+          },
+        },
+      });
+
+      await setupProject(project);
+      const p = new EmberAppPackage(project.baseDir);
+      const packageGraph: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
+
+      expect(packageGraph.hasNode('app/components/example.gjs')).toBeTruthy();
+    });
+
+    test('should have edges between imports from .gjs file', async () => {
+      const project = getEmberProject('app');
+
+      project.mergeFiles({
+        app: {
+          components: {
+            'trunk.gjs': `
+              import Branch from './branch'; 
+
+              <template>
+                <Branch/>
+              </template>
+            `,
+            'branch.gjs': `
+              import Component from '@glimmer/component';
+              import Leaf from './leaf';
+
+              export default class Branch extends Component {
+
+                get name() {
+                  return 'Littlest';
+                }
+
+                <template><Leaf @name={{this.name}}/></template>
+              };
+            `,
+            'leaf.gjs': `
+              const Flea = <template>
+                <p>Hello, {{@name}}!</p>
+              </template>;
+              
+              <template>
+                <Flea @name={{@name}}/>
+              </template>
+            `,
+          },
+        },
+      });
+
+      await setupProject(project);
+
+      const p = new EmberAppPackage(project.baseDir);
+      const options = {};
+      const packageGraph: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
+
+      const trunkNode = packageGraph.getNode('app/components/trunk.gjs');
+      const branchNode = packageGraph.getNode('app/components/branch.gjs');
+      const leafNode = packageGraph.getNode('app/components/leaf.gjs');
+
+      expect(
+        trunkNode.adjacent.has(branchNode),
+        'root.gjs should have edge with branch.gjs'
+      ).toBeTruthy();
+      expect(
+        branchNode.adjacent.has(leafNode),
+        'branch.gjs should have edge with leaf.gjs'
+      ).toBeTruthy();
+    });
   });
 });

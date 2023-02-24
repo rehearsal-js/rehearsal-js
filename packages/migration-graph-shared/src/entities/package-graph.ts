@@ -31,7 +31,6 @@ export type PackageGraphOptions = {
   parent?: GraphNode<PackageNode>;
   project?: ProjectGraph;
 };
-
 export class PackageGraph {
   protected baseDir: string;
   protected package: Package;
@@ -83,12 +82,14 @@ export class PackageGraph {
     // TODO get entrypoint  Package (maybePckage) and instantiate with that value if provided from API.
     const target = entrypoint ? [entrypoint] : [...include];
 
+    const resolveOptions = this.resolveOptions;
     DEBUG_CALLBACK('Executing dependency-cruiser');
     DEBUG_CALLBACK('Target: %O', target);
-    DEBUG_CALLBACK('Options: %O', cruiseOptions);
+    DEBUG_CALLBACK('cruiseOptions: %O', cruiseOptions);
+    DEBUG_CALLBACK('resolveOptions: %O', resolveOptions);
 
     try {
-      result = cruise(target, cruiseOptions, this.resolveOptions);
+      result = cruise(target, cruiseOptions, resolveOptions);
     } catch (error) {
       throw new Error(`Unable to cruise: ${error}`);
     }

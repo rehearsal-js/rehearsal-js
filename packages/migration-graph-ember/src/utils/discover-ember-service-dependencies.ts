@@ -1,6 +1,10 @@
 import { join, extname } from 'path';
-import { parseFileSync } from '@swc/core';
+import { readFileSync } from 'fs-extra';
+import { parseSync } from '@swc/core';
 import debug from 'debug';
+
+import { transformGjs } from './transform-gjs';
+
 import type {
   CallExpression,
   ClassDeclaration,
@@ -26,21 +30,30 @@ const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:discover-ember-ser
 
 const EMPTY_RESULT: EmberInferredServiceDependency[] = [];
 
+const SUPPORTED_EXT = new Set(['.js', '.gjs']);
+
 export function discoverServiceDependencies(
   baseDir: string,
   pathToFile: string
 ): EmberInferredServiceDependency[] {
   const filePath = join(baseDir, pathToFile);
-
+  const ext = extname(filePath);
   // TODO Evaluate if we need service discovery of TS files. Currently this parser doesn't work for typescript source.
-  if (extname(filePath) !== '.js') {
+  if (!SUPPORTED_EXT.has(ext)) {
+    throw new Error(`File ${ext} not supported.`);
     return EMPTY_RESULT;
+  }
+
+  let source = readFileSync(filePath, 'utf-8');
+
+  if (ext === '.gjs') {
+    source = transformGjs(filePath, source);
   }
 
   let parsed;
 
   try {
-    parsed = parseFileSync(filePath, {
+    parsed = parseSync(source, {
       syntax: 'ecmascript',
       decorators: true,
       decoratorsBeforeExport: true,

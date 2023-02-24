@@ -261,4 +261,41 @@ describe('discoverServiceDependencies', () => {
     const discovered = results[0];
     expect(discovered.serviceName).toBe('locale');
   });
+
+  test('should support .gjs file extension', () => {
+    const source = `
+      import Component from '@glimmer/component';
+      import { inject as service } from '@ember/service';
+
+      const Greeting = <template>Hello</template>
+
+      class Salutation extends Component {
+        @service locale;
+
+
+        get thing() {
+          this.locale.getLocale();
+        }
+
+        <template>
+          <Greeting/> from {{this.thing}}
+        </template>
+      }
+
+      export default Salutation;
+    `;
+
+    const files = {
+      'component.gjs': source,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.gjs');
+
+    expect(results).toBeTruthy();
+    expect(results?.length).toBe(1);
+    const discovered = results[0];
+    expect(discovered.serviceName).toBe('locale');
+  });
 });

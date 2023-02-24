@@ -30,7 +30,7 @@ export class EmberAppPackage extends Package implements IPackage {
       ...this.addonPaths,
     ]);
 
-    this.includePatterns = new Set(['.']); // No longer isolate this to the app directory, include all files in dir.
+    this.includePatterns = new Set(['.', '**/*.gjs']); // No longer isolate this to the app directory, include all files in dir.
   }
 
   get addonPaths(): Array<string> {

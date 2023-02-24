@@ -306,6 +306,7 @@ export class EmberAppPackageGraph extends PackageGraph {
       fileSystem: new CachedInputFileSystem(fs, 4000),
       resolveDeprecations: false,
       alias: alias,
+      extensions: ['.js', '.gjs'], // Add .gjs extension so this will be crawled by dependency-cruiser
     };
   }
 }
