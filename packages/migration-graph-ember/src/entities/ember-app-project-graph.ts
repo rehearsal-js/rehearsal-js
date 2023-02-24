@@ -258,6 +258,13 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const { root, found } = this.findProjectPackages();
 
+    root.addExcludePattern(...this.exclude);
+    root.addIncludePattern(...this.include);
+
+    DEBUG_CALLBACK('Root Package is %s', root.constructor.name);
+    DEBUG_CALLBACK('%s.excludePatterns', root.constructor.name, root.excludePatterns);
+    DEBUG_CALLBACK('%s.includePatterns', root.constructor.name, root.includePatterns);
+
     const rootNode = this.addPackageToGraph(root);
 
     // Get rootPackage and add it to the graph.
