@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Graph, ModuleNode, readPackageJson } from '@rehearsal/migration-graph-shared';
 
 import {
