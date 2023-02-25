@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import debug, { type Debugger } from 'debug';
 import { Graph, ModuleNode, readPackageJson } from '@rehearsal/migration-graph-shared';
 
