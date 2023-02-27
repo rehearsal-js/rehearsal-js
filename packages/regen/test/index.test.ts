@@ -1,10 +1,13 @@
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { copyFileSync, mkdirSync, rmSync, readFileSync, existsSync } from 'node:fs';
 import { Reporter } from '@rehearsal/reporter';
 import { describe, test, beforeEach, afterEach, expect } from 'vitest';
 import { outputFileSync } from 'fs-extra/esm';
 import { regen, RegenInput } from '../src/index.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const basePath = resolve(__dirname);
 const expectedDir = resolve(basePath, 'fixtures', 'output');
 const srcDir = resolve(basePath, 'fixtures', 'src');
