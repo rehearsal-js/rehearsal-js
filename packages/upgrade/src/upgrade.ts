@@ -8,7 +8,7 @@ import {
 import { Reporter } from '@rehearsal/reporter';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
-import { debug } from 'debug';
+import debug from 'debug';
 import type { Logger } from 'winston';
 
 export type UpgradeInput = {
