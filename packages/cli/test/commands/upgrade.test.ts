@@ -1,12 +1,16 @@
-import { join, resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { join, resolve, dirname } from 'node:path';
+import { existsSync, rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { type Report } from '@rehearsal/reporter';
 import { execa } from 'execa';
-import { readJSONSync, rmSync } from 'fs-extra/esm';
+import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
 
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
 

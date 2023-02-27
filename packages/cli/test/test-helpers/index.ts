@@ -1,8 +1,10 @@
-import { join, resolve } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
 import { Readable } from 'stream';
+import { rmSync, realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { copySync } from 'fs-extra/esm';
 import { execa } from 'execa';
 import which from 'which';
-import { rmSync, copySync, realpathSync } from 'fs-extra/esm';
 import { dirSync } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
 import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
@@ -11,6 +13,8 @@ import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src
 import type { Options, ExecaChildProcess } from 'execa';
 
 const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const PNPM_PATH = which.sync('pnpm');
 
