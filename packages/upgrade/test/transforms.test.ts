@@ -1,9 +1,13 @@
 import { copyFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { parse, resolve } from 'node:path';
+import { parse, resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import { upgrade } from '../src/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Test transform', function () {
   const basePath = resolve(__dirname, 'fixtures', 'transforms');
