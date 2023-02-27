@@ -1,4 +1,5 @@
 import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import ts, {
   type CodeActionCommand,
   type CodeFixAction,
@@ -9,6 +10,9 @@ import ts, {
 } from 'typescript';
 import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
