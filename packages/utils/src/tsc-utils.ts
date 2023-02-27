@@ -1,9 +1,4 @@
-import {
-  isClassDeclaration,
-  isInterfaceDeclaration,
-  isTypeAliasDeclaration,
-  SyntaxKind,
-} from 'typescript';
+import ts from 'typescript';
 import type {
   ClassDeclaration,
   ClassElement,
@@ -17,6 +12,8 @@ import type {
   TypeElement,
   TypeLiteralNode,
 } from 'typescript';
+
+const { isClassDeclaration, isInterfaceDeclaration, isTypeAliasDeclaration, SyntaxKind } = ts;
 
 export function getInterfaceByName(
   sourceFile: SourceFile,

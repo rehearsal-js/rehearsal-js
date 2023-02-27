@@ -1,13 +1,14 @@
 import { join, resolve } from 'node:path';
-import { readFileSync, writeJSONSync, readJSONSync, existsSync } from 'fs-extra';
+import { readFileSync, existsSync } from 'node:fs';
+import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
-import { parse } from 'json5';
+import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
-import { glob } from 'glob';
+import glob from 'glob';
 import { execa, execaSync } from 'execa';
 
 import findup = require('findup-sync');
@@ -89,7 +90,7 @@ export function msToSeconds(ms: number): number {
 export function readJSON<T>(file: string): T | undefined {
   const text = readText(file);
   if (text !== undefined) {
-    return parse(text);
+    return json5.parse(text);
   }
 }
 
