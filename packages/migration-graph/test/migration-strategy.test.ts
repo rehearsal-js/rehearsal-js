@@ -233,6 +233,8 @@ describe('migration-strategy', () => {
       expect(actual).toStrictEqual([
         'addon/components/greet.js',
         'tests/acceptance/addon-template-test.js',
+        'tests/dummy/app/app.js',
+        'tests/dummy/app/router.js',
         'tests/test-helper.js',
       ]);
       expect(strategy.sourceType).toBe(SourceType.EmberAddon);

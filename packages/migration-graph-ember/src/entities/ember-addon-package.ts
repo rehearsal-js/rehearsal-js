@@ -33,7 +33,7 @@ export class EmberAddonPackage extends EmberAppPackage {
       'ember-config',
       '@ember/*',
       'public',
-      'app', // Addons app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
+      '^app', // Addons ^app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
     ];
 
     const excludeFiles = [
