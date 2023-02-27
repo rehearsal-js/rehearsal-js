@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { readJSONSync } from 'fs-extra';
+import { readJSONSync } from 'fs-extra/esm';
 import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
 import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';

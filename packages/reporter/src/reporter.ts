@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
+import ts from 'typescript';
 import {
   type Report,
   type ReportFormatter,
@@ -12,6 +12,8 @@ import {
 import { normalizeFilePath } from './normalize-paths.js';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
+
+const { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } = ts;
 
 type ReporterMeta = {
   projectName: string;

@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readJSONSync } from 'fs-extra';
+import { readJSONSync } from 'fs-extra/esm';
 import { describe, expect, test } from 'vitest';
 
 import { sonarqubeFormatter } from '../src/index.js';
