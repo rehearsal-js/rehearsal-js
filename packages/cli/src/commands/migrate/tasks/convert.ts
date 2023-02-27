@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { Logger } from 'winston';
-import { debug } from 'debug';
+import debug from 'debug';
 import chalk from 'chalk';
 import { execa } from 'execa';
 import {

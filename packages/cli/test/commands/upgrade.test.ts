@@ -1,12 +1,14 @@
 import { join, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { type Report } from '@rehearsal/reporter';
 import { execa } from 'execa';
-import { existsSync, readJSONSync, rmSync } from 'fs-extra';
+import { readJSONSync, rmSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getLatestTSVersion, git } from '@rehearsal/utils';
+import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
 
-import packageJson from '../../package.json';
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
+
+const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against

@@ -1,5 +1,5 @@
-import { readFileSync } from "fs";
-import { parse } from "json5";
+import { readFileSync } from "node:fs";
+import json5 from "json5";
 import { execa } from 'execa';
 
 interface GitDescribe {
@@ -30,7 +30,7 @@ function msToSeconds(ms: number): number {
 function readJSON<TJson = unknown>(file: string): TJson | undefined {
   const text = readText(file);
   if (text !== undefined) {
-    return parse(text);
+    return json5.parse(text);
   }
 }
 

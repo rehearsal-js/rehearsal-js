@@ -10,8 +10,7 @@ import {
   resetFiles,
   ensureAbsolutePath,
 } from '@rehearsal/utils';
-import { readJsonSync } from 'fs-extra';
-import { version } from '../../../package.json';
+import { readJsonSync } from 'fs-extra/esm';
 import {
   initTask,
   depInstallTask,
@@ -26,6 +25,8 @@ import {
 
 import { sequentialTask } from './tasks/sequential.js';
 import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
+
+const { version } = readJsonSync('package.json') as { version: string };
 
 export const migrateCommand = new Command();
 

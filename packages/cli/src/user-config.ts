@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { addDep } from '@rehearsal/utils';
 import { execa } from 'execa';
-import { readJSONSync } from 'fs-extra';
+import { readJSONSync } from 'fs-extra/esm';
 import type {
   MigrateCommandConfig,
   UpgradeCommandConfig,

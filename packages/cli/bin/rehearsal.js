@@ -1,3 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable no-undef */
 
-require('../dist/src').rehearsal.parse(process.argv);
+import { rehearsal } from '../dist/src/index.js';
+
+rehearsal.parse(process.argv);

@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
-import { readJSONSync, writeJSONSync, existsSync, writeFileSync } from 'fs-extra';
+import { existsSync } from 'node:fs';
+import { readJSONSync, writeJSONSync, writeFileSync } from 'fs-extra/esm';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 

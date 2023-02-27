@@ -4,7 +4,7 @@ import {
   getMigrationStrategy,
   type SourceFile,
 } from '@rehearsal/migration-graph';
-import { debug } from 'debug';
+import debug from 'debug';
 
 import { determineProjectName, validateUserConfig } from '@rehearsal/utils';
 import { UserConfig } from '../../../user-config.js';

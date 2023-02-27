@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync, readdirSync, writeFileSync } from 'fs-extra';
+import { writeJSONSync, readdirSync, writeFileSync } from 'fs-extra/esm';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import { cosmiconfigSync } from 'cosmiconfig';
 

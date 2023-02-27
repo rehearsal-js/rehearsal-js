@@ -1,8 +1,13 @@
 import { resolve, extname } from 'node:path';
 import { ESLint } from 'eslint';
-import { outputFileSync, readJSONSync } from 'fs-extra';
+import { outputFileSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
-import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
+import {
+  determineProjectName,
+  getEsLintConfigPath,
+  gitAddIfInRepo,
+  readJSON,
+} from '@rehearsal/utils';
 import { stringify as yamlStringify } from 'yaml';
 import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
@@ -23,7 +28,7 @@ enum FORMAT {
   NO_EXTENSION = '',
 }
 
-const DEFAULT_ESLINT_CONFIG = readJSONSync(resolve('../../../configs/eslint-default.json'));
+const DEFAULT_ESLINT_CONFIG = readJSON(resolve('../../../configs/eslint-default.json'));
 
 export async function lintConfigTask(
   options: MigrateCommandOptions,

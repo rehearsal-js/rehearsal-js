@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync, readdirSync } from 'fs-extra';
+import { readJSONSync, writeJSONSync, readdirSync } from 'fs-extra/esm';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';

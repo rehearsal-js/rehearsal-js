@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { createFileSync, rmSync, writeFileSync } from 'fs-extra';
+import { createFileSync, rmSync, writeFileSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 

@@ -3,7 +3,7 @@
 import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
-import { debug } from 'debug';
+import debug from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { execa } from 'execa';
@@ -19,9 +19,11 @@ import {
   gitIsRepoDirty,
   parseCommaSeparatedList,
   parseTsVersion,
+  readJSON,
 } from '@rehearsal/utils';
-import { version } from '../../package.json';
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
+
+const { version } = readJSON('../../package.json') as { version: string };
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();

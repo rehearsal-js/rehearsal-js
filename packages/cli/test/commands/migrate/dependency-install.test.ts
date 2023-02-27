@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync, existsSync } from 'fs-extra';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 
 import { depInstallTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';

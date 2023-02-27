@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readdirSync, readJSONSync } from 'fs-extra';
+import { readdirSync, readJSONSync } from 'fs-extra/esm';
 import { createLogger, format, transports } from 'winston';
 import {
   initTask,

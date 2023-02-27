@@ -2,14 +2,15 @@ import { join, resolve } from 'node:path';
 import { Readable } from 'stream';
 import { execa } from 'execa';
 import which from 'which';
-import { rmSync, copySync, realpathSync } from 'fs-extra';
+import { rmSync, copySync, realpathSync } from 'fs-extra/esm';
 import { dirSync } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
-import { git, gitIsRepoDirty } from '@rehearsal/utils';
-import packageJson from '../../package.json';
+import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
 import type { Options, ExecaChildProcess } from 'execa';
+
+const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
 
 export const PNPM_PATH = which.sync('pnpm');
 
