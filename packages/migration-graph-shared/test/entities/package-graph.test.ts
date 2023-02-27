@@ -1,16 +1,17 @@
 import { join } from 'node:path';
+import { mkdirSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
-import { mkdirSync } from 'fs-extra/esm';
 import { sync as rimraf } from 'rimraf';
-import { dirSync, setGracefulCleanup } from 'tmp';
+import tmp from 'tmp';
 import { Package } from '../../src/entities/package.js';
 import { Graph, GraphNode } from '../../src/graph/index.js';
 import { PackageGraph } from '../../src/entities/package-graph.js';
+
 import type { ModuleNode, PackageNode } from '../../src/types.js';
 
-setGracefulCleanup();
+tmp.setGracefulCleanup();
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {
@@ -22,7 +23,7 @@ describe('PackageGraph', () => {
   const testSuiteTmpDir = join(process.cwd(), 'tmp');
 
   function getTmpDir(): string {
-    const { name: tmpDir } = dirSync({ tmpdir: testSuiteTmpDir });
+    const { name: tmpDir } = tmp.dirSync({ tmpdir: testSuiteTmpDir });
     return tmpDir;
   }
 

@@ -1,5 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join, dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function json(jsonObj = {}) {
   return JSON.stringify(jsonObj, null, 2);
@@ -18,7 +22,7 @@ const PACKAGE_FIXTURE_NAMES = {
 const PACKAGE_FIXTURES: { [key: string]: any } = {};
 
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
-  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.js': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
     version: '1.0.0',
@@ -30,7 +34,7 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE] = {
 };
 
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT] = {
-  'index.ts': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.ts': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
     version: '1.0.0',
@@ -52,7 +56,7 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT] = {
 };
 
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_TSCONFIG_BUT_NO_FILES] = {
-  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.js': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
     version: '1.0.0',
@@ -74,7 +78,7 @@ PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PACKAGE_TSCONFIG_BUT_NO_FILES] = {
 };
 
 PACKAGE_FIXTURES[PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE_WITH_DEPENDENCIES] = {
-  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.js': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: PACKAGE_FIXTURE_NAMES.PLAIN_PACKAGE,
     version: '1.0.0',
