@@ -1,4 +1,5 @@
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import findupSync from 'findup-sync';
 import tmp from 'tmp';
 import { Project } from 'fixturify-project';
@@ -11,6 +12,8 @@ import {
 
 tmp.setGracefulCleanup();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const maybePackageJson = findupSync('./package.json', { cwd: __dirname });
 
 if (!maybePackageJson) {
