@@ -23,6 +23,24 @@ exports[`regen > should generate correct rehearsal comments for a group of files
   {
     \\"analysisTarget\\": \\"tmp/test3.ts\\",
     \\"type\\": 0,
+    \\"ruleId\\": \\"TS6133\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'baz' is declared but its value is never read.\\",
+    \\"hint\\": \\"The variable 'baz' is never read or used. Remove the variable or use it.\\",
+    \\"hintAdded\\": true,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"baz\\",
+    \\"helpUrl\\": \\"https://stackoverflow.com/search?tab=votes&q=TS6133\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 9,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 9,
+      \\"endColumn\\": 8
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"type\\": 0,
     \\"ruleId\\": \\"TS2322\\",
     \\"category\\": \\"Error\\",
     \\"message\\": \\"Type 'number' is not assignable to type 'string'.\\",
@@ -32,9 +50,9 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     \\"nodeText\\": \\"baz\\",
     \\"helpUrl\\": \\"https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum\\",
     \\"nodeLocation\\": {
-      \\"startLine\\": 10,
+      \\"startLine\\": 11,
       \\"startColumn\\": 1,
-      \\"endLine\\": 10,
+      \\"endLine\\": 11,
       \\"endColumn\\": 4
     }
   },
@@ -50,9 +68,9 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     \\"nodeText\\": \\"\\",
     \\"helpUrl\\": \\"\\",
     \\"nodeLocation\\": {
-      \\"startLine\\": 10,
+      \\"startLine\\": 11,
       \\"startColumn\\": 1,
-      \\"endLine\\": 10,
+      \\"endLine\\": 11,
       \\"endColumn\\": 4
     }
   }
