@@ -1,9 +1,11 @@
-import { isClassDeclaration, isInterfaceDeclaration } from 'typescript';
+import ts from 'typescript';
 import { describe, expect, test } from 'vitest';
 
 import { getClassMemberByName } from '../../src/index.js';
 import { setupTest } from '../helpers.js';
 import type { ClassDeclaration } from 'typescript';
+
+const { isClassDeclaration, isInterfaceDeclaration } = ts;
 
 describe('Test getClassMemberByName', () => {
   const { sourceFile } = setupTest(__filename);

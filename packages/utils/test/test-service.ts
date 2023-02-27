@@ -44,8 +44,10 @@ class TestService {
   };
 
   getTypeChecker = (): TypeChecker => this.program.getTypeChecker();
-  getSourceFile = (fileName: string): SourceFile | undefined =>
-    this.program.getSourceFile(fileName);
+  getSourceFile = (fileName: string): SourceFile | undefined => {
+    const sourceFile = this.program.getSourceFile(fileName);
+    return sourceFile;
+  };
   getBasePath = (): string => this.basePath;
 }
 const testService = TestService.getInstance(__dirname);
