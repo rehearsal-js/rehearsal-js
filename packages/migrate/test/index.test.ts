@@ -1,11 +1,15 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
 import { migrate, MigrateInput } from '../src/index.js';
 import type { Logger } from 'winston';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('migrate', () => {
   let sourceFiles: string[] = [];
