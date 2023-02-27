@@ -1,6 +1,6 @@
 import { dirname, resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
-import { sync as fastGlobSync } from 'fast-glob';
+import fastGlob from 'fast-glob';
 import { Graph, GraphNode } from '../graph/index.js';
 import { isWorkspace } from '../../src/utils/workspace.js';
 import { Package } from './package.js';
@@ -196,7 +196,7 @@ export class ProjectGraph {
     const pathToRoot = this.rootDir;
     const cwd = this.rootDir;
 
-    let pathToPackageJsonList = fastGlobSync(
+    let pathToPackageJsonList = fastGlob.sync(
       [
         ...globs.map((glob) => `${glob}/package.json`),
         `!${pathToRoot}/**/build/**`,

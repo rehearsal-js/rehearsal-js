@@ -1,7 +1,8 @@
 import { resolve, join, relative } from 'node:path';
-import { existsSync, readJsonSync, writeJsonSync } from 'fs-extra';
+import { existsSync } from 'node:fs';
+import { readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import sortPackageJson from 'sort-package-json';
-import { sync as fastGlobSync } from 'fast-glob';
+import fastGlob from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo.js';
 import { getWorkspaceGlobs } from '../utils/workspace.js';
@@ -280,9 +281,9 @@ export class Package implements IPackage {
     }
 
     // if there's a tsconfig
-    const hasTSConfig = fastGlobSync('tsconfig.json', fastGlobConfig);
+    const hasTSConfig = fastGlob.sync('tsconfig.json', fastGlobConfig);
     // if there aren't any .js files in addon (minus the ignore list)
-    const hasJS = fastGlobSync('**/*.js', fastGlobConfig);
+    const hasJS = fastGlob.sync('**/*.js', fastGlobConfig);
 
     if (!!hasTSConfig?.length && !hasJS?.length) {
       return true;

@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import { realpathSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import debug, { type Debugger } from 'debug';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -25,7 +25,7 @@ function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
 }
 
 function resolveRelative(baseDir: string, somePath: string): string {
-  return relative(fs.realpathSync(baseDir), fs.realpathSync(join(baseDir, somePath)));
+  return relative(realpathSync(baseDir), realpathSync(join(baseDir, somePath)));
 }
 
 export type PackageGraphOptions = {

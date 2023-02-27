@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getLibrary } from '@rehearsal/test-support';
 import fixturify from 'fixturify';
-import { mkdirSync } from 'fs-extra';
+import { mkdirSync } from 'fs-extra/esm';
 import { sync as rimraf } from 'rimraf';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { Package } from '../../src/entities/package.js';

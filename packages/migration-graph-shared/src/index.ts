@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readJsonSync } from 'fs-extra';
+import { readJsonSync } from 'fs-extra/esm';
 
 export function readPackageJson(pathToPackage: string): Record<string, unknown> {
   return readJsonSync(resolve(pathToPackage, 'package.json'));
