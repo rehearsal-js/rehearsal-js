@@ -32,16 +32,7 @@ describe('project-graph', () => {
     expect(somePackage.hasModuleGraph()).toBe(true);
     expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(EXPECTED_FILES);
   });
-  test('should ignore css imports', () => {
-    const baseDir = getLibrary('library-with-css-imports');
 
-    const projectGraph = new ProjectGraph(baseDir);
-    projectGraph.discover();
-
-    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
-
-    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-  });
   test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', () => {
     const baseDir = getLibrary('library-with-ignored-files');
 

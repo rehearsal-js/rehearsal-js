@@ -28,7 +28,7 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeFalsy;
   });
 
-  test('should return nothing if a file cannot be parsed', () => {
+  test('should return EMPTY_RESULT if a file cannot be parsed', () => {
     const files = {
       'component.js': `
         import Component form '@glimmer/component';
@@ -39,6 +39,18 @@ describe('discoverServiceDependencies', () => {
     fixturify.writeSync(tmpDir, files);
 
     const results = discoverServiceDependencies(tmpDir, 'component.js');
+
+    expect(results).toStrictEqual([]);
+  });
+
+  test('should return EMPTY_RESULT if unsupported file extension', () => {
+    const files = {
+      'component.graphql': ``,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.graphql');
 
     expect(results).toStrictEqual([]);
   });
