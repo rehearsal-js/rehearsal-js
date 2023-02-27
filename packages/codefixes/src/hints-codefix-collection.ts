@@ -1,11 +1,12 @@
-import {
+import ts, {
   type CodeFixAction,
   type DiagnosticWithLocation,
   type FileTextChanges,
-  flattenDiagnosticMessageText,
 } from 'typescript';
 import { ChangesFactory } from '@rehearsal/utils';
 import type { CodeFixCollection, CodeHintList, DiagnosticWithContext } from './types.js';
+
+const { flattenDiagnosticMessageText } = ts;
 
 /**
  * Don't actually fix the issue but adds a @ts-expect-error comments instead

@@ -10,7 +10,7 @@ import {
   getTypeDeclarationFromTypeSymbol,
   getTypeNameFromType,
 } from '@rehearsal/utils';
-import { isDeleteExpression, isInterfaceDeclaration, isPropertyAccessExpression } from 'typescript';
+import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type {
   CodeFixAction,
@@ -22,6 +22,8 @@ import type {
   TypeElement,
 } from 'typescript';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
+
+const { isPropertyAccessExpression, isDeleteExpression, isInterfaceDeclaration } = ts;
 
 const OPTIONAL_TOKEN = '?';
 

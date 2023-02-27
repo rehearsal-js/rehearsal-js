@@ -1,16 +1,16 @@
 import { dirname, resolve } from 'node:path';
-import {
+import ts, {
   type CodeActionCommand,
   type CodeFixAction,
   FileTextChanges,
   type FormatCodeSettings,
-  getDefaultFormatCodeSettings,
-  SemicolonPreference,
   TextChange,
   type UserPreferences,
 } from 'typescript';
 import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
+
+const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
 /**
  * Provides code fixes based on the Typescript's codefix collection.
