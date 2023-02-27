@@ -40,7 +40,6 @@ export function discoverServiceDependencies(
   const ext = extname(filePath);
   // TODO Evaluate if we need service discovery of TS files. Currently this parser doesn't work for typescript source.
   if (!SUPPORTED_EXT.has(ext)) {
-    throw new Error(`File ${ext} not supported.`);
     return EMPTY_RESULT;
   }
 

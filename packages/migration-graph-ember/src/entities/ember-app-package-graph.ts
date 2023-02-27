@@ -12,13 +12,11 @@ import {
   PackageGraphOptions,
   PackageNode,
 } from '@rehearsal/migration-graph-shared';
-import debug from 'debug';
+import debug, { type Debugger } from 'debug';
 import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies';
 import { EmberAppPackage } from './ember-app-package';
 import { EmberAddonPackage } from './ember-addon-package';
 import { EmberAppProjectGraph } from './ember-app-project-graph';
-
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-app-package-graph');
 
 export class SyntheticPackage extends Package implements IPackage {
   #graph: Graph<ModuleNode>;
@@ -40,8 +38,9 @@ export type EmberAppPackageGraphOptions = {
 } & PackageGraphOptions;
 
 export class EmberAppPackageGraph extends PackageGraph {
-  serviceLookup: Map<string, string>;
+  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
 
+  serviceLookup: Map<string, string>;
   package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
   project: EmberAppProjectGraph | undefined;
@@ -83,21 +82,21 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     const moduleNodeKey = m.key;
 
-    DEBUG_CALLBACK(
+    this.debug(
       `>>> attempting to addNode to packageGraph for: ${this.package.packageName}, with path:  ${moduleNodeKey}`
     );
 
     // Thus completing the self sustaining economy.
     if (this.graph.hasNode(moduleNodeKey)) {
-      DEBUG_CALLBACK(`>>> getNode ${moduleNodeKey}`);
+      this.debug(`>>> getNode ${moduleNodeKey}`);
       n = this.graph.getNode(moduleNodeKey);
 
       if (this.graph.getNode(moduleNodeKey)?.content.synthetic) {
-        DEBUG_CALLBACK(`>>> updateNode ${moduleNodeKey}`);
+        this.debug(`>>> updateNode ${moduleNodeKey}`);
         n = this.graph.updateNode(moduleNodeKey, m);
       }
     } else {
-      DEBUG_CALLBACK(`>>> addNode ${moduleNodeKey}`);
+      this.debug(`>>> addNode ${moduleNodeKey}`);
       n = this.graph.addNode(m);
     }
 
@@ -107,7 +106,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     const services = discoverServiceDependencies(this.baseDir, n.content.path);
 
-    DEBUG_CALLBACK('>>> SERVICES DISCOVERD', services);
+    this.debug('>>> SERVICES DISCOVERD', services);
 
     services.forEach((s) => {
       const maybePathToService = `app/services/${s.serviceName}.js`;
@@ -142,7 +141,7 @@ export class EmberAppPackageGraph extends PackageGraph {
         // Does it exist in package.json
         // If yes then it's truly external and we can ignore it
         if (this.package.dependencies[maybePackage]) {
-          DEBUG_CALLBACK(
+          this.debug(
             `Ignore! A resolution was found for serivce '${s.serviceName}' in file '${m.path}'.`
           );
           return;
@@ -155,13 +154,13 @@ export class EmberAppPackageGraph extends PackageGraph {
 
       // If we found an addonName we potentially have a resolution within project to a service implmentation
       if (s.addonName) {
-        DEBUG_CALLBACK(`Coordinates: s.addonName: ${s.addonName} for ${s.serviceName}`);
+        this.debug(`Coordinates: s.addonName: ${s.addonName} for ${s.serviceName}`);
         // Lookup the addonName in the package graph
         const maybeAddonPackageNode: GraphNode<PackageNode> | undefined =
           this.findPackageNodeByAddonName(s.addonName);
 
         if (maybeAddonPackageNode) {
-          DEBUG_CALLBACK('findPackageNodeByAddonName: %O', maybeAddonPackageNode);
+          this.debug('findPackageNodeByAddonName: %O', maybeAddonPackageNode);
         }
 
         if (maybeAddonPackageNode) {
@@ -175,8 +174,8 @@ export class EmberAppPackageGraph extends PackageGraph {
 
             const someServiceInAnInRepoAddon = join(emberAddonPackage.path, key);
 
-            DEBUG_CALLBACK(emberAddonPackage.path);
-            DEBUG_CALLBACK(someServiceInAnInRepoAddon);
+            this.debug(emberAddonPackage.path);
+            this.debug(someServiceInAnInRepoAddon);
 
             if (key) {
               const dest = emberAddonPackage.getModuleGraph().hasNode(key);
@@ -191,7 +190,7 @@ export class EmberAppPackageGraph extends PackageGraph {
               // Get this package Node<PackageNode> for this package.
 
               if (this.parent) {
-                DEBUG_CALLBACK('Adding edge between parent and addon');
+                this.debug('Adding edge between parent and addon');
                 this.project?.graph.addEdge(this.parent, maybeAddonPackageNode);
               }
             }
@@ -202,7 +201,7 @@ export class EmberAppPackageGraph extends PackageGraph {
             // get updated.
 
             if (this.parent) {
-              DEBUG_CALLBACK('Adding edge between parent and addon');
+              this.debug('Adding edge between parent and addon');
               this.project?.graph.addEdge(this.parent, maybeAddonPackageNode);
             }
           }
