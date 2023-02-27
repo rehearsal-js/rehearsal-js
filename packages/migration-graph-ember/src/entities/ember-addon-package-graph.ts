@@ -1,16 +1,16 @@
 import { resolve } from 'path';
 import { type IResolveOptions } from 'dependency-cruiser';
-import debug from 'debug';
+import debug, { type Debugger } from 'debug';
 
 import { getEmberAddonName } from '../utils/ember';
 import { EmberAddonPackage } from './ember-addon-package';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
 
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:ember-addon-package-graph');
-
 export type EmberAddonPackageGraphOptions = EmberAppPackageGraphOptions;
 
 export class EmberAddonPackageGraph extends EmberAppPackageGraph {
+  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+
   constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
     super(p, options);
   }
@@ -26,7 +26,7 @@ export class EmberAddonPackageGraph extends EmberAppPackageGraph {
 
     alias[addonName] = resolve(this.baseDir, 'addon');
 
-    DEBUG_CALLBACK({
+    this.debug({
       baseDir: this.baseDir,
       alias,
     });

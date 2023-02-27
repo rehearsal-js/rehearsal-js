@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+import debug, { type Debugger } from 'debug';
 import { Graph, ModuleNode, readPackageJson } from '@rehearsal/migration-graph-shared';
 
 import {
@@ -21,6 +20,8 @@ export class EmberAddonPackage extends EmberAppPackage {
   #moduleName: string | undefined;
   #addonName: string | undefined;
 
+  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
     super(pathToPackage, {
       ...options,
@@ -32,7 +33,7 @@ export class EmberAddonPackage extends EmberAppPackage {
       'ember-config',
       '@ember/*',
       'public',
-      'app', // Addons app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
+      '^app', // Addons ^app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
     ];
 
     const excludeFiles = [
@@ -77,6 +78,7 @@ export class EmberAddonPackage extends EmberAppPackage {
   }
 
   getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
+    this.debug('getModuleGraph');
     if (this.graph) {
       return this.graph;
     }

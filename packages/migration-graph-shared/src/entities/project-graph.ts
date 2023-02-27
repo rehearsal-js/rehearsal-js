@@ -1,12 +1,10 @@
 import { dirname, resolve } from 'path';
-import debug from 'debug';
+import debug, { type Debugger } from 'debug';
 import { sync as fastGlobSync } from 'fast-glob';
 import { Graph, GraphNode } from '../graph';
 import { isWorkspace } from '../../src/utils/workspace';
 import { Package } from './package';
 import type { PackageNode } from '../types';
-
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:project-graph');
 
 // TODO this package level dependency data should be surfaced in a report
 
@@ -24,6 +22,7 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
+  protected debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
   protected entrypoint: string | undefined;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
@@ -37,6 +36,7 @@ export class ProjectGraph {
       sourceType: 'JavaScript Library',
       ...options,
     };
+    this.debug(`rootDir: %s, options: %o`, rootDir, options);
 
     this.include = new Set(include);
     this.exclude = new Set(exclude);
@@ -62,7 +62,7 @@ export class ProjectGraph {
   }
 
   addPackageToGraph(p: Package, crawl = true): GraphNode<PackageNode> {
-    DEBUG_CALLBACK('addPackageToGraph: name: %s, path: %s', p.packageName, p.path);
+    this.debug('addPackageToGraph: name: %s, path: %s', p.packageName, p.path);
 
     const isConverted = p.isConvertedToTypescript('source-only');
 
@@ -81,7 +81,7 @@ export class ProjectGraph {
     }
 
     if (isConverted) {
-      DEBUG_CALLBACK('Package %s appears to been migrated to Typescript.', p.packageName);
+      this.debug('Package %s appears to been migrated to Typescript.', p.packageName);
     }
 
     // Find in-project dependnecies/devDepenencies
@@ -104,7 +104,7 @@ export class ProjectGraph {
     }
 
     if (this.hasDiscoveredEdges(pkg)) {
-      DEBUG_CALLBACK('Already processed "%s". Skip.', pkg.packageName);
+      this.debug('Already processed "%s". Skip.', pkg.packageName);
       return;
     }
 
@@ -112,7 +112,7 @@ export class ProjectGraph {
 
     this.visited.add(pkg);
 
-    DEBUG_CALLBACK(
+    this.debug(
       '"%s" depends on: %O',
       pkg.packageName,
       explicitDependencies.map((p) => p.packageName)
@@ -120,7 +120,7 @@ export class ProjectGraph {
 
     explicitDependencies.forEach((p: Package) => {
       const dest = this.addPackageToGraph(p);
-      DEBUG_CALLBACK('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
+      this.debug('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
       this.graph.addEdge(source, dest);
     });
   }
@@ -143,7 +143,7 @@ export class ProjectGraph {
     }
 
     if (deps) {
-      DEBUG_CALLBACK(
+      this.debug(
         'Found explicit depedencies for %s: %s',
         pkg.packageName,
         deps.map((p) => p.packageName)
@@ -180,8 +180,8 @@ export class ProjectGraph {
     rootPackage.addExcludePattern(...this.exclude);
     rootPackage.addIncludePattern(...this.include);
 
-    DEBUG_CALLBACK('RootPackage.excludePatterns', rootPackage.excludePatterns);
-    DEBUG_CALLBACK('RootPackage.includePatterns', rootPackage.includePatterns);
+    this.debug('RootPackage.excludePatterns', rootPackage.excludePatterns);
+    this.debug('RootPackage.includePatterns', rootPackage.includePatterns);
 
     const rootPackageNode = this.addPackageToGraph(rootPackage, false);
 
@@ -191,7 +191,7 @@ export class ProjectGraph {
       return [rootPackage];
     }
 
-    DEBUG_CALLBACK('ProjectGraph.globs %s', globs);
+    this.debug('ProjectGraph.globs %s', globs);
 
     const pathToRoot = this.rootDir;
     const cwd = this.rootDir;
@@ -210,7 +210,7 @@ export class ProjectGraph {
       }
     );
 
-    DEBUG_CALLBACK('found packages: %s', pathToPackageJsonList);
+    this.debug('found packages: %s', pathToPackageJsonList);
 
     pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
 
