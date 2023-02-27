@@ -1,6 +1,6 @@
 import { join, resolve } from 'path';
 import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
-import { writeJsonSync } from 'fs-extra';
+import { writeJsonSync } from 'fs-extra/esm';
 import sortPackageJson from 'sort-package-json';
 
 export function isApp(packageJson: PackageJson): boolean {

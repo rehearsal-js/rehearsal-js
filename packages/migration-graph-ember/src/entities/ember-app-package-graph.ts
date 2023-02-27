@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { join, resolve } from 'node:path';
-import { CachedInputFileSystem } from 'enhanced-resolve';
+import enhancedResolve from 'enhanced-resolve';
 import {
   Graph,
   GraphNode,
@@ -301,7 +301,7 @@ export class EmberAppPackageGraph extends PackageGraph {
     alias[appName] = appDir;
 
     return {
-      fileSystem: new CachedInputFileSystem(fs, 4000),
+      fileSystem: new enhancedResolve.CachedInputFileSystem(fs, 4000),
       resolveDeprecations: false,
       alias: alias,
       extensions: ['.js', '.gjs'], // Add .gjs extension so this will be crawled by dependency-cruiser

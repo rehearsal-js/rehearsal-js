@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
+
 import { type IResolveOptions } from 'dependency-cruiser';
 import debug, { type Debugger } from 'debug';
-import { ResolveOptions, CachedInputFileSystem } from 'enhanced-resolve';
+import enhancedResolve, CachedInputFileSystem, { type ResolveOptions } from 'enhanced-resolve';
 import { getEmberAddonName } from '../utils/ember.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph.js';
@@ -11,7 +12,7 @@ export type EmberAddonPackageGraphOptions = EmberAppPackageGraphOptions;
 
 export interface IResolveOptions extends ResolveOptions {
   bustTheCache?: boolean;
-  fileSystem: CachedInputFileSystem;
+  fileSystem: enhancedResolve.CachedInputFileSystem;
   resolveDeprecations: boolean;
 }
 

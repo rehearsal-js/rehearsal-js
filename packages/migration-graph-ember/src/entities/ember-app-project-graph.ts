@@ -1,5 +1,5 @@
 import { dirname, resolve } from 'node:path';
-import { sync as fastGlobSync } from 'fast-glob';
+import fastGlob from 'fast-glob';
 import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
@@ -195,7 +195,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     // This issue was discovered during a migration-graph.test.ts because we have a fixtures
     // directory.
 
-    let pathToPackageJsonList = fastGlobSync(
+    let pathToPackageJsonList = fastGlob.sync(
       [
         `**/package.json`,
         `!${pathToRoot}/**/build/**`,
