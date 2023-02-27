@@ -1,4 +1,5 @@
 import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   createProgram,
   findConfigFile,
@@ -7,6 +8,9 @@ import {
   sys,
 } from 'typescript';
 import type { Program, SourceFile, TypeChecker } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class TestService {
   private static instance: TestService;
