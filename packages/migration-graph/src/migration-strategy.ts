@@ -1,5 +1,5 @@
 import { join, relative } from 'node:path';
-import fs from 'fs-extra';
+import { realpathSync } from 'node:fs';
 import { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph.js';
 import { type SourceType } from './source-type.js';
@@ -76,7 +76,7 @@ export function getMigrationStrategy(
   rootDir: string,
   options?: MigrationStrategyOptions
 ): MigrationStrategy {
-  rootDir = fs.realpathSync(rootDir);
+  rootDir = realpathSync(rootDir);
   const { projectGraph, sourceType } = buildMigrationGraph(rootDir, options);
 
   const strategy = new MigrationStrategy(rootDir, sourceType);
@@ -108,7 +108,7 @@ export function getMigrationStrategy(
       // Iterate through each module (file) node
       ordered.forEach((moduleNode) => {
         const fullPath = join(packagePath, moduleNode.path);
-        const relativePath = relative(rootDir, fs.realpathSync(fullPath));
+        const relativePath = relative(rootDir, realpathSync(fullPath));
         const f = new SourceFile(fullPath, relativePath, packagePath);
         strategy.addFile(f);
       });
