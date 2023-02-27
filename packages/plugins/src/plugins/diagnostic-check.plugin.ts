@@ -5,7 +5,7 @@ import {
   PluginsRunnerContext,
   RehearsalService,
 } from '@rehearsal/service';
-import { debug } from 'debug';
+import debug from 'debug';
 import {
   DiagnosticCategory,
   findAncestor,

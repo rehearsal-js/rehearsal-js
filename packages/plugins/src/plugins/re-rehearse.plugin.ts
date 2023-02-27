@@ -1,6 +1,6 @@
 import { isLineBreak } from 'typescript';
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
-import { debug } from 'debug';
+import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
 
