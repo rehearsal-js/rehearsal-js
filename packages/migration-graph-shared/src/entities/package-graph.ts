@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { join, relative } from 'path';
-import debug from 'debug';
+import debug, { type Debugger } from 'debug';
 import {
   cruise,
   ICruiseOptions,
@@ -14,8 +14,6 @@ import { Graph, GraphNode } from '../graph';
 import { Package } from './package';
 import type { ModuleNode, PackageNode } from '../types';
 import type { ProjectGraph } from './project-graph';
-
-const DEBUG_CALLBACK = debug('rehearsal:migration-graph-shared:package-graph');
 
 function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
   // If it's a coreModule like `path` skip;
@@ -32,6 +30,8 @@ export type PackageGraphOptions = {
   project?: ProjectGraph;
 };
 export class PackageGraph {
+  protected debug: Debugger = debug(`rehearsal:migration-graph-sahred:${this.constructor.name}`);
+
   protected baseDir: string;
   protected package: Package;
   protected entrypoint?: string;
@@ -83,10 +83,10 @@ export class PackageGraph {
     const target = entrypoint ? [entrypoint] : [...include];
 
     const resolveOptions = this.resolveOptions;
-    DEBUG_CALLBACK('Executing dependency-cruiser');
-    DEBUG_CALLBACK('Target: %O', target);
-    DEBUG_CALLBACK('cruiseOptions: %O', cruiseOptions);
-    DEBUG_CALLBACK('resolveOptions: %O', resolveOptions);
+    this.debug('Executing dependency-cruiser');
+    this.debug('Target: %O', target);
+    // this.debug('cruiseOptions: %O', cruiseOptions);
+    // this.debug('resolveOptions: %O', { ...resolveOptions, fileSystem: undefined });
 
     try {
       result = cruise(target, cruiseOptions, resolveOptions);
@@ -94,12 +94,12 @@ export class PackageGraph {
       throw new Error(`Unable to cruise: ${error}`);
     }
 
-    DEBUG_CALLBACK(result);
+    this.debug(result);
 
     const output = result.output as ICruiseResult;
 
     output.modules.forEach((m: IModule) => {
-      DEBUG_CALLBACK(m);
+      this.debug(m);
 
       if (isExternalModule(m)) {
         return;
@@ -112,7 +112,7 @@ export class PackageGraph {
       const sourcePath = resolveRelative(baseDir, m.source);
 
       if (this.isFileExternalToPackage(sourcePath)) {
-        DEBUG_CALLBACK(
+        this.debug(
           `The target file "${sourcePath}" is external to package "${this.package.packageName}" (${baseDir}), omitting target file form package-graph.`
         );
         // Should resolve path completely relativeto the project and find which package it belongs to.
@@ -140,7 +140,7 @@ export class PackageGraph {
         const packageName = this.package.packageName;
 
         if (this.isFileExternalToPackage(targetPath)) {
-          DEBUG_CALLBACK(
+          this.debug(
             `The source file "${sourcePath}" is importing a file "${targetPath}" that is external to "${packageName}" package directory (${baseDir}), omitting target file ("${targetPath}") form package-graph.`
           );
           // TODO Should resolve this path to a package in the project?
