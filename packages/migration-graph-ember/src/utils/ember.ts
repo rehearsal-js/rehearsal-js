@@ -1,7 +1,10 @@
 import { join, resolve } from 'path';
+import { Module } from 'node:module';
 import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
 import { writeJsonSync } from 'fs-extra/esm';
 import sortPackageJson from 'sort-package-json';
+
+const require = Module.createRequire(import.meta.url);
 
 export function isApp(packageJson: PackageJson): boolean {
   return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
