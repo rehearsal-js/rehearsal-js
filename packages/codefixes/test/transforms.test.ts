@@ -39,11 +39,10 @@ describe('Test transform', function () {
     const expectedOutputFiles = getExpectedOutputFiles(codefixesFixesTransformFixtureDir);
 
     for (const expectedOutputFile of expectedOutputFiles) {
-      const expectedOutput = readFileSync(expectedOutputFile).toString();
       const filename = basename(expectedOutputFile).replace('.output', '');
       const actualOutput = readFileSync(resolve(upgradeProjectDir, `${filename}`)).toString();
 
-      expect(expectedOutput).toEqual(actualOutput);
+      expect(actualOutput).matchSnapshot();
     }
   });
 });

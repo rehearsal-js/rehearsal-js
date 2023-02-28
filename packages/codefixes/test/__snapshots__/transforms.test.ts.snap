@@ -1,0 +1,343 @@
+// Vitest Snapshot v1
+
+exports[`Test transform > addErrorTypeGuard 1`] = `
+"
+// Case #1: try ... catch
+
+const test = ['dummy'];
+
+try {
+  console.log('success');
+} catch (e) {
+  console.log((e as Error).message);
+/* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  console.log(e.notErrorMember);
+
+  if ((e as Error).name === 'Test') {
+    console.log((e as Error).name);
+    console.log((e as Error)  .name);
+    console.log((e as Error).  name);
+    console.log((e as Error) . name);
+  }
+
+  if (test[1] === undefined && (e as Error).name === 'Test') {
+    console.log((e as Error).name);
+  }
+}
+
+
+// Case #2: not a try catch
+
+function getObject<T>(): T {
+  const object = ['dummy'];
+  return object as unknown as T;
+}
+
+const dummy = getObject();
+
+/* @ts-expect-error @rehearsal TODO TS18046: 'dummy' is of type 'unknown'. */
+dummy.key;
+"
+`;
+
+exports[`Test transform > addMissingTypesBasedOnInheritance 1`] = `
+"// Basics
+
+class Animal {
+  title: string = '';
+
+  test(test: string): string {
+    return test;
+  }
+
+  say(message: string): string {
+    return message;
+  }
+
+  feed(food: Food, quantity: number): boolean {
+    console.log(food, quantity);
+    return false;
+  }
+}
+
+interface Wild {
+  wild(place: string): string;
+}
+
+interface Happy {
+  happy(num: number): void;
+}
+
+class Food {
+  title: string;
+
+  constructor(title: string) {
+    this.title = title;
+  }
+}
+
+class Dog extends Animal {
+  say(message: string) {
+    console.log(message);
+    return 'bar';
+  }
+}
+
+export class WildDog extends Dog implements Wild, Happy {
+  say(message: string) {
+    console.log(message);
+    return 'bar';
+  }
+
+  override feed(food: Food, quantity: number) {
+    console.log(food, quantity);
+    return true;
+  }
+
+  wild(place: string) {
+    return place;
+  }
+
+  happy(num: number) {
+    console.log(num);
+  }
+}
+
+export class Cat extends Animal {
+  override say(text: string) {
+    console.log(text);
+    return 'meo';
+  }
+
+  feed(something: Food) {
+    console.log(something);
+    return false;
+  }
+}
+
+// Generics
+
+type Thing = {
+  foo: number;
+};
+
+// Generic Interfaces
+
+interface GenericThingInterface<A = number, B = string> {
+  thing(a: A, b: B): void;
+}
+
+interface ConstrainedThingInterface<C extends Thing> {
+  thing(c: C): void;
+}
+
+export class GenericThingImp1 implements GenericThingInterface {
+  thing(a: number, b: string) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
+  thing(a: boolean, b: number) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
+  thing(c: { foo: number; bar: string; }) {
+    console.log(c);
+  }
+}
+
+// Generic Classes
+
+class GenericThingClass<A = number, B = string> {
+  thing(a: A, b: B) {
+    console.log(a, b);
+  }
+}
+
+class ConstrainedThingClass<C extends Thing> {
+  thing(c: C) {
+    console.log(c);
+  }
+}
+
+export class GenericThingExt1 extends GenericThingClass {
+  thing(a: number, b: string) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingExt2 extends GenericThingClass<boolean, number> {
+  thing(a: boolean, b: number) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
+  thing(c: { foo: number; bar: string; }) {
+    console.log(c);
+  }
+}
+
+// Multiple signatures
+
+interface MultipleInterface {
+  foo(a: number): number;
+  foo(b: string): string;
+  foo(a: number, b: string): boolean;
+
+  moo(a: string): string;
+}
+
+class MultipleClass {
+  boo(a: number): number;
+  boo(b: string): string;
+  boo(a: number, b: string): boolean;
+  boo(ab: number | string, b?: string): number | string | boolean {
+    return !ab || !b;
+  }
+}
+
+export class MultipleImpl extends MultipleClass implements MultipleInterface {
+/* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  boo(ab, b?) {
+    return !ab || !b;
+  }
+
+/* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  foo(ab, b?) {
+    return !ab || !b;
+  }
+
+  moo(b: string) {
+    return b;
+  }
+}
+"
+`;
+
+exports[`Test transform > makeMemberOptional 1`] = `
+"export interface Animal {
+  species: string;
+  weight?: number;
+}
+
+export interface Car {
+  make: string;
+  model: string;
+  color?: string;
+}
+"
+`;
+
+exports[`Test transform > makeMemberOptional 2`] = `
+"export class Employee {
+  name: string;
+  badgeNumber?: string;
+
+  constructor({name, badgeNumber} : { name: string; badgeNumber: string }) {
+    this.name = name;
+    this.badgeNumber = badgeNumber;
+  }
+}"
+`;
+
+exports[`Test transform > makeMemberOptional 3`] = `
+"export interface Rabbit {
+    color?: string;
+    species: string;
+    name: string;
+}
+
+export function feedRabbit(rabbit: Rabbit) {
+    console.log(\`Rabbit \${rabbit.name} loves to eat fruit, not hay.\`);
+}"
+`;
+
+exports[`Test transform > makeMemberOptional 4`] = `
+"export default interface Human {
+  height?: number;
+  weight: number;
+}"
+`;
+
+exports[`Test transform > makeMemberOptional 5`] = `
+"import { Animal, Car } from './2790-import-1';
+import { Employee } from './2790-import-2';
+import * as RabbitStuff from './2790-import-3';
+import Human from './2790-import-4';
+
+const animal: Animal = {
+    species: 'dog',
+    weight: 90,
+};
+
+delete animal.weight;
+
+const car: Car = {
+    make: 'Ford',
+    model: 'Focus',
+    color: 'red',
+};
+
+delete car.color;
+
+const employee = new Employee({name: 'Victor', badgeNumber: '12345'});
+delete employee.badgeNumber;
+
+const human: Human = {
+  weight: 200,
+  height: 180,
+};
+delete human.height;
+
+const rabbit: RabbitStuff.Rabbit = {
+  color: 'butterscotch',
+  species: 'Holland Lop',
+  name: 'Poca',
+};
+delete rabbit.color;
+
+interface Person {
+    name: string;
+    age?: number;
+    address?: string | null;
+}
+
+const person:Person = {
+    name: 'Jane',
+    age: 10,
+    address: '123 Happy St'
+};
+
+delete person.address;
+
+class Student{
+    name: string;
+    grade: number;
+    gender?: string;
+
+    constructor({name, grade, gender}: { name: string; grade: number; gender: string }) {
+        this.name = name;
+        this.grade = grade;
+        this.gender = gender;
+    }
+}
+const student = new Student({name: '', grade: 3, gender: 'male'});
+delete student.gender;
+
+type Tree = {
+  species: string;
+  age: number;
+  height?: number;
+}
+
+const oak: Tree = {
+  species: 'oak',
+  age: 150,
+  height: 40,
+};
+delete oak.height;"
+`;
