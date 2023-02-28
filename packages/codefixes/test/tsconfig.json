@@ -4,5 +4,16 @@
     "rootDir": "../",
     "outDir": "../dist/test/"
   },
-  "include": [".", "../src", "../package.json"]
+  "include": [".", "../src", "../package.json"],
+  "references": [
+    {
+      "path": "../../utils"
+    },
+    {
+      "path": "../../upgrade"
+    },
+    {
+      "path": "../../reporter"
+    }
+  ]
 }

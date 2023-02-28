@@ -1,11 +1,11 @@
-import { copyFileSync, readdirSync, readFileSync, mkdirSync, realpathSync, rmSync } from 'node:fs';
+import { copyFileSync, readdirSync, readFileSync, mkdirSync, realpathSync } from 'node:fs';
 import { resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { copySync } from 'fs-extra/esm';
-import { Reporter } from '@rehearsal/reporter';
 import { afterEach, describe, expect, test } from 'vitest';
-import { upgrade } from '@rehearsal/upgrade';
 import { dirSync } from 'tmp';
+import { upgrade } from '@rehearsal/upgrade';
+import { Reporter } from '@rehearsal/reporter';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,7 +24,7 @@ describe('Test transform', function () {
   test.each(transforms)('%s', async (transform) => {
     const codefixesFixesTransformFixtureDir = resolve(codefixesDir, transform, 'fixtures');
 
-    copyFiles(transform, codefixesFixesTransformFixtureDir, fixturesDir);
+    // copyFiles(transform, codefixesFixesTransformFixtureDir, fixturesDir);
 
     const upgradeProjectDir = resolve(fixturesDir, transform);
 
