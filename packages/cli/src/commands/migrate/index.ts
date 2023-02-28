@@ -44,7 +44,7 @@ migrateCommand
     ensureAbsolutePath,
     process.cwd()
   )
-  .option('-e, --entrypoint <entrypoint>', 'entrypoint filepath of your project', '')
+  .option('-e, --entrypoint <entrypoint>', 'migrate the directory and its imported files specified by entrypoint', '')
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
