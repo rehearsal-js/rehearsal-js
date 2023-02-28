@@ -402,13 +402,6 @@ export function parseCommaSeparatedList(value: string): string[] {
 }
 
 /**
- * Ensure a path is absolute based on process.cwd()
- */
-export function ensureAbsolutePath(p: string): string {
-  return p === process.cwd() ? p : resolve(p);
-}
-
-/**
  * check if migration-config.json exists in process.cwd()
  */
 export function validateUserConfig(basePath: string, userConfigPath: string): boolean {

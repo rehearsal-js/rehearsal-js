@@ -3,7 +3,7 @@ import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { existsSync, readFileSync, readdirSync } from 'fs-extra';
 
-import { getEsLintConfigPath, findWorkspaceRoot } from '@rehearsal/utils';
+import { getEsLintConfigPath } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 function checkLintConfig(basePath: string, logger: Logger): boolean {
@@ -63,18 +63,8 @@ export function reportExisted(basePath: string, outputPath?: string): boolean {
   );
 }
 
-export function checkIfInProjectRoot(basePath: string): boolean {
-  const workspaceRoot = findWorkspaceRoot(basePath);
-  if (basePath !== workspaceRoot) {
-    throw new Error(
-      `migrate command needs to be running at project root with workspaces. 
-      Seems like the project root should be ${workspaceRoot} instead of current directory (${basePath}).`
-    );
-  }
-  return true;
-}
-
 export async function validateTask(
+  basePath: string,
   options: MigrateCommandOptions,
   logger: Logger
 ): Promise<ListrTask> {
@@ -82,19 +72,18 @@ export async function validateTask(
     title: 'Validate project',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
     task: async (ctx: MigrateCommandContext): Promise<void> => {
-      checkPackageJson(options.basePath);
-      checkGitIgnore(options.basePath);
-      checkIfInProjectRoot(options.basePath);
+      checkPackageJson(basePath);
+      checkGitIgnore(basePath);
       // If any report exists, skip all of the config tasks
-      if (reportExisted(options.basePath, options.outputPath)) {
+      if (reportExisted(basePath, options.outputPath)) {
         ctx.skipDepInstall = true;
         ctx.skipTsConfig = true;
         ctx.skipLintConfig = true;
         ctx.skipScriptConfig = true;
       }
       if (options.regen) {
-        checkLintConfig(options.basePath, logger);
-        checkTsConfig(options.basePath, logger);
+        checkLintConfig(basePath, logger);
+        checkTsConfig(basePath, logger);
       }
     },
   };

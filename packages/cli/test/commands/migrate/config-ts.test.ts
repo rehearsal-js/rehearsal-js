@@ -33,9 +33,9 @@ describe('Task: config-ts', async () => {
   });
 
   test('create tsconfig if not existed', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [await tsConfigTask(basePath, options, context)];
     await listrTaskRunner(tasks);
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
@@ -49,9 +49,9 @@ describe('Task: config-ts', async () => {
     const oldTsConfig = { compilerOptions: { strict: false } };
     writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [await tsConfigTask(basePath, options, context)];
     await listrTaskRunner(tasks);
 
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
@@ -70,9 +70,9 @@ describe('Task: config-ts', async () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const options = createMigrateOptions({ userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
+    const tasks = [await tsConfigTask(basePath, options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command works
@@ -90,9 +90,9 @@ describe('Task: config-ts', async () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const options = createMigrateOptions({ userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
+    const tasks = [await tsConfigTask(basePath, options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command and hook works
@@ -114,9 +114,9 @@ describe('Task: config-ts', async () => {
     await git.addConfig('user.email', 'tester@tester.com');
     await git.commit('foo');
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [await tsConfigTask(basePath, options, context)];
     await listrTaskRunner(tasks);
 
     const gitStatus = await git.status();

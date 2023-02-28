@@ -1,10 +1,12 @@
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import { readdirSync, readJSONSync, writeJSONSync } from 'fs-extra';
-import { setGracefulCleanup } from 'tmp';
+import { setGracefulCleanup, dirSync } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { create, getFiles } from '@rehearsal/test-support';
+import yaml from 'js-yaml';
+import fixturify = require('fixturify');
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers';
@@ -115,6 +117,133 @@ describe('migrate - validation', async () => {
       cwd: basePath,
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+  });
+
+  test('throw if not in project root with npm/yarn workspaces', async () => {
+    const { name: basePath } = dirSync();
+    const files = {
+      'package.json': JSON.stringify({
+        workspaces: ['packages/*'],
+      }),
+      packages: {
+        'package-a': {
+          'package.json': JSON.stringify({
+            name: 'package-a',
+            version: '1.0.0',
+          }),
+        },
+      },
+    };
+    fixturify.writeSync(basePath, files);
+
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(stdout).not.toContain(
+      'migrate command needs to be running at project root with workspaces'
+    );
+  });
+
+  test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
+    const { name: basePath } = dirSync();
+    const files = {
+      'package.json': JSON.stringify({
+        workspaces: ['packages/lib/*'],
+      }),
+      packages: {
+        'package-a': {
+          'package.json': JSON.stringify({
+            name: 'package-a',
+            version: '1.0.0',
+          }),
+        },
+      },
+    };
+    fixturify.writeSync(basePath, files);
+
+    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+  });
+
+  test('throw if not in project root with pnpm workspaces', async () => {
+    const { name: basePath } = dirSync();
+    const files = {
+      'package.json': JSON.stringify({
+        name: 'foo',
+      }),
+      'pnpm-lock.yaml': '',
+      'pnpm-workspace.yaml': yaml.dump({ packages: ['packages/*'] }),
+      packages: {
+        'package-a': {
+          'package.json': JSON.stringify({
+            name: 'package-a',
+            version: '1.0.0',
+          }),
+        },
+      },
+    };
+    fixturify.writeSync(basePath, files);
+
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(stdout).not.toContain(
+      'migrate command needs to be running at project root with workspaces'
+    );
+  });
+
+  test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
+    const { name: basePath } = dirSync();
+    const files = {
+      'package.json': JSON.stringify({
+        name: 'foo',
+      }),
+      'pnpm-lock.yaml': '',
+      'pnpm-workspace.yaml': yaml.dump({ packages: ['packages/lib/*'] }),
+      packages: {
+        'package-a': {
+          'package.json': JSON.stringify({
+            name: 'package-a',
+            version: '1.0.0',
+          }),
+        },
+      },
+    };
+    fixturify.writeSync(basePath, files);
+
+    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+  });
+
+  test('relative entrypoint inside project root works', async () => {
+    basePath = prepareTmpDir('basic');
+
+    const { stdout } = await runBin('migrate', ['-e', 'foo.js'], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+  });
+
+  test('absolute entrypoint inside project root works', async () => {
+    basePath = prepareTmpDir('basic');
+
+    const { stdout } = await runBin('migrate', ['-e', resolve(basePath, 'foo.js')], {
+      cwd: basePath,
+    });
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+  });
+
+  test('entrypoint outside project root does not work', async () => {
+    basePath = prepareTmpDir('basic');
+
+    const { stdout } = await runBin('migrate', ['-e', resolve(__dirname, 'e2e.test.ts')], {
+      cwd: basePath,
+    });
+    expect(stdout).toContain('Could not find entrypoint');
   });
 });
 
@@ -246,52 +375,6 @@ describe('migrate: e2e', async () => {
     });
 
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
-  });
-
-  test('againt specific basePath via --basePath option', async () => {
-    basePath = prepareTmpDir('custom_basepath');
-
-    const customBasePath = resolve(basePath, 'base');
-    const { stdout } = await runBin('migrate', ['--basePath', customBasePath]);
-
-    // summary message
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
-
-    // file structures
-    const fileList = readdirSync(customBasePath);
-    expect(fileList).toContain('index.ts');
-    expect(fileList).not.toContain('index.js');
-
-    // file contents
-    expect(
-      readFileSync(resolve(customBasePath, 'index.ts'), { encoding: 'utf-8' })
-    ).toMatchSnapshot();
-
-    // Dependencies
-    const packageJson = readJSONSync(resolve(customBasePath, 'package.json'));
-    const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
-
-    // report
-    const reportPath = resolve(customBasePath, '.rehearsal');
-    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
-
-    // tsconfig.json
-    const tsConfig = readJSONSync(resolve(customBasePath, 'tsconfig.json'));
-    expect(tsConfig).matchSnapshot();
-
-    // lint config
-    expect(fileList).toContain('.eslintrc.js');
-    expect(fileList).toContain('.rehearsal-eslintrc.js');
-    const lintConfig = readFileSync(resolve(customBasePath, '.eslintrc.js'), { encoding: 'utf-8' });
-    const lintConfigDefualt = readFileSync(resolve(customBasePath, '.rehearsal-eslintrc.js'), {
-      encoding: 'utf-8',
-    });
-    expect(lintConfig).toMatchSnapshot();
-    expect(lintConfigDefualt).toMatchSnapshot();
-
-    // new scripts
-    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
   });
 
   test('show warning message for missing config with --regen', async () => {

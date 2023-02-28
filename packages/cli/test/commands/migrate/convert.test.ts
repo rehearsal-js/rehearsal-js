@@ -57,14 +57,14 @@ describe('Task: convert', async () => {
   });
 
   test('migrate from default all files .js in root', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -85,14 +85,14 @@ describe('Task: convert', async () => {
   });
 
   test('migrate from specific entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js' });
+    const options = createMigrateOptions({ entrypoint: 'depends-on-foo.js' });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -110,42 +110,17 @@ describe('Task: convert', async () => {
     expect(config.include).toContain('foo.ts');
   });
 
-  test('againt specific basePath via -basePath option', async () => {
-    basePath = prepareTmpDir('custom_basepath');
-    const customBasePath = resolve(basePath, 'base');
-    const options = createMigrateOptions(customBasePath);
-    // Get context for convert task from previous tasks
-    const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
-    ];
-    await listrTaskRunner(tasks);
-
-    expect(output).toMatchSnapshot();
-
-    const fileList = readdirSync(customBasePath);
-    expect(fileList).toContain('tsconfig.json');
-    expect(fileList).toContain('index.ts');
-    expect(fileList).not.toContain('index.js');
-
-    const config = readJSONSync(resolve(customBasePath, 'tsconfig.json'));
-    expect(config.include).toContain('index.ts');
-  });
-
   test('generate reports', async () => {
-    const options = createMigrateOptions(basePath, {
+    const options = createMigrateOptions({
       format: ['json', 'md', 'sarif'],
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -160,7 +135,7 @@ describe('Task: convert', async () => {
   });
 
   test('accept changes without git', async () => {
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions({ interactive: true });
 
     // prompt control flow
     outputStream.on('data', (line: string) => {
@@ -175,11 +150,11 @@ describe('Task: convert', async () => {
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -209,7 +184,7 @@ describe('Task: convert', async () => {
       .add('./*')
       .commit('first commit!');
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions({ interactive: true });
     let fileCount = 1; // file counter in prompt selection
 
     // prompt control flow
@@ -241,11 +216,11 @@ describe('Task: convert', async () => {
 
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -271,7 +246,7 @@ describe('Task: convert', async () => {
     // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
     // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
     process.env.EDITOR = 'rm';
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions({ interactive: true });
 
     let fileCount = 1; // file counter in prompt selection
 
@@ -302,11 +277,11 @@ describe('Task: convert', async () => {
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -326,7 +301,7 @@ describe('Task: convert', async () => {
   });
 
   test('cancel prompt in interactive mode', async () => {
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions({ interactive: true });
 
     // prompt control flow
     outputStream.on('data', (line: string) => {
@@ -342,11 +317,11 @@ describe('Task: convert', async () => {
 
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
     ];
 
     // use try catch since it would be killed via ctrl c

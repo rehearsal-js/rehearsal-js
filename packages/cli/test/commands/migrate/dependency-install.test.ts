@@ -33,8 +33,8 @@ describe('Task: dependency-install', async () => {
   });
 
   test('install required dependencies', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await depInstallTask(options)];
+    const options = createMigrateOptions();
+    const tasks = [await depInstallTask(basePath, options)];
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
@@ -54,8 +54,8 @@ describe('Task: dependency-install', async () => {
       },
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const options = createMigrateOptions({ userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(basePath, options, { userConfig })];
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
@@ -79,8 +79,8 @@ describe('Task: dependency-install', async () => {
       },
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const options = createMigrateOptions({ userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(basePath, options, { userConfig })];
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));

@@ -19,6 +19,7 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
 export async function convertTask(
+  basePath: string,
   options: MigrateCommandOptions,
   logger: Logger,
   context?: Partial<MigrateCommandContext>
@@ -38,7 +39,7 @@ export async function convertTask(
       }
 
       const projectName = determineProjectName() || '';
-      const { basePath, entrypoint } = options;
+      const { entrypoint } = options;
       const tscPath = await getPathToBinary('tsc', { cwd: basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
@@ -137,7 +138,7 @@ export async function convertTask(
           const { migratedFiles } = await migrate(input);
 
           DEBUG_CALLBACK('migratedFiles', migratedFiles);
-          const reportOutputPath = resolve(options.basePath, options.outputPath);
+          const reportOutputPath = resolve(basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
           gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
           task.title = getReportSummary(reporter.report, migratedFiles.length);

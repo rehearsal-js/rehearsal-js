@@ -8,6 +8,7 @@ import type { ListrTask } from 'listr2';
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
 
 export async function regenTask(
+  basePath: string,
   options: MigrateCommandOptions,
   logger: Logger
 ): Promise<ListrTask> {
@@ -22,7 +23,7 @@ export async function regenTask(
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
 
       const projectName = determineProjectName() || '';
-      const { basePath, entrypoint } = options;
+      const { entrypoint } = options;
       const tscPath = await getPathToBinary('tsc');
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
@@ -42,7 +43,7 @@ export async function regenTask(
 
       const { scannedFiles } = await regen(input);
 
-      const reportOutputPath = resolve(options.basePath, options.outputPath);
+      const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('migrate', reporter, reportOutputPath, options.format);
       task.title = getRegenSummary(reporter.report, scannedFiles.length);
     },

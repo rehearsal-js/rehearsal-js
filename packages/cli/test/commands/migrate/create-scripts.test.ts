@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync } from 'fs-extra';
 
 import { createScriptsTask } from '../../../src/commands/migrate/tasks';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers';
+import { prepareTmpDir, listrTaskRunner } from '../../test-helpers';
 
 describe('Task: create-scripts', async () => {
   let basePath = '';
@@ -25,8 +25,7 @@ describe('Task: create-scripts', async () => {
   });
 
   test('add lint:tsc in package.json', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await createScriptsTask(options)];
+    const tasks = [await createScriptsTask(basePath)];
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));

@@ -49,8 +49,8 @@ describe('Task: initialize', async () => {
   });
 
   test('get files that will be migrated', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions();
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.targetPackagePath).toBe(`${basePath}`);
@@ -77,8 +77,8 @@ describe('Task: initialize', async () => {
       },
     });
 
-    const options = createMigrateOptions(basePath);
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions();
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(8);
@@ -113,8 +113,8 @@ describe('Task: initialize', async () => {
       'another-config.json'
     );
 
-    const options = createMigrateOptions(basePath, { userConfig: 'another-config.json' });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ userConfig: 'another-config.json' });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(8);
@@ -130,8 +130,8 @@ describe('Task: initialize', async () => {
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
-    const options = createMigrateOptions(basePath, { dryRun: true });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ dryRun: true });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.skip).toBe(true);
@@ -151,8 +151,8 @@ describe('Task: initialize', async () => {
       }
     });
 
-    const options = createMigrateOptions(basePath, { interactive: true });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ interactive: true });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -194,8 +194,8 @@ describe('Task: initialize', async () => {
       }
     });
 
-    const options = createMigrateOptions(basePath, { interactive: true });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ interactive: true });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -256,8 +256,8 @@ describe('Task: initialize', async () => {
     mkdirSync(resolve(basePath, '.rehearsal'));
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
-    const options = createMigrateOptions(basePath, { interactive: true });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ interactive: true });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -309,8 +309,8 @@ describe('Task: initialize', async () => {
     mkdirSync(resolve(basePath, '.rehearsal'));
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
-    const options = createMigrateOptions(basePath, { interactive: true });
-    const tasks = [await initTask(options)];
+    const options = createMigrateOptions({ interactive: true });
+    const tasks = [await initTask(basePath, options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt

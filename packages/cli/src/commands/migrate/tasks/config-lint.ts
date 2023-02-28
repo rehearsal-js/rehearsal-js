@@ -25,7 +25,8 @@ enum FORMAT {
 }
 
 export async function lintConfigTask(
-  options: MigrateCommandOptions,
+  basePath: string,
+  _options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
@@ -47,12 +48,12 @@ export async function lintConfigTask(
         }
       } else {
         // only run the default process with no custom config provided
-        const relativeConfigPath = getEsLintConfigPath(options.basePath);
+        const relativeConfigPath = getEsLintConfigPath(basePath);
         const format = getFormat(relativeConfigPath);
         const rehearsalConfigPath = getRehearsalFilename(format);
 
         // create .rehearsal-eslintrc.js
-        await createRehearsalConfig(options.basePath, format);
+        await createRehearsalConfig(basePath, format);
 
         if (relativeConfigPath) {
           task.output = `${relativeConfigPath} already exists, extending Rehearsal default eslint-related config`;
@@ -64,11 +65,11 @@ export async function lintConfigTask(
             absoluteConfigPath,
             rehearsalConfigPath,
             format,
-            options.basePath
+            basePath
           );
         } else {
           task.output = `Create .eslintrc.${FORMAT.JS}, extending Rehearsal default eslint-related config`;
-          await extendsRehearsalInNewConfig(options.basePath, `.eslintrc.${FORMAT.JS}`);
+          await extendsRehearsalInNewConfig(basePath, `.eslintrc.${FORMAT.JS}`);
         }
       }
     },

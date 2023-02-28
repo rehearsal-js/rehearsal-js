@@ -15,7 +15,8 @@ export const REQUIRED_DEPENDENCIES = [
 ];
 
 export async function depInstallTask(
-  options: MigrateCommandOptions,
+  basePath: string,
+  _options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
@@ -37,7 +38,7 @@ export async function depInstallTask(
         }
       }
       // even if dependencies are installed, exec this and get the latest patch
-      await addDep(REQUIRED_DEPENDENCIES, true, { cwd: options.basePath });
+      await addDep(REQUIRED_DEPENDENCIES, true, { cwd: basePath });
     },
   };
 }

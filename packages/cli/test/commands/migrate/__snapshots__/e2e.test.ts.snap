@@ -1,5 +1,120 @@
 // Vitest Snapshot v1
 
+exports[`migrate - validation > absolute entrypoint inside project root does not work 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > absolute entrypoint inside project root works 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > not throw if in project root with unrelated npm/yarn workspaces 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on null
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[TITLE] Migration Complete
+[TITLE]   0 JS files converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > not throw if in project root with unrelated npm/yarn workspaces 2`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on foo
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+error:   Error: Command failed with exit code 1: /Users/haocliu/Library/pnpm/pnpm add -D @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-prettier eslint-plugin-prettier prettier typescript
+ERR_PNPM_ADDING_TO_ROOT Running this command will add the dependency to the workspace root, which might not be what you want - if you really meant it, make it explicit by running this command again with the -w flag (or --workspace-root). If you dont want to see this warning anymore, you may set the ignore-workspace-root-check setting to true."
+`;
+
 exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
@@ -17,6 +132,76 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > relative entrypoint inside project root works 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > relative entrypoint within project root works 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
 [SUCCESS]   0 errors caught by rehearsal
 [SUCCESS]   0 have been fixed by rehearsal
 [SUCCESS]   0 errors need to be fixed manually

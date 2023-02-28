@@ -2,10 +2,6 @@ import { resolve } from 'path';
 import { createFileSync, rmSync, writeFileSync } from 'fs-extra';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
-import tmp from 'tmp';
-import yaml from 'js-yaml';
-
-import fixturify = require('fixturify');
 
 import { validateTask } from '../../../src/commands/migrate/tasks';
 import {
@@ -51,16 +47,16 @@ describe('Task: validate', async () => {
   });
 
   test('pass with package.json', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions();
+    const tasks = [await validateTask(basePath, options, logger)];
 
     await listrTaskRunner(tasks);
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
   });
 
   test('error if no package.json', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions();
+    const tasks = [await validateTask(basePath, options, logger)];
 
     rmSync(resolve(basePath, 'package.json'));
 
@@ -68,8 +64,8 @@ describe('Task: validate', async () => {
   });
 
   test('error if .gitignore has .rehearsal', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions();
+    const tasks = [await validateTask(basePath, options, logger)];
 
     const gitignore = `.rehearsal\nfoo\nbar`;
     const gitignorePath = resolve(basePath, '.gitignore');
@@ -81,16 +77,16 @@ describe('Task: validate', async () => {
   });
 
   test('show warning message for missing files in --regen', async () => {
-    const options = createMigrateOptions(basePath, { regen: true });
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions({ regen: true });
+    const tasks = [await validateTask(basePath, options, logger)];
 
     await listrTaskRunner(tasks);
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
   });
 
   test('pass with all config files in --regen', async () => {
-    const options = createMigrateOptions(basePath, { regen: true });
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions({ regen: true });
+    const tasks = [await validateTask(basePath, options, logger)];
 
     createFileSync(resolve(basePath, '.eslintrc.js'));
     createFileSync(resolve(basePath, 'tsconfig.json'));
@@ -100,8 +96,8 @@ describe('Task: validate', async () => {
   });
 
   test('set skips if report exists', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const options = createMigrateOptions();
+    const tasks = [await validateTask(basePath, options, logger)];
 
     // create dummy report
     createFileSync(resolve(basePath, '.rehearsal', 'migrate-report.sarif'));
@@ -113,53 +109,5 @@ describe('Task: validate', async () => {
     expect(skipLintConfig).toBeTruthy();
     expect(skipScriptConfig).toBeTruthy();
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
-  });
-
-  test('throw if not in project root with npm/yarn workspaces', async () => {
-    const { name: basePath } = tmp.dirSync();
-    const files = {
-      'package.json': JSON.stringify({
-        workspaces: ['packages/*'],
-      }),
-      packages: {
-        'package-a': {
-          'package.json': JSON.stringify({
-            name: 'package-a',
-            version: '1.0.0',
-          }),
-        },
-      },
-    };
-    fixturify.writeSync(basePath, files);
-    const options = createMigrateOptions(resolve(basePath, 'packages', 'package-a'));
-    const tasks = [await validateTask(options, logger)];
-    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
-      `migrate command needs to be running at project root with workspaces`
-    );
-  });
-
-  test('throw if not in project root with pnpm workspaces', async () => {
-    const { name: basePath } = tmp.dirSync();
-    const files = {
-      'package.json': JSON.stringify({
-        name: 'foo',
-      }),
-      'pnpm-lock.yaml': '',
-      'pnpm-workspace.yaml': yaml.dump({ packages: ['packages/*'] }),
-      packages: {
-        'package-a': {
-          'package.json': JSON.stringify({
-            name: 'package-a',
-            version: '1.0.0',
-          }),
-        },
-      },
-    };
-    fixturify.writeSync(basePath, files);
-    const options = createMigrateOptions(resolve(basePath, 'packages', 'package-a'));
-    const tasks = [await validateTask(options, logger)];
-    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
-      `migrate command needs to be running at project root with workspaces`
-    );
   });
 });

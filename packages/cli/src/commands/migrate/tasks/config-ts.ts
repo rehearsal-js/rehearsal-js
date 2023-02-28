@@ -7,6 +7,7 @@ import { readJSON, writeTSConfig, gitAddIfInRepo } from '@rehearsal/utils';
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types';
 
 export async function tsConfigTask(
+  basePath: string,
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
@@ -18,7 +19,7 @@ export async function tsConfigTask(
       if (context) {
         ctx = { ...ctx, ...context };
       }
-      const configPath = resolve(options.basePath, 'tsconfig.json');
+      const configPath = resolve(basePath, 'tsconfig.json');
 
       if (ctx.userConfig?.hasTsSetup) {
         task.output = `Create tsconfig from config`;
@@ -37,10 +38,10 @@ export async function tsConfigTask(
           tsConfig.compilerOptions.strict = true;
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          writeTSConfig(options.basePath, options.init ? [] : ctx.sourceFilesWithRelativePath);
+          writeTSConfig(basePath, options.init ? [] : ctx.sourceFilesWithRelativePath);
         }
       }
-      await gitAddIfInRepo(configPath, options.basePath); // stage tsconfig.json if in a git repo
+      await gitAddIfInRepo(configPath, basePath); // stage tsconfig.json if in a git repo
     },
   };
 }

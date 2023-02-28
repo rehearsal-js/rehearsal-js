@@ -21,6 +21,7 @@ const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 
 export async function initTask(
+  basePath: string,
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
@@ -33,21 +34,21 @@ export async function initTask(
       }
       // get custom config
       const userConfig =
-        options.userConfig && validateUserConfig(options.basePath, options.userConfig)
-          ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+        options.userConfig && validateUserConfig(basePath, options.userConfig)
+          ? new UserConfig(basePath, options.userConfig, 'migrate')
           : undefined;
 
       ctx.userConfig = userConfig;
 
-      const projectName = determineProjectName(options.basePath);
-      const packages = discoverEmberPackages(options.basePath); // TODO we should ask the migration-strategy for this data.
+      const projectName = determineProjectName(basePath);
+      const packages = discoverEmberPackages(basePath); // TODO we should ask the migration-strategy for this data.
       DEBUG_CALLBACK('projectName', projectName);
 
       if (options.interactive) {
         // Init state and store
         const state = new State(
           projectName,
-          options.basePath,
+          basePath,
           packages.map((p) => p.path) // use relative path
         );
         ctx.state = state;
@@ -112,7 +113,7 @@ export async function initTask(
         ctx.targetPackagePath = menuMap[ctx.input as string];
         task.output = `Running migration on ${ctx.targetPackagePath}`;
       } else {
-        ctx.targetPackagePath = options.basePath;
+        ctx.targetPackagePath = basePath;
         task.output = `Running migration on ${projectName}`;
       }
 

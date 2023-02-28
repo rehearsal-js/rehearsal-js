@@ -80,11 +80,9 @@ export function prepareTmpDir(dir: string): string {
 
 // create default options for migrate cli
 export function createMigrateOptions(
-  basePath: string,
   options?: Partial<MigrateCommandOptions>
 ): MigrateCommandOptions {
   return {
-    basePath,
     init: false,
     entrypoint: '',
     format: ['sarif' as Formats],

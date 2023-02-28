@@ -53,17 +53,17 @@ describe('Task: sequential', async () => {
   });
 
   test('sequential run regen on the existing report, and run migrate on current base path and entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'index.ts' });
+    const options = createMigrateOptions({ entrypoint: 'index.ts' });
     const previousRuns = {
       previousFixedCount: 1,
       paths: [{ basePath, entrypoint: 'depends-on-foo.ts' }],
     };
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await sequentialTask(options, logger, previousRuns),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await sequentialTask(basePath, options, logger, previousRuns),
     ];
 
     await listrTaskRunner(tasks);

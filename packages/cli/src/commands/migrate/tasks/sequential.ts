@@ -11,6 +11,7 @@ import type { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:sequential');
 
 export async function sequentialTask(
+  basePath: string,
   options: MigrateCommandOptions,
   logger: Logger,
   previousRuns: PreviousRuns
@@ -28,8 +29,7 @@ export async function sequentialTask(
       );
 
       const projectName = determineProjectName() || '';
-      const { basePath } = options;
-      const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
+      const tscPath = await getPathToBinary('tsc', { cwd: basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
@@ -57,7 +57,7 @@ export async function sequentialTask(
         task.title = getRegenSummary(reporter.lastRun!, scannedFiles.length, true);
       }
 
-      const currentRunFiles = getSourceFiles(options.basePath, options.entrypoint);
+      const currentRunFiles = getSourceFiles(basePath, options.entrypoint);
 
       const { migratedFiles } = await migrate({
         basePath,
@@ -69,7 +69,7 @@ export async function sequentialTask(
       });
 
       DEBUG_CALLBACK('migratedFiles', migratedFiles);
-      const reportOutputPath = resolve(options.basePath, options.outputPath);
+      const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('migrate', reporter, reportOutputPath, options.format);
       gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
       task.title = getReportSummary(reporter.report, migratedFiles.length);

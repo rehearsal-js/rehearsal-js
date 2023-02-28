@@ -39,8 +39,8 @@ describe('Task: regen', async () => {
   });
 
   test('throw error with no tsconfig.json', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await initTask(options), await regenTask(options, logger)];
+    const options = createMigrateOptions();
+    const tasks = [await initTask(basePath, options), await regenTask(basePath, options, logger)];
 
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
       `Config file 'tsconfig.json' not found`
@@ -48,11 +48,11 @@ describe('Task: regen', async () => {
   });
 
   test('no effect on JS filse before conversion', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     const tasks = [
-      await initTask(options),
-      await tsConfigTask(options),
-      await regenTask(options, logger),
+      await initTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await regenTask(basePath, options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -60,14 +60,14 @@ describe('Task: regen', async () => {
   });
 
   test('update ts and lint errors based on previous conversion', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions();
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
-      await regenTask(options, logger),
+      await initTask(basePath, options),
+      await depInstallTask(basePath, options),
+      await tsConfigTask(basePath, options),
+      await lintConfigTask(basePath, options),
+      await convertTask(basePath, options, logger),
+      await regenTask(basePath, options, logger),
     ];
 
     await listrTaskRunner(tasks);
