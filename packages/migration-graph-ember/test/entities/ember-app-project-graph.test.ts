@@ -219,6 +219,71 @@ export default class Salutation extends Component {
 
     expect(allFiles).toStrictEqual(['app/components/obtuse.js']);
   });
+
+  test('options.exclude', async () => {
+    const project = getEmberProject('app');
+
+    await setupProject(project);
+
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, { exclude: ['tests'] });
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    const allFiles = Array.from(orderedPackages)
+      .map((pkg) => {
+        const modules = pkg.content.pkg.getModuleGraph();
+        return flatten(modules.topSort());
+      })
+      .flat();
+
+    expect(allFiles).toStrictEqual([
+      'app/app.js',
+      'app/services/locale.js',
+      'app/components/salutation.js',
+      'app/router.js',
+    ]);
+  });
+
+  test('options.include', async () => {
+    const project = getEmberProject('app');
+
+    // We exclude public by default see EmberAppPackage
+    project.mergeFiles({
+      public: {
+        'include-this-file.js': '',
+      },
+    });
+
+    await setupProject(project);
+
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, {
+      include: ['public'],
+    });
+
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    const allFiles = Array.from(orderedPackages)
+      .map((pkg) => {
+        const modules = pkg.content.pkg.getModuleGraph();
+        return flatten(modules.topSort());
+      })
+      .flat();
+
+    expect(allFiles).toStrictEqual([
+      'app/app.js',
+      'app/services/locale.js',
+      'app/components/salutation.js',
+      'app/router.js',
+      'public/include-this-file.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
+    ]);
+  });
+
   test('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
     const project = getEmberProject('app-with-in-repo-addon');
 
