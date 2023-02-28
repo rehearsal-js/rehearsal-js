@@ -2,9 +2,8 @@ import { readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { copySync } from 'fs-extra/esm';
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, beforeEach } from 'vitest';
 import { dirSync, setGracefulCleanup } from 'tmp';
-import { beforeEach } from 'node:test';
 import { Reporter } from '../../reporter/src/index.js';
 import { upgrade } from '../../upgrade/src/upgrade.js';
 
