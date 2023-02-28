@@ -165,8 +165,6 @@ importers:
 
   packages/codefixes:
     specifiers:
-      '@rehearsal/reporter': workspace:*
-      '@rehearsal/upgrade': workspace:*
       '@rehearsal/utils': workspace:*
       '@types/prettier': ^2.7.2
       fs-extra: ^11.1.0
@@ -176,8 +174,6 @@ importers:
     dependencies:
       '@rehearsal/utils': link:../utils
     devDependencies:
-      '@rehearsal/reporter': link:../reporter
-      '@rehearsal/upgrade': link:../upgrade
       '@types/prettier': 2.7.2
       fs-extra: 11.1.0
       prettier: 2.8.4

@@ -1,11 +1,12 @@
-import { copyFileSync, readdirSync, readFileSync, mkdirSync, realpathSync } from 'node:fs';
+import { readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { copySync } from 'fs-extra/esm';
 import { afterEach, describe, expect, test } from 'vitest';
-import { dirSync } from 'tmp';
-import { upgrade } from '@rehearsal/upgrade';
-import { Reporter } from '@rehearsal/reporter';
+import { dirSync, setGracefulCleanup } from 'tmp';
+import { beforeEach } from 'node:test';
+import { Reporter } from '../../reporter/src/index.js';
+import { upgrade } from '../../upgrade/src/upgrade.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,20 +14,25 @@ const __dirname = dirname(__filename);
 describe('Test transform', function () {
   const fixturesDir = resolve(__dirname, 'fixtures');
   const codefixesDir = resolve(__dirname, '../src/fixes');
+  let tmpDir: string;
 
   // eg. ["addErrorTypeGuard","addMissingExport","addMissingTypesBasedOnInheritance","makeMemberOptional"]
   const transforms = readdirSync(codefixesDir);
 
+  beforeEach(() => {
+    // clone the fixturesDir to a tmp dir
+    const { name: targetTmpDir } = dirSync();
+    copySync(fixturesDir, targetTmpDir);
+    tmpDir = realpathSync(targetTmpDir);
+  });
+
   afterEach(() => {
-    // cleanupTsFiles(fixturesDir, transforms);
+    setGracefulCleanup();
   });
 
   test.each(transforms)('%s', async (transform) => {
     const codefixesFixesTransformFixtureDir = resolve(codefixesDir, transform, 'fixtures');
-
-    // copyFiles(transform, codefixesFixesTransformFixtureDir, fixturesDir);
-
-    const upgradeProjectDir = resolve(fixturesDir, transform);
+    const upgradeProjectDir = resolve(tmpDir, transform);
 
     await runUpgrade(upgradeProjectDir);
 
@@ -63,43 +69,4 @@ function getExpectedOutputFiles(path: string): string[] {
   return filesInput
     .filter((file) => file.isFile() && file.name.endsWith('.ts.output'))
     .map((file) => resolve(path, file.name));
-}
-
-// we want to be sure we maintain the current formatting of the files
-// eg we dont want prettier to run on the files which is why we copy the files as .input/.output
-function copyFiles(
-  transformName: string,
-  fromTransformFixturesDir: string,
-  toTestFixturesDir: string
-): void {
-  // get all files which match from the fromTransformDir and copyFileSync to the toTestFixturesDir
-  const files = readdirSync(fromTransformFixturesDir, { withFileTypes: true });
-  // stick the files here and create the dir
-  const testFixtureTransformDir = resolve(toTestFixturesDir, transformName);
-  mkdirSync(testFixtureTransformDir, { recursive: true });
-
-  // we only want files which end in .ts.input
-  files
-    .filter((file) => file.isFile() && file.name.endsWith('.ts.input'))
-    .forEach((file) => {
-      // create the folder structure in the toTestFixturesDir
-      // eg. /rehearsal-js/packages/upgrade/test/fixtures/addErrorTypeGuard
-      // copy the file from the fromTransformFixturesDir to the toTestFixturesDir
-      // copyFileSync(`${file}.input`, resolve(basePath, parse(file).base));
-      // remove the .input from the filename
-      const filename = file.name.replace('.input', '');
-      copyFileSync(
-        resolve(fromTransformFixturesDir, file.name),
-        resolve(testFixtureTransformDir, filename)
-      );
-    });
-}
-
-function prepareTmpDir(dir: string): string {
-  const migrateFixturesDir = resolve(__dirname, '../fixtures/app_for_migrate');
-  const testSrcDir = resolve(migrateFixturesDir, 'src');
-  const srcDir = resolve(testSrcDir, dir);
-  const { name: targetDir } = dirSync();
-  copySync(srcDir, targetDir);
-  return realpathSync(targetDir);
 }
