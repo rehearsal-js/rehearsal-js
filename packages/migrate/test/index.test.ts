@@ -5,6 +5,7 @@ import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
+import { readJSONSync } from 'fs-extra/esm';
 import { migrate, MigrateInput } from '../src/index.js';
 import type { Logger } from 'winston';
 
@@ -123,7 +124,7 @@ describe('migrate', () => {
 
     const pkgJSONPath = findupSync('package.json', {
       cwd: __dirname,
-    });
+    }) as string;
 
     const lockFilePath = findupSync('pnpm-lock.yaml', {
       cwd: __dirname,
@@ -162,7 +163,7 @@ describe('migrate', () => {
     expect(report.summary[0].basePath).toMatch(/migrate/);
     rmSync(jsonReport);
 
-    const pkgJSON = JSON.parse(readFileSync(pkgJSONPath!, 'utf-8'));
+    const pkgJSON = readJSONSync(pkgJSONPath);
 
     expect(pkgJSON.devDependencies['@types/uuid']).toBeTruthy();
 
