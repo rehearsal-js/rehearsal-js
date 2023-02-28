@@ -151,6 +151,12 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
           continue;
         }
 
+        // Covers cases with broken type signatures, like: `() =>`
+        const brokenTypeSignatures = /\(\) =>\s*$/i;
+        if (brokenTypeSignatures.test(textChanges.newText)) {
+          continue;
+        }
+
         safeTextChanges.push(textChanges);
       }
 
