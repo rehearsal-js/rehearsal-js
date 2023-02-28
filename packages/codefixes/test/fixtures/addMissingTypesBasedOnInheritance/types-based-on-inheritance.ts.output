@@ -101,7 +101,7 @@ export class GenericThingImp2 implements GenericThingInterface<boolean, number> 
 }
 
 export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string }) {
     console.log(c);
   }
 }
@@ -133,7 +133,7 @@ export class GenericThingExt2 extends GenericThingClass<boolean, number> {
 }
 
 export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string }) {
     console.log(c);
   }
 }
@@ -158,12 +158,12 @@ class MultipleClass {
 }
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
   boo(ab, b?) {
     return !ab || !b;
   }
 
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
   foo(ab, b?) {
     return !ab || !b;
   }

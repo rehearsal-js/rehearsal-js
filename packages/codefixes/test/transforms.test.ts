@@ -1,5 +1,5 @@
-import { copyFileSync, readdirSync, readFileSync, mkdirSync, realpathSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { copyFileSync, readdirSync, readFileSync, mkdirSync, realpathSync, rmSync } from 'node:fs';
+import { resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { copySync } from 'fs-extra/esm';
 import { Reporter } from '@rehearsal/reporter';
@@ -18,7 +18,7 @@ describe('Test transform', function () {
   const transforms = readdirSync(codefixesDir);
 
   afterEach(() => {
-    // cleanupTsFiles(upgradeTransformsFixturesDir, originalFixturesFiles);
+    // cleanupTsFiles(fixturesDir, transforms);
   });
 
   test.each(transforms)('%s', async (transform) => {
@@ -35,9 +35,8 @@ describe('Test transform', function () {
 
     for (const expectedOutputFile of expectedOutputFiles) {
       const expectedOutput = readFileSync(expectedOutputFile).toString();
-      const actualOutput = readFileSync(
-        resolve(upgradeProjectDir, `${expectedOutputFile}.ts`)
-      ).toString();
+      const filename = basename(expectedOutputFile).replace('.output', '');
+      const actualOutput = readFileSync(resolve(upgradeProjectDir, `${filename}`)).toString();
 
       expect(expectedOutput).toEqual(actualOutput);
     }
@@ -87,9 +86,11 @@ function copyFiles(
       // eg. /rehearsal-js/packages/upgrade/test/fixtures/addErrorTypeGuard
       // copy the file from the fromTransformFixturesDir to the toTestFixturesDir
       // copyFileSync(`${file}.input`, resolve(basePath, parse(file).base));
+      // remove the .input from the filename
+      const filename = file.name.replace('.input', '');
       copyFileSync(
         resolve(fromTransformFixturesDir, file.name),
-        resolve(testFixtureTransformDir, file.name)
+        resolve(testFixtureTransformDir, filename)
       );
     });
 }
