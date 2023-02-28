@@ -1,8 +1,10 @@
+import { fileURLToPath } from 'url';
 import { describe, expect, test } from 'vitest';
-
 import { getTypeDeclarationFromTypeSymbol } from '../../src/index.js';
 import { setupTest } from '../helpers.js';
 import type { InterfaceDeclaration } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
 
 describe('Test getTypeDeclarationFromSymbol', () => {
   const { sourceFile, checker } = setupTest(__filename);
