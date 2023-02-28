@@ -114,6 +114,7 @@ importers:
       '@rehearsal/test-support': workspace:*
       '@rehearsal/upgrade': workspace:*
       '@rehearsal/utils': workspace:*
+      '@types/js-yaml': ^4.0.5
       '@types/which': ^2.0.1
       chalk: ^4.1.2
       commander: ^10.0.0
@@ -123,7 +124,9 @@ importers:
       enquirer: ^2.3.6
       eslint: ^8.33.0
       execa: ^5.1.1
+      fixturify: ^3.0.0
       fs-extra: ^11.1.0
+      js-yaml: ^4.1.0
       listr2: ^5.0.7
       simple-git: ^3.16.0
       tmp: ^0.2.1
@@ -150,6 +153,7 @@ importers:
       eslint: 8.33.0
       execa: 5.1.1
       fs-extra: 11.1.0
+      js-yaml: 4.1.0
       listr2: 5.0.7_enquirer@2.3.6
       simple-git: 3.16.0
       tmp: 0.2.1
@@ -159,7 +163,9 @@ importers:
       yaml: 2.2.1
     devDependencies:
       '@rehearsal/test-support': link:../test-support
+      '@types/js-yaml': 4.0.5
       '@types/which': 2.0.1
+      fixturify: 3.0.0
       typescript-json-schema: 0.55.0
       vitest: 0.28.5
 
@@ -458,17 +464,22 @@ importers:
 
   packages/utils:
     specifiers:
+      '@types/js-yaml': ^4.0.5
       '@types/which': ^2.0.1
       chalk: ^4.1.2
       commander: ^10.0.0
       compare-versions: ^5.0.3
       execa: ^5.1.1
       findup-sync: ^5.0.0
+      fixturify: ^3.0.0
       fs-extra: ^11.1.0
       glob: ^8.1.0
+      js-yaml: ^4.1.0
       json5: ^2.2.3
+      micromatch: ^4.0.5
       semver: ^7.3.8
       simple-git: ^3.16.0
+      tmp: ^0.2.1
       typescript: ^4.9.5
       vitest: ^0.28.5
       which: ^3.0.0
@@ -478,13 +489,18 @@ importers:
       compare-versions: 5.0.3
       execa: 5.1.1
       findup-sync: 5.0.0
+      fixturify: 3.0.0
       fs-extra: 11.1.0
       glob: 8.1.0
+      js-yaml: 4.1.0
       json5: 2.2.3
+      micromatch: 4.0.5
       semver: 7.3.8
       simple-git: 3.16.0
+      tmp: 0.2.1
       which: 3.0.0
     devDependencies:
+      '@types/js-yaml': 4.0.5
       '@types/which': 2.0.1
       typescript: 4.9.5
       vitest: 0.28.5
@@ -1362,6 +1378,10 @@ packages:
 
   /@types/istanbul-lib-coverage/2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
+    dev: true
+
+  /@types/js-yaml/4.0.5:
+    resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: true
 
   /@types/json-schema/7.0.11:
