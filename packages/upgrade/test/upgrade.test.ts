@@ -33,9 +33,8 @@ describe('Test upgrade', async function () {
 
     for (const file of files) {
       const input = readFileSync(file).toString();
-      const output = readFileSync(`${file}.output`).toString();
 
-      expect(input).toEqual(output);
+      expect(input).toMatchSnapshot();
     }
 
     cleanupTsFiles(files);

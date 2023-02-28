@@ -1,5 +1,686 @@
 // Vitest Snapshot v1
 
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 1`] = `
+"// Test cases for TS2322
+
+/* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
+const dummy_const: number = 'string';
+
+let dummy_var: number = 0;
+/* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
+dummy_var = 'string';
+
+console.log(dummy_const, dummy_var);
+
+function demo(): void {
+/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
+  return 'dummy-string';
+}
+
+demo();
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 2`] = `
+"function removeFirstChar(str: string): string | undefined {
+  return str.substring(1);
+}
+
+let changeable: unknown;
+changeable = 'yes';
+
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'. Consider specifying type of argument to be 'string', using type assertion: '(changeable as string)', or using type guard: 'if (changeable instanceof string) { ... }'. */
+console.log(removeFirstChar(changeable));
+
+let num = 7;
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(num as string)', or using type guard: 'if (num instanceof string) { ... }'. */
+console.log(removeFirstChar(num));"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 3`] = `
+"
+import { sep } from 'path';
+
+sep;
+
+
+
+
+function defined_function_with_params(_defined_param: string): void {
+  return;
+}
+
+defined_function_with_params('dummy-string');
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 4`] = `""`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 5`] = `
+"import React from 'react';
+
+export function test() {
+}
+
+export function Component() {
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
+    const element1 = <NonExistingElement />;
+
+  const element2 = (
+    <h1>
+      The Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y Long Title
+{/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
+            <NonExistingElement>...</NonExistingElement>
+{/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
+            <p>{{ $notExistingVariable }}</p>
+    </h1>
+  );
+
+  console.log(element1, element2);
+
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingFragment'. */
+    return <NonExistingFragment />;
+}
+
+export function Test2() {
+  const someBoolean = true;
+
+/* @ts-expect-error @rehearsal TODO TS2322: The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type. */
+  return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 6`] = `
+"import { Component } from 'react';
+
+function action(_target: unknown, propertyKey: string): void {
+  console.log(propertyKey);
+}
+
+/**
+ * The Radio component is to display a list of radio options
+ */
+export class Radio extends Component {
+  args = {
+    onChange: async (one: boolean, two: boolean, v: boolean): Promise<boolean> => one || two || v
+  };
+
+  one = true;
+  two = false;
+
+  /**
+   * Action
+   * @return {string}
+   */
+  @action
+/* @ts-expect-error @rehearsal TODO TS2355: A function whose declared type is neither 'void' nor 'any' must return a value. */
+  async onRadioChange(value: boolean): Promise<string> {
+    this.one = true;
+    this.two = false;
+
+    this.args.onChange(this.one, this.two, value)
+      .then((status) => {
+        if (status) {
+          this.one = false;
+        } else {
+          this.two = true;
+        }
+      })
+      .catch(() => {
+        this.two = this.one;
+      });
+  }
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 7`] = `
+"import React from 'react';
+
+export function test() {
+}
+
+export function Component() {
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
+  const element1 = <NonExistingElement />;
+
+  const element2 = (
+    <h1>
+      The Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y Long Title
+{/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
+      <NonExistingElement>...</NonExistingElement>
+{/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
+      <p>{{$notExistingVariable}}</p>
+    </h1>
+  );
+
+  console.log(element1, element2);
+
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingFragment'. */
+  return <NonExistingFragment />;
+}
+
+export function Test2() {
+  const someBoolean = true;
+
+/* @ts-expect-error @rehearsal TODO TS2322: The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type. */
+  return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
+}
+
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 8`] = `
+"export function template(info: object): string {
+  let text = '';
+
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'one' does not exist on type 'object'. */
+  text += \`
+    <module>
+    <info argumentOne=\\"\${info.one}\\" argumentTwo=\\"\${info.two}\\"/>
+    </module>\`;
+
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'two' does not exist on type 'object'. */
+  text += \`
+    <module>
+    <info argumentOne=\\"\${info.two}\\" argumentTwo=\\"\${info.three}\\"/>
+    <info argumentOne=\\"\${info.two}\\" argumentTwo=\\"\${info.three}\\"/>
+    </module>\`;
+
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'three' does not exist on type 'object'. */
+    text += \`<module>
+    <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
+    <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
+    <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
+    </module>\`;
+
+  return text;
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 9`] = `
+"/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAny(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {string | any} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveSomethingOrAny(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - A string
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+export function returnTypeHasGenericAny(a: string) {
+  return Promise.resolve(a)
+}
+
+/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAnyAndReturnHasGenericAny(a: string, b) {
+  return Promise.resolve([a, b])
+}
+
+/**
+ * @param {String} a - some string
+ * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @returns {any} - just return something
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveAnyAndReturnIsAny(a: string, b) {
+  console.log(a);
+  return b;
+}
+
+function capitalize(str: string): string {
+  return str[0].toUpperCase() + str.substring(1);
+}
+
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'args' implicitly has an 'any' type. */
+export function doSomething(args, name: string){
+  if (!name) {
+    return;
+  }
+  if (args && args.length < 2) {
+    return;
+  }
+  return capitalize(name);
+}
+
+
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 10`] = `
+"
+/* Existing comment */
+
+
+
+export function usesMissingFunction(): void {
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'whereAmI'. */
+  return whereAmI();
+}
+
+export function usesMissingVariable(): boolean {
+  const something = true;
+  const existingVar = true;
+
+  return something
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+    ? missingVar
+    : existingVar;
+}
+
+export function usesMissingVarWithLongName(): boolean {
+  const something = true;
+
+  return something
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+    ? missingVar
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
+    : missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
+}
+
+
+
+// The next function call is not properly formatted
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'timestamp'. */
+timestamp(   );
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
+"function action(_target: unknown, propertyKey: string): void {
+  console.log(propertyKey);
+}
+
+/**
+ * Breakpoint Map
+ * @type {Object<string, number>}
+ */
+const breakpointMap: { [s: string]: number; } = { s: 1, m: 2, l: 3 };
+
+/**
+ * Ordered Breakpoints
+ * @type {Array<[string, number]>}
+ */
+const orderedBreakpointsLongNameConstant: Array<[string, number]> = Object.entries(breakpointMap).sort(
+  (a, b) => a[1] - b[1]
+);
+
+export class Foo {
+  /**
+   * Size
+   * @type {string}
+   */
+  @action size: string = 'l';
+
+  /**
+   * Viewport Width
+   * @type {string}
+   */
+  @action viewportWidth: string | undefined;
+
+  /**
+   * Foo Method
+   * @param {string} size
+   * @returns {boolean}
+   */
+  fooMethod(size: string): boolean {
+    const nextBreakpointIndex =
+      orderedBreakpointsLongNameConstant.indexOf(
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
+        orderedBreakpointsLongNameConstant.find(([key]) => key === size)
+      ) + 1;
+    if (nextBreakpointIndex < orderedBreakpointsLongNameConstant.length) {
+/* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+      return this.viewportWidth >= orderedBreakpointsLongNameConstant[nextBreakpointIndex][1];
+    }
+
+    return false;
+  }
+
+  /**
+   * Is Equal
+   * @param {string} size
+   * @returns {boolean}
+   */
+  isEqual(size: string): boolean {
+    return this.size === size;
+  }
+
+  /**
+   * Is Less
+   * @param {string} size
+   * @returns {boolean}
+   */
+  isLess(size: string): boolean {
+/* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    return this.viewportWidth < breakpointMap[size];
+  }
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 12`] = `
+"/**
+ * @param {String} a - some string
+ * @param {Object} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveObject(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {String | Object} b - hardcoded to any just for demonstrative purposes
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveSomethingOrObject(a: string, b) {
+  console.log(a, b);
+}
+
+/**
+ * @param {String} a - some string
+ * @param {Object[]} b - hardcoded to any just for demonstrative purposes
+ * @returns {Promise} the promise that resolves when the request has been resumed
+ */
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
+  return Promise.resolve([a, b])
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
+"/**
+ * This is a file with some comments added in a previous run of rehearsal
+ */
+import fs from 'fs';
+
+
+
+/* This is just a second comment that should not be touch */
+
+ fs.existsSync('.');
+
+fs.existsSync('.');
+
+fs.existsSync('@rehearsal')
+
+
+// The next two cases has to be fixed
+try {
+  console.log('success');
+} catch (e) {
+    console.log((e as Error).message);
+/* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+    console.log(e.notErrorMember);
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
+"// Basics
+
+class Animal {
+  title: string = '';
+
+  test(test: string): string {
+    return test;
+  }
+
+  say(message: string): string {
+    return message;
+  }
+
+  feed(food: Food, quantity: number): boolean {
+    console.log(food, quantity);
+    return false;
+  }
+}
+
+interface Wild {
+  wild(place: string): string;
+}
+
+interface Happy {
+  happy(num: number): void;
+}
+
+class Food {
+  title: string;
+
+  constructor(title: string) {
+    this.title = title;
+  }
+}
+
+class Dog extends Animal {
+  say(message: string) {
+    console.log(message);
+    return 'bar';
+  }
+}
+
+export class WildDog extends Dog implements Wild, Happy {
+  say(message: string) {
+    console.log(message);
+    return 'bar';
+  }
+
+  override feed(food: Food, quantity: number) {
+    console.log(food, quantity);
+    return true;
+  }
+
+  wild(place: string) {
+    return place;
+  }
+
+  happy(num: number) {
+    console.log(num);
+  }
+}
+
+export class Cat extends Animal {
+  override say(text: string) {
+    console.log(text);
+    return 'meo';
+  }
+
+  feed(something: Food) {
+    console.log(something);
+    return false;
+  }
+}
+
+// Generics
+
+type Thing = {
+  foo: number;
+};
+
+// Generic Interfaces
+
+interface GenericThingInterface<A = number, B = string> {
+  thing(a: A, b: B): void;
+}
+
+interface ConstrainedThingInterface<C extends Thing> {
+  thing(c: C): void;
+}
+
+export class GenericThingImp1 implements GenericThingInterface {
+  thing(a: number, b: string) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
+  thing(a: boolean, b: number) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
+  thing(c: { foo: number; bar: string; }) {
+    console.log(c);
+  }
+}
+
+// Generic Classes
+
+class GenericThingClass<A = number, B = string> {
+  thing(a: A, b: B) {
+    console.log(a, b);
+  }
+}
+
+class ConstrainedThingClass<C extends Thing> {
+  thing(c: C) {
+    console.log(c);
+  }
+}
+
+export class GenericThingExt1 extends GenericThingClass {
+  thing(a: number, b: string) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingExt2 extends GenericThingClass<boolean, number> {
+  thing(a: boolean, b: number) {
+    console.log(a, b);
+  }
+}
+
+export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
+  thing(c: { foo: number; bar: string; }) {
+    console.log(c);
+  }
+}
+
+// Multiple signatures
+
+interface MultipleInterface {
+  foo(a: number): number;
+  foo(b: string): string;
+  foo(a: number, b: string): boolean;
+
+  moo(a: string): string;
+}
+
+class MultipleClass {
+  boo(a: number): number;
+  boo(b: string): string;
+  boo(a: number, b: string): boolean;
+  boo(ab: number | string, b?: string): number | string | boolean {
+    return !ab || !b;
+  }
+}
+
+export class MultipleImpl extends MultipleClass implements MultipleInterface {
+/* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  boo(ab, b?) {
+    return !ab || !b;
+  }
+
+/* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  foo(ab, b?) {
+    return !ab || !b;
+  }
+
+  moo(b: string) {
+    return b;
+  }
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
+"export function test1(me: string) {
+  return 'This is ' + me;
+}
+
+test1('test');
+
+/**
+ * JSDoc
+ * @param {number} me
+ * @return {string}
+ */
+export function test2(me: number): string {
+  return me.toString();
+}
+
+test2(0);
+
+/**
+ * JSDoc is ignored
+ * @param {number} me
+ * @return {string}
+ */
+export function test3(me: number): string {
+  return me.toString();
+}
+
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
+test3('O');
+
+export class A {
+  /**
+   * JSDoc
+   * @param {number} me
+   * @return {string}
+   */
+  test4(me: number): string {
+    return me.toString(2);
+  }
+}
+
+export class Foo {
+  value = 0;
+
+  get foo() {
+    return this.value;
+  }
+
+  set foo(value) {
+    this.value = value;
+  }
+
+  boo(value: number) {
+    this.value = value;
+
+    if (this.value) {
+      return null;
+    } else {
+      return this.value;
+    }
+  }
+}
+"
+`;
+
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
   "fixedItemCount": 69,
@@ -95,42 +776,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "type": 0,
     },
     {
-      "analysisTarget": "2345.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'changeable' is never reassigned. Use 'const' instead.",
-      "hintAdded": false,
-      "message": "'changeable' is never reassigned. Use 'const' instead.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 11,
-        "endLine": 6,
-        "startColumn": 1,
-        "startLine": 6,
-      },
-      "nodeText": "",
-      "ruleId": "prefer-const",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "6133.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'_defined_param' is defined but never used.",
-      "hintAdded": false,
-      "message": "'_defined_param' is defined but never used.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 61,
-        "endLine": 5,
-        "startColumn": 39,
-        "startLine": 5,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/no-unused-vars",
-      "type": 1,
-    },
-    {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
@@ -139,10 +784,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 39,
-        "endLine": 7,
-        "startColumn": 21,
-        "startLine": 7,
+        "endColumn": 41,
+        "endLine": 8,
+        "startColumn": 23,
+        "startLine": 8,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -157,10 +802,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 26,
-        "endLine": 13,
-        "startColumn": 8,
-        "startLine": 13,
+        "endColumn": 32,
+        "endLine": 14,
+        "startColumn": 14,
+        "startLine": 14,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -175,10 +820,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 33,
-        "endLine": 15,
-        "startColumn": 13,
-        "startLine": 15,
+        "endColumn": 39,
+        "endLine": 16,
+        "startColumn": 19,
+        "startLine": 16,
       },
       "nodeText": "$notExistingVariable",
       "ruleId": "TS2322",
@@ -193,10 +838,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingFragment'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 30,
-        "endLine": 22,
-        "startColumn": 11,
-        "startLine": 22,
+        "endColumn": 32,
+        "endLine": 23,
+        "startColumn": 13,
+        "startLine": 23,
       },
       "nodeText": "NonExistingFragment",
       "ruleId": "TS2304",
@@ -212,85 +857,13 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 40,
-        "endLine": 29,
+        "endLine": 30,
         "startColumn": 28,
-        "startLine": 29,
+        "startLine": 30,
       },
       "nodeText": "doesNotExist",
       "ruleId": "TS2322",
       "type": 0,
-    },
-    {
-      "analysisTarget": "react-processed.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 23,
-        "endLine": 3,
-        "startColumn": 8,
-        "startLine": 3,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react-processed.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Unexpected empty function 'test'.",
-      "hintAdded": false,
-      "message": "Unexpected empty function 'test'.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 26,
-        "endLine": 3,
-        "startColumn": 24,
-        "startLine": 3,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/no-empty-function",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react-processed.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 28,
-        "endLine": 5,
-        "startColumn": 8,
-        "startLine": 5,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react-processed.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 24,
-        "endLine": 25,
-        "startColumn": 8,
-        "startLine": 25,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
     },
     {
       "analysisTarget": "react-xx.ts",
@@ -320,9 +893,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 39,
-        "endLine": 7,
+        "endLine": 8,
         "startColumn": 21,
-        "startLine": 7,
+        "startLine": 8,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -338,9 +911,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 26,
-        "endLine": 13,
+        "endLine": 14,
         "startColumn": 8,
-        "startLine": 13,
+        "startLine": 14,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -355,10 +928,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 33,
-        "endLine": 15,
-        "startColumn": 13,
-        "startLine": 15,
+        "endColumn": 32,
+        "endLine": 16,
+        "startColumn": 12,
+        "startLine": 16,
       },
       "nodeText": "$notExistingVariable",
       "ruleId": "TS2322",
@@ -374,9 +947,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 30,
-        "endLine": 22,
+        "endLine": 23,
         "startColumn": 11,
-        "startLine": 22,
+        "startLine": 23,
       },
       "nodeText": "NonExistingFragment",
       "ruleId": "TS2304",
@@ -392,85 +965,13 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 40,
-        "endLine": 29,
+        "endLine": 30,
         "startColumn": 28,
-        "startLine": 29,
+        "startLine": 30,
       },
       "nodeText": "doesNotExist",
       "ruleId": "TS2322",
       "type": 0,
-    },
-    {
-      "analysisTarget": "react.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 23,
-        "endLine": 3,
-        "startColumn": 8,
-        "startLine": 3,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Unexpected empty function 'test'.",
-      "hintAdded": false,
-      "message": "Unexpected empty function 'test'.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 26,
-        "endLine": 3,
-        "startColumn": 24,
-        "startLine": 3,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/no-empty-function",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 28,
-        "endLine": 5,
-        "startColumn": 8,
-        "startLine": 5,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "react.tsx",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 24,
-        "endLine": 25,
-        "startColumn": 8,
-        "startLine": 25,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
     },
     {
       "analysisTarget": "template-literal.ts",
@@ -617,114 +1118,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "type": 0,
     },
     {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 49,
-        "endLine": 6,
-        "startColumn": 8,
-        "startLine": 6,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 60,
-        "endLine": 15,
-        "startColumn": 8,
-        "startLine": 15,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 51,
-        "endLine": 23,
-        "startColumn": 8,
-        "startLine": 23,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 71,
-        "endLine": 33,
-        "startColumn": 8,
-        "startLine": 33,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 63,
-        "endLine": 43,
-        "startColumn": 8,
-        "startLine": 43,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-any.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 48,
-        "endLine": 53,
-        "startColumn": 8,
-        "startLine": 53,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
@@ -734,9 +1127,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 18,
-        "endLine": 5,
+        "endLine": 8,
         "startColumn": 10,
-        "startLine": 5,
+        "startLine": 8,
       },
       "nodeText": "whereAmI",
       "ruleId": "TS2304",
@@ -751,10 +1144,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'missingVar'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 32,
-        "endLine": 13,
-        "startColumn": 22,
-        "startLine": 13,
+        "endColumn": 17,
+        "endLine": 17,
+        "startColumn": 7,
+        "startLine": 17,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -770,9 +1163,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 17,
-        "endLine": 21,
+        "endLine": 26,
         "startColumn": 7,
-        "startLine": 21,
+        "startLine": 26,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -788,9 +1181,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 97,
-        "endLine": 23,
+        "endLine": 28,
         "startColumn": 7,
-        "startLine": 23,
+        "startLine": 28,
       },
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
       "ruleId": "TS2304",
@@ -806,9 +1199,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 10,
-        "endLine": 28,
+        "endLine": 35,
         "startColumn": 1,
-        "startLine": 28,
+        "startLine": 35,
       },
       "nodeText": "timestamp",
       "ruleId": "TS2304",
@@ -925,60 +1318,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "type": 0,
     },
     {
-      "analysisTarget": "ts-object.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 52,
-        "endLine": 6,
-        "startColumn": 8,
-        "startLine": 6,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-object.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 63,
-        "endLine": 15,
-        "startColumn": 8,
-        "startLine": 15,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-object.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 77,
-        "endLine": 25,
-        "startColumn": 8,
-        "startLine": 25,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
       "analysisTarget": "ts-processed.ts",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts18046}",
@@ -987,10 +1326,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "'e' is of type 'unknown'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 16,
-        "endLine": 20,
-        "startColumn": 15,
-        "startLine": 20,
+        "endColumn": 18,
+        "endLine": 23,
+        "startColumn": 17,
+        "startLine": 23,
       },
       "nodeText": "e",
       "ruleId": "TS18046",
@@ -1031,330 +1370,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeText": "foo",
       "ruleId": "TS2416",
       "type": 0,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 23,
-        "endLine": 37,
-        "startColumn": 3,
-        "startLine": 37,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 23,
-        "endLine": 44,
-        "startColumn": 3,
-        "startLine": 44,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 46,
-        "endLine": 49,
-        "startColumn": 3,
-        "startLine": 49,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 22,
-        "endLine": 54,
-        "startColumn": 3,
-        "startLine": 54,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 21,
-        "endLine": 58,
-        "startColumn": 3,
-        "startLine": 58,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 29,
-        "endLine": 64,
-        "startColumn": 3,
-        "startLine": 64,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 24,
-        "endLine": 69,
-        "startColumn": 3,
-        "startLine": 69,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 30,
-        "endLine": 92,
-        "startColumn": 3,
-        "startLine": 92,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 31,
-        "endLine": 98,
-        "startColumn": 3,
-        "startLine": 98,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 41,
-        "endLine": 104,
-        "startColumn": 3,
-        "startLine": 104,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 20,
-        "endLine": 112,
-        "startColumn": 3,
-        "startLine": 112,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 14,
-        "endLine": 118,
-        "startColumn": 3,
-        "startLine": 118,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 30,
-        "endLine": 124,
-        "startColumn": 3,
-        "startLine": 124,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 31,
-        "endLine": 130,
-        "startColumn": 3,
-        "startLine": 130,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 41,
-        "endLine": 136,
-        "startColumn": 3,
-        "startLine": 136,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 14,
-        "endLine": 162,
-        "startColumn": 3,
-        "startLine": 162,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 14,
-        "endLine": 167,
-        "startColumn": 3,
-        "startLine": 167,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types-extends.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 17,
-        "endLine": 171,
-        "startColumn": 3,
-        "startLine": 171,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
     },
     {
       "analysisTarget": "ts-types.ts",
