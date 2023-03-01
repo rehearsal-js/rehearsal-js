@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync, mkdirSync, writeFileSync } from 'fs-extra/esm';
+import { writeJSONSync } from 'fs-extra/esm';
 import { initTask } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,

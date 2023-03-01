@@ -12,9 +12,12 @@ import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
 import type { Options, ExecaChildProcess } from 'execa';
 
-const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const packageJson = readJSON(resolve(__dirname, '../../package.json')) as {
+  dependencies: { typescript: string };
+};
 
 export const PNPM_PATH = which.sync('pnpm');
 

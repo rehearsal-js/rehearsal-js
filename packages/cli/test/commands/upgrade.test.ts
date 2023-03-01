@@ -12,7 +12,9 @@ import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.j
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const packageJson = readJSON('../../package.json') as { dependencies: { typescript: string } };
+const packageJson = readJSON(resolve(__dirname, '../../package.json')) as {
+  dependencies: { typescript: string };
+};
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against

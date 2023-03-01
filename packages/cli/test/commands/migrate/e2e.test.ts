@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
-import { readFileSync } from 'node:fs';
-import { readdirSync, readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { readFileSync, readdirSync } from 'node:fs';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
