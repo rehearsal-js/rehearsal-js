@@ -10,7 +10,7 @@ describe('Test getTypeNameFromType', () => {
   const { sourceFile, checker } = setupTest(__filename);
   const statements = sourceFile && sourceFile.statements;
 
-  test.skip('should return type name for type alias', () => {
+  test('should return type name for type alias', () => {
     let typeName;
     if (statements && statements[1]) {
       const typeObj = checker.getTypeAtLocation(statements[1]);
@@ -20,7 +20,7 @@ describe('Test getTypeNameFromType', () => {
     expect(typeName).toEqual('T1');
   });
 
-  test.skip('should return type name for interface', () => {
+  test('should return type name for interface', () => {
     let typeName;
     if (statements && statements[2]) {
       const typeObj = checker.getTypeAtLocation(statements[2]);
@@ -30,7 +30,7 @@ describe('Test getTypeNameFromType', () => {
     expect(typeName).toEqual('T2');
   });
 
-  test.skip('should return type name for type alias with generics', () => {
+  test('should return type name for type alias with generics', () => {
     let typeName;
     if (statements && statements[3]) {
       const typeObj = checker.getTypeAtLocation(statements[3]);
@@ -52,7 +52,7 @@ describe('Test getTypeNameFromType', () => {
     expect(typeName).toEqual('T4');
   });
 
-  test.skip('should return type name for type exported as default', () => {
+  test('should return type name for type exported as default', () => {
     let typeName;
 
     if (statements && statements[6]) {
