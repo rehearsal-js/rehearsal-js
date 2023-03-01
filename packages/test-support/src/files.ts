@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fixturify from 'fixturify';
 
 export const FILE_EMBER_ADDON_CONFIG_EMBER_TRY = `
