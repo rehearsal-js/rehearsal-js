@@ -11,6 +11,11 @@
     "tsc utils",
     "typescript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rehearsal-js/rehearsal-js.git"
+  },
+  "license": "BSD-2-Clause",
   "type": "module",
   "exports": {
     ".": {
@@ -19,11 +24,6 @@
     },
     "./*": "./*"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rehearsal-js/rehearsal-js.git"
-  },
-  "license": "BSD-2-Clause",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [

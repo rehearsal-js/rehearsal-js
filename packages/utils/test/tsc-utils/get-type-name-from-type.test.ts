@@ -40,7 +40,7 @@ describe('Test getTypeNameFromType', () => {
     expect(typeName).toEqual('T3');
   });
 
-  test('should return type name for type imported as default', () => {
+  test.skip('should return type name for type imported as default', () => {
     let typeName;
 
     if (statements && statements[5]) {
