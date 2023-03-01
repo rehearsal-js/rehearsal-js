@@ -8,7 +8,7 @@ import {
   LintPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
-import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import ts from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
@@ -28,6 +28,8 @@ export type MigrateOutput = {
   configFile: string;
   migratedFiles: Array<string>;
 };
+
+const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
