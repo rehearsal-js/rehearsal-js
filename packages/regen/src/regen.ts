@@ -1,7 +1,7 @@
 import { dirname, resolve, extname } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import { DiagnosticCheckPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
-import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
+import ts from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
@@ -21,6 +21,8 @@ export type RegenOutput = {
   configFile: string;
   scannedFiles: Array<string>;
 };
+
+const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 export async function regen(input: RegenInput): Promise<RegenOutput> {
   const basePath = resolve(input.basePath);
