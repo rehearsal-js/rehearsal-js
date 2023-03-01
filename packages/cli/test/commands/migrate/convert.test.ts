@@ -271,7 +271,7 @@ describe('Task: convert', async () => {
     // 2. Haven't figured out how to pass key command/press to editor, to edit file and quit the edit
     // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
     // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
-    process.env.EDITOR = 'rm';
+    process.env['EDITOR'] = 'rm';
     const options = createMigrateOptions(basePath, { interactive: true });
 
     let fileCount = 1; // file counter in prompt selection

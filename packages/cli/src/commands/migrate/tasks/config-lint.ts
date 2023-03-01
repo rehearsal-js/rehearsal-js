@@ -1,6 +1,6 @@
 import { resolve, extname } from 'node:path';
 import { ESLint } from 'eslint';
-import { outputFileSync, readJSONSync } from 'fs-extra/esm';
+import { outputFileSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
 import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
 import { stringify as yamlStringify } from 'yaml';

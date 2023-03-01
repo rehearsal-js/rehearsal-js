@@ -54,7 +54,7 @@ describe('state', async () => {
 
     const { packages, files } = new State('foo', basePath, [], configPath);
 
-    expect(packages.bar).toEqual(['./foo']);
+    expect(packages['bar']).toEqual(['./foo']);
     expect(files['./foo'].package).toBe('./bar');
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });
