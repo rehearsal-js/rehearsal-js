@@ -12,6 +12,7 @@ import {
   PackageNode,
 } from '@rehearsal/migration-graph-shared';
 import debug, { type Debugger } from 'debug';
+import { IResolveOptions } from '@rehearsal/migration-graph-shared/types/dependency-cruiser/index.js';
 import { discoverServiceDependencies } from '../utils/discover-ember-service-dependencies.js';
 import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
@@ -37,10 +38,12 @@ export type EmberAppPackageGraphOptions = {
 } & PackageGraphOptions;
 
 export class EmberAppPackageGraph extends PackageGraph {
-  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  protected override debug: Debugger = debug(
+    `rehearsal:migration-graph-ember:${this.constructor.name}`
+  );
 
   serviceLookup: Map<string, string>;
-  package: EmberAppPackage;
+  override package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
   project: EmberAppProjectGraph | undefined;
 

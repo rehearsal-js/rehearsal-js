@@ -24,8 +24,10 @@ type EmberPackageLookup = {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
-  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
-  protected discoveredPackages: Record<string, EmberProjectPackage> = {};
+  protected override debug: Debugger = debug(
+    `rehearsal:migration-graph-ember:${this.constructor.name}`
+  );
+  protected override discoveredPackages: Record<string, EmberProjectPackage> = {};
   private lookup?: EmberPackageLookup;
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
@@ -33,7 +35,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
 
-  addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
+  override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
