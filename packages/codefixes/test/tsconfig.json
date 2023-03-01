@@ -5,6 +5,7 @@
     "outDir": "../dist/test/"
   },
   "include": [".", "../src", "../package.json"],
+  "exclude": ["fixtures"],
   "references": [
     {
       "path": "../../utils"
