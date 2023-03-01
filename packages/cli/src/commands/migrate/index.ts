@@ -26,7 +26,10 @@ import {
 import { sequentialTask } from './tasks/sequential.js';
 import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
 
-const { version } = readJsonSync('../../../package.json') as { version: string };
+const __dirname = new URL('.', import.meta.url).pathname;
+const { version } = readJsonSync(resolve(__dirname, '../../../package.json')) as {
+  version: string;
+};
 
 export const migrateCommand = new Command();
 

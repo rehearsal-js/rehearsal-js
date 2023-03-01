@@ -28,7 +28,7 @@ const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });

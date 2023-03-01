@@ -23,7 +23,8 @@ import {
 } from '@rehearsal/utils';
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
-const { version } = readJSONSync('../../package.json') as { version: string };
+const __dirname = new URL('.', import.meta.url).pathname;
+const { version } = readJSONSync(resolve(__dirname, '../../package.json')) as { version: string };
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
