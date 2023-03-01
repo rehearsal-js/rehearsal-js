@@ -4,7 +4,7 @@ import { readJSONSync } from 'fs-extra/esm';
 import { migrateCommand } from './commands/migrate/index.js';
 import { upgradeCommand } from './commands/upgrade.js';
 
-const { version } = readJSONSync('package.json') as { version: string };
+const { version } = readJSONSync('../package.json') as { version: string };
 const program = new Command();
 
 program.name('rehearsal').version(version).addCommand(migrateCommand).addCommand(upgradeCommand);

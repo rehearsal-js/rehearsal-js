@@ -7,6 +7,7 @@ import debug from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { execa } from 'execa';
+import { readJSONSync } from 'fs-extra/esm';
 import {
   addDep,
   determineProjectName,
@@ -19,11 +20,10 @@ import {
   gitIsRepoDirty,
   parseCommaSeparatedList,
   parseTsVersion,
-  readJSON,
 } from '@rehearsal/utils';
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
-const { version } = readJSON('../../package.json') as { version: string };
+const { version } = readJSONSync('../../package.json') as { version: string };
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
