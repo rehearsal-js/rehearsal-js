@@ -137,11 +137,9 @@ describe('migrate - validation', async () => {
     fixturify.writeSync(basePath, files);
 
     const { stdout } = await runBin('migrate', [], {
-      cwd: basePath,
+      cwd: resolve(basePath, 'packages', 'package-a'),
     });
-    expect(stdout).not.toContain(
-      'migrate command needs to be running at project root with workspaces'
-    );
+    expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
   });
 
   test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
@@ -162,7 +160,7 @@ describe('migrate - validation', async () => {
     fixturify.writeSync(basePath, files);
 
     const { stdout: secondRunStdout } = await runBin('migrate', [], {
-      cwd: basePath,
+      cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
   });
@@ -187,11 +185,9 @@ describe('migrate - validation', async () => {
     fixturify.writeSync(basePath, files);
 
     const { stdout } = await runBin('migrate', [], {
-      cwd: basePath,
+      cwd: resolve(basePath, 'packages', 'package-a'),
     });
-    expect(stdout).not.toContain(
-      'migrate command needs to be running at project root with workspaces'
-    );
+    expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
   });
 
   test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
@@ -214,7 +210,7 @@ describe('migrate - validation', async () => {
     fixturify.writeSync(basePath, files);
 
     const { stdout: secondRunStdout } = await runBin('migrate', [], {
-      cwd: basePath,
+      cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
   });
