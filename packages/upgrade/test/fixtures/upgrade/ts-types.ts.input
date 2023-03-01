@@ -59,3 +59,17 @@ export class Foo {
     }
   }
 }
+
+/**
+ * JSDoc
+ *
+ * @param {number} a
+ * @param {(string|number)} b
+ * @param {<callbackFunction>} c
+ * @param {UnavailableType} d
+ *
+ * @return {void}
+ */
+export function think(a, b, c, d) {
+  return console.log(a, b, c, d);
+}

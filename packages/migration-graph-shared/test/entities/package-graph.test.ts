@@ -283,23 +283,26 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['index.js']);
   });
 
-  test('should not include *.json files in module graph', () => {
+  test('should exclude *.json files from the module graph', () => {
     const tmpDir = getTmpDir();
 
     const files = {
       lib: {
-        'cli.js': `import pkg from '../package.json';`,
         'config.js': `import conf from './config.json`,
         'config.json': `{ name: 'my-config' }`,
+        'impl.js': `import pkg from '../package.json';`,
+        'member.graphql': '',
+        'main.css': '',
       },
       'index.js': `
         import path from 'path';
-        export * from './lib/cli';
+        import data from './lib/member.graphql';
+        import styles from './lib/main.css';
+        import pkg from './package';
+        import impl from './lib/impl;
+
         export * from './lib/config';
-  
-        export function power(foo, bar) {
-          return Math.pow(foo, bar);
-        }
+        export * from './lib/impl';
       `,
       'package.json': `
         {
@@ -316,6 +319,66 @@ describe('PackageGraph', () => {
 
     const actual = flatten(output.topSort());
 
-    expect(actual).toStrictEqual(['lib/cli.js', 'lib/config.js', 'index.js']);
+    expect(actual).toStrictEqual(['lib/config.js', 'lib/impl.js', 'index.js']);
+  });
+
+  test('should exclude *.css from the module graph', () => {
+    const tmpDir = getTmpDir();
+
+    const files = {
+      lib: {
+        'member.css': '',
+        'impl.js': `import './member'`,
+      },
+      'index.js': `
+        import './lib/member.css';
+        import './lib/impl';
+      `,
+      'package.json': `
+        {
+          "name": "basic",
+          "version": "1.0.0",
+          "license": "MIT"
+        }    
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+
+    const actual = flatten(output.topSort());
+
+    expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);
+  });
+
+  test('should exclude *.graphql from the module graph', () => {
+    const tmpDir = getTmpDir();
+
+    const files = {
+      lib: {
+        'member.graphql': '',
+        'impl.js': `import './member'`,
+      },
+      'index.js': `
+        import './lib/member.graphql';
+        import './lib/impl';
+      `,
+      'package.json': `
+        {
+          "name": "basic",
+          "version": "1.0.0",
+          "license": "MIT"
+        }    
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+
+    const actual = flatten(output.topSort());
+
+    expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);
   });
 });

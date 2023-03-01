@@ -14,7 +14,7 @@ function filter(arr: GraphNode<ModuleNode>[]): GraphNode<ModuleNode>[] {
 }
 
 describe('Unit | EmberAddonProjectGraph', () => {
-  test('addon', async () => {
+  test('should produce a graph of all files in an addon', async () => {
     const project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir);
@@ -27,6 +27,45 @@ describe('Unit | EmberAddonProjectGraph', () => {
       flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
     ).toStrictEqual([
       'addon/components/greet.js',
+      'tests/acceptance/addon-template-test.js',
+      'tests/dummy/app/app.js',
+      'tests/dummy/app/router.js',
+      'tests/test-helper.js',
+    ]);
+  });
+
+  test('options.exclude', async () => {
+    const project = await getEmberProjectFixture('addon');
+
+    const projectGraph = new EmberAddonProjectGraph(project.baseDir, { exclude: ['tests/dummy'] });
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
+    expect(
+      flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+    ).toStrictEqual([
+      'addon/components/greet.js',
+      'tests/acceptance/addon-template-test.js',
+      'tests/test-helper.js',
+    ]);
+  });
+
+  test('options.include', async () => {
+    const project = await getEmberProjectFixture('addon');
+
+    const projectGraph = new EmberAddonProjectGraph(project.baseDir, { include: ['^app'] });
+    projectGraph.discover();
+
+    const orderedPackages = projectGraph.graph.topSort();
+
+    expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
+    expect(
+      flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+    ).toStrictEqual([
+      'addon/components/greet.js',
+      'app/components/greet.js',
       'tests/acceptance/addon-template-test.js',
       'tests/dummy/app/app.js',
       'tests/dummy/app/router.js',

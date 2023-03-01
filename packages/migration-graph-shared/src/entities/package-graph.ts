@@ -15,6 +15,8 @@ import { Package } from './package';
 import type { ModuleNode, PackageNode } from '../types';
 import type { ProjectGraph } from './project-graph';
 
+const EXCLUDE_FILE_EXTS = ['\\.css$', '\\.json$', '\\.graphql$'];
+
 function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
   // If it's a coreModule like `path` skip;
   return (moduleOrDep.coreModule || moduleOrDep.couldNotResolve) ?? false;
@@ -73,7 +75,7 @@ export class PackageGraph {
     const cruiseOptions: ICruiseOptions = {
       baseDir,
       exclude: {
-        path: ['node_modules', '\\.css$', '\\.json$', ...exclude],
+        path: ['node_modules', ...EXCLUDE_FILE_EXTS, ...exclude],
       },
     };
 

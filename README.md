@@ -75,6 +75,10 @@ Rehearsal Migrate has performed the following tasks:
 
 With the interactive mode flag `--interactive` or `-i`, Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing.
 
+## Migrate by Directory
+
+With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report that merge both runs. 
+
 ## Rehearsal Reports
 
 Rehearsal will generate a report file in the "./rehearsal/" directory. This report file contains all of the information that Rehearsal has gathered during the migration process. It also contains the list of errors that need to be fixed manually. The report is available with multiple [formatters](https://github.com/rehearsal-js/rehearsal-js/tree/master/packages/reporter/src/formatters) in JSON, MD, SARIF and SONARQUBE.
