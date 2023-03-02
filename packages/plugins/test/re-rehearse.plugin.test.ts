@@ -5,7 +5,7 @@ import { Project } from 'fixturify-project';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import { Reporter } from '@rehearsal/reporter';
-import { ReRehearsePlugin } from '../src';
+import { ReRehearsePlugin } from '../src/index.js';
 
 describe('Test ReRehearsalPlugin', function () {
   let project: Project;

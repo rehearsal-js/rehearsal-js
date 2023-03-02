@@ -1,2 +1,2 @@
-export * from './strings';
-export * from './typescript-ast';
+export * from './strings.js';
+export * from './typescript-ast.js';

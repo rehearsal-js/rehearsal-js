@@ -1,8 +1,9 @@
-import { isLineBreak } from 'typescript';
+import ts from 'typescript';
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
-import { debug } from 'debug';
+import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
+const { isLineBreak } = ts;
 
 export interface ReRehearsePluginOptions extends PluginOptions {
   commentTag?: string;

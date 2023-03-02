@@ -1,9 +1,10 @@
-import { resolve } from 'path';
-import { readJSONSync, writeJSONSync, existsSync, writeFileSync } from 'fs-extra';
+import { resolve } from 'node:path';
+import { existsSync, writeFileSync } from 'node:fs';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state';
+import { State, calculateTSIgnoreCount, Store } from '../../src/helpers/state.js';
 
 setGracefulCleanup();
 
@@ -53,7 +54,7 @@ describe('state', async () => {
 
     const { packages, files } = new State('foo', basePath, [], configPath);
 
-    expect(packages.bar).toEqual(['./foo']);
+    expect(packages['bar']).toEqual(['./foo']);
     expect(files['./foo'].package).toBe('./bar');
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });

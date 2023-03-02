@@ -2,7 +2,10 @@
  * This file contains helper functions to work with Typescript AST nodes and diagnostics
  */
 
-import {
+import ts from 'typescript';
+import type { DiagnosticWithLocation, Node, SourceFile, Visitor } from 'typescript';
+
+const {
   createPrinter,
   findAncestor,
   forEachChild,
@@ -16,8 +19,7 @@ import {
   transform,
   visitEachChild,
   visitNode,
-} from 'typescript';
-import type { DiagnosticWithLocation, Node, SourceFile, Visitor } from 'typescript';
+} = ts;
 
 /**
  * Find the diagnosed node and passes it to `transformer` function.

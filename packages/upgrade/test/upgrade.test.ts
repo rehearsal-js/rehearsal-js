@@ -1,10 +1,14 @@
-import { copyFileSync, readdirSync, readFileSync, rmSync } from 'fs';
-import { resolve } from 'path';
+import { copyFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Reporter } from '@rehearsal/reporter';
 import { describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
-import { upgrade } from '../src';
+import { upgrade } from '../src/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Test upgrade', async function () {
   const basePath = resolve(__dirname, 'fixtures', 'upgrade');
@@ -29,9 +33,8 @@ describe('Test upgrade', async function () {
 
     for (const file of files) {
       const input = readFileSync(file).toString();
-      const output = readFileSync(`${file}.output`).toString();
 
-      expect(input).toEqual(output);
+      expect(input).toMatchSnapshot();
     }
 
     cleanupTsFiles(files);

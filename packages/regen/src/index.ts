@@ -1,1 +1,1 @@
-export { regen, RegenInput } from './regen';
+export { regen, RegenInput } from './regen.js';

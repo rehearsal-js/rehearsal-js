@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { clean, getEmberAppScenario } from '../src/scenarios';
+import { clean, getEmberAppScenario } from '../src/scenarios.js';
 
 const TEST_TIMEOUT = 50000;
 

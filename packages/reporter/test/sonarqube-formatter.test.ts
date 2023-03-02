@@ -1,9 +1,9 @@
-import { resolve } from 'path';
-import { readJSONSync } from 'fs-extra';
+import { resolve } from 'node:path';
+import { readJSONSync } from 'fs-extra/esm';
 import { describe, expect, test } from 'vitest';
 
-import { sonarqubeFormatter } from '../src';
-import type { Report } from '../src/types';
+import { sonarqubeFormatter } from '../src/index.js';
+import type { Report } from '../src/types.js';
 
 const rehearsalReportJSON: Report = readJSONSync(
   resolve('./test/fixtures/reporter/rehearsal-report.json')

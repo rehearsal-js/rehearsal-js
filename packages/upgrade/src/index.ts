@@ -1,1 +1,1 @@
-export { upgrade } from './upgrade';
+export { upgrade } from './upgrade.js';

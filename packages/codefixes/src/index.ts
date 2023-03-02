@@ -1,4 +1,4 @@
-export { codefixes } from './codefixes';
-export { isInstallPackageCommand } from './typescript-codefix-collection';
-export { hints } from './hints';
-export * from './types';
+export { codefixes } from './codefixes.js';
+export { isInstallPackageCommand } from './typescript-codefix-collection.js';
+export { hints } from './hints.js';
+export * from './types.js';

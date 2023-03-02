@@ -1,17 +1,16 @@
 import debug, { type Debugger } from 'debug';
 import { Graph, ModuleNode, readPackageJson } from '@rehearsal/migration-graph-shared';
-
 import {
   getEmberAddonName,
   getModuleNameFromMain,
   getNameFromMain,
   isEngine,
-} from '../utils/ember';
+} from '../utils/ember.js';
+import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package.js';
 import {
   EmberAddonPackageGraph,
   type EmberAddonPackageGraphOptions,
-} from './ember-addon-package-graph';
-import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package';
+} from './ember-addon-package-graph.js';
 
 export class EmberAddonPackage extends EmberAppPackage {
   isAddon: boolean = true;
@@ -77,7 +76,7 @@ export class EmberAddonPackage extends EmberAppPackage {
     return this.#addonName;
   }
 
-  getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
+  override getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
     this.debug('getModuleGraph');
     if (this.graph) {
       return this.graph;

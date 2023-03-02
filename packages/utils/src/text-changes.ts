@@ -1,12 +1,8 @@
-import {
-  FileTextChanges,
-  getLineAndCharacterOfPosition,
-  getPositionOfLineAndCharacter,
-  Node,
-  SourceFile,
-} from 'typescript';
+import ts, { FileTextChanges, Node, SourceFile } from 'typescript';
 
-import { isNodeInsideJsx } from '.';
+import { isNodeInsideJsx } from './index.js';
+
+const { getLineAndCharacterOfPosition, getPositionOfLineAndCharacter } = ts;
 
 /**
  * Collection of functions that produces FileTextChanges for different cases

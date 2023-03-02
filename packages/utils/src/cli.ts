@@ -1,17 +1,19 @@
-import { join, resolve } from 'path';
-import { readFileSync, writeJSONSync, readJSONSync, existsSync } from 'fs-extra';
+import { join, resolve } from 'node:path';
+import { readFileSync, existsSync } from 'node:fs';
+import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
-import { parse } from 'json5';
+import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
-import { glob } from 'glob';
+import glob from 'glob';
+import { execa, execaSync } from 'execa';
 
 import findup = require('findup-sync');
-import execa = require('execa');
-import { GitDescribe } from './types';
+import type { GitDescribe } from './types.js';
+import type { Options } from 'execa';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
@@ -88,7 +90,7 @@ export function msToSeconds(ms: number): number {
 export function readJSON<T>(file: string): T | undefined {
   const text = readText(file);
   if (text !== undefined) {
-    return parse(text);
+    return json5.parse(text);
   }
 }
 
@@ -210,7 +212,7 @@ export function getManagerBinPath(
   hasVolta: boolean = isBinExisted('volta')
 ): string {
   if (hasVolta && manager !== 'pnpm') {
-    return execa.sync('volta', ['which', manager]).stdout;
+    return execaSync('volta', ['which', manager]).stdout;
   } else {
     return which.sync(manager);
   }
@@ -312,9 +314,14 @@ export function getModuleManagerInstaller(
 export async function addDep(
   depList: string[],
   isDev: boolean,
-  options: execa.Options = {}
+  options: Options = {}
 ): Promise<void> {
-  const basePath = options.cwd ? options.cwd : process.cwd();
+  let basePath = options.cwd ? options.cwd : process.cwd();
+
+  if (typeof basePath === 'object') {
+    basePath = basePath.toString();
+  }
+
   const moduleManager = getModuleManager(basePath);
   const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
@@ -323,7 +330,7 @@ export async function addDep(
 
 // when executing a command with module manager prefix
 // eg. yarn tsc or pnpm tsc or npm tsc
-export async function runModuleCommand(args: string[], option: execa.Options = {}): Promise<void> {
+export async function runModuleCommand(args: string[], option: Options = {}): Promise<void> {
   const moduleManager = getModuleManager();
   const binAndArgs = {
     bin: moduleManager,
@@ -334,10 +341,7 @@ export async function runModuleCommand(args: string[], option: execa.Options = {
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
 // and volta use case
-export async function getPathToBinary(
-  binaryName: string,
-  options: execa.Options = {}
-): Promise<string> {
+export async function getPathToBinary(binaryName: string, options: Options = {}): Promise<string> {
   // pnpm | yarn | npm
   const moduleManager = getModuleManager();
   // /Users/foo/.volta/bin/yarn
@@ -486,7 +490,7 @@ export async function resetFiles(): Promise<void> {
  * Get default editor with args
  */
 export function getEditorBinWithArgs(): string[] {
-  const defaultEditor = process.env.EDITOR;
+  const defaultEditor = process.env['EDITOR'];
   if (!defaultEditor) {
     return [];
   }

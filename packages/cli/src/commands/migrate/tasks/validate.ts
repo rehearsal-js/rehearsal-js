@@ -1,10 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
-import { existsSync, readFileSync, readdirSync } from 'fs-extra';
-
 import { getEsLintConfigPath } from '@rehearsal/utils';
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 function checkLintConfig(basePath: string, logger: Logger): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);

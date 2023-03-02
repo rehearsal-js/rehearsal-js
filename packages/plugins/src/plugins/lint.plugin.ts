@@ -1,6 +1,6 @@
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
 import { ESLint } from 'eslint';
-import { debug } from 'debug';
+import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:formatting');
 

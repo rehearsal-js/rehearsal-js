@@ -1,5 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function json(jsonObj = {}) {
   return JSON.stringify(jsonObj, null, 2);
@@ -25,7 +29,7 @@ WORKSPACE_FIXTURES[WORKSPACE_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
 WORKSPACE_FIXTURES[WORKSPACE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
   WORKSPACE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER
 ] = {
-  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.js': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: WORKSPACE_FIXTURE_NAMES.NON_WORKSPACE_IN_WORKSPACE_CONTAINER,
     version: '1.0.0',
@@ -39,7 +43,7 @@ WORKSPACE_FIXTURES[WORKSPACE_FIXTURE_NAMES.WORKSPACE_CONTAINER][
 WORKSPACE_FIXTURES[WORKSPACE_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
   WORKSPACE_FIXTURE_NAMES.PACKAGE_IN_WORKSPACE_CONTAINER
 ] = {
-  'index.js': fs.readFileSync(path.join(__dirname, 'test-package', 'index.js'), 'utf-8'),
+  'index.js': readFileSync(join(__dirname, 'test-package', 'index.js'), 'utf-8'),
   'package.json': json({
     name: WORKSPACE_FIXTURE_NAMES.PACKAGE_IN_WORKSPACE_CONTAINER,
     version: '1.0.0',

@@ -1,11 +1,11 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { Logger } from 'winston';
-import execa = require('execa');
+import { execa } from 'execa';
 
 import { determineProjectName, getPathToBinary } from '@rehearsal/utils';
 import type { ListrTask } from 'listr2';
 
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 export async function regenTask(
   options: MigrateCommandOptions,
@@ -18,7 +18,7 @@ export async function regenTask(
       // Because we have to eagerly import all the tasks we need tolazily load these
       // modules because they refer to typescript which may or may not be installed
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getRegenSummary } = await import('../../../helpers/report');
+      const { generateReports, getRegenSummary } = await import('../../../helpers/report.js');
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
 
       const projectName = determineProjectName() || '';

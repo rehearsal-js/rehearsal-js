@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { DiagnosticFixPlugin } from '../src';
-import { mockDiagnosticWithLocations } from './utils';
+import { DiagnosticFixPlugin } from '../src/index.js';
+import { mockDiagnosticWithLocations } from './utils.js';
 
 describe('Test DiagnosticFixPlugin', function () {
   test('sort', async () => {

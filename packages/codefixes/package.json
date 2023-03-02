@@ -15,6 +15,14 @@
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "license": "BSD-2-Clause",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./*"
+  },
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
@@ -35,7 +43,9 @@
   },
   "devDependencies": {
     "@types/prettier": "^2.7.2",
+    "fs-extra": "^11.1.0",
     "prettier": "^2.8.3",
+    "tmp": "^0.2.1",
     "vitest": "^0.28.5"
   },
   "peerDependencies": {

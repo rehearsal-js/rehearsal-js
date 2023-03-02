@@ -1,5 +1,5 @@
 import type { CodeFixAction } from 'typescript';
-import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types';
+import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 
 /**
  * Provides

@@ -1,4 +1,4 @@
-export { DiagnosticCheckPlugin, DiagnosticCheckPluginOptions } from './diagnostic-check.plugin';
-export { DiagnosticFixPlugin, DiagnosticFixPluginOptions } from './diagnostic-fix.plugin';
-export { LintPlugin, LintPluginOptions } from './lint.plugin';
-export { ReRehearsePlugin, ReRehearsePluginOptions } from './re-rehearse.plugin';
+export { DiagnosticCheckPlugin, DiagnosticCheckPluginOptions } from './diagnostic-check.plugin.js';
+export { DiagnosticFixPlugin, DiagnosticFixPluginOptions } from './diagnostic-fix.plugin.js';
+export { LintPlugin, LintPluginOptions } from './lint.plugin.js';
+export { ReRehearsePlugin, ReRehearsePluginOptions } from './re-rehearse.plugin.js';

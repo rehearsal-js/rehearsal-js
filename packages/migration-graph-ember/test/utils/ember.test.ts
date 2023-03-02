@@ -1,12 +1,12 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 import { PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import { EmberAddonPackage } from '../../src/entities/ember-addon-package';
-import { EmberAppPackage } from '../../src/entities/ember-app-package';
+import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
+import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 
 import {
   getEmberAddonName,
@@ -15,9 +15,9 @@ import {
   isAddon,
   isEngine,
   requirePackageMain,
-} from '../../src/utils/ember';
+} from '../../src/utils/ember.js';
 
-import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures';
+import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures.js';
 
 setGracefulCleanup();
 
@@ -59,9 +59,9 @@ describe('Unit | utils | ember', () => {
       // returns an object
       expect(somePackage).toBeTypeOf('object');
       // has expected fields
-      expect(somePackage.name).toBeTruthy();
-      expect(somePackage.version).toBeTruthy();
-      expect(somePackage.keywords).toBeTruthy();
+      expect(somePackage['name']).toBeTruthy();
+      expect(somePackage['version']).toBeTruthy();
+      expect(somePackage['keywords']).toBeTruthy();
     });
 
     test('isApp', () => {

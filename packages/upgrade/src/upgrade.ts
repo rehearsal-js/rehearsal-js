@@ -1,4 +1,4 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'node:path';
 import {
   DiagnosticCheckPlugin,
   DiagnosticFixPlugin,
@@ -7,9 +7,11 @@ import {
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
-import { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } from 'typescript';
-import { debug } from 'debug';
+import ts from 'typescript';
+import debug from 'debug';
 import type { Logger } from 'winston';
+
+const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 export type UpgradeInput = {
   basePath: string;

@@ -1,11 +1,11 @@
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
-import type { UserConfig } from './user-config';
-import type { State } from './helpers/state';
+import type { UserConfig } from './user-config.js';
+import type { State } from './helpers/state.js';
 
 export type CliCommand = 'upgrade' | 'migrate';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 
-export * from './configs/rehearsal-config';
+export * from './configs/rehearsal-config.js';
 
 export type MigrateCommandOptions = {
   init: boolean;

@@ -1,12 +1,12 @@
-import { resolve, extname } from 'path';
+import { resolve, extname } from 'node:path';
 import { ESLint } from 'eslint';
-import { outputFileSync } from 'fs-extra';
+import { outputFileSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
 import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
 import { stringify as yamlStringify } from 'yaml';
-import defaultConfig from '../../../configs/eslint-default';
+import { eslintDefault } from '../../../configs/eslint-default.js';
 import type { ListrTask } from 'listr2';
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 enum REHEARSAL_CONFIG_FILENAMES {
   JS = '.rehearsal-eslintrc.js',
@@ -23,6 +23,8 @@ enum FORMAT {
   YML = 'yml',
   NO_EXTENSION = '',
 }
+
+const DEFAULT_ESLINT_CONFIG = eslintDefault;
 
 export async function lintConfigTask(
   options: MigrateCommandOptions,
@@ -208,7 +210,7 @@ function getRehearsalConfigStr(format: FORMAT): string {
       str = getJsonConfigStr();
       break;
     case FORMAT.JS:
-      str = `module.exports = ${JSON.stringify(defaultConfig, null, 2)}`;
+      str = `module.exports = ${JSON.stringify(DEFAULT_ESLINT_CONFIG, null, 2)}`;
       break;
     default:
   }
@@ -239,12 +241,12 @@ function getJsonConfigStr(): string {
 function getYAMLConfigStr(): string {
   return `
   parser: '@typescript-eslint/parser'
-  parserOptions: 
+  parserOptions:
     sourceType: module
-  plugins: 
+  plugins:
     - '@typescript-eslint'
     - prettier
-  extends: 
+  extends:
     - 'plugin:@typescript-eslint/eslint-recommended'
     - 'plugin:@typescript-eslint/recommended'
     - 'eslint:recommended'

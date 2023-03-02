@@ -1,17 +1,22 @@
-import { dirname, resolve } from 'path';
-import {
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import Module from 'node:module';
+import ts, {
   type CodeActionCommand,
   type CodeFixAction,
   FileTextChanges,
   type FormatCodeSettings,
-  getDefaultFormatCodeSettings,
-  SemicolonPreference,
   TextChange,
   type UserPreferences,
 } from 'typescript';
-import { CodeFixCollectionFilter } from './types';
-import type { CodeFixCollection, DiagnosticWithContext } from './types';
+import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const require = Module.createRequire(import.meta.url);
+
+const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
 /**
  * Provides code fixes based on the Typescript's codefix collection.

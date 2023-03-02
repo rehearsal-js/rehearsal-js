@@ -1,6 +1,6 @@
-const { join } = require('path');
-const { execSync } = require('child_process');
-const { existsSync } = require('fs-extra');
+import { join } from 'node:path';
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 function prepare(dir = '') {
   if (existsSync(join(dir, 'node_modules'))) {

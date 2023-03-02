@@ -1,5 +1,6 @@
-import { resolve } from 'path';
-import { existsSync, writeJSONSync, readJSONSync, readFileSync, mkdirSync } from 'fs-extra';
+import { resolve } from 'node:path';
+import { existsSync, readFileSync, mkdirSync } from 'node:fs';
+import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
 
 import { git } from '@rehearsal/utils';
 

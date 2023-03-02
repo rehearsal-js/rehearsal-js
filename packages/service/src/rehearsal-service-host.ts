@@ -1,15 +1,14 @@
-import { dirname } from 'path';
-import {
+import { dirname } from 'node:path';
+import ts, {
   ApplyCodeActionCommandResult,
-  getDefaultLibFilePath,
   InstallPackageOptions,
   LanguageServiceHost,
-  ScriptSnapshot,
-  sys,
 } from 'typescript';
 import { addDep } from '@rehearsal/utils';
 import findupSync from 'findup-sync';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
+
+const { ScriptSnapshot, getDefaultLibFilePath, sys } = ts;
 
 /**
  * ServiceHost represents the layer between the LanguageServer and the permanent storage.

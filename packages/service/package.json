@@ -14,6 +14,14 @@
     "url": "https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "license": "BSD-2-Clause",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [

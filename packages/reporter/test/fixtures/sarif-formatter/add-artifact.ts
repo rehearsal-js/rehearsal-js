@@ -1,4 +1,4 @@
-import type { Report } from '../../../src';
+import type { Report } from '../../../src/index.js';
 
 const addArtifactData: Report = {
   summary: [{

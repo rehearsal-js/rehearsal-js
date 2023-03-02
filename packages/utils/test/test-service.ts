@@ -1,12 +1,12 @@
-import { dirname } from 'path';
-import {
-  createProgram,
-  findConfigFile,
-  parseJsonConfigFileContent,
-  readConfigFile,
-  sys,
-} from 'typescript';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 import type { Program, SourceFile, TypeChecker } from 'typescript';
+
+const { createProgram, findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class TestService {
   private static instance: TestService;
@@ -44,8 +44,10 @@ class TestService {
   };
 
   getTypeChecker = (): TypeChecker => this.program.getTypeChecker();
-  getSourceFile = (fileName: string): SourceFile | undefined =>
-    this.program.getSourceFile(fileName);
+  getSourceFile = (fileName: string): SourceFile | undefined => {
+    const sourceFile = this.program.getSourceFile(fileName);
+    return sourceFile;
+  };
   getBasePath = (): string => this.basePath;
 }
 const testService = TestService.getInstance(__dirname);

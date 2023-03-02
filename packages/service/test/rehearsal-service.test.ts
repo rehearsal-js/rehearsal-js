@@ -1,9 +1,13 @@
-import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 
-import { RehearsalService } from '../src';
+import { RehearsalService } from '../src/index.js';
 import type { CompilerOptions, DiagnosticWithLocation } from 'typescript';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Test service', function () {
   const basePath = resolve(__dirname, 'fixtures');

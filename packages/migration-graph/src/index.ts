@@ -6,4 +6,4 @@ export {
   type MigrationStrategy,
   type MigrationStrategyOptions,
   type SourceFile,
-} from './migration-strategy';
+} from './migration-strategy.js';

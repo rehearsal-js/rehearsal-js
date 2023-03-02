@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
-import { debug } from 'debug';
+import debug from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-
-import execa = require('execa');
-
+import { execa } from 'execa';
+import { readJSONSync } from 'fs-extra/esm';
 import {
   addDep,
   determineProjectName,
@@ -22,8 +21,10 @@ import {
   parseCommaSeparatedList,
   parseTsVersion,
 } from '@rehearsal/utils';
-import { version } from '../../package.json';
-import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types';
+import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
+
+const __dirname = new URL('.', import.meta.url).pathname;
+const { version } = readJSONSync(resolve(__dirname, '../../package.json')) as { version: string };
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
@@ -240,7 +241,7 @@ upgradeCommand
         DEBUG_CALLBACK('ctx: %O', ctx);
       });
 
-      const generateReports = await import('../helpers/report').then((m) => m.generateReports);
+      const generateReports = await import('../helpers/report.js').then((m) => m.generateReports);
 
       const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('upgrade', reporter, reportOutputPath, options.format);

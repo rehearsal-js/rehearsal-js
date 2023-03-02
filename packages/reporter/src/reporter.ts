@@ -1,5 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } from 'typescript';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import ts from 'typescript';
 import {
   type Report,
   type ReportFormatter,
@@ -8,10 +8,12 @@ import {
   type LintErrorLike,
   type Run,
   ReportItemType,
-} from './types';
-import { normalizeFilePath } from './normalize-paths';
+} from './types.js';
+import { normalizeFilePath } from './normalize-paths.js';
 import type { DiagnosticWithLocation, Node } from 'typescript';
 import type { Logger } from 'winston';
+
+const { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } = ts;
 
 type ReporterMeta = {
   projectName: string;

@@ -1,19 +1,21 @@
-import fs from 'fs';
-import { join, relative } from 'path';
+import { realpathSync } from 'node:fs';
+import { join, relative } from 'node:path';
 import debug, { type Debugger } from 'debug';
-import {
-  cruise,
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { cruise } from 'dependency-cruiser';
+import { Graph, GraphNode } from '../graph/index.js';
+import { Package } from './package.js';
+import type { ModuleNode, PackageNode } from '../types.js';
+import type { ProjectGraph } from './project-graph.js';
+import type {
   ICruiseOptions,
   ICruiseResult,
-  IDependency,
   IModule,
-  IReporterOutput,
+  IDependency,
   IResolveOptions,
-} from 'dependency-cruiser';
-import { Graph, GraphNode } from '../graph';
-import { Package } from './package';
-import type { ModuleNode, PackageNode } from '../types';
-import type { ProjectGraph } from './project-graph';
+  IReporterOutput,
+} from '../../types/dependency-cruiser/index.js';
 
 const EXCLUDE_FILE_EXTS = ['\\.css$', '\\.json$', '\\.graphql$'];
 
@@ -23,7 +25,7 @@ function isExternalModule(moduleOrDep: IModule | IDependency): boolean {
 }
 
 function resolveRelative(baseDir: string, somePath: string): string {
-  return relative(fs.realpathSync(baseDir), fs.realpathSync(join(baseDir, somePath)));
+  return relative(realpathSync(baseDir), realpathSync(join(baseDir, somePath)));
 }
 
 export type PackageGraphOptions = {

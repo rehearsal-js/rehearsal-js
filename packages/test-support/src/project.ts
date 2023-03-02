@@ -1,16 +1,19 @@
-import { dirname, join } from 'path';
-import { Project } from 'fixturify-project';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import findupSync from 'findup-sync';
 import tmp from 'tmp';
+import { Project } from 'fixturify-project';
 import {
   getEmberAppFiles,
   getEmberAppWithInRepoAddonFiles,
   getEmberAddonFiles,
   getEmberAppWithInRepoEngine,
-} from './files';
+} from './files.js';
 
 tmp.setGracefulCleanup();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const maybePackageJson = findupSync('./package.json', { cwd: __dirname });
 
 if (!maybePackageJson) {
@@ -38,7 +41,7 @@ function addUtilDirectory(project: Project): Project {
               'arguments must be numbers',
               typeof a === number && typeof b === number
             );
-          
+
             return a + b;
           }
         `,
@@ -58,14 +61,14 @@ function addUtilDirectory(project: Project): Project {
           'math-test.js': `
           import { module, test } from 'qunit';
           import { add } from '${appName}/utils/math';
-          
+
           module('the \`add\` function', function(hooks) {
             test('adds numbers correctly', function(assert) {
               assert.equal('2 + 2 is 4', add(2, 2), 4);
               assert.notEqual('2 + 2 is a number', add(2, 2), NaN);
               assert.notEqual('2 + 2 is not infinity', add(2, 2), Infinity);
             });
-          
+
             test('throws an error with strings', function(assert) {
               assert.throws(
                 'when the first is a string and the second is a number',

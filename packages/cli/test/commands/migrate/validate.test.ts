@@ -1,15 +1,16 @@
-import { resolve } from 'path';
-import { createFileSync, rmSync, writeFileSync } from 'fs-extra';
+import { resolve } from 'node:path';
+import { rmSync, writeFileSync } from 'node:fs';
+import { createFileSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
-import { validateTask } from '../../../src/commands/migrate/tasks';
+import { validateTask } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,
   listrTaskRunner,
   createMigrateOptions,
   cleanOutput,
-} from '../../test-helpers';
+} from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

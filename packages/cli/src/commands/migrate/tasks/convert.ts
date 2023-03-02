@@ -1,9 +1,8 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { Logger } from 'winston';
-import { debug } from 'debug';
+import debug from 'debug';
 import chalk from 'chalk';
-import execa = require('execa');
-
+import { execa } from 'execa';
 import {
   determineProjectName,
   openInEditor,
@@ -13,8 +12,7 @@ import {
 } from '@rehearsal/utils';
 
 import type { ListrTask } from 'listr2';
-
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types';
+import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
@@ -31,7 +29,7 @@ export async function convertTask(
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getReportSummary } = await import('../../../helpers/report');
+      const { generateReports, getReportSummary } = await import('../../../helpers/report.js');
       // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
@@ -92,7 +90,7 @@ export async function convertTask(
               if (ctx.input === 'Accept') {
                 completed = true;
               } else if (ctx.input === 'Edit') {
-                if (!process.env.EDITOR) {
+                if (!process.env['EDITOR']) {
                   logger.warn(
                     'Cannot find default editor in environment variables, please set $EDITOR and try again.'
                   );

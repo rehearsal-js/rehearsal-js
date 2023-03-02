@@ -1,7 +1,9 @@
 import { getTypeNameFromVariable, isVariableOfCatchClause } from '@rehearsal/utils';
-import { isFunctionDeclaration, isIdentifier, isParameter, isReturnStatement } from 'typescript';
+import ts from 'typescript';
 
-import { HintsProvider } from './hints-provider';
+import { HintsProvider } from './hints-provider.js';
+
+const { isIdentifier, isFunctionDeclaration, isParameter, isReturnStatement } = ts;
 
 export const hints = new HintsProvider({
   2322: {

@@ -1,4 +1,4 @@
-export = {
+export const eslintDefault = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',

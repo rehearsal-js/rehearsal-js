@@ -4,6 +4,17 @@
     "rootDir": "../",
     "outDir": "../dist/test/"
   },
+  "include": [".", "../src", "../package.json"],
   "exclude": ["fixtures"],
-  "include": [".", "../src", "../package.json"]
+  "references": [
+    {
+      "path": "../../utils"
+    },
+    {
+      "path": "../../upgrade"
+    },
+    {
+      "path": "../../reporter"
+    }
+  ]
 }

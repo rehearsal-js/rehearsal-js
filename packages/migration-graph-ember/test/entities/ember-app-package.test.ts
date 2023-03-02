@@ -1,9 +1,9 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { describe, test, expect, beforeEach } from 'vitest';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
-import { FIXTURES, FIXTURE_NAMES } from '../fixtures/package-fixtures';
-import { EmberAppPackage } from '../../src/entities/ember-app-package';
+import { FIXTURES, FIXTURE_NAMES } from '../fixtures/package-fixtures.js';
+import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 
 setGracefulCleanup();
 

@@ -1,6 +1,6 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import micromatch from 'micromatch';
-import { readPackageJson } from '../index';
+import { readPackageJson } from '../index.js';
 
 /**
  * Gets all workspace globs from the the root `package.json`
@@ -16,7 +16,7 @@ export function getWorkspaceGlobs(pathToRoot: string): string[] {
     return [];
   }
 
-  const workspaces = (packageJson.workspaces as Array<string>) ?? [];
+  const workspaces = (packageJson['workspaces'] as Array<string>) ?? [];
 
   return workspaces.map((glob: string) => join(pathToRoot, glob));
 }

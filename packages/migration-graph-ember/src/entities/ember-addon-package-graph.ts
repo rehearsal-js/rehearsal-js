@@ -1,21 +1,21 @@
-import { resolve } from 'path';
-import { type IResolveOptions } from 'dependency-cruiser';
+import { resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
+import { getEmberAddonName } from '../utils/ember.js';
+import { EmberAddonPackage } from './ember-addon-package.js';
+import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph.js';
 
-import { getEmberAddonName } from '../utils/ember';
-import { EmberAddonPackage } from './ember-addon-package';
-import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph';
+import type { IResolveOptions } from '@rehearsal/migration-graph-shared/types/dependency-cruiser/index.js';
 
 export type EmberAddonPackageGraphOptions = EmberAppPackageGraphOptions;
 
 export class EmberAddonPackageGraph extends EmberAppPackageGraph {
-  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
 
   constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
     super(p, options);
   }
 
-  get resolveOptions(): IResolveOptions {
+  override get resolveOptions(): IResolveOptions {
     const addonName = getEmberAddonName(this.package.path);
 
     if (!addonName) {

@@ -1,5 +1,5 @@
-import { dirname, resolve } from 'path';
-import { sync as fastGlobSync } from 'fast-glob';
+import { dirname, resolve } from 'node:path';
+import fastGlob from 'fast-glob';
 import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
@@ -9,10 +9,10 @@ import {
   ProjectGraphOptions,
   readPackageJson,
 } from '@rehearsal/migration-graph-shared';
-import { isAddon, isApp } from '../utils/ember';
-import { EmberAppPackage } from './ember-app-package';
-import { EmberAddonPackage } from './ember-addon-package';
-import type { EmberProjectPackage } from '../types';
+import { isAddon, isApp } from '../utils/ember.js';
+import { EmberAppPackage } from './ember-app-package.js';
+import { EmberAddonPackage } from './ember-addon-package.js';
+import type { EmberProjectPackage } from '../types.js';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -24,8 +24,8 @@ type EmberPackageLookup = {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
-  protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
-  protected discoveredPackages: Record<string, EmberProjectPackage> = {};
+  override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  protected override discoveredPackages: Record<string, EmberProjectPackage> = {};
   private lookup?: EmberPackageLookup;
 
   constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
@@ -33,7 +33,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
 
-  addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
+  override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
@@ -59,7 +59,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
    * @param pkg we want
    * @returns an array of found packages
    */
-  findInternalPackageDependencies(pkg: Package): Array<Package> {
+  override findInternalPackageDependencies(pkg: Package): Array<Package> {
     let deps: Array<Package> = [];
 
     const { byAddonName: mappingsByAddonName, byPath: mappingsByLocation } =
@@ -131,7 +131,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     });
   }
 
-  protected discoveryByEntrypoint(entrypoint: string): EmberAppPackage {
+  protected override discoveryByEntrypoint(entrypoint: string): EmberAppPackage {
     // Create a package to make sure things work, but ignore the rest.
     const p = new EmberAppPackage(this.rootDir);
     p.includePatterns = new Set([entrypoint]);
@@ -195,7 +195,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     // This issue was discovered during a migration-graph.test.ts because we have a fixtures
     // directory.
 
-    let pathToPackageJsonList = fastGlobSync(
+    let pathToPackageJsonList = fastGlob.sync(
       [
         `**/package.json`,
         `!${pathToRoot}/**/build/**`,
@@ -248,7 +248,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return { root, found };
   }
 
-  discover(): Array<EmberProjectPackage> {
+  override discover(): Array<EmberProjectPackage> {
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
 

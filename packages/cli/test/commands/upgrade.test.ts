@@ -1,12 +1,20 @@
-import { join, resolve } from 'path';
+import { join, resolve, dirname } from 'node:path';
+import { existsSync, rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { type Report } from '@rehearsal/reporter';
-import execa from 'execa';
-import { existsSync, readJSONSync, rmSync } from 'fs-extra';
+import { execa } from 'execa';
+import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getLatestTSVersion, git } from '@rehearsal/utils';
+import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
 
-import packageJson from '../../package.json';
-import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers';
+import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const packageJson = readJSON(resolve(__dirname, '../../package.json')) as {
+  dependencies: { typescript: string };
+};
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
@@ -20,7 +28,7 @@ const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });

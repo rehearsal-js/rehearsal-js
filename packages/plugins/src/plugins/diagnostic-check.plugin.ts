@@ -5,19 +5,19 @@ import {
   PluginsRunnerContext,
   RehearsalService,
 } from '@rehearsal/service';
-import { debug } from 'debug';
-import {
-  DiagnosticCategory,
-  findAncestor,
-  getLineAndCharacterOfPosition,
-  getPositionOfLineAndCharacter,
-  isTemplateLiteral,
-  LanguageService,
-} from 'typescript';
+import debug from 'debug';
+import ts, { LanguageService } from 'typescript';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
-import { getLocation } from '../helpers';
+import { getLocation } from '../helpers.js';
 
+const {
+  isTemplateLiteral,
+  findAncestor,
+  DiagnosticCategory,
+  getLineAndCharacterOfPosition,
+  getPositionOfLineAndCharacter,
+} = ts;
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
 export interface DiagnosticCheckPluginOptions extends PluginOptions {

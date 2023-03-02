@@ -1,9 +1,9 @@
-import { join, extname } from 'path';
-import { readFileSync } from 'fs-extra';
+import { join, extname } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { parseSync } from '@swc/core';
 import debug from 'debug';
 
-import { transformGjs } from './transform-gjs';
+import { transformGjs } from './transform-gjs.js';
 
 import type {
   CallExpression,

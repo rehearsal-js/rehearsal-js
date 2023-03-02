@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-import { resolve } from 'path';
-import { existsSync } from 'fs';
+import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { Command } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-
 import {
   parseCommaSeparatedList,
   gitIsRepoDirty,
   resetFiles,
   ensureAbsolutePath,
 } from '@rehearsal/utils';
-import { readJsonSync } from 'fs-extra';
-import { version } from '../../../package.json';
+import { readJsonSync } from 'fs-extra/esm';
 import {
   initTask,
   depInstallTask,
@@ -23,10 +21,15 @@ import {
   regenTask,
   validateTask,
   reportExisted,
-} from './tasks';
+} from './tasks/index.js';
 
-import { sequentialTask } from './tasks/sequential';
-import type { MigrateCommandOptions, PreviousRuns } from '../../types';
+import { sequentialTask } from './tasks/sequential.js';
+import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
+
+const __dirname = new URL('.', import.meta.url).pathname;
+const { version } = readJsonSync(resolve(__dirname, '../../../package.json')) as {
+  version: string;
+};
 
 export const migrateCommand = new Command();
 
@@ -44,7 +47,11 @@ migrateCommand
     ensureAbsolutePath,
     process.cwd()
   )
-  .option('-e, --entrypoint <entrypoint>', 'migrate the directory and its imported files specified by entrypoint', '')
+  .option(
+    '-e, --entrypoint <entrypoint>',
+    'migrate the directory and its imported files specified by entrypoint',
+    ''
+  )
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',

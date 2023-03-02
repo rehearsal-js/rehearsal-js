@@ -1,6 +1,7 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
+import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readdirSync, readJSONSync } from 'fs-extra';
+import { readJSONSync } from 'fs-extra/esm';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { createLogger, format, transports } from 'winston';
 
@@ -10,7 +11,7 @@ import {
   convertTask,
   tsConfigTask,
   lintConfigTask,
-} from '../../../src/commands/migrate/tasks';
+} from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,
   listrTaskRunner,
@@ -21,7 +22,7 @@ import {
   createOutputStream,
   isPackageSelection,
   isActionSelection,
-} from '../../test-helpers';
+} from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
@@ -270,7 +271,7 @@ describe('Task: convert', async () => {
     // 2. Haven't figured out how to pass key command/press to editor, to edit file and quit the edit
     // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
     // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
-    process.env.EDITOR = 'rm';
+    process.env['EDITOR'] = 'rm';
     const options = createMigrateOptions(basePath, { interactive: true });
 
     let fileCount = 1; // file counter in prompt selection

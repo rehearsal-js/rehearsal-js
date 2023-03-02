@@ -5,12 +5,8 @@ import {
   isSubtypeOf,
   isTypeMatched,
 } from '@rehearsal/utils';
-import {
-  flattenDiagnosticMessageText,
-  isExportAssignment,
-  isObjectLiteralExpression,
-} from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection';
+import ts from 'typescript';
+import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type {
   CodeFixAction,
   ExportAssignment,
@@ -21,7 +17,9 @@ import type {
   TypeChecker,
   TypeReference,
 } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../../types';
+import type { CodeFix, DiagnosticWithContext } from '../../types.js';
+
+const { flattenDiagnosticMessageText, isExportAssignment, isObjectLiteralExpression } = ts;
 
 const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 

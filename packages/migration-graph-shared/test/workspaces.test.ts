@@ -1,10 +1,10 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import { getWorkspaceGlobs, isWorkspace } from '../src/utils/workspace';
-import { FIXTURE_NAMES, FIXTURES } from './fixtures/workspace-fixtures';
+import { getWorkspaceGlobs, isWorkspace } from '../src/utils/workspace.js';
+import { FIXTURE_NAMES, FIXTURES } from './fixtures/workspace-fixtures.js';
 
 setGracefulCleanup();
 

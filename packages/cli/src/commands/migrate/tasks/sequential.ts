@@ -1,12 +1,12 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { Logger } from 'winston';
-import { debug } from 'debug';
-import execa = require('execa');
+import debug from 'debug';
+import { execa } from 'execa';
 import { determineProjectName, getPathToBinary, gitAddIfInRepo } from '@rehearsal/utils';
-import { getSourceFiles } from '../../../helpers/sequential';
-import type { ListrTask } from 'listr2';
+import { getSourceFiles } from '../../../helpers/sequential.js';
 
-import type { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../../types';
+import type { ListrTask } from 'listr2';
+import type { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:sequential');
 
@@ -24,7 +24,7 @@ export async function sequentialTask(
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { generateReports, getReportSummary, getRegenSummary } = await import(
-        '../../../helpers/report'
+        '../../../helpers/report.js'
       );
 
       const projectName = determineProjectName() || '';

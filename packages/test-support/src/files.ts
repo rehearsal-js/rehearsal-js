@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fixturify from 'fixturify';
 
 export const FILE_EMBER_ADDON_CONFIG_EMBER_TRY = `
@@ -185,15 +186,15 @@ export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon'): fixtu
           import { module, test } from 'qunit';
           import { visit, currentURL } from '@ember/test-helpers';
           import { setupApplicationTest } from 'ember-qunit';
-  
+
           module('Acceptance | Index', function (hooks) {
             setupApplicationTest(hooks);
-  
+
             test('visiting /', async function (assert) {
               await visit('/');
-  
+
               assert.equal(currentURL(), '/');
-  
+
               assert
                 .dom('#app-container')
                 .hasText(
@@ -216,10 +217,10 @@ export function getEmptyInRepoAddonFiles(addonName = 'some-addon'): fixturify.Di
     app: {},
     'index.js': `
       'use strict';
-  
+
       module.exports = {
         name: require('./package').name,
-  
+
         isDevelopingAddon() {
           return true;
         },
@@ -247,7 +248,7 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fix
       components: {
         'greet.js': `
           import Component from '@glimmer/component';
-  
+
           export default class Greet extends Component {
             get name() {
               return 'Sue';
@@ -264,10 +265,10 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fix
     },
     'index.js': `
       'use strict';
-  
+
       module.exports = {
         name: require('./package').name,
-  
+
         isDevelopingAddon() {
           return true;
         },
@@ -298,7 +299,7 @@ export function getEmberAddonFiles(): fixturify.DirJSON {
       components: {
         'greet.js': `
             import Component from '@glimmer/component';
-  
+
             export default class Greet extends Component {
               get name() {
                 return 'Sue';
@@ -331,15 +332,15 @@ export function getEmberAddonFiles(): fixturify.DirJSON {
           import { module, test } from 'qunit';
           import { visit, currentURL } from '@ember/test-helpers';
           import { setupApplicationTest } from 'ember-qunit';
-      
+
           module('Acceptance | addon-template', function (hooks) {
             setupApplicationTest(hooks);
-      
+
             test('visiting /', async function (assert) {
               await visit('/');
-      
+
               assert.equal(currentURL(), '/');
-      
+
               assert
                 .dom('#app-container')
                 .hasText('Hello Sue, from an addon!', 'The user can see Hello World');
@@ -374,7 +375,7 @@ export function getEmberAppWithInRepoEngine(engineName = 'some-engine'): fixturi
     },
   };
   // Add acceptance test for validating that our engine is mounted and routable
-  files.tests.acceptance[`${engineName}-test.js`] = `
+  files['tests'].acceptance[`${engineName}-test.js`] = `
     import { module, test } from 'qunit';
     import { visit, currentURL } from '@ember/test-helpers';
     import { setupApplicationTest } from 'ember-qunit';
@@ -480,7 +481,7 @@ export function getEmberAppWithInRepoEngine(engineName = 'some-engine'): fixturi
   };
 
   // Add the egine to lib directory
-  files.lib[engineName] = engine;
+  files['lib'][engineName] = engine;
 
   return files as fixturify.DirJSON;
 }

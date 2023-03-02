@@ -1,10 +1,10 @@
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
-import { sync as fastGlobSync } from 'fast-glob';
-import { Graph, GraphNode } from '../graph';
-import { isWorkspace } from '../../src/utils/workspace';
-import { Package } from './package';
-import type { PackageNode } from '../types';
+import fastGlob from 'fast-glob';
+import { Graph, GraphNode } from '../graph/index.js';
+import { isWorkspace } from '../../src/utils/workspace.js';
+import { Package } from './package.js';
+import type { PackageNode } from '../types.js';
 
 // TODO this package level dependency data should be surfaced in a report
 
@@ -22,11 +22,11 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
-  protected debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
   protected entrypoint: string | undefined;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
 
+  debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
   include: Set<string>;
   exclude: Set<string>;
 
@@ -196,7 +196,7 @@ export class ProjectGraph {
     const pathToRoot = this.rootDir;
     const cwd = this.rootDir;
 
-    let pathToPackageJsonList = fastGlobSync(
+    let pathToPackageJsonList = fastGlob.sync(
       [
         ...globs.map((glob) => `${glob}/package.json`),
         `!${pathToRoot}/**/build/**`,
