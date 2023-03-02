@@ -1,5 +1,9 @@
+import { resolve } from 'path';
 import { compare } from 'compare-versions';
+import fixturify from 'fixturify';
+import tmp from 'tmp';
 import { describe, expect, test } from 'vitest';
+import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 
 import {
@@ -17,6 +21,7 @@ import {
   timestamp,
   getLockfilePath,
   getEditorBinWithArgs,
+  findWorkspaceRoot,
 } from '../src/cli.js';
 
 describe('utils', () => {
@@ -187,5 +192,95 @@ describe('utils', () => {
 
     process.env['EDITOR'] = 'nvim';
     expect(getEditorBinWithArgs()).toEqual(['nvim']);
+  });
+
+  describe('findWorkspaceRoot', async () => {
+    test('npm/yarn with workspace', async () => {
+      const { name: tmpLocation } = tmp.dirSync();
+      const files = {
+        'package.json': JSON.stringify({
+          workspaces: ['packages/*'],
+        }),
+        packages: {
+          'package-a': {
+            'package.json': JSON.stringify({
+              name: 'package-a',
+              version: '1.0.0',
+            }),
+          },
+        },
+      };
+      fixturify.writeSync(tmpLocation, files);
+
+      const currentDir = resolve(tmpLocation, 'packages', 'package-a');
+      expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
+    });
+
+    test('npm/yarn without workspace', async () => {
+      const { name: tmpLocation } = tmp.dirSync();
+      const files = {
+        'package.json': JSON.stringify({
+          name: 'foo',
+        }),
+        packages: {
+          'package-a': {
+            'package.json': JSON.stringify({
+              name: 'package-a',
+              version: '1.0.0',
+            }),
+          },
+        },
+      };
+      fixturify.writeSync(tmpLocation, files);
+
+      const currentDir = resolve(tmpLocation, 'packages', 'package-a');
+      expect(findWorkspaceRoot(currentDir)).toBe(currentDir);
+    });
+
+    test('pnpm with workspace', async () => {
+      const { name: tmpLocation } = tmp.dirSync();
+      const files = {
+        'package.json': JSON.stringify({
+          name: 'foo',
+        }),
+        'pnpm-lock.yaml': '',
+        'pnpm-workspace.yaml': yaml.dump({ packages: ['packages/*'] }),
+        packages: {
+          'package-a': {
+            'package.json': JSON.stringify({
+              name: 'package-a',
+              version: '1.0.0',
+            }),
+          },
+        },
+      };
+      fixturify.writeSync(tmpLocation, files);
+
+      const currentDir = resolve(tmpLocation, 'packages', 'package-a');
+      expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
+    });
+
+    test('pnpm without workspace', async () => {
+      const { name: tmpLocation } = tmp.dirSync();
+      const files = {
+        'package.json': JSON.stringify({
+          name: 'foo',
+        }),
+        'pnpm-lock.yaml': '',
+        packages: {
+          'package-a': {
+            'package.json': JSON.stringify({
+              name: 'package-a',
+              version: '1.0.0',
+            }),
+            'pnpm-lock.yaml': '',
+          },
+        },
+      };
+      fixturify.writeSync(tmpLocation, files);
+
+      const currentDir = resolve(tmpLocation, 'packages', 'package-a');
+      expect(findWorkspaceRoot(currentDir)).toBe(currentDir);
+    });
   });
 });

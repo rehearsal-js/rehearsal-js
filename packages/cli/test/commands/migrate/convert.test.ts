@@ -111,31 +111,6 @@ describe('Task: convert', async () => {
     expect(config.include).toContain('foo.ts');
   });
 
-  test('againt specific basePath via -basePath option', async () => {
-    basePath = prepareTmpDir('custom_basepath');
-    const customBasePath = resolve(basePath, 'base');
-    const options = createMigrateOptions(customBasePath);
-    // Get context for convert task from previous tasks
-    const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await convertTask(options, logger),
-    ];
-    await listrTaskRunner(tasks);
-
-    expect(output).toMatchSnapshot();
-
-    const fileList = readdirSync(customBasePath);
-    expect(fileList).toContain('tsconfig.json');
-    expect(fileList).toContain('index.ts');
-    expect(fileList).not.toContain('index.js');
-
-    const config = readJSONSync(resolve(customBasePath, 'tsconfig.json'));
-    expect(config.include).toContain('index.ts');
-  });
-
   test('generate reports', async () => {
     const options = createMigrateOptions(basePath, {
       format: ['json', 'md', 'sarif'],

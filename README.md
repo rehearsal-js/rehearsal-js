@@ -42,6 +42,7 @@ pnpm install -g @rehearsal/cli
 cd my-js-project
 
 # run rehearsal migrate with an entrypoint to your source file directory
+# entrypiont should be inside your project root directory (where you run rehearsal migrate)
 ~/my-js-project rehearsal migrate --entrypoint ./src
 
 # ... rehearsal does some magic

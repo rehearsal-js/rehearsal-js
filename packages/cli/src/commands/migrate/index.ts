@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import { resolve } from 'node:path';
+import { resolve, relative, isAbsolute } from 'node:path';
 import { existsSync } from 'node:fs';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import {
   parseCommaSeparatedList,
   gitIsRepoDirty,
   resetFiles,
-  ensureAbsolutePath,
+  findWorkspaceRoot,
 } from '@rehearsal/utils';
 import { readJsonSync } from 'fs-extra/esm';
 import {
@@ -40,16 +40,20 @@ process.on('SIGINT', () => {
 migrateCommand
   .name('migrate')
   .description('migrate a javascript project to typescript')
+  // Currently we don't want to expose --basePath to end users
+  // always use default process.cwd()
+  .addOption(
+    new Option('-p, --basePath <project base path>', 'base directory of your project')
+      .default(process.cwd())
+      // use argParser to ensure process.cwd() is basePath
+      // even use passes anything accidentally
+      .argParser(() => process.cwd())
+      .hideHelp()
+  )
   .option('--init', 'only initializes the project', false)
   .option(
-    '-p, --basePath <project base path>',
-    'base directory of your project',
-    ensureAbsolutePath,
-    process.cwd()
-  )
-  .option(
     '-e, --entrypoint <entrypoint>',
-    'migrate the directory and its imported files specified by entrypoint',
+    `path to a entrypoint file inside your project(${process.cwd()})`,
     ''
   )
   .option(
@@ -92,6 +96,34 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       );
       process.exit(0);
     }
+  }
+
+  // force in project root
+  const workspaceRoot = findWorkspaceRoot(options.basePath);
+  if (options.basePath !== workspaceRoot) {
+    logger.warn(
+      `migrate command needs to be running at project root with workspaces. 
+        Seems like the project root should be ${workspaceRoot} instead of current directory (${options.basePath}).`
+    );
+    process.exit(0);
+  }
+
+  // ensure entrypoint exists and it is inside options.basePath
+  const relativePath = relative(options.basePath, options.entrypoint);
+  if (
+    options.entrypoint &&
+    (!relativePath ||
+      relativePath.startsWith('..') ||
+      isAbsolute(relativePath) ||
+      !existsSync(resolve(options.basePath, relativePath)))
+  ) {
+    logger.warn(
+      `Could not find entrypoint ${resolve(
+        options.basePath,
+        relativePath
+      )}. Please make sure it is existed and inside your project(${options.basePath}).`
+    );
+    process.exit(0);
   }
 
   const defaultListrOption = {

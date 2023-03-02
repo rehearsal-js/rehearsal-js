@@ -1,5 +1,106 @@
 // Vitest Snapshot v1
 
+exports[`migrate - validation > absolute entrypoint inside project root works 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > not throw if in project root with unrelated npm/yarn workspaces 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on package-a
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[TITLE] Migration Complete
+[TITLE]   0 JS files converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > not throw if in project root with unrelated npm/yarn workspaces 2`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on package-a
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[TITLE] Migration Complete
+[TITLE]   0 JS files converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
 exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
@@ -17,6 +118,41 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   0 JS files converted to TS
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   0 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`migrate - validation > relative entrypoint inside project root works 1`] = `
+"info:    @rehearsal/migrate<test-version>
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[SUCCESS] Add package scripts
+[STARTED] Convert JS files to TS
+[DATA] git mv /foo.js to /foo.ts
+[DATA] processing file: /foo.ts
+[TITLE] Migration Complete
+[TITLE]   1 JS file converted to TS
+[TITLE]   0 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   0 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Migration Complete
+[SUCCESS]   1 JS file converted to TS
 [SUCCESS]   0 errors caught by rehearsal
 [SUCCESS]   0 have been fixed by rehearsal
 [SUCCESS]   0 errors need to be fixed manually
@@ -66,98 +202,6 @@ debug:   fileNames: [\\"<tmp-path>/foo.ts\\",\\"<tmp-path>/depends-on-foo.ts\\",
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
-`;
-
-exports[`migrate: e2e > againt specific basePath via --basePath option 1`] = `
-"info:    @rehearsal/migrate<test-version>
-[STARTED] Validate project
-[SUCCESS] Validate project
-[STARTED] Initialize
-[DATA] Running migration on base
-[SUCCESS] Initialize
-[STARTED] Install dependencies
-[SUCCESS] Install dependencies
-[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
-[STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
-[SUCCESS] Create eslint config
-[STARTED] Add package scripts
-[SUCCESS] Add package scripts
-[STARTED] Convert JS files to TS
-[DATA] git mv /index.js to /index.ts
-[DATA] processing file: /index.ts
-[TITLE] Migration Complete
-[TITLE]   1 JS file converted to TS
-[TITLE]   3 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
-[TITLE]   3 errors need to be fixed manually
-[TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 1 eslint errors, with details in the report
-[SUCCESS] Migration Complete
-[SUCCESS]   1 JS file converted to TS
-[SUCCESS]   3 errors caught by rehearsal
-[SUCCESS]   0 have been fixed by rehearsal
-[SUCCESS]   3 errors need to be fixed manually
-[SUCCESS]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 1 eslint errors, with details in the report"
-`;
-
-exports[`migrate: e2e > againt specific basePath via --basePath option 2`] = `
-"/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'baz' implicitly has an 'any' type. */
-export function run(baz) {
-  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'foo'. */
-  return foo(baz);
-}
-"
-`;
-
-exports[`migrate: e2e > againt specific basePath via --basePath option 3`] = `
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "strict": true,
-    "target": "ES2021",
-  },
-  "include": [
-    "index.ts",
-  ],
-}
-`;
-
-exports[`migrate: e2e > againt specific basePath via --basePath option 4`] = `
-"module.exports = {
-  extends: [\\"./.rehearsal-eslintrc.js\\"],
-};
-"
-`;
-
-exports[`migrate: e2e > againt specific basePath via --basePath option 5`] = `
-"module.exports = {
-  \\"parser\\": \\"@typescript-eslint/parser\\",
-  \\"parserOptions\\": {
-    \\"sourceType\\": \\"module\\"
-  },
-  \\"plugins\\": [
-    \\"@typescript-eslint\\",
-    \\"prettier\\"
-  ],
-  \\"extends\\": [
-    \\"plugin:@typescript-eslint/eslint-recommended\\",
-    \\"plugin:@typescript-eslint/recommended\\",
-    \\"eslint:recommended\\",
-    \\"plugin:prettier/recommended\\",
-    \\"prettier\\"
-  ]
-}"
 `;
 
 exports[`migrate: e2e > default migrate command 1`] = `
