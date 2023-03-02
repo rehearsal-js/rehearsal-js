@@ -37,6 +37,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@glint/core": "1.0.0-beta.4",
     "@rehearsal/codefixes": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",

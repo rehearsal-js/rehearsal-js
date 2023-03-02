@@ -1,20 +1,20 @@
-import { CodeActionCommand, CodeFixAction } from 'typescript';
 import debug from 'debug';
 import hash from 'object-hash';
+import { CodeActionCommand, CodeFixAction } from 'typescript';
 
 import {
-  codefixes,
-  type DiagnosticWithContext,
-  isInstallPackageCommand,
-  getDiagnosticOrder,
   applyCodeFix,
+  codefixes,
+  getDiagnosticOrder,
+  isInstallPackageCommand,
+  type DiagnosticWithContext,
 } from '@rehearsal/codefixes';
 import {
   Plugin,
   PluginOptions,
-  type PluginResult,
   PluginsRunnerContext,
-  RehearsalService,
+  Service,
+  type PluginResult,
 } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 
@@ -39,7 +39,11 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     options.safeFixes ??= true;
     options.strictTyping ??= true;
 
-    let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
+    console.log('diagnostic fix', fileName);
+
+    let diagnostics = this.getDiagnostics(context.service, fileName);
+
+    console.log('diagnostics', diagnostics[0]);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
@@ -68,7 +72,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
       applyCodeFix(fix, {
         getText(filename: string) {
-          return context.rehearsal.getFileText(filename);
+          return context.service.getFileText(filename);
         },
 
         applyText(newText: string) {
@@ -76,7 +80,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
         },
 
         setText(filename: string, text: string) {
-          context.rehearsal.setFileText(filename, text);
+          context.service.setFileText(filename, text);
           allFixedFiles.add(filename);
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         },
@@ -85,7 +89,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
       context.reporter.incrementRunFixedItemCount();
 
       // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(context.rehearsal, fileName);
+      diagnostics = this.getDiagnostics(context.service, fileName);
     }
 
     return Array.from(allFixedFiles);
@@ -94,12 +98,12 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
   /**
    * Returns the list of diagnostics with location and additional context of the application
    */
-  getDiagnostics(rehearsalService: RehearsalService, fileName: string): DiagnosticWithContext[] {
-    const service = rehearsalService.getLanguageService();
-    const program = service.getProgram()!;
+  getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
+    const languageService = service.getLanguageService();
+    const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = getDiagnosticOrder(rehearsalService.getDiagnostics(fileName));
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
 
     return (
       diagnostics
@@ -121,7 +125,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     context: PluginsRunnerContext
   ): Promise<boolean> {
     try {
-      await context.rehearsal.getLanguageService().applyCodeActionCommand(command);
+      await context.service.getLanguageService().applyCodeActionCommand(command);
       return true;
     } catch (e) {
       return false;

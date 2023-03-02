@@ -85,7 +85,10 @@ export class RehearsalService {
     const withLocation = (diagnostic: Diagnostic): diagnostic is DiagnosticWithLocation =>
       diagnostic.start !== undefined && diagnostic.length !== undefined;
 
-    return this.service.getSemanticDiagnostics(fileName).filter(withLocation);
+    return [
+      ...this.service.getSemanticDiagnostics(fileName).filter(withLocation),
+      ...this.service.getSuggestionDiagnostics(fileName),
+    ];
   }
 
   /**

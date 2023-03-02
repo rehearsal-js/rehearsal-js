@@ -1,16 +1,11 @@
+import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
-import { execSync } from 'node:child_process';
-import { PluginsRunner, RehearsalService } from '@rehearsal/service';
-import {
-  DiagnosticCheckPlugin,
-  DiagnosticFixPlugin,
-  LintPlugin,
-  ReRehearsePlugin,
-} from '@rehearsal/plugins';
+import { GlintService, PluginsRunner } from '@rehearsal/service';
+import { DiagnosticCheckPlugin, DiagnosticFixPlugin, LintPlugin } from '@rehearsal/plugins';
 import ts from 'typescript';
-import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
+import type { Logger } from 'winston';
 
 export type MigrateInput = {
   basePath: string;
@@ -72,7 +67,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
-    sys,
+    ts.sys,
     dirname(configFile),
     {},
     configFile
@@ -84,16 +79,17 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const commentTag = '@rehearsal';
 
-  const rehearsal = new RehearsalService(options, fileNames);
+  // const rehearsal = new RehearsalService(options, fileNames);
+  const rehearsal = new GlintService(basePath);
 
   const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
-    .queue(new ReRehearsePlugin(), {
-      commentTag,
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
+    // .queue(new ReRehearsePlugin(), {
+    //   commentTag,
+    // })
+    // .queue(new LintPlugin(), {
+    //   eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+    //   reportErrors: false,
+    // })
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
@@ -135,7 +131,8 @@ export function gitMove(
     const ext = extname(sourceFile);
     const pos = sourceFile.lastIndexOf(ext);
     const destFile = `${sourceFile.substring(0, pos)}`;
-    const tsFile = `${destFile}.ts`;
+    const tsFile = ext === '.gjs' ? `${destFile}.gts` : `${destFile}.ts`;
+    // const tsFile = `${destFile}.ts`;
     const dtsFile = `${destFile}.d.ts`;
 
     if (sourceFile === tsFile) {

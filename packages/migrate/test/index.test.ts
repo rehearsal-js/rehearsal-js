@@ -171,4 +171,31 @@ describe('migrate', () => {
     writeFileSync(pkgJSONPath, originalPackageJSON);
     writeFileSync(lockFilePath!, originalLockFile);
   });
+
+  test('should move gjs file to gts extension', async () => {
+    const files = ['glint.gjs'];
+    const sourceFiles = prepareInputFiles(files);
+
+    const input: MigrateInput = {
+      basePath: actualDir,
+      sourceFiles,
+      logger,
+      reporter,
+      entrypoint: 'glint.gjs',
+    };
+
+    const output = await migrate(input);
+    migratedFiles = output.migratedFiles;
+    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    reporter.saveReport(jsonReport);
+    const report = JSON.parse(readFileSync(jsonReport).toString());
+
+    console.log('report', report);
+
+    expect(report.summary[0].basePath).toMatch(/migrate/);
+    expect(report.summary[0].entrypoint).toMatch('glint.gts');
+    expect(migratedFiles).includes(`${actualDir}/glint.gts`);
+    expect(existsSync(`${actualDir}/glint.gjs`)).toBeFalsy();
+    rmSync(jsonReport);
+  });
 });

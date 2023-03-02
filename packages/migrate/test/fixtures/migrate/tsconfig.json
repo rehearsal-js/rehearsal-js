@@ -16,7 +16,11 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "checkJs": true
   },
-  "include": ["tmp/**/*"]
+  "include": ["tmp/**/*"],
+  "glint": {
+    "environment": ["ember-loose", "ember-template-imports"]
+  }
 }
