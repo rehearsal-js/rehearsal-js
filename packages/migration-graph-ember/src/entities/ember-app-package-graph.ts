@@ -38,7 +38,7 @@ export type EmberAppPackageGraphOptions = {
 } & PackageGraphOptions;
 
 export class EmberAppPackageGraph extends PackageGraph {
-  debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
 
   serviceLookup: Map<string, string>;
   override package: EmberAppPackage;

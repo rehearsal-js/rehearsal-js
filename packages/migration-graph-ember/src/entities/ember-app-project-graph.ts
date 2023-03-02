@@ -24,7 +24,7 @@ type EmberPackageLookup = {
 export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
-  debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
   protected override discoveredPackages: Record<string, EmberProjectPackage> = {};
   private lookup?: EmberPackageLookup;
 
