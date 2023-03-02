@@ -422,7 +422,7 @@ import fs from 'fs';
 
  fs.existsSync('.');
 
-fs.existsSync('.');
+fs.existsSync('.'); 
 
 fs.existsSync('@rehearsal')
 
@@ -677,6 +677,21 @@ export class Foo {
       return this.value;
     }
   }
+}
+
+/**
+ * JSDoc
+ *
+ * @param {number} a
+ * @param {(string|number)} b
+ * @param {<callbackFunction>} c
+ * @param {UnavailableType} d
+ *
+ * @return {void}
+ */
+/* @ts-expect-error @rehearsal TODO TS4078: Parameter 'c' of exported function has or is using private name ''. */
+export function think(a: number, b: (string | number), c: <callbackFunction>() => , d: UnavailableType): void {
+  return console.log(a, b, c, d);
 }
 "
 `;
@@ -1392,74 +1407,20 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
-      "hint": "Parameter 'c' implicitly has an 'any' type.",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts4078}",
+      "hint": "Parameter 'c' of exported function has or is using private name ''.",
       "hintAdded": true,
-      "message": "Parameter 'c' implicitly has an 'any' type.",
-      "nodeKind": "Parameter",
+      "message": "Parameter 'c' of exported function has or is using private name ''.",
+      "nodeKind": "TypeReference",
       "nodeLocation": {
-        "endColumn": 55,
+        "endColumn": 82,
         "endLine": 74,
-        "startColumn": 54,
+        "startColumn": 82,
         "startLine": 74,
       },
-      "nodeText": "c",
-      "ruleId": "TS7006",
+      "nodeText": "",
+      "ruleId": "TS4078",
       "type": 0,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionDeclaration",
-      "nodeLocation": {
-        "endColumn": 34,
-        "endLine": 1,
-        "startColumn": 8,
-        "startLine": 1,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 12,
-        "endLine": 44,
-        "startColumn": 3,
-        "startLine": 44,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "Missing return type on function.",
-      "hintAdded": false,
-      "message": "Missing return type on function.",
-      "nodeKind": "FunctionExpression",
-      "nodeLocation": {
-        "endColumn": 21,
-        "endLine": 52,
-        "startColumn": 3,
-        "startLine": 52,
-      },
-      "nodeText": "",
-      "ruleId": "@typescript-eslint/explicit-function-return-type",
-      "type": 1,
     },
   ],
   "summary": [
