@@ -689,8 +689,8 @@ export class Foo {
  *
  * @return {void}
  */
-/* @ts-expect-error @rehearsal TODO TS4078: Parameter 'c' of exported function has or is using private name ''. */
-export function think(a: number, b: (string | number), c: <callbackFunction>() => , d: UnavailableType): void {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
+export function think(a: number, b: (string | number), c, d: UnavailableType): void {
   return console.log(a, b, c, d);
 }
 "
@@ -1407,19 +1407,19 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts4078}",
-      "hint": "Parameter 'c' of exported function has or is using private name ''.",
+      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
+      "hint": "Parameter 'c' implicitly has an 'any' type.",
       "hintAdded": true,
-      "message": "Parameter 'c' of exported function has or is using private name ''.",
-      "nodeKind": "TypeReference",
+      "message": "Parameter 'c' implicitly has an 'any' type.",
+      "nodeKind": "Parameter",
       "nodeLocation": {
-        "endColumn": 82,
+        "endColumn": 57,
         "endLine": 74,
-        "startColumn": 82,
+        "startColumn": 56,
         "startLine": 74,
       },
-      "nodeText": "",
-      "ruleId": "TS4078",
+      "nodeText": "c",
+      "ruleId": "TS7006",
       "type": 0,
     },
   ],
