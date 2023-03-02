@@ -1,9 +1,9 @@
+import Module from 'node:module';
 import { preprocessEmbeddedTemplates as babelPreprocessEmbeddedTemplates } from 'babel-plugin-htmlbars-inline-precompile';
-
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph-ember:transform-gjs');
-
+const require = Module.createRequire(import.meta.url);
 const getTemplateLocalsRequirePath = require.resolve('@glimmer/syntax');
 
 const TEMPLATE_TAG_CONFIG = {

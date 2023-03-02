@@ -11,7 +11,7 @@
     "lint": "pnpm lint:package-json && pnpm recursive run lint",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",
-    "test": "pnpm recursive run test",
+    "test": "pnpm -r build && pnpm recursive run test",
     "changelog": "pnpm conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
     "reset": "pnpm clean && pnpm install",
