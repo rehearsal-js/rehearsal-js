@@ -38,8 +38,10 @@ export interface ICruiseResult {
   modules: IModule[];
 }
 
-interface IResolveOptions extends ResolveOptions {
+export interface IResolveOptions extends ResolveOptions {
   bustTheCache?: boolean;
   fileSystem: CachedInputFileSystem;
   resolveDeprecations: boolean;
+  alias?: Record<string, string>;
+  extensions?: string[];
 }

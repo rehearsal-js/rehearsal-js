@@ -76,7 +76,7 @@ export class EmberAddonPackage extends EmberAppPackage {
     return this.#addonName;
   }
 
-  getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
+  override getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
     this.debug('getModuleGraph');
     if (this.graph) {
       return this.graph;

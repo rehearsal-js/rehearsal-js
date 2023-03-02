@@ -22,11 +22,11 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
-  protected debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
   protected entrypoint: string | undefined;
   protected discoveredPackages: Record<string, Package>;
   protected visited: Set<Package>;
 
+  debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
   include: Set<string>;
   exclude: Set<string>;
 

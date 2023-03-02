@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { transformGjs } from '../../src/utils/transform-gjs';
+import { transformGjs } from '../../src/utils/transform-gjs.js';
 
 describe('transformGjs', () => {
   test('should support .gjs file extension', () => {
