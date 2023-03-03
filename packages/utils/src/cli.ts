@@ -1,4 +1,4 @@
-import { join, resolve } from 'node:path';
+import { join, resolve, normalize, dirname, relative } from 'node:path';
 import { readFileSync, existsSync } from 'node:fs';
 import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
@@ -9,6 +9,8 @@ import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
 import glob from 'glob';
+import micromatch from 'micromatch';
+import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 
 import findup = require('findup-sync');
@@ -552,4 +554,61 @@ export function getEsLintConfigPath(basePath: string): string {
   // glob against the following file extension pattern js,yml,json,yaml and return the first match
   const configPath = glob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml})'))[0];
   return configPath;
+}
+
+/**
+ * Return workspaces info for npm/yarn with package.json, or pnpm with pnpm-workspace.yaml
+ * Or null if there is no workspaces info
+ */
+export function getWorkspacesInfo(currentDir: string = process.cwd()): string[] | null {
+  if (isPnpmManager(currentDir)) {
+    // For pnpm, if currentDir contains pnpm-workspace.yaml
+    // read the yaml file and grab workspaces config if there is any
+    const yamlPath = resolve(currentDir, 'pnpm-workspace.yaml');
+    if (!existsSync(yamlPath)) {
+      return null;
+    }
+
+    const yamlStr = readFileSync(yamlPath, 'utf-8');
+    const yamlObj = yaml.load(yamlStr) as { packages: string[] };
+    return yamlObj.packages || null;
+  } else {
+    // for npm/yarn
+    // grab workspaces config from package.json if there is any
+    const packageJSONPath = resolve(currentDir, 'package.json');
+    if (!existsSync(packageJSONPath)) {
+      return null;
+    }
+
+    const packageJSON = readJSON<{ workspaces: string[] }>(packageJSONPath);
+    return packageJSON ? packageJSON.workspaces : null;
+  }
+}
+
+/**
+ * Find workspaces root for a givin startDir
+ */
+export function findWorkspaceRoot(startDir: string = process.cwd()): string {
+  let previousDir = null;
+  let currentDir = normalize(startDir);
+
+  while (currentDir != previousDir) {
+    const workspaces = getWorkspacesInfo(currentDir);
+    if (workspaces) {
+      const relativePath = relative(currentDir, startDir);
+      if (relativePath === '' || micromatch([relativePath], workspaces).length > 0) {
+        return currentDir;
+      } else {
+        return startDir;
+      }
+    }
+
+    previousDir = currentDir;
+    currentDir = dirname(currentDir);
+  }
+
+  // For pnpm, cannot find 'pnpm-workspace.yaml
+  // Or for npm/yarn, cannot find yarn/npm workspaces
+  // startDir should be the root
+  return startDir;
 }
