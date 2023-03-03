@@ -5,7 +5,7 @@ import { type Report } from '@rehearsal/reporter';
 import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
+import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils/dist/src/indexs.js';
 
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
 

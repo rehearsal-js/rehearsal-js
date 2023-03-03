@@ -1,4 +1,4 @@
-import { getTypeNameFromVariable, isVariableOfCatchClause } from '@rehearsal/utils';
+import { getTypeNameFromVariable, isVariableOfCatchClause } from '@rehearsal/ts-utils';
 import ts from 'typescript';
 
 import { HintsProvider } from './hints-provider.js';

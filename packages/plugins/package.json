@@ -41,7 +41,7 @@
     "@rehearsal/codefixes": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
-    "@rehearsal/utils": "workspace:*",
+    "@rehearsal/ts-utils": "workspace:*",
     "@types/object-hash": "^3.0.2",
     "debug": "^4.3.4",
     "eslint": "^8.33.0",

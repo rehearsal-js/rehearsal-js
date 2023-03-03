@@ -4,7 +4,7 @@ import {
   getTypeDeclarationFromTypeSymbol,
   isSubtypeOf,
   isTypeMatched,
-} from '@rehearsal/utils';
+} from '@rehearsal/ts-utils';
 import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type {

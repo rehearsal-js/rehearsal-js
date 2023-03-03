@@ -17,7 +17,7 @@
       "path": "../service"
     },
     {
-      "path": "../utils"
+      "path": "../ts-utils"
     }
   ]
 }

@@ -8,7 +8,7 @@ import {
 import debug from 'debug';
 import ts, { LanguageService } from 'typescript';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/utils';
+import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/ts-utils';
 import { getLocation } from '../helpers.js';
 
 const {

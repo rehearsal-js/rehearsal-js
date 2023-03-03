@@ -1,4 +1,4 @@
-import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/utils';
+import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/ts-utils';
 import ts, { type CodeFixAction, Node } from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';

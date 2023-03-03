@@ -1,4 +1,4 @@
-import { ChangesFactory, findNodeAtPosition } from '@rehearsal/utils';
+import { ChangesFactory, findNodeAtPosition } from '@rehearsal/ts-utils';
 import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
 import type { CodeFixAction } from 'typescript';
