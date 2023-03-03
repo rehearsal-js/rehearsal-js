@@ -10,11 +10,6 @@ exports[`Task: validate > pass with package.json 1`] = `
 [SUCCESS] Validate project"
 `;
 
-exports[`Task: validate > set skips if report exists 1`] = `
-"[STARTED] Validate project
-[SUCCESS] Validate project"
-`;
-
 exports[`Task: validate > show warning message for missing files in --regen 1`] = `
 "[STARTED] Validate project
 Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen

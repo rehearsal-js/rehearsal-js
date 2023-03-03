@@ -61,6 +61,20 @@ describe('Task: config-ts', async () => {
     expect(output).toContain('ensuring strict mode is enabled');
   });
 
+  test('skip if tsconfig.json exists with strict on', async () => {
+    // Prepare old tsconfig
+    const oldTsConfig = { compilerOptions: { strict: true } };
+    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+
+    const options = createMigrateOptions(basePath);
+    const context = { sourceFilesWithRelativePath: [] };
+    const tasks = [await tsConfigTask(options, context)];
+    await listrTaskRunner(tasks);
+
+    await listrTaskRunner(tasks); // should be skipped
+    expect(output).toMatchSnapshot();
+  });
+
   test('run custom config command with user config provided', async () => {
     createUserConfig(basePath, {
       migrate: {
@@ -79,6 +93,29 @@ describe('Task: config-ts', async () => {
     expect(readdirSync(basePath)).toContain('custom-ts-config-script');
     expect(output).toMatchSnapshot();
   });
+
+  // test('skip custom config command', async () => {
+  //   // Prepare old tsconfig
+  //   writeJSONSync(resolve(basePath, 'tsconfig.json'), {});
+
+  //   createUserConfig(basePath, {
+  //     migrate: {
+  //       setup: {
+  //         ts: { command: 'touch', args: ['custom-ts-config-script'] },
+  //       },
+  //     },
+  //   });
+
+  //   const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+  //   const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+  //   const tasks = [await tsConfigTask(options, { userConfig })];
+
+  //   await listrTaskRunner(tasks); // should be skipped
+
+  //   // This proves the custom command works not triggered
+  //   expect(readdirSync(basePath)).not.toContain('custom-ts-config-script');
+  //   expect(output).toBe(''); // should output nothing
+  // });
 
   test('postTsSetup hook from user config', async () => {
     createUserConfig(basePath, {

@@ -28,13 +28,49 @@ enum FORMAT {
 
 const DEFAULT_ESLINT_CONFIG = eslintDefault;
 
+// check if we need to run lintConfigTask
+export function shouldRunLintConfigTask(
+  options: MigrateCommandOptions,
+  context: Partial<MigrateCommandContext> = {}
+): boolean {
+  const { basePath } = options;
+  const relativeConfigPath = getEsLintConfigPath(basePath);
+
+  if (context.userConfig?.hasTsSetup) {
+    // customized lint setup command/scripts from user config is nearly impossible to validate or predict
+    // since we couldn't know anything about how they deal lint config
+    // for now we would not run lintConfigTask if:
+    // 1. has lint setup command in user config
+    // 2. has lint config file .eslintrc.{js,yml,json,yaml}
+    return !relativeConfigPath;
+  } else {
+    // should run lintConfigTask if .eslintrc doesn't exist
+    // or dose not extend .rehearsal-eslintrc
+    if (relativeConfigPath) {
+      const projectName = determineProjectName(basePath);
+      const explorerSync = cosmiconfigSync(projectName || '');
+      const loaded = explorerSync.load(relativeConfigPath);
+      const oldConfig = loaded?.config;
+      return (
+        // check if .eslintrc exists
+        // or its extends has ".rehearsal-eslintrc"
+        !oldConfig ||
+        oldConfig.extends.filter((s: string) => s.includes(REHEARSAL_CONFIG_FILENAMES.NO_EXTENSION))
+          .length === 0
+      );
+    } else {
+      return true;
+    }
+  }
+}
+
 export async function lintConfigTask(
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
     title: 'Create eslint config',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipLintConfig,
+    skip: (ctx: MigrateCommandContext): boolean => !shouldRunLintConfigTask(options, ctx),
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {
@@ -76,6 +112,7 @@ export async function lintConfigTask(
         }
       }
     },
+    options: { persistentOutput: true, bottomBar: Infinity },
   };
 }
 

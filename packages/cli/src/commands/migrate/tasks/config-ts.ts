@@ -1,10 +1,34 @@
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ListrTask } from 'listr2';
 import { writeJSONSync } from 'fs-extra/esm';
 import { readJSON, writeTSConfig } from '@rehearsal/utils';
+import ts from 'typescript';
+
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
+
+// check if we need to run tsConfigTask
+export function shouldRunTsConfigTask(options: MigrateCommandOptions): boolean {
+  // customized ts setup command/scripts from user config is nearly impossible to validate or predict
+  // since we couldn't know anything about how they deal with tsconfig.json
+  // for now we would not run tsConfigTask if:
+  // 1. tsconfig.json exists
+  // 2. it is in strict mode
+  const { sys: tsSys, readConfigFile, parseJsonConfigFileContent } = ts;
+  const { basePath } = options;
+  const configPath = resolve(basePath, 'tsconfig.json');
+
+  if (existsSync(configPath)) {
+    // Read tsconfig.json file
+    const tsConfig = readConfigFile(configPath, tsSys.readFile);
+
+    // Resolve extends
+    const parsedTsconfig = parseJsonConfigFileContent(tsConfig.config, tsSys, dirname(configPath));
+    return !parsedTsconfig.options.strict === true;
+  }
+  return true;
+}
 
 export async function tsConfigTask(
   options: MigrateCommandOptions,
@@ -12,7 +36,7 @@ export async function tsConfigTask(
 ): Promise<ListrTask> {
   return {
     title: 'Create tsconfig.json',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skipTsConfig,
+    skip: (): boolean => !shouldRunTsConfigTask(options),
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {
@@ -37,9 +61,10 @@ export async function tsConfigTask(
           tsConfig.compilerOptions.strict = true;
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          writeTSConfig(options.basePath, options.init ? [] : ctx.sourceFilesWithRelativePath);
+          writeTSConfig(options.basePath, options.skipInit ? ctx.sourceFilesWithRelativePath : []);
         }
       }
     },
+    options: { persistentOutput: true, bottomBar: Infinity },
   };
 }

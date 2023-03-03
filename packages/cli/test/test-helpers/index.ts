@@ -90,7 +90,7 @@ export function createMigrateOptions(
 ): MigrateCommandOptions {
   return {
     basePath,
-    init: false,
+    skipInit: false,
     entrypoint: '',
     format: ['sarif' as Formats],
     outputPath: '.rehearsal',

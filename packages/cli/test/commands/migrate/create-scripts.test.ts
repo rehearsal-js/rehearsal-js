@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync } from 'fs-extra/esm';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 
 import { createScriptsTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
@@ -30,6 +30,21 @@ describe('Task: create-scripts', async () => {
     await listrTaskRunner(tasks);
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+
+    expect(output).matchSnapshot();
+  });
+
+  test('replace if the script exists', async () => {
+    const options = createMigrateOptions(basePath);
+    const tasks = [await createScriptsTask(options)];
+    await listrTaskRunner(tasks);
+
+    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    writeJSONSync(resolve(basePath, 'package.json'), {
+      scripts: { 'lint:tsc': 'foo' },
+      ...packageJson,
+    });
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
     expect(output).matchSnapshot();

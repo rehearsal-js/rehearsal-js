@@ -8,7 +8,7 @@ export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 export * from './configs/rehearsal-config.js';
 
 export type MigrateCommandOptions = {
-  init: boolean;
+  skipInit: boolean;
   basePath: string;
   entrypoint: string;
   format: Formats[];
@@ -20,12 +20,14 @@ export type MigrateCommandOptions = {
   regen: boolean | undefined;
 };
 
+// export type MigrateInitCommandOptions = {
+//   basePath: string;
+//   verbose: boolean | undefined;
+//   userConfig: string | undefined;
+// };
+
 export type MigrateCommandContext = {
   skip: boolean;
-  skipTsConfig: boolean;
-  skipLintConfig: boolean;
-  skipDepInstall: boolean;
-  skipScriptConfig: boolean;
   userConfig: UserConfig | undefined;
   strategy: MigrationStrategy;
   sourceFilesWithAbsolutePath: string[];

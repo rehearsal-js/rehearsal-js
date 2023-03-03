@@ -95,20 +95,4 @@ describe('Task: validate', async () => {
     await listrTaskRunner(tasks);
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
   });
-
-  test('set skips if report exists', async () => {
-    const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
-
-    // create dummy report
-    createFileSync(resolve(basePath, '.rehearsal', 'migrate-report.sarif'));
-
-    const { skipDepInstall, skipTsConfig, skipLintConfig, skipScriptConfig } =
-      await listrTaskRunner(tasks);
-    expect(skipDepInstall).toBeTruthy();
-    expect(skipTsConfig).toBeTruthy();
-    expect(skipLintConfig).toBeTruthy();
-    expect(skipScriptConfig).toBeTruthy();
-    expect(cleanOutput(output, basePath)).toMatchSnapshot();
-  });
 });
