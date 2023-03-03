@@ -42,7 +42,6 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@types/findup-sync": "^4.0.2",
     "vitest": "^0.28.5"
   },
   "peerDependencies": {
