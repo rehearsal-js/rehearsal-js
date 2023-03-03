@@ -12,8 +12,7 @@ import glob from 'glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
-
-import findup = require('findup-sync');
+import findupSync from 'findup-sync';
 import type { GitDescribe } from './types.js';
 import type { Options } from 'execa';
 
@@ -160,7 +159,7 @@ export function normalizeVersionString(versionString: string): string {
 }
 
 export function determineProjectName(directory = process.cwd()): string | null {
-  const packageJSONPath = findup('package.json', {
+  const packageJSONPath = findupSync('package.json', {
     cwd: directory,
   });
 
@@ -172,7 +171,7 @@ export function determineProjectName(directory = process.cwd()): string | null {
 }
 
 export function isYarnManager(basePath: string = process.cwd()): boolean {
-  const yarnPath = findup('yarn.lock', {
+  const yarnPath = findupSync('yarn.lock', {
     cwd: basePath,
   });
 
@@ -180,10 +179,10 @@ export function isYarnManager(basePath: string = process.cwd()): boolean {
 }
 
 export function isYarnBerryManager(basePath: string = process.cwd()): boolean {
-  const lockFilePath = findup('yarn.lock', {
+  const lockFilePath = findupSync('yarn.lock', {
     cwd: basePath,
   });
-  const berryConfigPath = findup('.yarnrc.yml', {
+  const berryConfigPath = findupSync('.yarnrc.yml', {
     cwd: basePath,
   });
 
@@ -191,7 +190,7 @@ export function isYarnBerryManager(basePath: string = process.cwd()): boolean {
 }
 
 export function isPnpmManager(basePath: string = process.cwd()): boolean {
-  const pnpmPath = findup('pnpm-lock.yaml', {
+  const pnpmPath = findupSync('pnpm-lock.yaml', {
     cwd: basePath,
   });
 
@@ -221,7 +220,7 @@ export function getManagerBinPath(
 }
 
 export function getLockfilePath(): string | null {
-  const yarnPath = findup('yarn.lock', {
+  const yarnPath = findupSync('yarn.lock', {
     cwd: process.cwd(),
   });
 
@@ -229,7 +228,7 @@ export function getLockfilePath(): string | null {
     return yarnPath;
   }
 
-  const pnpmPath = findup('pnpm-lock.yaml', {
+  const pnpmPath = findupSync('pnpm-lock.yaml', {
     cwd: process.cwd(),
   });
 
@@ -237,7 +236,7 @@ export function getLockfilePath(): string | null {
     return pnpmPath;
   }
 
-  const npmPath = findup('package-lock.json', {
+  const npmPath = findupSync('package-lock.json', {
     cwd: process.cwd(),
   });
 
