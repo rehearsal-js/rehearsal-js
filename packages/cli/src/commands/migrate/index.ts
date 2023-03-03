@@ -103,7 +103,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const workspaceRoot = findWorkspaceRoot(options.basePath);
   if (options.basePath !== workspaceRoot) {
     logger.warn(
-      `migrate command needs to be running at project root with workspaces. 
+      `migrate command needs to be running at project root with workspaces.
         Seems like the project root should be ${workspaceRoot} instead of current directory (${options.basePath}).`
     );
     process.exit(0);
