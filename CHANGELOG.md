@@ -1,4 +1,4 @@
-## <small>1.0.6-beta (2023-02-21)</small>
+## <small>1.0.10-beta (2023-02-21)</small>
 
 * test: smoke test gha (#758) ([678f4aa](https://github.com/rehearsal-js/rehearsal-js/commit/678f4aa)), closes [#758](https://github.com/rehearsal-js/rehearsal-js/issues/758)
 * chore: add $schema to config in README.md ([7413ab0](https://github.com/rehearsal-js/rehearsal-js/commit/7413ab0))
@@ -11,13 +11,13 @@
 
 
 
-## <small>1.0.6-beta (2023-02-15)</small>
+## <small>1.0.9-beta (2023-02-15)</small>
 
 * fix: bundle typescript dep (#745) ([11f5bdd](https://github.com/rehearsal-js/rehearsal-js/commit/11f5bdd)), closes [#745](https://github.com/rehearsal-js/rehearsal-js/issues/745)
 
 
 
-## <small>1.0.6-beta (2023-02-15)</small>
+## <small>1.0.8-beta (2023-02-15)</small>
 
 * feat: default user config (#738) ([7663abe](https://github.com/rehearsal-js/rehearsal-js/commit/7663abe)), closes [#738](https://github.com/rehearsal-js/rehearsal-js/issues/738)
 * feat: hooks in user config (#739) ([533284b](https://github.com/rehearsal-js/rehearsal-js/commit/533284b)), closes [#739](https://github.com/rehearsal-js/rehearsal-js/issues/739)
