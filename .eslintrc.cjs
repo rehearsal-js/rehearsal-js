@@ -37,6 +37,16 @@ module.exports = {
         'no-restricted-imports': ['error', ...packages],
       },
     },
+
+    {
+      files: ['./packages/utils/**/*.ts'],
+      rules: {
+        'no-restricted-imports': ['error', {
+          path: 'typescript',
+          message: `Do not import 'typescript' into this package as it's used in the cli package which installs TypeScript into the app being migrated. This will result in a 'module not found' error in app that is being migrated. If you are creating a typescript util, put it in 'ts-utils'.`
+        }],
+      },
+    },
   ],
   rules: {
     curly: 'error',
