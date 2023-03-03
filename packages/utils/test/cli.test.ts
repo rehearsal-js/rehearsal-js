@@ -22,7 +22,7 @@ import {
   getLockfilePath,
   getEditorBinWithArgs,
   findWorkspaceRoot,
-} from '../src/cli.js';
+} from '../src/index.js';
 
 describe('utils', () => {
   describe.each([

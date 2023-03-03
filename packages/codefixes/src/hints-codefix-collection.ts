@@ -3,7 +3,7 @@ import ts, {
   type DiagnosticWithLocation,
   type FileTextChanges,
 } from 'typescript';
-import { ChangesFactory } from '@rehearsal/utils';
+import { ChangesFactory } from '@rehearsal/ts-utils';
 import type { CodeFixCollection, CodeHintList, DiagnosticWithContext } from './types.js';
 
 const { flattenDiagnosticMessageText } = ts;

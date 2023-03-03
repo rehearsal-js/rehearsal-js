@@ -11,17 +11,6 @@ import {
   findWorkspaceRoot,
 } from '@rehearsal/utils';
 import { readJsonSync } from 'fs-extra/esm';
-import {
-  initTask,
-  depInstallTask,
-  convertTask,
-  tsConfigTask,
-  lintConfigTask,
-  createScriptsTask,
-  regenTask,
-  validateTask,
-  reportExisted,
-} from './tasks/index.js';
 
 import { sequentialTask } from './tasks/sequential.js';
 import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
@@ -82,6 +71,18 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
   });
 
+  const {
+    validateTask,
+    initTask,
+    depInstallTask,
+    tsConfigTask,
+    lintConfigTask,
+    createScriptsTask,
+    convertTask,
+    regenTask,
+    reportExisted,
+  } = await loadTasks();
+
   logger.info(`@rehearsal/migrate ${version.trim()}`);
 
   // Show git warning if:
@@ -102,7 +103,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const workspaceRoot = findWorkspaceRoot(options.basePath);
   if (options.basePath !== workspaceRoot) {
     logger.warn(
-      `migrate command needs to be running at project root with workspaces. 
+      `migrate command needs to be running at project root with workspaces.
         Seems like the project root should be ${workspaceRoot} instead of current directory (${options.basePath}).`
     );
     process.exit(0);
@@ -210,4 +211,33 @@ function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string
     }
   }
   return previousRuns;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+async function loadTasks() {
+  return await import('./tasks/index.js').then((m) => {
+    const {
+      initTask,
+      depInstallTask,
+      convertTask,
+      tsConfigTask,
+      lintConfigTask,
+      createScriptsTask,
+      regenTask,
+      validateTask,
+      reportExisted,
+    } = m;
+
+    return {
+      initTask,
+      depInstallTask,
+      convertTask,
+      tsConfigTask,
+      lintConfigTask,
+      createScriptsTask,
+      regenTask,
+      validateTask,
+      reportExisted,
+    };
+  });
 }

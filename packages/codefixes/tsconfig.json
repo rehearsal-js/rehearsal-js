@@ -6,7 +6,7 @@
   "include": ["src"],
   "references": [
     {
-      "path": "../utils"
+      "path": "../ts-utils"
     }
   ]
 }

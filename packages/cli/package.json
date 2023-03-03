@@ -56,13 +56,15 @@
     "js-yaml": "^4.1.0",
     "listr2": "^5.0.7",
     "simple-git": "^3.16.0",
+    "semver": "^7.3.8",
+    "json5": "2.2.3",
     "tmp": "^0.2.1",
-    "typescript": "^4.9.5",
     "which": "^3.0.0",
     "winston": "^3.8.2",
     "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "typescript": "^4.9.5",
     "@rehearsal/test-support": "workspace:*",
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^2.0.1",

@@ -14,7 +14,7 @@ import {
   PluginsRunnerContext,
   RehearsalService,
 } from '@rehearsal/service';
-import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/utils';
+import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/ts-utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 

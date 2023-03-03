@@ -1,4 +1,4 @@
-import { TextChange } from 'typescript';
+import type { TextChange } from 'typescript';
 
 /**
  * Applies text change (ts.TextChange) to the text string
