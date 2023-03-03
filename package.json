@@ -76,7 +76,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "fixturify": "^3.0.0",
     "fixturify-project": "^5.2.0",
-    "glob": "^8.1.0",
+    "glob": "^9.2.1",
     "husky": "^8.0.3",
     "lodash.get": "^4.4.2",
     "micromatch": "^4.0.5",
