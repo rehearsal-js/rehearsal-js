@@ -81,7 +81,12 @@ function publish() {
   console.log(pnpmPrepare);
   execSync(pnpmPrepare);
 
-  // replace the version in package json on all packages with version
+  // replace the version in the main package.json (required for changelog)
+  const bumpVersion = `pnpm version ${newVersion} --exact --no-git-tag-version`;
+  console.log(bumpVersion);
+  execSync(bumpVersion);
+
+  // replace version recursively in the all packages
   const bumpVersionRecursive = `pnpm -r version ${newVersion} --exact --no-git-tag-version`;
   console.log(bumpVersionRecursive);
   execSync(bumpVersionRecursive);
