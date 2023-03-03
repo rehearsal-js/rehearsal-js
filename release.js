@@ -92,7 +92,7 @@ function publish() {
   execSync(bumpVersionRecursive);
 
   // pnpm build recursive
-  const pnpmBuild = `pnpm -r build`;
+  const pnpmBuild = `pnpm build`;
   console.log(pnpmBuild);
   execSync(pnpmBuild);
 
