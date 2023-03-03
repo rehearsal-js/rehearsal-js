@@ -1,11 +1,10 @@
 import { join, resolve, dirname } from 'node:path';
 import { existsSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { type Report } from '@rehearsal/reporter';
 import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils/dist/src/indexs.js';
+import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
 
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
 
@@ -13,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const packageJson = readJSON(resolve(__dirname, '../../package.json')) as {
-  dependencies: { typescript: string };
+  devDependencies: { typescript: string };
 };
 
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
@@ -21,7 +20,7 @@ const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
 // we bundle the latest version of typescript with the cli
-const ORIGIN_TSC_VERSION = packageJson.dependencies.typescript;
+const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeEachPrep = async (): Promise<void> => {
@@ -68,7 +67,7 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
       expect(result.stdout).to.contain(`Codefixes applied successfully`);
       expect(existsSync(reportFile)).toBeTruthy;
 
-      const report: Report = readJSONSync(reportFile);
+      const report = readJSONSync(reportFile) as import('@rehearsal/reporter').Report;
       expect(report).to.exist;
       expect(report).toHaveProperty('summary');
       expect(report.summary[0].projectName).toBe('@rehearsal/cli');
@@ -96,7 +95,7 @@ describe('upgrade:command typescript@next', async () => {
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
     expect(existsSync(reportFile)).toBeTruthy;
 
-    const report: Report = readJSONSync(reportFile);
+    const report = readJSONSync(reportFile) as import('@rehearsal/reporter').Report;
     expect(report).to.exist;
   });
 });

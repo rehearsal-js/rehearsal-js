@@ -7,7 +7,7 @@ import { execa } from 'execa';
 import which from 'which';
 import { dirSync } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
-import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils/dist/src/indexs.js';
+import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
 import type { Options, ExecaChildProcess } from 'execa';

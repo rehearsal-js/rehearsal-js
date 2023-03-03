@@ -21,6 +21,7 @@ import {
   parseCommaSeparatedList,
   parseTsVersion,
 } from '@rehearsal/utils';
+
 import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;

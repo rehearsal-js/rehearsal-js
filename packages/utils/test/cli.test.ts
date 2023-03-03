@@ -21,8 +21,12 @@ import {
   timestamp,
   getLockfilePath,
   getEditorBinWithArgs,
+<<<<<<< HEAD
   findWorkspaceRoot,
 } from '../src/cli.js';
+=======
+} from '../src/index.js';
+>>>>>>> 531d4d0 (chore: lint against all packages except util in the top level of the cli package)
 
 describe('utils', () => {
   describe.each([

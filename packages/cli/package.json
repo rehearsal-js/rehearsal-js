@@ -64,6 +64,7 @@
     "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "typescript": "^4.9.5",
     "@rehearsal/test-support": "workspace:*",
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^2.0.1",
