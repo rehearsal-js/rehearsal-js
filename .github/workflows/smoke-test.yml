@@ -11,11 +11,20 @@ jobs:
     name: Runs the CLI Smoke Test
     runs-on: ubuntu-latest
     steps:
-      - uses: convictional/trigger-workflow-and-wait@v1.6.5
+      - name: Get branch name
+        uses: tj-actions/branch-names@v6
+        id: branch-name
+
+      - name: echo name
+        run: |
+            echo '${{ steps.branch-name.outputs.current_branch }}'
+      - name: Running Smoke Tests
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: rehearsal-js
           repo: smoke-test
           github_token: ${{ secrets.G_ACCESS_TOKEN }}
           github_user: lynchbomb
           workflow_file_name: 48689645
+          client_payload: '{ "client_payload": "${{ steps.branch-name.outputs.current_branch }}" }'
           ref: master
