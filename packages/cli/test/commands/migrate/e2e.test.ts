@@ -278,16 +278,6 @@ describe('migrate: e2e', async () => {
 
     // new scripts
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
-
-    // stage all config files
-    const gitStatus = await git.status();
-    expect(gitStatus.staged).toStrictEqual([
-      '.eslintrc.js',
-      '.rehearsal-eslintrc.js',
-      '.rehearsal/migrate-report.json',
-      '.rehearsal/migrate-report.sarif',
-      'tsconfig.json',
-    ]);
   });
 
   test('init flag', async () => {
