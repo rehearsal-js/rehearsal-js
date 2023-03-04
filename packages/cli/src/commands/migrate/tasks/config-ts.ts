@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ListrTask } from 'listr2';
 import { writeJSONSync } from 'fs-extra/esm';
-import { readJSON, writeTSConfig, gitAddIfInRepo } from '@rehearsal/utils';
+import { readJSON, writeTSConfig } from '@rehearsal/utils';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
 
@@ -40,7 +40,6 @@ export async function tsConfigTask(
           writeTSConfig(options.basePath, options.init ? [] : ctx.sourceFilesWithRelativePath);
         }
       }
-      await gitAddIfInRepo(configPath, options.basePath); // stage tsconfig.json if in a git repo
     },
   };
 }

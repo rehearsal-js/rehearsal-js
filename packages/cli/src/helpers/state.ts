@@ -2,8 +2,6 @@ import { resolve } from 'node:path';
 import { existsSync, readFileSync, mkdirSync } from 'node:fs';
 import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
 
-import { git } from '@rehearsal/utils';
-
 // The reaosn to have packageMap is getting all files in a package faster
 // than loop through everyhing in the files
 export type Store = {
@@ -160,12 +158,6 @@ export class State {
       errorCount += fileState.errorCount;
     });
     return errorCount;
-  }
-
-  async addStateFileToGit(): Promise<void> {
-    if (await git.checkIsRepo()) {
-      git.add(['add', this.configPath]);
-    }
   }
 }
 

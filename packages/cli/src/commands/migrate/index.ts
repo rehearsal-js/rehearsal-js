@@ -4,12 +4,7 @@ import { existsSync } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import {
-  parseCommaSeparatedList,
-  gitIsRepoDirty,
-  resetFiles,
-  findWorkspaceRoot,
-} from '@rehearsal/utils';
+import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
 import { readJsonSync } from 'fs-extra/esm';
 
 import { sequentialTask } from './tasks/sequential.js';
@@ -93,9 +88,8 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(
-        'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
+        'You have uncommitted files in your repo. You might want to commit or stash them.'
       );
-      process.exit(0);
     }
   }
 
@@ -182,7 +176,6 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
     }
   } catch (e) {
-    await resetFiles();
     logger.error(`${e}`);
   }
 }

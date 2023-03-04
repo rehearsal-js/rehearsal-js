@@ -2,7 +2,7 @@ import { resolve, extname } from 'node:path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
-import { determineProjectName, getEsLintConfigPath, gitAddIfInRepo } from '@rehearsal/utils';
+import { determineProjectName, getEsLintConfigPath } from '@rehearsal/utils';
 import { stringify as yamlStringify } from 'yaml';
 import { eslintDefault } from '../../../configs/eslint-default.js';
 import type { ListrTask } from 'listr2';
@@ -84,7 +84,6 @@ async function createRehearsalConfig(basePath: string, format: FORMAT): Promise<
   const rehearsalConfigPath = resolve(basePath, filename);
 
   outputFileSync(rehearsalConfigPath, rehearsalConfigStr);
-  await gitAddIfInRepo(rehearsalConfigPath, basePath); // stage '.rehearsal-eslintrc.js'; if in a git repo
 }
 
 async function extendsRehearsalInCurrentConfig(
@@ -139,7 +138,6 @@ async function writeLintConfig(
     const formattedConfig = await lintJSConfig(config, configPath, basePath);
     formattedConfig && outputFileSync(configPath, formattedConfig);
   }
-  await gitAddIfInRepo(configPath, basePath); // stage .eslintrc.js if in a git repo
 }
 
 async function lintJSConfig(

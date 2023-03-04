@@ -8,7 +8,6 @@ import {
   openInEditor,
   getPathToBinary,
   prettyGitDiff,
-  gitAddIfInRepo,
 } from '@rehearsal/utils';
 
 import type { ListrTask } from 'listr2';
@@ -115,12 +114,10 @@ export async function convertTask(
             }
             const reportOutputPath = resolve(basePath, options.outputPath);
             generateReports('migrate', reporter, reportOutputPath, options.format);
-            gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
             task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
           if (ctx.state) {
             ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
-            await ctx.state.addStateFileToGit();
           }
         } else {
           const input = {
@@ -137,7 +134,6 @@ export async function convertTask(
           DEBUG_CALLBACK('migratedFiles', migratedFiles);
           const reportOutputPath = resolve(options.basePath, options.outputPath);
           generateReports('migrate', reporter, reportOutputPath, options.format);
-          gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
           task.title = getReportSummary(reporter.report, migratedFiles.length);
         }
       } else {

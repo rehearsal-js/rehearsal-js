@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { Logger } from 'winston';
 import debug from 'debug';
 import { execa } from 'execa';
-import { determineProjectName, getPathToBinary, gitAddIfInRepo } from '@rehearsal/utils';
+import { determineProjectName, getPathToBinary } from '@rehearsal/utils';
 import { getSourceFiles } from '../../../helpers/sequential.js';
 
 import type { ListrTask } from 'listr2';
@@ -71,7 +71,6 @@ export async function sequentialTask(
       DEBUG_CALLBACK('migratedFiles', migratedFiles);
       const reportOutputPath = resolve(options.basePath, options.outputPath);
       generateReports('migrate', reporter, reportOutputPath, options.format);
-      gitAddIfInRepo(reportOutputPath, basePath); // stage report if in git repo
       task.title = getReportSummary(reporter.report, migratedFiles.length);
     },
   };
