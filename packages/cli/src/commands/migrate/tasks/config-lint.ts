@@ -13,6 +13,7 @@ enum REHEARSAL_CONFIG_FILENAMES {
   YML = '.rehearsal-eslintrc.yml',
   YAML = '.rehearsal-eslintrc.yaml',
   JSON = '.rehearsal-eslintrc.json',
+  CJS = '.rehearsal-eslintrc.cjs',
   NO_EXTENSION = '.rehearsal-eslintrc',
 }
 
@@ -21,6 +22,7 @@ enum FORMAT {
   JSON = 'json',
   YAML = 'yaml',
   YML = 'yml',
+  CJS = 'cjs',
   NO_EXTENSION = '',
 }
 
@@ -162,6 +164,8 @@ function getRehearsalFilename(format: FORMAT): string {
       return REHEARSAL_CONFIG_FILENAMES.YAML;
     case FORMAT.YML:
       return REHEARSAL_CONFIG_FILENAMES.YML;
+    case FORMAT.CJS:
+      return REHEARSAL_CONFIG_FILENAMES.CJS;
     case FORMAT.NO_EXTENSION:
       return REHEARSAL_CONFIG_FILENAMES.NO_EXTENSION;
     default:
@@ -173,6 +177,7 @@ function formatConfig(configObj: { [key: string]: unknown }, extension: string):
   let configStr = '';
   switch (extension) {
     case FORMAT.JS:
+    case FORMAT.CJS:
       configStr = `
       module.exports = ${JSON.stringify(configObj, null, 2)}
       `;
@@ -210,6 +215,7 @@ function getRehearsalConfigStr(format: FORMAT): string {
       str = getJsonConfigStr();
       break;
     case FORMAT.JS:
+    case FORMAT.CJS:
       str = `module.exports = ${JSON.stringify(DEFAULT_ESLINT_CONFIG, null, 2)}`;
       break;
     default:
