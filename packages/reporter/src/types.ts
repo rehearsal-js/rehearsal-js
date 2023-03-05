@@ -41,12 +41,12 @@ export type ReportItem = {
 export interface LintErrorLike {
   message: string;
   ruleId: string | null;
-  line: number;
-  column: number;
+  line?: number;
+  column?: number;
   nodeType?: string;
   messageId?: string;
-  endLine?: number | undefined;
-  endColumn?: number | undefined;
+  endLine?: number;
+  endColumn?: number;
 }
 
 export type Report = {
