@@ -10,7 +10,6 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 enum REHEARSAL_CONFIG_FILENAMES {
   JS = '.rehearsal-eslintrc.js',
-  CJS = '.rehearsal-eslintrc.cjs',
   YML = '.rehearsal-eslintrc.yml',
   YAML = '.rehearsal-eslintrc.yaml',
   JSON = '.rehearsal-eslintrc.json',
@@ -159,8 +158,6 @@ function getRehearsalFilename(format: FORMAT): string {
   switch (format) {
     case FORMAT.JS:
       return REHEARSAL_CONFIG_FILENAMES.JS;
-    case FORMAT.CJS:
-      return REHEARSAL_CONFIG_FILENAMES.CJS;
     case FORMAT.JSON:
       return REHEARSAL_CONFIG_FILENAMES.JSON;
     case FORMAT.YAML:
