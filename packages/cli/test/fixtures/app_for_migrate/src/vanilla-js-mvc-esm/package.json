@@ -1,0 +1,19 @@
+{
+  "name": "vanilla-js-mvc-esm",
+  "version": "1.0.0",
+  "description": "this is a fixture app refactored off of todos-vanillajs - all props to them",
+  "main": "./src/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./*": "./*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

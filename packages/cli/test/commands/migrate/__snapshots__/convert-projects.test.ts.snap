@@ -1,0 +1,976 @@
+// Vitest Snapshot v1
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > controller.ts 1`] = `
+"/**
+ * Takes a model and view and acts as the controller between them
+ *
+ * @constructor
+ * @param {Model} model The model instance
+ * @param {View} view The view instance
+ */
+class Controller {
+  private _lastActiveRoute: string | undefined;
+  private _activeRoute: string | undefined;
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter model implicitly has an any type. */
+  constructor(model, view) {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model = model;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view = view;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"newTodo\\", (title: string) => this.addItem(title));
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"itemEdit\\", (item) => this.editItem(item.id));
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"itemEditDone\\", (item: { id: number; title: string }) =>
+      this.editItemSave(item.id, item.title)
+    );
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"itemEditCancel\\", (item) => this.editItemCancel(item.id));
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"itemRemove\\", (item: { id: number }) =>
+      this.removeItem(item.id)
+    );
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"itemToggle\\", (item) =>
+      this.toggleComplete(item.id, item.completed)
+    );
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"removeCompleted\\", () => this.removeCompletedItems());
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.bind(\\"toggleAll\\", (status) => this.toggleAll(status.completed));
+  }
+  /**
+   * Loads and initialises the view
+   *  @param {string} active | completed
+   * */
+  setView(locationHash: string) {
+    const route = locationHash.split(\\"/\\")[1];
+    const page = route || \\"\\";
+    this._updateFilterState(page);
+  }
+  /**
+   * An event to fire on load. Will get all items and display them in the todo-list
+   * */
+  showAll() {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.read((data) => this.view.render(\\"showEntries\\", data));
+  }
+  /**
+   * Renders all active tasks
+   * */
+  showActive() {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.read({ completed: false }, (data) =>
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      this.view.render(\\"showEntries\\", data)
+    );
+  }
+  /**
+   * Renders all completed tasks
+   * */
+  showCompleted() {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.read({ completed: true }, (data) =>
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      this.view.render(\\"showEntries\\", data)
+    );
+  }
+  /**
+   * An event to fire whenever you want to add an item. Simply pass in the event
+   * object and itll handle the DOM insertion and saving of the new item.
+   * */
+  addItem(title: string) {
+    if (title.trim() === \\"\\") {
+      return;
+    }
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.create(title, () => {
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      this.view.render(\\"clearNewTodo\\");
+      this._filter(true);
+    });
+  }
+  /**
+   * Triggers the item editing mode.
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter id implicitly has an any type. */
+  editItem(id) {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.read(id, (data) =>
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      this.view.render(\\"editItem\\", { id, title: data[0].title })
+    );
+  }
+  /**
+   * Finishes the item editing mode successfully.
+   * */
+  editItemSave(id: number, title: string) {
+    const self = this;
+    title = title.trim();
+    if (title.length !== 0) {
+      /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+      self.model.update(id, { title: title }, function () {
+        /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+        self.view.render(\\"editItemDone\\", { id: id, title: title });
+      });
+    } else {
+      self.removeItem(id);
+    }
+  }
+  /**
+   * Cancels the item editing mode.
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter id implicitly has an any type. */
+  editItemCancel(id) {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    this.model.read(id, (data) =>
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      this.view.render(\\"editItemDone\\", { id, title: data[0].title })
+    );
+  }
+  /**
+   * By giving it an ID itll find the DOM element matching that ID,
+   * remove it from the DOM and also remove it from storage.
+   *
+   * @param {number} id The ID of the item to remove from the DOM and storage
+   */
+  removeItem(id: number) {
+    const self = this;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    self.model.remove(id, () => self.view.render(\\"removeItem\\", id));
+    self._filter();
+  }
+  /**
+   * Will remove all completed items from the DOM and storage.
+   * */
+  removeCompletedItems() {
+    const self = this;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    self.model.read({ completed: true }, (data: { id: number }[]) => {
+      data.forEach((item: { id: number }) => self.removeItem(item.id));
+    });
+  }
+  /**
+   * Give it an ID of a model and a checkbox and it will update the item
+   * in storage based on the checkboxs state.
+   *
+   * @param {number} id The ID of the element to complete or uncomplete
+   * @param {object} completed The checkbox to check the state of complete or not
+   * @param {boolean|undefined} silent Prevent re-filtering the todo items
+   */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter completed implicitly has an any type. */
+  toggleComplete(id: number, completed) {
+    const self = this;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    self.model.update(id, { completed: completed }, function () {
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      self.view.render(\\"elementComplete\\", {
+        id: id,
+        completed: completed,
+      });
+    });
+    /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name silent. */
+    if (!silent) {
+      self._filter();
+    }
+  }
+  /**
+   * Will toggle ALL checkboxes on/off state and completeness of models.
+   * Just pass in the event object.
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter completed implicitly has an any type. */
+  toggleAll(completed) {
+    const self = this;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    self.model.read({ completed: !completed }, (data: { id: number }[]) => {
+      data.forEach((item: { id: number }) =>
+        /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 3. */
+        self.toggleComplete(item.id, completed, true)
+      );
+    });
+    self._filter();
+  }
+  /**
+   * Updates the pieces of the page which change depending on the remaining
+   * number of todos.
+   * */
+  _updateCount() {
+    const self = this;
+    /* @ts-expect-error @rehearsal TODO TS2339: Property model does not exist on type Controller. */
+    self.model.getCount(function (todos) {
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      self.view.render(\\"updateElementCount\\", todos.active);
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      self.view.render(\\"clearCompletedButton\\", {
+        completed: todos.completed,
+        visible: todos.completed > 0,
+      });
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      self.view.render(\\"toggleAll\\", {
+        checked: todos.completed === todos.total,
+      });
+      /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+      self.view.render(\\"contentBlockVisibility\\", { visible: todos.total > 0 });
+    });
+  }
+  /**
+   * Re-filters the todo items, based on the active route.
+   * @param {boolean|undefined} force  forces a re-painting of todo items.
+   */
+  _filter(_completed: boolean | undefined) {
+    const activeRoute =
+      /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly undefined. */
+      this._activeRoute.charAt(0).toUpperCase() + this._activeRoute.substr(1);
+    // Update the elements on the page, which change with each completed todo
+    this._updateCount();
+    // If the last active route isnt \\"All\\", or were switching routes, we
+    // re-create the todo item elements, calling:
+    //   this.show[All|Active|Completed]();
+    if (
+      /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name force. */
+      force ||
+      this._lastActiveRoute !== \\"All\\" ||
+      this._lastActiveRoute !== activeRoute
+    ) {
+      /* @ts-expect-error @rehearsal TODO TS7053: Element implicitly has an any type because expression of type string cant be used to index type Controller..  No index signature with a parameter of type string was found on type Controller. */
+      this[\\"show\\" + activeRoute]();
+    }
+    this._lastActiveRoute = activeRoute;
+  }
+  /**
+   * Simply updates the filter navs selected states
+   * */
+  _updateFilterState(currentPage: string) {
+    // Store a reference to the active route, allowing us to re-filter todo
+    // items as they are marked complete or incomplete.
+    this._activeRoute = currentPage;
+    if (currentPage === \\"\\") {
+      this._activeRoute = \\"All\\";
+    }
+    this._filter();
+    /* @ts-expect-error @rehearsal TODO TS2339: Property view does not exist on type Controller. */
+    this.view.render(\\"setFilter\\", currentPage);
+  }
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > helpers.ts 1`] = `
+"export function qs(selector: string, scope: undefined) {
+  return (scope || document).querySelector(selector);
+}
+export function qsa(selector: string, scope: Element | null | undefined) {
+  return (scope || document).querySelectorAll(selector);
+}
+export function $on(
+  target: Window & typeof globalThis,
+  type: string,
+  callback: EventListenerOrEventListenerObject,
+  useCapture: boolean | undefined
+) {
+  target.addEventListener(type, callback, !!useCapture);
+}
+/* @ts-expect-error @rehearsal TODO TS7023: $parent implicitly has return type any because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions. */
+export function $parent(
+  element: { parentNode: { tagName: string } },
+  tagName: string
+) {
+  if (!element.parentNode) {
+    return;
+  }
+  if (element.parentNode.tagName.toLowerCase() === tagName.toLowerCase()) {
+    return element.parentNode;
+  }
+  /* @ts-expect-error @rehearsal TODO TS2345: Argument of type tagName: string is not assignable to parameter of type parentNode: { tagName: string. Consider verifying both types, using type assertion: (element.parentNode as string), or using type guard: if (element.parentNode instanceof string) { ... }. */
+  return $parent(element.parentNode, tagName);
+}
+export function $delegate(
+  target: Element | (Window & typeof globalThis) | null | undefined,
+  selector: string,
+  type: string,
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter handler implicitly has an any type. */
+  handler
+) {
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter event implicitly has an any type. */
+  function dispatchEvent(event) {
+    const targetElement = event.target;
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type Element | (Window & typeof globalThis) | null | undefined is not assignable to parameter of type Element | null | undefined. Consider verifying both types, using type assertion: ( target as string), or using type guard: if ( target instanceof string) { ... }. */
+    const potentialElements = qsa(selector, target);
+    const hasMatch =
+      Array.prototype.indexOf.call(potentialElements, targetElement) >= 0;
+    if (hasMatch) {
+      handler.call(targetElement, event);
+    }
+  }
+  const useCapture = type === \\"blur\\" || type === \\"focus\\";
+  /* @ts-expect-error @rehearsal TODO TS2345: Argument of type Element | (Window & typeof globalThis) | null | undefined is not assignable to parameter of type Window & typeof globalThis. Consider verifying both types, using type assertion: (target as string), or using type guard: if (target instanceof string) { ... }. */
+  $on(target, type, dispatchEvent, useCapture);
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > index.ts 1`] = `
+"/*global window, document */
+import { Model } from \\"./model.js\\";
+import { View } from \\"./view.js\\";
+/* @ts-expect-error @rehearsal TODO TS2306: File /private/var/folders/9j/jmgyq8sx3sgdxqnx9dchtkcw000f1_/T/tmp-34549-B0xaoucKcVOt/src/controller.ts is not a module. */
+import { Controller } from \\"./controller.js\\";
+import { Store } from \\"./store.js\\";
+import { Template } from \\"./template.js\\";
+import { $on } from \\"./helpers.js\\";
+/**
+ * Sets up a brand new Todo list.
+ *
+ * @param {string} name The name of your new to do list.
+ */
+class Todo {
+  storage: Store;
+  model: Model;
+  template: Template;
+  view: View;
+  constructor(name: string) {
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.storage = new Store(name);
+    this.model = new Model(this.storage);
+    this.template = new Template();
+    this.view = new View(this.template);
+    /* @ts-expect-error @rehearsal TODO TS2339: Property controller does not exist on type Todo. */
+    this.controller = new Controller(this.model, this.view);
+  }
+}
+const todo = new Todo(\\"todos-vanillajs\\");
+function setView() {
+  /* @ts-expect-error @rehearsal TODO TS2339: Property controller does not exist on type Todo. */
+  todo.controller.setView(document.location.hash);
+}
+/* @ts-expect-error @rehearsal TODO TS2554: Expected 4 arguments, but got 3. */
+$on(window, \\"load\\", setView);
+/* @ts-expect-error @rehearsal TODO TS2554: Expected 4 arguments, but got 3. */
+$on(window, \\"hashchange\\", setView);"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > model.ts 1`] = `
+"import { Store } from \\"../../../T/tmp-34549-B0xaoucKcVOt/src/store\\";
+export class Model {
+  storage: Store;
+  /**
+   * @param {Store} storage the storage object to use
+   * */
+  constructor(storage: Store) {
+    this.storage = storage;
+  }
+  /**
+   * Creates a new todo model
+   * @param {string} title The title of the task
+   * @param {function} callback The callback to fire after the model is created
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  create(title: string, callback: function) {
+    title = title || \\"\\";
+    callback = callback || function () {};
+    const newItem = {
+      title: title.trim(),
+      completed: false,
+    };
+    this.storage.save(newItem, callback);
+  }
+  /**
+   * Finds and returns a model in storage. If no query is given itll simply
+   *
+   * @param {string|number|object} query A query to match models against
+   * @param {function} callback The callback to fire after the model is found
+   *
+   * @example
+   * model.read(1, func); // Will find the model with an ID of 1
+   * model.read(1); // Same as above
+   * Below will find a model with foo equalling bar and hello equalling world.
+   * model.read({ foo: bar, hello: world });
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  read(query: string | number, callback: function) {
+    const queryType = typeof query;
+    callback = callback || function () {};
+    if (queryType === \\"function\\") {
+      callback = query;
+      return this.storage.findAll(callback);
+    } else if (queryType === \\"string\\" || queryType === \\"number\\") {
+      /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | number is not assignable to parameter of type string. Consider verifying both types, using type assertion: (query as string), or using type guard: if (query instanceof string) { ... }. */
+      query = parseInt(query, 10);
+      this.storage.find({ id: query }, callback);
+    } else {
+      this.storage.find(query, callback);
+    }
+  }
+  /**
+   * Will update the data of a todo item in storage based on the id its given
+   *
+   * @param {number} id The ID of the element to update
+   * @param {object} data The data to update, ex. {title: Buy some cookies}
+   * @param {function} callback The callback to fire after the update is complete
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter data implicitly has an any type. */
+  update(id: number, data, callback: function) {
+    this.storage.save(data, callback, id);
+  }
+  /**
+   * Will remove an item from storage based on its ID
+   *
+   * @param {number} id The ID of the item to remove
+   * @param {function} callback The callback to fire after the removal is complete
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  remove(id: number, callback: function) {
+    this.storage.remove(id, callback);
+  }
+  /**
+   * Will drop all storage
+   *
+   * @param {function} callback The callback to fire after the storage is dropped
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  removeAll(callback: function) {
+    this.storage.drop(callback);
+  }
+  /**
+   * Returns a count of all todos
+   */
+  getCount(
+    callback: (arg0: {
+      active: number;
+      completed: number;
+      total: number;
+    }) => void
+  ) {
+    const todos = {
+      active: 0,
+      completed: 0,
+      total: 0,
+    };
+    /* @ts-expect-error @rehearsal TODO TS7006: Parameter data implicitly has an any type. */
+    this.storage.findAll(function (data) {
+      /* @ts-expect-error @rehearsal TODO TS7006: Parameter todo implicitly has an any type. */
+      data.forEach(function (todo) {
+        if (todo.completed) {
+          todos.completed++;
+        } else {
+          todos.active++;
+        }
+        todos.total++;
+      });
+      callback(todos);
+    });
+  }
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > store.ts 1`] = `
+"export class Store {
+  private _dbName: string;
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter callback implicitly has an any type. */
+  constructor(name: string, callback) {
+    callback = callback || function () {};
+    this._dbName = name;
+    if (!localStorage.getItem(name)) {
+      const todos: never[] = [];
+      localStorage.setItem(name, JSON.stringify(todos));
+    }
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | null is not assignable to parameter of type string. Consider verifying both types, using type assertion: (localStorage.getItem(name) as string), or using type guard: if (localStorage.getItem(name) instanceof string) { ... }. */
+    callback.call(this, JSON.parse(localStorage.getItem(name)));
+  }
+  /**
+   * Finds items based on a query given as a JS object
+   *
+   * @param {object} query The query to match against (i.e. {foo: bar})
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter callback implicitly has an any type. */
+  find(query: string | number, callback) {
+    if (!callback) {
+      return;
+    }
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | null is not assignable to parameter of type string. Consider verifying both types, using type assertion: (localStorage.getItem(this._dbName) as string), or using type guard: if (localStorage.getItem(this._dbName) instanceof string) { ... }. */
+    const todos = JSON.parse(localStorage.getItem(this._dbName));
+    callback.call(
+      this,
+      /* @ts-expect-error @rehearsal TODO TS7006: Parameter todo implicitly has an any type. */
+      todos.filter(function (todo) {
+        /* @ts-expect-error @rehearsal TODO TS2407: The right-hand side of a for...in statement must be of type any, an object type or a type parameter, but here has type string | number. */
+        for (const q in query) {
+          /* @ts-expect-error @rehearsal TODO TS7053: Element implicitly has an any type because expression of type string cant be used to index type string | number..  No index signature with a parameter of type string was found on type string | number. */
+          if (query[q] !== todo[q]) {
+            return false;
+          }
+        }
+        return true;
+      })
+    );
+  }
+  /**
+   *
+   * Will retrieve all data from the collection
+   *
+   * @param {function} callback The callback to fire upon retrieving data
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  findAll(callback: function) {
+    callback = callback || function () {};
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | null is not assignable to parameter of type string. Consider verifying both types, using type assertion: (localStorage.getItem(this._dbName) as string), or using type guard: if (localStorage.getItem(this._dbName) instanceof string) { ... }. */
+    callback.call(this, JSON.parse(localStorage.getItem(this._dbName)));
+  }
+  /**
+   * Will save the given data to the DB. If no item exists it will create a new
+   *
+   * item, otherwise itll simply update an existing items properties
+   *
+   * @param {object} updateData The data to save back into the DB
+   * @param {function} callback The callback to fire after saving
+   * @param {number} id An optional param to enter an ID of an item to update
+   * */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter updateData implicitly has an any type. */
+  save(updateData, callback: function, id: number) {
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | null is not assignable to parameter of type string. Consider verifying both types, using type assertion: (localStorage.getItem(this._dbName) as string), or using type guard: if (localStorage.getItem(this._dbName) instanceof string) { ... }. */
+    const data = JSON.parse(localStorage.getItem(this._dbName));
+    callback = callback || function () {};
+    // If an ID was actually given, find the item and update each property
+    if (id) {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].id === id) {
+          for (const key in updateData) {
+            data[i][key] = updateData[key];
+          }
+          break;
+        }
+      }
+      localStorage.setItem(this._dbName, JSON.stringify(data));
+      callback.call(this, data);
+    } else {
+      // Generate an ID
+      updateData.id = new Date().getTime();
+      data.push(updateData);
+      localStorage.setItem(this._dbName, JSON.stringify(data));
+      callback.call(this, [updateData]);
+    }
+  }
+  /**
+   * Will remove an item from the Store based on its ID
+   *
+   * @param {number} id The ID of the item you want to remove
+   * @param {function} callback The callback to fire after saving
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  remove(id: number, callback: function) {
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type string | null is not assignable to parameter of type string. Consider verifying both types, using type assertion: (localStorage.getItem(this._dbName) as string), or using type guard: if (localStorage.getItem(this._dbName) instanceof string) { ... }. */
+    const data = JSON.parse(localStorage.getItem(this._dbName));
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id == id) {
+        data.splice(i, 1);
+        break;
+      }
+    }
+    localStorage.setItem(this._dbName, JSON.stringify(data));
+    callback.call(this, data);
+  }
+  /**
+   * Will drop all storage and start fresh
+   *
+   * @param {function} callback The callback to fire after dropping the data
+   * */
+  /* @ts-expect-error @rehearsal TODO TS2552: Cannot find name function. Did you mean Function? */
+  drop(callback: function) {
+    const data: never[] = [];
+    localStorage.setItem(this._dbName, JSON.stringify(data));
+    callback.call(this, data);
+  }
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > template.ts 1`] = `
+"const htmlEscapes = {
+  \\"&\\": \\"&amp;\\",
+  \\"<\\": \\"&lt;\\",
+  \\">\\": \\"&gt;\\",
+  \\": \\"&quot;\\",
+  \\"\\": \\"&#x27;\\",
+  \\"\`\\": \\"&#x60;\\",
+};
+const escapeHtmlChar = function (chr: string | number) {
+  /* @ts-expect-error @rehearsal TODO TS7053: Element implicitly has an any type because expression of type string | number cant be used to index type { \\"&\\": string; \\"<\\": string; \\">\\": string; \\": string; \\"\\": string; \\"\`\\": string; }..  No index signature with a parameter of type string was found on type { \\"&\\": string; \\"<\\": string; \\">\\": string; \\": string; \\"\\": string; \\"\`\\": string; }. */
+  return htmlEscapes[chr];
+};
+const reUnescapedHtml = /[&<>\\"\`]/g;
+const reHasUnescapedHtml = new RegExp(reUnescapedHtml.source);
+const escape = function (string: string) {
+  return string && reHasUnescapedHtml.test(string)
+    ? string.replace(reUnescapedHtml, escapeHtmlChar)
+    : string;
+};
+export class Template {
+  defaultTemplate: string;
+  constructor() {
+    this.defaultTemplate =
+      <li data-id=\\"{{id}}\\" class=\\"{{completed}}\\"> +
+      <div class=\\"view\\"> +
+      <input class=\\"toggle\\" type=\\"checkbox\\" {{checked}}> +
+      \\"<label>{{title}}</label>\\" +
+      <button class=\\"destroy\\"></button> +
+      \\"</div>\\" +
+      \\"</li>\\";
+  }
+  /**
+   * Creates an <li> HTML string and returns it for placement in your app.
+   *
+   * NOTE: In real life you should be using a templating engine such as Mustache
+   * or Handlebars, however, this is a vanilla JS example.
+   *
+   * @param {object} data The object containing keys you want to find in the template to replace.
+   * @returns {string} HTML String of an <li> element
+   *
+   */
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter data implicitly has an any type. */
+  show(data): string {
+    let i;
+    let l;
+    let view = \\"\\";
+    for (i = 0, l = data.length; i < l; i++) {
+      let template = this.defaultTemplate;
+      let completed = \\"\\";
+      let checked = \\"\\";
+      if (data[i].completed) {
+        completed = \\"completed\\";
+        checked = \\"checked\\";
+      }
+      template = template.replace(\\"{{id}}\\", data[i].id);
+      template = template.replace(\\"{{title}}\\", escape(data[i].title));
+      template = template.replace(\\"{{completed}}\\", completed);
+      template = template.replace(\\"{{checked}}\\", checked);
+      view = view + template;
+    }
+    return view;
+  }
+  /**
+   * Displays a counter of how many to dos are left to complete
+   *
+   * @param {number} activeTodos The number of active todos.
+   * @returns {string} String containing the count
+   */
+  itemCounter(activeTodos: number): string {
+    const plural = activeTodos === 1 ? \\"\\" : \\"s\\";
+    return \\"<strong>\\" + activeTodos + \\"</strong> item\\" + plural + \\" left\\";
+  }
+  /**
+   * Updates the text within the \\"Clear completed\\" button
+   *
+   * @param  {[type]} completedTodos The number of completed todos.
+   * @returns {string} String containing the count
+   */
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name type. */
+  clearCompletedButton(completedTodos: [type]): string {
+    /* @ts-expect-error @rehearsal TODO TS2365: Operator > cannot be applied to types [type] and number. */
+    if (completedTodos > 0) {
+      return \\"Clear completed\\";
+    } else {
+      return \\"\\";
+    }
+  }
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > view.ts 1`] = `
+"import { qs, qsa, $on, $parent, $delegate } from \\"./helpers.js\\";
+export class View {
+  ENTER_KEY: number;
+  ESCAPE_KEY: number;
+  $todoList: Element | null;
+  $todoItemCounter: Element | null;
+  $clearCompleted: Element | null;
+  $main: Element | null;
+  $footer: Element | null;
+  $toggleAll: Element | null;
+  $newTodo: Element | null;
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter template implicitly has an any type. */
+  constructor(template) {
+    /* @ts-expect-error @rehearsal TODO TS2339: Property template does not exist on type View. */
+    this.template = template;
+    this.ENTER_KEY = 13;
+    this.ESCAPE_KEY = 27;
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$todoList = qs(\\".todo-list\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$todoItemCounter = qs(\\".todo-count\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$clearCompleted = qs(\\".clear-completed\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$main = qs(\\".main\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$footer = qs(\\".footer\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$toggleAll = qs(\\".toggle-all\\");
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    this.$newTodo = qs(\\".new-todo\\");
+  }
+  _removeItem(id: string) {
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    const elem = qs([data-id=\\" + id + \\"]);
+    if (elem) {
+      /* @ts-expect-error @rehearsal TODO TS2531: Object is possibly null. */
+      this.$todoList.removeChild(elem);
+    }
+  }
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter completedCount implicitly has an any type. */
+  _clearCompletedButton(completedCount, visible) {
+    /* @ts-expect-error @rehearsal TODO TS2531: Object is possibly null. */
+    this.$clearCompleted.innerHTML =
+      /* @ts-expect-error @rehearsal TODO TS2339: Property template does not exist on type View. */
+      this.template.clearCompletedButton(completedCount);
+    /* @ts-expect-error @rehearsal TODO TS2531: Object is possibly null. */
+    this.$clearCompleted.style.display = visible ? \\"block\\" : \\"none\\";
+  }
+  _setFilter(currentPage: string) {
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    qsa(\\".filters .selected\\").forEach((el) => (el.className = \\"\\"));
+    /* @ts-expect-error @rehearsal TODO TS2531: Object is possibly null. */
+    qs(.filters [href=\\"#/ + currentPage + \\"]).className = \\"selected\\";
+  }
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter completed implicitly has an any type. */
+  _elementComplete(id: string, completed) {
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    const listItem = qs([data-id=\\" + id + \\"]);
+    if (!listItem) {
+      return;
+    }
+    listItem.className = completed ? \\"completed\\" : \\"\\";
+    /* @ts-expect-error @rehearsal TODO TS2339: Property checked does not exist on type Element. */
+    qsa(\\"input\\", listItem).forEach((el) => (el.checked = completed));
+  }
+  _editItemDone(id: string, title: string | null) {
+    /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+    const listItem = qs([data-id=\\" + id + \\"]);
+    /* @ts-expect-error @rehearsal TODO TS2345: Argument of type Element | null is not assignable to parameter of type undefined. Consider verifying both types, using type assertion: ( listItem as string), or using type guard: if ( listItem instanceof string) { ... }. */
+    const input = qs(\\"input.edit\\", listItem);
+    /* @ts-expect-error @rehearsal TODO TS18047: listItem is possibly null. */
+    listItem.removeChild(input);
+    /* @ts-expect-error @rehearsal TODO TS18047: listItem is possibly null. */
+    listItem.className = listItem.className.replace(\\"editing\\", \\"\\");
+    qsa(\\"label\\", listItem).forEach((el) => (el.textContent = title));
+  }
+  render(viewCmd: string | number, parameter: string) {
+    const self = this;
+    const viewCommands = {
+      showEntries: function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$todoList is possibly null. */
+        self.$todoList.innerHTML = self.template.show(parameter);
+      },
+      removeItem: function () {
+        self._removeItem(parameter);
+      },
+      updateElementCount: function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$todoItemCounter is possibly null. */
+        self.$todoItemCounter.innerHTML = self.template.itemCounter(parameter);
+      },
+      clearCompletedButton: function () {
+        /* @ts-expect-error @rehearsal TODO TS2339: Property completed does not exist on type string. */
+        self._clearCompletedButton(parameter.completed, parameter.visible);
+      },
+      contentBlockVisibility: function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$main is possibly null. */
+        self.$main.style.display = self.$footer.style.display =
+          /* @ts-expect-error @rehearsal TODO TS2339: Property visible does not exist on type string. */
+          parameter.visible ? \\"block\\" : \\"none\\";
+      },
+      toggleAll: function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$toggleAll is possibly null. */
+        self.$toggleAll.checked = parameter.checked;
+      },
+      setFilter: function () {
+        self._setFilter(parameter);
+      },
+      clearNewTodo: function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$newTodo is possibly null. */
+        self.$newTodo.value = \\"\\";
+      },
+      elementComplete: function () {
+        /* @ts-expect-error @rehearsal TODO TS2339: Property id does not exist on type string. */
+        self._elementComplete(parameter.id, parameter.completed);
+      },
+      editItem: function () {
+        /* @ts-expect-error @rehearsal TODO TS2554: Expected 2 arguments, but got 1. */
+        const listItem = qs([data-id=\\" + parameter.id + \\"]);
+        /* @ts-expect-error @rehearsal TODO TS18047: listItem is possibly null. */
+        listItem.className = listItem.className + \\" editing\\";
+        const input = document.createElement(\\"input\\");
+        input.className = \\"edit\\";
+        /* @ts-expect-error @rehearsal TODO TS18047: listItem is possibly null. */
+        listItem.appendChild(input);
+        input.focus();
+      },
+      editItemDone: function () {
+        /* @ts-expect-error @rehearsal TODO TS2339: Property id does not exist on type string. */
+        self._editItemDone(parameter.id, parameter.title);
+      },
+    };
+    /* @ts-expect-error @rehearsal TODO TS7053: Element implicitly has an any type because expression of type string | number cant be used to index type { showEntries: () => void; removeItem: () => void; updateElementCount: () => void; clearCompletedButton: () => void; contentBlockVisibility: () => void; toggleAll: () => void; setFilter: () => void; clearNewTodo: () => void; elementComplete: () => void; editItem: () => void; editItemDone: () => void; }..  No index signature with a parameter of type string was found on type { showEntries: () => void; removeItem: () => void; updateElementCount: () => void; clearCompletedButton: () => void; contentBlockVisibility: () => void; toggleAll: () => void; setFilter: () => void; clearNewTodo: () => void; elementComplete: () => void; editItem: () => void; editItemDone: () => void; }. */
+    viewCommands[viewCmd]();
+  }
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter handler implicitly has an any type. */
+  bind(event: string, handler) {
+    const self = this;
+    if (event === \\"newTodo\\") {
+      /* @ts-expect-error @rehearsal TODO TS2554: Expected 4 arguments, but got 3. */
+      $on(self.$newTodo, \\"change\\", function () {
+        /* @ts-expect-error @rehearsal TODO TS18047: self.$newTodo is possibly null. */
+        handler(self.$newTodo.value);
+      });
+    } else if (event === \\"removeCompleted\\") {
+      /* @ts-expect-error @rehearsal TODO TS2554: Expected 4 arguments, but got 3. */
+      $on(self.$clearCompleted, \\"click\\", function () {
+        handler();
+      });
+    } else if (event === \\"toggleAll\\") {
+      /* @ts-expect-error @rehearsal TODO TS2554: Expected 4 arguments, but got 3. */
+      $on(self.$toggleAll, \\"click\\", function () {
+        /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+        handler({ completed: this.checked });
+      });
+    } else if (event === \\"itemEdit\\") {
+      $delegate(self.$todoList, \\"li label\\", \\"dblclick\\", function () {
+        /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+        handler({ id: self._itemId(this) });
+      });
+    } else if (event === \\"itemRemove\\") {
+      $delegate(self.$todoList, \\".destroy\\", \\"click\\", function () {
+        /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+        handler({ id: self._itemId(this) });
+      });
+    } else if (event === \\"itemToggle\\") {
+      $delegate(self.$todoList, \\".toggle\\", \\"click\\", function () {
+        handler({
+          /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+          id: self._itemId(this),
+          /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+          completed: this.checked,
+        });
+      });
+    } else if (event === \\"itemEditDone\\") {
+      $delegate(self.$todoList, \\"li .edit\\", \\"blur\\", function () {
+        /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+        if (!this.dataset.iscanceled) {
+          handler({
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            id: self._itemId(this),
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            title: this.value,
+          });
+        }
+      });
+      $delegate(
+        self.$todoList,
+        \\"li .edit\\",
+        \\"keypress\\",
+        function (event: { keyCode: number }) {
+          if (event.keyCode === self.ENTER_KEY) {
+            // Remove the cursor from the input when you hit enter just like if it were a real form
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            this.blur();
+          }
+        }
+      );
+    } else if (event === \\"itemEditCancel\\") {
+      $delegate(
+        self.$todoList,
+        \\"li .edit\\",
+        \\"keyup\\",
+        function (event: { keyCode: number }) {
+          if (event.keyCode === self.ESCAPE_KEY) {
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            this.dataset.iscanceled = true;
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            this.blur();
+            /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+            handler({ id: self._itemId(this) });
+          }
+        }
+      );
+    }
+  }
+  _itemId(element: { parentNode: { tagName: string } }) {
+    const li = $parent(element, \\"li\\");
+    return parseInt(li.dataset.id, 10);
+  }
+  _bindItemEditCancel(handler: (arg0: { id: number }) => void) {
+    const self = this;
+    $delegate(
+      self.$todoList,
+      \\"li .edit\\",
+      \\"keyup\\",
+      function (event: { keyCode: number }) {
+        if (event.keyCode === self.ESCAPE_KEY) {
+          /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+          this.dataset.iscanceled = true;
+          /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+          this.blur();
+          /* @ts-expect-error @rehearsal TODO TS2683: this implicitly has type any because it does not have a type annotation. */
+          handler({ id: self._itemId(this) });
+        }
+      }
+    );
+  }
+}"
+`;
+
+exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root 1`] = `
+"[STARTED] Initialize
+[DATA] Running migration on vanilla-js-mvc-esm
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] /private/var/folders/9j/jmgyq8sx3sgdxqnx9dchtkcw000f1_/T/tmp-34549-B0xaoucKcVOt/.eslintrc.cjs already exists, extending Rehearsal default eslint-related config
+[TITLE] Update .eslintrc.cjs
+[SUCCESS] Update .eslintrc.cjs
+[STARTED] Convert JS files to TS
+[DATA] git mv /src/controller.js to /src/controller.ts
+[DATA] git mv /src/helpers.js to /src/helpers.ts
+[DATA] git mv /src/model.js to /src/model.ts
+[DATA] git mv /src/store.js to /src/store.ts
+[DATA] git mv /src/template.js to /src/template.ts
+[DATA] git mv /src/view.js to /src/view.ts
+[DATA] git mv /src/index.js to /src/index.ts
+[DATA] processing file: /src/controller.ts
+[DATA] processing file: /src/helpers.ts
+[DATA] processing file: /src/model.ts
+[DATA] processing file: /src/store.ts
+[DATA] processing file: /src/template.ts
+[DATA] processing file: /src/view.ts
+[DATA] processing file: /src/index.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   7 JS files converted to TS
+[TITLE] 
+[TITLE]   275 errors caught by rehearsal
+[TITLE] 
+[TITLE]   76 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   199 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 139 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 60 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   7 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   275 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   76 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   199 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 139 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 60 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
