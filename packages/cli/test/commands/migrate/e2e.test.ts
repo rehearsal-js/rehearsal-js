@@ -48,22 +48,6 @@ describe('migrate - validation', async () => {
     expect(stdout).toContain('Migration Complete');
   });
 
-  test('exit in a dirty git project', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git.init().add('package.json');
-
-    const { stdout } = await runBin('migrate', [], {
-      cwd: basePath,
-    });
-
-    expect(stdout).toContain(
-      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
-    );
-  });
-
   test('pass in a dirty git project with --dryRun', async () => {
     // simulate clean git project
     const git = simpleGit({
@@ -77,20 +61,6 @@ describe('migrate - validation', async () => {
 
     expect(stdout).toContain('Initialize -- Dry Run Mode');
     expect(stdout).toContain('List of files will be attempted to migrate:');
-  });
-
-  test('pass in a dirty git project with --regen', async () => {
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git.init();
-
-    const { stdout } = await runBin('migrate', ['-r'], {
-      cwd: basePath,
-    });
-    expect(stdout).not.toContain(
-      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
-    );
   });
 
   test('pass in a dirty git in multi runs', async () => {
@@ -108,9 +78,7 @@ describe('migrate - validation', async () => {
     const { stdout: firstRunStdout } = await runBin('migrate', [], {
       cwd: basePath,
     });
-    expect(firstRunStdout).not.toContain(
-      'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
-    );
+
     expect(firstRunStdout).toContain('Migration Complete');
 
     const { stdout: secondRunStdout } = await runBin('migrate', [], {
@@ -310,16 +278,6 @@ describe('migrate: e2e', async () => {
 
     // new scripts
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
-
-    // stage all config files
-    const gitStatus = await git.status();
-    expect(gitStatus.staged).toStrictEqual([
-      '.eslintrc.js',
-      '.rehearsal-eslintrc.js',
-      '.rehearsal/migrate-report.json',
-      '.rehearsal/migrate-report.sarif',
-      'tsconfig.json',
-    ]);
   });
 
   test('init flag', async () => {

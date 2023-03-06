@@ -218,9 +218,5 @@ describe('Task: config-lint', async () => {
 
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
-
-    const gitStatus = await git.status();
-    expect(gitStatus.staged).toContain('.eslintrc.js');
-    expect(gitStatus.staged).toContain('.rehearsal-eslintrc.js');
   });
 });

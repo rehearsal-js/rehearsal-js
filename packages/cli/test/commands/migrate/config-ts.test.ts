@@ -119,9 +119,6 @@ describe('Task: config-ts', async () => {
     const tasks = [await tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const gitStatus = await git.status();
-    expect(gitStatus.staged).toContain('tsconfig.json');
-
     expect(output).matchSnapshot();
   });
 });

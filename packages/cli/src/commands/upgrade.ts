@@ -71,7 +71,6 @@ upgradeCommand
         logger.warn(
           'You have uncommitted files in your repo. Please commit or stash them as Rehearsal will reset your uncommitted changes.'
         );
-        process.exit(0);
       }
     }
 
