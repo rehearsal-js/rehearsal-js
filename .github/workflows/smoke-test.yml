@@ -1,4 +1,4 @@
-# name: Smoke Test
+name: E2E Smoke Test
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Runs the CLI Smoke Test
+    name: Runs CLI In Smoke Test Repo
     runs-on: ubuntu-latest
     steps:
       - name: Get branch name
