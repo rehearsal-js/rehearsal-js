@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync } from 'fs-extra/esm';
 import { createLogger, format, transports } from 'winston';
 
+import { setGracefulCleanup } from 'tmp';
 import {
   initTask,
   depInstallTask,
@@ -17,7 +18,11 @@ import {
   createMigrateOptions,
   removeSpecialChars,
   createOutputStream,
+  replaceRelativePath,
+  replaceTmpPath,
 } from '../../test-helpers/index.js';
+
+setGracefulCleanup();
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
@@ -64,7 +69,7 @@ describe('Task: convert vanilla-js-mvc-esm', async () => {
     ];
     await listrTaskRunner(tasks);
 
-    expect(output).toMatchSnapshot();
+    expect(replaceTmpPath(output, basePath)).toMatchSnapshot();
 
     const fileList = readdirSync(join(basePath, 'src'));
 
@@ -87,7 +92,10 @@ describe('Task: convert vanilla-js-mvc-esm', async () => {
     fileList.forEach((file) => {
       const filePath = join(basePath, 'src', file);
       const content = readFileSync(filePath, 'utf8');
-      expect(removeSpecialChars(content)).toMatchSnapshot(file);
+      const noSpecialCharsContent = removeSpecialChars(content);
+      const noTmpPathContent = replaceTmpPath(noSpecialCharsContent, basePath);
+      const noRelativePathContent = replaceRelativePath(noTmpPathContent, basePath);
+      expect(noRelativePathContent).toMatchSnapshot(file);
     });
 
     // confirm the tsconfig.json is correct

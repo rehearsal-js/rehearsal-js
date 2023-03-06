@@ -1,16 +1,18 @@
-import { join, resolve, dirname } from 'node:path';
+import { join, resolve, dirname, basename } from 'node:path';
 import { Readable } from 'stream';
 import { rmSync, realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { copySync } from 'fs-extra/esm';
 import { execa } from 'execa';
 import which from 'which';
-import { dirSync } from 'tmp';
+import { dirSync, setGracefulCleanup } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
 import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
 import type { Options, ExecaChildProcess } from 'execa';
+
+setGracefulCleanup();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,7 +79,8 @@ export function prepareTmpDir(dir: string): string {
   const migrateFixturesDir = resolve(__dirname, '../fixtures/app_for_migrate');
   const testSrcDir = resolve(migrateFixturesDir, 'src');
   const srcDir = resolve(testSrcDir, dir);
-  const { name: targetDir } = dirSync();
+  const { name: targetDir } = dirSync({ postfix: 'rehearsal-cli-test' });
+
   copySync(srcDir, targetDir);
   // /var is a symlink to /private/var, use realpath to return /private/var
   return realpathSync(targetDir);
@@ -146,6 +149,17 @@ export function removeSpecialChars(input: string): string {
     })
     .filter((line) => line.trim())
     .join('\n');
+}
+
+// replace dynamic tmp path with <tmp-path> for snapshot test
+export function replaceTmpPath(input: string, basePath: string): string {
+  const pathRegex = new RegExp(basePath, 'g');
+  return input.replace(pathRegex, '<tmp-path>');
+}
+
+export function replaceRelativePath(input: string, basePath: string): string {
+  const pathRegex = new RegExp(`./*${basename(basePath)}`, 'g');
+  return input.replace(pathRegex, '<tmp-path>');
 }
 
 // clean special chars and variables for output message snapshot:

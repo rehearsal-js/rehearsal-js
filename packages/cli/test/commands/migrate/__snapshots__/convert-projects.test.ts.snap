@@ -312,7 +312,7 @@ exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js i
 "/*global window, document */
 import { Model } from \\"./model.js\\";
 import { View } from \\"./view.js\\";
-/* @ts-expect-error @rehearsal TODO TS2306: File /private/var/folders/9j/jmgyq8sx3sgdxqnx9dchtkcw000f1_/T/tmp-34549-B0xaoucKcVOt/src/controller.ts is not a module. */
+/* @ts-expect-error @rehearsal TODO TS2306: File <tmp-path>/src/controller.ts is not a module. */
 import { Controller } from \\"./controller.js\\";
 import { Store } from \\"./store.js\\";
 import { Template } from \\"./template.js\\";
@@ -349,7 +349,7 @@ $on(window, \\"hashchange\\", setView);"
 `;
 
 exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js in root > model.ts 1`] = `
-"import { Store } from \\"../../../T/tmp-34549-B0xaoucKcVOt/src/store\\";
+"import { Store } from \\"../../../<tmp-path>/src/store\\";
 export class Model {
   storage: Store;
   /**
@@ -924,7 +924,7 @@ exports[`Task: convert vanilla-js-mvc-esm > migrate from default all files .js i
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] /private/var/folders/9j/jmgyq8sx3sgdxqnx9dchtkcw000f1_/T/tmp-34549-B0xaoucKcVOt/.eslintrc.cjs already exists, extending Rehearsal default eslint-related config
+[DATA] <tmp-path>/.eslintrc.cjs already exists, extending Rehearsal default eslint-related config
 [TITLE] Update .eslintrc.cjs
 [SUCCESS] Update .eslintrc.cjs
 [STARTED] Convert JS files to TS
