@@ -6,6 +6,7 @@ import fastGlob from 'fast-glob';
 
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo.js';
 import { getWorkspaceGlobs } from '../utils/workspace.js';
+import { getExcludePatterns } from '../index.js';
 import { PackageGraph, PackageGraphOptions } from './package-graph.js';
 
 import type { IPackage } from './IPackage.js';
@@ -68,24 +69,7 @@ export class Package implements IPackage {
     this.#packageType = packageType;
     this.#name = name;
 
-    const excludeDirs = [
-      '.yarn', // yarn3 directory
-      'dist',
-    ];
-
-    const excludeFiles = [
-      '.eslintrc.*',
-      '.babelrc.*',
-      'babel.config.*', // Babel configs
-      'Brocfile.js',
-      '.prettierrc.*',
-      'prettier.config.*', // Prettier configs
-      'karma.config.*',
-      'webpack.config.js',
-      'vite.config.ts',
-    ];
-
-    this.#excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
+    this.#excludePatterns = new Set([...getExcludePatterns()]);
     this.#includePatterns = new Set(['.']);
 
     // Only add the globs if this path contains a package.json

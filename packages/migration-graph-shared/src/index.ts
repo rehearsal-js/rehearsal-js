@@ -16,3 +16,5 @@ export { PackageGraph, PackageGraphOptions } from './entities/package-graph.js';
 export { ProjectGraph, ProjectGraphOptions } from './entities/project-graph.js';
 
 export type { IPackage } from './entities/IPackage.js';
+
+export * from './utils/excludes.js';

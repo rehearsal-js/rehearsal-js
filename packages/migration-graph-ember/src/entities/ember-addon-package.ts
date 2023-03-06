@@ -6,6 +6,7 @@ import {
   getNameFromMain,
   isEngine,
 } from '../utils/ember.js';
+import { getEmberExcludePatterns } from '../utils/excludes.js';
 import { type EmberPackageOptions, EmberAppPackage } from './ember-app-package.js';
 import {
   EmberAddonPackageGraph,
@@ -26,22 +27,10 @@ export class EmberAddonPackage extends EmberAppPackage {
       ...options,
     });
 
-    const excludeDirs = [
-      'dist',
-      'config',
-      'ember-config',
-      '@ember/*',
-      'public',
+    this.excludePatterns = new Set([
+      ...getEmberExcludePatterns(),
       '^app', // Addons ^app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
-    ];
-
-    const excludeFiles = [
-      'ember-cli-build.js',
-      'testem.js',
-      'index.js', // Ignore index.js because it's a CJS use to interact with the build pipeline.
-    ];
-
-    this.excludePatterns = new Set([...excludeDirs, ...excludeFiles]);
+    ]);
 
     this.includePatterns = new Set(['.', '**/*.gjs']);
   }

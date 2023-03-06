@@ -6,6 +6,7 @@ import {
   IPackage,
 } from '@rehearsal/migration-graph-shared';
 import { getEmberAddonPaths } from '../utils/ember.js';
+import { getEmberExcludePatterns } from '../utils/excludes.js';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph.js';
 
 export type EmberPackageOptions = PackageOptions;
@@ -14,21 +15,7 @@ export class EmberAppPackage extends Package implements IPackage {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
     super(pathToPackage, { ...options });
 
-    this.excludePatterns = new Set([
-      // files
-      '.ember-cli.js',
-      'ember-cli-build.js',
-      'ember-config.js',
-      'index.js',
-      'testem.js',
-      // Directories
-      'dist',
-      'config',
-      'ember-config',
-      '@ember/*',
-      'public',
-      ...this.addonPaths,
-    ]);
+    this.excludePatterns = new Set([...getEmberExcludePatterns(), ...this.addonPaths]);
 
     this.includePatterns = new Set(['.', '**/*.gjs']); // No longer isolate this to the app directory, include all files in dir.
   }

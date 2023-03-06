@@ -14,6 +14,7 @@ const EMBER_FIXTURE_NAMES = {
   SIMPLE_APP: 'simple-app',
   SIMPLE_ADDON: 'simple-addon',
   SIMPLE_ENGINE: 'simple-engine',
+  APP_WITH_IN_REPO_ADDONS: 'app-with-in-repo-addons',
   ADDON_WITH_MODULE_NAME: 'addon-with-module-name',
   ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN: 'addon-with-simple-custom-module-name',
   ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN: 'addon-with-complex-custom-module-name',
@@ -188,6 +189,24 @@ EMBER_FIXTURES[EMBER_FIXTURE_NAMES.ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN] = {
   }),
 };
 
+EMBER_FIXTURES[EMBER_FIXTURE_NAMES.APP_WITH_IN_REPO_ADDONS] = {
+  'package.json': json({
+    name: EMBER_FIXTURE_NAMES.SIMPLE_APP,
+    version: '1.0.0',
+    dependencies: {},
+    devDependencies: {
+      'ember-source': '^3.28.0',
+    },
+    'ember-addon': {
+      paths: ['lib/some-addon', 'lib/some-engine'],
+    },
+  }),
+  lib: {
+    'some-engine': EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_ADDON],
+    'some-addon': EMBER_FIXTURES[EMBER_FIXTURE_NAMES.SIMPLE_ENGINE],
+  },
+};
+
 EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER] = {
   'package.json': json({
     name: 'workspace-container',
@@ -224,5 +243,8 @@ EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
     },
   }),
 };
+
+
+
 // export the fixture and names for easier mapping
 export { EMBER_FIXTURES as FIXTURES, EMBER_FIXTURE_NAMES as FIXTURE_NAMES };
