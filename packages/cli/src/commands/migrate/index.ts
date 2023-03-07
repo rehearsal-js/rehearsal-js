@@ -64,7 +64,6 @@ migrateCommand
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
   .option('-r, --regen', 'print out current migration status')
   .action(async (options: MigrateCommandOptions) => {
-    console.log(options);
     await migrate(options);
   });
 
