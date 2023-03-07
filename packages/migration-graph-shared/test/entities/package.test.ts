@@ -51,8 +51,6 @@ describe('Unit | Entities | Package', function () {
       const p = new Package(pathToPackage);
       expect(p.excludePatterns).toStrictEqual(
         new Set([
-          '.yarn',
-          'dist',
           '.eslintrc.*',
           '.babelrc.*',
           'babel.config.*',
@@ -60,8 +58,11 @@ describe('Unit | Entities | Package', function () {
           '.prettierrc.*',
           'prettier.config.*',
           'karma.config.*',
+          '.rehearsal-eslintrc.js',
           'webpack.config.js',
           'vite.config.ts',
+          '.yarn',
+          'dist',
         ])
       );
       expect(p.includePatterns).toStrictEqual(new Set(['.']));
@@ -82,22 +83,7 @@ describe('Unit | Entities | Package', function () {
     test('addExcludePattern', () => {
       const p = new Package(pathToPackage);
       p.addExcludePattern('test-packages');
-      expect(p.excludePatterns).toStrictEqual(
-        new Set([
-          '.yarn',
-          'dist',
-          '.eslintrc.*',
-          '.babelrc.*',
-          'babel.config.*',
-          'Brocfile.js',
-          '.prettierrc.*',
-          'prettier.config.*',
-          'karma.config.*',
-          'webpack.config.js',
-          'vite.config.ts',
-          'test-packages',
-        ])
-      );
+      expect(p.excludePatterns.has('test-packages')).toBeTruthy();
 
       p.addIncludePattern('index.js');
       expect(p.includePatterns).toStrictEqual(new Set(['.', 'index.js']));
