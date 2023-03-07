@@ -77,7 +77,7 @@ describe('Test reporter', function () {
     rmSync(testPrintMdFile);
   });
 
-  test('addItem', async () => {
+  test('addTSItem', async () => {
     const mockSourceFile = mock<SourceFile>();
     mockSourceFile.fileName = 'testFile1.ts';
     mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
@@ -103,14 +103,36 @@ describe('Test reporter', function () {
     reporter!.addTSItemToRun(mockDiagnostic, mockNode, location, hint);
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
 
-    const testAddItemFile = resolve(basePath, 'test-add-item.json');
+    const testAddTSItemFile = resolve(basePath, 'test-add-item.json');
 
-    reporter!.saveReport(testAddItemFile);
-    expect(existsSync(testAddItemFile)).toBeTruthy;
-    expect(readFileSync(testAddItemFile, 'utf-8')).toMatchSnapshot();
+    reporter!.saveReport(testAddTSItemFile);
+    expect(existsSync(testAddTSItemFile)).toBeTruthy;
+    expect(readFileSync(testAddTSItemFile, 'utf-8')).toMatchSnapshot();
 
-    rmSync(testAddItemFile);
+    rmSync(testAddTSItemFile);
   });
+
+  test('addLintItem', async () => {
+    const lintError = {
+      ruleId: null,
+      message: 'Parsing error: require() of ES Module...from require-from-eslint.js not supported',
+      line: undefined,
+      column: undefined,
+    };
+
+    reporter!.addLintItemToRun('testFile1.ts', lintError);
+    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
+
+    const testAddLintItemFile = resolve(basePath, 'test-add-lint-item.json');
+
+    reporter!.saveReport(testAddLintItemFile);
+    expect(existsSync(testAddLintItemFile)).toBeTruthy;
+    expect(readFileSync(testAddLintItemFile, 'utf-8')).toMatchSnapshot();
+
+    rmSync(testAddLintItemFile);
+  });
+
+
 
   test('getFileNames', async () => {
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
