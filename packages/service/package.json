@@ -37,16 +37,13 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@glimmer/component": "^1.1.2",
     "@glint/core": "1.0.0-beta.4",
-    "@glint/environment-ember-loose": "1.0.0-beta.3",
-    "@glint/environment-ember-template-imports": "1.0.0-beta.3",
-    "@glint/template": "1.0.0-beta.3",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/test-support": "workspace:*",
     "@rehearsal/utils": "workspace:*",
-    "ember-template-imports": "^3.4.1",
     "findup-sync": "^5.0.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-uri": "^3.0.7",
     "winston": "^3.8.2"
   },
   "devDependencies": {

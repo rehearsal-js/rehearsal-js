@@ -66,9 +66,9 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   const commentTag = '@rehearsal';
 
-  const rehearsal = new RehearsalService(options, fileNames);
+  const service = new RehearsalService(options, fileNames);
 
-  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
+  const runner = new PluginsRunner({ basePath, service, reporter, logger })
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })

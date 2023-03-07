@@ -4,6 +4,6 @@ export default class Hello extends Component {
   name = 'world';
 
   <template>
-    <span>Hello, {{this.name}}!</span>
+    <span>Hello, I am {{this.name}}!</span>
   </template>
 }

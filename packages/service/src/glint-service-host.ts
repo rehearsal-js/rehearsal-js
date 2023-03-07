@@ -20,7 +20,6 @@ export class GlintServiceHost implements ts.LanguageServiceHost {
     this.glintConfig = glintConfig;
     this.ts = glintConfig.ts;
     this.parsedConfig = this.parseTsConfig(glintConfig, transformManager);
-    console.log('glint config', this.glintConfig);
     this.openFileNames = new Set();
     this.rootFileNames = new Set(this.parsedConfig.fileNames);
   }
@@ -34,7 +33,7 @@ export class GlintServiceHost implements ts.LanguageServiceHost {
   }
 
   getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
-    const contents = this.transformManager.readTransformedFile(fileName);
+    const contents = this.documents.getDocumentContents(fileName);
     if (typeof contents === 'string') {
       return this.ts.ScriptSnapshot.fromString(contents);
     }
@@ -79,9 +78,6 @@ export class GlintServiceHost implements ts.LanguageServiceHost {
   getCurrentDirectory(): string {
     return this.ts.sys.getCurrentDirectory();
   }
-  // directoryExists = this.ts.sys.directoryExists;
-  // getDirectories = this.ts.sys.getDirectories;
-  // realpath = this.ts.sys.realpath;
 
   private *allKnownFileNames(): Iterable<string> {
     const { environment } = this.glintConfig;

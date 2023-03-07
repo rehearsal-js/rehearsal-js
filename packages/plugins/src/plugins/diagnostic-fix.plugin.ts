@@ -1,6 +1,6 @@
 import debug from 'debug';
 import hash from 'object-hash';
-import { CodeActionCommand, CodeFixAction } from 'typescript';
+import { CodeActionCommand, CodeFixAction, type DiagnosticWithLocation } from 'typescript';
 
 import {
   applyCodeFix,
@@ -39,11 +39,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     options.safeFixes ??= true;
     options.strictTyping ??= true;
 
-    console.log('diagnostic fix', fileName);
-
     let diagnostics = this.getDiagnostics(context.service, fileName);
-
-    console.log('diagnostics', diagnostics[0]);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
@@ -108,15 +104,17 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     return (
       diagnostics
         // Convert DiagnosticWithLocation to DiagnosticWithContext
-        .map<DiagnosticWithContext>((diagnostic) => ({
-          ...diagnostic,
-          ...{
-            service,
-            program,
-            checker,
-            node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
-          },
-        }))
+        .map<DiagnosticWithContext>((diagnostic) => {
+          return {
+            ...diagnostic,
+            ...{
+              service: languageService,
+              program,
+              checker,
+              node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+            },
+          };
+        })
     );
   }
 

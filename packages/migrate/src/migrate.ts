@@ -2,7 +2,14 @@ import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
 import { GlintService, PluginsRunner } from '@rehearsal/service';
-import { DiagnosticCheckPlugin, DiagnosticFixPlugin, LintPlugin } from '@rehearsal/plugins';
+import {
+  DiagnosticCheckPlugin,
+  DiagnosticFixPlugin,
+  GlintCheckPlugin,
+  GlintFixPlugin,
+  LintPlugin,
+  ReRehearsePlugin,
+} from '@rehearsal/plugins';
 import ts from 'typescript';
 import type { Reporter } from '@rehearsal/reporter';
 import type { Logger } from 'winston';
@@ -24,6 +31,7 @@ export type MigrateOutput = {
 };
 
 const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
+const GLINT_EXTENSIONS = ['.gts', '.hbs'];
 
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
@@ -79,20 +87,24 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const commentTag = '@rehearsal';
 
-  // const rehearsal = new RehearsalService(options, fileNames);
-  const rehearsal = new GlintService(basePath);
+  // const service = new RehearsalService(options, fileNames);
+  const service = new GlintService(basePath);
 
-  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
-    // .queue(new ReRehearsePlugin(), {
-    //   commentTag,
-    // })
-    // .queue(new LintPlugin(), {
-    //   eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-    //   reportErrors: false,
-    // })
+  const runner = new PluginsRunner({ basePath, service, reporter, logger })
+    .queue(new ReRehearsePlugin(), {
+      commentTag,
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+    })
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
+      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+    })
+    .queue(new GlintFixPlugin(), {
+      filter: (fileName: string) => GLINT_EXTENSIONS.includes(extname(fileName)),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
@@ -100,6 +112,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     })
     .queue(new DiagnosticCheckPlugin(), {
       commentTag: '@rehearsal',
+      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+    })
+    .queue(new GlintCheckPlugin(), {
+      commentTag,
+      filter: (fileName: string) => GLINT_EXTENSIONS.includes(extname(fileName)),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
@@ -129,10 +146,14 @@ export function gitMove(
 ): string[] {
   return sourceFiles.map((sourceFile) => {
     const ext = extname(sourceFile);
+
+    if (ext === '.hbs') {
+      return sourceFile;
+    }
+
     const pos = sourceFile.lastIndexOf(ext);
     const destFile = `${sourceFile.substring(0, pos)}`;
     const tsFile = ext === '.gjs' ? `${destFile}.gts` : `${destFile}.ts`;
-    // const tsFile = `${destFile}.ts`;
     const dtsFile = `${destFile}.d.ts`;
 
     if (sourceFile === tsFile) {

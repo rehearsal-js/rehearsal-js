@@ -9,6 +9,7 @@ import type {
   Node,
   SourceFile,
 } from 'typescript';
+import { GlintLanguageServer } from '@glint/core';
 
 const {
   DiagnosticCategory,
@@ -19,11 +20,21 @@ const {
   isMethodDeclaration,
 } = ts;
 
+export interface Service {
+  getFileText(fileName: string): string;
+  setFileText(fileName: string, text: string): void;
+  saveFile(fileName: string): void;
+  getSourceFile(fileName: string): SourceFile;
+  getLanguageService(): LanguageService;
+  getGlintService(): GlintLanguageServer | undefined;
+  getDiagnostics(fileName: string): DiagnosticWithLocation[];
+}
+
 /**
  * Service represents the list of helper functions wrapped over compiled program context.
  * Service helps to get diagnostics and work with source files content (through ServiceHost).
  */
-export class RehearsalService {
+export class RehearsalService implements Service {
   protected readonly host: RehearsalServiceHost;
   protected readonly service: LanguageService;
 
@@ -67,6 +78,10 @@ export class RehearsalService {
    */
   getLanguageService(): LanguageService {
     return this.service;
+  }
+
+  getGlintService(): undefined {
+    return undefined;
   }
 
   getDiagnostics(fileName: string): DiagnosticWithLocation[] {
