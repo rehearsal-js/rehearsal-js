@@ -170,7 +170,8 @@ export class EmberAppPackageGraph extends PackageGraph {
           if (!synthetic) {
             const emberAddonPackage = pkg as EmberAddonPackage;
 
-            const key = `app/services/${s.serviceName}.js`;
+            // Looking for the implementation at addon/ becase some addons may not have an app/ for re-exports of the service
+            const key = `addon/services/${s.serviceName}.js`;
 
             const someServiceInAnInRepoAddon = join(emberAddonPackage.path, key);
 
@@ -180,8 +181,11 @@ export class EmberAppPackageGraph extends PackageGraph {
             if (key) {
               const dest = emberAddonPackage.getModuleGraph().hasNode(key);
               if (!dest) {
+                const sourceFile = join(this.baseDir, moduleNodeKey);
+                const destFile = join(emberAddonPackage.path);
+
                 throw new Error(
-                  `Unexpected Error; Unable to retreive node ${key} from package ${emberAddonPackage.name}`
+                  `Unexpected error when parsing ${sourceFile}. Attempting to resolve service "${s.serviceName}" from module/package name "${s.addonName}" in package: ${destFile}.`
                 );
               }
 
