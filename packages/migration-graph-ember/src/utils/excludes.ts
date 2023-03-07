@@ -2,7 +2,7 @@ import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 
 const EMBER_FILES = [
   '.ember-cli.js',
-  '.template-lint.js', // ember-template-lint
+  '.template-lintrc.js', // ember-template-lint
   'ember-cli-build.js',
   'ember-config.js',
   'index.js', // Ignore index.js because it's a CJS use to interact with the build pipeline.
