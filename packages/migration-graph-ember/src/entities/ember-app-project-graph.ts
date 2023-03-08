@@ -1,5 +1,6 @@
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve, relative } from 'node:path';
 import fastGlob from 'fast-glob';
+import { findUpSync } from 'find-up';
 import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
@@ -133,8 +134,27 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
   protected override discoveryByEntrypoint(entrypoint: string): EmberAppPackage {
     // Create a package to make sure things work, but ignore the rest.
-    const p = new EmberAppPackage(this.rootDir);
-    p.includePatterns = new Set([entrypoint]);
+    const someEntrypoint = join(this.rootDir, entrypoint);
+
+    const lookUpDir = dirname(someEntrypoint);
+
+    // Findup till we find package.json relative to the dir of the entrypoint.
+    const foundPackageJson = findUpSync('package.json', {
+      cwd: lookUpDir,
+      stopAt: this.rootDir,
+    });
+
+    const packageDir = dirname(foundPackageJson);
+
+    if (!packageDir) {
+      throw new Error(`Unable to find package.json for package that contains ${entrypoint}`);
+    }
+
+    // Adjust entrypoint to be relative to the package directory
+    const relativeEntrypoint = relative(packageDir, someEntrypoint);
+
+    const p = this.entityFactory(packageDir);
+    p.includePatterns = new Set([relativeEntrypoint]);
     this.addPackageToGraph(p, false);
     return p;
   }
