@@ -1,3 +1,6 @@
+import ts from 'typescript';
+
+import { RehearsalServiceHost } from './rehearsal-service-host.js';
 import type {
   CompilerOptions,
   Diagnostic,
@@ -6,9 +9,6 @@ import type {
   Node,
   SourceFile,
 } from 'typescript';
-import ts from 'typescript';
-
-import { RehearsalServiceHost } from './rehearsal-service-host.js';
 
 const {
   DiagnosticCategory,
@@ -107,7 +107,7 @@ export class RehearsalService {
           length: node.getEnd() - node.getStart(),
           category: DiagnosticCategory.Suggestion,
           code: 7050,
-          messageText: `${node.name.getText()} don't have a return type, but the type may be inferred from usage.`
+          messageText: `${node.name.getText()} don't have a return type, but the type may be inferred from usage.`,
         });
 
         return undefined;

@@ -96,7 +96,7 @@ export function createMigrateOptions(
     outputPath: '.rehearsal',
     verbose: false,
     userConfig: 'rehearsal-config.json',
-    interactive: undefined,
+    ci: false,
     dryRun: false,
     regen: false,
     ...options,

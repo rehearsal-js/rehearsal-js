@@ -132,8 +132,6 @@ describe('Test reporter', function () {
     rmSync(testAddLintItemFile);
   });
 
-
-
   test('getFileNames', async () => {
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts', '/base/path/file2.ts']);

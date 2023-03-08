@@ -15,7 +15,7 @@ export type MigrateCommandOptions = {
   outputPath: string;
   verbose: boolean | undefined;
   userConfig: string | undefined;
-  interactive: boolean | undefined;
+  ci: boolean | undefined;
   dryRun: boolean;
   regen: boolean | undefined;
 };

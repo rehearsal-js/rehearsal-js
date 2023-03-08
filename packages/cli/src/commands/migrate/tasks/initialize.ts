@@ -43,7 +43,7 @@ export async function initTask(
       const packages = discoverEmberPackages(options.basePath); // TODO we should ask the migration-strategy for this data.
       DEBUG_CALLBACK('projectName', projectName);
 
-      if (options.interactive) {
+      if (!options.ci) {
         // Init state and store
         const state = new State(
           projectName,
