@@ -40,7 +40,7 @@ describe('Task: regen', async () => {
   });
 
   test('throw error with no tsconfig.json', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [await initTask(options), await regenTask(options, logger)];
 
     try {
@@ -51,7 +51,7 @@ describe('Task: regen', async () => {
   });
 
   test('no effect on JS filse before conversion', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [
       await initTask(options),
       await tsConfigTask(options),
@@ -63,7 +63,7 @@ describe('Task: regen', async () => {
   });
 
   test('update ts and lint errors based on previous conversion', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [
       await initTask(options),
       await depInstallTask(options),

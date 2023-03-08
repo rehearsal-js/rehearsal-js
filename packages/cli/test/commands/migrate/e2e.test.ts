@@ -386,7 +386,7 @@ describe('migrate: e2e', async () => {
       .commit('test');
 
     // first run without --regen
-    await runBin('migrate', [], {
+    await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
     const { stdout } = await runBin('migrate', ['-r', '--ci'], {
