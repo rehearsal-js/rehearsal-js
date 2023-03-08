@@ -35,7 +35,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     7005, // inferFromUsage
     7006, // inferFromUsage
     7008, // inferFromUsage
-    7010, // inferFromUsa
+    7010, // inferFromUsage
     7043, // inferFromUsage
     7044, // inferFromUsage
     7045, // inferFromUsage
@@ -114,10 +114,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = [
-      ...rehearsalService.getSemanticDiagnosticsWithLocation(fileName),
-      ...rehearsalService.getSuggestionDiagnostics(fileName),
-    ];
+    const diagnostics = rehearsalService.getDiagnostics(fileName);
 
     this.sort(diagnostics, this.prioritizedCodes);
 

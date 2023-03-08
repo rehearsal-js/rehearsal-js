@@ -77,39 +77,39 @@ class Food {
 }
 
 class Dog extends Animal {
-  say(message: string) {
+  say(message: string) : string {
     console.log(message);
     return 'bar';
   }
 }
 
 export class WildDog extends Dog implements Wild, Happy {
-  say(message: string) {
+  say(message: string) : string {
     console.log(message);
     return 'bar';
   }
 
-  override feed(food: Food, quantity: number) {
+  override feed(food: Food, quantity: number) : boolean {
     console.log(food, quantity);
     return true;
   }
 
-  wild(place: string) {
+  wild(place: string) : string {
     return place;
   }
 
-  happy(num: number) {
+  happy(num: number) : void {
     console.log(num);
   }
 }
 
 export class Cat extends Animal {
-  override say(text: string) {
+  override say(text: string) : string {
     console.log(text);
     return 'meo';
   }
 
-  feed(something: Food) {
+  feed(something: Food) : boolean {
     console.log(something);
     return false;
   }
@@ -132,19 +132,19 @@ interface ConstrainedThingInterface<C extends Thing> {
 }
 
 export class GenericThingImp1 implements GenericThingInterface {
-  thing(a: number, b: string) {
+  thing(a: number, b: string) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
-  thing(a: boolean, b: number) {
+  thing(a: boolean, b: number) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string; }) : void {
     console.log(c);
   }
 }
@@ -152,31 +152,31 @@ export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number
 // Generic Classes
 
 class GenericThingClass<A = number, B = string> {
-  thing(a: A, b: B) {
+  thing(a: A, b: B): void  {
     console.log(a, b);
   }
 }
 
 class ConstrainedThingClass<C extends Thing> {
-  thing(c: C) {
+  thing(c: C): void  {
     console.log(c);
   }
 }
 
 export class GenericThingExt1 extends GenericThingClass {
-  thing(a: number, b: string) {
+  thing(a: number, b: string) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt2 extends GenericThingClass<boolean, number> {
-  thing(a: boolean, b: number) {
+  thing(a: boolean, b: number) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string; }) : void {
     console.log(c);
   }
 }
@@ -202,17 +202,58 @@ class MultipleClass {
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
 /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  boo(ab, b?) {
+  boo(ab, b?): boolean  {
     return !ab || !b;
   }
 
 /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  foo(ab, b?) {
+  foo(ab, b?): boolean  {
     return !ab || !b;
   }
 
-  moo(b: string) {
+  moo(b: string) : string {
     return b;
+  }
+}
+"
+`;
+
+exports[`Test transform > addMissingTypesBasedOnInlayHints 1`] = `
+"export function test1(): string  {
+  return 'Test this';
+}
+
+export const test2 = () => console.log('Test this')
+
+export const test3 = () => 'Test this';
+
+
+export function test4<Type>(arg: Array<Type>): Type[]  {
+  return arg;
+}
+
+
+export async function test5(): Promise<TestClass>  {
+  return new TestClass();
+}
+
+interface TestInterface {
+  test1(): string | undefined;
+}
+
+class BaseTestClass {
+  test2(param: boolean): number | string {
+    return param ? 0 : '0';
+  };
+}
+
+export class TestClass extends BaseTestClass implements TestInterface {
+  test1() : string | undefined {
+    return undefined;
+  }
+
+  test2() : string | number {
+    return 0;
   }
 }
 "
@@ -251,7 +292,7 @@ exports[`Test transform > makeMemberOptional 3`] = `
     name: string;
 }
 
-export function feedRabbit(rabbit: Rabbit) {
+export function feedRabbit(rabbit: Rabbit): void  {
     console.log(\`Rabbit \${rabbit.name} loves to eat fruit, not hay.\`);
 }"
 `;

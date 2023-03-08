@@ -4,18 +4,18 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync } from 'fs-extra/esm';
 import { createLogger, format, transports } from 'winston';
 import {
-  initTask,
   depInstallTask,
-  tsConfigTask,
+  initTask,
   lintConfigTask,
   sequentialTask,
+  tsConfigTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 
 import {
-  prepareTmpDir,
-  listrTaskRunner,
-  createOutputStream,
   createMigrateOptions,
+  createOutputStream,
+  listrTaskRunner,
+  prepareTmpDir,
 } from '../../test-helpers/index.js';
 
 const logger = createLogger({
@@ -81,7 +81,7 @@ describe('Task: sequential', async () => {
     expect(summary[0].basePath).toEqual(summary[1].basePath);
     expect(summary[0].entrypoint).toBe('depends-on-foo.ts');
     expect(summary[1].entrypoint).toBe('index.ts');
-    expect(fixedItemCount).toBe(2);
+    expect(fixedItemCount).toBe(4);
     expect(items.length).toBe(2);
   });
 });

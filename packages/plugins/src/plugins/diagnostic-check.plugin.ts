@@ -79,10 +79,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
     const program = service.getProgram()!;
     const checker = program!.getTypeChecker();
 
-    const diagnostics = [
-      ...rehearsalService.getSemanticDiagnosticsWithLocation(fileName),
-      ...rehearsalService.getSuggestionDiagnostics(fileName),
-    ];
+    const diagnostics = rehearsalService.getDiagnostics(fileName);
 
     //Sort diagnostics from top to bottom, so that we add comments from top to bottom
     //This will ensure we calculate the line numbers correctly
