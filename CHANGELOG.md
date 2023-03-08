@@ -1,3 +1,38 @@
+## <small>1.0.11-beta (2023-03-08)</small>
+
+* feat: force migration from root dir (#797) ([c5fe8b6](https://github.com/rehearsal-js/rehearsal-js/commit/c5fe8b6)), closes [#797](https://github.com/rehearsal-js/rehearsal-js/issues/797)
+* feat: include .cjs eslint config ext (#810) ([bd49485](https://github.com/rehearsal-js/rehearsal-js/commit/bd49485)), closes [#810](https://github.com/rehearsal-js/rehearsal-js/issues/810)
+* feat: infer missing return types based on inlay hints and inheritance (#743) ([7394179](https://github.com/rehearsal-js/rehearsal-js/commit/7394179)), closes [#743](https://github.com/rehearsal-js/rehearsal-js/issues/743)
+* feat: support .gjs in Ember PackageGraphs (#772) ([be087c1](https://github.com/rehearsal-js/rehearsal-js/commit/be087c1)), closes [#772](https://github.com/rehearsal-js/rehearsal-js/issues/772)
+* feat: types based on inheritance (#763) ([095c97c](https://github.com/rehearsal-js/rehearsal-js/commit/095c97c)), closes [#763](https://github.com/rehearsal-js/rehearsal-js/issues/763)
+* feat(cli): init command and skip configs (#805) ([57b4433](https://github.com/rehearsal-js/rehearsal-js/commit/57b4433)), closes [#805](https://github.com/rehearsal-js/rehearsal-js/issues/805)
+* feat(cli): migrate default interactive - optional ci (#829) ([47364dc](https://github.com/rehearsal-js/rehearsal-js/commit/47364dc)), closes [#829](https://github.com/rehearsal-js/rehearsal-js/issues/829)
+* fix: exclude .graphql files from graph (#786) ([5c812cb](https://github.com/rehearsal-js/rehearsal-js/commit/5c812cb)), closes [#786](https://github.com/rehearsal-js/rehearsal-js/issues/786)
+* fix: exclude only root app dir in EmberAddonPackage (#784) ([88dce9c](https://github.com/rehearsal-js/rehearsal-js/commit/88dce9c)), closes [#784](https://github.com/rehearsal-js/rehearsal-js/issues/784)
+* fix: filter out broken function types comes from JSDocs (#791) ([ad279a6](https://github.com/rehearsal-js/rehearsal-js/commit/ad279a6)), closes [#791](https://github.com/rehearsal-js/rehearsal-js/issues/791)
+* fix: fix versioning (#798) ([28a00f6](https://github.com/rehearsal-js/rehearsal-js/commit/28a00f6)), closes [#798](https://github.com/rehearsal-js/rehearsal-js/issues/798)
+* fix: pass include/excludes to root package (#788) ([1a12921](https://github.com/rehearsal-js/rehearsal-js/commit/1a12921)), closes [#788](https://github.com/rehearsal-js/rehearsal-js/issues/788)
+* fix: patch up eslint errors without ruleId (#812) ([5f7e513](https://github.com/rehearsal-js/rehearsal-js/commit/5f7e513)), closes [#812](https://github.com/rehearsal-js/rehearsal-js/issues/812)
+* fix: refactor excluded files in ember package entites (#815) ([056f4f1](https://github.com/rehearsal-js/rehearsal-js/commit/056f4f1)), closes [#815](https://github.com/rehearsal-js/rehearsal-js/issues/815)
+* fix: release and root build should follow tsconfig paths (#806) ([a653dd7](https://github.com/rehearsal-js/rehearsal-js/commit/a653dd7)), closes [#806](https://github.com/rehearsal-js/rehearsal-js/issues/806)
+* fix: remove no-explicity-any (#783) ([52921d7](https://github.com/rehearsal-js/rehearsal-js/commit/52921d7)), closes [#783](https://github.com/rehearsal-js/rehearsal-js/issues/783)
+* fix: remove require from findup-sync (#801) ([534ba3e](https://github.com/rehearsal-js/rehearsal-js/commit/534ba3e)), closes [#801](https://github.com/rehearsal-js/rehearsal-js/issues/801)
+* fix: renaming entrypoint from js to ts for migrate (#768) ([cdaf5d1](https://github.com/rehearsal-js/rehearsal-js/commit/cdaf5d1)), closes [#768](https://github.com/rehearsal-js/rehearsal-js/issues/768)
+* fix(migration-graoph): change path for service resolution to addon dir (#818) ([56e972c](https://github.com/rehearsal-js/rehearsal-js/commit/56e972c)), closes [#818](https://github.com/rehearsal-js/rehearsal-js/issues/818)
+* refactor: esm (#796) ([9d2d7da](https://github.com/rehearsal-js/rehearsal-js/commit/9d2d7da)), closes [#796](https://github.com/rehearsal-js/rehearsal-js/issues/796)
+* refactor: remove rehearsal commits on migrate only (#809) ([2fffaa1](https://github.com/rehearsal-js/rehearsal-js/commit/2fffaa1)), closes [#809](https://github.com/rehearsal-js/rehearsal-js/issues/809)
+* chore: run smoke on branch (#808) ([3dea891](https://github.com/rehearsal-js/rehearsal-js/commit/3dea891)), closes [#808](https://github.com/rehearsal-js/rehearsal-js/issues/808)
+* chore: types based on inheritance tune up (#777) ([66430c4](https://github.com/rehearsal-js/rehearsal-js/commit/66430c4)), closes [#777](https://github.com/rehearsal-js/rehearsal-js/issues/777)
+* chore: untagle typescript (#800) ([b7cf622](https://github.com/rehearsal-js/rehearsal-js/commit/b7cf622)), closes [#800](https://github.com/rehearsal-js/rehearsal-js/issues/800)
+* chore: update md with migrate-by-directory (#789) ([b0eccd3](https://github.com/rehearsal-js/rehearsal-js/commit/b0eccd3)), closes [#789](https://github.com/rehearsal-js/rehearsal-js/issues/789)
+* chore: update README.md in migration-graph-ember ([7a4fa16](https://github.com/rehearsal-js/rehearsal-js/commit/7a4fa16))
+* chore(migration-graph): improve logging for inheritance (#782) ([7a34ecc](https://github.com/rehearsal-js/rehearsal-js/commit/7a34ecc)), closes [#782](https://github.com/rehearsal-js/rehearsal-js/issues/782)
+* add cjs to lint config (#811) ([c75a696](https://github.com/rehearsal-js/rehearsal-js/commit/c75a696)), closes [#811](https://github.com/rehearsal-js/rehearsal-js/issues/811)
+* Update smoke-test.yml ([0862f0b](https://github.com/rehearsal-js/rehearsal-js/commit/0862f0b))
+* test: unblock smoke-test ([f8a09bb](https://github.com/rehearsal-js/rehearsal-js/commit/f8a09bb))
+
+
+
 ## <small>1.0.10-beta (2023-02-21)</small>
 
 * test: smoke test gha (#758) ([678f4aa](https://github.com/rehearsal-js/rehearsal-js/commit/678f4aa)), closes [#758](https://github.com/rehearsal-js/rehearsal-js/issues/758)
