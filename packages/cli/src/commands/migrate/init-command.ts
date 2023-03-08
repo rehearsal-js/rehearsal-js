@@ -61,6 +61,9 @@ export async function initCommandHandler(options: MigrateCommandOptions): Promis
 
   try {
     await new Listr(tasks, defaultListrOption).run();
+    logger.info(
+      `The project is ready for migration. Please run "rehearsal migrate" to start the migration.`
+    );
   } catch (e) {
     logger.error(`${e}`);
   }

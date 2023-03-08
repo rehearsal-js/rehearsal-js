@@ -2,7 +2,6 @@ import { resolve } from 'node:path';
 import { readdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
-import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import { cosmiconfigSync } from 'cosmiconfig';
 
 import { depInstallTask, lintConfigTask } from '../../../src/commands/migrate/tasks/index.js';
@@ -301,27 +300,5 @@ describe('Task: config-lint', async () => {
     // This proves the custom command works
     expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
     expect(output).toContain('[SKIPPED] Create eslint config');
-  });
-
-  test('stage .eslintrc if in git repo', async () => {
-    // simulate clean git project
-    const git: SimpleGit = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    // Init git, add and commit existed files, to make it a clean state
-    await git.init();
-    await git.add(resolve(basePath, 'package.json'));
-    // GH CI would require git name and email
-    await git.addConfig('user.name', 'tester');
-    await git.addConfig('user.email', 'tester@tester.com');
-    await git.commit('foo');
-
-    const options = createMigrateOptions(basePath);
-    // lint task requires dependencies installed first
-    const tasks = [await depInstallTask(options), await lintConfigTask(options)];
-    await listrTaskRunner(tasks);
-
-    expect(readdirSync(basePath)).toContain('.eslintrc.js');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
   });
 });

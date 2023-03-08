@@ -61,7 +61,7 @@ export async function tsConfigTask(
           tsConfig.compilerOptions.strict = true;
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          writeTSConfig(options.basePath, options.skipInit ? ctx.sourceFilesWithRelativePath : []);
+          writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
         }
       }
     },

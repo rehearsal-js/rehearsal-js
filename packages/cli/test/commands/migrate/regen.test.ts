@@ -39,28 +39,28 @@ describe('Task: regen', async () => {
     vi.clearAllMocks();
   });
 
-  // test('throw error with no tsconfig.json', async () => {
-  //   const options = createMigrateOptions(basePath);
-  //   const tasks = [await initTask(options), await regenTask(options, logger)];
+  test('throw error with no tsconfig.json', async () => {
+    const options = createMigrateOptions(basePath);
+    const tasks = [await initTask(options), await regenTask(options, logger)];
 
-  //   try {
-  //     await listrTaskRunner(tasks);
-  //   } catch (error: any) {
-  //     expect(error.message).toContain(`Config file 'tsconfig.json' not found`);
-  //   }
-  // });
+    try {
+      await listrTaskRunner(tasks);
+    } catch (error: any) {
+      expect(error.message).toContain(`Config file 'tsconfig.json' not found`);
+    }
+  });
 
-  // test('no effect on JS filse before conversion', async () => {
-  //   const options = createMigrateOptions(basePath);
-  //   const tasks = [
-  //     await initTask(options),
-  //     await tsConfigTask(options),
-  //     await regenTask(options, logger),
-  //   ];
+  test('no effect on JS filse before conversion', async () => {
+    const options = createMigrateOptions(basePath);
+    const tasks = [
+      await initTask(options),
+      await tsConfigTask(options),
+      await regenTask(options, logger),
+    ];
 
-  //   await listrTaskRunner(tasks);
-  //   expect(output).matchSnapshot();
-  // });
+    await listrTaskRunner(tasks);
+    expect(output).matchSnapshot();
+  });
 
   test('update ts and lint errors based on previous conversion', async () => {
     const options = createMigrateOptions(basePath);
@@ -74,7 +74,6 @@ describe('Task: regen', async () => {
     ];
 
     await listrTaskRunner(tasks);
-    console.warn(output);
     expect(output).matchSnapshot();
   });
 });

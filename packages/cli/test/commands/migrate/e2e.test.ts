@@ -280,47 +280,63 @@ describe('migrate: e2e', async () => {
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
   });
 
-  test('init flag', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git
-      .init()
-      .add('./*')
-      .addConfig('user.name', 'tester')
-      .addConfig('user.email', 'tester@tester.com')
-      .commit('test');
-
-    const { stdout } = await runBin('migrate', ['--init'], {
+  test('migrate would skip steps after migrate init', async () => {
+    // migrate init
+    await runBin('migrate', ['init'], {
       cwd: basePath,
     });
 
-    // summary message
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    let fileList = readdirSync(basePath);
 
-    // file structures
-    const fileList = readdirSync(basePath);
-    expect(fileList).not.toContain('index.ts');
-    expect(fileList).not.toContain('foo.ts');
-    expect(fileList).not.toContain('depends-on-foo.ts');
-    expect(fileList).toContain('index.js');
-    expect(fileList).toContain('foo.js');
-    expect(fileList).toContain('depends-on-foo.js');
-    expect(fileList).toContain('tsconfig.json');
-    expect(fileList).toContain('package.json');
-    expect(fileList).toContain('.rehearsal-eslintrc.js');
-
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
-    expect(tsConfig).matchSnapshot();
-
+    // Dependencies
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
     expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+
+    // tsconfig.json
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    expect(tsConfig).matchSnapshot();
+
+    // lint config
+    expect(fileList).toContain('.eslintrc.js');
+    expect(fileList).toContain('.rehearsal-eslintrc.js');
+    const lintConfig = readFileSync(resolve(basePath, '.eslintrc.js'), { encoding: 'utf-8' });
+    const lintConfigDefualt = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), {
+      encoding: 'utf-8',
+    });
+    expect(lintConfig).toMatchSnapshot();
+    expect(lintConfigDefualt).toMatchSnapshot();
+
+    // new scripts
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
-    const eslint = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), 'utf-8');
-    expect(eslint).toMatchSnapshot();
+    // run migrate
+    const { stdout } = await runBin('migrate', [], {
+      cwd: basePath,
+    });
+    // migrate init output
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+
+    // read files again
+    fileList = readdirSync(basePath);
+    // file structures
+    expect(fileList).toContain('index.ts');
+    expect(fileList).toContain('foo.ts');
+    expect(fileList).toContain('depends-on-foo.ts');
+    expect(fileList).not.toContain('index.js');
+    expect(fileList).not.toContain('foo.js');
+    expect(fileList).not.toContain('depends-on-foo.js');
+
+    // file contents
+    expect(readFileSync(resolve(basePath, 'foo.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
+    expect(
+      readFileSync(resolve(basePath, 'depends-on-foo.ts'), { encoding: 'utf-8' })
+    ).toMatchSnapshot();
+    expect(readFileSync(resolve(basePath, 'index.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
+
+    // report
+    const reportPath = resolve(basePath, '.rehearsal');
+    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
   });
 
   test('Print debug messages with --verbose', async () => {
@@ -387,10 +403,10 @@ describe('migrate: e2e', async () => {
       });
 
       const expected = `[STARTED] Initialize -- Dry Run Mode
-[DATA] Running migration on my-package
-[DATA] List of files will be attempted to migrate:
-[DATA]  lib/a.js
-[DATA] index.js`;
+  [DATA] Running migration on my-package
+  [DATA] List of files will be attempted to migrate:
+  [DATA]  lib/a.js
+  [DATA] index.js`;
 
       expect(result.stdout).contains(expected);
     });
@@ -417,12 +433,12 @@ describe('migrate: e2e', async () => {
       });
 
       const expected = `[STARTED] Initialize -- Dry Run Mode
-[DATA] Running migration on my-package
-[DATA] List of files will be attempted to migrate:
-[DATA]  lib/a.js
-[DATA] index.js
-[DATA] test/index.js
-[SUCCESS] Initialize -- Dry Run Mode`;
+  [DATA] Running migration on my-package
+  [DATA] List of files will be attempted to migrate:
+  [DATA]  lib/a.js
+  [DATA] index.js
+  [DATA] test/index.js
+  [SUCCESS] Initialize -- Dry Run Mode`;
 
       expect(result.stdout).contains(expected);
     });
