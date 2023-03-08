@@ -22,7 +22,7 @@ describe('migrate - validation', async () => {
   });
 
   test('pass in a non git project', async () => {
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
 
@@ -41,7 +41,7 @@ describe('migrate - validation', async () => {
       .addConfig('user.email', 'tester@tester.com')
       .commit('test');
 
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
 
@@ -55,7 +55,7 @@ describe('migrate - validation', async () => {
     } as Partial<SimpleGitOptions>);
     await git.init().add('package.json');
 
-    const { stdout } = await runBin('migrate', ['-d'], {
+    const { stdout } = await runBin('migrate', ['-d', '--ci'], {
       cwd: basePath,
     });
 
@@ -75,13 +75,13 @@ describe('migrate - validation', async () => {
       .addConfig('user.email', 'tester@tester.com')
       .commit('test');
 
-    const { stdout: firstRunStdout } = await runBin('migrate', [], {
+    const { stdout: firstRunStdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
 
     expect(firstRunStdout).toContain('Migration Complete');
 
-    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+    const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
@@ -104,7 +104,7 @@ describe('migrate - validation', async () => {
     };
     fixturify.writeSync(basePath, files);
 
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
@@ -127,7 +127,7 @@ describe('migrate - validation', async () => {
     };
     fixturify.writeSync(basePath, files);
 
-    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+    const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
       cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
@@ -152,7 +152,7 @@ describe('migrate - validation', async () => {
     };
     fixturify.writeSync(basePath, files);
 
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
@@ -177,7 +177,7 @@ describe('migrate - validation', async () => {
     };
     fixturify.writeSync(basePath, files);
 
-    const { stdout: secondRunStdout } = await runBin('migrate', [], {
+    const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
       cwd: resolve(basePath, 'packages', 'package-a'),
     });
     expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
@@ -186,7 +186,7 @@ describe('migrate - validation', async () => {
   test('relative entrypoint inside project root works', async () => {
     basePath = prepareTmpDir('basic');
 
-    const { stdout } = await runBin('migrate', ['-e', 'foo.js'], {
+    const { stdout } = await runBin('migrate', ['-e', 'foo.js', '--ci'], {
       cwd: basePath,
     });
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
@@ -195,7 +195,7 @@ describe('migrate - validation', async () => {
   test('absolute entrypoint inside project root works', async () => {
     basePath = prepareTmpDir('basic');
 
-    const { stdout } = await runBin('migrate', ['-e', resolve(basePath, 'foo.js')], {
+    const { stdout } = await runBin('migrate', ['-e', resolve(basePath, 'foo.js'), '--ci'], {
       cwd: basePath,
     });
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
@@ -204,7 +204,7 @@ describe('migrate - validation', async () => {
   test('entrypoint outside project root does not work', async () => {
     basePath = prepareTmpDir('basic');
 
-    const { stdout } = await runBin('migrate', ['-e', resolve(__dirname, 'e2e.test.ts')], {
+    const { stdout } = await runBin('migrate', ['-e', resolve(__dirname, 'e2e.test.ts'), '--ci'], {
       cwd: basePath,
     });
     expect(stdout).toContain('Could not find entrypoint');
@@ -230,7 +230,7 @@ describe('migrate: e2e', async () => {
       .addConfig('user.email', 'tester@tester.com')
       .commit('test');
 
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
 
@@ -311,7 +311,7 @@ describe('migrate: e2e', async () => {
     expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
 
     // run migrate
-    const { stdout } = await runBin('migrate', [], {
+    const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
     // migrate init output
@@ -342,7 +342,7 @@ describe('migrate: e2e', async () => {
   test('--skip-init option', async () => {
     // run migrate with --skip-init
     // this command should fail
-    const { stdout } = await runBin('migrate', ['--skip-init'], {
+    const { stdout } = await runBin('migrate', ['--skip-init', '--ci'], {
       cwd: basePath,
     });
 
@@ -358,7 +358,7 @@ describe('migrate: e2e', async () => {
   });
 
   test('Print debug messages with --verbose', async () => {
-    const { stdout } = await runBin('migrate', ['--verbose'], {
+    const { stdout } = await runBin('migrate', ['--verbose', '--ci'], {
       cwd: basePath,
     });
 
@@ -366,7 +366,7 @@ describe('migrate: e2e', async () => {
   });
 
   test('show warning message for missing config with --regen', async () => {
-    const { stdout } = await runBin('migrate', ['-r'], {
+    const { stdout } = await runBin('migrate', ['-r', '--ci'], {
       cwd: basePath,
     });
     expect(stdout).toContain('Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist');
@@ -389,7 +389,7 @@ describe('migrate: e2e', async () => {
     await runBin('migrate', [], {
       cwd: basePath,
     });
-    const { stdout } = await runBin('migrate', ['-r'], {
+    const { stdout } = await runBin('migrate', ['-r', '--ci'], {
       cwd: basePath,
     });
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
@@ -416,7 +416,7 @@ describe('migrate: e2e', async () => {
         },
       });
 
-      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json'], {
+      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
         cwd: basePath,
       });
 
@@ -447,7 +447,7 @@ describe('migrate: e2e', async () => {
         },
       });
 
-      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json'], {
+      const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
         cwd: basePath,
       });
 
