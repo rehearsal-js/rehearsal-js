@@ -454,22 +454,22 @@ exports[`migrate: e2e > migrate would skip steps after migrate init 4`] = `
 [DATA] processing file: /index.ts
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   4 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   2 errors caught by rehearsal
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`migrate: e2e > migrate would skip steps after migrate init 5`] = `
-"export function foo(name = \\"World\\") {
+"export function foo(name = \\"World\\"): string {
   return \`Hello \${name}\`;
 }
 "
@@ -485,7 +485,7 @@ console.log(foo(\\"hello\\"));
 exports[`migrate: e2e > migrate would skip steps after migrate init 7`] = `
 "import { foo } from \\"./foo\\";
 
-export function run(baz: string | undefined) {
+export function run(baz: string | undefined): string {
   return foo(baz);
 }
 "
