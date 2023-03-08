@@ -1,7 +1,13 @@
 import { ChangesFactory } from '@rehearsal/ts-utils';
-import type { CodeFixAction, MethodDeclaration, ParameterDeclaration, Signature, TypeChecker } from 'typescript';
 import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
+import type {
+  CodeFixAction,
+  MethodDeclaration,
+  ParameterDeclaration,
+  Signature,
+  TypeChecker,
+} from 'typescript';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 const { findAncestor, isClassDeclaration, isMethodDeclaration, isParameter } = ts;

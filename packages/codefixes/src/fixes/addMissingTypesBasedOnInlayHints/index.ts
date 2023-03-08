@@ -1,7 +1,7 @@
 import { ChangesFactory } from '@rehearsal/ts-utils';
-import type { CodeFixAction } from 'typescript';
 import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
+import type { CodeFixAction } from 'typescript';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 const { isMethodDeclaration, isFunctionDeclaration } = ts;

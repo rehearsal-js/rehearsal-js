@@ -62,7 +62,7 @@ describe('Task: config-ts', async () => {
 
   test('update tsconfig if invalid extends exist', async () => {
     // Prepare old tsconfig
-    const oldTsConfig = { extends: 'invalid-tsconfig.json'};
+    const oldTsConfig = { extends: 'invalid-tsconfig.json' };
     writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
 
     const options = createMigrateOptions(basePath);
