@@ -1,24 +1,61 @@
-import { ChangesFactory, findNodeAtPosition } from '@rehearsal/ts-utils';
+import { ChangesFactory } from '@rehearsal/ts-utils';
+import type { CodeFixAction, MethodDeclaration, ParameterDeclaration, Signature, TypeChecker } from 'typescript';
 import ts from 'typescript';
 import { createCodeFixAction } from '../../hints-codefix-collection.js';
-import type { CodeFixAction } from 'typescript';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 const { findAncestor, isClassDeclaration, isMethodDeclaration, isParameter } = ts;
 
+type TypeFinder = (ancestorMethodSignature: Signature, checker: TypeChecker) => string | undefined;
+
 export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
-    const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
-
-    // Support only function params
-    if (!node || !isParameter(node)) {
+    if (!diagnostic.node) {
       return undefined;
     }
-    const currentClass = findAncestor(node, isClassDeclaration);
+
+    if (isParameter(diagnostic.node)) {
+      return this.fixMissingParameterType(diagnostic);
+    }
+
+    if (isMethodDeclaration(diagnostic.node)) {
+      return this.fixMissingReturnType(diagnostic);
+    }
+
+    return undefined;
+  }
+
+  private fixMissingReturnType(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+    const node = diagnostic.node as MethodDeclaration;
+    const typeFinder: TypeFinder = (ancestorSignature, checker) => {
+      return checker.typeToString(ancestorSignature.getReturnType());
+    };
+
+    const returnType = this.findInheritedType(node, diagnostic.checker, typeFinder);
+
+    if (!returnType) {
+      return undefined;
+    }
+
+    const closeParen = node.getChildren().find((node) => node.kind == 21);
+
+    // Only named methods are supported
+    if (!closeParen) {
+      return undefined;
+    }
+
+    return createCodeFixAction(
+      'addMissingTypeBasedOnInheritance',
+      [ChangesFactory.insertText(diagnostic.file, closeParen.getEnd() + 1, `: ${returnType} `)],
+      'Add the missing return type based on inheritance'
+    );
+  }
+
+  private fixMissingParameterType(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+    const node = diagnostic.node as ParameterDeclaration;
     const currentMethod = findAncestor(node, isMethodDeclaration);
 
-    // Method declaration inside class extends another class
-    if (!currentMethod || !currentClass || !currentClass.heritageClauses) {
+    if (!currentMethod) {
       return undefined;
     }
 
@@ -26,7 +63,43 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
       (p) => p.name.getText() === node.name.getText()
     );
 
-    const checker = diagnostic.checker;
+    const typeFinder: TypeFinder = (ancestorMethodSignature, checker) => {
+      const parameterSymbol = ancestorMethodSignature.parameters[currentParameterIndex];
+
+      // Additional parameter in a child function won't have param in parent function signature
+      if (!parameterSymbol || !parameterSymbol.valueDeclaration) {
+        return undefined;
+      }
+
+      return checker.typeToString(
+        checker.getTypeOfSymbolAtLocation(parameterSymbol, parameterSymbol.valueDeclaration)
+      );
+    };
+
+    const paramType = this.findInheritedType(currentMethod, diagnostic.checker, typeFinder);
+
+    if (!paramType) {
+      return undefined;
+    }
+
+    return createCodeFixAction(
+      'addMissingTypeBasedOnInheritance',
+      [ChangesFactory.insertText(diagnostic.file, node.getEnd(), `: ${paramType}`)],
+      'Add the missing type based on inheritance'
+    );
+  }
+
+  private findInheritedType(
+    methodDeclaration: MethodDeclaration,
+    checker: TypeChecker,
+    finder: TypeFinder
+  ): string | undefined {
+    const currentClass = findAncestor(methodDeclaration, isClassDeclaration);
+
+    // Check if the method declaration is inside a class extends another class
+    if (!currentClass || !currentClass.heritageClauses) {
+      return undefined;
+    }
 
     // Walk over `extends` and `implements`
     for (const heritageClause of currentClass.heritageClauses) {
@@ -35,7 +108,7 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
         // Search for a function symbol with the same name
         const ancestorMethodSymbol = checker
           .getTypeAtLocation(heritageClauseTypeNode)
-          .getProperty(currentMethod.name.getText());
+          .getProperty(methodDeclaration.name.getText());
 
         if (!ancestorMethodSymbol || !ancestorMethodSymbol.valueDeclaration) {
           continue;
@@ -50,26 +123,14 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
           continue;
         }
 
-        const parameterSymbol = ancestorMethodCallSignatures[0].parameters[currentParameterIndex];
+        const type = finder(ancestorMethodCallSignatures[0], checker);
 
-        // Additional parameter in a child function won't have param in parent function signature
-        if (!parameterSymbol || !parameterSymbol.valueDeclaration) {
-          continue;
-        }
-
-        const type = checker.typeToString(
-          checker.getTypeOfSymbolAtLocation(parameterSymbol, parameterSymbol.valueDeclaration)
-        );
-
+        // Skipping "non-strict types"
         if (!type || type === 'any' || type === 'object') {
           continue;
         }
 
-        return createCodeFixAction(
-          'addMissingTypeBasedOnInheritance',
-          [ChangesFactory.insertText(diagnostic.file, node.getEnd(), `: ${type}`)],
-          'Add the missing type based on inheritance'
-        );
+        return type;
       }
     }
 

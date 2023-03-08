@@ -1,15 +1,23 @@
-import ts from 'typescript';
-
-import { RehearsalServiceHost } from './rehearsal-service-host.js';
 import type {
   CompilerOptions,
   Diagnostic,
   DiagnosticWithLocation,
   LanguageService,
+  Node,
   SourceFile,
 } from 'typescript';
+import ts from 'typescript';
 
-const { ScriptSnapshot, createLanguageService } = ts;
+import { RehearsalServiceHost } from './rehearsal-service-host.js';
+
+const {
+  DiagnosticCategory,
+  ScriptSnapshot,
+  createLanguageService,
+  forEachChild,
+  isFunctionDeclaration,
+  isMethodDeclaration,
+} = ts;
 
 /**
  * Service represents the list of helper functions wrapped over compiled program context.
@@ -61,6 +69,14 @@ export class RehearsalService {
     return this.service;
   }
 
+  getDiagnostics(fileName: string): DiagnosticWithLocation[] {
+    return [
+      ...this.getSemanticDiagnosticsWithLocation(fileName),
+      ...this.getSuggestionDiagnostics(fileName),
+      ...this.getAdditionalDiagnostics(fileName),
+    ];
+  }
+
   /**
    * Gets a list of semantic diagnostic objects only with location information (those have related node in the AST)
    */
@@ -77,5 +93,31 @@ export class RehearsalService {
    */
   getSuggestionDiagnostics(fileName: string): DiagnosticWithLocation[] {
     return this.service.getSuggestionDiagnostics(fileName);
+  }
+
+  getAdditionalDiagnostics(fileName: string): DiagnosticWithLocation[] {
+    const sourceFile = this.getSourceFile(fileName);
+    const diagnostics: DiagnosticWithLocation[] = [];
+
+    const visitEveryNode = (node: Node): Node | undefined => {
+      if ((isFunctionDeclaration(node) || isMethodDeclaration(node)) && node.name && !node.type) {
+        diagnostics.push({
+          file: sourceFile,
+          start: node.getStart(),
+          length: node.getEnd() - node.getStart(),
+          category: DiagnosticCategory.Suggestion,
+          code: 7050,
+          messageText: `${node.name.getText()} don't have a return type, but the type may be inferred from usage.`
+        });
+
+        return undefined;
+      }
+
+      return forEachChild(node, visitEveryNode);
+    };
+
+    visitEveryNode(sourceFile);
+
+    return diagnostics;
   }
 }

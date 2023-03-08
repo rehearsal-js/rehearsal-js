@@ -1,9 +1,0 @@
-import { sep } from 'path';
-
-sep;
-
-function defined_function_with_params(_defined_param: string): void {
-  return;
-}
-
-defined_function_with_params('dummy-string');

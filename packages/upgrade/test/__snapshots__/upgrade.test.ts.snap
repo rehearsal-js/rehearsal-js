@@ -59,10 +59,10 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 5`] = `
 "import React from 'react';
 
-export function test() {
+export function test(): void  {
 }
 
-export function Component() {
+export function Component(): Element  {
 /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
     const element1 = <NonExistingElement />;
 
@@ -78,14 +78,14 @@ export function Component() {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingFragment'. */
+/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more. */
     return <NonExistingFragment />;
 }
 
-export function Test2() {
+export function Test2(): Element  {
   const someBoolean = true;
 
-/* @ts-expect-error @rehearsal TODO TS2322: The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type. */
+/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
   return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
 }
 "
@@ -138,10 +138,10 @@ export class Radio extends Component {
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 7`] = `
 "import React from 'react';
 
-export function test() {
+export function test(): void  {
 }
 
-export function Component() {
+export function Component(): Element  {
 /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
   const element1 = <NonExistingElement />;
 
@@ -157,14 +157,14 @@ export function Component() {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingFragment'. */
+/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more. */
   return <NonExistingFragment />;
 }
 
-export function Test2() {
+export function Test2(): Element  {
   const someBoolean = true;
 
-/* @ts-expect-error @rehearsal TODO TS2322: The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type. */
+/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
   return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
 }
 
@@ -206,7 +206,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * @param {any} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveAny(a: string, b) {
+export function oneOfParamsHaveAny(a: string, b): void  {
   console.log(a, b);
 }
 
@@ -215,7 +215,7 @@ export function oneOfParamsHaveAny(a: string, b) {
  * @param {string | any} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveSomethingOrAny(a: string, b) {
+export function oneOfParamsHaveSomethingOrAny(a: string, b): void  {
   console.log(a, b);
 }
 
@@ -223,7 +223,7 @@ export function oneOfParamsHaveSomethingOrAny(a: string, b) {
  * @param {String} a - A string
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
-export function returnTypeHasGenericAny(a: string) {
+export function returnTypeHasGenericAny(a: string): Promise<string>  {
   return Promise.resolve(a)
 }
 
@@ -253,7 +253,7 @@ function capitalize(str: string): string {
 }
 
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'args' implicitly has an 'any' type. */
-export function doSomething(args, name: string){
+export function doSomething(args, name: string): string | undefined {
   if (!name) {
     return;
   }
@@ -385,7 +385,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * @param {Object} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveObject(a: string, b) {
+export function oneOfParamsHaveObject(a: string, b): void  {
   console.log(a, b);
 }
 
@@ -394,7 +394,7 @@ export function oneOfParamsHaveObject(a: string, b) {
  * @param {String | Object} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveSomethingOrObject(a: string, b) {
+export function oneOfParamsHaveSomethingOrObject(a: string, b): void  {
   console.log(a, b);
 }
 
@@ -439,6 +439,46 @@ try {
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
+"export function test1(): string  {
+  return 'Test this';
+}
+
+export const test2 = () => console.log('Test this')
+
+export const test3 = () => 'Test this';
+
+
+export function test4<Type>(arg: Array<Type>): Type[]  {
+  return arg;
+}
+
+export async function test5(): Promise<TestClass>  {
+  return new TestClass();
+}
+
+interface TestInterface {
+  test1(): string | undefined;
+}
+
+class BaseTestClass {
+  test2(param: boolean): number | string {
+    return param ? 0 : '0';
+  };
+}
+
+export class TestClass extends BaseTestClass implements TestInterface {
+  test1() : string | undefined {
+    return undefined;
+  }
+
+  test2() : string | number {
+    return 0;
+  }
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
 "// Basics
 
 class Animal {
@@ -475,39 +515,39 @@ class Food {
 }
 
 class Dog extends Animal {
-  say(message: string) {
+  say(message: string) : string {
     console.log(message);
     return 'bar';
   }
 }
 
 export class WildDog extends Dog implements Wild, Happy {
-  say(message: string) {
+  say(message: string) : string {
     console.log(message);
     return 'bar';
   }
 
-  override feed(food: Food, quantity: number) {
+  override feed(food: Food, quantity: number) : boolean {
     console.log(food, quantity);
     return true;
   }
 
-  wild(place: string) {
+  wild(place: string) : string {
     return place;
   }
 
-  happy(num: number) {
+  happy(num: number) : void {
     console.log(num);
   }
 }
 
 export class Cat extends Animal {
-  override say(text: string) {
+  override say(text: string) : string {
     console.log(text);
     return 'meo';
   }
 
-  feed(something: Food) {
+  feed(something: Food) : boolean {
     console.log(something);
     return false;
   }
@@ -530,19 +570,19 @@ interface ConstrainedThingInterface<C extends Thing> {
 }
 
 export class GenericThingImp1 implements GenericThingInterface {
-  thing(a: number, b: string) {
+  thing(a: number, b: string) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
-  thing(a: boolean, b: number) {
+  thing(a: boolean, b: number) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string; }) : void {
     console.log(c);
   }
 }
@@ -550,31 +590,31 @@ export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number
 // Generic Classes
 
 class GenericThingClass<A = number, B = string> {
-  thing(a: A, b: B) {
+  thing(a: A, b: B): void  {
     console.log(a, b);
   }
 }
 
 class ConstrainedThingClass<C extends Thing> {
-  thing(c: C) {
+  thing(c: C): void  {
     console.log(c);
   }
 }
 
 export class GenericThingExt1 extends GenericThingClass {
-  thing(a: number, b: string) {
+  thing(a: number, b: string) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt2 extends GenericThingClass<boolean, number> {
-  thing(a: boolean, b: number) {
+  thing(a: boolean, b: number) : void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) {
+  thing(c: { foo: number; bar: string; }) : void {
     console.log(c);
   }
 }
@@ -600,24 +640,24 @@ class MultipleClass {
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
 /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  boo(ab, b?) {
+  boo(ab, b?): boolean  {
     return !ab || !b;
   }
 
 /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  foo(ab, b?) {
+  foo(ab, b?): boolean  {
     return !ab || !b;
   }
 
-  moo(b: string) {
+  moo(b: string) : string {
     return b;
   }
 }
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
-"export function test1(me: string) {
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
+"export function test1(me: string): string  {
   return 'This is ' + me;
 }
 
@@ -668,7 +708,7 @@ export class Foo {
     this.value = value;
   }
 
-  boo(value: number) {
+  boo(value: number): number | null  {
     this.value = value;
 
     if (this.value) {
@@ -698,7 +738,7 @@ export function think(a: number, b: (string | number), c, d: UnavailableType): v
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 69,
+  "fixedItemCount": 106,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -847,36 +887,36 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
-      "hint": "Cannot find name 'NonExistingFragment'.",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
+      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
       "hintAdded": true,
-      "message": "Cannot find name 'NonExistingFragment'.",
-      "nodeKind": "Identifier",
+      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "nodeKind": "ReturnStatement",
       "nodeLocation": {
-        "endColumn": 32,
+        "endColumn": 36,
         "endLine": 23,
-        "startColumn": 13,
+        "startColumn": 5,
         "startLine": 23,
       },
-      "nodeText": "NonExistingFragment",
-      "ruleId": "TS2304",
+      "nodeText": "return <NonExistingFragment />;",
+      "ruleId": "TS2740",
       "type": 0,
     },
     {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
-      "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+      "hint": "The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type.",
       "hintAdded": true,
-      "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
-      "nodeKind": "Identifier",
+      "message": "Type 'JSX.Element' is not assignable to type 'Element'.",
+      "nodeKind": "ReturnStatement",
       "nodeLocation": {
-        "endColumn": 40,
+        "endColumn": 60,
         "endLine": 30,
-        "startColumn": 28,
+        "startColumn": 3,
         "startLine": 30,
       },
-      "nodeText": "doesNotExist",
+      "nodeText": "return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;",
       "ruleId": "TS2322",
       "type": 0,
     },
@@ -955,36 +995,36 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
-      "hint": "Cannot find name 'NonExistingFragment'.",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
+      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
       "hintAdded": true,
-      "message": "Cannot find name 'NonExistingFragment'.",
-      "nodeKind": "Identifier",
+      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "nodeKind": "ReturnStatement",
       "nodeLocation": {
-        "endColumn": 30,
+        "endColumn": 34,
         "endLine": 23,
-        "startColumn": 11,
+        "startColumn": 3,
         "startLine": 23,
       },
-      "nodeText": "NonExistingFragment",
-      "ruleId": "TS2304",
+      "nodeText": "return <NonExistingFragment />;",
+      "ruleId": "TS2740",
       "type": 0,
     },
     {
       "analysisTarget": "react.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum",
-      "hint": "The variable 'doesNotExist' has type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement', but 'doesNotExist: string' is assigned. Please convert 'doesNotExist: string' to 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement' or change variable's type.",
+      "hint": "The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type.",
       "hintAdded": true,
-      "message": "Type '{ doesNotExist: string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'..   Property 'doesNotExist' does not exist on type 'DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>'.",
-      "nodeKind": "Identifier",
+      "message": "Type 'JSX.Element' is not assignable to type 'Element'.",
+      "nodeKind": "ReturnStatement",
       "nodeLocation": {
-        "endColumn": 40,
+        "endColumn": 60,
         "endLine": 30,
-        "startColumn": 28,
+        "startColumn": 3,
         "startLine": 30,
       },
-      "nodeText": "doesNotExist",
+      "nodeText": "return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;",
       "ruleId": "TS2322",
       "type": 0,
     },

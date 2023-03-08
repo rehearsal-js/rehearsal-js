@@ -55,9 +55,9 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [TITLE] 
 [TITLE]   3 JS files converted to TS
 [TITLE] 
-[TITLE]   2 errors caught by rehearsal
+[TITLE]   4 errors caught by rehearsal
 [TITLE] 
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
@@ -70,9 +70,9 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [SUCCESS] 
 [SUCCESS]   3 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   2 errors caught by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 

@@ -25,8 +25,8 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   1 JS file converted to TS
-[TITLE]   0 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   1 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   0 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
@@ -41,8 +41,8 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   2 JS files converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   2 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
@@ -62,15 +62,15 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [DATA]   Discard
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   4 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   2 errors caught by rehearsal
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
@@ -101,8 +101,8 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   1 JS file converted to TS
-[TITLE]   0 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   1 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   0 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
@@ -117,8 +117,8 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   2 JS files converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   2 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
@@ -134,15 +134,15 @@ exports[`Task: convert > accept changes without git 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   4 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   2 errors caught by rehearsal
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
@@ -196,9 +196,9 @@ exports[`Task: convert > generate reports 1`] = `
 [TITLE] 
 [TITLE]   3 JS files converted to TS
 [TITLE] 
-[TITLE]   2 errors caught by rehearsal
+[TITLE]   4 errors caught by rehearsal
 [TITLE] 
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
@@ -211,9 +211,9 @@ exports[`Task: convert > generate reports 1`] = `
 [SUCCESS] 
 [SUCCESS]   3 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   2 errors caught by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 
@@ -247,9 +247,9 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 [TITLE] 
 [TITLE]   3 JS files converted to TS
 [TITLE] 
-[TITLE]   2 errors caught by rehearsal
+[TITLE]   4 errors caught by rehearsal
 [TITLE] 
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
@@ -262,9 +262,9 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 [SUCCESS] 
 [SUCCESS]   3 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   2 errors caught by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 
@@ -296,9 +296,9 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 [TITLE] 
 [TITLE]   2 JS files converted to TS
 [TITLE] 
-[TITLE]   1 errors caught by rehearsal
+[TITLE]   2 errors caught by rehearsal
 [TITLE] 
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE] 
 [TITLE]   1 errors need to be fixed manually
 [TITLE] 
@@ -311,9 +311,9 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 [SUCCESS] 
 [SUCCESS]   2 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   1 errors caught by rehearsal
+[SUCCESS]   2 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   1 have been fixed by rehearsal
 [SUCCESS] 
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS] 
@@ -349,8 +349,8 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   1 JS file converted to TS
-[TITLE]   0 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   1 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   0 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
@@ -365,8 +365,8 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA]   Accept
 [TITLE] Migration Complete
 [TITLE]   2 JS files converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   2 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
@@ -384,15 +384,15 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [DATA]   Edit
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   4 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
 [SUCCESS]   3 JS files converted to TS
-[SUCCESS]   2 errors caught by rehearsal
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   4 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
