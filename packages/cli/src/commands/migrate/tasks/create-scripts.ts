@@ -6,6 +6,7 @@ import type { MigrateCommandOptions } from '../../../types.js';
 export async function createScriptsTask(options: MigrateCommandOptions): Promise<ListrTask> {
   return {
     title: 'Add package scripts',
+    enabled: (): boolean => !options.dryRun,
     task: async (_, task): Promise<void> => {
       task.output = `Adding "lint:tsc" script in package.json`;
       addPackageJsonScripts(options.basePath, {

@@ -8,6 +8,14 @@ exports[`migrate - validation > absolute entrypoint inside project root works 1`
 [DATA] Running migration on basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -15,6 +23,7 @@ exports[`migrate - validation > absolute entrypoint inside project root works 1`
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -43,6 +52,14 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Running migration on package-a
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -50,6 +67,7 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [TITLE] Migration Complete
@@ -76,6 +94,14 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Running migration on package-a
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -83,6 +109,7 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [TITLE] Migration Complete
@@ -108,6 +135,15 @@ exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
 [STARTED] Initialize
 [DATA] Running migration on initilization
 [SUCCESS] Initialize
+[STARTED] Install dependencies
+[SKIPPED] Install dependencies
+[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+[STARTED] Create eslint config
+[SKIPPED] Create eslint config
+[STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
+[SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [TITLE] Migration Complete
 [TITLE]   0 JS files converted to TS
@@ -133,6 +169,14 @@ exports[`migrate - validation > relative entrypoint inside project root works 1`
 [DATA] Running migration on basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -140,6 +184,7 @@ exports[`migrate - validation > relative entrypoint inside project root works 1`
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -168,6 +213,14 @@ exports[`migrate: e2e > Print debug messages with --verbose 1`] = `
 [DATA] Running migration on basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -175,6 +228,7 @@ exports[`migrate: e2e > Print debug messages with --verbose 1`] = `
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 debug:   migration started
@@ -212,6 +266,14 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [DATA] Running migration on basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
+[DATA] Installing devDependency @types/node...
+[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
+[DATA] Installing devDependency @typescript-eslint/parser...
+[DATA] Installing devDependency eslint...
+[DATA] Installing devDependency eslint-config-prettier...
+[DATA] Installing devDependency eslint-plugin-prettier...
+[DATA] Installing devDependency prettier...
+[DATA] Installing devDependency typescript...
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -219,6 +281,7 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
 [SUCCESS] Add package scripts
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
@@ -297,140 +360,6 @@ exports[`migrate: e2e > default migrate command 6`] = `
 `;
 
 exports[`migrate: e2e > default migrate command 7`] = `
-"module.exports = {
-  \\"parser\\": \\"@typescript-eslint/parser\\",
-  \\"parserOptions\\": {
-    \\"sourceType\\": \\"module\\"
-  },
-  \\"plugins\\": [
-    \\"@typescript-eslint\\",
-    \\"prettier\\"
-  ],
-  \\"extends\\": [
-    \\"plugin:@typescript-eslint/eslint-recommended\\",
-    \\"plugin:@typescript-eslint/recommended\\",
-    \\"eslint:recommended\\",
-    \\"plugin:prettier/recommended\\",
-    \\"prettier\\"
-  ]
-}"
-`;
-
-exports[`migrate: e2e > init flag 1`] = `
-"info:    @rehearsal/migrate<test-version>
-[STARTED] Validate project
-[SUCCESS] Validate project
-[STARTED] Initialize
-[DATA] Running migration on basic
-[SUCCESS] Initialize
-[STARTED] Install dependencies
-[SUCCESS] Install dependencies
-[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
-[STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
-[SUCCESS] Create eslint config
-[STARTED] Add package scripts
-[SUCCESS] Add package scripts"
-`;
-
-exports[`migrate: e2e > init flag 2`] = `
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "strict": true,
-    "target": "ES2021",
-  },
-  "include": [],
-}
-`;
-
-exports[`migrate: e2e > init flag 3`] = `
-"module.exports = {
-  \\"parser\\": \\"@typescript-eslint/parser\\",
-  \\"parserOptions\\": {
-    \\"sourceType\\": \\"module\\"
-  },
-  \\"plugins\\": [
-    \\"@typescript-eslint\\",
-    \\"prettier\\"
-  ],
-  \\"extends\\": [
-    \\"plugin:@typescript-eslint/eslint-recommended\\",
-    \\"plugin:@typescript-eslint/recommended\\",
-    \\"eslint:recommended\\",
-    \\"plugin:prettier/recommended\\",
-    \\"prettier\\"
-  ]
-}"
-`;
-
-exports[`migrate: e2e > migrate init 1`] = `
-"[STARTED] Validate project
-[SUCCESS] Validate project
-[STARTED] Initialize
-[DATA] Running migration on basic
-[SUCCESS] Initialize
-[STARTED] Install dependencies
-[DATA] Installing devDependency @types/node...
-[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
-[DATA] Installing devDependency @typescript-eslint/parser...
-[DATA] Installing devDependency eslint...
-[DATA] Installing devDependency eslint-config-prettier...
-[DATA] Installing devDependency eslint-plugin-prettier...
-[DATA] Installing devDependency prettier...
-[DATA] Installing devDependency typescript...
-[SUCCESS] Install dependencies
-[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
-[STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
-[SUCCESS] Create eslint config
-[STARTED] Add package scripts
-[DATA] Adding \\"lint:tsc\\" script in package.json
-[SUCCESS] Add package scripts
-info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
-`;
-
-exports[`migrate: e2e > migrate init 2`] = `
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "strict": true,
-    "target": "ES2021",
-  },
-  "include": [
-    "foo.ts",
-    "depends-on-foo.ts",
-    "index.ts",
-  ],
-}
-`;
-
-exports[`migrate: e2e > migrate init 3`] = `
-"module.exports = {
-  extends: [\\"./.rehearsal-eslintrc.js\\"],
-};
-"
-`;
-
-exports[`migrate: e2e > migrate init 4`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {

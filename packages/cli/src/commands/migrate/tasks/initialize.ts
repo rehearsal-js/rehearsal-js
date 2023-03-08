@@ -137,7 +137,6 @@ export async function initTask(
         task.output = `List of files will be attempted to migrate:\n ${ctx.sourceFilesWithRelativePath.join(
           '\n'
         )}`;
-        ctx.skip = true;
       }
     },
     options: {

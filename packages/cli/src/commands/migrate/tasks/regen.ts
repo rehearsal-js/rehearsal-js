@@ -13,7 +13,7 @@ export async function regenTask(
 ): Promise<ListrTask> {
   return {
     title: 'Regenerating report for TS errors and Eslint errors',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (): boolean => !options.dryRun,
     task: async (_: MigrateCommandContext, task): Promise<void> => {
       // Because we have to eagerly import all the tasks we need tolazily load these
       // modules because they refer to typescript which may or may not be installed

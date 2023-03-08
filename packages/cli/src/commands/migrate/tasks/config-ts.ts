@@ -36,6 +36,7 @@ export async function tsConfigTask(
 ): Promise<ListrTask> {
   return {
     title: 'Create tsconfig.json',
+    enabled: (): boolean => !options.dryRun,
     skip: (): boolean => !shouldRunTsConfigTask(options),
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed

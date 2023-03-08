@@ -339,12 +339,22 @@ describe('migrate: e2e', async () => {
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
   });
 
-  test('Print debug messages with --verbose', async () => {
-    const { stdout } = await runBin('migrate', ['--verbose'], {
+  test('--skip-init option', async () => {
+    // run migrate with --skip-init
+    // this command should fail
+    const { stdout } = await runBin('migrate', ['--skip-init'], {
       cwd: basePath,
     });
 
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    // from validate straight to migration
+    const expected = `[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Running migration on basic
+[SUCCESS] Initialize
+[STARTED] Convert JS files to TS`;
+
+    expect(stdout).toContain(expected);
   });
 
   test('show warning message for missing config with --regen', async () => {
@@ -403,10 +413,11 @@ describe('migrate: e2e', async () => {
       });
 
       const expected = `[STARTED] Initialize -- Dry Run Mode
-  [DATA] Running migration on my-package
-  [DATA] List of files will be attempted to migrate:
-  [DATA]  lib/a.js
-  [DATA] index.js`;
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js
+[SUCCESS] Initialize -- Dry Run Mode`;
 
       expect(result.stdout).contains(expected);
     });
@@ -433,12 +444,12 @@ describe('migrate: e2e', async () => {
       });
 
       const expected = `[STARTED] Initialize -- Dry Run Mode
-  [DATA] Running migration on my-package
-  [DATA] List of files will be attempted to migrate:
-  [DATA]  lib/a.js
-  [DATA] index.js
-  [DATA] test/index.js
-  [SUCCESS] Initialize -- Dry Run Mode`;
+[DATA] Running migration on my-package
+[DATA] List of files will be attempted to migrate:
+[DATA]  lib/a.js
+[DATA] index.js
+[DATA] test/index.js
+[SUCCESS] Initialize -- Dry Run Mode`;
 
       expect(result.stdout).contains(expected);
     });
