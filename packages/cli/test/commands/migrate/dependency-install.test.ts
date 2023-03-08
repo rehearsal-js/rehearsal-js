@@ -24,6 +24,10 @@ describe('Task: dependency-install', async () => {
     output += `${chunk}\n`;
   });
 
+  vi.spyOn(console, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+  });
+
   beforeEach(() => {
     output = '';
     basePath = prepareTmpDir('initialization');
@@ -45,12 +49,33 @@ describe('Task: dependency-install', async () => {
     expect(output).matchSnapshot();
   });
 
+  test('skip install required dependencies', async () => {
+    const options = createMigrateOptions(basePath);
+    const tasks = [await depInstallTask(options)];
+
+    // convert array of deps to object-ish
+    const requiredDevDepsMap = REQUIRED_DEPENDENCIES.reduce(
+      (map, d) => ({ ...map, [d]: '1.0.0' }),
+      {}
+    );
+    // update package.json with required deps
+    const packageJsonPath = resolve(basePath, 'package.json');
+    const packageJson = readJSONSync(packageJsonPath);
+    writeJSONSync(packageJsonPath, {
+      ...packageJson,
+      devDependencies: requiredDevDepsMap,
+    });
+
+    await listrTaskRunner(tasks); // should be skipped
+    expect(output).toMatchSnapshot();
+  });
+
   test('install custom dependencies', async () => {
     createUserConfig(basePath, {
       migrate: {
         install: {
-          dependencies: [],
-          devDependencies: ['fs-extra'],
+          dependencies: ['fs-extra'],
+          devDependencies: ['tmp'],
         },
       },
     });
@@ -61,9 +86,61 @@ describe('Task: dependency-install', async () => {
 
     const packageJson = readJSONSync(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
+    const deps = packageJson.dependencies;
 
-    expect(devDeps).toHaveProperty('fs-extra');
+    expect(Object.keys(devDeps).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+
+    expect(devDeps).toHaveProperty('tmp');
+    expect(deps).toHaveProperty('fs-extra');
     expect(output).matchSnapshot();
+  });
+
+  test('skip install custom dependencies', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: ['fs-extra'],
+          devDependencies: ['tmp'],
+        },
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(options, { userConfig })];
+    // convert array of deps to object-ish
+    const requiredDevDepsMap = {
+      ...REQUIRED_DEPENDENCIES.reduce((map, d) => ({ ...map, [d]: '1.0.0' }), {}),
+      tmp: '1.0.0',
+    };
+    const requiredDepsMap = { 'fs-extra': '1.0.0' };
+    // update package.json with required deps
+    const packageJsonPath = resolve(basePath, 'package.json');
+    const packageJson = readJSONSync(packageJsonPath);
+    writeJSONSync(packageJsonPath, {
+      ...packageJson,
+      dependencies: requiredDepsMap,
+      devDependencies: requiredDevDepsMap,
+    });
+
+    await listrTaskRunner(tasks); // should be skipped
+    expect(output).toMatchSnapshot();
+  });
+
+  test('show failed deps', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: ['this-is-not-existed'],
+          devDependencies: ['this-would-fail'],
+        },
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(options, { userConfig })];
+    // await listrTaskRunner(tasks);
+
+    await expect(() => listrTaskRunner(tasks)).rejects.toThrowErrorMatchingSnapshot();
   });
 
   test('postInstall hook from user config', async () => {

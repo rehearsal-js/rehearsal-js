@@ -7,6 +7,8 @@ import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
 import { readJsonSync } from 'fs-extra/esm';
 
+import { initCommand } from './init-command.js';
+
 import { sequentialTask } from './tasks/sequential.js';
 import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
 
@@ -26,6 +28,7 @@ migrateCommand
   .description('migrate a javascript project to typescript')
   // Currently we don't want to expose --basePath to end users
   // always use default process.cwd()
+  .addCommand(initCommand)
   .addOption(
     new Option('-p, --basePath <project base path>', 'base directory of your project')
       .default(process.cwd())
@@ -34,7 +37,11 @@ migrateCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .option('--init', 'only initializes the project', false)
+  .addOption(
+    new Option('--skip-init', 'skip dep install, and ts/lint/script config')
+      .default(false)
+      .hideHelp()
+  )
   .option(
     '-e, --entrypoint <entrypoint>',
     `path to a entrypoint file inside your project(${process.cwd()})`,
@@ -136,9 +143,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   ];
 
   try {
-    if (options.init) {
-      await new Listr(tasks, defaultListrOption).run();
-    } else if (options.interactive) {
+    if (options.interactive) {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
@@ -152,6 +157,15 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         defaultListrOption
       );
       await tasks.run();
+    } else if (options.skipInit) {
+      await new Listr(
+        [
+          await validateTask(options, logger),
+          await initTask(options),
+          await convertTask(options, logger),
+        ],
+        defaultListrOption
+      ).run();
     } else if (reportExisted(options.basePath, options.outputPath)) {
       const previousRuns = getPreviousRuns(
         options.basePath,

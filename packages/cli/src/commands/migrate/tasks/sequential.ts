@@ -18,7 +18,7 @@ export async function sequentialTask(
   return {
     title:
       'Regenerating past migrate report(s), generating current migrate report and merging all reports',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (): boolean => !options.dryRun,
     task: async (_: MigrateCommandContext, task): Promise<void> => {
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);

@@ -29,6 +29,26 @@ export class UserConfig {
     );
   }
 
+  public get dependencies(): string[] {
+    if (this.config && this.config.install) {
+      const { dependencies } = this.config.install;
+      if (dependencies && dependencies.length) {
+        return dependencies;
+      }
+    }
+    return [];
+  }
+
+  public get devDependencies(): string[] {
+    if (this.config && this.config.install) {
+      const { devDependencies } = this.config.install;
+      if (devDependencies && devDependencies.length) {
+        return devDependencies;
+      }
+    }
+    return [];
+  }
+
   public get hasPostInstallHook(): boolean {
     return !!this.config?.postInstall;
   }

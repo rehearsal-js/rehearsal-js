@@ -69,16 +69,10 @@ export async function validateTask(
   return {
     title: 'Validate project',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
-    task: async (ctx: MigrateCommandContext): Promise<void> => {
+    task: async (): Promise<void> => {
       checkPackageJson(options.basePath);
       checkGitIgnore(options.basePath);
-      // If any report exists, skip all of the config tasks
-      if (reportExisted(options.basePath, options.outputPath)) {
-        ctx.skipDepInstall = true;
-        ctx.skipTsConfig = true;
-        ctx.skipLintConfig = true;
-        ctx.skipScriptConfig = true;
-      }
+
       if (options.regen) {
         checkLintConfig(options.basePath, logger);
         checkTsConfig(options.basePath, logger);
