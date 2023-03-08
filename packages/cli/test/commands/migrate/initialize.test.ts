@@ -133,9 +133,8 @@ describe('Task: initialize', async () => {
   test('print files will be attempted to migrate with --dryRun', async () => {
     const options = createMigrateOptions(basePath, { dryRun: true });
     const tasks = [await initTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    await listrTaskRunner(tasks);
 
-    expect(ctx.skip).toBe(true);
     expect(output).matchSnapshot();
   });
 

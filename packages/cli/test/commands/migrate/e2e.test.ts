@@ -357,6 +357,14 @@ describe('migrate: e2e', async () => {
     expect(stdout).toContain(expected);
   });
 
+  test('Print debug messages with --verbose', async () => {
+    const { stdout } = await runBin('migrate', ['--verbose'], {
+      cwd: basePath,
+    });
+
+    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+  });
+
   test('show warning message for missing config with --regen', async () => {
     const { stdout } = await runBin('migrate', ['-r'], {
       cwd: basePath,

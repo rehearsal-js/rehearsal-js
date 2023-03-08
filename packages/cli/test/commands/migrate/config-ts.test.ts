@@ -95,7 +95,8 @@ describe('Task: config-ts', async () => {
 
   test('skip custom config command', async () => {
     // Prepare old tsconfig
-    writeJSONSync(resolve(basePath, 'tsconfig.json'), {});
+    const oldTsConfig = { compilerOptions: { strict: true } };
+    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
 
     createUserConfig(basePath, {
       migrate: {

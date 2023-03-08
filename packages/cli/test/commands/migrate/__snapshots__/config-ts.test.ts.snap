@@ -40,16 +40,16 @@ exports[`Task: config-ts > run custom config command with user config provided 1
 "
 `;
 
+exports[`Task: config-ts > skip custom config command 1`] = `
+"[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+"
+`;
+
 exports[`Task: config-ts > skip if tsconfig.json exists with strict on 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 [STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
-"
-`;
-
-exports[`Task: config-ts > stage tsconfig if in git repo 1`] = `
-"[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
 "
 `;

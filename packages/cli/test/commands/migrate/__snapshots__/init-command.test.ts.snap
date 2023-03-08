@@ -108,7 +108,7 @@ exports[`migrate init > pass user config 1`] = `
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init > skip dep install, ts config, and lint config if exist 1`] = `
+exports[`migrate init > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
