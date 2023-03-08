@@ -45,7 +45,7 @@ export async function convertTask(
       );
 
       if (ctx.sourceFilesWithAbsolutePath) {
-        if (options.interactive) {
+        if (!options.ci) {
           // In interactive mode, go through files one by one
           // and ask user for actions: Accept/Edit/Discard
           for (const f of ctx.sourceFilesWithAbsolutePath) {

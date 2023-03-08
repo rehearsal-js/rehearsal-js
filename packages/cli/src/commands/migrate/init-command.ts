@@ -39,6 +39,9 @@ initCommand
   });
 
 export async function initCommandHandler(options: MigrateCommandOptions): Promise<void> {
+  // init should never run in interactive mode
+  options.ci = true;
+
   const loggerLevel = options.verbose ? 'debug' : 'info';
   const logger = createLogger({
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],

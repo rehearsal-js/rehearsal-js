@@ -58,7 +58,7 @@ describe('Task: convert', async () => {
   });
 
   test('migrate from default all files .js in root', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -86,7 +86,7 @@ describe('Task: convert', async () => {
   });
 
   test('migrate from specific entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js' });
+    const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js', ci: true });
     // Get context for convert task from previous tasks
     const tasks = [
       await initTask(options),
@@ -114,6 +114,7 @@ describe('Task: convert', async () => {
   test('generate reports', async () => {
     const options = createMigrateOptions(basePath, {
       format: ['json', 'md', 'sarif'],
+      ci: true,
     });
     // Get context for convert task from previous tasks
     const tasks = [
@@ -136,7 +137,7 @@ describe('Task: convert', async () => {
   });
 
   test('accept changes without git', async () => {
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
 
     // prompt control flow
     outputStream.on('data', (line: string) => {
@@ -185,7 +186,7 @@ describe('Task: convert', async () => {
       .add('./*')
       .commit('first commit!');
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
     let fileCount = 1; // file counter in prompt selection
 
     // prompt control flow
@@ -247,7 +248,7 @@ describe('Task: convert', async () => {
     // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
     // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
     process.env['EDITOR'] = 'rm';
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
 
     let fileCount = 1; // file counter in prompt selection
 
@@ -302,7 +303,7 @@ describe('Task: convert', async () => {
   });
 
   test('cancel prompt in interactive mode', async () => {
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
 
     // prompt control flow
     outputStream.on('data', (line: string) => {

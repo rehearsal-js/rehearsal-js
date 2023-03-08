@@ -73,11 +73,11 @@ Rehearsal Migrate has performed the following tasks:
 
 ## Interactive Mode - Migrate
 
-With the interactive mode flag `--interactive` or `-i`, Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing.
+Interactive mode will run by default. Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing. If you want to skip interactive mode, you can use the flag `--ci`.
 
 ## Migrate by Directory
 
-With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report that merge both runs. 
+With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report that merge both runs.
 
 ## Rehearsal Reports
 
@@ -90,6 +90,7 @@ In combination with the VSCode SARIF Viewer extension, you can view the SARIF re
 Rehearsal also can read from a custom user config file. This is useful if you want to customize the migration process. For example, you can add additional dependencies to be installed during the migration process. You can also add custom setup tasks to be run during the migration process. The config file is a JSON file with the following structure:
 
 **rehearsal-config.json**
+
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/rehearsal-js/rehearsal-js/master/packages/cli/rehearsal-config-schema.json",

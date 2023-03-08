@@ -54,7 +54,7 @@ describe('Task: sequential', async () => {
   });
 
   test('sequential run regen on the existing report, and run migrate on current base path and entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'index.ts' });
+    const options = createMigrateOptions(basePath, { entrypoint: 'index.ts', ci: true });
     const previousRuns = {
       previousFixedCount: 1,
       paths: [{ basePath, entrypoint: 'depends-on-foo.ts' }],
