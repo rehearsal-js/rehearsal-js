@@ -1,10 +1,9 @@
-import { resolve, dirname } from 'node:path';
+import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ListrTask } from 'listr2';
 import { writeJSONSync } from 'fs-extra/esm';
 import { readJSON, writeTSConfig } from '@rehearsal/utils';
-import ts from 'typescript';
-
+import { parseTsconfig } from 'get-tsconfig';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
 
@@ -15,17 +14,18 @@ export function shouldRunTsConfigTask(options: MigrateCommandOptions): boolean {
   // for now we would not run tsConfigTask if:
   // 1. tsconfig.json exists
   // 2. it is in strict mode
-  const { sys: tsSys, readConfigFile, parseJsonConfigFileContent } = ts;
   const { basePath } = options;
   const configPath = resolve(basePath, 'tsconfig.json');
 
   if (existsSync(configPath)) {
-    // Read tsconfig.json file
-    const tsConfig = readConfigFile(configPath, tsSys.readFile);
-
     // Resolve extends
-    const parsedTsconfig = parseJsonConfigFileContent(tsConfig.config, tsSys, dirname(configPath));
-    return !parsedTsconfig.options.strict === true;
+    try {
+      const parsedTsconfig = parseTsconfig(configPath);
+      return !parsedTsconfig.compilerOptions?.strict === true;
+    } catch (e) {
+      // if cannot resolve the extends in tsconfig.json
+      return true;
+    }
   }
   return true;
 }
@@ -59,7 +59,11 @@ export async function tsConfigTask(
           task.title = `Update tsconfig.json`;
 
           const tsConfig = readJSON<TSConfig>(configPath) as TSConfig;
-          tsConfig.compilerOptions.strict = true;
+          if (!tsConfig.compilerOptions) {
+            tsConfig.compilerOptions = { strict: true };
+          } else {
+            tsConfig.compilerOptions.strict = true;
+          }
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
           writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);

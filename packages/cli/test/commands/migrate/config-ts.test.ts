@@ -60,6 +60,23 @@ describe('Task: config-ts', async () => {
     expect(output).toContain('ensuring strict mode is enabled');
   });
 
+  test('update tsconfig if invalid extends exist', async () => {
+    // Prepare old tsconfig
+    const oldTsConfig = { extends: 'invalid-tsconfig.json'};
+    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+
+    const options = createMigrateOptions(basePath);
+    const context = { sourceFilesWithRelativePath: [] };
+    const tasks = [await tsConfigTask(options, context)];
+    await listrTaskRunner(tasks);
+
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+
+    expect(tsConfig.compilerOptions.strict).toBeTruthy();
+    // Do not use snapshot here since there is absolute path in output
+    expect(output).toContain('ensuring strict mode is enabled');
+  });
+
   test('skip if tsconfig.json exists with strict on', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: true } };
