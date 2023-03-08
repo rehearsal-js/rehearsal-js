@@ -50,7 +50,7 @@ describe('Task: initialize', async () => {
   });
 
   test('get files that will be migrated', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -78,7 +78,7 @@ describe('Task: initialize', async () => {
       },
     });
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -114,7 +114,7 @@ describe('Task: initialize', async () => {
       'another-config.json'
     );
 
-    const options = createMigrateOptions(basePath, { userConfig: 'another-config.json' });
+    const options = createMigrateOptions(basePath, { ci: true, userConfig: 'another-config.json' });
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -131,7 +131,7 @@ describe('Task: initialize', async () => {
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
-    const options = createMigrateOptions(basePath, { dryRun: true });
+    const options = createMigrateOptions(basePath, { ci: true, dryRun: true });
     const tasks = [await initTask(options)];
     await listrTaskRunner(tasks);
 
@@ -151,7 +151,7 @@ describe('Task: initialize', async () => {
       }
     });
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -194,7 +194,7 @@ describe('Task: initialize', async () => {
       }
     });
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -256,7 +256,7 @@ describe('Task: initialize', async () => {
     mkdirSync(resolve(basePath, '.rehearsal'));
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
@@ -309,7 +309,7 @@ describe('Task: initialize', async () => {
     mkdirSync(resolve(basePath, '.rehearsal'));
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
-    const options = createMigrateOptions(basePath, { interactive: true });
+    const options = createMigrateOptions(basePath);
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 

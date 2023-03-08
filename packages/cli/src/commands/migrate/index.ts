@@ -59,7 +59,7 @@ migrateCommand
     'path to rehearsal config',
     'rehearsal-config.json'
   )
-  .option('-i, --interactive', 'interactive mode')
+  .option('--ci', 'non-interactive mode')
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
   .option('-r, --regen', 'print out current migration status')
@@ -143,7 +143,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   ];
 
   try {
-    if (options.interactive) {
+    if (!options.ci) {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
