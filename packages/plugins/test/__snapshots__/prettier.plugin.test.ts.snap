@@ -1,0 +1,7 @@
+// Vitest Snapshot v1
+
+exports[`Test PrettierPlugin > run 1`] = `
+"function doSomething(arg: string) {
+  return arg;
+}"
+`;
