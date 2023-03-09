@@ -54,7 +54,7 @@ export async function initCommandHandler(options: MigrateCommandOptions): Promis
   };
 
   const tasks = [
-    await validateTask(options, logger),
+    validateTask(options, logger),
     await initTask(options),
     await depInstallTask(options),
     await tsConfigTask(options),

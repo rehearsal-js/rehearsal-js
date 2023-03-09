@@ -7,3 +7,4 @@ export * from './create-scripts.js';
 export * from './regen.js';
 export * from './validate.js';
 export * from './sequential.js';
+export * from './analyze.js';

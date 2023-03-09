@@ -62,10 +62,7 @@ export function reportExisted(basePath: string, outputPath?: string): boolean {
   );
 }
 
-export async function validateTask(
-  options: MigrateCommandOptions,
-  logger: Logger
-): Promise<ListrTask> {
+export function validateTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
   return {
     title: 'Validate project',
     enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,

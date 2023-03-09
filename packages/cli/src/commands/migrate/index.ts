@@ -54,11 +54,6 @@ migrateCommand
     ['sarif']
   )
   .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
-  .option(
-    '-u, --userConfig <custom json config for migrate command>',
-    'path to rehearsal config',
-    'rehearsal-config.json'
-  )
   .option('--ci', 'non-interactive mode')
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
@@ -73,17 +68,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
   });
 
-  const {
-    validateTask,
-    initTask,
-    depInstallTask,
-    tsConfigTask,
-    lintConfigTask,
-    createScriptsTask,
-    convertTask,
-    regenTask,
-    reportExisted,
-  } = await loadTasks();
+  const { analyze, validateTask, convertTask, regenTask, reportExisted } = await loadTasks();
 
   logger.info(`@rehearsal/migrate ${version.trim()}`);
 
@@ -133,14 +118,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     exitOnError: true,
   };
 
-  const tasks = [
-    await validateTask(options, logger),
-    await initTask(options),
-    await depInstallTask(options),
-    await tsConfigTask(options),
-    await lintConfigTask(options),
-    await createScriptsTask(options),
-  ];
+  const tasks = [validateTask(options, logger), analyze(options)];
 
   try {
     if (!options.ci) {
@@ -159,11 +137,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       await tasks.run();
     } else if (options.skipInit) {
       await new Listr(
-        [
-          await validateTask(options, logger),
-          await initTask(options),
-          await convertTask(options, logger),
-        ],
+        [await validateTask(options, logger), analyze(options), await convertTask(options, logger)],
         defaultListrOption
       ).run();
     } else if (reportExisted(options.basePath, options.outputPath)) {
@@ -177,10 +151,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
           `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
         );
         await new Listr(
-          [
-            await validateTask(options, logger),
-            await sequentialTask(options, logger, previousRuns),
-          ],
+          [validateTask(options, logger), await sequentialTask(options, logger, previousRuns)],
           defaultListrOption
         ).run();
       } else {
@@ -223,25 +194,11 @@ function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function loadTasks() {
   return await import('./tasks/index.js').then((m) => {
-    const {
-      initTask,
-      depInstallTask,
-      convertTask,
-      tsConfigTask,
-      lintConfigTask,
-      createScriptsTask,
-      regenTask,
-      validateTask,
-      reportExisted,
-    } = m;
+    const { analyze, convertTask, regenTask, validateTask, reportExisted } = m;
 
     return {
-      initTask,
-      depInstallTask,
+      analyze,
       convertTask,
-      tsConfigTask,
-      lintConfigTask,
-      createScriptsTask,
       regenTask,
       validateTask,
       reportExisted,

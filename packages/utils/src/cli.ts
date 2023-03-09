@@ -421,8 +421,7 @@ export function validateUserConfig(basePath: string, userConfigPath: string): bo
 /**
  * Generate tsconfig
  */
-export function writeTSConfig(basePath: string, fileList: string[]): void {
-  const include = [...fileList.map((f) => f.replace('.js', '.ts'))];
+export function writeTSConfig(basePath: string): void {
   const config = {
     $schema: 'https://json.schemastore.org/tsconfig',
     compilerOptions: {
@@ -437,7 +436,6 @@ export function writeTSConfig(basePath: string, fileList: string[]): void {
       noFallthroughCasesInSwitch: true,
       noEmit: true,
     },
-    include,
   };
 
   writeJSONSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
