@@ -193,7 +193,7 @@ describe('Task: dependency-install', async () => {
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowErrorMatchingSnapshot();
   });
 
-  test('postInstall hook from user config', async () => {
+  test('single postInstall command from user config', async () => {
     createUserConfig(basePath, {
       migrate: {
         install: {
@@ -216,6 +216,53 @@ describe('Task: dependency-install', async () => {
     expect(devDeps).toHaveProperty('fs-extra');
 
     expect(existsSync(resolve(basePath, 'foo')));
+    expect(output).matchSnapshot();
+  });
+
+  test('multiple postInstall commands from user config', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: [],
+          devDependencies: [],
+        },
+        postInstall: [
+          {
+            command: 'touch',
+            args: ['foo'],
+          },
+          {
+            command: 'touch',
+            args: ['bar'],
+          },
+        ],
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
+
+    expect(existsSync(resolve(basePath, 'foo')));
+    expect(existsSync(resolve(basePath, 'bar')));
+    expect(output).matchSnapshot();
+  });
+
+  test('do not run postInstall command if empty', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: [],
+          devDependencies: [],
+        },
+        postInstall: [],
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    const tasks = [await depInstallTask(options, { userConfig })];
+    await listrTaskRunner(tasks);
+
     expect(output).matchSnapshot();
   });
 });

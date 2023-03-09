@@ -50,7 +50,10 @@ export class UserConfig {
   }
 
   public get hasPostInstallHook(): boolean {
-    return !!this.config?.postInstall;
+    if (this.config?.postInstall) {
+      return Array.isArray(this.config.postInstall) ? this.config.postInstall.length > 0 : !!this.config.postInstall;
+    }
+    return false;
   }
 
   public get hasTsSetup(): boolean {
