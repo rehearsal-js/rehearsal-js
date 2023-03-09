@@ -63,6 +63,12 @@ exports[`Task: dependency-install > skip install custom dependencies 1`] = `
 "
 `;
 
+exports[`Task: dependency-install > skip install custom deps 1`] = `
+"[STARTED] Install dependencies
+[SKIPPED] Install dependencies
+"
+`;
+
 exports[`Task: dependency-install > skip install required dependencies 1`] = `
 "[STARTED] Install dependencies
 [SKIPPED] Install dependencies

@@ -3,10 +3,13 @@ import { existsSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 
-import { depInstallTask } from '../../../src/commands/migrate/tasks/index.js';
+import {
+  REQUIRED_DEPENDENCIES,
+  depInstallTask,
+  shouldRunDepInstallTask,
+} from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 import { CustomConfig } from '../../../src/types.js';
-import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 import { UserConfig } from '../../../src/user-config.js';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -47,6 +50,25 @@ describe('Task: dependency-install', async () => {
 
     expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
     expect(output).matchSnapshot();
+  });
+
+  test('shouldRunDepInstallTask should skip', async () => {
+    const options = createMigrateOptions(basePath);
+
+    // convert array of deps to object-ish
+    const requiredDevDepsMap = REQUIRED_DEPENDENCIES.reduce(
+      (map, d) => ({ ...map, [d]: '1.0.0' }),
+      {}
+    );
+    // update package.json with required deps
+    const packageJsonPath = resolve(basePath, 'package.json');
+    const packageJson = readJSONSync(packageJsonPath);
+    writeJSONSync(packageJsonPath, {
+      ...packageJson,
+      devDependencies: requiredDevDepsMap,
+    });
+
+    expect(shouldRunDepInstallTask(options)).toBeFalsy();
   });
 
   test('skip install required dependencies', async () => {
@@ -95,11 +117,39 @@ describe('Task: dependency-install', async () => {
     expect(output).matchSnapshot();
   });
 
-  test('skip install custom dependencies', async () => {
+  test('shouldRunDepInstallTask should skip with custom deps', async () => {
     createUserConfig(basePath, {
       migrate: {
         install: {
-          dependencies: ['fs-extra'],
+          dependencies: ['fs-extra@2.0.0'], // also handle this format: {name}@{version}
+          devDependencies: ['tmp'],
+        },
+      },
+    });
+    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
+    // convert array of deps to object-ish
+    const requiredDevDepsMap = {
+      ...REQUIRED_DEPENDENCIES.reduce((map, d) => ({ ...map, [d]: '1.0.0' }), {}),
+      tmp: '1.0.0',
+    };
+    const requiredDepsMap = { 'fs-extra': '2.0.0' };
+    // update package.json with required deps
+    const packageJsonPath = resolve(basePath, 'package.json');
+    const packageJson = readJSONSync(packageJsonPath);
+    writeJSONSync(packageJsonPath, {
+      ...packageJson,
+      dependencies: requiredDepsMap,
+      devDependencies: requiredDevDepsMap,
+    });
+    expect(shouldRunDepInstallTask(options, { userConfig })).toBeFalsy();
+  });
+
+  test('skip install custom deps', async () => {
+    createUserConfig(basePath, {
+      migrate: {
+        install: {
+          dependencies: ['fs-extra@2.0.0'], // also handle this format: {name}@{version}
           devDependencies: ['tmp'],
         },
       },
@@ -112,7 +162,7 @@ describe('Task: dependency-install', async () => {
       ...REQUIRED_DEPENDENCIES.reduce((map, d) => ({ ...map, [d]: '1.0.0' }), {}),
       tmp: '1.0.0',
     };
-    const requiredDepsMap = { 'fs-extra': '1.0.0' };
+    const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
     const packageJson = readJSONSync(packageJsonPath);

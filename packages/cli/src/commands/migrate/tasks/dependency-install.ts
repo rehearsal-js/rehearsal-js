@@ -17,6 +17,16 @@ export const REQUIRED_DEPENDENCIES = [
   'typescript',
 ];
 
+// get the name of dependency from those two format:
+// - foo
+// - foo@{version}
+// Be aware that a package name would start with @, e.g @types/node
+function extractDepName(dep: string): string {
+  const reg = /^(@?[^@]+)/g;
+  const matched = dep.match(reg);
+  return matched ? matched[0] : dep;
+}
+
 // check if package.json has all required dependecies
 // from rehearsal default and user config
 export function shouldRunDepInstallTask(
@@ -37,13 +47,13 @@ export function shouldRunDepInstallTask(
   if (existsSync(packageJsonPath)) {
     const packageJson = readJSONSync(packageJsonPath);
     for (const d of dependencies) {
-      if (!packageJson.dependencies || !packageJson.dependencies[d]) {
+      if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
         return true;
       }
     }
 
     for (const d of devDependencies) {
-      if (!packageJson.devDependencies || !packageJson.devDependencies[d]) {
+      if (!packageJson.devDependencies || !packageJson.devDependencies[extractDepName(d)]) {
         return true;
       }
     }

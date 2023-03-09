@@ -47,6 +47,7 @@ export async function initCommandHandler(options: MigrateCommandOptions): Promis
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
   });
   const defaultListrOption = {
+    renderer: 'simple',
     collapse: false,
     collapseErrors: false,
     concurrent: false,
