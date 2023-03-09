@@ -20,12 +20,6 @@ export type MigrateCommandOptions = {
   regen: boolean | undefined;
 };
 
-// export type MigrateInitCommandOptions = {
-//   basePath: string;
-//   verbose: boolean | undefined;
-//   userConfig: string | undefined;
-// };
-
 export type MigrateCommandContext = {
   skip: boolean;
   userConfig: UserConfig | undefined;
