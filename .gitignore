@@ -20,3 +20,5 @@ tmp/
 **/.yarn/**
 .yarnrc.yml
 yarn.lock
+
+packages/codefixes/src/diagnosticInformationMap.generated.ts

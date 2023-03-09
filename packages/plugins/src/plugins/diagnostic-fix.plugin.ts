@@ -5,7 +5,10 @@ import hash from 'object-hash';
 import {
   codefixes,
   type DiagnosticWithContext,
+  Diagnostics,
   isInstallPackageCommand,
+  isDiagnosticSupported,
+  eligiableDiagnostics,
 } from '@rehearsal/codefixes';
 import {
   Plugin,
@@ -29,19 +32,26 @@ export interface DiagnosticFixPluginOptions extends PluginOptions {
 export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
   /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
   prioritizedCodes = [
-    80002, // convertFunctionToEs6Class
-    80005, // requireInTs
-    80004, // annotateWithTypeFromJSDoc
-    7005, // inferFromUsage
-    7006, // inferFromUsage
-    7008, // inferFromUsage
-    7010, // inferFromUsage
-    7043, // inferFromUsage
-    7044, // inferFromUsage
-    7045, // inferFromUsage
-    7046, // inferFromUsage
-    7050, // inferFromUsage
-    2612, // addMissingDeclareProperty
+    Diagnostics.This_constructor_function_may_be_converted_to_a_class_declaration.code,
+    Diagnostics.require_call_may_be_converted_to_an_import.code,
+    Diagnostics.JSDoc_types_may_be_moved_to_TypeScript_types.code,
+    Diagnostics.Variable_0_implicitly_has_an_1_type.code,
+    Diagnostics.Parameter_0_implicitly_has_an_1_type.code,
+    Diagnostics.Member_0_implicitly_has_an_1_type.code,
+    Diagnostics._0_which_lacks_return_type_annotation_implicitly_has_an_1_return_type.code,
+    Diagnostics.Variable_0_implicitly_has_an_1_type_but_a_better_type_may_be_inferred_from_usage
+      .code,
+    Diagnostics.Parameter_0_implicitly_has_an_1_type_but_a_better_type_may_be_inferred_from_usage
+      .code,
+    Diagnostics.Member_0_implicitly_has_an_1_type_but_a_better_type_may_be_inferred_from_usage.code,
+    Diagnostics
+      .Variable_0_implicitly_has_type_1_in_some_locations_but_a_better_type_may_be_inferred_from_usage
+      .code,
+    Diagnostics._0_implicitly_has_an_1_return_type_but_a_better_type_may_be_inferred_from_usage
+      .code,
+    Diagnostics
+      .Property_0_will_overwrite_the_base_property_in_1_If_this_is_intentional_add_an_initializer_Otherwise_add_a_declare_modifier_or_remove_the_redundant_declaration
+      .code,
   ];
 
   attemptedToFix: string[] = [];
@@ -51,59 +61,62 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     context: PluginsRunnerContext,
     options: DiagnosticFixPluginOptions
   ): PluginResult {
-    options.safeFixes ??= true;
-    options.strictTyping ??= true;
-
-    let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
-
-    DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
-
+    const diagnostics = this.getDiagnostics(context.rehearsal, fileName);
     const allFixedFiles: Set<string> = new Set();
 
-    this.resetAttemptedToFix();
+    // options.safeFixes ??= true;
+    // options.strictTyping ??= true;
 
-    while (diagnostics.length > 0) {
-      const diagnostic = diagnostics.shift()!;
+    // let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
 
-      if (!diagnostic.node) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
-        continue;
-      }
+    // DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
-      const fix = this.getCodeFix(diagnostic, options);
+    // const allFixedFiles: Set<string> = new Set();
 
-      if (!fix) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
-        continue;
-      }
+    // this.resetAttemptedToFix();
 
-      if (isInstallPackageCommand(fix)) {
-        await this.applyCommandAction(fix.commands, context);
-      }
+    // while (diagnostics.length > 0) {
+    //   const diagnostic = diagnostics.shift()!;
 
-      for (const fileTextChange of fix.changes) {
-        let text = context.rehearsal.getFileText(fileTextChange.fileName);
+    //   if (!diagnostic.node) {
+    //     DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
+    //     continue;
+    //   }
 
-        const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
-        for (const textChange of textChanges) {
-          DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
+    //   const fix = this.getCodeFix(diagnostic, options);
 
-          text = applyTextChange(text, textChange);
-        }
+    //   if (!fix) {
+    //     DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
+    //     continue;
+    //   }
 
-        context.rehearsal.setFileText(fileTextChange.fileName, text);
-        allFixedFiles.add(fileTextChange.fileName);
+    //   if (isInstallPackageCommand(fix)) {
+    //     await this.applyCommandAction(fix.commands, context);
+    //   }
 
-        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
-      }
+    //   for (const fileTextChange of fix.changes) {
+    //     let text = context.rehearsal.getFileText(fileTextChange.fileName);
 
-      context.reporter.incrementRunFixedItemCount();
+    //     const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
+    //     for (const textChange of textChanges) {
+    //       DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
 
-      // Get updated list of diagnostics
-      diagnostics = this.getDiagnostics(context.rehearsal, fileName);
-    }
+    //       text = applyTextChange(text, textChange);
+    //     }
 
-    return Array.from(allFixedFiles);
+    //     context.rehearsal.setFileText(fileTextChange.fileName, text);
+    //     allFixedFiles.add(fileTextChange.fileName);
+
+    //     DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+    //   }
+
+    //   context.reporter.incrementRunFixedItemCount();
+
+    //   // Get updated list of diagnostics
+    //   diagnostics = this.getDiagnostics(context.rehearsal, fileName);
+    // }
+
+    // return Array.from(allFixedFiles);
   }
 
   /**
@@ -113,24 +126,17 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     const service = rehearsalService.getLanguageService();
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
-
     const diagnostics = rehearsalService.getDiagnostics(fileName);
 
-    this.sort(diagnostics, this.prioritizedCodes);
-
-    return (
-      diagnostics
-        // Convert DiagnosticWithLocation to DiagnosticWithContext
-        .map<DiagnosticWithContext>((diagnostic) => ({
-          ...diagnostic,
-          ...{
-            service,
-            program,
-            checker,
-            node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
-          },
-        }))
-    );
+    return eligiableDiagnostics(diagnostics).map<DiagnosticWithContext>((diagnostic) => ({
+      ...diagnostic,
+      ...{
+        service,
+        program,
+        checker,
+        node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+      },
+    }));
   }
 
   private async applyCommandAction(
@@ -150,29 +156,29 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
    * If the diagnostic has the code mentioned in the `prioritizedCodes` list, it will be moved to the start and will
    * be ordered against other prioritized codes in the order codes provided in the `prioritizedCodes`.
    */
-  sort(diagnostics: DiagnosticWithLocation[], prioritizedCodes: number[]): void {
-    diagnostics.sort((left, right) => {
-      if (left.code != right.code) {
-        const leftIndex = prioritizedCodes.indexOf(left.code);
-        const rightIndex = prioritizedCodes.indexOf(right.code);
+  // sort(diagnostics: DiagnosticWithLocation[], prioritizedCodes: number[]): void {
+  //   diagnostics.sort((left, right) => {
+  //     if (left.code != right.code) {
+  //       const leftIndex = prioritizedCodes.indexOf(left.code);
+  //       const rightIndex = prioritizedCodes.indexOf(right.code);
 
-        // Sort prioritized codes by how they ordered in `prioritizedCodes`
-        if (leftIndex >= 0 && rightIndex >= 0) {
-          return leftIndex - rightIndex;
-        }
+  //       // Sort prioritized codes by how they ordered in `prioritizedCodes`
+  //       if (leftIndex >= 0 && rightIndex >= 0) {
+  //         return leftIndex - rightIndex;
+  //       }
 
-        if (leftIndex >= 0) {
-          return -1;
-        }
+  //       if (leftIndex >= 0) {
+  //         return -1;
+  //       }
 
-        if (rightIndex >= 0) {
-          return 1;
-        }
-      }
+  //       if (rightIndex >= 0) {
+  //         return 1;
+  //       }
+  //     }
 
-      return left.start - right.start;
-    });
-  }
+  //     return left.start - right.start;
+  //   });
+  // }
 
   /**
    * Returns a code fix that expected to fix provided diagnostic

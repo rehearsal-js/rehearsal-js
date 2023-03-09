@@ -9,6 +9,7 @@ export interface Plugin<PluginOptions> {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PluginOptions {}
 
+export type PluginIterator = Promise<AsyncIterator<string[]>>;
 export type PluginResult = Promise<string[]>;
 
 export interface PluginsRunnerContext {
@@ -85,7 +86,7 @@ export class PluginsRunner {
   async *processPlugins(
     fileName: string,
     allChangedFiles: Set<string>
-  ): AsyncGenerator<Set<string>> {
+  ): AsyncGenerator<Set<string>, void> {
     for (const plugin of this.plugins) {
       const changedFiles = await plugin.plugin.run(fileName, this.context, plugin.options);
 

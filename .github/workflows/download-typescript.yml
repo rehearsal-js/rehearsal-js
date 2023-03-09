@@ -1,0 +1,24 @@
+name: Get Diagnostics From TypeScript
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  get_diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Diagnostics
+        run: curl https://raw.githubusercontent.com/microsoft/TypeScript/main/src/compiler/diagnosticMessages.json -o packages/codefixes/src/diagnosticMessages.json
+      - name: Download Generator Script
+        run: curl https://raw.githubusercontent.com/microsoft/TypeScript/main/scripts/processDiagnosticMessages.mjs -o processDiagnosticMessages.mjs
+      - name: Convert To Enums
+        uses: actions/setup-node@v3
+          with:
+            node-version: 16
+        run: node ./processDiagnosticMessages.mjs packages/src/codefixes/diagnosticMessages.json
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Adding TypeScript Diagnostics
+          branch: ${{ github.head_ref }}

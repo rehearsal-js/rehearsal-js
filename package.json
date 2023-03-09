@@ -7,14 +7,14 @@
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "node processDiagnosticMessages.mjs && tsc -b",
     "lint": "pnpm lint:package-json && pnpm recursive run lint",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",
     "test": "pnpm build && pnpm recursive run test",
     "changelog": "pnpm conventional-changelog -i CHANGELOG.md -s",
     "clean": "find . -name 'node_modules' -o -name 'dist' -o -name 'coverage' -type d -prune -exec rm -rf '{}' +",
-    "reset": "pnpm clean && pnpm install",
+    "reset": "pnpm clean && pnpm install && pnpm build",
     "release": "node release.js"
   },
   "commitlint": {
