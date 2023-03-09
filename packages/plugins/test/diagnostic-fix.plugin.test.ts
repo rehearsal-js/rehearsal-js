@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { DiagnosticFixPlugin } from '../src/index.js';
 import { mockDiagnosticWithLocations } from './utils.js';
 
-describe('Test DiagnosticFixPlugin', function () {
+describe('Test DiagnosticFixPlugin', () => {
   test('sort', async () => {
     const diagnostics = mockDiagnosticWithLocations([
       { start: 5, code: 100 },

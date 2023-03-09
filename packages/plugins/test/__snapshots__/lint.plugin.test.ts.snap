@@ -1,0 +1,30 @@
+// Vitest Snapshot v1
+
+exports[`Test LintPlugin > run 1`] = `
+"function doSomething(arg) {
+  return arg;
+}"
+`;
+
+exports[`Test LintPlugin > run 2`] = `
+[
+  {
+    "analysisTarget": "index.js",
+    "category": "Error",
+    "helpUrl": "",
+    "hint": "'doSomething' is defined but never used.",
+    "hintAdded": false,
+    "message": "'doSomething' is defined but never used.",
+    "nodeKind": "Identifier",
+    "nodeLocation": {
+      "endColumn": 21,
+      "endLine": 1,
+      "startColumn": 10,
+      "startLine": 1,
+    },
+    "nodeText": "",
+    "ruleId": "no-unused-vars",
+    "type": 1,
+  },
+]
+`;
