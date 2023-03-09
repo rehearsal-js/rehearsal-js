@@ -57,12 +57,6 @@ this-would-fail
 Please try again or install manually as devDependencies in your project."
 `;
 
-exports[`Task: dependency-install > skip install custom dependencies 1`] = `
-"[STARTED] Install dependencies
-[SKIPPED] Install dependencies
-"
-`;
-
 exports[`Task: dependency-install > skip install custom deps 1`] = `
 "[STARTED] Install dependencies
 [SKIPPED] Install dependencies
