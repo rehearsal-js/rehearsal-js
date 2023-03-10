@@ -17,6 +17,16 @@ export const REQUIRED_DEPENDENCIES = [
   'typescript',
 ];
 
+// get the name of dependency from those two format:
+// - foo
+// - foo@{version}
+// Be aware that a package name would start with @, e.g @types/node
+function extractDepName(dep: string): string {
+  const reg = /^(@?[^@]+)/g;
+  const matched = dep.match(reg);
+  return matched ? matched[0] : dep;
+}
+
 // check if package.json has all required dependecies
 // from rehearsal default and user config
 export function shouldRunDepInstallTask(
@@ -37,13 +47,13 @@ export function shouldRunDepInstallTask(
   if (existsSync(packageJsonPath)) {
     const packageJson = readJSONSync(packageJsonPath);
     for (const d of dependencies) {
-      if (!packageJson.dependencies || !packageJson.dependencies[d]) {
+      if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
         return true;
       }
     }
 
     for (const d of devDependencies) {
-      if (!packageJson.devDependencies || !packageJson.devDependencies[d]) {
+      if (!packageJson.devDependencies || !packageJson.devDependencies[extractDepName(d)]) {
         return true;
       }
     }
@@ -81,45 +91,41 @@ export async function depInstallTask(
         }
       }
 
-      // hold failed deps
-      const failedDeps: string[] = [];
-      const failedDevDeps: string[] = [];
+      const errorMessages: string[] = [];
 
-      for (const dep of dependencies) {
+      // for deps
+      if (dependencies.length) {
         try {
-          task.output = `Installing dependency ${dep}...`;
-          await addDep([dep], false, { cwd: options.basePath });
+          task.output = `Installing dependecies: ${dependencies.join(', ')}`;
+          await addDep(dependencies, false, { cwd: options.basePath });
         } catch (e) {
-          failedDeps.push(dep);
+          errorMessages.push(formatErrorMessage(dependencies, false));
         }
       }
 
-      for (const dep of devDependencies) {
+      // for devDeps
+      if (devDependencies.length) {
         try {
-          task.output = `Installing devDependency ${dep}...`;
-          await addDep([dep], true, { cwd: options.basePath });
+          task.output = `Installing devDependencies: ${devDependencies.join(', ')}`;
+          await addDep(devDependencies, true, { cwd: options.basePath });
         } catch (e) {
-          failedDevDeps.push(dep);
+          errorMessages.push(formatErrorMessage(devDependencies, true));
         }
-      }
 
-      const depErrorMessage = failedDeps.length
-        ? `Could not install the following packages as dependencies:\n${failedDeps.join(
-            '\n'
-          )}\nPlease try again or install manually as dependencies in your project.`
-        : '';
-
-      const devDepErrorMessage = failedDevDeps.length
-        ? `Could not install the following packages as devDependencies:\n${failedDevDeps.join(
-            '\n'
-          )}\nPlease try again or install manually as devDependencies in your project.`
-        : '';
-
-      if (failedDeps.length || failedDevDeps.length) {
-        throw new Error(`${depErrorMessage}\n${devDepErrorMessage}`);
+        if (errorMessages.length) {
+          throw new Error(errorMessages.join('\n'));
+        }
       }
     },
     // will print and keep what dpe is currently installing at bottom bar
     options: { persistentOutput: true, bottomBar: Infinity },
   };
+}
+
+function formatErrorMessage(deps: string[], dev: boolean): string {
+  const depType = dev ? 'devDependencies' : 'dependencies';
+  return [
+    `We ran into an error when installing ${depType}, please install the following as ${depType} and try again.`,
+    `${deps.map((d) => `  - ${d}`).join('\n')}`,
+  ].join('\n');
 }
