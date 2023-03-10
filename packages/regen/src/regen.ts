@@ -43,7 +43,6 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
-    logger?.error(message);
     throw Error(message);
   }
 

@@ -3,7 +3,6 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup, dirSync } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { create, getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
 import fixturify from 'fixturify';
@@ -21,70 +20,12 @@ describe('migrate - validation', async () => {
     basePath = prepareTmpDir('initialization');
   });
 
-  test('pass in a non git project', async () => {
+  test('pass in a clean project', async () => {
     const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
 
     expect(stdout).toContain('Migration Complete');
-  });
-
-  test('pass in a clean git project', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git
-      .init()
-      .add('package.json')
-      .addConfig('user.name', 'tester')
-      .addConfig('user.email', 'tester@tester.com')
-      .commit('test');
-
-    const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
-    });
-
-    expect(stdout).toContain('Migration Complete');
-  });
-
-  test('pass in a dirty git project with --dryRun', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git.init().add('package.json');
-
-    const { stdout } = await runBin('migrate', ['-d', '--ci'], {
-      cwd: basePath,
-    });
-
-    expect(stdout).toContain('Initialize -- Dry Run Mode');
-    expect(stdout).toContain('List of files will be attempted to migrate:');
-  });
-
-  test('pass in a dirty git in multi runs', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git
-      .init()
-      .add('package.json')
-      .addConfig('user.name', 'tester')
-      .addConfig('user.email', 'tester@tester.com')
-      .commit('test');
-
-    const { stdout: firstRunStdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
-    });
-
-    expect(firstRunStdout).toContain('Migration Complete');
-
-    const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
-    });
-    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
   });
 
   test('throw if not in project root with npm/yarn workspaces', async () => {
@@ -219,17 +160,6 @@ describe('migrate: e2e', async () => {
   });
 
   test('default migrate command', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git
-      .init()
-      .add('./*')
-      .addConfig('user.name', 'tester')
-      .addConfig('user.email', 'tester@tester.com')
-      .commit('test');
-
     const { stdout } = await runBin('migrate', ['--ci'], {
       cwd: basePath,
     });
@@ -374,17 +304,6 @@ describe('migrate: e2e', async () => {
   });
 
   test('regen result after the first pass', async () => {
-    // simulate clean git project
-    const git = simpleGit({
-      baseDir: basePath,
-    } as Partial<SimpleGitOptions>);
-    await git
-      .init()
-      .add('./*')
-      .addConfig('user.name', 'tester')
-      .addConfig('user.email', 'tester@tester.com')
-      .commit('test');
-
     // first run without --regen
     await runBin('migrate', ['--ci'], {
       cwd: basePath,
