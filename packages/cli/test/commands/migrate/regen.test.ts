@@ -43,11 +43,9 @@ describe('Task: regen', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [await initTask(options), await regenTask(options, logger)];
 
-    try {
-      await listrTaskRunner(tasks);
-    } catch (error: any) {
-      expect(error.message).toContain(`Config file 'tsconfig.json' not found`);
-    }
+    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
+      `Config file 'tsconfig.json' not found`
+    );
   });
 
   test('no effect on JS filse before conversion', async () => {

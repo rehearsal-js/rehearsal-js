@@ -1,10 +1,10 @@
-import { join, resolve, dirname } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { existsSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { readJSON, getLatestTSVersion, git } from '@rehearsal/utils';
+import { getLatestTSVersion, git, readJSON } from '@rehearsal/utils';
 
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
 
@@ -27,7 +27,7 @@ const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
@@ -40,7 +40,7 @@ const afterEachCleanup = async (): Promise<void> => {
 
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
-  await execa(PNPM_PATH, ['remove', `typescript`]);
+  await execa(PNPM_PATH, ['remove', '-D', `typescript`]);
   await execa(PNPM_PATH, ['add', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });

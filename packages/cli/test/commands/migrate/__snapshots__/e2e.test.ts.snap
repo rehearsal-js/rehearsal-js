@@ -107,39 +107,6 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
-exports[`migrate - validation > pass in a dirty git in multi runs 1`] = `
-"info:    @rehearsal/migrate<test-version>
-[STARTED] Validate project
-[SUCCESS] Validate project
-[STARTED] Initialize
-[DATA] Running migration on initilization
-[SUCCESS] Initialize
-[STARTED] Install dependencies
-[SKIPPED] Install dependencies
-[STARTED] Create tsconfig.json
-[SKIPPED] Create tsconfig.json
-[STARTED] Create eslint config
-[SKIPPED] Create eslint config
-[STARTED] Add package scripts
-[DATA] Adding \\"lint:tsc\\" script in package.json
-[SUCCESS] Add package scripts
-[STARTED] Convert JS files to TS
-[TITLE] Migration Complete
-[TITLE]   0 JS files converted to TS
-[TITLE]   0 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
-[TITLE]   0 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 0 eslint errors, with details in the report
-[SUCCESS] Migration Complete
-[SUCCESS]   0 JS files converted to TS
-[SUCCESS]   0 errors caught by rehearsal
-[SUCCESS]   0 have been fixed by rehearsal
-[SUCCESS]   0 errors need to be fixed manually
-[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 0 eslint errors, with details in the report"
-`;
-
 exports[`migrate - validation > relative entrypoint inside project root works 1`] = `
 "info:    @rehearsal/migrate<test-version>
 [STARTED] Validate project
