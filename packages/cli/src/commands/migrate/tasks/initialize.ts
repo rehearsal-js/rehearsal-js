@@ -19,9 +19,10 @@ export async function initTask(
         ctx = { ...ctx, ...context };
       }
       // get custom config
-      const userConfig = validateUserConfig(options.basePath, 'rehearsal-config.json')
-        ? new UserConfig(options.basePath, 'migrate')
-        : undefined;
+      const userConfig =
+        options.userConfig && validateUserConfig(options.basePath, options.userConfig)
+          ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+          : undefined;
 
       ctx.userConfig = userConfig;
 

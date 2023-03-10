@@ -54,6 +54,11 @@ migrateCommand
     ['sarif']
   )
   .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
+  .option(
+    '-u, --userConfig <custom json config for migrate command>',
+    'path to rehearsal config',
+    'rehearsal-config.json'
+  )
   .option('--ci', 'non-interactive mode')
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
@@ -68,7 +73,18 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
   });
 
-  const { analyze, validateTask, convertTask, regenTask, reportExisted } = await loadTasks();
+  const {
+    validateTask,
+    analyzeTask,
+    initTask,
+    depInstallTask,
+    tsConfigTask,
+    lintConfigTask,
+    createScriptsTask,
+    convertTask,
+    regenTask,
+    reportExisted,
+  } = await loadTasks();
 
   logger.info(`@rehearsal/migrate ${version.trim()}`);
 
@@ -118,7 +134,15 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     exitOnError: true,
   };
 
-  const tasks = [validateTask(options, logger), analyze(options)];
+  const tasks = [
+    await validateTask(options, logger),
+    await initTask(options),
+    await analyzeTask(options),
+    await depInstallTask(options),
+    await tsConfigTask(options),
+    await lintConfigTask(options),
+    await createScriptsTask(options),
+  ];
 
   try {
     if (!options.ci) {
@@ -137,7 +161,11 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       await tasks.run();
     } else if (options.skipInit) {
       await new Listr(
-        [await validateTask(options, logger), analyze(options), await convertTask(options, logger)],
+        [
+          await validateTask(options, logger),
+          analyzeTask(options),
+          await convertTask(options, logger),
+        ],
         defaultListrOption
       ).run();
     } else if (reportExisted(options.basePath, options.outputPath)) {
@@ -194,11 +222,27 @@ function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function loadTasks() {
   return await import('./tasks/index.js').then((m) => {
-    const { analyze, convertTask, regenTask, validateTask, reportExisted } = m;
+    const {
+      initTask,
+      analyzeTask,
+      depInstallTask,
+      convertTask,
+      tsConfigTask,
+      lintConfigTask,
+      createScriptsTask,
+      regenTask,
+      validateTask,
+      reportExisted,
+    } = m;
 
     return {
-      analyze,
+      initTask,
+      analyzeTask,
+      depInstallTask,
       convertTask,
+      tsConfigTask,
+      lintConfigTask,
+      createScriptsTask,
       regenTask,
       validateTask,
       reportExisted,

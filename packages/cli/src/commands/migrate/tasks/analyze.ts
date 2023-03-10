@@ -3,7 +3,7 @@ import {
   getMigrationStrategy,
   SourceFile,
 } from '@rehearsal/migration-graph';
-import { determineProjectName, validateUserConfig } from '@rehearsal/utils';
+import { determineProjectName } from '@rehearsal/utils';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import { State } from '../../../helpers/state.js';
@@ -13,14 +13,13 @@ import {
   MigrateCommandOptions,
   PackageSelection,
 } from '../../../types.js';
-import { UserConfig } from '../../../user-config.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:analyze');
 
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 
-export function analyze(
+export function analyzeTask(
   options: MigrateCommandOptions
 ): ListrTask<MigrateCommandContext, ListrDefaultRenderer> {
   return {
@@ -103,15 +102,11 @@ export function analyze(
         task.output = `Running migration on ${projectName}`;
       }
 
-      const userConfig = validateUserConfig(options.basePath, 'rehearsal-config.json')
-        ? new UserConfig(options.basePath, 'migrate')
-        : undefined;
-
       // construct migration strategy and prepare all the files needs to be migrated
       const strategy = getMigrationStrategy(ctx.targetPackagePath, {
         entrypoint: options.entrypoint,
-        exclude: userConfig?.exclude,
-        include: userConfig?.include,
+        exclude: ctx.userConfig?.exclude,
+        include: ctx.userConfig?.include,
       });
 
       const files: SourceFile[] = strategy.getMigrationOrder();
@@ -120,7 +115,6 @@ export function analyze(
         files.map((file) => file.relativePath)
       );
 
-      ctx.userConfig = userConfig;
       ctx.strategy = strategy;
       ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
       ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
