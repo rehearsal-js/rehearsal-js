@@ -11,7 +11,7 @@ export type PrettierPluginOptions = PluginOptions;
  * Source code formatting
  */
 export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
-  async run(
+  async *run(
     fileName: string,
     context: PluginsRunnerContext,
     options: PrettierPluginOptions
@@ -20,7 +20,7 @@ export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
 
     try {
       const result = format(text, options);
-
+      yield;
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.rehearsal.setFileText(fileName, result);
 

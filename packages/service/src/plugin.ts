@@ -3,14 +3,18 @@ import { Logger } from 'winston';
 import { RehearsalService } from './rehearsal-service.js';
 
 export interface Plugin<PluginOptions> {
-  run(fileName: string, context: PluginsRunnerContext, options: PluginOptions): PluginResult;
+  run(
+    fileName: string,
+    context: PluginsRunnerContext,
+    options: PluginOptions
+  ): AsyncGenerator<void, string[]>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PluginOptions {}
 
 export type PluginIterator = Promise<AsyncIterator<string[]>>;
-export type PluginResult = Promise<string[]>;
+export type PluginResult = AsyncGenerator<void, string[]>;
 
 export interface PluginsRunnerContext {
   basePath: string;
@@ -87,12 +91,32 @@ export class PluginsRunner {
     fileName: string,
     allChangedFiles: Set<string>
   ): AsyncGenerator<Set<string>, void> {
-    for (const plugin of this.plugins) {
-      const changedFiles = await plugin.plugin.run(fileName, this.context, plugin.options);
+    for await (const plugin of this.plugins) {
+      const innerWork = plugin.plugin.run(fileName, this.context, plugin.options)[
+        Symbol.asyncIterator
+      ];
 
-      allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
+      let done = false;
+      let value: string | void;
+      do {
+        // @todo this is where can thread the listr promp into the inner loop
+        const result = await innerWork().next();
+        done = !!result.done;
+        value = result.value;
+      } while (!done);
+
+      if (value && value !== '') {
+        allChangedFiles = new Set([...allChangedFiles, value]);
+      }
 
       yield allChangedFiles;
     }
   }
 }
+
+/**
+
+  run -> file
+  each turn of the inner loop yield and allow for input
+  at end of the internal loop return file with changes
+ */

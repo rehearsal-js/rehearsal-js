@@ -13,7 +13,7 @@ export interface LintPluginOptions extends PluginOptions {
  * Source code formatting
  */
 export class LintPlugin implements Plugin<LintPluginOptions> {
-  async run(
+  async *run(
     fileName: string,
     context: PluginsRunnerContext,
     options: LintPluginOptions
@@ -28,6 +28,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
 
       this.terminalOutput(false);
       const [report] = await eslint.lintText(text, { filePath: fileName });
+      yield;
       this.terminalOutput(true);
 
       if (options.reportErrors) {

@@ -13,7 +13,7 @@ export interface ReRehearsePluginOptions extends PluginOptions {
  * Removes all comments with `@rehearsal` tag inside
  */
 export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
-  async run(
+  async *run(
     fileName: string,
     context: PluginsRunnerContext,
     options: ReRehearsePluginOptions
@@ -25,7 +25,7 @@ export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
     const tagStarts = [...text.matchAll(new RegExp(options.commentTag, 'g'))].map((m) => m.index!);
 
     // Walk through all comments with a tag in it from the bottom of the file
-    for (const tagStart of tagStarts.reverse()) {
+    for await (const tagStart of tagStarts.reverse()) {
       const commentSpan = context.rehearsal
         .getLanguageService()
         .getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
@@ -37,6 +37,9 @@ export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
       // Remove comment, together with the {} that wraps around comments in React, and  `\n`
       const boundary = this.getBoundaryOfCommentBlock(commentSpan.start, commentSpan.length, text);
       text = text.substring(0, boundary.start) + text.substring(boundary.end + 1);
+
+      // Yielding back to the prompt if need be
+      yield;
     }
 
     context.rehearsal.setFileText(fileName, text);

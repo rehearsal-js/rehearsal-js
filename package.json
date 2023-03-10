@@ -7,7 +7,7 @@
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "scripts": {
-    "build": "node processDiagnosticMessages.mjs && tsc -b",
+    "build": "node processDiagnosticMessages.mjs ./packages/codefixes/src/diagnosticMessages.json && tsc -b",
     "lint": "pnpm lint:package-json && pnpm recursive run lint",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",

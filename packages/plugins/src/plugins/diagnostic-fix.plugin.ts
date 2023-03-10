@@ -56,13 +56,21 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
   attemptedToFix: string[] = [];
 
-  async run(
+  async *run(
     fileName: string,
     context: PluginsRunnerContext,
     options: DiagnosticFixPluginOptions
   ): PluginResult {
     const diagnostics = this.getDiagnostics(context.rehearsal, fileName);
     const allFixedFiles: Set<string> = new Set();
+
+    DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
+
+    for await (const diagnostic of diagnostics) {
+      yield;
+    }
+
+    return Array.from(allFixedFiles);
 
     // options.safeFixes ??= true;
     // options.strictTyping ??= true;

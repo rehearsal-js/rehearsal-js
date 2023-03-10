@@ -109,6 +109,7 @@ module.exports = {
     '*.config.*',
     'release.js',
     'processDiagnosticMessages.mjs',
+    'processCodeFixes.mjs',
     'packages/codefixes/src/diagnosticInformationMap.generated.ts',
   ],
 };
