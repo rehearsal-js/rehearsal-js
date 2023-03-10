@@ -1,4 +1,4 @@
-import { CodeActionCommand, CodeFixAction, type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, CodeFixAction } from 'typescript';
 import debug from 'debug';
 import hash from 'object-hash';
 
@@ -7,7 +7,6 @@ import {
   type DiagnosticWithContext,
   Diagnostics,
   isInstallPackageCommand,
-  isDiagnosticSupported,
   eligiableDiagnostics,
 } from '@rehearsal/codefixes';
 import {
@@ -56,75 +55,45 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
 
   attemptedToFix: string[] = [];
 
-  async *run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: DiagnosticFixPluginOptions
-  ): PluginResult {
-    const diagnostics = this.getDiagnostics(context.rehearsal, fileName);
+  async *run(fileName: string, context: PluginsRunnerContext): PluginResult {
+    this.resetAttemptedToFix();
+
+    let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
     const allFixedFiles: Set<string> = new Set();
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
     for await (const diagnostic of diagnostics) {
-      yield;
+      if (!diagnostic.node) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
+        continue;
+      }
+
+      const fix = this.getCodeFix(diagnostic);
+
+      if (!fix) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
+        continue;
+      }
+
+      if (isInstallPackageCommand(fix)) {
+        await this.applyCommandAction(fix.commands, context);
+        yield; // placeholder for prompt
+      }
+
+      for (const textChange of this.getText(fix, context, diagnostic)) {
+        context.rehearsal.setFileText(textChange.file, textChange.text);
+        yield; // placeholder for promp;
+
+        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+      }
+
+      diagnostics = this.getDiagnostics(context.rehearsal, fileName);
     }
 
+    context.reporter.incrementRunFixedItemCount();
+
     return Array.from(allFixedFiles);
-
-    // options.safeFixes ??= true;
-    // options.strictTyping ??= true;
-
-    // let diagnostics = this.getDiagnostics(context.rehearsal, fileName);
-
-    // DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
-
-    // const allFixedFiles: Set<string> = new Set();
-
-    // this.resetAttemptedToFix();
-
-    // while (diagnostics.length > 0) {
-    //   const diagnostic = diagnostics.shift()!;
-
-    //   if (!diagnostic.node) {
-    //     DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
-    //     continue;
-    //   }
-
-    //   const fix = this.getCodeFix(diagnostic, options);
-
-    //   if (!fix) {
-    //     DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
-    //     continue;
-    //   }
-
-    //   if (isInstallPackageCommand(fix)) {
-    //     await this.applyCommandAction(fix.commands, context);
-    //   }
-
-    //   for (const fileTextChange of fix.changes) {
-    //     let text = context.rehearsal.getFileText(fileTextChange.fileName);
-
-    //     const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
-    //     for (const textChange of textChanges) {
-    //       DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
-
-    //       text = applyTextChange(text, textChange);
-    //     }
-
-    //     context.rehearsal.setFileText(fileTextChange.fileName, text);
-    //     allFixedFiles.add(fileTextChange.fileName);
-
-    //     DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
-    //   }
-
-    //   context.reporter.incrementRunFixedItemCount();
-
-    //   // Get updated list of diagnostics
-    //   diagnostics = this.getDiagnostics(context.rehearsal, fileName);
-    // }
-
-    // return Array.from(allFixedFiles);
   }
 
   /**
@@ -147,6 +116,25 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     }));
   }
 
+  private *getText(
+    fix: CodeFixAction,
+    context: PluginsRunnerContext,
+    diagnostic: DiagnosticWithContext
+  ): Generator<{ file: string; text: string }> {
+    for (const fileTextChange of fix.changes) {
+      let text = context.rehearsal.getFileText(fileTextChange.fileName);
+
+      const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
+      for (const textChange of textChanges) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
+
+        text = applyTextChange(text, textChange);
+      }
+
+      yield { text, file: fileTextChange.fileName };
+    }
+  }
+
   private async applyCommandAction(
     command: CodeActionCommand[],
     context: PluginsRunnerContext
@@ -160,45 +148,10 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
   }
 
   /**
-   * Sorts diagnostics by the `start` position with prioritization of diagnostic have codes in `prioritizedCodes`.
-   * If the diagnostic has the code mentioned in the `prioritizedCodes` list, it will be moved to the start and will
-   * be ordered against other prioritized codes in the order codes provided in the `prioritizedCodes`.
-   */
-  // sort(diagnostics: DiagnosticWithLocation[], prioritizedCodes: number[]): void {
-  //   diagnostics.sort((left, right) => {
-  //     if (left.code != right.code) {
-  //       const leftIndex = prioritizedCodes.indexOf(left.code);
-  //       const rightIndex = prioritizedCodes.indexOf(right.code);
-
-  //       // Sort prioritized codes by how they ordered in `prioritizedCodes`
-  //       if (leftIndex >= 0 && rightIndex >= 0) {
-  //         return leftIndex - rightIndex;
-  //       }
-
-  //       if (leftIndex >= 0) {
-  //         return -1;
-  //       }
-
-  //       if (rightIndex >= 0) {
-  //         return 1;
-  //       }
-  //     }
-
-  //     return left.start - right.start;
-  //   });
-  // }
-
-  /**
    * Returns a code fix that expected to fix provided diagnostic
    */
-  getCodeFix(
-    diagnostic: DiagnosticWithContext,
-    options: DiagnosticFixPluginOptions
-  ): CodeFixAction | undefined {
-    const fixes = codefixes.getCodeFixes(diagnostic, {
-      safeFixes: options.safeFixes,
-      strictTyping: options.strictTyping,
-    });
+  getCodeFix(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+    const fixes = codefixes.getCodeFixes(diagnostic);
 
     if (fixes.length === 0) {
       return undefined;

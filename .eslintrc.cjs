@@ -111,5 +111,6 @@ module.exports = {
     'processDiagnosticMessages.mjs',
     'processCodeFixes.mjs',
     'packages/codefixes/src/diagnosticInformationMap.generated.ts',
+    'packages/codefixes/src/codefixInformationMap.generated.ts',
   ],
 };

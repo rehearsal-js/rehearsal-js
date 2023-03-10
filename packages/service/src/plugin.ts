@@ -97,7 +97,7 @@ export class PluginsRunner {
       ];
 
       let done = false;
-      let value: string | void;
+      let value: string[] | void;
       do {
         // @todo this is where can thread the listr promp into the inner loop
         const result = await innerWork().next();
@@ -105,8 +105,8 @@ export class PluginsRunner {
         value = result.value;
       } while (!done);
 
-      if (value && value !== '') {
-        allChangedFiles = new Set([...allChangedFiles, value]);
+      if (value && value.length !== 0) {
+        allChangedFiles = new Set([...allChangedFiles, ...value]);
       }
 
       yield allChangedFiles;

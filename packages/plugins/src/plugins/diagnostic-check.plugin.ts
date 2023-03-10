@@ -26,7 +26,7 @@ export interface DiagnosticCheckPluginOptions extends PluginOptions {
 }
 
 export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOptions> {
-  async run(
+  async *run(
     fileName: string,
     context: PluginsRunnerContext,
     options: DiagnosticCheckPluginOptions
@@ -40,12 +40,14 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
     const allFixedFiles: Set<string> = new Set();
 
-    while (diagnostics.length > 0) {
-      const diagnostic = diagnostics.shift()!;
+    for await (const diagnostic of diagnostics) {
       const hint = hints.getHint(diagnostic);
 
       if (options.addHints) {
         const text = this.addHintComment(diagnostic, hint, options.commentTag);
+
+        yield; // placeholder for prompt
+
         context.rehearsal.setFileText(fileName, text);
 
         allFixedFiles.add(fileName);
@@ -67,6 +69,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
       diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
     }
+
     return Array.from(allFixedFiles);
   }
 
@@ -162,7 +165,6 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
       .trim();
     return !comment;
   }
-
   /**
    * Builds and adds a `@rehearsal` comment above the affected node
    */

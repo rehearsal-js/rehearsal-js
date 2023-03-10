@@ -9,7 +9,7 @@ import {
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
-import type { ListrContext, ListrTask } from 'listr2';
+import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
 

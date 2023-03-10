@@ -9,8 +9,8 @@ import ts, {
   TextChange,
   type UserPreferences,
 } from 'typescript';
-import { hasFix } from './codefixInformationMap.js';
-import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
+import { hasFix } from './supported-codefixes.js';
+import type { CodeFixCollection, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,10 +27,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
   hasPrettier: boolean | undefined;
   prettierConfigs: PrettierOptions | undefined;
 
-  getFixesForDiagnostic(
-    diagnostic: DiagnosticWithContext,
-    filter: CodeFixCollectionFilter
-  ): CodeFixAction[] {
+  getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[] {
     const languageService = diagnostic.service;
 
     const userPreferences: UserPreferences = {
@@ -56,38 +53,26 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     const filteredCodeFixes: CodeFixAction[] = [];
 
     for (let fix of fixes) {
-      if (filter.safeFixes && !this.isCodeFixSafe(fix)) {
+      if (!hasFix(fix.fixName)) {
         continue;
       }
 
-      if (filter.strictTyping) {
-        let strictCodeFix = this.makeCodeFixStrict(fix);
+      let strictCodeFix = this.makeCodeFixStrict(fix);
 
-        if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
-          strictCodeFix = fix;
-        }
-
-        if (!strictCodeFix) {
-          continue;
-        }
-
-        fix = strictCodeFix;
+      if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
+        strictCodeFix = fix;
       }
+
+      if (!strictCodeFix) {
+        continue;
+      }
+
+      fix = strictCodeFix;
 
       filteredCodeFixes.push(fix);
     }
 
     return filteredCodeFixes;
-  }
-
-  /**
-   * Checks if the codefix is safe to apply
-   *
-   * Filtering out codefixes based on fixName,
-   * because `fixId` is not exists when there is only one/last error of a certain type in the file
-   */
-  private isCodeFixSafe(fix: CodeFixAction): boolean {
-    return hasFix(fix.fixName);
   }
 
   /**

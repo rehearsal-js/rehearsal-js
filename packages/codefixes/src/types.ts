@@ -35,10 +35,7 @@ export interface CodeFixCollectionFilter {
 }
 
 export interface CodeFixCollection {
-  getFixesForDiagnostic(
-    diagnostic: DiagnosticWithContext,
-    filter: CodeFixCollectionFilter
-  ): CodeFixAction[];
+  getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[];
 }
 
 export interface CodeFix {
