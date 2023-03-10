@@ -1,63 +1,63 @@
 // Vitest Snapshot v1
 
+exports[`Task: dependency-install > do not run postInstall command if empty 1`] = `
+"[STARTED] Install dependencies
+[DATA] Install dependencies from config
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+"
+`;
+
 exports[`Task: dependency-install > install custom dependencies 1`] = `
 "[STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependency fs-extra...
-[DATA] Installing devDependency @types/node...
-[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
-[DATA] Installing devDependency @typescript-eslint/parser...
-[DATA] Installing devDependency eslint...
-[DATA] Installing devDependency eslint-config-prettier...
-[DATA] Installing devDependency eslint-plugin-prettier...
-[DATA] Installing devDependency prettier...
-[DATA] Installing devDependency typescript...
-[DATA] Installing devDependency tmp...
+[DATA] Installing dependecies: fs-extra
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 "
 `;
 
 exports[`Task: dependency-install > install required dependencies 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependency @types/node...
-[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
-[DATA] Installing devDependency @typescript-eslint/parser...
-[DATA] Installing devDependency eslint...
-[DATA] Installing devDependency eslint-config-prettier...
-[DATA] Installing devDependency eslint-plugin-prettier...
-[DATA] Installing devDependency prettier...
-[DATA] Installing devDependency typescript...
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 "
 `;
 
-exports[`Task: dependency-install > postInstall hook from user config 1`] = `
+exports[`Task: dependency-install > multiple postInstall commands from user config 1`] = `
 "[STARTED] Install dependencies
 [DATA] Install dependencies from config
 [DATA] Run postInstall hook from config
-[DATA] Installing devDependency @types/node...
-[DATA] Installing devDependency @typescript-eslint/eslint-plugin...
-[DATA] Installing devDependency @typescript-eslint/parser...
-[DATA] Installing devDependency eslint...
-[DATA] Installing devDependency eslint-config-prettier...
-[DATA] Installing devDependency eslint-plugin-prettier...
-[DATA] Installing devDependency prettier...
-[DATA] Installing devDependency typescript...
-[DATA] Installing devDependency fs-extra...
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 "
 `;
 
 exports[`Task: dependency-install > show failed deps 1`] = `
-"Could not install the following packages as dependencies:
-this-is-not-existed
-Please try again or install manually as dependencies in your project.
-Could not install the following packages as devDependencies:
-this-would-fail
-Please try again or install manually as devDependencies in your project."
+"We ran into an error when installing dependencies, please install the following as dependencies and try again.
+  - this-is-not-existed
+We ran into an error when installing devDependencies, please install the following as devDependencies and try again.
+  - @types/node
+  - @typescript-eslint/eslint-plugin
+  - @typescript-eslint/parser
+  - eslint
+  - eslint-config-prettier
+  - eslint-plugin-prettier
+  - prettier
+  - typescript
+  - this-would-fail"
 `;
 
-exports[`Task: dependency-install > skip install custom dependencies 1`] = `
+exports[`Task: dependency-install > single postInstall command from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Install dependencies from config
+[DATA] Run postInstall hook from config
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, fs-extra
+[SUCCESS] Install dependencies
+"
+`;
+
+exports[`Task: dependency-install > skip install custom deps 1`] = `
 "[STARTED] Install dependencies
 [SKIPPED] Install dependencies
 "

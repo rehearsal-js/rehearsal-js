@@ -1,22 +1,22 @@
 import { resolve } from 'path';
 import { describe, expect, test } from 'vitest';
-import { ReRehearsePlugin } from '../src/index.js';
+import { PrettierPlugin } from '../src/index.js';
 import { initProject, mockPluginRunnerContext } from './utils.js';
 
-describe('Test ReRehearsalPlugin', () => {
+describe('Test PrettierPlugin', () => {
   test('run', async () => {
     const project = await initProject('prettier-test', {
-      'index.ts': './test/fixtures/re-rehearse.ts.fixture',
+      'index.ts': './test/fixtures/prettier.ts.fixture',
     });
 
     const context = mockPluginRunnerContext(project);
 
-    const plugin = new ReRehearsePlugin();
+    const plugin = new PrettierPlugin();
 
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
 
-      const result = await plugin.run(fileName, context, { commentTag: '@rehearsal' });
+      const result = await plugin.run(fileName, context, {});
       const resultText = context.rehearsal.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
