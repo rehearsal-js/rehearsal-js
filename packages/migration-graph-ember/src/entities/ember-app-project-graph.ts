@@ -132,7 +132,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     });
   }
 
-  protected override discoveryByEntrypoint(entrypoint: string): EmberAppPackage {
+  protected override discoveryByEntrypoint(entrypoint: string): EmberProjectPackage {
     // Create a package to make sure things work, but ignore the rest.
     const someEntrypoint = join(this.rootDir, entrypoint);
 
@@ -144,11 +144,11 @@ export class EmberAppProjectGraph extends ProjectGraph {
       stopAt: this.rootDir,
     });
 
-    const packageDir = dirname(foundPackageJson);
-
-    if (!packageDir) {
+    if (!foundPackageJson) {
       throw new Error(`Unable to find package.json for package that contains ${entrypoint}`);
     }
+
+    const packageDir = dirname(foundPackageJson);
 
     // Adjust entrypoint to be relative to the package directory
     const relativeEntrypoint = relative(packageDir, someEntrypoint);
