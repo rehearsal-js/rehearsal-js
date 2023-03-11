@@ -162,17 +162,15 @@ export default class Salutation extends Component {
       'should have an edge between app and in-repo-addon'
     ).toBe(true);
   });
+  describe('options.entrypoint', () => {
+    test('should discover only one package and it be from the addon', async () => {
+      const project = getEmberProject('app-with-in-repo-addon');
 
-  test('options.entrypoint', async () => {
-    const project = getEmberProject('app-with-in-repo-addon');
-
-    // TODO projectGraph should have meta data about how some-addon@date is being used.
-
-    // Augment the app and addon code to have component that uses a service from the addon.
-    project.mergeFiles({
-      app: {
-        components: {
-          'obtuse.js': `
+      // Augment the app and addon code to have component that uses a service from the addon.
+      project.mergeFiles({
+        app: {
+          components: {
+            'obtuse.js': `
             import Component from '@glimmer/component';
             import { inject as service } from '@ember/service';
 
@@ -180,44 +178,125 @@ export default class Salutation extends Component {
               @service('some-addon@date') myDate;
             }
           `,
+          },
         },
-      },
-      lib: {
-        'some-addon': {
-          addon: {
-            services: {
-              'date.js': `
+        lib: {
+          'some-addon': {
+            addon: {
+              services: {
+                'date.js': `
                     import { inject as service } from '@ember/service';
                     export default class DateService extends Service {}
                   `,
+              },
+              utils: {
+                lib: {
+                  'another-util.js': `console.log('Hello World');`,
+                },
+                'some-util.js': `import anotherUtil from 'some-addon/utils/lib/another-util';`,
+              },
             },
-          },
-          app: {
-            services: {
-              'date.js': `export { default } from 'some-addon/services/date';`,
+            app: {
+              services: {
+                'date.js': `export { default } from 'some-addon/services/date';`,
+              },
             },
           },
         },
-      },
+      });
+
+      await setupProject(project);
+
+      // This entrypoint is relative to the project rootDir
+      const entrypoint = 'lib/some-addon/addon/utils/some-util.js';
+
+      const projectGraph = new EmberAppProjectGraph(project.baseDir, {
+        entrypoint,
+      });
+      projectGraph.discover();
+
+      const orderedPackages = projectGraph.graph.topSort();
+
+      expect(orderedPackages.length).toBe(1);
+
+      const [someNode] = orderedPackages;
+      const somePackage = someNode.content.pkg;
+      expect(somePackage.packageName, 'there should only be a single package in the graph').toBe(
+        'some-addon'
+      );
+
+      expect(
+        somePackage.includePatterns.has('addon/utils/some-util.js'),
+        'a package whose include pattern is only the entrypoint'
+      ).toBeTruthy();
+
+      const allFiles = Array.from(orderedPackages)
+        .map((pkg) => {
+          const graph = pkg.content.pkg.getModuleGraph();
+          return flatten(graph.topSort());
+        })
+        .flat();
+
+      // Assert the graph has these edges
+      expect(allFiles).toStrictEqual([
+        'addon/utils/lib/another-util.js',
+        'addon/utils/some-util.js',
+      ]);
     });
+    test('should not include a service dependency', async () => {
+      const project = getEmberProject('app-with-in-repo-addon');
 
-    await setupProject(project);
+      // Augment the app and addon code to have component that uses a service from the addon.
+      project.mergeFiles({
+        app: {
+          components: {
+            'obtuse.js': `
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
 
-    const projectGraph = new EmberAppProjectGraph(project.baseDir, {
-      entrypoint: 'app/components/obtuse.js',
+            export default class Obtuse extends Component {
+              @service('some-addon@date') myDate;
+            }
+          `,
+          },
+        },
+        lib: {
+          'some-addon': {
+            addon: {
+              services: {
+                'date.js': `
+                    import { inject as service } from '@ember/service';
+                    export default class DateService extends Service {}
+                  `,
+              },
+            },
+            app: {
+              services: {
+                'date.js': `export { default } from 'some-addon/services/date';`,
+              },
+            },
+          },
+        },
+      });
+
+      await setupProject(project);
+
+      const projectGraph = new EmberAppProjectGraph(project.baseDir, {
+        entrypoint: 'app/components/obtuse.js',
+      });
+      projectGraph.discover();
+
+      const orderedPackages = projectGraph.graph.topSort();
+
+      const allFiles = Array.from(orderedPackages)
+        .map((pkg) => {
+          const modules = pkg.content.pkg.getModuleGraph();
+          return flatten(modules.topSort());
+        })
+        .flat();
+
+      expect(allFiles).toStrictEqual(['app/components/obtuse.js']);
     });
-    projectGraph.discover();
-
-    const orderedPackages = projectGraph.graph.topSort();
-
-    const allFiles = Array.from(orderedPackages)
-      .map((pkg) => {
-        const modules = pkg.content.pkg.getModuleGraph();
-        return flatten(modules.topSort());
-      })
-      .flat();
-
-    expect(allFiles).toStrictEqual(['app/components/obtuse.js']);
   });
 
   test('options.exclude', async () => {
