@@ -80,6 +80,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     tsConfigTask,
     lintConfigTask,
     createScriptsTask,
+    analyzeTask,
     convertTask,
     regenTask,
     reportExisted,
@@ -134,12 +135,13 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   };
 
   const tasks = [
-    await validateTask(options, logger),
-    await initTask(options),
-    await depInstallTask(options),
-    await tsConfigTask(options),
-    await lintConfigTask(options),
-    await createScriptsTask(options),
+    validateTask(options, logger),
+    initTask(options),
+    depInstallTask(options),
+    tsConfigTask(options),
+    lintConfigTask(options),
+    createScriptsTask(options),
+    analyzeTask(options),
   ];
 
   try {
@@ -147,22 +149,23 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
-      await new Listr([await convertTask(options, logger, ctx)], {
+      await new Listr([convertTask(options, logger, ctx)], {
         renderer: 'simple',
         ...defaultListrOption,
       }).run();
     } else if (options.regen) {
       const tasks = new Listr(
-        [await validateTask(options, logger), await regenTask(options, logger)],
+        [validateTask(options, logger), regenTask(options, logger)],
         defaultListrOption
       );
       await tasks.run();
     } else if (options.skipInit) {
       await new Listr(
         [
-          await validateTask(options, logger),
-          await initTask(options),
-          await convertTask(options, logger),
+          validateTask(options, logger),
+          initTask(options),
+          analyzeTask(options),
+          convertTask(options, logger),
         ],
         defaultListrOption
       ).run();
@@ -177,17 +180,14 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
           `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
         );
         await new Listr(
-          [
-            await validateTask(options, logger),
-            await sequentialTask(options, logger, previousRuns),
-          ],
+          [validateTask(options, logger), sequentialTask(options, logger, previousRuns)],
           defaultListrOption
         ).run();
       } else {
-        await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
+        await new Listr([...tasks, convertTask(options, logger)], defaultListrOption).run();
       }
     } else {
-      await new Listr([...tasks, await convertTask(options, logger)], defaultListrOption).run();
+      await new Listr([...tasks, convertTask(options, logger)], defaultListrOption).run();
     }
   } catch (e) {
     logger.error(`${e}`);
@@ -225,6 +225,7 @@ async function loadTasks() {
   return await import('./tasks/index.js').then((m) => {
     const {
       initTask,
+      analyzeTask,
       depInstallTask,
       convertTask,
       tsConfigTask,
@@ -237,6 +238,7 @@ async function loadTasks() {
 
     return {
       initTask,
+      analyzeTask,
       depInstallTask,
       convertTask,
       tsConfigTask,

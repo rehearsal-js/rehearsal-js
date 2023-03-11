@@ -4,7 +4,7 @@ exports[`migrate init > default run 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -35,11 +35,6 @@ exports[`migrate init > default run 2`] = `
     "strict": true,
     "target": "ES2021",
   },
-  "include": [
-    "foo.ts",
-    "depends-on-foo.ts",
-    "index.ts",
-  ],
 }
 `;
 
@@ -74,7 +69,7 @@ exports[`migrate init > pass user config 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
@@ -97,7 +92,7 @@ exports[`migrate init > skip dep install, ts config, and lint config if exists 1
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies

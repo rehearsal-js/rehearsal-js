@@ -132,6 +132,7 @@ importers:
       js-yaml: ^4.1.0
       json5: 2.2.3
       listr2: ^5.0.7
+      minimatch: ^7.4.2
       semver: ^7.3.8
       simple-git: ^3.16.0
       tmp: ^0.2.1
@@ -162,6 +163,7 @@ importers:
       js-yaml: 4.1.0
       json5: 2.2.3
       listr2: 5.0.7_enquirer@2.3.6
+      minimatch: 7.4.2
       semver: 7.3.8
       simple-git: 3.16.1
       tmp: 0.2.1
@@ -4113,6 +4115,13 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+
+  /minimatch/7.4.2:
+    resolution: {integrity: sha512-xy4q7wou3vUoC9k1xGTXc+awNdGaGVHtFUaey8tiX4H1QRc04DZ/rmDFwNm2EBsuYEhAZ6SgMmYf3InGY6OauA==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
 
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}

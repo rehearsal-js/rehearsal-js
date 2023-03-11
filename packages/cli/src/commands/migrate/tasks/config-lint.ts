@@ -64,10 +64,10 @@ export function shouldRunLintConfigTask(
   }
 }
 
-export async function lintConfigTask(
+export function lintConfigTask(
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: 'Create eslint config',
     enabled: (): boolean => !options.dryRun,
@@ -93,7 +93,7 @@ export async function lintConfigTask(
         const rehearsalConfigPath = getRehearsalFilename(format);
 
         // create .rehearsal-eslintrc.js
-        await createRehearsalConfig(options.basePath, format);
+        createRehearsalConfig(options.basePath, format);
 
         if (relativeConfigPath) {
           task.output = `${relativeConfigPath} already exists, extending Rehearsal default eslint-related config`;
@@ -117,7 +117,7 @@ export async function lintConfigTask(
   };
 }
 
-async function createRehearsalConfig(basePath: string, format: FORMAT): Promise<void> {
+function createRehearsalConfig(basePath: string, format: FORMAT): void {
   const filename = getRehearsalFilename(format);
 
   const rehearsalConfigStr = getRehearsalConfigStr(format);
@@ -148,7 +148,7 @@ async function extendsRehearsalInCurrentConfig(
     const configStr = formatConfig(newConfig, format);
     await writeLintConfig(configPath, configStr, basePath, format);
   } else {
-    extendsRehearsalInNewConfig(basePath, `.eslintrc.${FORMAT.JS}`);
+    await extendsRehearsalInNewConfig(basePath, `.eslintrc.${FORMAT.JS}`);
   }
 }
 

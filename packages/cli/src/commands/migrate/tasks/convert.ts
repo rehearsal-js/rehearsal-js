@@ -15,11 +15,11 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
-export async function convertTask(
+export function convertTask(
   options: MigrateCommandOptions,
   logger: Logger,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: 'Convert JS files to TS',
     enabled: (): boolean => !options.dryRun,
@@ -37,8 +37,16 @@ export async function convertTask(
       const projectName = determineProjectName() || '';
       const { basePath, entrypoint } = options;
       const tscPath = await getPathToBinary('tsc', { cwd: basePath });
-      const { stdout } = await execa(tscPath, ['--version']);
-      const tsVersion = stdout.split(' ')[1];
+      let tsVersion = '';
+
+      // If there is no access to tsc binary, stop
+      try {
+        const { stdout } = await execa(tscPath, ['--version']);
+        tsVersion = stdout.split(' ')[1];
+      } catch (e) {
+        throw new Error(`Cannot find or access tsc in ${tscPath}`);
+      }
+
       const reporter = new Reporter(
         { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
         logger

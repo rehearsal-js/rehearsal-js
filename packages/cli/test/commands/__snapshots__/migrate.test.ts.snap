@@ -1,11 +1,11 @@
 // Vitest Snapshot v1
 
 exports[`migrate - initialization > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Initialize -- Dry Run Mode
+"[STARTED] Initialize
 [DATA] Running migration on basic
 [DATA] List of files will be attempted to migrate:
 [DATA]  foo.js
 [DATA] depends-on-foo.js
 [DATA] index.js
-[SUCCESS] Initialize -- Dry Run Mode"
+[SUCCESS] Initialize"
 `;

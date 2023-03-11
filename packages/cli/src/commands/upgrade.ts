@@ -119,7 +119,7 @@ upgradeCommand
               },
               {
                 title: 'Comparing TypeScript versions',
-                task: async (ctx) => {
+                task: (ctx) => {
                   if (compare(ctx.latestAvailableBuild, ctx.currentTSVersion, '>')) {
                     ctx.tsVersion = ctx.latestAvailableBuild;
                     parent.title = `Rehearsing with typescript@${ctx.tsVersion}`;
@@ -156,7 +156,7 @@ upgradeCommand
                     task.skip('Skipping task because dryRun flag is set');
                   } else {
                     // eventually commit change
-                    const lockFile = (await getLockfilePath()) || '';
+                    const lockFile = getLockfilePath() || '';
                     await git.add(['package.json', lockFile]);
                     await gitCommit(
                       `bump typescript from ${ctx.currentTSVersion} to ${ctx.tsVersion}`
@@ -182,7 +182,7 @@ upgradeCommand
                       task.newListr(() => [
                         {
                           title: 'Creating Pull Request',
-                          task: async (ctx, task) => {
+                          task: (ctx, task) => {
                             if (options.dryRun) {
                               ctx.skip = true;
                               task.skip('Skipping task because dryRun flag is set');
@@ -237,7 +237,7 @@ upgradeCommand
     );
 
     try {
-      await tasks.run().then(async (ctx) => {
+      await tasks.run().then((ctx) => {
         DEBUG_CALLBACK('ctx: %O', ctx);
       });
 

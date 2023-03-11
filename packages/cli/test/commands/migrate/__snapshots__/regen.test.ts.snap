@@ -2,7 +2,7 @@
 
 exports[`Task: regen > no effect on JS filse before conversion 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -34,7 +34,7 @@ exports[`Task: regen > no effect on JS filse before conversion 1`] = `
 
 exports[`Task: regen > update ts and lint errors based on previous conversion 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -44,6 +44,9 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts

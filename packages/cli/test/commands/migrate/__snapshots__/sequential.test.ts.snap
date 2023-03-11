@@ -2,7 +2,7 @@
 
 exports[`Task: sequential > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on sequential
+[DATA] Setting up config for sequential
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -12,6 +12,9 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on sequential
+[SUCCESS] Analyzing Project
 [STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
 [DATA] processing file: /foo.ts
 [DATA] processing file: /index.ts

@@ -30,10 +30,10 @@ export function shouldRunTsConfigTask(options: MigrateCommandOptions): boolean {
   return true;
 }
 
-export async function tsConfigTask(
+export function tsConfigTask(
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: 'Create tsconfig.json',
     enabled: (): boolean => !options.dryRun,
@@ -66,7 +66,7 @@ export async function tsConfigTask(
           }
           writeJSONSync(configPath, tsConfig, { spaces: 2 });
         } else {
-          writeTSConfig(options.basePath, ctx.sourceFilesWithRelativePath);
+          writeTSConfig(options.basePath);
         }
       }
     },

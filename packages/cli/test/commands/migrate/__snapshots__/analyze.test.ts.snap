@@ -1,0 +1,79 @@
+// Vitest Snapshot v1
+
+exports[`Task: analyze > add files in tsconfig.json include 1`] = `
+{
+  "include": [
+    "foo.ts",
+    "depends-on-foo.ts",
+    "index.ts",
+  ],
+}
+`;
+
+exports[`Task: analyze > disable package selection if completed 1`] = `
+{
+  ".": [],
+  "./module-a": [
+    "./module-a/index.js",
+  ],
+  "./module-b": [],
+}
+`;
+
+exports[`Task: analyze > disable package selection if completed 2`] = `
+{
+  "./module-a/index.js": {
+    "current": "./module-a/index.ts",
+    "errorCount": 0,
+    "origin": "./module-a/index.js",
+    "package": "./module-a",
+  },
+}
+`;
+
+exports[`Task: analyze > get files that will be migrated 1`] = `
+[
+  "foo.js",
+  "depends-on-foo.js",
+  "index.js",
+]
+`;
+
+exports[`Task: analyze > get files that will be migrated 2`] = `
+"[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[SUCCESS] Analyzing Project
+"
+`;
+
+exports[`Task: analyze > print files will be attempted to migrate with --dryRun 1`] = `
+"[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[DATA] List of files will be attempted to migrate:
+[DATA]  foo.js
+[DATA] depends-on-foo.js
+[DATA] index.js
+[SUCCESS] Analyzing Project
+"
+`;
+
+exports[`Task: analyze > show package progress in interactive mode 1`] = `
+{
+  ".": [],
+  "./module-a": [
+    "./module-a/index.js",
+  ],
+  "./module-b": [],
+}
+`;
+
+exports[`Task: analyze > show package progress in interactive mode 2`] = `
+{
+  "./module-a/index.js": {
+    "current": "./module-a/index.ts",
+    "errorCount": 2,
+    "origin": "./module-a/index.js",
+    "package": "./module-a",
+  },
+}
+`;

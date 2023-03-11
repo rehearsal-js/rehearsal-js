@@ -15,7 +15,6 @@ exports[`Task: config-ts > create tsconfig if not existed 1`] = `
     "strict": true,
     "target": "ES2021",
   },
-  "include": [],
 }
 `;
 

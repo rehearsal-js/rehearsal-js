@@ -7,6 +7,7 @@ import { createLogger, format, transports } from 'winston';
 
 import {
   initTask,
+  analyzeTask,
   depInstallTask,
   convertTask,
   tsConfigTask,
@@ -65,6 +66,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
@@ -93,6 +95,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
@@ -122,6 +125,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
@@ -156,6 +160,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
 
@@ -222,6 +227,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
 
@@ -283,6 +289,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
 
@@ -323,6 +330,7 @@ describe('Task: convert', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
     ];
 
