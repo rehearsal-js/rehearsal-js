@@ -7,10 +7,7 @@ import type { ListrTask } from 'listr2';
 
 import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
-export async function regenTask(
-  options: MigrateCommandOptions,
-  logger: Logger
-): Promise<ListrTask> {
+export function regenTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
   return {
     title: 'Regenerating report for TS errors and Eslint errors',
     enabled: (): boolean => !options.dryRun,

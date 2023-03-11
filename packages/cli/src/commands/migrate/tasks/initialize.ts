@@ -7,13 +7,13 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
 
-export async function initTask(
+export function initTask(
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: `Initialize`,
-    task: async (ctx: MigrateCommandContext, task): Promise<void> => {
+    task: (ctx: MigrateCommandContext, task): void => {
       // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };

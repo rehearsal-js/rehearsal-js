@@ -66,7 +66,7 @@ export function validateTask(options: MigrateCommandOptions, logger: Logger): Li
   return {
     title: 'Validate project',
     enabled: (): boolean => !options.dryRun,
-    task: async (): Promise<void> => {
+    task: (): void => {
       checkPackageJson(options.basePath);
       checkGitIgnore(options.basePath);
 

@@ -64,10 +64,10 @@ export function shouldRunDepInstallTask(
   return false;
 }
 
-export async function depInstallTask(
+export function depInstallTask(
   options: MigrateCommandOptions,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: 'Install dependencies',
     enabled: (): boolean => !options.dryRun,

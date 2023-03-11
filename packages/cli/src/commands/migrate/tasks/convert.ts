@@ -15,11 +15,11 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:convert');
 
-export async function convertTask(
+export function convertTask(
   options: MigrateCommandOptions,
   logger: Logger,
   context?: Partial<MigrateCommandContext>
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title: 'Convert JS files to TS',
     enabled: (): boolean => !options.dryRun,

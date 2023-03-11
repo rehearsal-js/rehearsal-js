@@ -10,11 +10,11 @@ import type { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from 
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:sequential');
 
-export async function sequentialTask(
+export function sequentialTask(
   options: MigrateCommandOptions,
   logger: Logger,
   previousRuns: PreviousRuns
-): Promise<ListrTask> {
+): ListrTask {
   return {
     title:
       'Regenerating past migrate report(s), generating current migrate report and merging all reports',
