@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync } from 'fs-extra/esm';
-import { analyzeTask } from '../../../src/commands/migrate/tasks/index.js';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { analyzeTask, addFilesToIncludes } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareTmpDir,
   listrTaskRunner,
@@ -14,7 +14,7 @@ import {
   isActionSelection,
 } from '../../test-helpers/index.js';
 
-describe('Task: initialize', async () => {
+describe('Task: analyze', async () => {
   let basePath = '';
   let output = '';
   let outputStream = createOutputStream();
@@ -50,6 +50,19 @@ describe('Task: initialize', async () => {
     expect(ctx.sourceFilesWithRelativePath).matchSnapshot();
 
     expect(output).matchSnapshot();
+  });
+
+  test('add files in tsconfig.json include', async () => {
+    const configPath = resolve(basePath, 'tsconfig.json');
+    writeJSONSync(configPath, {});
+
+    const options = createMigrateOptions(basePath, { ci: true });
+    const tasks = [await analyzeTask(options)];
+    await listrTaskRunner(tasks);
+
+    // check include tsconfig.json
+    const config = readJSONSync(configPath);
+    expect(config).matchSnapshot();
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
@@ -246,5 +259,49 @@ describe('Task: initialize', async () => {
     // check state
     expect(ctx.state.packages).toMatchSnapshot();
     expect(ctx.state.files).toMatchSnapshot();
+  });
+});
+
+describe('Helper: addFilesToIncludes', async () => {
+  let basePath = '';
+
+  beforeEach(() => {
+    basePath = prepareTmpDir('basic');
+  });
+
+  test('do nothing with no tsconfig', async () => {
+    const configPath = resolve(basePath, 'tsconfig.json');
+    addFilesToIncludes([], configPath);
+    expect(existsSync(configPath)).toBeFalsy();
+  });
+
+  test('repalce include if no include in tsconfig', async () => {
+    const configPath = resolve(basePath, 'tsconfig.json');
+    writeJSONSync(configPath, {});
+    const fileList = ['foo', 'bar'];
+    addFilesToIncludes(fileList, configPath);
+
+    const config = readJSONSync(configPath);
+    expect(config.include).toStrictEqual(fileList);
+  });
+
+  test('only append unique files to existed include', async () => {
+    const configPath = resolve(basePath, 'tsconfig.json');
+    const oldInclude = ['lib/*.ts', 'test/**/*.ts'];
+    writeJSONSync(configPath, {
+      include: oldInclude,
+    });
+    const fileList = [
+      'lib/foo/a.ts',
+      'lib/a.ts',
+      'test/foo/a.ts',
+      'test/bar/a.ts',
+      'test/a.ts',
+      'index.ts',
+    ];
+    addFilesToIncludes(fileList, configPath);
+
+    const config = readJSONSync(configPath);
+    expect(config.include).toStrictEqual([...oldInclude, 'lib/foo/a.ts', 'index.ts']);
   });
 });

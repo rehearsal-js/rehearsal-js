@@ -1,9 +1,9 @@
 // Vitest Snapshot v1
 
 exports[`Task: initialize > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Initialize -- Dry Run Mode
+"[STARTED] Initialize
 [DATA] Setting up config for basic
-[SUCCESS] Initialize -- Dry Run Mode
+[SUCCESS] Initialize
 "
 `;
 
@@ -40,6 +40,13 @@ exports[`Task: initialize > read and store config via --userConfig 1`] = `
 }
 `;
 
+exports[`Task: initialize > read and store config via --userConfig 2`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for basic
+[SUCCESS] Initialize
+"
+`;
+
 exports[`Task: initialize > read and store default config in context 1`] = `
 {
   "exclude": [
@@ -71,4 +78,11 @@ exports[`Task: initialize > read and store default config in context 1`] = `
     },
   },
 }
+`;
+
+exports[`Task: initialize > read and store default config in context 2`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for basic
+[SUCCESS] Initialize
+"
 `;

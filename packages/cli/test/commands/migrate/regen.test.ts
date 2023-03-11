@@ -8,6 +8,7 @@ import {
   convertTask,
   tsConfigTask,
   lintConfigTask,
+  analyzeTask,
   regenTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
@@ -67,11 +68,12 @@ describe('Task: regen', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await convertTask(options, logger),
-      await regenTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
+    await listrTaskRunner([await regenTask(options, logger)]);
     expect(output).matchSnapshot();
   });
 });

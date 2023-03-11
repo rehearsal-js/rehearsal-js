@@ -37,8 +37,16 @@ export async function convertTask(
       const projectName = determineProjectName() || '';
       const { basePath, entrypoint } = options;
       const tscPath = await getPathToBinary('tsc', { cwd: basePath });
-      const { stdout } = await execa(tscPath, ['--version']);
-      const tsVersion = stdout.split(' ')[1];
+      let tsVersion = '';
+
+      // If there is no access to tsc binary, stop
+      try {
+        const { stdout } = await execa(tscPath, ['--version']);
+        tsVersion = stdout.split(' ')[1];
+      } catch (e) {
+        throw new Error(`Cannot find or access tsc in ${tscPath}`);
+      }
+
       const reporter = new Reporter(
         { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
         logger

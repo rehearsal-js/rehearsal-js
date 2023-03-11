@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
 import { getEsLintConfigPath } from '@rehearsal/utils';
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
+import type { MigrateCommandOptions } from '../../../types.js';
 
 function checkLintConfig(basePath: string, logger: Logger): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);
@@ -65,7 +65,7 @@ export function reportExisted(basePath: string, outputPath?: string): boolean {
 export function validateTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
   return {
     title: 'Validate project',
-    enabled: (ctx: MigrateCommandContext): boolean => !ctx.skip,
+    enabled: (): boolean => !options.dryRun,
     task: async (): Promise<void> => {
       checkPackageJson(options.basePath);
       checkGitIgnore(options.basePath);

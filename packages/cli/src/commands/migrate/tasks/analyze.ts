@@ -1,3 +1,5 @@
+import { resolve } from 'path';
+import { existsSync } from 'node:fs';
 import {
   discoverEmberPackages,
   getMigrationStrategy,
@@ -5,7 +7,9 @@ import {
 } from '@rehearsal/migration-graph';
 import { determineProjectName } from '@rehearsal/utils';
 import debug from 'debug';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
+import { minimatch } from 'minimatch';
 import { State } from '../../../helpers/state.js';
 import {
   MenuMap,
@@ -24,7 +28,6 @@ export function analyzeTask(
 ): ListrTask<MigrateCommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing Project',
-    enabled: (): boolean => !options.dryRun,
     async task(ctx: MigrateCommandContext, task) {
       const projectName = determineProjectName(options.basePath);
       const packages = discoverEmberPackages(options.basePath);
@@ -124,6 +127,12 @@ export function analyzeTask(
         task.output = `List of files will be attempted to migrate:\n ${ctx.sourceFilesWithRelativePath.join(
           '\n'
         )}`;
+      } else {
+        // add files to "include" in tsconfig.json
+        addFilesToIncludes(
+          ctx.sourceFilesWithRelativePath.map((f) => f.replace(/js$/g, 'ts')),
+          resolve(options.basePath, 'tsconfig.json')
+        );
       }
     },
     options: {
@@ -132,4 +141,32 @@ export function analyzeTask(
       persistentOutput: options.dryRun ? true : false,
     },
   };
+}
+
+/**
+ * Update "include" in tsconfig.json
+ * @param fileList array of relative file paths to the root
+ * @param configPath tsconfig.json path
+ */
+export function addFilesToIncludes(fileList: string[], configPath: string): void {
+  if (existsSync(configPath)) {
+    const tsConfig = readJSONSync(configPath);
+    if (!tsConfig.include) {
+      tsConfig.include = fileList;
+    } else if (Array.isArray(tsConfig.include) && !tsConfig.include.length) {
+      tsConfig.include = fileList;
+    } else if (Array.isArray(tsConfig.include)) {
+      const uniqueFiles = fileList.filter((f) => {
+        // if a file from fileList matches any file/glob in "include"
+        // will keep it as unique file
+        return (
+          tsConfig.include.filter((glob: string) => {
+            return minimatch(f, glob);
+          }).length === 0
+        );
+      });
+      tsConfig.include = [...tsConfig.include, ...uniqueFiles];
+    }
+    writeJSONSync(configPath, tsConfig, { spaces: 2 });
+  }
 }

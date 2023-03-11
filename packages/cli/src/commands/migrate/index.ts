@@ -75,12 +75,12 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
 
   const {
     validateTask,
-    analyzeTask,
     initTask,
     depInstallTask,
     tsConfigTask,
     lintConfigTask,
     createScriptsTask,
+    analyzeTask,
     convertTask,
     regenTask,
     reportExisted,
@@ -137,11 +137,11 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const tasks = [
     await validateTask(options, logger),
     await initTask(options),
-    await analyzeTask(options),
     await depInstallTask(options),
     await tsConfigTask(options),
     await lintConfigTask(options),
     await createScriptsTask(options),
+    await analyzeTask(options),
   ];
 
   try {
@@ -163,6 +163,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       await new Listr(
         [
           await validateTask(options, logger),
+          await initTask(options),
           analyzeTask(options),
           await convertTask(options, logger),
         ],

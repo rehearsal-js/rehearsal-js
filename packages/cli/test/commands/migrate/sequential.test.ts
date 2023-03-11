@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync } from 'fs-extra/esm';
 import { createLogger, format, transports } from 'winston';
 import {
+  analyzeTask,
   depInstallTask,
   initTask,
   lintConfigTask,
@@ -64,6 +65,7 @@ describe('Task: sequential', async () => {
       await depInstallTask(options),
       await tsConfigTask(options),
       await lintConfigTask(options),
+      await analyzeTask(options),
       await sequentialTask(options, logger, previousRuns),
     ];
 

@@ -12,7 +12,7 @@ export async function initTask(
   context?: Partial<MigrateCommandContext>
 ): Promise<ListrTask> {
   return {
-    title: `Initialize${options.dryRun ? ' -- Dry Run Mode' : ''}`,
+    title: `Initialize`,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {

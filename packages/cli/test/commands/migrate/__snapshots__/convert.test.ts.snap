@@ -2,10 +2,7 @@
 
 exports[`Task: convert > accept and discard changes with git 1`] = `
 "[STARTED] Initialize
-[DATA] ? We have found multiple packages in your project, select the one to migrate:  
-[DATA]  basic(no progress found)
-[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
-[DATA] Running migration on <tmp-path>
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -15,6 +12,12 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] ? We have found multiple packages in your project, select the one to migrate:  
+[DATA]  basic(no progress found)
+[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
+[DATA] Running migration on <tmp-path>
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
@@ -79,10 +82,7 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 
 exports[`Task: convert > accept changes without git 1`] = `
 "[STARTED] Initialize
-[DATA] ? We have found multiple packages in your project, select the one to migrate:  
-[DATA]  basic(no progress found)
-[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
-[DATA] Running migration on <tmp-path>
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -92,6 +92,12 @@ exports[`Task: convert > accept changes without git 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] ? We have found multiple packages in your project, select the one to migrate:  
+[DATA]  basic(no progress found)
+[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
+[DATA] Running migration on <tmp-path>
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
@@ -152,10 +158,7 @@ exports[`Task: convert > accept changes without git 1`] = `
 
 exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 "[STARTED] Initialize
-[DATA] ? We have found multiple packages in your project, select the one to migrate:  
-[DATA]  basic(no progress found)
-[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
-[DATA] Running migration on <tmp-path>
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -165,6 +168,12 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] ? We have found multiple packages in your project, select the one to migrate:  
+[DATA]  basic(no progress found)
+[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
+[DATA] Running migration on <tmp-path>
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts
@@ -178,7 +187,7 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 
 exports[`Task: convert > generate reports 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -188,6 +197,9 @@ exports[`Task: convert > generate reports 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
@@ -230,7 +242,7 @@ exports[`Task: convert > generate reports 1`] = `
 
 exports[`Task: convert > migrate from default all files .js in root 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -240,6 +252,9 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
@@ -282,7 +297,7 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 
 exports[`Task: convert > migrate from specific entrypoint 1`] = `
 "[STARTED] Initialize
-[DATA] Running migration on basic
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -292,6 +307,9 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on basic
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
@@ -332,10 +350,7 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 
 exports[`Task: convert > view changes in $EDITOR 1`] = `
 "[STARTED] Initialize
-[DATA] ? We have found multiple packages in your project, select the one to migrate:  
-[DATA]  basic(no progress found)
-[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
-[DATA] Running migration on <tmp-path>
+[DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -345,6 +360,12 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] ? We have found multiple packages in your project, select the one to migrate:  
+[DATA]  basic(no progress found)
+[DATA]  We have found multiple packages in your project, select the one to migrate:  basic(no progress found)
+[DATA] Running migration on <tmp-path>
+[SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] processing file: /foo.ts

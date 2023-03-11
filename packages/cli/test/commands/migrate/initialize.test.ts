@@ -16,12 +16,22 @@ function createUserConfig(
 
 describe('Task: initialize', async () => {
   let basePath = '';
+  let output = '';
+
+  vi.spyOn(console, 'info').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+  });
+  vi.spyOn(console, 'log').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+  });
 
   beforeEach(() => {
+    output = '';
     basePath = prepareTmpDir('basic');
   });
 
   afterEach(() => {
+    output = '';
     vi.clearAllMocks();
   });
 
@@ -45,7 +55,7 @@ describe('Task: initialize', async () => {
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
-    expect.assertions(8);
+    expect.assertions(9);
 
     expect(ctx.userConfig).toBeTruthy();
     expect(ctx?.userConfig?.basePath).toBe(basePath);
@@ -55,6 +65,8 @@ describe('Task: initialize', async () => {
     expect(ctx?.userConfig?.hasTsSetup).toBeTruthy();
     expect(ctx?.userConfig?.include).toStrictEqual(['test']);
     expect(ctx?.userConfig?.exclude).toStrictEqual(['docs']);
+
+    expect(output).matchSnapshot();
   });
 
   test('read and store config via --userConfig', async () => {
@@ -81,7 +93,7 @@ describe('Task: initialize', async () => {
     const tasks = [await initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
-    expect.assertions(8);
+    expect.assertions(9);
 
     expect(ctx.userConfig).toBeTruthy();
     expect(ctx?.userConfig?.basePath).toBe(basePath);
@@ -91,5 +103,7 @@ describe('Task: initialize', async () => {
     expect(ctx?.userConfig?.hasTsSetup).toBeTruthy();
     expect(ctx?.userConfig?.include).toStrictEqual(['test']);
     expect(ctx?.userConfig?.exclude).toStrictEqual(['docs']);
+
+    expect(output).matchSnapshot();
   });
 });
