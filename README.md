@@ -12,7 +12,7 @@ Rehearsal is a CLI tool which helps to improve the experience of both migrating 
 
 ## Migrate
 
-Rehearsal Migrate can be executed both manually and automated. It is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes with a PR for each step. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights. Once migrated to TypeScript, Rehearsal tasks enable a manual type tighten for strictness. After all tasks have been completed, Rehearsal Upgrade takes over. All in all, Rehearsal Migrate will increase your productivity when migrating a given JavaScript project to TypeScript.
+Rehearsal Migrate can be executed both manually and automated. It is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights. Once migrated to TypeScript, Rehearsal tasks enable a manual type tighten for strictness. After all tasks have been completed, Rehearsal Upgrade takes over. All in all, Rehearsal Migrate will increase your productivity when migrating a given JavaScript project to TypeScript.
 
 ## Upgrade
 
@@ -77,7 +77,7 @@ Interactive mode will run by default. Rehearsal will prompt you to confirm each 
 
 ## Migrate by Directory
 
-With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report that merge both runs.
+With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report which merges both runs.
 
 ## Rehearsal Reports
 
@@ -116,8 +116,8 @@ Rehearsal also can read from a custom user config file. This is useful if you wa
 
 ## Known Limitations
 
-Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types that Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
-
+Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
+U
 # Packages
 
 | Folder                                    | Version                                                                                                              | Package                                                                  |
