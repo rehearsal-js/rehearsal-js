@@ -3,11 +3,11 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 
 import {
-  initTask,
-  depInstallTask,
-  tsConfigTask,
-  lintConfigTask,
   createScriptsTask,
+  depInstallTask,
+  initTask,
+  lintConfigTask,
+  tsConfigTask,
   validateTask,
 } from './tasks/index.js';
 import type { MigrateCommandOptions } from '../../types.js';
@@ -18,8 +18,14 @@ export const initCommand = new Command();
 initCommand
   .name('init')
   .description(
-    'Install required dependencies, setup tsconfig.json, eslint config and essential package scrtips'
+    'Install required dependencies, setup tsconfig.json, eslint config and essential package scripts'
   )
+  .option(
+    '-u, --userConfig <custom json config for migrate command>',
+    'path to rehearsal config',
+    'rehearsal-config.json'
+  )
+  .option('-v, --verbose', 'print debugging logs')
   .addOption(
     new Option('-p, --basePath <project base path>', 'base directory of your project')
       .default(process.cwd())
@@ -28,12 +34,6 @@ initCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .option(
-    '-u, --userConfig <custom json config for migrate command>',
-    'path to rehearsal config',
-    'rehearsal-config.json'
-  )
-  .option('-v, --verbose', 'print debugging logs')
   .action(async (options: MigrateCommandOptions) => {
     await initCommandHandler(options);
   });

@@ -71,3 +71,22 @@ export type PreviousRuns = {
   paths: RunPath[];
   previousFixedCount: number;
 };
+
+export interface Logger {
+  error: (message: string) => Logger;
+  warn: (message: string) => Logger;
+  info: (message: string) => Logger;
+  debug: (message: string) => Logger;
+}
+
+export type CommandContext = {
+  skip: boolean;
+  input: MigrateCommandOptions;
+  logger: Logger;
+  userConfig: UserConfig | undefined;
+  strategy: MigrationStrategy;
+  sourceFilesWithAbsolutePath: string[];
+  sourceFilesWithRelativePath: string[];
+  targetPackagePath: string;
+  state: State;
+};

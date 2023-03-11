@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { resolve, relative, isAbsolute } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
+import { findWorkspaceRoot, gitIsRepoDirty, parseCommaSeparatedList } from '@rehearsal/utils';
 import { readJsonSync } from 'fs-extra/esm';
 
 import { initCommand } from './init-command.js';
@@ -70,7 +70,12 @@ migrateCommand
 async function migrate(options: MigrateCommandOptions): Promise<void> {
   const loggerLevel = options.verbose ? 'debug' : 'info';
   const logger = createLogger({
-    transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
+    transports: [
+      new transports.Console({
+        format: format.printf((i) => `${i.message}`),
+        level: loggerLevel,
+      }),
+    ],
   });
 
   const {
@@ -131,6 +136,8 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   const defaultListrOption = {
     concurrent: false,
     exitOnError: true,
+    collapseErrors: false,
+    collapse: false,
   };
 
   const tasks = [
@@ -147,6 +154,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
       const ctx = await new Listr(tasks, defaultListrOption).run();
+
       await new Listr([await convertTask(options, logger, ctx)], {
         renderer: 'simple',
         ...defaultListrOption,
