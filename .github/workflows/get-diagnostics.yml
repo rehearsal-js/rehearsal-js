@@ -1,0 +1,30 @@
+name: Get Diagnostics From TypeScript
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  get_diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+      - run: pnpm install
+      - name: Download Diagnostics
+        run: pnpm run new-diagnostics
+      - name: Generate Diagnostics & Fixes
+        run: pnpm run generate
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_options: '-n'
+          commit_message: 'chore: adding new diagnostics'
+          branch: ${{ github.head_ref }}

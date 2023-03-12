@@ -1,4 +1,4 @@
-import { CodeActionCommand, CodeFixAction, type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, CodeFixAction } from 'typescript';
 import debug from 'debug';
 import hash from 'object-hash';
 
@@ -6,6 +6,8 @@ import {
   codefixes,
   type DiagnosticWithContext,
   isInstallPackageCommand,
+  getDiagnosticOrder,
+  applyCodeFix,
 } from '@rehearsal/codefixes';
 import {
   Plugin,
@@ -14,7 +16,7 @@ import {
   PluginsRunnerContext,
   RehearsalService,
 } from '@rehearsal/service';
-import { applyTextChange, findNodeAtPosition, normalizeTextChanges } from '@rehearsal/ts-utils';
+import { findNodeAtPosition } from '@rehearsal/ts-utils';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 
@@ -27,23 +29,6 @@ export interface DiagnosticFixPluginOptions extends PluginOptions {
  * Diagnose issues in the file and applied transforms to fix them
  */
 export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
-  /** @see https://github.com/microsoft/TypeScript/blob/main/src/compiler/diagnosticMessages.json for more codes */
-  prioritizedCodes = [
-    80002, // convertFunctionToEs6Class
-    80005, // requireInTs
-    80004, // annotateWithTypeFromJSDoc
-    7005, // inferFromUsage
-    7006, // inferFromUsage
-    7008, // inferFromUsage
-    7010, // inferFromUsage
-    7043, // inferFromUsage
-    7044, // inferFromUsage
-    7045, // inferFromUsage
-    7046, // inferFromUsage
-    7050, // inferFromUsage
-    2612, // addMissingDeclareProperty
-  ];
-
   attemptedToFix: string[] = [];
 
   async run(
@@ -81,21 +66,21 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
         await this.applyCommandAction(fix.commands, context);
       }
 
-      for (const fileTextChange of fix.changes) {
-        let text = context.rehearsal.getFileText(fileTextChange.fileName);
+      applyCodeFix(fix, {
+        getText(filename: string) {
+          return context.rehearsal.getFileText(filename);
+        },
 
-        const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
-        for (const textChange of textChanges) {
-          DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t ${textChange.newText}`);
+        applyText(newText: string) {
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t ${newText}`);
+        },
 
-          text = applyTextChange(text, textChange);
-        }
-
-        context.rehearsal.setFileText(fileTextChange.fileName, text);
-        allFixedFiles.add(fileTextChange.fileName);
-
-        DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
-      }
+        setText(filename: string, text: string) {
+          context.rehearsal.setFileText(filename, text);
+          allFixedFiles.add(filename);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+        },
+      });
 
       context.reporter.incrementRunFixedItemCount();
 
@@ -114,9 +99,7 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     const program = service.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = rehearsalService.getDiagnostics(fileName);
-
-    this.sort(diagnostics, this.prioritizedCodes);
+    const diagnostics = getDiagnosticOrder(rehearsalService.getDiagnostics(fileName));
 
     return (
       diagnostics
@@ -143,35 +126,6 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     } catch (e) {
       return false;
     }
-  }
-
-  /**
-   * Sorts diagnostics by the `start` position with prioritization of diagnostic have codes in `prioritizedCodes`.
-   * If the diagnostic has the code mentioned in the `prioritizedCodes` list, it will be moved to the start and will
-   * be ordered against other prioritized codes in the order codes provided in the `prioritizedCodes`.
-   */
-  sort(diagnostics: DiagnosticWithLocation[], prioritizedCodes: number[]): void {
-    diagnostics.sort((left, right) => {
-      if (left.code != right.code) {
-        const leftIndex = prioritizedCodes.indexOf(left.code);
-        const rightIndex = prioritizedCodes.indexOf(right.code);
-
-        // Sort prioritized codes by how they ordered in `prioritizedCodes`
-        if (leftIndex >= 0 && rightIndex >= 0) {
-          return leftIndex - rightIndex;
-        }
-
-        if (leftIndex >= 0) {
-          return -1;
-        }
-
-        if (rightIndex >= 0) {
-          return 1;
-        }
-      }
-
-      return left.start - right.start;
-    });
   }
 
   /**

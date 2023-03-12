@@ -1,11 +1,12 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "rootDir": "../",
     "outDir": "../dist/test/"
   },
-  "include": [".", "../src", "../package.json"],
-  "exclude": ["fixtures"],
+  "include": [".", "../src/**/*.ts", "../package.json"],
+  "exclude": ["fixtures/**/*.ts", "fixtures/**/*.tsx"],
   "references": [
     {
       "path": "../../utils"
