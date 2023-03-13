@@ -6,7 +6,6 @@
 
 [![Build Status](https://github.com/rehearsal-js/rehearsal-js/workflows/CI/badge.svg)](https://github.com/rehearsal-js/rehearsal-js/actions?workflow=CI)
 [![Version](https://img.shields.io/npm/v/@rehearsal/cli.svg)](https://www.npmjs.com/package/@rehearsal/cli)
-[![License](https://img.shields.io/npm/l/tracerbench.svg)](https://github.com/TracerBench/tracerbench/blob/master/package.json)
 
 Rehearsal is a CLI tool which helps to improve the experience of both migrating to TypeScript and once migrated, upgrading your repo to future versions of TypeScript.
 
