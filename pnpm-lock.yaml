@@ -167,6 +167,7 @@ importers:
       semver: 7.3.8
       simple-git: 3.16.1
       tmp: 0.2.1
+      typescript: 4.9.5
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
@@ -175,7 +176,6 @@ importers:
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2
       fixturify: 3.0.0
-      typescript: 4.9.5
       typescript-json-schema: 0.55.0
       vitest: 0.28.5
 
@@ -5454,7 +5454,6 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /ufo/1.1.0:
     resolution: {integrity: sha512-LQc2s/ZDMaCN3QLpa+uzHUOQ7SdV0qgv3VBXOolQGXTaaZpIur6PwUclF5nN2hNkiTRcUugXd1zFOW3FLJ135Q==}
