@@ -213,6 +213,7 @@ importers:
       fixturify-project: ^5.2.0
       fs-extra: ^11.1.0
       listr2: ^5.0.7
+      type-fest: ^3.6.1
       uuid: ^9.0.0
       vitest: ^0.28.5
       winston: ^3.8.2
@@ -228,6 +229,7 @@ importers:
       findup-sync: 5.0.0
       fixturify-project: 5.2.0
       listr2: 5.0.7
+      type-fest: 3.6.1
       uuid: 9.0.0
       vitest: 0.28.5
 
@@ -5481,7 +5483,6 @@ packages:
   /type-fest/3.6.1:
     resolution: {integrity: sha512-htXWckxlT6U4+ilVgweNliPqlsVSSucbxVexRYllyMVJDtf5rTjv6kF/s+qAd4QSL1BZcnJPEJavYBPQiWuZDA==}
     engines: {node: '>=14.16'}
-    dev: false
 
   /typed-array-length/1.0.4:
     resolution: {integrity: sha512-KjZypGq+I/H7HI5HlOoGHkWUUGq+Q0TPhQurLbyrVrvnKTBgzLhIJ7j6J/XTQOi0d1RjyZ0wdas8bKs2p0x3Ng==}
