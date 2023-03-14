@@ -59,6 +59,24 @@ exports[`regen > should generate correct rehearsal comments for a group of files
   {
     \\"analysisTarget\\": \\"tmp/test3.ts\\",
     \\"type\\": 1,
+    \\"ruleId\\": \\"no-unused-vars\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'baz' is assigned a value but never used.\\",
+    \\"hint\\": \\"'baz' is assigned a value but never used.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 11,
+      \\"startColumn\\": 1,
+      \\"endLine\\": 11,
+      \\"endColumn\\": 4
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"type\\": 1,
     \\"ruleId\\": \\"@typescript-eslint/no-unused-vars\\",
     \\"category\\": \\"Error\\",
     \\"message\\": \\"'baz' is assigned a value but never used.\\",
@@ -95,6 +113,114 @@ exports[`regen > should report lint errors 1`] = `
       \\"startColumn\\": 26,
       \\"endLine\\": 1,
       \\"endColumn\\": 29
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 3,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 3,
+      \\"endColumn\\": 12
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 5,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 5,
+      \\"endColumn\\": 12
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 7,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 7,
+      \\"endColumn\\": 12
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 9,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 9,
+      \\"endColumn\\": 12
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 11,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 11,
+      \\"endColumn\\": 12
+    }
+  },
+  {
+    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"type\\": 1,
+    \\"ruleId\\": \\"no-undef\\",
+    \\"category\\": \\"Error\\",
+    \\"message\\": \\"'console' is not defined.\\",
+    \\"hint\\": \\"'console' is not defined.\\",
+    \\"hintAdded\\": false,
+    \\"nodeKind\\": \\"Identifier\\",
+    \\"nodeText\\": \\"\\",
+    \\"helpUrl\\": \\"\\",
+    \\"nodeLocation\\": {
+      \\"startLine\\": 13,
+      \\"startColumn\\": 5,
+      \\"endLine\\": 13,
+      \\"endColumn\\": 12
     }
   }
 ]"

@@ -41,7 +41,7 @@ const afterEachCleanup = async (): Promise<void> => {
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
   await execa(PNPM_PATH, ['remove', '-D', `typescript`]);
-  await execa(PNPM_PATH, ['add', `typescript@${ORIGIN_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });
 

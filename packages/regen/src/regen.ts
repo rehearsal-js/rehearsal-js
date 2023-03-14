@@ -5,12 +5,14 @@ import ts from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
+import type { ESLint } from 'eslint';
 
 export type RegenInput = {
   basePath: string;
   entrypoint: string;
   sourceFiles: string[];
-  configName?: string;
+  tsConfigName?: string;
+  eslintOptions?: ESLint.Options;
   reporter: Reporter;
   logger?: Logger;
   task?: ListrContext;
@@ -26,7 +28,7 @@ const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 export async function regen(input: RegenInput): Promise<RegenOutput> {
   const basePath = resolve(input.basePath);
-  const configName = input.configName || 'tsconfig.json';
+  const tsConfigName = input.tsConfigName || 'tsconfig.json';
   const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.ts')];
   const reporter = input.reporter;
   const logger = input.logger;
@@ -39,10 +41,10 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   logger?.debug('migration regen started');
   logger?.debug(`Base path: ${basePath}`);
 
-  const configFile = findConfigFile(basePath, sys.fileExists, configName);
+  const configFile = findConfigFile(basePath, sys.fileExists, tsConfigName);
 
   if (!configFile) {
-    const message = `Config file '${configName}' not found in '${basePath}'`;
+    const message = `Config file '${tsConfigName}' not found in '${basePath}'`;
     throw Error(message);
   }
 
@@ -71,18 +73,18 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
       commentTag,
     })
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
       reportErrors: false,
     })
     .queue(new DiagnosticCheckPlugin(), {
       commentTag,
     })
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
       reportErrors: false,
     })
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false, ...input.eslintOptions },
       reportErrors: true,
     });
 

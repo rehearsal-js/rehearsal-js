@@ -70,7 +70,7 @@ describe('Task: dependency-install', () => {
       devDependencies: requiredDevDepsMap,
     });
 
-    expect(shouldRunDepInstallTask(options)).toBeFalsy();
+    expect(await shouldRunDepInstallTask(options)).toBeFalsy();
   });
 
   test('skip install required dependencies', async () => {
@@ -146,7 +146,7 @@ describe('Task: dependency-install', () => {
       dependencies: requiredDepsMap,
       devDependencies: requiredDevDepsMap,
     });
-    expect(shouldRunDepInstallTask(options, { userConfig })).toBeFalsy();
+    expect(await shouldRunDepInstallTask(options, { userConfig })).toBeFalsy();
   });
 
   test('skip install custom deps', async () => {
