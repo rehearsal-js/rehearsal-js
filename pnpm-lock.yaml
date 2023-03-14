@@ -142,6 +142,7 @@ importers:
       which: ^3.0.0
       winston: ^3.8.2
       yaml: ^2.2.1
+      zod: ^3.21.4
     dependencies:
       '@microsoft/api-documenter': 7.21.5
       '@rehearsal/migrate': link:../migrate
@@ -167,15 +168,16 @@ importers:
       semver: 7.3.8
       simple-git: 3.16.1
       tmp: 0.2.1
-      typescript: 4.9.5
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
+      zod: 3.21.4
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2
       fixturify: 3.0.0
+      typescript: 4.9.5
       typescript-json-schema: 0.55.0
       vitest: 0.28.5
 
@@ -5454,6 +5456,7 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /ufo/1.1.0:
     resolution: {integrity: sha512-LQc2s/ZDMaCN3QLpa+uzHUOQ7SdV0qgv3VBXOolQGXTaaZpIur6PwUclF5nN2hNkiTRcUugXd1zFOW3FLJ135Q==}
@@ -5867,3 +5870,7 @@ packages:
       validator: 13.9.0
     optionalDependencies:
       commander: 9.5.0
+
+  /zod/3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false

@@ -61,7 +61,7 @@ export const beforeEachPrep = async (): Promise<void> => {
   const { current } = await git.branchLocal();
   WORKING_BRANCH = current;
   // install the test version of tsc
-  await execa(PNPM_PATH, ['add', '-w', `typescript@${TEST_TSC_VERSION}`]);
+  await execa(PNPM_PATH, ['add', '-w', '-D', `typescript@${TEST_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
   // clean any report files
   rmSync(join(FIXTURE_APP_PATH, '.rehearsal'), { recursive: true, force: true });
@@ -110,7 +110,7 @@ export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateComman
     exitOnError: true,
     renderer: 'verbose',
   };
-  return await new Listr(tasks, defaultListrOption).run();
+  return (await new Listr(tasks, defaultListrOption).run()) as Promise<MigrateCommandContext>;
 }
 
 // keycode for interactive mode test

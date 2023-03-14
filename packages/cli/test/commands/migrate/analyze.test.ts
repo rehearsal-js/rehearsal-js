@@ -14,7 +14,7 @@ import {
   isActionSelection,
 } from '../../test-helpers/index.js';
 
-describe('Task: analyze', async () => {
+describe('Task: analyze', () => {
   let basePath = '';
   let output = '';
   let outputStream = createOutputStream();
@@ -41,7 +41,7 @@ describe('Task: analyze', async () => {
 
   test('get files that will be migrated', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect(ctx.targetPackagePath).toBe(`${basePath}`);
@@ -57,17 +57,16 @@ describe('Task: analyze', async () => {
     writeJSONSync(configPath, {});
 
     const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     await listrTaskRunner(tasks);
 
     // check include tsconfig.json
-    const config = readJSONSync(configPath);
-    expect(config).matchSnapshot();
+    expect(readJSONSync(configPath)).matchSnapshot();
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
     const options = createMigrateOptions(basePath, { ci: true, dryRun: true });
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     await listrTaskRunner(tasks);
 
     expect(output).matchSnapshot();
@@ -87,7 +86,7 @@ describe('Task: analyze', async () => {
     });
 
     const options = createMigrateOptions(basePath);
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -130,7 +129,7 @@ describe('Task: analyze', async () => {
     });
 
     const options = createMigrateOptions(basePath);
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -192,7 +191,7 @@ describe('Task: analyze', async () => {
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
     const options = createMigrateOptions(basePath);
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -245,7 +244,7 @@ describe('Task: analyze', async () => {
     writeJSONSync(resolve(basePath, '.rehearsal', 'migrate-state.json'), previousState);
 
     const options = createMigrateOptions(basePath);
-    const tasks = [await analyzeTask(options)];
+    const tasks = [analyzeTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     // test message and package selection prompt
@@ -262,30 +261,30 @@ describe('Task: analyze', async () => {
   });
 });
 
-describe('Helper: addFilesToIncludes', async () => {
+describe('Helper: addFilesToIncludes', () => {
   let basePath = '';
 
   beforeEach(() => {
     basePath = prepareTmpDir('basic');
   });
 
-  test('do nothing with no tsconfig', async () => {
+  test('do nothing with no tsconfig', () => {
     const configPath = resolve(basePath, 'tsconfig.json');
     addFilesToIncludes([], configPath);
     expect(existsSync(configPath)).toBeFalsy();
   });
 
-  test('repalce include if no include in tsconfig', async () => {
+  test('repalce include if no include in tsconfig', () => {
     const configPath = resolve(basePath, 'tsconfig.json');
     writeJSONSync(configPath, {});
     const fileList = ['foo', 'bar'];
     addFilesToIncludes(fileList, configPath);
 
-    const config = readJSONSync(configPath);
+    const config = readJSONSync(configPath) as { include: string[] };
     expect(config.include).toStrictEqual(fileList);
   });
 
-  test('only append unique files to existed include', async () => {
+  test('only append unique files to existed include', () => {
     const configPath = resolve(basePath, 'tsconfig.json');
     const oldInclude = ['lib/*.ts', 'test/**/*.ts'];
     writeJSONSync(configPath, {
@@ -301,7 +300,7 @@ describe('Helper: addFilesToIncludes', async () => {
     ];
     addFilesToIncludes(fileList, configPath);
 
-    const config = readJSONSync(configPath);
+    const config = readJSONSync(configPath) as { include: string[] };
     expect(config.include).toStrictEqual([...oldInclude, 'lib/foo/a.ts', 'index.ts']);
   });
 });

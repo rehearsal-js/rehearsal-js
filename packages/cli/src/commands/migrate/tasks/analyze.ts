@@ -16,6 +16,7 @@ import {
   MigrateCommandContext,
   MigrateCommandOptions,
   PackageSelection,
+  TSConfig,
 } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:analyze');
@@ -102,7 +103,7 @@ export function analyzeTask(
         task.output = `Running migration on ${ctx.targetPackagePath}`;
       } else {
         ctx.targetPackagePath = options.basePath;
-        task.output = `Running migration on ${projectName}`;
+        task.output = `Running migration on ${projectName || 'project'}`;
       }
 
       // construct migration strategy and prepare all the files needs to be migrated
@@ -150,7 +151,7 @@ export function analyzeTask(
  */
 export function addFilesToIncludes(fileList: string[], configPath: string): void {
   if (existsSync(configPath)) {
-    const tsConfig = readJSONSync(configPath);
+    const tsConfig = readJSONSync(configPath) as TSConfig;
     if (!tsConfig.include) {
       tsConfig.include = fileList;
     } else if (Array.isArray(tsConfig.include) && !tsConfig.include.length) {
@@ -160,7 +161,7 @@ export function addFilesToIncludes(fileList: string[], configPath: string): void
         // if a file from fileList matches any file/glob in "include"
         // will keep it as unique file
         return (
-          tsConfig.include.filter((glob: string) => {
+          tsConfig.include?.filter((glob: string) => {
             return minimatch(f, glob);
           }).length === 0
         );

@@ -34,6 +34,7 @@ describe('regen', () => {
       sourceFiles: [],
       reporter,
       entrypoint: '',
+      eslintOptions: { cwd: __dirname },
     };
   });
 

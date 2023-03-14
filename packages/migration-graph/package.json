@@ -17,7 +17,6 @@
     "build": "tsc -b",
     "clean": "rm -rf fixtures/ember/*/node_modules",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run",

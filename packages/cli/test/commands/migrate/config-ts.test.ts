@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+import { CustomConfig, TSConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -12,7 +12,7 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
-describe('Task: config-ts', async () => {
+describe('Task: config-ts', () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
@@ -34,12 +34,10 @@ describe('Task: config-ts', async () => {
   test('create tsconfig if not existed', async () => {
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
-
-    expect(tsConfig).matchSnapshot();
+    expect(readJSONSync(resolve(basePath, 'tsconfig.json'))).matchSnapshot();
     expect(output).matchSnapshot();
   });
 
@@ -50,10 +48,10 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
 
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
@@ -67,10 +65,10 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
 
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
@@ -84,7 +82,7 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath);
     const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [await tsConfigTask(options, context)];
+    const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
     await listrTaskRunner(tasks); // should be skipped
@@ -102,7 +100,7 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
+    const tasks = [tsConfigTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command works
@@ -125,7 +123,7 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
+    const tasks = [tsConfigTask(options, { userConfig })];
 
     await listrTaskRunner(tasks); // should be skipped
 
@@ -146,7 +144,7 @@ describe('Task: config-ts', async () => {
 
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [await tsConfigTask(options, { userConfig })];
+    const tasks = [tsConfigTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command and hook works

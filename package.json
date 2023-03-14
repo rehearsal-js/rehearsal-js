@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "lint": "pnpm lint:package-json && pnpm recursive run lint",
+    "lint": "pnpm lint:package-json && eslint --fix . --cache",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",
     "test": "pnpm build && pnpm recursive run test",

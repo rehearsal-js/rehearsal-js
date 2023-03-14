@@ -17,7 +17,7 @@ const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
-describe('Task: regen', async () => {
+describe('Task: regen', () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
@@ -42,20 +42,16 @@ describe('Task: regen', async () => {
 
   test('throw error with no tsconfig.json', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [await initTask(options), await regenTask(options, logger)];
+    const tasks = [initTask(options), regenTask(options, logger)];
 
-    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
+    await expect(async () => await listrTaskRunner(tasks)).rejects.toThrowError(
       `Config file 'tsconfig.json' not found`
     );
   });
 
   test('no effect on JS filse before conversion', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [
-      await initTask(options),
-      await tsConfigTask(options),
-      await regenTask(options, logger),
-    ];
+    const tasks = [initTask(options), tsConfigTask(options), regenTask(options, logger)];
 
     await listrTaskRunner(tasks);
     expect(output).matchSnapshot();
@@ -64,16 +60,16 @@ describe('Task: regen', async () => {
   test('update ts and lint errors based on previous conversion', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
-    await listrTaskRunner([await regenTask(options, logger)]);
+    await listrTaskRunner([regenTask(options, logger)]);
     expect(output).matchSnapshot();
   });
 });

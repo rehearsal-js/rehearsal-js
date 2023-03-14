@@ -16,7 +16,7 @@ const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
-describe('Task: validate', async () => {
+describe('Task: validate', () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
@@ -49,7 +49,7 @@ describe('Task: validate', async () => {
 
   test('pass with package.json', async () => {
     const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const tasks = [validateTask(options, logger)];
 
     await listrTaskRunner(tasks);
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
@@ -57,7 +57,7 @@ describe('Task: validate', async () => {
 
   test('error if no package.json', async () => {
     const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const tasks = [validateTask(options, logger)];
 
     rmSync(resolve(basePath, 'package.json'));
 
@@ -66,7 +66,7 @@ describe('Task: validate', async () => {
 
   test('error if .gitignore has .rehearsal', async () => {
     const options = createMigrateOptions(basePath);
-    const tasks = [await validateTask(options, logger)];
+    const tasks = [validateTask(options, logger)];
 
     const gitignore = `.rehearsal\nfoo\nbar`;
     const gitignorePath = resolve(basePath, '.gitignore');
@@ -79,7 +79,7 @@ describe('Task: validate', async () => {
 
   test('show warning message for missing files in --regen', async () => {
     const options = createMigrateOptions(basePath, { regen: true });
-    const tasks = [await validateTask(options, logger)];
+    const tasks = [validateTask(options, logger)];
 
     await listrTaskRunner(tasks);
     expect(cleanOutput(output, basePath)).toMatchSnapshot();
@@ -87,7 +87,7 @@ describe('Task: validate', async () => {
 
   test('pass with all config files in --regen', async () => {
     const options = createMigrateOptions(basePath, { regen: true });
-    const tasks = [await validateTask(options, logger)];
+    const tasks = [validateTask(options, logger)];
 
     createFileSync(resolve(basePath, '.eslintrc.js'));
     createFileSync(resolve(basePath, 'tsconfig.json'));

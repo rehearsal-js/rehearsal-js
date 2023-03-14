@@ -68,6 +68,8 @@ export async function initCommandHandler(options: MigrateCommandOptions): Promis
       `The project is ready for migration. Please run "rehearsal migrate" to start the migration.`
     );
   } catch (e) {
-    logger.error(`${e}`);
+    if (e instanceof Error) {
+      logger.error(`${e.message + '\n' + (e.stack || '')}`);
+    }
   }
 }

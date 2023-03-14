@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup, dirSync } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -9,11 +9,11 @@ import fixturify from 'fixturify';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+import { CustomConfig, PackageJson, TSConfig } from '../../../src/types.js';
 
 setGracefulCleanup();
 
-describe('migrate - validation', async () => {
+describe('migrate - validation', () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -152,7 +152,7 @@ describe('migrate - validation', async () => {
   });
 });
 
-describe('migrate: e2e', async () => {
+describe('migrate: e2e', () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -184,16 +184,18 @@ describe('migrate: e2e', async () => {
     expect(readFileSync(resolve(basePath, 'index.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
 
     // Dependencies
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // report
     const reportPath = resolve(basePath, '.rehearsal');
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
     expect(tsConfig).matchSnapshot();
 
     // lint config
@@ -207,7 +209,7 @@ describe('migrate: e2e', async () => {
     expect(lintConfigDefualt).toMatchSnapshot();
 
     // new scripts
-    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
   });
 
   test('migrate would skip steps after migrate init', async () => {
@@ -219,12 +221,14 @@ describe('migrate: e2e', async () => {
     let fileList = readdirSync(basePath);
 
     // Dependencies
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
     expect(tsConfig).matchSnapshot();
 
     // lint config
@@ -238,7 +242,7 @@ describe('migrate: e2e', async () => {
     expect(lintConfigDefualt).toMatchSnapshot();
 
     // new scripts
-    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
 
     // run migrate
     const { stdout } = await runBin('migrate', ['--ci'], {
@@ -322,7 +326,7 @@ describe('migrate: e2e', async () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 
-  describe('user defined options passed by --user-config -u', async () => {
+  describe('user defined options passed by --user-config -u', () => {
     function createUserConfig(basePath: string, config: CustomConfig): void {
       const configPath = resolve(basePath, 'rehearsal-config.json');
       writeJSONSync(configPath, config);

@@ -15,7 +15,7 @@ export class UserConfig {
   public config?: MigrateCommandConfig | UpgradeCommandConfig;
 
   constructor(basePath: string, configPath: string, command: CliCommand) {
-    const config: CustomConfig = readJSONSync(resolve(basePath, configPath));
+    const config = readJSONSync(resolve(basePath, configPath)) as CustomConfig;
 
     this.config = config[command];
 

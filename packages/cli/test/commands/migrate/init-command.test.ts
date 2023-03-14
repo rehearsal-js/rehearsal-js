@@ -1,12 +1,12 @@
 import { resolve } from 'node:path';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+import { CustomConfig, PackageJson, TSConfig } from '../../../src/types.js';
 
 setGracefulCleanup();
 
@@ -15,7 +15,7 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
-describe('migrate init', async () => {
+describe('migrate init', () => {
   let basePath = '';
 
   beforeEach(() => {
@@ -34,12 +34,14 @@ describe('migrate init', async () => {
     const fileList = readdirSync(basePath);
 
     // Dependencies
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
     expect(tsConfig).matchSnapshot();
 
     // lint config
@@ -53,7 +55,7 @@ describe('migrate init', async () => {
     expect(lintConfigDefualt).toMatchSnapshot();
 
     // new scripts
-    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
   });
 
   test('pass user config', async () => {
@@ -77,10 +79,12 @@ describe('migrate init', async () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
     // Dependencies
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
     expect(deps).toHaveProperty('fs-extra');
 
     // ts config
@@ -90,7 +94,7 @@ describe('migrate init', async () => {
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
 
     // new scripts
-    expect(packageJson.scripts['lint:tsc']).toBe('tsc --noEmit');
+    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
   });
 
   test('skip dep install, ts config, and lint config if exists', async () => {

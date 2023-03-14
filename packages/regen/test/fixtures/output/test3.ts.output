@@ -6,6 +6,6 @@ function add(foo: number, bar: number): number {
 add('5', 10);
 
 /* @ts-expect-error @rehearsal TODO TS6133: The variable 'baz' is never read or used. Remove the variable or use it. */
-let baz: string = '';
+let baz = '';
 /* @ts-expect-error @rehearsal TODO TS2322: The variable 'baz' has type 'string', but 'number' is assigned. Please convert 'number' to 'string' or change variable's type. */
 baz = 2;
