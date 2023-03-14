@@ -3,10 +3,13 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "references": [
     {
       "path": "../ts-utils"
+    },
+    {
+      "path": "../service"
     }
   ]
 }

@@ -5,7 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "commonjs",
     "moduleResolution": "node",
     "newLine": "LF",
@@ -17,4 +17,5 @@
     "strict": true,
     "target": "es2017",
   },
+  "exclude": ["./ts-codefixes/**/*"]
 }

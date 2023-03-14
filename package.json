@@ -7,7 +7,9 @@
     "url": "git+https://github.com/rehearsal-js/rehearsal-js.git"
   },
   "scripts": {
-    "build": "tsc -b",
+    "generate": "node scripts/processDiagnosticsAndFixes.mjs packages/codefixes/src/diagnosticMessages.json packages/codefixes/src/codefixesMessages.json",
+    "new-diagnostics": "curl https://raw.githubusercontent.com/microsoft/TypeScript/main/src/compiler/diagnosticMessages.json -o packages/codefixes/src/diagnosticMessages.json",
+    "build": "pnpm generate && tsc -b",
     "lint": "pnpm lint:package-json && eslint --fix . --cache",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",

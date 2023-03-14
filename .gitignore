@@ -21,3 +21,6 @@ tmp/
 .yarnrc.yml
 yarn.lock
 .eslintcache
+
+packages/codefixes/src/diagnosticInformationMap.generated.ts
+packages/codefixes/src/codefixInformationMap.generated.ts
