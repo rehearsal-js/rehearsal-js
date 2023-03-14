@@ -1,18 +1,26 @@
 #!/usr/bin/env node
 import { resolve, relative, isAbsolute } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
 
-import { MigrateCommandOptions, PackageJson, PreviousRuns, ReportJson } from '../../types.js';
+import {
+  MigrateCommandContext,
+  MigrateCommandOptions,
+  PackageJson,
+  PreviousRuns,
+  ReportJson,
+} from '../../types.js';
 import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = PackageJson.parse(resolve(__dirname, '../../../package.json'));
+const { version } = PackageJson.parse(
+  JSON.parse(await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8'))
+);
 
 export const migrateCommand = new Command();
 
@@ -83,7 +91,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     reportExisted,
   } = await loadTasks();
 
-  logger.info(`@rehearsal/migrate ${version.trim()}`);
+  logger.info(`@rehearsal/migrate ${version?.trim()}`);
 
   // Show git warning if:
   // 1. Not --dryRun
@@ -145,7 +153,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     if (!options.ci) {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
-      const ctx = await new Listr(tasks, defaultListrOption).run();
+      const ctx = await new Listr<MigrateCommandContext>(tasks, defaultListrOption).run();
       await new Listr([convertTask(options, logger, ctx)], {
         renderer: 'simple',
         ...defaultListrOption,
@@ -167,7 +175,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         defaultListrOption
       ).run();
     } else if (reportExisted(options.basePath, options.outputPath)) {
-      const previousRuns = getPreviousRuns(
+      const previousRuns = await getPreviousRuns(
         options.basePath,
         options.outputPath,
         options.entrypoint
@@ -193,14 +201,18 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   }
 }
 
-function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string): PreviousRuns {
+async function getPreviousRuns(
+  basePath: string,
+  outputDir: string,
+  entrypoint: string
+): Promise<PreviousRuns> {
   const jsonReportPath = resolve(basePath, outputDir, 'migrate-report.json');
 
   let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
 
   if (existsSync(jsonReportPath)) {
-    const report = ReportJson.parse(jsonReportPath);
-    const { summary, fixedItemCount: previousFixedCount } = report;
+    const report = ReportJson.parse(JSON.parse(await fs.readFile(jsonReportPath, 'utf-8')));
+    const { summary = [], fixedItemCount: previousFixedCount = 0 } = report;
     previousRuns = {
       ...previousRuns,
       previousFixedCount,

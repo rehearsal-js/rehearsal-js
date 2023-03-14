@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+import { promises as fs } from 'node:fs';
 import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { compare } from 'compare-versions';
@@ -24,7 +24,9 @@ import {
 import { PackageJson, UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = PackageJson.parse(resolve(__dirname, '../../package.json'));
+const { version } = PackageJson.parse(
+  JSON.parse(await fs.readFile(resolve(__dirname, '../../package.json'), 'utf-8'))
+);
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
@@ -61,7 +63,7 @@ upgradeCommand
 
     basePath = resolve(basePath);
 
-    console.log(`@rehearsal/upgrade ${version.trim()}`);
+    console.log(`@rehearsal/upgrade ${version?.trim()}`);
 
     // WARN: is git dirty check and exit if dirty
     if (!options.dryRun) {

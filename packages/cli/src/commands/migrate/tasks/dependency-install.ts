@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, promises as fs } from 'node:fs';
 import { ListrTask } from 'listr2';
 
 import { addDep } from '@rehearsal/utils';
@@ -28,10 +28,10 @@ function extractDepName(dep: string): string {
 
 // check if package.json has all required dependecies
 // from rehearsal default and user config
-export function shouldRunDepInstallTask(
+export async function shouldRunDepInstallTask(
   options: MigrateCommandOptions,
   context: Partial<MigrateCommandContext> = {}
-): boolean {
+): Promise<boolean> {
   const { basePath } = options;
   // add extra required dependencies from user config if there is any
   let dependencies: string[] = [];
@@ -44,7 +44,7 @@ export function shouldRunDepInstallTask(
 
   const packageJsonPath = resolve(basePath, 'package.json');
   if (existsSync(packageJsonPath)) {
-    const packageJson = PackageJson.parse(packageJsonPath);
+    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
     for (const d of dependencies) {
       if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
         return true;
@@ -70,7 +70,8 @@ export function depInstallTask(
   return {
     title: 'Install dependencies',
     enabled: (): boolean => !options.dryRun,
-    skip: (ctx: MigrateCommandContext): boolean => !shouldRunDepInstallTask(options, ctx),
+    skip: async (ctx: MigrateCommandContext): Promise<boolean> =>
+      !(await shouldRunDepInstallTask(options, ctx)),
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {

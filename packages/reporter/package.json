@@ -28,7 +28,6 @@
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run",

@@ -74,14 +74,16 @@ export type PreviousRuns = {
   previousFixedCount: number;
 };
 
-export const PackageJson = z.object({
+const PackageJsonSchema = z.object({
   version: z.string(),
   scripts: z.optional(z.record(z.string(), z.string())),
   devDependencies: z.optional(z.record(z.string())),
   dependencies: z.optional(z.record(z.string(), z.string())),
 });
 
-export const ReportJson = z.object({
+export const PackageJson = PackageJsonSchema.partial();
+
+const ReportJsonSchema = z.object({
   summary: z.array(
     z.object({
       basePath: z.string(),
@@ -91,3 +93,5 @@ export const ReportJson = z.object({
   fixedItemCount: z.number(),
   items: z.array(z.unknown()),
 });
+
+export const ReportJson = ReportJsonSchema.partial();

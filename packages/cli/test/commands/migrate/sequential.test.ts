@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readdirSync } from 'node:fs';
+import { readdirSync, promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import {
@@ -77,13 +77,15 @@ describe('Task: sequential', () => {
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('index.ts');
 
-    const report = ReportJson.parse(resolve(basePath, '.rehearsal', 'migrate-report.json'));
+    const report = ReportJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, '.rehearsal', 'migrate-report.json'), 'utf-8'))
+    );
     const { summary, fixedItemCount, items } = report;
-    expect(summary.length).toBe(2);
-    expect(summary[0].basePath).toEqual(summary[1].basePath);
-    expect(summary[0].entrypoint).toBe('depends-on-foo.ts');
-    expect(summary[1].entrypoint).toBe('index.ts');
+    expect(summary?.length).toBe(2);
+    expect(summary?.[0].basePath).toEqual(summary?.[1].basePath);
+    expect(summary?.[0].entrypoint).toBe('depends-on-foo.ts');
+    expect(summary?.[1].entrypoint).toBe('index.ts');
     expect(fixedItemCount).toBe(4);
-    expect(items.length).toBe(2);
+    expect(items?.length).toBe(2);
   });
 });

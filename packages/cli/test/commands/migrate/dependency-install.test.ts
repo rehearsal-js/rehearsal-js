@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 
@@ -45,14 +45,16 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options)];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
 
     expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
     expect(output).matchSnapshot();
   });
 
-  test('shouldRunDepInstallTask should skip', () => {
+  test('shouldRunDepInstallTask should skip', async () => {
     const options = createMigrateOptions(basePath);
 
     // convert array of deps to object-ish
@@ -62,7 +64,7 @@ describe('Task: dependency-install', () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(packageJsonPath);
+    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -82,7 +84,7 @@ describe('Task: dependency-install', () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(packageJsonPath);
+    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -106,7 +108,9 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
 
@@ -117,7 +121,7 @@ describe('Task: dependency-install', () => {
     expect(output).matchSnapshot();
   });
 
-  test('shouldRunDepInstallTask should skip with custom deps', () => {
+  test('shouldRunDepInstallTask should skip with custom deps', async () => {
     createUserConfig(basePath, {
       migrate: {
         install: {
@@ -136,7 +140,7 @@ describe('Task: dependency-install', () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(packageJsonPath);
+    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -165,7 +169,7 @@ describe('Task: dependency-install', () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(packageJsonPath);
+    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -211,7 +215,9 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
     expect(devDeps).toHaveProperty('fs-extra');
 

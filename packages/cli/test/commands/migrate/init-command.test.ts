@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -34,7 +34,9 @@ describe('migrate init', () => {
     const fileList = readdirSync(basePath);
 
     // Dependencies
-    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
     expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
@@ -77,7 +79,9 @@ describe('migrate init', () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
     // Dependencies
-    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(
+      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    );
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
     expect(Object.keys(devDeps!).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());

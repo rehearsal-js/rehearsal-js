@@ -29,7 +29,6 @@
     "build:schema": "typescript-json-schema \"src/configs/rehearsal-config.ts\" IRehearsalConfig --out ./rehearsal-config-schema.json",
     "docs": "api-extractor run --typescript-compiler-folder ./node_modules/typescript && api-documenter markdown -i ./temp -o ./docs",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run",

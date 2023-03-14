@@ -19,7 +19,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2022,
-    project: ['./packages/*/tsconfig.json', './packages/*/test/tsconfig.json'],
+    project: ['./packages/*/tsconfig.json', './packages/*/test/tsconfig.json', './tsconfig.eslint.json'],
   },
   plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames'],
   extends: [
@@ -104,5 +104,5 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': ['off'],
     '@typescript-eslint/no-inferrable-types': ['off'],
   },
-  ignorePatterns: ['dist', 'node_modules', 'fixtures', '*.config.*', 'release.js', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', 'node_modules', 'fixtures', '*.config.*', 'release.js', '.eslintrc.cjs', 'packages/test-support/scripts/setup-fixtures.js'],
 };
