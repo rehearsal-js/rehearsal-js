@@ -42,8 +42,8 @@
     "@rehearsal/ts-utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/prettier": "^2.7.2",
     "@rehearsal/service": "workspace:*",
+    "@types/prettier": "^2.7.2",
     "fs-extra": "^11.1.0",
     "prettier": "^2.8.3",
     "tmp": "^0.2.1",

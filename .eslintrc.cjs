@@ -32,6 +32,13 @@ module.exports = {
   ],
   overrides: [
     {
+      files: ['./packages/codefixes/**/*.ts'],
+      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
+      rules: {
+        '@typescript-eslint/restrict-template-expressions': ['off'],
+      }
+    },
+    {
       files: ['./packages/cli/**/*.ts'],
       extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
       rules: {

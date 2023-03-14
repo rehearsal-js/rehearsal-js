@@ -36,7 +36,7 @@ export class HintCodeFixCollection implements CodeFixCollection {
 
     if (conditionalHints !== undefined && diagnostic.node !== undefined) {
       for (const conditionalHint of conditionalHints) {
-        if (conditionalHint.when(diagnostic.node!, diagnostic.program, diagnostic.checker)) {
+        if (conditionalHint.when(diagnostic.node, diagnostic.program, diagnostic.checker)) {
           return this.prepareHint(conditionalHint.hint, diagnostic);
         }
       }
