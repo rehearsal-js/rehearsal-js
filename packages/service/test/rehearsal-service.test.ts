@@ -68,18 +68,18 @@ describe('Test service', function () {
     expect(service.getSourceFile(fileName).text).toEqual(originalFileContent);
   });
 
-  test('getSemanticDiagnosticsWithLocation', () => {
+  test('getDiagnostics', async () => {
     const service = new RehearsalService(options, fileNames);
 
     let diagnostics: DiagnosticWithLocation[];
 
-    diagnostics = service.getSemanticDiagnosticsWithLocation(fileName);
+    diagnostics = service.getDiagnostics(fileName);
 
     expect(diagnostics).toHaveLength(0);
 
     // Add error to the file content
     service.setFileText(fileName, 'class Dummy {\n  \n}\n oops();\n');
-    diagnostics = service.getSemanticDiagnosticsWithLocation(fileName);
+    diagnostics = service.getDiagnostics(fileName);
 
     expect(diagnostics).toHaveLength(1);
     expect(diagnostics[0].code).toEqual(2304);
