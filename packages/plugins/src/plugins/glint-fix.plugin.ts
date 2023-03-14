@@ -5,7 +5,7 @@ import {
   PluginsRunnerContext,
   type PluginResult,
 } from '@rehearsal/service';
-import { applyTextChange, normalizeTextChanges } from '@rehearsal/utils';
+import { applyTextChange, normalizeTextChanges } from '@rehearsal/ts-utils';
 import { CodeFixAction, FileTextChanges, TextChange } from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
 

@@ -1,6 +1,6 @@
 import debug from 'debug';
 import hash from 'object-hash';
-import { CodeActionCommand, CodeFixAction, type DiagnosticWithLocation } from 'typescript';
+import { CodeActionCommand, CodeFixAction } from 'typescript';
 
 import {
   applyCodeFix,
