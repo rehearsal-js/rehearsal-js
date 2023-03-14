@@ -9,7 +9,6 @@ import {
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
-import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
 
@@ -20,7 +19,7 @@ export type MigrateInput = {
   configName?: string;
   reporter: Reporter; // Reporter
   logger?: Logger;
-  task?: ListrContext;
+  task?: { output: string };
 };
 
 export type MigrateOutput = {
@@ -39,7 +38,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const logger = input.logger;
   let entrypoint = input.entrypoint;
   // output is only for tests
-  const listrTask: ListrContext = input.task || { output: '' };
+  const listrTask = input.task || { output: '' };
 
   logger?.debug('migration started');
   logger?.debug(`Base path: ${basePath}`);
@@ -52,7 +51,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     entrypoint = entrypoint.replace(/js$/, 'ts');
   }
 
-  const configFile = findConfigFile(basePath, sys.fileExists, configName);
+  const configFile = findConfigFile(
+    basePath,
+    (filePath: string) => sys.fileExists(filePath),
+    configName
+  );
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -62,7 +65,10 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   logger?.debug(`config file: ${configFile}`);
 
-  const { config } = readConfigFile(configFile, sys.readFile);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { config } = readConfigFile(configFile, (filePath: string, encoding?: string) =>
+    sys.readFile(filePath, encoding)
+  );
 
   const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
@@ -121,7 +127,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 // Rename files to TS extension.
 export function gitMove(
   sourceFiles: string[],
-  listrTask: ListrContext,
+  listrTask: { output: string },
   basePath: string,
   logger?: Logger
 ): string[] {

@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { readdirSync, promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import { Report } from '@rehearsal/reporter';
 import {
   analyzeTask,
   depInstallTask,
@@ -17,7 +18,6 @@ import {
   listrTaskRunner,
   prepareTmpDir,
 } from '../../test-helpers/index.js';
-import { ReportJson } from '../../../src/types.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
@@ -77,9 +77,10 @@ describe('Task: sequential', () => {
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('index.ts');
 
-    const report = ReportJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, '.rehearsal', 'migrate-report.json'), 'utf-8'))
-    );
+    const report = JSON.parse(
+      await fs.readFile(resolve(basePath, '.rehearsal', 'migrate-report.json'), 'utf-8')
+    ) as Report;
+
     const { summary, fixedItemCount, items } = report;
     expect(summary?.length).toBe(2);
     expect(summary?.[0].basePath).toEqual(summary?.[1].basePath);

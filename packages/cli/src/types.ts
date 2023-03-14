@@ -82,16 +82,3 @@ const PackageJsonSchema = z.object({
 });
 
 export const PackageJson = PackageJsonSchema.partial();
-
-const ReportJsonSchema = z.object({
-  summary: z.array(
-    z.object({
-      basePath: z.string(),
-      entrypoint: z.string(),
-    })
-  ),
-  fixedItemCount: z.number(),
-  items: z.array(z.unknown()),
-});
-
-export const ReportJson = ReportJsonSchema.partial();
