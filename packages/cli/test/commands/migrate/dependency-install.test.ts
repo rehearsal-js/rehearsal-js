@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { writeJSONSync } from 'fs-extra/esm';
 
 import {
   REQUIRED_DEPENDENCIES,
@@ -9,7 +9,7 @@ import {
   shouldRunDepInstallTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+import { CustomConfig, PackageJson } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -17,7 +17,7 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
-describe('Task: dependency-install', async () => {
+describe('Task: dependency-install', () => {
   let basePath = '';
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
@@ -42,17 +42,17 @@ describe('Task: dependency-install', async () => {
 
   test('install required dependencies', async () => {
     const options = createMigrateOptions(basePath);
-    const tasks = [await depInstallTask(options)];
+    const tasks = [depInstallTask(options)];
     await listrTaskRunner(tasks);
 
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
 
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
     expect(output).matchSnapshot();
   });
 
-  test('shouldRunDepInstallTask should skip', async () => {
+  test('shouldRunDepInstallTask should skip', () => {
     const options = createMigrateOptions(basePath);
 
     // convert array of deps to object-ish
@@ -62,7 +62,7 @@ describe('Task: dependency-install', async () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = readJSONSync(packageJsonPath);
+    const packageJson = PackageJson.parse(packageJsonPath);
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -73,7 +73,7 @@ describe('Task: dependency-install', async () => {
 
   test('skip install required dependencies', async () => {
     const options = createMigrateOptions(basePath);
-    const tasks = [await depInstallTask(options)];
+    const tasks = [depInstallTask(options)];
 
     // convert array of deps to object-ish
     const requiredDevDepsMap = REQUIRED_DEPENDENCIES.reduce(
@@ -82,7 +82,7 @@ describe('Task: dependency-install', async () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = readJSONSync(packageJsonPath);
+    const packageJson = PackageJson.parse(packageJsonPath);
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -103,21 +103,21 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
 
-    expect(Object.keys(devDeps).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+    expect(Object.keys(devDeps!).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
 
     expect(devDeps).toHaveProperty('tmp');
     expect(deps).toHaveProperty('fs-extra');
     expect(output).matchSnapshot();
   });
 
-  test('shouldRunDepInstallTask should skip with custom deps', async () => {
+  test('shouldRunDepInstallTask should skip with custom deps', () => {
     createUserConfig(basePath, {
       migrate: {
         install: {
@@ -136,7 +136,7 @@ describe('Task: dependency-install', async () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = readJSONSync(packageJsonPath);
+    const packageJson = PackageJson.parse(packageJsonPath);
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -156,7 +156,7 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     // convert array of deps to object-ish
     const requiredDevDepsMap = {
       ...REQUIRED_DEPENDENCIES.reduce((map, d) => ({ ...map, [d]: '1.0.0' }), {}),
@@ -165,7 +165,7 @@ describe('Task: dependency-install', async () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = readJSONSync(packageJsonPath);
+    const packageJson = PackageJson.parse(packageJsonPath);
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -187,7 +187,7 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     // await listrTaskRunner(tasks);
 
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowErrorMatchingSnapshot();
@@ -208,10 +208,10 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = readJSONSync(resolve(basePath, 'package.json'));
+    const packageJson = PackageJson.parse(resolve(basePath, 'package.json'));
     const devDeps = packageJson.devDependencies;
     expect(devDeps).toHaveProperty('fs-extra');
 
@@ -240,7 +240,7 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     expect(existsSync(resolve(basePath, 'foo')));
@@ -260,7 +260,7 @@ describe('Task: dependency-install', async () => {
     });
     const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const tasks = [await depInstallTask(options, { userConfig })];
+    const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     expect(output).matchSnapshot();

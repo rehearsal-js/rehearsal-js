@@ -14,7 +14,7 @@ function createUserConfig(
   writeJSONSync(configPath, config);
 }
 
-describe('Task: initialize', async () => {
+describe('Task: initialize', () => {
   let basePath = '';
   let output = '';
 
@@ -52,7 +52,7 @@ describe('Task: initialize', async () => {
     });
 
     const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [await initTask(options)];
+    const tasks = [initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(9);
@@ -90,7 +90,7 @@ describe('Task: initialize', async () => {
     );
 
     const options = createMigrateOptions(basePath, { ci: true, userConfig: 'another-config.json' });
-    const tasks = [await initTask(options)];
+    const tasks = [initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(9);

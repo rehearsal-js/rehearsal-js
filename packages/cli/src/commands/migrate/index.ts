@@ -5,17 +5,14 @@ import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
-import { readJsonSync } from 'fs-extra/esm';
 
+import { MigrateCommandOptions, PackageJson, PreviousRuns, ReportJson } from '../../types.js';
 import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';
-import type { MigrateCommandOptions, PreviousRuns } from '../../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = readJsonSync(resolve(__dirname, '../../../package.json')) as {
-  version: string;
-};
+const { version } = PackageJson.parse(resolve(__dirname, '../../../package.json'));
 
 export const migrateCommand = new Command();
 
@@ -190,7 +187,9 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
       await new Listr([...tasks, convertTask(options, logger)], defaultListrOption).run();
     }
   } catch (e) {
-    logger.error(`${e}`);
+    if (e instanceof Error) {
+      logger.error(`${e.message + '\n' + (e.stack || '')}`);
+    }
   }
 }
 
@@ -200,7 +199,7 @@ function getPreviousRuns(basePath: string, outputDir: string, entrypoint: string
   let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
 
   if (existsSync(jsonReportPath)) {
-    const report = readJsonSync(jsonReportPath);
+    const report = ReportJson.parse(jsonReportPath);
     const { summary, fixedItemCount: previousFixedCount } = report;
     previousRuns = {
       ...previousRuns,

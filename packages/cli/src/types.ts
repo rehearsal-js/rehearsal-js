@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { UserConfig } from './user-config.js';
 import type { State } from './helpers/state.js';
@@ -60,6 +61,7 @@ export type TSConfig = {
   compilerOptions: {
     strict: boolean;
   };
+  include?: string[];
 };
 
 export type RunPath = {
@@ -71,3 +73,21 @@ export type PreviousRuns = {
   paths: RunPath[];
   previousFixedCount: number;
 };
+
+export const PackageJson = z.object({
+  version: z.string(),
+  scripts: z.optional(z.record(z.string(), z.string())),
+  devDependencies: z.optional(z.record(z.string())),
+  dependencies: z.optional(z.record(z.string(), z.string())),
+});
+
+export const ReportJson = z.object({
+  summary: z.array(
+    z.object({
+      basePath: z.string(),
+      entrypoint: z.string(),
+    })
+  ),
+  fixedItemCount: z.number(),
+  items: z.array(z.unknown()),
+});

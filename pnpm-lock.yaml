@@ -142,6 +142,7 @@ importers:
       which: ^3.0.0
       winston: ^3.8.2
       yaml: ^2.2.1
+      zod: ^3.21.4
     dependencies:
       '@microsoft/api-documenter': 7.21.5
       '@rehearsal/migrate': link:../migrate
@@ -171,6 +172,7 @@ importers:
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
+      zod: 3.21.4
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/js-yaml': 4.0.5
@@ -5867,3 +5869,7 @@ packages:
       validator: 13.9.0
     optionalDependencies:
       commander: 9.5.0
+
+  /zod/3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false

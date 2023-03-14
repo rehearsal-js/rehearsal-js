@@ -7,7 +7,6 @@ import debug from 'debug';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { execa } from 'execa';
-import { readJSONSync } from 'fs-extra/esm';
 import {
   addDep,
   determineProjectName,
@@ -22,10 +21,10 @@ import {
   parseTsVersion,
 } from '@rehearsal/utils';
 
-import type { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
+import { PackageJson, UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = readJSONSync(resolve(__dirname, '../../package.json')) as { version: string };
+const { version } = PackageJson.parse(resolve(__dirname, '../../package.json'));
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();
@@ -91,7 +90,7 @@ upgradeCommand
       [
         {
           title: 'Setting TypeScript version for rehearsal',
-          task: (_ctx: UpgradeCommandContext, task): Listr =>
+          task: (_ctx: UpgradeCommandContext, task) =>
             task.newListr((parent) => [
               {
                 title: options.tsVersion
@@ -136,7 +135,7 @@ upgradeCommand
         {
           title: `Bumping TypeScript Dev-Dependency`,
           skip: (ctx): boolean => ctx.skip,
-          task: (ctx: UpgradeCommandContext, task): Listr =>
+          task: (ctx: UpgradeCommandContext, task) =>
             task.newListr(() => [
               {
                 title: `Bumping TypeScript Dev-Dependency to typescript@${ctx.tsVersion}`,
@@ -169,7 +168,7 @@ upgradeCommand
         {
           title: 'Checking for compilation errors',
           skip: (ctx): boolean => ctx.skip,
-          task: (_ctx: UpgradeCommandContext, task): Listr =>
+          task: (_ctx: UpgradeCommandContext, task) =>
             task.newListr(
               () => [
                 {
@@ -246,7 +245,9 @@ upgradeCommand
       const reportOutputPath = resolve(basePath, options.outputPath);
       generateReports('upgrade', reporter, reportOutputPath, options.format);
     } catch (e) {
-      logger.error(`${e}`);
+      if (e instanceof Error) {
+        logger.error(`${e.message + '\n' + (e.stack || '')}`);
+      }
     }
 
     return;

@@ -47,7 +47,7 @@ afterAll(async (): Promise<void> => {
 
 describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
   'upgrade:command typescript@%s',
-  async (buildTag) => {
+  (buildTag) => {
     beforeEach(beforeEachPrep);
     afterEach(afterEachCleanup);
 
@@ -65,7 +65,7 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
 
       expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
       expect(result.stdout).to.contain(`Codefixes applied successfully`);
-      expect(existsSync(reportFile)).toBeTruthy;
+      expect(existsSync(reportFile)).toBeTruthy();
 
       const report = readJSONSync(reportFile) as import('@rehearsal/reporter').Report;
       expect(report).to.exist;
@@ -76,7 +76,7 @@ describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
   }
 );
 
-describe('upgrade:command typescript@next', async () => {
+describe('upgrade:command typescript@next', () => {
   beforeEach(beforeEachPrep);
   afterEach(afterEachCleanup);
 
@@ -93,14 +93,14 @@ describe('upgrade:command typescript@next', async () => {
     const reportFile = join(FIXTURE_APP_PATH, '.rehearsal', 'upgrade-report.sarif');
 
     expect(result.stdout).contain(`Rehearsing with typescript@${latestPublishedTSVersion}`);
-    expect(existsSync(reportFile)).toBeTruthy;
+    expect(existsSync(reportFile)).toBeTruthy();
 
     const report = readJSONSync(reportFile) as import('@rehearsal/reporter').Report;
     expect(report).to.exist;
   });
 });
 
-describe('upgrade:command tsc version check', async () => {
+describe('upgrade:command tsc version check', () => {
   beforeEach(beforeEachPrep);
   afterEach(afterEachCleanup);
 
@@ -108,6 +108,7 @@ describe('upgrade:command tsc version check', async () => {
     try {
       await runBin('upgrade', [FIXTURE_APP_PATH, '--tsVersion', ''], { cwd: FIXTURE_APP_PATH });
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       expect(`${error}`).to.contain(
         `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
       );
@@ -116,6 +117,7 @@ describe('upgrade:command tsc version check', async () => {
     try {
       await runBin('upgrade', [FIXTURE_APP_PATH, '--tsVersion', '0'], { cwd: FIXTURE_APP_PATH });
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       expect(`${error}`).to.contain(
         `The tsVersion specified is an invalid string. Please specify a valid version as n.n.n`
       );

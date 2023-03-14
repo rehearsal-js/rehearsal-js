@@ -50,7 +50,7 @@ export function shouldRunLintConfigTask(
       const projectName = determineProjectName(basePath);
       const explorerSync = cosmiconfigSync(projectName || '');
       const loaded = explorerSync.load(relativeConfigPath);
-      const oldConfig = loaded?.config;
+      const oldConfig = loaded?.config as { extends: string[] };
       return (
         // check if .eslintrc exists
         // or its extends has ".rehearsal-eslintrc"
@@ -135,7 +135,7 @@ async function extendsRehearsalInCurrentConfig(
   const projectName = determineProjectName(basePath);
   const explorerSync = cosmiconfigSync(projectName || '');
   const loaded = explorerSync.load(configPath);
-  const oldConfig = loaded?.config;
+  const oldConfig = loaded?.config as { extends: string[] };
 
   let newConfig;
   if (oldConfig) {

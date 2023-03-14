@@ -24,12 +24,13 @@ import {
   isPackageSelection,
   isActionSelection,
 } from '../../test-helpers/index.js';
+import { TSConfig } from '../../../src/types.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
-describe('Task: convert', async () => {
+describe('Task: convert', () => {
   let basePath = '';
   let output = '';
   let outputStream = createOutputStream();
@@ -62,12 +63,12 @@ describe('Task: convert', async () => {
     const options = createMigrateOptions(basePath, { ci: true });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -81,7 +82,7 @@ describe('Task: convert', async () => {
     expect(fileList).not.toContain('foo.js');
     expect(fileList).not.toContain('depends-on-foo.js');
 
-    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const config = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
     expect(config.include).toContain('index.ts');
     expect(config.include).toContain('foo.ts');
     expect(config.include).toContain('depends-on-foo.ts');
@@ -91,12 +92,12 @@ describe('Task: convert', async () => {
     const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js', ci: true });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -109,7 +110,7 @@ describe('Task: convert', async () => {
     expect(fileList).not.toContain('depends-on-foo.js');
     expect(fileList).not.toContain('foo.js');
 
-    const config = readJSONSync(resolve(basePath, 'tsconfig.json'));
+    const config = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
     expect(config.include).toContain('depends-on-foo.ts');
     expect(config.include).toContain('foo.ts');
   });
@@ -121,12 +122,12 @@ describe('Task: convert', async () => {
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
     await listrTaskRunner(tasks);
 
@@ -156,12 +157,12 @@ describe('Task: convert', async () => {
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -223,12 +224,12 @@ describe('Task: convert', async () => {
 
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -285,12 +286,12 @@ describe('Task: convert', async () => {
     });
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
 
     await listrTaskRunner(tasks);
@@ -326,12 +327,12 @@ describe('Task: convert', async () => {
 
     // Get context for convert task from previous tasks
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await convertTask(options, logger),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      convertTask(options, logger),
     ];
 
     // use try catch since it would be killed via ctrl c

@@ -1,10 +1,9 @@
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ListrTask } from 'listr2';
-import { readJSONSync } from 'fs-extra/esm';
 
 import { addDep } from '@rehearsal/utils';
-import type { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
+import { MigrateCommandContext, MigrateCommandOptions, PackageJson } from '../../../types.js';
 
 export const REQUIRED_DEPENDENCIES = [
   '@types/node',
@@ -45,7 +44,7 @@ export function shouldRunDepInstallTask(
 
   const packageJsonPath = resolve(basePath, 'package.json');
   if (existsSync(packageJsonPath)) {
-    const packageJson = readJSONSync(packageJsonPath);
+    const packageJson = PackageJson.parse(packageJsonPath);
     for (const d of dependencies) {
       if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
         return true;

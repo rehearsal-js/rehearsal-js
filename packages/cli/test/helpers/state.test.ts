@@ -13,14 +13,14 @@ function prepareTmpDir(): string {
   return targetDir;
 }
 
-describe('state', async () => {
+describe('state', () => {
   let basePath = '';
 
   beforeEach(() => {
     basePath = prepareTmpDir();
   });
 
-  test('constructor should init state to disk', async () => {
+  test('constructor should init state to disk', () => {
     const configPath = resolve(basePath, 'state.json');
     const { packages, files } = new State('foo', basePath, [], configPath);
 
@@ -30,7 +30,7 @@ describe('state', async () => {
     expect(readJSONSync(configPath)).matchSnapshot();
   });
 
-  test('constructor should load existed state', async () => {
+  test('constructor should load existed state', () => {
     const configPath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
     const existedStore: Store = {
@@ -59,7 +59,7 @@ describe('state', async () => {
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
-  test('getVerifiedStore', async () => {
+  test('getVerifiedStore', () => {
     const configPath = resolve(basePath, 'state.json');
     const existedStore: Store = {
       name: 'bar',
@@ -87,7 +87,7 @@ describe('state', async () => {
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
-  test('addFilesToPackages', async () => {
+  test('addFilesToPackages', () => {
     const configPath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
 
@@ -103,7 +103,7 @@ describe('state', async () => {
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
-  test('calculateTSIgnoreCount', async () => {
+  test('calculateTSIgnoreCount', () => {
     const foo = '@rehearsal TODO foo bar';
     const fooPath = resolve(basePath, 'foo');
 
@@ -117,7 +117,7 @@ describe('state', async () => {
     expect(calculateTSIgnoreCount(barPath)).toBe(2);
   });
 
-  test('getPackageMigrateProgress', async () => {
+  test('getPackageMigrateProgress', () => {
     const configPath = resolve(basePath, 'state.json');
 
     const fooPath = resolve(basePath, 'foo.ts');
@@ -162,7 +162,7 @@ describe('state', async () => {
     expect(readJSONSync(configPath)).toMatchSnapshot();
   });
 
-  test('getPackageErrorCount', async () => {
+  test('getPackageErrorCount', () => {
     const configPath = resolve(basePath, 'state.json');
 
     const foo = '@rehearsal TODO foo bar';
@@ -181,7 +181,7 @@ describe('state', async () => {
     expect(state.getPackageErrorCount('sample-package')).toStrictEqual(3);
   });
 
-  test('does not contain absolute paths in state file', async () => {
+  test('does not contain absolute paths in state file', () => {
     const configPath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
     const barPath = resolve(basePath, 'bar');

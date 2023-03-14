@@ -1,7 +1,6 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync } from 'fs-extra/esm';
 import { createLogger, format, transports } from 'winston';
 import {
   analyzeTask,
@@ -18,12 +17,13 @@ import {
   listrTaskRunner,
   prepareTmpDir,
 } from '../../test-helpers/index.js';
+import { ReportJson } from '../../../src/types.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
-describe('Task: sequential', async () => {
+describe('Task: sequential', () => {
   let basePath = '';
   let output = '';
 
@@ -61,12 +61,12 @@ describe('Task: sequential', async () => {
       paths: [{ basePath, entrypoint: 'depends-on-foo.ts' }],
     };
     const tasks = [
-      await initTask(options),
-      await depInstallTask(options),
-      await tsConfigTask(options),
-      await lintConfigTask(options),
-      await analyzeTask(options),
-      await sequentialTask(options, logger, previousRuns),
+      initTask(options),
+      depInstallTask(options),
+      tsConfigTask(options),
+      lintConfigTask(options),
+      analyzeTask(options),
+      sequentialTask(options, logger, previousRuns),
     ];
 
     await listrTaskRunner(tasks);
@@ -77,7 +77,7 @@ describe('Task: sequential', async () => {
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('index.ts');
 
-    const report = readJSONSync(resolve(basePath, '.rehearsal', 'migrate-report.json'));
+    const report = ReportJson.parse(resolve(basePath, '.rehearsal', 'migrate-report.json'));
     const { summary, fixedItemCount, items } = report;
     expect(summary.length).toBe(2);
     expect(summary[0].basePath).toEqual(summary[1].basePath);

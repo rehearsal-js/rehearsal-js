@@ -110,7 +110,7 @@ export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateComman
     exitOnError: true,
     renderer: 'verbose',
   };
-  return await new Listr(tasks, defaultListrOption).run();
+  return (await new Listr(tasks, defaultListrOption).run()) as Promise<MigrateCommandContext>;
 }
 
 // keycode for interactive mode test

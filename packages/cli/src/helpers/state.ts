@@ -79,6 +79,7 @@ export class State {
 
   // verify and update state based on files on disk
   getVerifiedStore(): Store {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const store: Store = readJSONSync(this.configPath);
     for (const f in store.files) {
       const status = store.files[f];

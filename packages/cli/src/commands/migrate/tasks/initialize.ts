@@ -29,7 +29,7 @@ export function initTask(
       const projectName = determineProjectName(options.basePath);
       DEBUG_CALLBACK('projectName', projectName);
 
-      task.output = `Setting up config for ${projectName}`;
+      task.output = `Setting up config for ${projectName || 'project'}`;
     },
     options: {
       // options for dryRun, since we need to keep the output to see the list of files

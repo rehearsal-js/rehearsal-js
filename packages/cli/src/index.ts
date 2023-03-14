@@ -1,12 +1,12 @@
 import { URL } from 'node:url';
 import { resolve } from 'node:path';
 import { Command } from 'commander';
-import { readJSONSync } from 'fs-extra/esm';
 import { migrateCommand } from './commands/migrate/index.js';
 import { upgradeCommand } from './commands/upgrade.js';
+import { PackageJson } from './types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = readJSONSync(resolve(__dirname, '../package.json')) as { version: string };
+const { version } = PackageJson.parse(resolve(__dirname, '../package.json'));
 
 const program = new Command();
 
