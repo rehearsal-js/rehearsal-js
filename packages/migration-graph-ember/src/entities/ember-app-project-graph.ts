@@ -5,6 +5,7 @@ import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
   Package,
+  PackageJson,
   PackageNode,
   ProjectGraph,
   ProjectGraphOptions,
@@ -37,18 +38,18 @@ export class EmberAppProjectGraph extends ProjectGraph {
   override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
-    if (p instanceof EmberAddonPackage) {
-      // Check the graph if it has this node already
-      const hasNodeByPackageName = this.graph.hasNode(p.packageName);
+    // if (p instanceof EmberAddonPackage) {
+    //   // Check the graph if it has this node already
+    //   const hasNodeByPackageName = this.graph.hasNode(p.packageName);
 
-      if (!hasNodeByPackageName) {
-        const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(p.name);
-        // Create a registry entry for the packageName to ensure a update
-        if (maybeNode) {
-          this.graph.registry.set(p.packageName, maybeNode);
-        }
-      }
-    }
+    //   if (!hasNodeByPackageName) {
+    //     const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(p.name);
+    //     // Create a registry entry for the packageName to ensure a update
+    //     if (maybeNode) {
+    //       this.graph.registry.set(p.packageName, maybeNode);
+    //     }
+    //   }
+    // }
     const node = super.addPackageToGraph(p, crawl);
 
     return node;
@@ -103,11 +104,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   private isMatch(addonName: string, emberAddonPackage: EmberAddonPackage): boolean {
-    return (
-      addonName == emberAddonPackage.name ||
-      addonName == emberAddonPackage.emberAddonName ||
-      addonName == emberAddonPackage.moduleName
-    );
+    return addonName == emberAddonPackage.packageName;
   }
 
   /**
@@ -160,7 +157,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   private entityFactory(pathToPackage: string): EmberProjectPackage {
-    let packageJson;
+    let packageJson: PackageJson;
     try {
       packageJson = readPackageJson(pathToPackage);
     } catch (e) {

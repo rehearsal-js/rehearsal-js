@@ -142,7 +142,6 @@ importers:
       which: ^3.0.0
       winston: ^3.8.2
       yaml: ^2.2.1
-      zod: ^3.21.4
     dependencies:
       '@microsoft/api-documenter': 7.21.5
       '@rehearsal/migrate': link:../migrate
@@ -171,7 +170,6 @@ importers:
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
-      zod: 3.21.4
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/js-yaml': 4.0.5
@@ -298,6 +296,7 @@ importers:
   packages/migration-graph-shared:
     specifiers:
       '@rehearsal/test-support': workspace:*
+      '@rehearsal/utils': workspace:*
       debug: ^4.3.4
       dependency-cruiser: ^12.10.0
       fast-glob: ^3.2.12
@@ -310,7 +309,9 @@ importers:
       sort-package-json: ^1.57.0
       tmp: ^0.2.1
       vitest: ^0.28.5
+      zod: ^3.21.4
     dependencies:
+      '@rehearsal/utils': link:../utils
       debug: 4.3.4
       dependency-cruiser: 12.10.0
       fast-glob: 3.2.12
@@ -319,6 +320,7 @@ importers:
       micromatch: 4.0.5
       prettier: 2.8.4
       sort-package-json: 1.57.0
+      zod: 3.21.4
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       fixturify: 3.0.0
@@ -404,8 +406,10 @@ importers:
       vitest: ^0.28.5
       vitest-mock-extended: ^1.0.9
       winston: ^3.8.2
+      zod: ^3.21.4
     dependencies:
       winston: 3.8.2
+      zod: 3.21.4
     devDependencies:
       '@types/debug': 4.1.7
       '@types/eslint': 8.21.1
@@ -538,6 +542,7 @@ importers:
       typescript: ^4.9.5
       vitest: ^0.28.5
       which: ^3.0.0
+      zod: ^3.21.4
     dependencies:
       chalk: 4.1.2
       commander: 10.0.0
@@ -552,6 +557,7 @@ importers:
       semver: 7.3.8
       simple-git: 3.16.1
       which: 3.0.0
+      zod: 3.21.4
     devDependencies:
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2

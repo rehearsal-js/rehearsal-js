@@ -1,7 +1,8 @@
 import { resolve } from 'node:path';
 import { readJsonSync } from 'fs-extra/esm';
+import { PackageJson } from './entities/package.js';
 
-export function readPackageJson(pathToPackage: string): Record<string, unknown> {
+export function readPackageJson(pathToPackage: string): PackageJson {
   return readJsonSync(resolve(pathToPackage, 'package.json'));
 }
 

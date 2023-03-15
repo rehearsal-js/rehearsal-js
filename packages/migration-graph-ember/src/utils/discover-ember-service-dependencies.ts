@@ -116,7 +116,7 @@ export function discoverServiceDependencies(
     const edd = someDefaultExport as ExportDefaultDeclaration;
     // Check if the ExportDefaultDeclaration has a ClassExpression
     if (edd.decl.type === 'ClassExpression') {
-      foundClasses.push(edd.decl as ClassExpression);
+      foundClasses.push(edd.decl);
     } else {
       DEBUG_CALLBACK('Default export does not contain a ClassExpression');
     }

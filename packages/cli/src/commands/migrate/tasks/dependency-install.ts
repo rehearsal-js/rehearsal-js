@@ -2,8 +2,8 @@ import { resolve } from 'node:path';
 import { existsSync, promises as fs } from 'node:fs';
 import { ListrTask } from 'listr2';
 
-import { addDep } from '@rehearsal/utils';
-import { MigrateCommandContext, MigrateCommandOptions, PackageJson } from '../../../types.js';
+import { addDep, PackageJson } from '@rehearsal/utils';
+import { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 export const REQUIRED_DEPENDENCIES = [
   '@types/node',

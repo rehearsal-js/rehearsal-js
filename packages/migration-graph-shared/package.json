@@ -25,6 +25,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@rehearsal/utils": "workspace:*",
     "debug": "^4.3.4",
     "dependency-cruiser": "^12.10.0",
     "fast-glob": "^3.2.12",
@@ -32,7 +33,8 @@
     "fs-extra": "^11.1.0",
     "micromatch": "^4.0.5",
     "prettier": "^2.8.3",
-    "sort-package-json": "^1.57.0"
+    "sort-package-json": "^1.57.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",

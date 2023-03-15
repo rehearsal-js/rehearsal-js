@@ -4,13 +4,13 @@ import { existsSync, promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
 import {
-  MigrateCommandContext,
-  MigrateCommandOptions,
+  parseCommaSeparatedList,
+  gitIsRepoDirty,
+  findWorkspaceRoot,
   PackageJson,
-  PreviousRuns,
-} from '../../types.js';
+} from '@rehearsal/utils';
+import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
 import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';

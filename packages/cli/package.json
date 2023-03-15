@@ -62,8 +62,7 @@
     "tmp": "^0.2.1",
     "which": "^3.0.0",
     "winston": "^3.8.2",
-    "yaml": "^2.2.1",
-    "zod": "^3.21.4"
+    "yaml": "^2.2.1"
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",

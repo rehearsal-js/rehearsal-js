@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { UserConfig } from './user-config.js';
 import type { State } from './helpers/state.js';
@@ -73,12 +72,3 @@ export type PreviousRuns = {
   paths: RunPath[];
   previousFixedCount: number;
 };
-
-const PackageJsonSchema = z.object({
-  version: z.string(),
-  scripts: z.optional(z.record(z.string(), z.string())),
-  devDependencies: z.optional(z.record(z.string())),
-  dependencies: z.optional(z.record(z.string(), z.string())),
-});
-
-export const PackageJson = PackageJsonSchema.partial();

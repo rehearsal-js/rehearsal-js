@@ -300,7 +300,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
+    const files = {
       app: {
         components: {
           'obtuse.js': `
@@ -591,13 +591,13 @@ describe('Unit | EmberAppPackageGraph', () => {
               import Component from '@glimmer/component';
 
               const divide = () => 4 / 2;
-          
+
               const First = <template>Hello</template>
-          
+
               class Second extends Component {
                 <template>world</template>
               }
-          
+
               <template>
                 <First/>, <Second/>!
               </template>
@@ -620,7 +620,7 @@ describe('Unit | EmberAppPackageGraph', () => {
         app: {
           components: {
             'trunk.gjs': `
-              import Branch from './branch'; 
+              import Branch from './branch';
 
               <template>
                 <Branch/>
@@ -643,7 +643,7 @@ describe('Unit | EmberAppPackageGraph', () => {
               const Flea = <template>
                 <p>Hello, {{@name}}!</p>
               </template>;
-              
+
               <template>
                 <Flea @name={{@name}}/>
               </template>

@@ -19,9 +19,10 @@ import {
   gitIsRepoDirty,
   parseCommaSeparatedList,
   parseTsVersion,
+  PackageJson,
 } from '@rehearsal/utils';
 
-import { PackageJson, UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
+import { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const { version } = PackageJson.parse(

@@ -4,6 +4,8 @@ import { readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import sortPackageJson from 'sort-package-json';
 import fastGlob from 'fast-glob';
 
+import { PackageJson as PackageJsonSchema } from '@rehearsal/utils';
+import { z } from 'zod';
 import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo.js';
 import { getWorkspaceGlobs } from '../utils/workspace.js';
 import { getExcludePatterns } from '../index.js';
@@ -13,8 +15,7 @@ import type { IPackage } from './IPackage.js';
 import type { Graph } from '../graph/index.js';
 import type { ModuleNode } from '../types.js';
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-export type PackageJson = Record<string, any>;
+export type PackageJson = z.infer<typeof PackageJsonSchema>;
 
 export type PackageOptions = {
   packageType?: string;
@@ -42,84 +43,38 @@ export class Package implements IPackage {
   /**
    * path {string} - the path to this package
    */
-  #packagePath: string;
-
-  /**
-   * Internal representation of package.json
-   */
-  #packageJson: PackageJson | undefined;
-
-  #packageType: string;
-
-  #name: string;
-
-  #excludePatterns: Set<string>;
-
-  #includePatterns: Set<string>;
+  path: string;
+  packageJson: PackageJson;
+  packageName: string;
+  type: string;
+  includePatterns: Set<string>;
+  excludePatterns: Set<string>;
+  workspaceGlobs: string[] = [];
 
   protected graph: Graph<ModuleNode> | undefined;
 
-  #workspaceGlobs?: string[];
-
   constructor(
-    packagePath: string,
+    path: string,
     { name = '', packageType = '', excludeWorkspaces = true }: PackageOptions = {}
   ) {
-    this.#packagePath = packagePath;
-    this.#packageType = packageType;
-    this.#name = name;
-
-    this.#excludePatterns = new Set([...getExcludePatterns()]);
-    this.#includePatterns = new Set(['.']);
+    this.path = path;
+    this.type = packageType;
+    this.packageName = name;
+    this.excludePatterns = new Set([...getExcludePatterns()]);
+    this.includePatterns = new Set(['.']);
 
     // Only add the globs if this path contains a package.json
     if (excludeWorkspaces && existsSync(join(this.path, 'package.json'))) {
-      this.#workspaceGlobs = getWorkspaceGlobs(this.path) || [];
+      this.workspaceGlobs = getWorkspaceGlobs(this.path) || [];
 
       // Add the workspace globs to the exclude pattern for the root package
       // so it doesn't attempt to add them to the root package's graph.
-      this.#workspaceGlobs.forEach((glob) => this.addExcludePattern(relative(this.path, glob)));
+      this.workspaceGlobs.forEach((glob) => this.addExcludePattern(relative(this.path, glob)));
     }
-  }
 
-  get excludePatterns(): Set<string> {
-    return this.#excludePatterns;
-  }
-
-  set excludePatterns(patterns: Set<string>) {
-    this.#excludePatterns = new Set(patterns);
-  }
-
-  get includePatterns(): Set<string> {
-    return this.#includePatterns;
-  }
-
-  set includePatterns(patterns: Set<string>) {
-    this.#includePatterns = new Set(patterns);
-  }
-
-  get path(): string {
-    return this.#packagePath;
-  }
-
-  set packageType(packageType: string) {
-    this.#packageType = packageType;
-  }
-
-  get type(): string {
-    return this.#packageType;
-  }
-
-  get packageName(): string {
-    return this.#name || this.packageJson?.['name'];
-  }
-
-  get packageJson(): PackageJson {
-    if (!this.#packageJson) {
-      const packageJsonPath = resolve(this.path, 'package.json');
-      this.#packageJson = readJsonSync(packageJsonPath);
-    }
-    return this.#packageJson as PackageJson;
+    const packageJsonPath = resolve(this.path, 'package.json');
+    this.packageJson = readJsonSync(packageJsonPath);
+    this.packageName = this.packageJson.name;
   }
 
   /**
@@ -130,7 +85,7 @@ export class Package implements IPackage {
    * It is technically possible to have zero dependencies
    * @return dependencies {object|undefined}
    */
-  get dependencies(): Record<string, string> {
+  get dependencies(): Record<string, string> | undefined {
     // get the dependencies from package.json
     return this.packageJson?.['dependencies'];
   }
@@ -141,16 +96,9 @@ export class Package implements IPackage {
    * It is technically possible to have zero devDependencies
    * @return dependencies {object|undefined}
    */
-  get devDependencies(): Record<string, string> {
+  get devDependencies(): Record<string, string> | undefined {
     // get the dependencies from package.json
     return this.packageJson?.['devDependencies'];
-  }
-
-  /**
-   * Return any workspace globs this package might have.
-   */
-  get workspaceGlobs(): string[] {
-    return this.#workspaceGlobs || [];
   }
 
   addWorkspaceGlob(glob: string): this {
@@ -164,27 +112,27 @@ export class Package implements IPackage {
 
   addIncludePattern(...patterns: string[]): this {
     patterns.forEach((pattern) => {
-      if (this.#excludePatterns.has(pattern)) {
-        this.#excludePatterns.delete(pattern);
+      if (this.excludePatterns.has(pattern)) {
+        this.excludePatterns.delete(pattern);
       }
-      this.#includePatterns.add(pattern);
+      this.includePatterns.add(pattern);
     });
     return this;
   }
 
   addExcludePattern(...patterns: string[]): this {
     patterns.forEach((pattern) => {
-      if (this.#includePatterns.has(pattern)) {
-        this.#includePatterns.delete(pattern);
+      if (this.includePatterns.has(pattern)) {
+        this.includePatterns.delete(pattern);
       }
-      this.#excludePatterns.add(pattern);
+      this.excludePatterns.add(pattern);
     });
     return this;
   }
 
   setPackageName(name: string): this {
     this.packageJson['name'] = name;
-    this.#name = name;
+    this.packageName = name;
     return this;
   }
 
@@ -242,7 +190,7 @@ export class Package implements IPackage {
    * multiple packages at once.
    */
   writePackageJsonToDisk(): void {
-    const sorted: Record<any, any> = sortPackageJson(this.packageJson);
+    const sorted = sortPackageJson(this.packageJson);
     const pathToPackageJson = join(this.path, 'package.json');
     writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
   }

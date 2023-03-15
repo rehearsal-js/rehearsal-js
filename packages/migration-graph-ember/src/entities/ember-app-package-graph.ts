@@ -140,7 +140,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
         // Does it exist in package.json
         // If yes then it's truly external and we can ignore it
-        if (this.package.dependencies[maybePackage]) {
+        if (this.package.dependencies && this.package.dependencies[maybePackage]) {
           this.debug(
             `Ignore! A resolution was found for serivce '${s.serviceName}' in file '${m.path}'.`
           );

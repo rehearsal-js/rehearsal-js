@@ -3,9 +3,9 @@ import { resolve } from 'node:path';
 import assert from 'node:assert';
 import { promises as fs } from 'node:fs';
 import { Command } from 'commander';
+import { PackageJson } from '@rehearsal/utils';
 import { migrateCommand } from './commands/migrate/index.js';
 import { upgradeCommand } from './commands/upgrade.js';
-import { PackageJson } from './types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const { version } = PackageJson.parse(
