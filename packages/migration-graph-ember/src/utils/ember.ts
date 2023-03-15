@@ -1,10 +1,8 @@
-import { join, resolve } from 'path';
-import { Module } from 'node:module';
+import { resolve } from 'path';
+import { createRequire } from 'node:module';
 import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
-import { writeJsonSync } from 'fs-extra/esm';
-import sortPackageJson from 'sort-package-json';
 
-const require = Module.createRequire(import.meta.url);
+const require = createRequire(import.meta.url);
 
 export function isApp(packageJson: PackageJson): boolean {
   return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
@@ -82,22 +80,6 @@ export function getNameFromMain(pathToPackage: string): string | undefined {
   return addonEntryPoint.name;
 }
 
-export function getModuleNameFromMain(pathToPackage: string): string {
-  const addonEntryPoint = requirePackageMain(pathToPackage);
-
-  const isFunction = typeof addonEntryPoint === 'function';
-
-  let moduleName;
-  if (isFunction) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    moduleName = addonEntryPoint.prototype.moduleName && addonEntryPoint.prototype.moduleName();
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    moduleName = addonEntryPoint.moduleName && addonEntryPoint.moduleName();
-  }
-  return moduleName as string;
-}
-
 type WithField<T extends Record<string, unknown>, K extends keyof T> = Required<Pick<T, K>> & T;
 
 function hasPath(packageJson: PackageJson): packageJson is WithField<PackageJson, 'ember-addon'> {
@@ -129,24 +111,4 @@ export function getEmberAddonPaths(packageJson: PackageJson): string[] {
  */
 export function getEmberAddonName(pathToPackage: string): string | undefined {
   return getNameFromMain(pathToPackage);
-}
-
-export function writePackageJsonSync(pathToPackage: string, data: PackageJson): void {
-  const sorted = sortPackageJson(data);
-
-  if ('ember-addon' in sorted) {
-    sorted['ember-addon'] = sortPackageJson<WithField<PackageJson, 'ember-addon'>>(
-      sorted['ember-addon']
-    );
-
-    // sort `ember-addon.paths`
-    if (hasPath(sorted)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      sorted['ember-addon'].paths = sorted['ember-addon'].paths.sort();
-    }
-  }
-
-  const pathToPackageJson = join(pathToPackage, 'package.json');
-
-  writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
 }

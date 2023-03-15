@@ -33,9 +33,9 @@ describe('Unit | Entities | EmberAddonPackage', () => {
   });
 
   test('get name', () => {
-    expect(new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON)).name).toBe(
-      FIXTURE_NAMES.SIMPLE_ADDON
-    );
+    expect(
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON)).packageName
+    ).toBe(FIXTURE_NAMES.SIMPLE_ADDON);
     expect(
       new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME))
         .packageName,

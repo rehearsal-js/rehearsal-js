@@ -100,7 +100,7 @@ describe('Unit | utils | ember', () => {
       expect(
         requirePackageMain(
           getPathToPackage(FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
-        ).fileName.includes('ember-addon-main.js'),
+        ).name?.includes(FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN),
         'the custom main js file was loaded instead of index'
       ).toBeTruthy();
     });

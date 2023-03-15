@@ -11,6 +11,8 @@ import {
 export class EmberAddonPackage extends EmberAppPackage {
   isAddon: boolean = true;
 
+  moduleName: string;
+
   protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
 
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
@@ -27,7 +29,9 @@ export class EmberAddonPackage extends EmberAppPackage {
 
     const alternativeName = getNameFromMain(this.path);
     if (alternativeName) {
-      this.packageName = alternativeName;
+      this.moduleName = alternativeName;
+    } else {
+      this.moduleName = this.packageName;
     }
   }
 

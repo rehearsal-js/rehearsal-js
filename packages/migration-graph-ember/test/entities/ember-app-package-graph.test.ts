@@ -313,11 +313,11 @@ describe('Unit | EmberAppPackageGraph', () => {
           `,
         },
       },
-      lib: {},
+      lib: {
+        [firstAddonName]: firstAddonFiles,
+        [secondAddonName]: secondAddonFiles,
+      },
     };
-
-    files['lib'][firstAddonName] = firstAddonFiles;
-    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -428,11 +428,11 @@ describe('Unit | EmberAppPackageGraph', () => {
     const project = getEmberProject('app');
 
     const files: Record<string, any> = {
-      lib: {},
+      lib: {
+        [firstAddonName]: firstAddonFiles,
+        [secondAddonName]: secondAddonFiles,
+      },
     };
-
-    files['lib'][firstAddonName] = firstAddonFiles;
-    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -538,10 +538,10 @@ describe('Unit | EmberAppPackageGraph', () => {
           `,
         },
       },
-      lib: {},
+      lib: {
+        [someAddonModuleName]: someAddonFiles,
+      },
     };
-
-    files['lib'][someAddonModuleName] = someAddonFiles;
 
     project.mergeFiles(files);
 

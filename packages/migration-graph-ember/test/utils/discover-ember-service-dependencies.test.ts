@@ -25,6 +25,7 @@ describe('discoverServiceDependencies', () => {
 
     const results = discoverServiceDependencies(tmpDir, 'component.js');
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(results).toBeFalsy;
   });
 

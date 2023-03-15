@@ -38,18 +38,20 @@ export class EmberAppProjectGraph extends ProjectGraph {
   override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
-    // if (p instanceof EmberAddonPackage) {
-    //   // Check the graph if it has this node already
-    //   const hasNodeByPackageName = this.graph.hasNode(p.packageName);
+    if (p instanceof EmberAddonPackage) {
+      // Check the graph if it has this node already
+      const hasNodeByPackageName = this.graph.hasNode(p.packageName);
 
-    //   if (!hasNodeByPackageName) {
-    //     const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(p.name);
-    //     // Create a registry entry for the packageName to ensure a update
-    //     if (maybeNode) {
-    //       this.graph.registry.set(p.packageName, maybeNode);
-    //     }
-    //   }
-    // }
+      if (!hasNodeByPackageName) {
+        const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(
+          p.moduleName
+        );
+        // Create a registry entry for the packageName to ensure a update
+        if (maybeNode) {
+          this.graph.registry.set(p.packageName, maybeNode);
+        }
+      }
+    }
     const node = super.addPackageToGraph(p, crawl);
 
     return node;
@@ -116,7 +118,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
       // this.debug('findPackageNodeByAddonName: %O', n.content);
 
-      const somePackage: Package = n.content.pkg;
+      const somePackage = n.content.pkg;
 
       if (
         n.content.key === addonName ||

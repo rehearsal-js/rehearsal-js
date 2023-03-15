@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph.js';
-import { SyntheticPackage } from '../../src/entities/ember-app-package-graph.js';
 import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {
@@ -141,7 +140,7 @@ export default class Salutation extends Component {
 
     const addonFoundByAddonName = projectGraph.graph.getNode('some-addon');
 
-    expect(addonFoundByAddonName.content.pkg).instanceOf(SyntheticPackage);
+    expect(addonFoundByAddonName.content.pkg).equal(undefined);
     expect(addonFoundByAddonName.content.synthetic).toBeTruthy();
     expect(
       rootNode.adjacent.has(addonFoundByAddonName),

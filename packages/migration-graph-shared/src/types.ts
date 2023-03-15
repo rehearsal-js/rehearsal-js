@@ -6,7 +6,7 @@ export type UniqueNode = {
 };
 
 export type PackageNode = UniqueNode & {
-  pkg: Package;
+  pkg?: Package;
   converted?: boolean;
 };
 
