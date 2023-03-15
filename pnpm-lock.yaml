@@ -133,6 +133,7 @@ importers:
       json5: 2.2.3
       listr2: ^5.0.7
       minimatch: ^7.4.2
+      scenario-tester: ^2.1.2
       semver: ^7.3.8
       simple-git: ^3.16.0
       tmp: ^0.2.1
@@ -177,6 +178,7 @@ importers:
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2
       fixturify: 3.0.0
+      scenario-tester: 2.1.2
       typescript: 4.9.5
       typescript-json-schema: 0.55.0
       vitest: 0.28.5
@@ -1927,7 +1929,6 @@ packages:
   /at-least-node/1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
-    dev: false
 
   /available-typed-arrays/1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
@@ -3176,7 +3177,6 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
-    dev: false
 
   /fs.realpath/1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
@@ -4834,7 +4834,6 @@ packages:
       glob: 7.2.3
       tmp: 0.2.1
       yargs: 16.2.0
-    dev: false
 
   /semver-try-require/6.0.0:
     resolution: {integrity: sha512-C3RwXtL5VHhGcUeH+t/Gybit9XGHutb1fX8mp2L2v6rrD1GPC9FLQuYN/RoZAedmoWKmuWWDGbfej1LpJOcJxA==}
