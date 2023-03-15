@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { ProjectGraph, ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
+import { PackageJson, ProjectGraph, ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
 import {
   EmberAddonPackageGraphOptions,
   EmberAddonProjectGraph,
@@ -25,7 +25,7 @@ export function buildMigrationGraph(
   // Ember Addon
   // Library
 
-  const packageJson = readJsonSync(resolve(rootDir, 'package.json'));
+  const packageJson = readJsonSync(resolve(rootDir, 'package.json')) as PackageJson;
 
   let projectGraph: ProjectGraph | EmberAppProjectGraph | EmberAddonProjectGraph;
   let sourceType: SourceType;
