@@ -1,4 +1,4 @@
-import get from 'lodash.get';
+import { Log } from 'sarif';
 import { describe, expect, test } from 'vitest';
 
 import { sarifFormatter } from '../src/index.js';
@@ -15,31 +15,27 @@ describe('Test sarif-formatter', () => {
     expect(sarif).toMatchSnapshot();
   });
 
-  test('should add a rule only if the rule does not exist in rules', async () => {
+  test('should add a rule only if the rule does not exist in rules', () => {
     const sarif = sarifFormatter(addRuleData);
-    const rules = getPartialDataByKey(sarif, 'runs[0].tool.driver.rules');
+    const log = JSON.parse(sarif) as Log;
+    const rules = log.runs[0].tool.driver.rules;
 
     expect(rules).toMatchSnapshot();
   });
 
-  test('should have the correct number of results in order, and each result should be assigned the correct property values', async () => {
+  test('should have the correct number of results in order, and each result should be assigned the correct property values', () => {
     const sarif = sarifFormatter(addResultData);
-    const results = getPartialDataByKey(sarif, 'runs[0].results');
+    const log = JSON.parse(sarif) as Log;
+    const results = log.runs[0].results;
 
     expect(results).toMatchSnapshot();
   });
 
-  test('should add an artifact only if it does not exist, should merge roles and properties correctly', async () => {
+  test('should add an artifact only if it does not exist, should merge roles and properties correctly', () => {
     const sarif = sarifFormatter(addArtifactData);
-    const artifacts = getPartialDataByKey(sarif, 'runs[0].artifacts');
+    const log = JSON.parse(sarif) as Log;
+    const artifacts = log.runs[0].artifacts;
 
     expect(artifacts).toMatchSnapshot();
   });
 });
-
-function getPartialDataByKey(sarif: string, key: string): string {
-  const parsedSarif = JSON.parse(sarif);
-  const parsedPartialData = get(parsedSarif, key);
-  const partialData = JSON.stringify(parsedPartialData, null, 2);
-  return partialData;
-}

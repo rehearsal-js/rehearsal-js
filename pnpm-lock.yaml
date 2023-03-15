@@ -398,10 +398,8 @@ importers:
     specifiers:
       '@types/debug': ^4.1.7
       '@types/eslint': ^8.21.0
-      '@types/lodash.get': ^4.4.7
       '@types/sarif': ^2.1.4
       fs-extra: ^11.1.0
-      lodash.get: ^4.4.2
       typescript: ^4.9.5
       vitest: ^0.28.5
       vitest-mock-extended: ^1.0.9
@@ -413,10 +411,8 @@ importers:
     devDependencies:
       '@types/debug': 4.1.7
       '@types/eslint': 8.21.1
-      '@types/lodash.get': 4.4.7
       '@types/sarif': 2.1.4
       fs-extra: 11.1.0
-      lodash.get: 4.4.2
       typescript: 4.9.5
       vitest: 0.28.5
       vitest-mock-extended: 1.0.9_vr72464tuoou3wr7saaljb3dke

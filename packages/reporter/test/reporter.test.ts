@@ -6,7 +6,8 @@ import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
 import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
-import { type Report, jsonFormatter, mdFormatter, Reporter } from '../src/index.js';
+import { jsonFormatter, mdFormatter, Reporter } from '../src/index.js';
+import { Run } from '../src/types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,7 +15,7 @@ const __dirname = dirname(__filename);
 describe('Test reporter', function () {
   const basePath = resolve(__dirname, 'fixtures/reporter');
   const testDataPath = resolve(basePath, 'rehearsal-run.json');
-  const testData = readJSONSync(testDataPath);
+  const testData = readJSONSync(testDataPath) as Run;
   const timestamp = testData.runSummary.timestamp;
   const runBasePath = testData.runSummary.basePath;
   const runEntrypoint = testData.runSummary.entrypoint;
@@ -34,11 +35,10 @@ describe('Test reporter', function () {
     reporter = undefined;
   });
 
-  test('load', async () => {
+  test('load', () => {
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const report = (reporter as any).report as Report;
+    const report = reporter!.report;
 
     expect(report.summary.length).toBe(1);
     expect(report.summary[0].basePath).toMatch(/base/);
@@ -46,38 +46,41 @@ describe('Test reporter', function () {
     expect(report).toMatchSnapshot();
   });
 
-  test('save', async () => {
+  test('save', () => {
     const testSaveFile = resolve(basePath, 'test-save.json');
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     reporter!.saveReport(testSaveFile);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(existsSync(testSaveFile)).toBeTruthy;
     expect(readFileSync(testSaveFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testSaveFile);
   });
 
-  test('print, json', async () => {
+  test('print, json', () => {
     const testPrintJsonFile = resolve(basePath, 'test-print-json.json');
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     reporter!.printReport(testPrintJsonFile, jsonFormatter);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(existsSync(testPrintJsonFile)).toBeTruthy;
     expect(readFileSync(testPrintJsonFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testPrintJsonFile);
   });
 
-  test('print, pull-request-md', async () => {
+  test('print, pull-request-md', () => {
     const testPrintMdFile = resolve(basePath, 'test-print-md.md');
 
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     reporter!.printReport(testPrintMdFile, mdFormatter);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(existsSync(testPrintMdFile)).toBeTruthy;
     expect(readFileSync(testPrintMdFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testPrintMdFile);
   });
 
-  test('addTSItem', async () => {
+  test('addTSItem', () => {
     const mockSourceFile = mock<SourceFile>();
     mockSourceFile.fileName = 'testFile1.ts';
     mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
@@ -106,13 +109,14 @@ describe('Test reporter', function () {
     const testAddTSItemFile = resolve(basePath, 'test-add-item.json');
 
     reporter!.saveReport(testAddTSItemFile);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(existsSync(testAddTSItemFile)).toBeTruthy;
     expect(readFileSync(testAddTSItemFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testAddTSItemFile);
   });
 
-  test('addLintItem', async () => {
+  test('addLintItem', () => {
     const lintError = {
       ruleId: null,
       message: 'Parsing error: require() of ES Module...from require-from-eslint.js not supported',
@@ -126,18 +130,19 @@ describe('Test reporter', function () {
     const testAddLintItemFile = resolve(basePath, 'test-add-lint-item.json');
 
     reporter!.saveReport(testAddLintItemFile);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(existsSync(testAddLintItemFile)).toBeTruthy;
     expect(readFileSync(testAddLintItemFile, 'utf-8')).toMatchSnapshot();
 
     rmSync(testAddLintItemFile);
   });
 
-  test('getFileNames', async () => {
+  test('getFileNames', () => {
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts', '/base/path/file2.ts']);
   });
 
-  test('getItemsByFile', async () => {
+  test('getItemsByFile', () => {
     reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
     const items = reporter!.getItemsByAnalysisTarget('/base/path/file1.ts');
     expect(items).toMatchSnapshot();

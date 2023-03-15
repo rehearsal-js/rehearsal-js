@@ -208,7 +208,7 @@ export class Reporter {
     this.logger?.info(`Report file found: ${file}.`);
 
     const content = readFileSync(file, 'utf-8');
-    const run: Run = JSON.parse(content);
+    const run = JSON.parse(content) as Run;
     this.currentRun = run;
 
     if (!Reporter.isReport(this.report)) {
