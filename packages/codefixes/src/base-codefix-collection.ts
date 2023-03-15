@@ -7,7 +7,7 @@ import { CodeFix, CodeFixCollection, DiagnosticWithContext } from './index.js';
 export class BaseCodeFixCollection implements CodeFixCollection {
   readonly list;
 
-  constructor(list: { [key: number]: CodeFix }) {
+  constructor(list: { [key: number]: CodeFix[] }) {
     this.list = list;
   }
 
@@ -16,12 +16,15 @@ export class BaseCodeFixCollection implements CodeFixCollection {
       return [];
     }
 
-    const codeFixAction = this.list[diagnostic.code].getCodeAction(diagnostic);
+    const codeFixActions = [];
 
-    if (codeFixAction === undefined) {
-      return [];
+    for (const codefix of this.list[diagnostic.code]) {
+      const codeFixAction = codefix.getCodeAction(diagnostic)
+      if (codeFixAction !== undefined) {
+        codeFixActions.push(codeFixAction);
+      }
     }
 
-    return [codeFixAction];
+    return codeFixActions;
   }
 }
