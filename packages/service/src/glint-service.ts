@@ -1,6 +1,5 @@
 import { extname } from 'node:path';
 import {
-  DocumentCache,
   analyzeProject,
   pathUtils,
   type GlintLanguageServer,
@@ -18,7 +17,6 @@ import {
   type Range,
   type CodeAction,
 } from 'vscode-languageserver';
-import { GlintServiceHost } from './glint-service-host.js';
 import { Service } from './rehearsal-service.js';
 
 type TS = typeof import('typescript');
@@ -33,24 +31,18 @@ const GLINT_EXTENSIONS = ['.gjs', '.gts', '.hbs'];
 export { Range, Diagnostic };
 
 export class GlintService implements Service {
-  protected readonly host: GlintServiceHost;
   protected readonly service: GlintLanguageServer;
   protected readonly transformManager: TransformManager;
   readonly ts: TS;
-  protected readonly documents: DocumentCache;
 
   private tsService: ts.LanguageService;
 
   constructor(glintProjectDir: string) {
-    const { languageServer, documents, transformManager, glintConfig } =
-      analyzeProject(glintProjectDir);
+    const { languageServer, transformManager, glintConfig } = analyzeProject(glintProjectDir);
 
     this.service = languageServer;
     this.transformManager = transformManager;
     this.ts = glintConfig.ts;
-    this.documents = documents;
-
-    this.host = new GlintServiceHost(documents, transformManager, glintConfig);
 
     this.service = languageServer;
     this.tsService = languageServer.service;
@@ -60,23 +52,22 @@ export class GlintService implements Service {
    * Gets the content of the file from its latest in-memory state
    */
   getFileText(fileName: string): string {
-    const snapshot = this.host.getScriptSnapshot(fileName);
-    return snapshot?.getText(0, snapshot?.getLength()) || '';
+    return this.service.getOriginalContents(fileName) ?? '';
   }
 
   /**
    * Updates the current state of the file with the new content
    */
   setFileText(fileName: string, text: string): void {
-    this.host.setScriptSnapshot(fileName, text);
+    this.service.updateFile(fileName, text);
   }
 
   /**
    * Saves the latest state (snapshot) of the file to filesystem
    */
   saveFile(fileName: string): void {
-    const snapshot = this.host.getScriptSnapshot(fileName);
-    this.host.writeFile(fileName, snapshot?.getText(0, snapshot?.getLength()) || '');
+    const snapshot = this.getFileText(fileName);
+    this.ts.sys.writeFile(fileName, snapshot);
   }
 
   /**
@@ -86,7 +77,7 @@ export class GlintService implements Service {
     if (GLINT_EXTENSIONS.includes(extname(fileName))) {
       return createSyntheticSourceFile(this.ts, {
         filename: fileName,
-        contents: this.documents.getDocumentContents(fileName),
+        contents: this.getFileText(fileName),
       });
     } else {
       return this.getLanguageService().getProgram()!.getSourceFile(fileName)!;
