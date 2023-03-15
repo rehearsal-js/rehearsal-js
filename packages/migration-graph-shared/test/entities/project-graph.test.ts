@@ -1,6 +1,7 @@
 import { getLibrary } from '@rehearsal/test-support';
 import { describe, expect, test } from 'vitest';
 import { ProjectGraph } from '../../src/entities/project-graph.js';
+import { onlyPackage, Package } from '../../src/entities/package.js';
 import type { GraphNode } from '../../src/graph/node.js';
 import type { ModuleNode, PackageNode } from '../../src/types.js';
 
@@ -27,10 +28,10 @@ describe('project-graph', () => {
     const packageNode = ordered[0];
     const somePackage = packageNode.content.pkg;
 
-    expect(somePackage.hasModuleGraph()).toBe(false);
+    expect(somePackage?.hasModuleGraph()).toBe(false);
     const moduleGraphForPackage = somePackage?.getModuleGraph(); // Forces creation of moduleGraph
-    expect(somePackage.hasModuleGraph()).toBe(true);
-    expect(flatten(moduleGraphForPackage?.topSort())).toStrictEqual(EXPECTED_FILES);
+    expect(somePackage?.hasModuleGraph()).toBe(true);
+    expect(flatten(moduleGraphForPackage?.topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
   test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', () => {
@@ -40,7 +41,7 @@ describe('project-graph', () => {
     projectGraph.discover();
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
-    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(EXPECTED_FILES);
+    expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
   test('should ignore .lock files', () => {
@@ -54,7 +55,7 @@ describe('project-graph', () => {
 
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
-    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(EXPECTED_FILES);
+    expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
   test('library should ignore files', () => {
@@ -65,7 +66,7 @@ describe('project-graph', () => {
 
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
-    const files = flatten(somePackage.getModuleGraph().topSort());
+    const files = flatten(somePackage?.getModuleGraph().topSort() || []);
 
     expect(files).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
   });
@@ -79,7 +80,7 @@ describe('project-graph', () => {
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
     expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
     expect(
-      flatten(projectGraph.graph.topSort()[0].content.pkg.getModuleGraph().topSort())
+      flatten(projectGraph.graph.topSort()[0].content.pkg?.getModuleGraph().topSort() || [])
     ).toStrictEqual([
       'Events.js',
       'utils/Defaults.js',
@@ -101,23 +102,27 @@ describe('project-graph', () => {
     projectGraph = new ProjectGraph(baseDir);
     projectGraph.discover();
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
-    expect(somePackage.hasModuleGraph(), 'should not exist by default').toBe(false);
+    expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
 
     projectGraph = new ProjectGraph(baseDir, { eager: true });
     projectGraph.discover();
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
-    expect(somePackage.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
+    expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
   });
 
   describe('options.entrypoint', () => {
     test('should work with a file', () => {
       const baseDir = getLibrary('simple');
-      let projectGraph, sortedPackages, orderedFiles;
+      let projectGraph: ProjectGraph, sortedPackages: Package[], orderedFiles;
 
       projectGraph = new ProjectGraph(baseDir, { entrypoint: 'index.js' });
       projectGraph.discover();
 
-      sortedPackages = Array.from(projectGraph.graph.topSort()).map((node) => node.content.pkg);
+      const sorted = projectGraph.graph.topSort();
+
+      sortedPackages = Array.from(sorted)
+        .map((node) => node.content.pkg)
+        .filter(onlyPackage);
 
       orderedFiles = sortedPackages.reduce((allFiles, p) => {
         const files = flatten(p.getModuleGraph().topSort());
@@ -129,10 +134,12 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(baseDir, { entrypoint: './index.js' });
       projectGraph.discover();
 
-      sortedPackages = Array.from(projectGraph.graph.topSort()).map((node) => node.content.pkg);
+      sortedPackages = Array.from(projectGraph.graph.topSort())
+        .map((node) => node.content.pkg)
+        .filter(onlyPackage);
 
       orderedFiles = sortedPackages.reduce((allFiles, p) => {
-        const files = flatten(p.getModuleGraph().topSort());
+        const files = flatten(p.getModuleGraph().topSort() || []);
         return [...allFiles, ...files];
       }, new Array<string>());
 
@@ -145,9 +152,9 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(baseDir, { entrypoint: 'packages/foo/index.js' });
       projectGraph.discover();
 
-      const orderedPackages = Array.from(projectGraph.graph.topSort()).map(
-        (node) => node.content.pkg
-      );
+      const orderedPackages = Array.from(projectGraph.graph.topSort())
+        .map((node) => node.content.pkg)
+        .filter(onlyPackage);
 
       const orderedFiles = orderedPackages.reduce((allFiles, p) => {
         const moduleNodes = Array.from(p.getModuleGraph().topSort());
@@ -203,9 +210,9 @@ describe('project-graph', () => {
         'some-library-with-workspace', // Root Pacakge is last.
       ]);
 
-      const [package0, package1, package2, package3, package4] = sortedPackages.map(
-        (node) => node.content.pkg
-      );
+      const [package0, package1, package2, package3, package4] = sortedPackages
+        .map((node) => node.content.pkg)
+        .filter(onlyPackage);
 
       expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
@@ -248,7 +255,10 @@ describe('project-graph', () => {
       expect(branchNode.adjacent.has(leafNode)).toBe(true);
 
       // Validate graph order correctness
-      const nodes = projectGraph.graph.topSort().map((node) => node.content.pkg);
+      const nodes = projectGraph.graph
+        .topSort()
+        .map((node) => node.content.pkg)
+        .filter(onlyPackage);
 
       expect(nodes.length).toBe(3);
 

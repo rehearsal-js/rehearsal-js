@@ -6,7 +6,6 @@ import fastGlob from 'fast-glob';
 
 import { PackageJson as PackageJsonSchema } from '@rehearsal/utils';
 import { z } from 'zod';
-import { removeNestedPropertyValue, setNestedPropertyValue } from '../utils/pojo.js';
 import { getWorkspaceGlobs } from '../utils/workspace.js';
 import { getExcludePatterns } from '../index.js';
 import { PackageGraph, PackageGraphOptions } from './package-graph.js';
@@ -73,7 +72,7 @@ export class Package implements IPackage {
     }
 
     const packageJsonPath = resolve(this.path, 'package.json');
-    this.packageJson = readJsonSync(packageJsonPath);
+    this.packageJson = PackageJsonSchema.parse(readJsonSync(packageJsonPath));
     this.packageName = this.packageJson.name;
   }
 
@@ -130,60 +129,6 @@ export class Package implements IPackage {
     return this;
   }
 
-  setPackageName(name: string): this {
-    this.packageJson['name'] = name;
-    this.packageName = name;
-    return this;
-  }
-
-  /**
-   * ex, addPackageJsonKey('foo.bar.baz', 5) ->
-   *  { foo: {bar: {baz: 5}}}
-   */
-  addPackageJsonKey(key: string, value = {}): this {
-    // update the package to add the thing
-    setNestedPropertyValue(this.packageJson, key.split('.'), value);
-    return this;
-  }
-
-  removePackageJsonKey(key: string): this {
-    // update the package to remove the thing
-    removeNestedPropertyValue(this.packageJson, key.split('.'));
-    return this;
-  }
-
-  addDependency(packageName: string, version: string): this {
-    // add to dependencies
-    let _dependencies = this.dependencies;
-    if (!_dependencies) {
-      this.packageJson['dependencies'] = {};
-      _dependencies = this.packageJson['dependencies'];
-    }
-    _dependencies[packageName] = version;
-    return this;
-  }
-
-  removeDependency(packageName: string): this {
-    // remove from dependencies
-    delete this.packageJson?.['dependencies']?.[packageName];
-    return this;
-  }
-
-  addDevDependency(packageName: string, version: string): this {
-    let _devDependencies = this.devDependencies;
-    if (!_devDependencies) {
-      this.packageJson['devDependencies'] = {};
-      _devDependencies = this.packageJson['devDependencies'];
-    }
-    _devDependencies[packageName] = version;
-    return this;
-  }
-
-  removeDevDependency(packageName: string): this {
-    delete this.devDependencies?.[packageName];
-    return this;
-  }
-
   /**
    * Write the packageJson data to disk.
    * Writes a async, unlikes reads which are sync, so consumers of this could write
@@ -236,4 +181,8 @@ export class Package implements IPackage {
 
     return this.graph;
   }
+}
+
+export function onlyPackage(element: unknown): element is Package {
+  return element !== undefined;
 }

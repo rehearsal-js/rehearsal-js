@@ -93,7 +93,8 @@ export class PackageGraph {
     // this.debug('resolveOptions: %O', { ...resolveOptions, fileSystem: undefined });
 
     try {
-      result = cruise(target, cruiseOptions, resolveOptions);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      result = cruise(target, cruiseOptions, resolveOptions) as IReporterOutput;
     } catch (error) {
       throw new Error(`Unable to cruise: ${error}`);
     }

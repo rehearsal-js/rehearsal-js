@@ -6,10 +6,11 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { create, getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
 import fixturify from 'fixturify';
+import { PackageJson } from '@rehearsal/utils';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig, PackageJson, TSConfig } from '../../../src/types.js';
+import { CustomConfig, TSConfig } from '../../../src/types.js';
 
 setGracefulCleanup();
 
@@ -188,7 +189,7 @@ describe('migrate: e2e', () => {
       JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
     );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // report
     const reportPath = resolve(basePath, '.rehearsal');
@@ -225,7 +226,7 @@ describe('migrate: e2e', () => {
       JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
     );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;

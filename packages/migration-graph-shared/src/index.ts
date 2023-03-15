@@ -1,15 +1,15 @@
 import { resolve } from 'node:path';
 import { readJsonSync } from 'fs-extra/esm';
+import { PackageJson as PackageJsonSchema } from '@rehearsal/utils';
 import { PackageJson } from './entities/package.js';
 
 export function readPackageJson(pathToPackage: string): PackageJson {
-  return readJsonSync(resolve(pathToPackage, 'package.json'));
+  return PackageJsonSchema.parse(readJsonSync(resolve(pathToPackage, 'package.json')));
 }
 
-export { Package, type PackageOptions, type PackageJson } from './entities/package.js';
+export { Package, type PackageOptions, type PackageJson, onlyPackage } from './entities/package.js';
 export { formatter } from './utils/prettier.js';
 export * from './utils/workspace.js';
-export { setNestedPropertyValue, removeNestedPropertyValue } from './utils/pojo.js';
 
 export * from './graph/index.js';
 export * from './types.js';

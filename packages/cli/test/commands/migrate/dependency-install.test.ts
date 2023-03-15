@@ -3,13 +3,14 @@ import { existsSync, promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 
+import { PackageJson } from '@rehearsal/utils';
 import {
   REQUIRED_DEPENDENCIES,
   depInstallTask,
   shouldRunDepInstallTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig, PackageJson } from '../../../src/types.js';
+import { CustomConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
@@ -50,7 +51,7 @@ describe('Task: dependency-install', () => {
     );
     const devDeps = packageJson.devDependencies;
 
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
     expect(output).matchSnapshot();
   });
 
@@ -114,7 +115,7 @@ describe('Task: dependency-install', () => {
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
 
-    expect(Object.keys(devDeps!).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
 
     expect(devDeps).toHaveProperty('tmp');
     expect(deps).toHaveProperty('fs-extra');

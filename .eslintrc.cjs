@@ -32,7 +32,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['./packages/codefixes/**/*.ts', './packages/migrate/**/*.ts', './packages/migration-graph/**/*.ts', './packages/migration-graph-ember/**/*.ts'],
+      files: ['./packages/codefixes/**/*.ts', './packages/migrate/**/*.ts', './packages/migration-graph/**/*.ts', './packages/migration-graph-ember/**/*.ts', './packages/migration-graph-shared/**/*.ts'],
       extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
       rules: {
         '@typescript-eslint/restrict-template-expressions': ['off'],

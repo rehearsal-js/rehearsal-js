@@ -13,6 +13,7 @@ import {
   type Graph,
   type GraphNode,
 } from '@rehearsal/migration-graph-shared';
+import fixturify from 'fixturify';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
 import {
@@ -427,7 +428,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
+    const files: fixturify.DirJSON = {
       lib: {
         [firstAddonName]: firstAddonFiles,
         [secondAddonName]: secondAddonFiles,
@@ -525,7 +526,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     });
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
+    const files: fixturify.DirJSON = {
       app: {
         components: {
           'obtuse.js': `
