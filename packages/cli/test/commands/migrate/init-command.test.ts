@@ -39,7 +39,7 @@ describe('migrate init', () => {
       JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
     );
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;

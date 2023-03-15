@@ -43,7 +43,7 @@ export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
 
     DEBUG_CALLBACK(`Plugin 'ReRehearse' run on %O:`, fileName);
 
-    return [fileName];
+    return Promise.resolve([fileName]);
   }
 
   getBoundaryOfCommentBlock(

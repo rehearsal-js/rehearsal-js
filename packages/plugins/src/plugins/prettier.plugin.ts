@@ -24,11 +24,11 @@ export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.rehearsal.setFileText(fileName, result);
 
-      return [fileName];
+      return Promise.resolve([fileName]);
     } catch (e) {
       DEBUG_CALLBACK(`Plugin 'Prettier' failed on ${fileName}: ${(e as Error).message}`);
     }
 
-    return [];
+    return Promise.resolve([]);
   }
 }

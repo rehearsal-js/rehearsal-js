@@ -67,7 +67,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
       diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
     }
-    return Array.from(allFixedFiles);
+    return Promise.resolve(Array.from(allFixedFiles));
   }
 
   getDiagnostics(
@@ -77,7 +77,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
   ): DiagnosticWithContext[] {
     const service = rehearsalService.getLanguageService();
     const program = service.getProgram()!;
-    const checker = program!.getTypeChecker();
+    const checker = program.getTypeChecker();
 
     const diagnostics = rehearsalService.getDiagnostics(fileName);
 
