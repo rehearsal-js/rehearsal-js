@@ -128,5 +128,5 @@ export function isVariableOfCatchClause(node: Node): boolean {
     return false;
   }
 
-  return node.getText() === catchClauseNode.variableDeclaration!.getText();
+  return node.getText() === catchClauseNode.variableDeclaration.getText();
 }

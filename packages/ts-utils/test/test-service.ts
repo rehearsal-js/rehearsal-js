@@ -26,11 +26,18 @@ class TestService {
   }
 
   private createProgram = (): Program => {
-    const configFile = findConfigFile(this.basePath, sys.fileExists, 'tsconfig.json');
+    const configFile = findConfigFile(
+      this.basePath,
+      (filepath) => sys.fileExists(filepath),
+      'tsconfig.json'
+    );
     if (!configFile) {
       throw Error('configFile not found');
     }
-    const { config } = readConfigFile(configFile, sys.readFile);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { config } = readConfigFile(configFile, (filepath: string, encoding?: string) =>
+      sys.readFile(filepath, encoding)
+    );
     const { options: compilerOptions, fileNames } = parseJsonConfigFileContent(
       config,
       sys,
