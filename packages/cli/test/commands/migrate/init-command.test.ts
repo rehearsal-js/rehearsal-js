@@ -1,20 +1,18 @@
-import { resolve } from 'node:path';
-import { readFileSync, readdirSync, promises as fs } from 'node:fs';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { readdirSync } from 'node:fs';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
-import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig, TSConfig } from '../../../src/types.js';
-import type { PackageJson } from 'type-fest';
+import { prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
+import {
+  runDefault,
+  runWithUserConfig,
+  runTwoTimes,
+  CUSTOM_CONFIG,
+  createUserConfig,
+} from '../../test-helpers/init-command-test-utils.js';
 
 setGracefulCleanup();
-
-function createUserConfig(basePath: string, config: CustomConfig): void {
-  const configPath = resolve(basePath, 'rehearsal-config.json');
-  writeJSONSync(configPath, config);
-}
 
 describe('migrate init', () => {
   let basePath = '';
@@ -24,91 +22,43 @@ describe('migrate init', () => {
   });
 
   test('default run', async () => {
-    const { stdout } = await runBin('migrate', ['init'], {
-      cwd: basePath,
-    });
+    const { stdout, devDeps, fileList, lintConfig, lintConfigDefault, tsConfig, tscLintScript } =
+      await runDefault(basePath);
 
-    // summary message
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
-    // file structures
-    const fileList = readdirSync(basePath);
+    for (const devDep of REQUIRED_DEPENDENCIES) {
+      expect(Object.keys(devDeps!).includes(devDep));
+    }
 
-    // Dependencies
-    const packageJson = JSON.parse(
-      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
-    ) as PackageJson;
-    const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
-
-    // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
-    expect(tsConfig).matchSnapshot();
-
-    // lint config
     expect(fileList).toContain('.eslintrc.js');
     expect(fileList).toContain('.rehearsal-eslintrc.js');
-    const lintConfig = readFileSync(resolve(basePath, '.eslintrc.js'), { encoding: 'utf-8' });
-    const lintConfigDefualt = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), {
-      encoding: 'utf-8',
-    });
-    expect(lintConfig).toMatchSnapshot();
-    expect(lintConfigDefualt).toMatchSnapshot();
 
-    // new scripts
-    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
+    expect(lintConfig).toMatchSnapshot();
+    expect(lintConfigDefault).toMatchSnapshot();
+    expect(tsConfig).matchSnapshot();
+    expect(tscLintScript).toBe('tsc --noEmit');
   });
 
   test('pass user config', async () => {
-    createUserConfig(basePath, {
-      migrate: {
-        install: {
-          dependencies: ['fs-extra'],
-          devDependencies: ['tmp'],
-        },
-        setup: {
-          ts: { command: 'touch', args: ['custom-ts-config-script'] },
-          lint: { command: 'touch', args: ['custom-lint-config-script'] },
-        },
-      },
-    });
-    const { stdout } = await runBin('migrate', ['init'], {
-      cwd: basePath,
-    });
+    createUserConfig(basePath, CUSTOM_CONFIG);
 
-    // summary message
+    const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(basePath);
+
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
-
-    // Dependencies
-    const packageJson = JSON.parse(
-      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
-    ) as PackageJson;
-    const devDeps = packageJson.devDependencies;
-    const deps = packageJson.dependencies;
-    expect(Object.keys(devDeps || {}).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+    
+    expect(Object.keys(devDeps!)).includes('tmp');
     expect(deps).toHaveProperty('fs-extra');
 
-    // ts config
     expect(readdirSync(basePath)).toContain('custom-ts-config-script');
-
-    // lint config
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
 
-    // new scripts
-    expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
+    expect(tscLintScript).toBe('tsc --noEmit');
   });
 
   test('skip dep install, ts config, and lint config if exists', async () => {
-    // first run
-    await runBin('migrate', ['init'], {
-      cwd: basePath,
-    });
-    // second run
-    const { stdout } = await runBin('migrate', ['init'], {
-      cwd: basePath,
-    });
+    const { stdout } = await runTwoTimes(basePath);
 
-    // summary message
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
   });
 });

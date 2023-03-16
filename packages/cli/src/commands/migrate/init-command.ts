@@ -18,7 +18,7 @@ export const initCommand = new Command();
 initCommand
   .name('init')
   .description(
-    'Install required dependencies, setup tsconfig.json, eslint config and essential package scrtips'
+    'Install required dependencies, setup tsconfig.json, eslint config and essential package scripts'
   )
   .addOption(
     new Option('-p, --basePath <project base path>', 'base directory of your project')

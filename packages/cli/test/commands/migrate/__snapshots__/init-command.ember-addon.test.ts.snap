@@ -1,10 +1,10 @@
 // Vitest Snapshot v1
 
-exports[`migrate init > default run 1`] = `
+exports[`migrate init for ember addon variant > ember3-addon > default run --ember3-addon 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Setting up config for basic
+[DATA] Setting up config for addon-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -20,14 +20,14 @@ exports[`migrate init > default run 1`] = `
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init > default run 2`] = `
+exports[`migrate init for ember addon variant > ember3-addon > default run --ember3-addon 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init > default run 3`] = `
+exports[`migrate init for ember addon variant > ember3-addon > default run --ember3-addon 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -47,7 +47,7 @@ exports[`migrate init > default run 3`] = `
 }"
 `;
 
-exports[`migrate init > default run 4`] = `
+exports[`migrate init for ember addon variant > ember3-addon > default run --ember3-addon 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -65,11 +65,11 @@ exports[`migrate init > default run 4`] = `
 }
 `;
 
-exports[`migrate init > pass user config 1`] = `
+exports[`migrate init for ember addon variant > ember3-addon > pass user config ember3-addon 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Setting up config for basic
+[DATA] Setting up config for addon-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
@@ -88,11 +88,11 @@ exports[`migrate init > pass user config 1`] = `
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember addon variant > ember3-addon > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
-[DATA] Setting up config for basic
+[DATA] Setting up config for addon-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies
