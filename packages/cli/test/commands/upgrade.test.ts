@@ -4,23 +4,18 @@ import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
 import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getLatestTSVersion, git, readJSON } from '@rehearsal/utils';
+import { getLatestTSVersion, git } from '@rehearsal/utils';
 
 import { gitDeleteLocalBranch, PNPM_PATH, runBin } from '../test-helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const packageJson = readJSON(resolve(__dirname, '../../package.json')) as {
-  devDependencies: { typescript: string };
-};
-
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 // we want an older version of typescript to test against
 // eg 4.2.4 since we want to be sure to get compile errors
 const TEST_TSC_VERSION = '4.5.5';
 // we bundle the latest version of typescript with the cli
-const ORIGIN_TSC_VERSION = packageJson.devDependencies.typescript;
 let WORKING_BRANCH = '';
 
 const beforeEachPrep = async (): Promise<void> => {
@@ -41,7 +36,6 @@ const afterEachCleanup = async (): Promise<void> => {
 // Revert to development version of TSC
 afterAll(async (): Promise<void> => {
   await execa(PNPM_PATH, ['remove', '-D', `typescript`]);
-  await execa(PNPM_PATH, ['add', '-D', `typescript@${ORIGIN_TSC_VERSION}`]);
   await execa(PNPM_PATH, ['install']);
 });
 

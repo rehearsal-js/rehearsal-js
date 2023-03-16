@@ -3,7 +3,13 @@
  */
 
 import ts from 'typescript';
-import type { DiagnosticWithLocation, Node, SourceFile, Visitor } from 'typescript';
+import type {
+  DiagnosticWithLocation,
+  Node,
+  SourceFile,
+  TransformerFactory,
+  Visitor,
+} from 'typescript';
 
 const {
   createPrinter,
@@ -37,9 +43,9 @@ export function transformDiagnosedNode(
           : visitEachChild(node, visit, context);
       };
 
-      return (node) => visitNode(node, visit);
+      return (node) => visitNode(node, visit) as Node;
     },
-  ]);
+  ] as TransformerFactory<SourceFile>[]);
 
   return createPrinter({
     newLine: NewLineKind.LineFeed,

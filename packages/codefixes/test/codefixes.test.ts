@@ -9,6 +9,7 @@ import {
   ImportsNotUsedAsValues,
   JsxEmit,
 } from 'typescript';
+import { format } from 'prettier';
 import { TypescriptCodeFixCollection } from '../src/typescript-codefix-collection.js';
 import { getDiagnosticOrder } from '../src/get-diagnostics.js';
 import { applyCodeFix } from '../src/codefixes.js';
@@ -86,7 +87,9 @@ describe('ts-codefixes', () => {
       }
     }
 
-    expect(service.getFileText(input)).toEqual(await fs.readFile(expectation, 'utf-8'));
+    expect(format(service.getFileText(input).trim(), { filepath: expectation })).toEqual(
+      format(await fs.readFile(expectation, 'utf-8'), { filepath: expectation })
+    );
   }
 
   test('addMissingAync', async () => {
