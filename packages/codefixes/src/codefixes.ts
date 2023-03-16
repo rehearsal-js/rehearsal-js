@@ -13,23 +13,18 @@ import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
   new BaseCodeFixCollection({
-    [Diagnostics._0_implicitly_has_an_1_return_type_but_a_better_type_may_be_inferred_from_usage
-      .code]: new AddMissingTypesBasedOnInheritanceCodeFix(),
+    [Diagnostics.TS7050.code]: new AddMissingTypesBasedOnInheritanceCodeFix(),
   }),
   new BaseCodeFixCollection({
-    [Diagnostics._0_is_of_type_unknown.code]: new AddErrorTypeGuardCodeFix(),
-    [Diagnostics.Object_is_of_type_unknown.code]: new AddErrorTypeGuardCodeFix(),
-    [Diagnostics.The_operand_of_a_delete_operator_must_be_optional.code]:
-      new MakeMemberOptionalCodeFix(),
-    [Diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0.code]:
-      new AddMissingExportCodeFix(),
-    [Diagnostics._0_implicitly_has_an_1_return_type_but_a_better_type_may_be_inferred_from_usage
-      .code]: new AddMissingTypesBasedOnInlayHintsCodeFix(),
+    [Diagnostics.TS18046.code]: new AddErrorTypeGuardCodeFix(),
+    [Diagnostics.TS2571.code]: new AddErrorTypeGuardCodeFix(),
+    [Diagnostics.TS2790.code]: new MakeMemberOptionalCodeFix(),
+    [Diagnostics.TS4082.code]: new AddMissingExportCodeFix(),
+    [Diagnostics.TS7050.code]: new AddMissingTypesBasedOnInlayHintsCodeFix(),
   }),
   new TypescriptCodeFixCollection(),
   new BaseCodeFixCollection({
-    [Diagnostics.Parameter_0_implicitly_has_an_1_type.code]:
-      new AddMissingTypesBasedOnInheritanceCodeFix(),
+    [Diagnostics.TS7006.code]: new AddMissingTypesBasedOnInheritanceCodeFix(),
   }),
 ]);
 
