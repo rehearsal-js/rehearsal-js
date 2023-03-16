@@ -40,7 +40,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   DEBUG_CALLBACK('Upgrade started at Base path: %O', basePath);
 
-  const configFile = findConfigFile(basePath, sys.fileExists, configName);
+  const configFile = findConfigFile(basePath, (filepath) => sys.fileExists(filepath), configName);
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -50,7 +50,10 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
 
   DEBUG_CALLBACK('Config file found: %O', configFile);
 
-  const { config } = readConfigFile(configFile, sys.readFile);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { config } = readConfigFile(configFile, (filepath: string, encoding?: string) =>
+    sys.readFile(filepath, encoding)
+  );
   const { options, fileNames } = parseJsonConfigFileContent(
     config,
     sys,

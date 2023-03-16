@@ -10,7 +10,7 @@
     "generate": "node scripts/processDiagnosticsAndFixes.mjs packages/codefixes/src/diagnosticMessages.json packages/codefixes/src/codefixesMessages.json",
     "new-diagnostics": "curl https://raw.githubusercontent.com/microsoft/TypeScript/main/src/compiler/diagnosticMessages.json -o packages/codefixes/src/diagnosticMessages.json",
     "build": "pnpm generate && tsc -b",
-    "lint": "pnpm lint:package-json && eslint --fix . --cache",
+    "lint": "pnpm lint:package-json && eslint --fix . --cache && pnpm recursive run lint",
     "lint:package-json": "sort-package-json package.json packages/*/package.json",
     "prepare": "husky install",
     "test": "pnpm build && pnpm recursive run test",
