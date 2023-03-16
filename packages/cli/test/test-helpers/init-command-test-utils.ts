@@ -3,12 +3,12 @@ import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra';
 
 import { TSConfig, CustomConfig } from '../../src/types.js';
-import type { PackageJson } from 'type-fest';
 import { runBin } from './index.js';
+import type { PackageJson } from 'type-fest';
 
 type DefaultRunType = {
   stdout: string;
-  devDeps: Record<string, string> | undefined;
+  devDeps: PackageJson['devDependencies'];
   fileList: string[];
   lintConfig: string;
   lintConfigDefault: string;
@@ -18,8 +18,8 @@ type DefaultRunType = {
 
 type UserConfigRunType = {
   stdout: string;
-  devDeps: Record<string, string> | undefined;
-  deps: Record<string, string> | undefined;
+  devDeps: PackageJson['devDependencies'];
+  deps: PackageJson['dependencies'];
   tscLintScript: string | undefined;
 };
 
@@ -45,7 +45,7 @@ export async function runDefault(basePath: string): Promise<DefaultRunType> {
 
   const packageJson = JSON.parse(
     await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
-  ) as PacakgeJson;
+  ) as PackageJson;
 
   const devDeps = packageJson.devDependencies;
 
@@ -75,7 +75,7 @@ export async function runWithUserConfig(basePath: string): Promise<UserConfigRun
 
   const packageJson = JSON.parse(
     await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
-  ) as PacakgeJson;
+  ) as PackageJson;
   const devDeps = packageJson.devDependencies;
   const deps = packageJson.dependencies;
 
