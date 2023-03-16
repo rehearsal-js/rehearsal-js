@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra';
 
 import { TSConfig, CustomConfig } from '../../src/types.js';
-import { PacakgeJson } from 'type-fest';
+import type { PackageJson } from 'type-fest';
 import { runBin } from './index.js';
 
 type DefaultRunType = {
@@ -44,7 +44,7 @@ export async function runDefault(basePath: string): Promise<DefaultRunType> {
   const fileList = readdirSync(basePath);
 
   const packageJson = JSON.parse(
-    JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
   ) as PacakgeJson;
 
   const devDeps = packageJson.devDependencies;
@@ -74,7 +74,7 @@ export async function runWithUserConfig(basePath: string): Promise<UserConfigRun
   });
 
   const packageJson = JSON.parse(
-    JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
+    await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
   ) as PacakgeJson;
   const devDeps = packageJson.devDependencies;
   const deps = packageJson.dependencies;
