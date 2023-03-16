@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Reporter } from '@rehearsal/reporter';
+import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
@@ -81,7 +81,7 @@ describe('migrate', () => {
     migratedFiles = output.migratedFiles;
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
-    const report = JSON.parse(readFileSync(jsonReport).toString());
+    const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(/migrate/);
     expect(report.summary[0].entrypoint).toMatch('index.ts');
@@ -112,7 +112,7 @@ describe('migrate', () => {
     expect(actual).toBe(expected);
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
-    const report = JSON.parse(readFileSync(jsonReport).toString());
+    const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(/migrate/);
     rmSync(jsonReport);
@@ -133,7 +133,7 @@ describe('migrate', () => {
     expect(pkgJSONPath).toBeTruthy();
     expect(lockFilePath).toBeTruthy();
 
-    const originalPackageJSON = readFileSync(pkgJSONPath!, 'utf-8');
+    const originalPackageJSON = readFileSync(pkgJSONPath, 'utf-8');
     const originalLockFile = readFileSync(lockFilePath!, 'utf-8');
 
     const input: MigrateInput = {
@@ -158,17 +158,17 @@ describe('migrate', () => {
     expect(actual).toBe(expected);
     const jsonReport = resolve(basePath, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
-    const report = JSON.parse(readFileSync(jsonReport).toString());
+    const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(/migrate/);
     rmSync(jsonReport);
 
-    const pkgJSON = readJSONSync(pkgJSONPath);
+    const pkgJSON = readJSONSync(pkgJSONPath) as { devDependencies: Record<string, string> };
 
     expect(pkgJSON.devDependencies['@types/uuid']).toBeTruthy();
 
     // cleanup
-    writeFileSync(pkgJSONPath!, originalPackageJSON);
+    writeFileSync(pkgJSONPath, originalPackageJSON);
     writeFileSync(lockFilePath!, originalLockFile);
   });
 });

@@ -24,7 +24,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -44,7 +44,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -62,7 +62,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'app/components/greet.js',

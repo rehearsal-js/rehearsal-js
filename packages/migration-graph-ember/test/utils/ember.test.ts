@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 
-import { PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
+import { readPackageJson } from '@rehearsal/migration-graph-shared';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -18,6 +18,7 @@ import {
 } from '../../src/utils/ember.js';
 
 import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures.js';
+import type { PackageJson } from 'type-fest';
 
 setGracefulCleanup();
 
@@ -100,7 +101,7 @@ describe('Unit | utils | ember', () => {
       expect(
         requirePackageMain(
           getPathToPackage(FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN)
-        ).fileName.includes('ember-addon-main.js'),
+        ).name?.includes(FIXTURE_NAMES.ADDON_WITH_SIMPLE_CUSTOM_PACKAGE_MAIN),
         'the custom main js file was loaded instead of index'
       ).toBeTruthy();
     });

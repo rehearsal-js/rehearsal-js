@@ -25,6 +25,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "type-fest": "^3.6.1",
     "debug": "^4.3.4",
     "dependency-cruiser": "^12.10.0",
     "fast-glob": "^3.2.12",

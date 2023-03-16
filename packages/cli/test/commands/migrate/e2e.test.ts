@@ -9,7 +9,8 @@ import fixturify from 'fixturify';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig, PackageJson, TSConfig } from '../../../src/types.js';
+import { CustomConfig, TSConfig } from '../../../src/types.js';
+import type { PackageJson } from 'type-fest';
 
 setGracefulCleanup();
 
@@ -184,11 +185,12 @@ describe('migrate: e2e', () => {
     expect(readFileSync(resolve(basePath, 'index.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
 
     // Dependencies
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
+
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // report
     const reportPath = resolve(basePath, '.rehearsal');
@@ -221,11 +223,11 @@ describe('migrate: e2e', () => {
     let fileList = readdirSync(basePath);
 
     // Dependencies
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
     const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
     const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;

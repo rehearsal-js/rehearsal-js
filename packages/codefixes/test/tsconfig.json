@@ -9,6 +9,9 @@
   "exclude": ["fixtures/**/*.ts", "fixtures/**/*.tsx"],
   "references": [
     {
+      "path": "../../service"
+    },
+    {
       "path": "../../utils"
     },
     {

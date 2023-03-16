@@ -14,7 +14,7 @@ import { getDiagnosticOrder } from '../src/get-diagnostics.js';
 import { applyCodeFix } from '../src/codefixes.js';
 import { CodeFixes } from '../src/codefixInformationMap.generated.js';
 
-describe('ts-codefixes', async () => {
+describe('ts-codefixes', () => {
   const tsCollection = new TypescriptCodeFixCollection();
 
   test('has test for all codefixes', async () => {

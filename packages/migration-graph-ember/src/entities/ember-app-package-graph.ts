@@ -2,11 +2,8 @@ import fs from 'node:fs';
 import { join, resolve } from 'node:path';
 import enhancedResolve from 'enhanced-resolve';
 import {
-  Graph,
   GraphNode,
-  IPackage,
   ModuleNode,
-  Package,
   PackageGraph,
   PackageGraphOptions,
   PackageNode,
@@ -17,19 +14,6 @@ import { discoverServiceDependencies } from '../utils/discover-ember-service-dep
 import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import { EmberAppProjectGraph } from './ember-app-project-graph.js';
-
-export class SyntheticPackage extends Package implements IPackage {
-  #graph: Graph<ModuleNode>;
-
-  constructor() {
-    super('/dev/null');
-    this.#graph = new Graph<ModuleNode>();
-  }
-
-  override getModuleGraph(): Graph<ModuleNode> {
-    return this.#graph;
-  }
-}
 
 export type EmberAppPackageGraphOptions = {
   parent?: GraphNode<PackageNode>;
@@ -140,7 +124,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
         // Does it exist in package.json
         // If yes then it's truly external and we can ignore it
-        if (this.package.dependencies[maybePackage]) {
+        if (this.package.dependencies && this.package.dependencies[maybePackage]) {
           this.debug(
             `Ignore! A resolution was found for serivce '${s.serviceName}' in file '${m.path}'.`
           );
@@ -290,7 +274,6 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     return graph.addNode({
       key,
-      pkg: new SyntheticPackage(), // We could make pkg optionally undfined but this simplifies iteration
       synthetic: true,
     });
   }

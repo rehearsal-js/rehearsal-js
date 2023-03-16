@@ -3,7 +3,8 @@ import { existsSync, promises as fs } from 'node:fs';
 import { ListrTask } from 'listr2';
 
 import { addDep } from '@rehearsal/utils';
-import { MigrateCommandContext, MigrateCommandOptions, PackageJson } from '../../../types.js';
+import { PackageJson } from 'type-fest';
+import { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
 export const REQUIRED_DEPENDENCIES = [
   '@types/node',
@@ -44,7 +45,7 @@ export async function shouldRunDepInstallTask(
 
   const packageJsonPath = resolve(basePath, 'package.json');
   if (existsSync(packageJsonPath)) {
-    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
     for (const d of dependencies) {
       if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
         return true;

@@ -64,8 +64,7 @@ export class MakeMemberOptionalCodeFix implements CodeFix {
         typeName,
         typeMemberName
       );
-      nameEnd =
-        classMemberDeclaration && (classMemberDeclaration as PropertyDeclaration).name.getEnd();
+      nameEnd = classMemberDeclaration && classMemberDeclaration.name.getEnd();
     } else {
       const typeMemberDeclaration = this.findTypeMemberDeclaration(
         sourceFile,

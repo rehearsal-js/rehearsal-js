@@ -27,7 +27,8 @@
     "@rehearsal/migration-graph-shared": "workspace:*",
     "debug": "^4.3.4",
     "fs-extra": "^11.1.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "type-fest": "^3.6.1"
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",

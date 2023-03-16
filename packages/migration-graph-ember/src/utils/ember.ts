@@ -1,25 +1,27 @@
-import { join, resolve } from 'path';
-import { Module } from 'node:module';
-import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
-import { writeJsonSync } from 'fs-extra/esm';
-import sortPackageJson from 'sort-package-json';
+import { resolve } from 'path';
+import { createRequire } from 'node:module';
+import { readPackageJson } from '@rehearsal/migration-graph-shared';
+import type { PackageJson } from 'type-fest';
 
-const require = Module.createRequire(import.meta.url);
+type EmberCentricPackageJson = PackageJson & { ['ember-addon']: { paths: string[] } };
+
+const require = createRequire(import.meta.url);
 
 export function isApp(packageJson: PackageJson): boolean {
   return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
 }
 
 function hasDevDependency(packageJson: PackageJson, packageName: string): boolean {
-  return (
-    (packageJson?.['devDependencies'] && packageJson?.['devDependencies'][packageName]) ?? false
-  );
+  return !!(packageJson?.devDependencies && packageName in packageJson.devDependencies) ?? false;
 }
 
 function hasKeyword(packageJson: PackageJson, keyword: string): boolean {
-  return packageJson?.['keywords']?.includes(keyword) ?? false;
+  return !!(
+    packageJson?.keywords &&
+    Array.isArray(packageJson.keywords) &&
+    packageJson.keywords.includes(keyword)
+  );
 }
-
 /**
  * A package is an addon if the keywords property exists and contains "ember-addon"
  *
@@ -49,6 +51,11 @@ export function getPackageMainFileName(pathToPackage: string): string {
   return result['ember-addon']?.main ?? result.main ?? 'index.js';
 }
 
+type EmberMainModule = {
+  name?: string;
+  moduleName?(): string;
+};
+
 /**
  * Ember addons can set a `ember-addon.main`, which takes precedence over the package.json `main`,
  * this finds the desired main entry point and requires it.
@@ -56,49 +63,41 @@ export function getPackageMainFileName(pathToPackage: string): string {
  * @param {string} pathToPackage - the path to the addon directory
  * @param {string} packageMain - the actual main file (index.js)
  * @param {boolean} clearCache - clear the cache before requiring
- * @returns {any} - the contents of the required file
  */
 export function requirePackageMain(
   pathToPackage: string,
-  packageMain: string = getPackageMainFileName(pathToPackage),
-  clearCache = true
-): any {
-  // clear the node require cache to make sure the latest version on disk is required (i.e. after new data has been written)
-  if (clearCache) {
-    delete require.cache[require.resolve(resolve(pathToPackage, packageMain))];
-  }
-  return require(resolve(pathToPackage, packageMain));
+  packageMain: string = getPackageMainFileName(pathToPackage)
+): EmberMainModule {
+  return require(resolve(pathToPackage, packageMain)) as EmberMainModule;
 }
 
-export function getNameFromMain(pathToPackage: string): string {
+export function getNameFromMain(pathToPackage: string): string | undefined {
   const addonEntryPoint = requirePackageMain(pathToPackage);
-  const isFunction = typeof addonEntryPoint === 'function';
-  let name;
 
-  if (isFunction) {
-    ({ name } = addonEntryPoint.prototype);
-  } else {
-    ({ name } = addonEntryPoint);
+  // presence of this method idicates that the module names in code are different
+  // than the actual module name in package.json
+  if (addonEntryPoint.moduleName) {
+    return addonEntryPoint.moduleName();
   }
-  return name;
+
+  return addonEntryPoint.name;
 }
 
-export function getModuleNameFromMain(pathToPackage: string): string {
-  const addonEntryPoint = requirePackageMain(pathToPackage);
-
-  const isFunction = typeof addonEntryPoint === 'function';
-
-  let moduleName;
-  if (isFunction) {
-    moduleName = addonEntryPoint.prototype.moduleName && addonEntryPoint.prototype.moduleName();
-  } else {
-    moduleName = addonEntryPoint.moduleName && addonEntryPoint.moduleName();
-  }
-  return moduleName;
+function hasPath(packageJson: PackageJson): packageJson is EmberCentricPackageJson {
+  return !!(
+    'ember-addon' in packageJson &&
+    packageJson['ember-addon'] &&
+    'paths' in (packageJson['ember-addon'] as EmberCentricPackageJson)
+  );
 }
 
 export function getEmberAddonPaths(packageJson: PackageJson): string[] {
-  return packageJson['ember-addon']?.paths ?? [];
+  if (hasPath(packageJson)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+    return packageJson['ember-addon'].paths;
+  }
+
+  return [];
 }
 
 /**
@@ -111,25 +110,6 @@ export function getEmberAddonPaths(packageJson: PackageJson): string[] {
  * @param {string} pathToPackage - the path to the addon directory
  * @returns {string} - the name of the addon
  */
-export function getEmberAddonName(pathToPackage: string): string {
-  const name = getNameFromMain(pathToPackage);
-  const moduleName = getModuleNameFromMain(pathToPackage);
-  return moduleName ?? name;
-}
-
-export function writePackageJsonSync(pathToPackage: string, data: Record<string, any>): void {
-  const sorted: Record<any, any> = sortPackageJson(data);
-
-  if ('ember-addon' in sorted) {
-    sorted['ember-addon'] = sortPackageJson(sorted['ember-addon']);
-
-    // sort `ember-addon.paths`
-    if (Array.isArray(sorted['ember-addon'].paths)) {
-      sorted['ember-addon'].paths = sorted['ember-addon'].paths.sort();
-    }
-  }
-
-  const pathToPackageJson = join(pathToPackage, 'package.json');
-
-  writeJsonSync(pathToPackageJson, sorted, { spaces: 2 });
+export function getEmberAddonName(pathToPackage: string): string | undefined {
+  return getNameFromMain(pathToPackage);
 }

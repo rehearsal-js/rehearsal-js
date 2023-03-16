@@ -5,22 +5,17 @@ import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
-
-import {
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  PackageJson,
-  PreviousRuns,
-  ReportJson,
-} from '../../types.js';
+import { PackageJson } from 'type-fest';
+import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
 import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';
+import type { Report } from '@rehearsal/reporter';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = PackageJson.parse(
-  JSON.parse(await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8'))
-);
+const { version } = JSON.parse(
+  await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8')
+) as PackageJson;
 
 export const migrateCommand = new Command();
 
@@ -211,7 +206,7 @@ async function getPreviousRuns(
   let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
 
   if (existsSync(jsonReportPath)) {
-    const report = ReportJson.parse(JSON.parse(await fs.readFile(jsonReportPath, 'utf-8')));
+    const report = JSON.parse(await fs.readFile(jsonReportPath, 'utf-8')) as Report;
     const { summary = [], fixedItemCount: previousFixedCount = 0 } = report;
     previousRuns = {
       ...previousRuns,

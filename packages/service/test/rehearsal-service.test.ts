@@ -17,14 +17,14 @@ describe('Test service', function () {
 
   const options: CompilerOptions = {};
 
-  test('construct', async () => {
+  test('construct', () => {
     const service = new RehearsalService(options, fileNames);
 
     expect(service).toEqual(expect.anything());
     expect(service.getLanguageService()).toEqual(expect.anything());
   });
 
-  test('getFileText', async () => {
+  test('getFileText', () => {
     const service = new RehearsalService(options, fileNames);
 
     expect(function () {
@@ -34,7 +34,7 @@ describe('Test service', function () {
     expect(service.getFileText(fileName)).toEqual(originalFileContent);
   });
 
-  test('setFileText', async () => {
+  test('setFileText', () => {
     const service = new RehearsalService(options, fileNames);
 
     service.setFileText(fileName, 'class Real {\n  \n}\n');
@@ -42,7 +42,7 @@ describe('Test service', function () {
     expect(service.getFileText(fileName)).toEqual('class Real {\n  \n}\n');
   });
 
-  test('setFileText', async () => {
+  test('setFileText', () => {
     const service = new RehearsalService(options, fileNames);
     const originalContent = readFileSync(fileName).toString();
 
@@ -59,7 +59,7 @@ describe('Test service', function () {
     expect(readFileSync(fileName).toString()).toEqual(originalFileContent);
   });
 
-  test('getSourceFile', async () => {
+  test('getSourceFile', () => {
     const service = new RehearsalService(options, fileNames);
 
     expect(service.getSourceFile('oops')).toBeUndefined();
@@ -68,7 +68,7 @@ describe('Test service', function () {
     expect(service.getSourceFile(fileName).text).toEqual(originalFileContent);
   });
 
-  test('getSemanticDiagnosticsWithLocation', async () => {
+  test('getSemanticDiagnosticsWithLocation', () => {
     const service = new RehearsalService(options, fileNames);
 
     let diagnostics: DiagnosticWithLocation[];

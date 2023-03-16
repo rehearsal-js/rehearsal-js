@@ -14,6 +14,7 @@ import { isAddon, isApp } from '../utils/ember.js';
 import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
+import type { PackageJson } from 'type-fest';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -42,7 +43,9 @@ export class EmberAppProjectGraph extends ProjectGraph {
       const hasNodeByPackageName = this.graph.hasNode(p.packageName);
 
       if (!hasNodeByPackageName) {
-        const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(p.name);
+        const maybeNode: GraphNode<PackageNode> | undefined = this.findPackageByAddonName(
+          p.moduleName
+        );
         // Create a registry entry for the packageName to ensure a update
         if (maybeNode) {
           this.graph.registry.set(p.packageName, maybeNode);
@@ -103,11 +106,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   private isMatch(addonName: string, emberAddonPackage: EmberAddonPackage): boolean {
-    return (
-      addonName == emberAddonPackage.name ||
-      addonName == emberAddonPackage.emberAddonName ||
-      addonName == emberAddonPackage.moduleName
-    );
+    return addonName == emberAddonPackage.packageName;
   }
 
   /**
@@ -119,7 +118,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return Array.from(this.graph.nodes).find((n: GraphNode<PackageNode>) => {
       // this.debug('findPackageNodeByAddonName: %O', n.content);
 
-      const somePackage: Package = n.content.pkg;
+      const somePackage = n.content.pkg;
 
       if (
         n.content.key === addonName ||
@@ -160,7 +159,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   private entityFactory(pathToPackage: string): EmberProjectPackage {
-    let packageJson;
+    let packageJson: PackageJson;
     try {
       packageJson = readPackageJson(pathToPackage);
     } catch (e) {

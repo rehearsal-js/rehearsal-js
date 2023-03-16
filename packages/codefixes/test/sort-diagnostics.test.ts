@@ -23,7 +23,7 @@ export function mockDiagnosticWithLocation(
 }
 
 describe('Test DiagnosticFixPlugin', () => {
-  test('sort', async () => {
+  test('sort', () => {
     const diagnostics = mockDiagnosticWithLocations([
       { start: 5, code: 2790 },
       { start: 3, code: 4082 },
@@ -43,7 +43,7 @@ describe('Test DiagnosticFixPlugin', () => {
     );
   });
 
-  test('sort with priorities', async () => {
+  test('sort with priorities', () => {
     const diagnostics = mockDiagnosticWithLocations([
       { start: 9, code: 7044 },
       { start: 8, code: 95084 },

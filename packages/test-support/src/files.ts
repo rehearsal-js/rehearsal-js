@@ -369,119 +369,118 @@ export function getEmberAppWithInRepoEngine(engineName = 'some-engine'): fixturi
         });
       `,
     },
-    lib: {},
-    tests: {
-      acceptance: {},
-    },
-  };
-  // Add acceptance test for validating that our engine is mounted and routable
-  files['tests'].acceptance[`${engineName}-test.js`] = `
-    import { module, test } from 'qunit';
-    import { visit, currentURL } from '@ember/test-helpers';
-    import { setupApplicationTest } from 'ember-qunit';
+    lib: {
+      // Add the egine to lib directory
+      [engineName]: {
+        addon: {
+          'engine.js': `
+            import Engine from 'ember-engines/engine';
+            import loadInitializers from 'ember-load-initializers';
+            import Resolver from './resolver';
+            import config from './config/environment';
 
-    module('Acceptance | some-engine', function (hooks) {
-      setupApplicationTest(hooks);
+            const { modulePrefix } = config;
 
-      test('visiting /', async function (assert) {
-        await visit('/some-engine');
+            const Eng = Engine.extend({
+              modulePrefix,
+              Resolver,
+            });
 
-        assert.equal(currentURL(), '/some-engine');
+            loadInitializers(Eng, modulePrefix);
 
-        assert
-          .dom('#app-container')
-          .hasText('Hello from some-engine/index', 'The user can see Hello World');
-      });
-    });
-  `;
+            export default Eng;
+          `,
+          'resolver.js': `import Resolver from 'ember-resolver';
 
-  const engine = {
-    addon: {
-      'engine.js': `
-        import Engine from 'ember-engines/engine';
-        import loadInitializers from 'ember-load-initializers';
-        import Resolver from './resolver';
-        import config from './config/environment';
+            export default Resolver;
+          `,
+          'routes.js': `import buildRoutes from 'ember-engines/routes';
 
-        const { modulePrefix } = config;
+            export default buildRoutes(function () {
+              // Define your engine's route map here
+              this.route('some-page');
+            });
+          `,
+          templates: {
+            'application.hbs': `{{outlet}}`,
+            'some-page.hbs': `Hello from some-engine/some-page`,
+            'index.hbs': `Hello from some-engine/index`,
+          },
+        },
+        config: {
+          'environment.js': `
+            /* eslint-env node */
+            'use strict';
 
-        const Eng = Engine.extend({
-          modulePrefix,
-          Resolver,
-        });
+            module.exports = function (environment) {
+              let ENV = {
+                modulePrefix: '${engineName}',
+                environment,
+              };
 
-        loadInitializers(Eng, modulePrefix);
+              return ENV;
+            };
+          `,
+        },
+        'index.js': `
+          /* eslint-env node */
+          'use strict';
+          // Need to add this disable rule because it's blocking lint.
+          // eslint-disable-next-line node/no-extraneous-require
+          const EngineAddon = require('ember-engines/lib/engine-addon');
 
-        export default Eng;
-      `,
-      'resolver.js': `import Resolver from 'ember-resolver';
+          module.exports = EngineAddon.extend({
+            name: '${engineName}',
 
-        export default Resolver;
-      `,
-      'routes.js': `import buildRoutes from 'ember-engines/routes';
+            lazyLoading: Object.freeze({
+              enabled: false,
+            }),
 
-        export default buildRoutes(function () {
-          // Define your engine's route map here
-          this.route('some-page');
-        });
-      `,
-      templates: {
-        'application.hbs': `{{outlet}}`,
-        'some-page.hbs': `Hello from some-engine/some-page`,
-        'index.hbs': `Hello from some-engine/index`,
+            isDevelopingAddon() {
+              return true;
+            },
+          });
+        `,
+        'package.json': `
+          {
+            "name": "${engineName}",
+            "keywords": [
+              "ember-addon",
+              "ember-engine"
+            ],
+            "dependencies": {
+              "ember-cli-babel": "*",
+              "ember-cli-htmlbars": "*"
+            }
+          }
+        `,
       },
     },
-    config: {
-      'environment.js': `
-        /* eslint-env node */
-        'use strict';
+    tests: {
+      acceptance: {
+        // Add acceptance test for validating that our engine is mounted and routable
+        [`${engineName}-test.js`]: `
+        import { module, test } from 'qunit';
+        import { visit, currentURL } from '@ember/test-helpers';
+        import { setupApplicationTest } from 'ember-qunit';
 
-        module.exports = function (environment) {
-          let ENV = {
-            modulePrefix: '${engineName}',
-            environment,
-          };
+        module('Acceptance | some-engine', function (hooks) {
+          setupApplicationTest(hooks);
 
-          return ENV;
-        };
+          test('visiting /', async function (assert) {
+            await visit('/some-engine');
+
+            assert.equal(currentURL(), '/some-engine');
+
+            assert
+              .dom('#app-container')
+              .hasText('Hello from some-engine/index', 'The user can see Hello World');
+          });
+        });
       `,
+      },
     },
-    'index.js': `
-      /* eslint-env node */
-      'use strict';
-      // Need to add this disable rule because it's blocking lint.
-      // eslint-disable-next-line node/no-extraneous-require
-      const EngineAddon = require('ember-engines/lib/engine-addon');
-
-      module.exports = EngineAddon.extend({
-        name: '${engineName}',
-
-        lazyLoading: Object.freeze({
-          enabled: false,
-        }),
-
-        isDevelopingAddon() {
-          return true;
-        },
-      });
-    `,
-    'package.json': `
-      {
-        "name": "${engineName}",
-        "keywords": [
-          "ember-addon",
-          "ember-engine"
-        ],
-        "dependencies": {
-          "ember-cli-babel": "*",
-          "ember-cli-htmlbars": "*"
-        }
-      }
-    `,
   };
-
-  // Add the egine to lib directory
-  files['lib'][engineName] = engine;
 
   return files as fixturify.DirJSON;
 }

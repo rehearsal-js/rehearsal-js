@@ -170,7 +170,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
 function importPrettier(fromPath: string): typeof import('prettier') {
   const pkg = getPackageInfo('prettier', fromPath);
   const main = resolve(pkg.path);
-  return require(main);
+  return require(main) as typeof import('prettier');
 }
 
 function getPackageInfo(packageName: string, fromPath: string): { path: string } {

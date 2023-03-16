@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import findup from 'findup-sync';
-import { format } from 'prettier';
+import { format, Options } from 'prettier';
 
 /**
  * Runs prettier on a source string
@@ -21,7 +21,7 @@ export function formatter(source: string, filePath: string): string {
     console.warn('No .prettierrc found. Using default');
   }
 
-  const DEFAULT_PRETTIER_CONFIG = JSON.parse(prettierConfig);
+  const DEFAULT_PRETTIER_CONFIG = JSON.parse(prettierConfig) as Options;
 
   return format(source, {
     ...DEFAULT_PRETTIER_CONFIG,

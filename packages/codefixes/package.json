@@ -31,7 +31,6 @@
   "scripts": {
     "build": "tsc -b",
     "lint": "npm-run-all lint:*",
-    "lint:eslint": "eslint --fix . --ext .ts",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run",
@@ -42,8 +41,8 @@
     "@rehearsal/ts-utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/prettier": "^2.7.2",
     "@rehearsal/service": "workspace:*",
+    "@types/prettier": "^2.7.2",
     "fs-extra": "^11.1.0",
     "prettier": "^2.8.3",
     "tmp": "^0.2.1",

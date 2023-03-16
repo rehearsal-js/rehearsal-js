@@ -13,6 +13,7 @@ import {
   type Graph,
   type GraphNode,
 } from '@rehearsal/migration-graph-shared';
+import fixturify from 'fixturify';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
 import {
@@ -300,7 +301,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
+    const files = {
       app: {
         components: {
           'obtuse.js': `
@@ -313,11 +314,11 @@ describe('Unit | EmberAppPackageGraph', () => {
           `,
         },
       },
-      lib: {},
+      lib: {
+        [firstAddonName]: firstAddonFiles,
+        [secondAddonName]: secondAddonFiles,
+      },
     };
-
-    files['lib'][firstAddonName] = firstAddonFiles;
-    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -427,12 +428,12 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
-      lib: {},
+    const files: fixturify.DirJSON = {
+      lib: {
+        [firstAddonName]: firstAddonFiles,
+        [secondAddonName]: secondAddonFiles,
+      },
     };
-
-    files['lib'][firstAddonName] = firstAddonFiles;
-    files['lib'][secondAddonName] = secondAddonFiles;
 
     project.mergeFiles(files);
 
@@ -525,7 +526,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     });
     const project = getEmberProject('app');
 
-    const files: Record<string, any> = {
+    const files: fixturify.DirJSON = {
       app: {
         components: {
           'obtuse.js': `
@@ -538,10 +539,10 @@ describe('Unit | EmberAppPackageGraph', () => {
           `,
         },
       },
-      lib: {},
+      lib: {
+        [someAddonModuleName]: someAddonFiles,
+      },
     };
-
-    files['lib'][someAddonModuleName] = someAddonFiles;
 
     project.mergeFiles(files);
 
@@ -591,13 +592,13 @@ describe('Unit | EmberAppPackageGraph', () => {
               import Component from '@glimmer/component';
 
               const divide = () => 4 / 2;
-          
+
               const First = <template>Hello</template>
-          
+
               class Second extends Component {
                 <template>world</template>
               }
-          
+
               <template>
                 <First/>, <Second/>!
               </template>
@@ -620,7 +621,7 @@ describe('Unit | EmberAppPackageGraph', () => {
         app: {
           components: {
             'trunk.gjs': `
-              import Branch from './branch'; 
+              import Branch from './branch';
 
               <template>
                 <Branch/>
@@ -643,7 +644,7 @@ describe('Unit | EmberAppPackageGraph', () => {
               const Flea = <template>
                 <p>Hello, {{@name}}!</p>
               </template>;
-              
+
               <template>
                 <Flea @name={{@name}}/>
               </template>

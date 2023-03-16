@@ -1,6 +1,5 @@
 import { resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
-import { getEmberAddonName } from '../utils/ember.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import { EmberAppPackageGraph, EmberAppPackageGraphOptions } from './ember-app-package-graph.js';
 
@@ -16,15 +15,9 @@ export class EmberAddonPackageGraph extends EmberAppPackageGraph {
   }
 
   override get resolveOptions(): IResolveOptions {
-    const addonName = getEmberAddonName(this.package.path);
-
-    if (!addonName) {
-      console.warn('addonName is undefined, unable to create alias from app directory');
-    }
-
     const alias: Record<string, string> = {};
 
-    alias[addonName] = resolve(this.baseDir, 'addon');
+    alias[this.package.packageName] = resolve(this.baseDir, 'addon');
 
     this.debug({
       baseDir: this.baseDir,

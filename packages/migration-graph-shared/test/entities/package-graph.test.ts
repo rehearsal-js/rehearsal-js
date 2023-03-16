@@ -36,7 +36,7 @@ describe('PackageGraph', () => {
     rimraf(testSuiteTmpDir);
   });
 
-  test('should construct a graph; simple', async () => {
+  test('should construct a graph; simple', () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -68,7 +68,7 @@ describe('PackageGraph', () => {
     expect(flatten(output.topSort())).toStrictEqual(flatten(g.topSort()));
   });
 
-  test('should dedupe nodes e.g. reused imports', async () => {
+  test('should dedupe nodes e.g. reused imports', () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -102,7 +102,7 @@ describe('PackageGraph', () => {
     expect(flatten(output.topSort())).toStrictEqual(flatten(g.topSort()));
   });
 
-  test('should handle circular dependencies', async () => {
+  test('should handle circular dependencies', () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -128,7 +128,7 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['lib/a.js', 'lib/b.js', 'index.js']);
   });
 
-  test('should handle re-exporting', async () => {
+  test('should handle re-exporting', () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -153,7 +153,7 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['lib/file.js', 'index.js']);
   });
 
-  test("should handle aggregating exports e.g. '*' ", async () => {
+  test("should handle aggregating exports e.g. '*' ", () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -180,7 +180,7 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
   });
 
-  test("should handle aggregating exports e.g. '* as phrases' ", async () => {
+  test("should handle aggregating exports e.g. '* as phrases' ", () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -207,14 +207,14 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
   });
 
-  test('should ignore node_modules ', async () => {
+  test('should ignore node_modules ', () => {
     const baseDir = getLibrary('simple');
     const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
     const actual = flatten(output.topSort());
     expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
   });
 
-  test('should detect file extension in moduleName', async () => {
+  test('should detect file extension in moduleName', () => {
     const tmpDir = getTmpDir();
 
     const files = {
@@ -234,7 +234,7 @@ describe('PackageGraph', () => {
     expect(actual).toStrictEqual(['a.js', 'index.js']);
   });
 
-  test('should resolve a directory with package.json and main entry', async () => {
+  test('should resolve a directory with package.json and main entry', () => {
     const tmpDir = getTmpDir();
 
     const files = {

@@ -9,8 +9,9 @@ import {
   shouldRunDepInstallTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig, PackageJson } from '../../../src/types.js';
+import { CustomConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
+import type { PackageJson } from 'type-fest';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');
@@ -45,12 +46,13 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options)];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
+
     const devDeps = packageJson.devDependencies;
 
-    expect(Object.keys(devDeps!).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
     expect(output).matchSnapshot();
   });
 
@@ -64,7 +66,7 @@ describe('Task: dependency-install', () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -84,7 +86,7 @@ describe('Task: dependency-install', () => {
     );
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       devDependencies: requiredDevDepsMap,
@@ -108,13 +110,13 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
 
-    expect(Object.keys(devDeps!).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
+    expect(Object.keys(devDeps || {}).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());
 
     expect(devDeps).toHaveProperty('tmp');
     expect(deps).toHaveProperty('fs-extra');
@@ -140,7 +142,7 @@ describe('Task: dependency-install', () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -169,7 +171,7 @@ describe('Task: dependency-install', () => {
     const requiredDepsMap = { 'fs-extra': '2.0.0' };
     // update package.json with required deps
     const packageJsonPath = resolve(basePath, 'package.json');
-    const packageJson = PackageJson.parse(JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')));
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
     writeJSONSync(packageJsonPath, {
       ...packageJson,
       dependencies: requiredDepsMap,
@@ -215,9 +217,9 @@ describe('Task: dependency-install', () => {
     const tasks = [depInstallTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
     const devDeps = packageJson.devDependencies;
     expect(devDeps).toHaveProperty('fs-extra');
 

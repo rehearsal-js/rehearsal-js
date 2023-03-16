@@ -29,13 +29,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:import/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
   overrides: [
     {
       files: ['./packages/cli/**/*.ts'],
-      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
       rules: {
-        '@typescript-eslint/restrict-template-expressions': ['off'],
         'no-restricted-imports': [
           'error',
           ...packages,
@@ -86,6 +85,7 @@ module.exports = {
         usePrettierrc: false,
       },
     ],
+    '@typescript-eslint/restrict-template-expressions': ['off'],
     '@typescript-eslint/no-use-before-define': [
       'error',
       {

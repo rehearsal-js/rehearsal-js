@@ -20,10 +20,11 @@ const TEMPLATE_TAG_CONFIG = {
 export function transformGjs(filename: string, source: string): string {
   DEBUG_CALLBACK(`transforming %s to .js`, {});
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const { output } = babelPreprocessEmbeddedTemplates(
     source,
     Object.assign({ relativePath: filename }, TEMPLATE_TAG_CONFIG)
   );
 
-  return output;
+  return output as string;
 }

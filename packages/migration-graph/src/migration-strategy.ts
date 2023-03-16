@@ -63,7 +63,7 @@ export class MigrationStrategy {
   }
 
   toString(): string {
-    const files = this.#files.reduce((f, result) => result + '\n' + f, '');
+    const files = this.#files.reduce((f, result) => `${result}\n${f}`, '');
     return `Suggsted Migration Strategy\n${files}`;
   }
 }

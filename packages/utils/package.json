@@ -51,6 +51,7 @@
     "micromatch": "^4.0.5",
     "semver": "^7.3.8",
     "simple-git": "^3.16.0",
+    "type-fest": "^3.6.1",
     "which": "^3.0.0"
   },
   "devDependencies": {

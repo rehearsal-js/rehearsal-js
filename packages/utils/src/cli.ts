@@ -15,6 +15,7 @@ import { execa, execaSync } from 'execa';
 import findupSync from 'findup-sync';
 import type { GitDescribe } from './types.js';
 import type { Options } from 'execa';
+import type { PackageJson } from 'type-fest';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
@@ -459,10 +460,9 @@ export function parseTsVersion(value: string): string {
  */
 export function isTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath);
-  return (
-    (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
-    (packageJSON.dependencies && packageJSON.dependencies.typescript)
+  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
+  return !!(
+    packageJSON?.devDependencies?.['typescript'] || packageJSON?.dependencies?.['typescript']
   );
 }
 
@@ -471,7 +471,7 @@ export function isTypescriptInDevdep(basePath: string): boolean {
  */
 export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath);
+  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
   writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
 }

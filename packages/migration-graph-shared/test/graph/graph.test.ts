@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { Graph } from '../../src/graph/index.js';
+import { Graph, GraphNode } from '../../src/graph/index.js';
 import type { UniqueNode } from '../../src/types.js';
 
 export function createNode(key = 'some-name'): UniqueNode {
@@ -9,13 +9,13 @@ export function createNode(key = 'some-name'): UniqueNode {
 }
 
 describe('graph', () => {
-  test('should addNode', async () => {
+  test('should addNode', () => {
     const graph = new Graph<UniqueNode>();
     graph.addNode(createNode());
     expect(graph.nodes.size).toEqual(1);
   });
 
-  test('should addEdge to node', async () => {
+  test('should addEdge to node', () => {
     const graph = new Graph<UniqueNode>();
     const someNode = graph.addNode(createNode('some-node'));
     const someEdgeNode = graph.addNode(createNode('some-edge-node'));
@@ -23,12 +23,13 @@ describe('graph', () => {
     graph.addEdge(someNode, someEdgeNode);
     expect(graph.nodes.has(someNode)).toBeTruthy();
 
-    const maybeNode = graph.nodes.values().next().value;
+    const maybeNode = graph.nodes.values().next().value as GraphNode<UniqueNode>;
     expect(maybeNode).toBe(someNode);
-    expect(maybeNode.adjacent.values().next().value).toBe(someEdgeNode);
+    const adjacent = maybeNode.adjacent.values().next().value as GraphNode<UniqueNode>;
+    expect(adjacent).toBe(someEdgeNode);
   });
 
-  test('should produce a topologicalSort iterator', async () => {
+  test('should produce a topologicalSort iterator', () => {
     // Reference https://www.geeksforgeeks.org/topological-sorting/
     const graph = new Graph<UniqueNode>();
 
@@ -56,7 +57,7 @@ describe('graph', () => {
     expect(actual).toEqual(expected);
   });
 
-  test('should print a graph relative to a passed node', async () => {
+  test('should print a graph relative to a passed node', () => {
     // Reference https://www.geeksforgeeks.org/topological-sorting/
     const graph = new Graph<UniqueNode>();
 

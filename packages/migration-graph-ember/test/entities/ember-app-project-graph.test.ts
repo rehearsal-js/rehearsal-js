@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
+import { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph.js';
-import { SyntheticPackage } from '../../src/entities/ember-app-package-graph.js';
-import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
 function flatten(arr: GraphNode<UniqueNode>[]): string[] {
   return Array.from(arr).map((n) => n.content.key);
@@ -141,7 +140,7 @@ export default class Salutation extends Component {
 
     const addonFoundByAddonName = projectGraph.graph.getNode('some-addon');
 
-    expect(addonFoundByAddonName.content.pkg).instanceOf(SyntheticPackage);
+    expect(addonFoundByAddonName.content.pkg).equal(undefined);
     expect(addonFoundByAddonName.content.synthetic).toBeTruthy();
     expect(
       rootNode.adjacent.has(addonFoundByAddonName),
@@ -221,19 +220,19 @@ export default class Salutation extends Component {
 
       const [someNode] = orderedPackages;
       const somePackage = someNode.content.pkg;
-      expect(somePackage.packageName, 'there should only be a single package in the graph').toBe(
+      expect(somePackage?.packageName, 'there should only be a single package in the graph').toBe(
         'some-addon'
       );
 
       expect(
-        somePackage.includePatterns.has('addon/utils/some-util.js'),
+        somePackage?.includePatterns.has('addon/utils/some-util.js'),
         'a package whose include pattern is only the entrypoint'
       ).toBeTruthy();
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
-          const graph = pkg.content.pkg.getModuleGraph();
-          return flatten(graph.topSort());
+          const graph = pkg.content.pkg?.getModuleGraph();
+          return flatten(graph?.topSort() || []);
         })
         .flat();
 
@@ -290,8 +289,8 @@ export default class Salutation extends Component {
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
-          const modules = pkg.content.pkg.getModuleGraph();
-          return flatten(modules.topSort());
+          const modules = pkg.content.pkg?.getModuleGraph();
+          return flatten(modules?.topSort() || []);
         })
         .flat();
 
@@ -311,8 +310,8 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg.getModuleGraph();
-        return flatten(modules.topSort());
+        const modules = pkg.content.pkg?.getModuleGraph();
+        return flatten(modules?.topSort() || []);
       })
       .flat();
 
@@ -346,8 +345,8 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg.getModuleGraph();
-        return flatten(modules.topSort());
+        const modules = pkg.content.pkg?.getModuleGraph();
+        return flatten(modules?.topSort() || []);
       })
       .flat();
 
@@ -417,8 +416,8 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg.getModuleGraph();
-        return flatten(modules.topSort());
+        const modules = pkg.content.pkg?.getModuleGraph();
+        return flatten(modules?.topSort() || []);
       })
       .flat();
 
@@ -460,7 +459,7 @@ export default class Salutation extends Component {
       const orderedPackages = projectGraph.graph.topSort();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort()))
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-addon', async () => {
@@ -486,12 +485,12 @@ export default class Salutation extends Component {
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
 
       expect(
-        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
         'expected migraiton order for addon'
       ).toStrictEqual(['addon/components/greet.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
+        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
         'expected migraiton order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
@@ -506,12 +505,12 @@ export default class Salutation extends Component {
 
       expect(flatten(orderedPackages)).toStrictEqual(['some-engine', 'app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg.getModuleGraph().topSort())),
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
         'expected migraiton order for in-repo-engine'
       ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg.getModuleGraph().topSort())),
+        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
         'expected migraiton order for app'
       ).toStrictEqual([
         'app/app.js',

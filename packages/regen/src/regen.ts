@@ -36,11 +36,13 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   //regen will only work on ts files
   const filteredSourceFiles = sourceFiles.filter((file) => extname(file) === '.ts');
 
-  const listrTask = input.task || { output: '' };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const listrTask: { output: string } = input.task || { output: '' };
 
   logger?.debug('migration regen started');
   logger?.debug(`Base path: ${basePath}`);
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const configFile = findConfigFile(basePath, sys.fileExists, tsConfigName);
 
   if (!configFile) {
@@ -50,7 +52,10 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   logger?.debug(`config file: ${configFile}`);
 
-  const { config } = readConfigFile(configFile, sys.readFile);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { config } = readConfigFile(configFile, (filepath: string, encoding?: string) =>
+    sys.readFile(filepath, encoding)
+  );
 
   const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
