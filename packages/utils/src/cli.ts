@@ -13,6 +13,7 @@ import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 import findupSync from 'findup-sync';
+import { PackageJson } from './schemas.js';
 import type { GitDescribe } from './types.js';
 import type { Options } from 'execa';
 
@@ -459,10 +460,9 @@ export function parseTsVersion(value: string): string {
  */
 export function isTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath);
-  return (
-    (packageJSON.devDependencies && packageJSON.devDependencies.typescript) ||
-    (packageJSON.dependencies && packageJSON.dependencies.typescript)
+  const packageJSON = PackageJson.parse(readJSONSync(packageJSONPath));
+  return !!(
+    packageJSON?.devDependencies?.['typescript'] || packageJSON?.dependencies?.['typescript']
   );
 }
 
@@ -471,7 +471,7 @@ export function isTypescriptInDevdep(basePath: string): boolean {
  */
 export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath);
+  const packageJSON = PackageJson.parse(readJSONSync(packageJSONPath));
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
   writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
 }

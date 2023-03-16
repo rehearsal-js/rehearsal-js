@@ -194,8 +194,8 @@ describe('utils', () => {
     expect(getEditorBinWithArgs()).toEqual(['nvim']);
   });
 
-  describe('findWorkspaceRoot', async () => {
-    test('npm/yarn with workspace', async () => {
+  describe('findWorkspaceRoot', () => {
+    test('npm/yarn with workspace', () => {
       const { name: tmpLocation } = tmp.dirSync();
       const files = {
         'package.json': JSON.stringify({
@@ -216,7 +216,7 @@ describe('utils', () => {
       expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
     });
 
-    test('npm/yarn without workspace', async () => {
+    test('npm/yarn without workspace', () => {
       const { name: tmpLocation } = tmp.dirSync();
       const files = {
         'package.json': JSON.stringify({
@@ -237,7 +237,7 @@ describe('utils', () => {
       expect(findWorkspaceRoot(currentDir)).toBe(currentDir);
     });
 
-    test('pnpm with workspace', async () => {
+    test('pnpm with workspace', () => {
       const { name: tmpLocation } = tmp.dirSync();
       const files = {
         'package.json': JSON.stringify({
@@ -260,7 +260,7 @@ describe('utils', () => {
       expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
     });
 
-    test('pnpm without workspace', async () => {
+    test('pnpm without workspace', () => {
       const { name: tmpLocation } = tmp.dirSync();
       const files = {
         'package.json': JSON.stringify({

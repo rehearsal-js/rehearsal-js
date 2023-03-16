@@ -19,7 +19,7 @@ describe('Test sarif-formatter', () => {
     const sarif = sarifFormatter(addRuleData);
     const log = JSON.parse(sarif) as Log;
     const rules = log.runs[0].tool.driver.rules;
-
+    console.log(rules);
     expect(rules).toMatchSnapshot();
   });
 

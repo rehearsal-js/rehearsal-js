@@ -29,20 +29,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:import/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
   overrides: [
     {
-      files: ['./packages/codefixes/**/*.ts', './packages/migrate/**/*.ts', './packages/migration-graph/**/*.ts', './packages/migration-graph-ember/**/*.ts', './packages/migration-graph-shared/**/*.ts', './packages/plugins/**/*.ts', './packages/regen/**/*.ts', './packages/reporter/**/*.ts', './packages/service/**/*.ts', './packages/test-support/**/*.ts', './packages/ts-utils/**/*.ts', './packages/upgrade/**/*.ts'],
-      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
-      rules: {
-        '@typescript-eslint/restrict-template-expressions': ['off'],
-      }
-    },
-    {
       files: ['./packages/cli/**/*.ts'],
-      extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
       rules: {
-        '@typescript-eslint/restrict-template-expressions': ['off'],
         'no-restricted-imports': [
           'error',
           ...packages,
@@ -93,6 +85,7 @@ module.exports = {
         usePrettierrc: false,
       },
     ],
+    '@typescript-eslint/restrict-template-expressions': ['off'],
     '@typescript-eslint/no-use-before-define': [
       'error',
       {
