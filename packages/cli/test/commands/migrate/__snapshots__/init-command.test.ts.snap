@@ -21,31 +21,13 @@ info:    The project is ready for migration. Please run \\"rehearsal migrate\\" 
 `;
 
 exports[`migrate init > default run 2`] = `
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "strict": true,
-    "target": "ES2021",
-  },
-}
-`;
-
-exports[`migrate init > default run 3`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init > default run 4`] = `
+exports[`migrate init > default run 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -63,6 +45,24 @@ exports[`migrate init > default run 4`] = `
     \\"prettier\\"
   ]
 }"
+`;
+
+exports[`migrate init > default run 4`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2021",
+  },
+}
 `;
 
 exports[`migrate init > pass user config 1`] = `

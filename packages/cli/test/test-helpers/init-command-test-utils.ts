@@ -89,7 +89,7 @@ export async function runWithUserConfig(basePath: string): Promise<UserConfigRun
   };
 }
 
-export async function runTwoTimes(basePath: string) {
+export async function runTwoTimes(basePath: string): Promise<{ stdout: string }> {
   await runBin('migrate', ['init'], {
     cwd: basePath,
   });
