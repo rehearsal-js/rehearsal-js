@@ -46,6 +46,7 @@ export class PluginsRunner {
       const next = async (): Promise<void> => {
         const { done } = await fileIteratorProcessor.next();
         if (!done) {
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           setImmediate(next);
         }
       };
@@ -71,6 +72,7 @@ export class PluginsRunner {
           changedFile.forEach((file) => this.context.rehearsal.saveFile(file));
 
           if (!done) {
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             setImmediate(next);
           }
         };

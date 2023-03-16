@@ -101,12 +101,19 @@ export class RehearsalServiceHost implements LanguageServiceHost {
   getScriptFileNames = (): string[] => this.fileNames;
   getScriptVersion = (fileName: string): string => this.files[fileName]?.version.toString() || '0';
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   fileExists = sys.fileExists;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   readFile = sys.readFile;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   writeFile = sys.writeFile;
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   directoryExists = sys.directoryExists;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   getDirectories = sys.getDirectories;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   readDirectory = sys.readDirectory;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   realpath = sys.realpath;
 }
