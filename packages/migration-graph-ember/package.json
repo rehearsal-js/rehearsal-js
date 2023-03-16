@@ -38,7 +38,8 @@
     "micromatch": "^4.0.5",
     "prettier": "^2.8.3",
     "resolve-package-path": "^4.0.3",
-    "sort-package-json": "^1.57.0"
+    "sort-package-json": "^1.57.0",
+    "type-fest": "^3.6.1"
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",

@@ -3,11 +3,11 @@ import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { setGracefulCleanup } from 'tmp';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { PackageJson } from '@rehearsal/utils';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
 import { CustomConfig, TSConfig } from '../../../src/types.js';
+import type { PackageJson } from 'type-fest';
 
 setGracefulCleanup();
 
@@ -35,9 +35,9 @@ describe('migrate init', () => {
     const fileList = readdirSync(basePath);
 
     // Dependencies
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
     const devDeps = packageJson.devDependencies;
     expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
@@ -80,9 +80,9 @@ describe('migrate init', () => {
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
 
     // Dependencies
-    const packageJson = PackageJson.parse(
-      JSON.parse(await fs.readFile(resolve(basePath, 'package.json'), 'utf-8'))
-    );
+    const packageJson = JSON.parse(
+      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+    ) as PackageJson;
     const devDeps = packageJson.devDependencies;
     const deps = packageJson.dependencies;
     expect(Object.keys(devDeps || {}).sort()).toEqual(['tmp', ...REQUIRED_DEPENDENCIES].sort());

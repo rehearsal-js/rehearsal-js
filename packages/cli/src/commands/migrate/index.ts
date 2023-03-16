@@ -4,12 +4,8 @@ import { existsSync, promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import {
-  parseCommaSeparatedList,
-  gitIsRepoDirty,
-  findWorkspaceRoot,
-  PackageJson,
-} from '@rehearsal/utils';
+import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
+import { PackageJson } from 'type-fest';
 import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
 import { initCommand } from './init-command.js';
 
@@ -17,9 +13,9 @@ import { sequentialTask } from './tasks/sequential.js';
 import type { Report } from '@rehearsal/reporter';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = PackageJson.parse(
-  JSON.parse(await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8'))
-);
+const { version } = JSON.parse(
+  await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8')
+) as PackageJson;
 
 export const migrateCommand = new Command();
 

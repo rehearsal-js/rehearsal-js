@@ -136,6 +136,7 @@ importers:
       semver: ^7.3.8
       simple-git: ^3.16.0
       tmp: ^0.2.1
+      type-fest: ^3.6.1
       typescript: ^4.9.5
       typescript-json-schema: ^0.55.0
       vitest: ^0.28.5
@@ -167,6 +168,7 @@ importers:
       semver: 7.3.8
       simple-git: 3.16.1
       tmp: 0.2.1
+      type-fest: 3.6.1
       which: 3.0.0
       winston: 3.8.2
       yaml: 2.2.1
@@ -233,6 +235,7 @@ importers:
       debug: ^4.3.4
       fs-extra: ^11.1.0
       path: ^0.12.7
+      type-fest: ^3.6.1
       vitest: ^0.28.5
     dependencies:
       '@rehearsal/migration-graph-ember': link:../migration-graph-ember
@@ -240,6 +243,7 @@ importers:
       debug: 4.3.4
       fs-extra: 11.1.0
       path: 0.12.7
+      type-fest: 3.6.1
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       vitest: 0.28.5
@@ -266,6 +270,7 @@ importers:
       rimraf: ^4.1.2
       sort-package-json: ^1.57.0
       tmp: ^0.2.1
+      type-fest: ^3.6.1
       vitest: ^0.28.5
       walk-sync: ^3.0.0
     dependencies:
@@ -283,6 +288,7 @@ importers:
       prettier: 2.8.4
       resolve-package-path: 4.0.3
       sort-package-json: 1.57.0
+      type-fest: 3.6.1
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       '@types/lodash.merge': 4.6.7
@@ -296,7 +302,6 @@ importers:
   packages/migration-graph-shared:
     specifiers:
       '@rehearsal/test-support': workspace:*
-      '@rehearsal/utils': workspace:*
       debug: ^4.3.4
       dependency-cruiser: ^12.10.0
       fast-glob: ^3.2.12
@@ -308,10 +313,9 @@ importers:
       rimraf: ^4.1.2
       sort-package-json: ^1.57.0
       tmp: ^0.2.1
+      type-fest: ^3.6.1
       vitest: ^0.28.5
-      zod: ^3.21.4
     dependencies:
-      '@rehearsal/utils': link:../utils
       debug: 4.3.4
       dependency-cruiser: 12.10.0
       fast-glob: 3.2.12
@@ -320,7 +324,7 @@ importers:
       micromatch: 4.0.5
       prettier: 2.8.4
       sort-package-json: 1.57.0
-      zod: 3.21.4
+      type-fest: 3.6.1
     devDependencies:
       '@rehearsal/test-support': link:../test-support
       fixturify: 3.0.0
@@ -404,10 +408,8 @@ importers:
       vitest: ^0.28.5
       vitest-mock-extended: ^1.0.9
       winston: ^3.8.2
-      zod: ^3.21.4
     dependencies:
       winston: 3.8.2
-      zod: 3.21.4
     devDependencies:
       '@types/debug': 4.1.7
       '@types/eslint': 8.21.1
@@ -535,10 +537,10 @@ importers:
       semver: ^7.3.8
       simple-git: ^3.16.0
       tmp: ^0.2.1
+      type-fest: ^3.6.1
       typescript: ^4.9.5
       vitest: ^0.28.5
       which: ^3.0.0
-      zod: ^3.21.4
     dependencies:
       chalk: 4.1.2
       commander: 10.0.0
@@ -552,8 +554,8 @@ importers:
       micromatch: 4.0.5
       semver: 7.3.8
       simple-git: 3.16.1
+      type-fest: 3.6.1
       which: 3.0.0
-      zod: 3.21.4
     devDependencies:
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2
@@ -5422,6 +5424,11 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
+  /type-fest/3.6.1:
+    resolution: {integrity: sha512-htXWckxlT6U4+ilVgweNliPqlsVSSucbxVexRYllyMVJDtf5rTjv6kF/s+qAd4QSL1BZcnJPEJavYBPQiWuZDA==}
+    engines: {node: '>=14.16'}
+    dev: false
+
   /typed-array-length/1.0.4:
     resolution: {integrity: sha512-KjZypGq+I/H7HI5HlOoGHkWUUGq+Q0TPhQurLbyrVrvnKTBgzLhIJ7j6J/XTQOi0d1RjyZ0wdas8bKs2p0x3Ng==}
     dependencies:
@@ -5874,7 +5881,3 @@ packages:
       validator: 13.9.0
     optionalDependencies:
       commander: 9.5.0
-
-  /zod/3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-    dev: false

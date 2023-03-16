@@ -1,11 +1,10 @@
 import { resolve, join, relative } from 'node:path';
 import { existsSync } from 'node:fs';
+import { assert } from 'node:console';
 import { readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import sortPackageJson from 'sort-package-json';
 import fastGlob from 'fast-glob';
 
-import { PackageJson as PackageJsonSchema } from '@rehearsal/utils';
-import { z } from 'zod';
 import { getWorkspaceGlobs } from '../utils/workspace.js';
 import { getExcludePatterns } from '../index.js';
 import { PackageGraph, PackageGraphOptions } from './package-graph.js';
@@ -13,8 +12,7 @@ import { PackageGraph, PackageGraphOptions } from './package-graph.js';
 import type { IPackage } from './IPackage.js';
 import type { Graph } from '../graph/index.js';
 import type { ModuleNode } from '../types.js';
-
-export type PackageJson = z.infer<typeof PackageJsonSchema>;
+import type { PackageJson } from 'type-fest';
 
 export type PackageOptions = {
   packageType?: string;
@@ -72,8 +70,15 @@ export class Package implements IPackage {
     }
 
     const packageJsonPath = resolve(this.path, 'package.json');
-    this.packageJson = PackageJsonSchema.parse(readJsonSync(packageJsonPath));
-    this.packageName = this.packageJson.name;
+    this.packageJson = readJsonSync(packageJsonPath) as PackageJson;
+
+    const { name: packageName } = this.packageJson;
+
+    if (packageName) {
+      this.packageName = packageName;
+    } else {
+      assert(packageName, `Must have a package name for package at ${path}`);
+    }
   }
 
   /**
@@ -84,9 +89,9 @@ export class Package implements IPackage {
    * It is technically possible to have zero dependencies
    * @return dependencies {object|undefined}
    */
-  get dependencies(): Record<string, string> | undefined {
+  get dependencies(): Partial<Record<string, string>> | undefined {
     // get the dependencies from package.json
-    return this.packageJson?.['dependencies'];
+    return this.packageJson.dependencies;
   }
 
   /**
@@ -95,17 +100,18 @@ export class Package implements IPackage {
    * It is technically possible to have zero devDependencies
    * @return dependencies {object|undefined}
    */
-  get devDependencies(): Record<string, string> | undefined {
+  get devDependencies(): Partial<Record<string, string>> | undefined {
     // get the dependencies from package.json
-    return this.packageJson?.['devDependencies'];
+    return this.packageJson.devDependencies;
   }
 
   addWorkspaceGlob(glob: string): this {
     const pkg = this.packageJson;
-    if (!pkg['workspaces']) {
-      pkg['workspaces'] = [];
+    if (!pkg.workspaces) {
+      pkg.workspaces = [glob];
+    } else if (Array.isArray(pkg.workspaces)) {
+      pkg.workspaces.push(glob);
     }
-    pkg['workspaces'].push(glob);
     return this;
   }
 

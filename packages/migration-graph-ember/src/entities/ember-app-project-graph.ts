@@ -5,7 +5,6 @@ import debug, { type Debugger } from 'debug';
 import {
   GraphNode,
   Package,
-  PackageJson,
   PackageNode,
   ProjectGraph,
   ProjectGraphOptions,
@@ -15,6 +14,7 @@ import { isAddon, isApp } from '../utils/ember.js';
 import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
+import type { PackageJson } from 'type-fest';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 

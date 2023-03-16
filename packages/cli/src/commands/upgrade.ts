@@ -19,15 +19,15 @@ import {
   gitIsRepoDirty,
   parseCommaSeparatedList,
   parseTsVersion,
-  PackageJson,
 } from '@rehearsal/utils';
+import { PackageJson } from 'type-fest';
 
 import { UpgradeCommandContext, UpgradeCommandOptions } from '../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const { version } = PackageJson.parse(
-  JSON.parse(await fs.readFile(resolve(__dirname, '../../package.json'), 'utf-8'))
-);
+const { version } = JSON.parse(
+  await fs.readFile(resolve(__dirname, '../../package.json'), 'utf-8')
+) as PackageJson;
 
 const DEBUG_CALLBACK = debug('rehearsal:upgrade');
 export const upgradeCommand = new Command();

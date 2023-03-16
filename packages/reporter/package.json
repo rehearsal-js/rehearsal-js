@@ -35,8 +35,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "winston": "^3.8.2",
-    "zod": "^3.21.4"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",

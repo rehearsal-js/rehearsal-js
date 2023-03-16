@@ -1,6 +1,9 @@
 import { resolve } from 'path';
 import { createRequire } from 'node:module';
-import { type PackageJson, readPackageJson } from '@rehearsal/migration-graph-shared';
+import { readPackageJson } from '@rehearsal/migration-graph-shared';
+import type { PackageJson } from 'type-fest';
+
+type EmberCentricPackageJson = PackageJson & { ['ember-addon']: { paths: string[] } };
 
 const require = createRequire(import.meta.url);
 
@@ -80,13 +83,11 @@ export function getNameFromMain(pathToPackage: string): string | undefined {
   return addonEntryPoint.name;
 }
 
-type WithField<T extends Record<string, unknown>, K extends keyof T> = Required<Pick<T, K>> & T;
-
-function hasPath(packageJson: PackageJson): packageJson is WithField<PackageJson, 'ember-addon'> {
+function hasPath(packageJson: PackageJson): packageJson is EmberCentricPackageJson {
   return !!(
     'ember-addon' in packageJson &&
     packageJson['ember-addon'] &&
-    'paths' in packageJson['ember-addon']
+    'paths' in (packageJson['ember-addon'] as EmberCentricPackageJson)
   );
 }
 

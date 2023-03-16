@@ -13,9 +13,9 @@ import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 import findupSync from 'findup-sync';
-import { PackageJson } from './schemas.js';
 import type { GitDescribe } from './types.js';
 import type { Options } from 'execa';
+import type { PackageJson } from 'type-fest';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
@@ -460,7 +460,7 @@ export function parseTsVersion(value: string): string {
  */
 export function isTypescriptInDevdep(basePath: string): boolean {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = PackageJson.parse(readJSONSync(packageJSONPath));
+  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
   return !!(
     packageJSON?.devDependencies?.['typescript'] || packageJSON?.dependencies?.['typescript']
   );
@@ -471,7 +471,7 @@ export function isTypescriptInDevdep(basePath: string): boolean {
  */
 export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
   const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = PackageJson.parse(readJSONSync(packageJSONPath));
+  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
   packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
   writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
 }
