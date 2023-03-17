@@ -54,6 +54,7 @@
     "vitest": "^0.28.5"
   },
   "peerDependencies": {
+    "@glint/core": "1.0.0-beta.4",
     "typescript": "^4.9 || ^5.0"
   },
   "packageManager": "pnpm@7.12.1",
