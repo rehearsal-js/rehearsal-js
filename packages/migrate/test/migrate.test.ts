@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { Logger, createLogger, format, transports } from 'winston';
 import { MigrateInput, migrate } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -66,7 +65,6 @@ function prepareInputFiles(project: Project, files: string[] = ['index.js']): st
 describe('migrate', () => {
   describe('.gjs', () => {
     let project: Project;
-    let logger: Logger;
     let reporter: Reporter;
 
     beforeEach(async () => {
@@ -76,19 +74,12 @@ describe('migrate', () => {
 
       await project.write();
 
-      logger = createLogger({
-        transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath: project.baseDir,
+        commandName: '@rehearsal/migrate',
       });
-
-      reporter = new Reporter(
-        {
-          tsVersion: '',
-          projectName: '@rehearsal/test',
-          basePath: project.baseDir,
-          commandName: '@rehearsal/migrate',
-        },
-        logger
-      );
     });
 
     afterEach(() => {
@@ -103,7 +94,6 @@ describe('migrate', () => {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -130,7 +120,6 @@ describe('migrate', () => {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -152,7 +141,6 @@ describe('migrate', () => {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -180,7 +168,6 @@ export default class Hello extends Component {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -207,7 +194,6 @@ export default class Hello extends Component {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -229,7 +215,6 @@ export default class Hello extends Component {
 
   describe('.hbs', () => {
     let project: Project;
-    let logger: Logger;
     let reporter: Reporter;
 
     beforeEach(async () => {
@@ -239,19 +224,12 @@ export default class Hello extends Component {
 
       await project.write();
 
-      logger = createLogger({
-        transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath: project.baseDir,
+        commandName: '@rehearsal/migrate',
       });
-
-      reporter = new Reporter(
-        {
-          tsVersion: '',
-          projectName: '@rehearsal/test',
-          basePath: project.baseDir,
-          commandName: '@rehearsal/migrate',
-        },
-        logger
-      );
     });
 
     afterEach(() => {
@@ -269,7 +247,6 @@ export default class Hello extends Component {
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -291,25 +268,17 @@ export default class Foo extends Component {}
 
   describe('.js', () => {
     let project: Project;
-    let logger: Logger;
     let reporter: Reporter;
 
     beforeEach(async () => {
       project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
 
-      logger = createLogger({
-        transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath: project.baseDir,
+        commandName: '@rehearsal/migrate',
       });
-
-      reporter = new Reporter(
-        {
-          tsVersion: '',
-          projectName: '@rehearsal/test',
-          basePath: project.baseDir,
-          commandName: '@rehearsal/migrate',
-        },
-        logger
-      );
     });
 
     test('class with missing prop', async () => {
@@ -333,7 +302,6 @@ export default class Foo extends Component {}
         sourceFiles: inputs,
         entrypoint: '',
         reporter,
-        logger,
       };
 
       await migrate(input);
@@ -343,84 +311,6 @@ export default class Foo extends Component {}
 /* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
     return this.name;
   }
-}
-`;
-
-      expectFile(outputs[0]).toEqual(expected);
-    });
-
-    test.skip('complex', async () => {
-      // @ts-ignore
-      project.mergeFiles({
-        src: {
-          'foo.js': `import { salutations, DEFAULT_GREETING } from './salutations';
-import { v4 as uuid } from 'uuid';
-
-uuid();
-
-export function hasGreeting(g) {
-  return salutations.find((s) => s == g) || DEFAULT_GREETING;
-}
-
-export function findGreeting(someGreeting) {
-  const greeting = salutations.find((g) => {
-    return g == someGreeting;
-  });
-  return greeting;
-}
-
-export default function say(name = 'World') {
-  return \`Hello \${name}\`;
-}
-`,
-          'salutations.ts': `export type Greeting = {
-locale: string;
-phrase: string;
-};
-
-export const salutations : Greeting[] = [
-{ locale: 'en_US', phrase: 'Hello' },
-{ locale: 'fr_FR', phrase: 'Bonjour' },
-{ locale: 'es_ES', phrase: 'Hola' },
-];
-
-export const DEFAULT_GREETING: Greeting  = salutations[0];
-`,
-        },
-      });
-
-      await project.write();
-
-      const [inputs, outputs] = prepareInputFiles(project, ['foo.js', 'salutations.ts']);
-
-      const input: MigrateInput = {
-        basePath: project.baseDir,
-        sourceFiles: inputs,
-        entrypoint: '',
-        reporter,
-        logger,
-      };
-
-      await migrate(input);
-
-      const expected = `import { salutations, DEFAULT_GREETING, Greeting } from './salutations';
-import { v4 as uuid } from 'uuid';
-
-uuid();
-
-export function hasGreeting(g: Greeting) {
-  return salutations.find((s) => s == g) || DEFAULT_GREETING;
-}
-
-export function findGreeting(someGreeting: Greeting) {
-  const greeting = salutations.find((g) => {
-    return g == someGreeting;
-  });
-  return greeting;
-}
-
-export default function say(name = 'World') {
-  return \`Hello \${name}\`;
 }
 `;
 
