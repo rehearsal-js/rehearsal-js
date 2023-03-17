@@ -61,7 +61,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       }
 
       if (filter.strictTyping) {
-        let strictCodeFix = this.makeCodeFixStrict(fix);
+        let strictCodeFix = makeCodeFixStrict(fix);
 
         if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
           strictCodeFix = fix;
@@ -78,53 +78,6 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     }
 
     return filteredCodeFixes;
-  }
-
-  /**
-   * Remove text changes contains loose typing (like usage of `any` type)
-   */
-  private makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
-    // Filtering out all text changes contain `any`
-    const safeChanges: FileTextChanges[] = [];
-    for (const changes of fix.changes) {
-      const safeTextChanges: TextChange[] = [];
-      for (const textChanges of changes.textChanges) {
-        // Don't return dummy function declarations
-        if (textChanges.newText.includes('throw new Error')) {
-          continue;
-        }
-
-        // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and same cases with `any[]`
-        const anyTypeUsageRegex = /[:<|]\s*any|any(\[])*\s*[|>]/i;
-        if (anyTypeUsageRegex.test(textChanges.newText)) {
-          continue;
-        }
-
-        // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, and same cases with `object[]`
-        const objectTypeUsageRegex = /[:<|]\s*object|object(\[])*\s*[|>]/i;
-        if (objectTypeUsageRegex.test(textChanges.newText)) {
-          continue;
-        }
-
-        // Covers cases with broken type signatures, like: `() =>`
-        const brokenTypeSignatures = /\(\) =>\s*$/i;
-        if (brokenTypeSignatures.test(textChanges.newText)) {
-          continue;
-        }
-
-        safeTextChanges.push(textChanges);
-      }
-
-      if (safeTextChanges.length) {
-        safeChanges.push({ ...changes, textChanges: safeTextChanges });
-      }
-    }
-
-    if (safeChanges.length) {
-      return { ...fix, changes: safeChanges };
-    }
-
-    return undefined;
   }
 
   private getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
@@ -191,4 +144,48 @@ export function isInstallPackageCommand(
   fix: CodeFixAction
 ): fix is CodeFixAction & { commands: CodeActionCommand } {
   return fix.fixId === 'installTypesPackage' && !!fix.commands;
+}
+
+export function makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
+  // Filtering out all text changes contain `any`
+  const safeChanges: FileTextChanges[] = [];
+  for (const changes of fix.changes) {
+    const safeTextChanges: TextChange[] = [];
+    for (const textChanges of changes.textChanges) {
+      // Don't return dummy function declarations
+      if (textChanges.newText.includes('throw new Error')) {
+        continue;
+      }
+
+      // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and same cases with `any[]`
+      const anyTypeUsageRegex = /[:<|]\s*any|any(\[])*\s*[|>]/i;
+      if (anyTypeUsageRegex.test(textChanges.newText)) {
+        continue;
+      }
+
+      // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, and same cases with `object[]`
+      const objectTypeUsageRegex = /[:<|]\s*object|object(\[])*\s*[|>]/i;
+      if (objectTypeUsageRegex.test(textChanges.newText)) {
+        continue;
+      }
+
+      // Covers cases with broken type signatures, like: `() =>`
+      const brokenTypeSignatures = /\(\) =>\s*$/i;
+      if (brokenTypeSignatures.test(textChanges.newText)) {
+        continue;
+      }
+
+      safeTextChanges.push(textChanges);
+    }
+
+    if (safeTextChanges.length) {
+      safeChanges.push({ ...changes, textChanges: safeTextChanges });
+    }
+  }
+
+  if (safeChanges.length) {
+    return { ...fix, changes: safeChanges };
+  }
+
+  return undefined;
 }

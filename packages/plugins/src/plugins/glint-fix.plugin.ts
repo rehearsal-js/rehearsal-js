@@ -1,4 +1,4 @@
-import { applyCodeFix } from '@rehearsal/codefixes';
+import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
 import {
   GlintService,
   Plugin,
@@ -9,7 +9,7 @@ import {
 import debug from 'debug';
 
 import { pathUtils } from '@glint/core';
-import { CodeFixAction, FileTextChanges, TextChange } from 'typescript';
+import { CodeFixAction } from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
@@ -79,7 +79,7 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
     const transformedActions = service
       .transformCodeActionToCodeFixAction(rawActions)
       .reduce<CodeFixAction[]>((acc, fix) => {
-        const strictFix = this.makeCodeFixStrict(fix);
+        const strictFix = makeCodeFixStrict(fix);
 
         if (strictFix) {
           acc.push(strictFix);
@@ -110,49 +110,5 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
     });
 
     return service.transformCodeActionToCodeFixAction(actions);
-  }
-
-  private makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
-    // Filtering out all text changes contain `any`
-    const safeChanges: FileTextChanges[] = [];
-    for (const changes of fix.changes) {
-      const safeTextChanges: TextChange[] = [];
-      for (const textChanges of changes.textChanges) {
-        // Don't return dummy function declarations
-        if (textChanges.newText.includes('throw new Error')) {
-          continue;
-        }
-
-        // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and same cases with `any[]`
-        const anyTypeUsageRegex = /[:<|]\s*any|any(\[])*\s*[|>]/i;
-        if (anyTypeUsageRegex.test(textChanges.newText)) {
-          continue;
-        }
-
-        // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, and same cases with `object[]`
-        const objectTypeUsageRegex = /[:<|]\s*object|object(\[])*\s*[|>]/i;
-        if (objectTypeUsageRegex.test(textChanges.newText)) {
-          continue;
-        }
-
-        // Covers cases with broken type signatures, like: `() =>`
-        const brokenTypeSignatures = /\(\) =>\s*$/i;
-        if (brokenTypeSignatures.test(textChanges.newText)) {
-          continue;
-        }
-
-        safeTextChanges.push(textChanges);
-      }
-
-      if (safeTextChanges.length) {
-        safeChanges.push({ ...changes, textChanges: safeTextChanges });
-      }
-    }
-
-    if (safeChanges.length) {
-      return { ...fix, changes: safeChanges };
-    }
-
-    return undefined;
   }
 }
