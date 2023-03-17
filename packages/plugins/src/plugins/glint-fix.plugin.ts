@@ -1,3 +1,4 @@
+import { applyCodeFix } from '@rehearsal/codefixes';
 import {
   GlintService,
   Plugin,
@@ -5,41 +6,60 @@ import {
   PluginsRunnerContext,
   type PluginResult,
 } from '@rehearsal/service';
-import { applyTextChange, normalizeTextChanges } from '@rehearsal/ts-utils';
+import debug from 'debug';
+
+import { pathUtils } from '@glint/core';
 import { CodeFixAction, FileTextChanges, TextChange } from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 
 export class GlintFixPlugin implements Plugin<PluginOptions> {
   async run(fileName: string, context: PluginsRunnerContext): PluginResult {
     const allFixedFiles: Set<string> = new Set();
     const service = context.service as GlintService;
 
-    const diagnostics = this.getDiagnostics(fileName, service);
+    let diagnostics = this.getDiagnostics(service, fileName);
 
-    for (const diagnostic of diagnostics) {
+    while (diagnostics.length > 0) {
+      const diagnostic = diagnostics.shift();
+
+      if (diagnostic === undefined) {
+        break;
+      }
+      const fileText = service.getFileText(fileName);
+      const start = pathUtils.positionToOffset(fileText, diagnostic.range.start);
+
       const fix = this.getCodeFix(fileName, diagnostic, service);
 
       if (fix === undefined) {
         continue;
       }
 
-      for (const fileTextChange of fix.changes) {
-        let text = context.service.getFileText(fileTextChange.fileName);
+      applyCodeFix(fix, {
+        getText(filename: string) {
+          return context.service.getFileText(filename);
+        },
 
-        const textChanges = normalizeTextChanges([...fileTextChange.textChanges]);
-        for (const textChange of textChanges) {
-          text = applyTextChange(text, textChange);
-        }
+        applyText(newText: string) {
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t ${newText}`);
+        },
 
-        context.service.setFileText(fileTextChange.fileName, text);
-        allFixedFiles.add(fileTextChange.fileName);
-      }
+        setText(filename: string, text: string) {
+          context.service.setFileText(filename, text);
+          allFixedFiles.add(filename);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t codefix applied`);
+        },
+      });
+
+      // Get updated list of diagnostics
+      diagnostics = this.getDiagnostics(service, fileName);
     }
 
     return Array.from(allFixedFiles);
   }
 
-  getDiagnostics(fileName: string, service: GlintService): Diagnostic[] {
+  getDiagnostics(service: GlintService, fileName: string): Diagnostic[] {
     return service.getDiagnostics(fileName).map((d) => service.convertTsDiagnosticToLSP(d));
   }
 
