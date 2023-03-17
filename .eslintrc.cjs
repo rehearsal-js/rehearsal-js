@@ -19,7 +19,11 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2022,
-    project: ['./packages/*/tsconfig.json', './packages/*/test/tsconfig.json', './tsconfig.eslint.json'],
+    project: [
+      './packages/*/tsconfig.json',
+      './packages/*/test/tsconfig.json',
+      './tsconfig.eslint.json',
+    ],
   },
   plugins: ['@typescript-eslint', 'import', 'prettier', 'filenames'],
   extends: [
@@ -29,7 +33,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:import/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   overrides: [
     {
@@ -104,5 +108,16 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': ['off'],
     '@typescript-eslint/no-inferrable-types': ['off'],
   },
-  ignorePatterns: ['dist', 'node_modules', 'fixtures', '*.config.*', 'release.js', '.eslintrc.cjs', 'packages/test-support/scripts/setup-fixtures.js', 'scripts/*.mjs', 'packages/codefixes/src/*.generated.ts'],
+  ignorePatterns: [
+    'dist',
+    'node_modules',
+    'fixtures',
+    '*.config.*',
+    'release.js',
+    '.eslintrc.cjs',
+    'packages/test-support/scripts/setup-fixtures.js',
+    'packages/migrate/scripts/*.js',
+    'scripts/*.mjs',
+    'packages/codefixes/src/*.generated.ts',
+  ],
 };
