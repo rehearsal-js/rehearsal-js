@@ -1,43 +1,55 @@
-import { copyFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { Reporter } from '@rehearsal/reporter';
-import { describe, expect, test } from 'vitest';
+import { afterAll, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import { Project } from 'fixturify-project';
 
 import { upgrade } from '../src/index.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe('Test upgrade', async function () {
-  const basePath = resolve(__dirname, 'fixtures', 'upgrade');
+  const fixturePath = resolve(__dirname, 'fixtures', 'upgrade');
+  const project = Project.fromDir(fixturePath, { linkDeps: true, linkDevDeps: true });
 
-  const files = prepareListOfTestFiles(basePath);
+  project.files['.eslintrc.json'] = await readFile(
+    resolve(__dirname, 'fixtures', '.eslintrc.json'),
+    'utf-8'
+  );
 
   const logger = createLogger({
     transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
   });
 
   const reporter = new Reporter(
-    { tsVersion: '', projectName: '@rehearsal/test', basePath, commandName: '@rehearsal/upgrade' },
+    {
+      tsVersion: '',
+      projectName: '@rehearsal/test',
+      basePath: project.baseDir,
+      commandName: '@rehearsal/upgrade',
+    },
     logger
   );
 
-  createTsFilesFromInputs(files);
+  await project.write();
 
-  const result = await upgrade({ basePath, logger, reporter, entrypoint: '' });
+  const result = await upgrade({ basePath: project.baseDir, logger, reporter, entrypoint: '' });
 
-  test('should fix errors or provide hints for errors in the original files', () => {
+  afterAll(() => {
+    project.dispose();
+  });
+
+  test('should fix errors or provide hints for errors in the original files', async () => {
     expect(result).toBeDefined();
 
-    for (const file of files) {
-      const input = readFileSync(file).toString();
+    for (const file of Object.keys(project.files)) {
+      const input = await readFile(join(project.baseDir, file), 'utf-8');
 
       expect(input).toMatchSnapshot();
     }
-
-    cleanupTsFiles(files);
   });
 
   test('should output the correct data from upgrade', () => {
@@ -49,31 +61,3 @@ describe('Test upgrade', async function () {
     expect(report).toMatchSnapshot();
   });
 });
-
-/**
- * Prepare ts files in the folder by using sources from .input
- */
-function prepareListOfTestFiles(basePath: string): string[] {
-  return readdirSync(basePath) // Takes all files from fixtures/upgrade
-    .filter((file) => file.endsWith('.input')) // Filter only .input ones
-    .map((file) => file.slice(0, -6)) // Remove .input suffix from filenames
-    .map((file) => resolve(basePath, file)); //  Append basePath to file names
-}
-
-/**
- * Creates .ts files from .ts.input files
- */
-function createTsFilesFromInputs(files: string[]): void {
-  files.forEach((file) => {
-    copyFileSync(`${file}.input`, `${file}`);
-  });
-}
-
-/**
- * Removes .ts files after test is completed
- */
-function cleanupTsFiles(files: string[]): void {
-  for (const file of files) {
-    rmSync(file);
-  }
-}

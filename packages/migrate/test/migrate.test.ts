@@ -251,7 +251,7 @@ export default class Hello extends Component {
 
       await migrate(input);
 
-      const expectedTs = `import Component from '@glimmer/component';
+      const expectedTs = `import Component from "@glimmer/component";
 
 export default class Foo extends Component {}
 `;
@@ -308,7 +308,7 @@ export default class Foo extends Component {}
 
       const expected = `class Foo {
   hello() {
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
+    /* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
     return this.name;
   }
 }

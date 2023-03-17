@@ -37,6 +37,12 @@ module.exports = {
   ],
   overrides: [
     {
+      files: ['./packages/*/test/**/*.ts'],
+      rules: {
+        "import/no-extraneous-dependencies": ['off']
+      }
+    },
+    {
       files: ['./packages/cli/**/*.ts'],
       rules: {
         'no-restricted-imports': [

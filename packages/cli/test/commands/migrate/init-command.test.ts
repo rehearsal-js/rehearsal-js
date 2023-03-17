@@ -1,9 +1,10 @@
-import { readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { setGracefulCleanup } from 'tmp';
-import { beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
-import { prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
+import { prepareProject, cleanOutput } from '../../test-helpers/index.js';
 import {
   runDefault,
   runWithUserConfig,
@@ -11,21 +12,27 @@ import {
   CUSTOM_CONFIG,
   createUserConfig,
 } from '../../test-helpers/init-command-test-utils.js';
+import type { Project } from 'fixturify-project';
 
 setGracefulCleanup();
 
 describe('migrate init', () => {
-  let basePath = '';
+  let project: Project;
 
   beforeEach(() => {
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
+  });
+
+  afterEach(() => {
+    project.dispose();
   });
 
   test('default run', async () => {
+    await project.write();
     const { stdout, devDeps, fileList, lintConfig, lintConfigDefault, tsConfig, tscLintScript } =
-      await runDefault(basePath);
+      await runDefault(project.baseDir);
 
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
     for (const devDep of REQUIRED_DEPENDENCIES) {
       expect(Object.keys(devDeps!).includes(devDep));
@@ -41,24 +48,26 @@ describe('migrate init', () => {
   });
 
   test('pass user config', async () => {
-    createUserConfig(basePath, CUSTOM_CONFIG);
+    delete project.files['tsconfig.json'];
+    await project.write();
+    createUserConfig(project.baseDir, CUSTOM_CONFIG);
 
-    const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(basePath);
+    const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(project.baseDir);
 
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
     expect(Object.keys(devDeps!)).includes('tmp');
     expect(deps).toHaveProperty('fs-extra');
 
-    expect(readdirSync(basePath)).toContain('custom-ts-config-script');
-    expect(readdirSync(basePath)).toContain('custom-lint-config-script');
-
+    expect(existsSync(join(project.baseDir, 'custom-ts-config-script'))).toBe(true);
+    expect(existsSync(join(project.baseDir, 'custom-lint-config-script'))).toBe(true);
     expect(tscLintScript).toBe('tsc --noEmit');
   });
 
   test('skip dep install, ts config, and lint config if exists', async () => {
-    const { stdout } = await runTwoTimes(basePath);
+    await project.write();
+    const { stdout } = await runTwoTimes(project.baseDir);
 
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
   });
 });

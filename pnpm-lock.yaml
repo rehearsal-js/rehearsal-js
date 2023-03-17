@@ -129,6 +129,7 @@ importers:
       eslint: ^8.33.0
       execa: ^7.0.0
       fixturify: ^3.0.0
+      fixturify-project: ^5.2.0
       fs-extra: ^11.1.0
       get-tsconfig: ^4.4.0
       js-yaml: ^4.1.0
@@ -140,7 +141,6 @@ importers:
       simple-git: ^3.16.0
       tmp: ^0.2.1
       type-fest: ^3.6.1
-      typescript: ^5.0.0
       typescript-json-schema: ^0.55.0
       vitest: ^0.29.2
       which: ^3.0.0
@@ -180,8 +180,8 @@ importers:
       '@types/js-yaml': 4.0.5
       '@types/which': 2.0.2
       fixturify: 3.0.0
+      fixturify-project: 5.2.0
       scenario-tester: 2.1.2
-      typescript: 5.0.2
       typescript-json-schema: 0.55.0
       vitest: 0.29.5
 
@@ -190,6 +190,7 @@ importers:
       '@rehearsal/service': workspace:*
       '@rehearsal/ts-utils': workspace:*
       '@types/prettier': ^2.7.2
+      fixturify-project: ^5.2.0
       fs-extra: ^11.1.0
       prettier: ^2.8.3
       tmp: ^0.2.1
@@ -199,6 +200,7 @@ importers:
     devDependencies:
       '@rehearsal/service': link:../service
       '@types/prettier': 2.7.2
+      fixturify-project: 5.2.0
       fs-extra: 11.1.0
       prettier: 2.8.4
       tmp: 0.2.1
@@ -377,16 +379,10 @@ importers:
       '@rehearsal/reporter': workspace:*
       '@rehearsal/service': workspace:*
       '@rehearsal/utils': workspace:*
-      '@typescript-eslint/eslint-plugin': ^5.50.0
-      '@typescript-eslint/parser': ^5.50.0
       debug: ^4.3.4
-      eslint: ^8.0.0
-      eslint-config-prettier: ^8.6.0
       execa: ^7.0.0
       fs-extra: ^11.1.0
       listr2: ^5.0.7
-      prettier: ^2.8.3
-      typescript: ^5.0.0
       vitest: ^0.29.2
       winston: ^3.8.2
     dependencies:
@@ -398,14 +394,8 @@ importers:
       execa: 7.0.0
       winston: 3.8.2
     devDependencies:
-      '@typescript-eslint/eslint-plugin': 5.53.0_3ikpxpdfn6gnt6ib6ikkcexfai
-      '@typescript-eslint/parser': 5.53.0_qxbo2xm47qt6fxnlmgbosp4hva
-      eslint: 8.34.0
-      eslint-config-prettier: 8.6.0_eslint@8.34.0
       fs-extra: 11.1.0
       listr2: 5.0.7
-      prettier: 2.8.4
-      typescript: 5.0.2
       vitest: 0.29.5
 
   packages/reporter:
@@ -414,7 +404,6 @@ importers:
       '@types/eslint': ^8.21.0
       '@types/sarif': ^2.1.4
       fs-extra: ^11.1.0
-      typescript: ^5.0.0
       vitest: ^0.29.2
       vitest-mock-extended: ^1.1.3
       winston: ^3.8.2
@@ -425,9 +414,8 @@ importers:
       '@types/eslint': 8.21.1
       '@types/sarif': 2.1.4
       fs-extra: 11.1.0
-      typescript: 5.0.2
       vitest: 0.29.5
-      vitest-mock-extended: 1.1.3_cqggwoxqw63cyyqckpwrbt3q44
+      vitest-mock-extended: 1.1.3_vitest@0.29.5
 
   packages/service:
     specifiers:
@@ -492,7 +480,6 @@ importers:
       json5: ^2.2.3
       semver: ^7.3.8
       simple-git: ^3.16.0
-      typescript: ^5.0.0
       vitest: ^0.29.2
       which: ^3.0.0
     dependencies:
@@ -509,7 +496,6 @@ importers:
       which: 3.0.0
     devDependencies:
       '@types/which': 2.0.2
-      typescript: 5.0.2
       vitest: 0.29.5
 
   packages/upgrade:
@@ -521,6 +507,7 @@ importers:
       '@rehearsal/utils': workspace:*
       commander: ^10.0.0
       debug: ^4.3.4
+      fixturify-project: ^5.2.0
       vitest: ^0.29.2
       winston: ^3.8.2
     dependencies:
@@ -533,6 +520,7 @@ importers:
       debug: 4.3.4
       winston: 3.8.2
     devDependencies:
+      fixturify-project: 5.2.0
       vitest: 0.29.5
 
   packages/utils:
@@ -554,7 +542,6 @@ importers:
       simple-git: ^3.16.0
       tmp: ^0.2.1
       type-fest: ^3.6.1
-      typescript: ^5.0.0
       vitest: ^0.29.2
       which: ^3.0.0
     dependencies:
@@ -577,7 +564,6 @@ importers:
       '@types/which': 2.0.2
       fixturify: 3.0.0
       tmp: 0.2.1
-      typescript: 5.0.2
       vitest: 0.29.5
 
 packages:
@@ -2244,7 +2230,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /concat-stream/1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -5357,12 +5343,10 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: false
 
-  /ts-essentials/9.3.1_typescript@5.0.2:
+  /ts-essentials/9.3.1:
     resolution: {integrity: sha512-9CChSvQMyVRo29Vb1A2jbs+LKo3d/bAf+ndSaX0T8cEiy/HChVaRN/HY5DqUryZ8hZ6uol9bEgCnGmnDbwBR9Q==}
     peerDependencies:
       typescript: '>=4.1.0'
-    dependencies:
-      typescript: 5.0.2
     dev: true
 
   /ts-node/10.9.1_jptobktzajwvnogfrdfbpkf4ae:
@@ -5749,14 +5733,13 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest-mock-extended/1.1.3_cqggwoxqw63cyyqckpwrbt3q44:
+  /vitest-mock-extended/1.1.3_vitest@0.29.5:
     resolution: {integrity: sha512-MiaKYZbTg+fjozKnCpoTTva0BnlSNYyk4jiPuM2xVhg4aou112QIrALdH3/ZKK6qfXWh0A17gFIjWJjylOlXxg==}
     peerDependencies:
       typescript: 3.x || 4.x || 5.x
       vitest: '>=0.29.2'
     dependencies:
-      ts-essentials: 9.3.1_typescript@5.0.2
-      typescript: 5.0.2
+      ts-essentials: 9.3.1
       vitest: 0.29.5
     dev: true
 

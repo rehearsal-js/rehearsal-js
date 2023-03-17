@@ -14,7 +14,7 @@ import {
   lintConfigTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import {
-  prepareTmpDir,
+  prepareProject,
   listrTaskRunner,
   createMigrateOptions,
   KEYS,
@@ -25,14 +25,15 @@ import {
   isActionSelection,
 } from '../../test-helpers/index.js';
 import { TSConfig } from '../../../src/types.js';
+import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: convert', () => {
-  let basePath = '';
   let output = '';
+  let project: Project;
   let outputStream = createOutputStream();
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
@@ -47,9 +48,12 @@ describe('Task: convert', () => {
     outputStream.push(`${chunk}\n`);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     output = '';
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
+    // these test for the creation of tsconfig.json
+    delete project.files['tsconfig.json'];
+    await project.write();
     outputStream = createOutputStream();
   });
 
@@ -57,10 +61,11 @@ describe('Task: convert', () => {
     output = '';
     vi.clearAllMocks();
     outputStream.destroy();
+    project.dispose();
   });
 
   test('migrate from default all files .js in root', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
+    const options = createMigrateOptions(project.baseDir, { ci: true });
     // Get context for convert task from previous tasks
     const tasks = [
       initTask(options),
@@ -74,7 +79,7 @@ describe('Task: convert', () => {
 
     expect(output).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     expect(fileList).toContain('index.ts');
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('depends-on-foo.ts');
@@ -82,14 +87,17 @@ describe('Task: convert', () => {
     expect(fileList).not.toContain('foo.js');
     expect(fileList).not.toContain('depends-on-foo.js');
 
-    const config = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const config = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
     expect(config.include).toContain('index.ts');
     expect(config.include).toContain('foo.ts');
     expect(config.include).toContain('depends-on-foo.ts');
   });
 
   test('migrate from specific entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'depends-on-foo.js', ci: true });
+    const options = createMigrateOptions(project.baseDir, {
+      entrypoint: 'depends-on-foo.js',
+      ci: true,
+    });
     // Get context for convert task from previous tasks
     const tasks = [
       initTask(options),
@@ -103,20 +111,20 @@ describe('Task: convert', () => {
 
     expect(output).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     expect(fileList).toContain('depends-on-foo.ts');
     expect(fileList).toContain('foo.ts');
 
     expect(fileList).not.toContain('depends-on-foo.js');
     expect(fileList).not.toContain('foo.js');
 
-    const config = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const config = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
     expect(config.include).toContain('depends-on-foo.ts');
     expect(config.include).toContain('foo.ts');
   });
 
   test('generate reports', async () => {
-    const options = createMigrateOptions(basePath, {
+    const options = createMigrateOptions(project.baseDir, {
       format: ['json', 'md', 'sarif'],
       ci: true,
     });
@@ -133,7 +141,7 @@ describe('Task: convert', () => {
 
     expect(output).toMatchSnapshot();
 
-    const reportPath = resolve(basePath, '.rehearsal');
+    const reportPath = resolve(project.baseDir, '.rehearsal');
     const reportList = readdirSync(reportPath);
 
     expect(reportList).toContain('migrate-report.json');
@@ -142,7 +150,7 @@ describe('Task: convert', () => {
   });
 
   test('accept changes without git', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
 
     // prompt control flow
     outputStream.on('data', (line: string) => {
@@ -167,11 +175,10 @@ describe('Task: convert', () => {
 
     await listrTaskRunner(tasks);
 
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    const outputWithoutTmpPath = output.replace(new RegExp(project.baseDir, 'g'), '<tmp-path>');
     expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     expect(fileList).toContain('index.ts');
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('depends-on-foo.ts');
@@ -183,7 +190,7 @@ describe('Task: convert', () => {
   test('accept and discard changes with git', async () => {
     // simulate clean git project
     const git = simpleGit({
-      baseDir: basePath,
+      baseDir: project.baseDir,
     } as Partial<SimpleGitOptions>);
     await git
       .init()
@@ -192,7 +199,7 @@ describe('Task: convert', () => {
       .add('./*')
       .commit('first commit!');
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     let fileCount = 1; // file counter in prompt selection
 
     // prompt control flow
@@ -234,11 +241,10 @@ describe('Task: convert', () => {
 
     await listrTaskRunner(tasks);
 
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    const outputWithoutTmpPath = output.replace(new RegExp(project.baseDir, 'g'), '<tmp-path>');
     expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     // index.ts should been discarded
     expect(fileList).toContain('index.js');
     expect(fileList).toContain('foo.ts');
@@ -255,7 +261,7 @@ describe('Task: convert', () => {
     // 3. Also tried EDITOR = 'echo foo >>', to append string to a file so we know it would change, but it doesn't work (probably related to all stdio config)
     // For now EDITOR is set to be 'rm', which would remove the selected file so we know the edit command works
     process.env['EDITOR'] = 'rm';
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
 
     let fileCount = 1; // file counter in prompt selection
 
@@ -296,11 +302,10 @@ describe('Task: convert', () => {
 
     await listrTaskRunner(tasks);
 
-    const pathReg = new RegExp(basePath, 'g');
-    const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+    const outputWithoutTmpPath = output.replace(new RegExp(project.baseDir, 'g'), '<tmp-path>');
     expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     // // index.ts should been removed
     expect(fileList).not.toContain('index.ts');
     expect(fileList).toContain('foo.ts');
@@ -311,7 +316,7 @@ describe('Task: convert', () => {
   });
 
   test('cancel prompt in interactive mode', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
 
     // prompt control flow
     outputStream.on('data', (line: string) => {
@@ -338,8 +343,7 @@ describe('Task: convert', () => {
     // use try catch since it would be killed via ctrl c
     await listrTaskRunner(tasks).catch(() => {
       // replace random tmp path for consistent snapshot
-      const pathReg = new RegExp(basePath, 'g');
-      const outputWithoutTmpPath = output.replace(pathReg, '<tmp-path>');
+      const outputWithoutTmpPath = output.replace(new RegExp(project.baseDir, 'g'), '<tmp-path>');
       expect(removeSpecialChars(outputWithoutTmpPath)).toMatchSnapshot();
     });
   });

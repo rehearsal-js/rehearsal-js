@@ -1,0 +1,3 @@
+packages/regen/test/fixtures/**/*.ts
+packages/regen/test/fixtures/**/*.js
+packages/codefixes/test/fixtures/ts-codefixes/**/*.ts

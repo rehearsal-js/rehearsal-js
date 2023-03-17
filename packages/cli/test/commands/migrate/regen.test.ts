@@ -11,14 +11,15 @@ import {
   analyzeTask,
   regenTask,
 } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: regen', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
@@ -32,16 +33,20 @@ describe('Task: regen', () => {
 
   beforeEach(() => {
     output = '';
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
   });
 
   afterEach(() => {
     output = '';
     vi.clearAllMocks();
+    project.dispose();
   });
 
   test('throw error with no tsconfig.json', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
+    project.linkDevDependency('typescript', { baseDir: process.cwd() });
+    delete project.files['tsconfig.json'];
+    await project.write();
+    const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [initTask(options), regenTask(options, logger)];
 
     await expect(async () => await listrTaskRunner(tasks)).rejects.toThrowError(
@@ -50,7 +55,9 @@ describe('Task: regen', () => {
   });
 
   test('no effect on JS filse before conversion', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
+    delete project.files['tsconfig.json'];
+    await project.write();
+    const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [initTask(options), tsConfigTask(options), regenTask(options, logger)];
 
     await listrTaskRunner(tasks);
@@ -58,7 +65,9 @@ describe('Task: regen', () => {
   });
 
   test('update ts and lint errors based on previous conversion', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
+    delete project.files['tsconfig.json'];
+    await project.write();
+    const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [
       initTask(options),
       depInstallTask(options),

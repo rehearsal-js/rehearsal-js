@@ -47,7 +47,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "fixturify-project": "^5.2.0"
   },
   "peerDependencies": {
     "typescript": "^5.0"

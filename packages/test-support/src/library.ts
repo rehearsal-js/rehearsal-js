@@ -1,18 +1,9 @@
 import fixturify from 'fixturify';
 import { Project } from 'fixturify-project';
-import { dirSync, setGracefulCleanup } from 'tmp';
+import { setGracefulCleanup } from 'tmp';
 import { setupProject } from './project.js';
 
 setGracefulCleanup();
-
-export function create(files: fixturify.DirJSON): string {
-  // TODO refactor this test fixture to use fixturify-project
-  const { name: tmpdir } = dirSync();
-  fixturify.writeSync(tmpdir, files);
-  return tmpdir;
-}
-
-type FixtureDir = string;
 
 type LibraryVariants =
   | 'simple'
@@ -395,10 +386,6 @@ export function getFiles(variant: LibraryVariants): fixturify.DirJSON {
   }
 
   return files;
-}
-
-export function getLibrary(variant: LibraryVariants): FixtureDir {
-  return create(getFiles(variant));
 }
 
 export function getLibraryProject(variant: LibraryVariants): Project {

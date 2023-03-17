@@ -1,27 +1,22 @@
-import { resolve, dirname } from 'node:path';
+import { resolve, dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { copyFileSync, mkdirSync, rmSync, readFileSync, existsSync } from 'node:fs';
-import { Reporter } from '@rehearsal/reporter';
+import { readFileSync, existsSync } from 'node:fs';
+import { Report, Reporter } from '@rehearsal/reporter';
 import { describe, test, beforeEach, afterEach, expect } from 'vitest';
-import { outputFileSync } from 'fs-extra/esm';
 import { regen, RegenInput } from '../src/index.js';
+import { Project } from 'fixturify-project';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const basePath = resolve(__dirname);
-const expectedDir = resolve(basePath, 'fixtures', 'output');
 const srcDir = resolve(basePath, 'fixtures', 'src');
-const generatedDir = resolve(basePath, 'tmp');
-const jsonReportPath = resolve(generatedDir, '.rehearsal-report.json');
 
 let reporter: Reporter;
 let regenInput: RegenInput;
+let project: Project;
 
 describe('regen', () => {
-  beforeEach(() => {
-    cleanDir(generatedDir);
-    mkdirSync(generatedDir);
-
+  beforeEach(async () => {
     reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
@@ -29,102 +24,87 @@ describe('regen', () => {
       commandName: '@rehearsal/migrate',
     });
 
+    project = createProject();
+
     regenInput = {
-      basePath: resolve(basePath, 'tmp'),
+      basePath: project.baseDir,
       sourceFiles: [],
       reporter,
       entrypoint: '',
-      eslintOptions: { cwd: __dirname },
+      eslintOptions: { cwd: project.baseDir },
     };
+
+    await project.write();
   });
 
   afterEach(() => {
-    cleanDir(generatedDir);
+    project.dispose();
   });
 
   test('should scan files and generate report', async () => {
-    prepareInputFiles(['test1.ts']);
-
     const { scannedFiles } = await regen(regenInput);
-    expect(scannedFiles.length).toBe(1);
+    expect(scannedFiles.length).toBe(3);
+
+    const jsonReportPath = join(project.baseDir, '.rehearsal-report.json');
 
     reporter.saveReport(jsonReportPath);
+
     expect(existsSync(jsonReportPath)).toBeTruthy();
-  });
-
-  test('should scan ts files but ignore js files', async () => {
-    prepareInputFiles(['test1.ts', 'test2.js']);
-
-    const { scannedFiles } = await regen(regenInput);
-    expect(scannedFiles.length).toBe(1);
-    expect(scannedFiles[0].includes('test1.ts')).toBeTruthy();
-
-    reporter.saveReport(jsonReportPath);
-    const report = JSON.parse(readFileSync(jsonReportPath).toString());
+    const report = cleanReport(JSON.parse(readFileSync(jsonReportPath, 'utf-8')));
     const { items } = report;
     expect(JSON.stringify(items, null, 2)).toMatchSnapshot();
 
     expect(fileOutputMatched('test1.ts')).toBeTruthy();
-  });
-
-  test('should generate correct rehearsal comments for a group of files', async () => {
-    prepareInputFiles(['test1.ts', 'test3.ts']);
-
-    const { scannedFiles } = await regen(regenInput);
-    expect(scannedFiles.length).toBe(2);
-
-    reporter.saveReport(jsonReportPath);
-
-    const report = JSON.parse(readFileSync(jsonReportPath).toString());
-    const { items } = report;
-    expect(JSON.stringify(items, null, 2)).toMatchSnapshot();
-
+    expect(fileOutputMatched('test2.js')).toBeTruthy();
     expect(fileOutputMatched('test3.ts')).toBeTruthy();
-    expect(fileOutputMatched('test1.ts')).toBeTruthy();
-  });
-
-  test('should report lint errors', async () => {
-    prepareInputFiles(['test4.ts']);
-
-    const { scannedFiles } = await regen(regenInput);
-    expect(scannedFiles.length).toBe(1);
-    reporter.saveReport(jsonReportPath);
-
-    const report = JSON.parse(readFileSync(jsonReportPath).toString());
-    const { items } = report;
-    expect(JSON.stringify(items, null, 2)).toMatchSnapshot();
-
     expect(fileOutputMatched('test4.ts')).toBeTruthy();
   });
 });
 
 function fileOutputMatched(filename: string): boolean {
-  const generatedFile = resolve(generatedDir, filename);
-  const generatedContent = readFileSync(generatedFile, 'utf-8');
-  const expectedContent = readFileSync(`${expectedDir}/${filename}.output`, 'utf-8');
-  return generatedContent === expectedContent;
+  const outputFile = resolve(project.baseDir, filename);
+  const outputFileContent = readFileSync(outputFile, 'utf-8');
+  return outputFileContent === project.files[filename];
 }
 
-function prepareInputFiles(srcFiles: string[]): string[] {
-  createTSConfig(generatedDir);
-  return srcFiles.map((file) => {
-    const originalPath = resolve(srcDir, file);
-    const generatedPath = resolve(generatedDir, file);
-    copyFileSync(originalPath, generatedPath);
-    return generatedPath;
-  });
+function cleanReport(report: Report): Report {
+  report.summary.forEach((sum) => (sum.basePath = `<path>/${basename(sum.basePath)}`));
+  report.items.forEach((item) => (item.analysisTarget = `<path>/${basename(item.analysisTarget)}`));
+  return report;
 }
 
-function createTSConfig(dir: string): void {
-  const configStr = `{
-    "extends": "../tsconfig",
-    "include": ["."]
-  }
-  `;
-  const configPath = resolve(dir, 'tsconfig.json');
-  outputFileSync(configPath, configStr);
-}
+function createProject(): Project {
+  const project = Project.fromDir(srcDir, { linkDeps: true, linkDevDeps: true });
 
-function cleanDir(dir: string): void {
-  rmSync(dir, { recursive: true, force: true });
+  project.files['tsconfig.json'] = JSON.stringify(
+    {
+      include: ['.'],
+      compilerOptions: {
+        allowSyntheticDefaultImports: true,
+        declarationMap: true,
+        newLine: 'LF',
+        noUnusedLocals: true,
+        noUnusedParameters: true,
+        strictNullChecks: true,
+        resolveJsonModule: true,
+        skipDefaultLibCheck: true,
+        skipLibCheck: true,
+        target: 'ES2020',
+        module: 'Node16',
+        moduleResolution: 'Node16',
+        strict: true,
+        noImplicitOverride: true,
+        noPropertyAccessFromIndexSignature: true,
+        esModuleInterop: false,
+        composite: true,
+        declaration: true,
+        sourceMap: true,
+      },
+    },
+    null,
+    2
+  );
+  project.files['.eslintrc.json'] = readFileSync(join(basePath, '.eslintrc.json'), 'utf-8');
+
+  return project;
 }

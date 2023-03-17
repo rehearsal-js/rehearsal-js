@@ -16,15 +16,16 @@ import {
   createMigrateOptions,
   createOutputStream,
   listrTaskRunner,
-  prepareTmpDir,
+  prepareProject,
 } from '../../test-helpers/index.js';
+import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: sequential', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
 
   let outputStream = createOutputStream();
@@ -42,9 +43,12 @@ describe('Task: sequential', () => {
     outputStream.push(`${chunk}\n`);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     output = '';
-    basePath = prepareTmpDir('sequential');
+    project = prepareProject('sequential');
+    // tests below assume creation
+    delete project.files['tsconfig.json'];
+    await project.write();
     outputStream = createOutputStream();
   });
 
@@ -52,13 +56,14 @@ describe('Task: sequential', () => {
     output = '';
     vi.clearAllMocks();
     outputStream.destroy();
+    project.dispose();
   });
 
   test('sequential run regen on the existing report, and run migrate on current base path and entrypoint', async () => {
-    const options = createMigrateOptions(basePath, { entrypoint: 'index.ts', ci: true });
+    const options = createMigrateOptions(project.baseDir, { entrypoint: 'index.ts', ci: true });
     const previousRuns = {
       previousFixedCount: 1,
-      paths: [{ basePath, entrypoint: 'depends-on-foo.ts' }],
+      paths: [{ basePath: project.baseDir, entrypoint: 'depends-on-foo.ts' }],
     };
     const tasks = [
       initTask(options),
@@ -72,13 +77,13 @@ describe('Task: sequential', () => {
     await listrTaskRunner(tasks);
     expect(output).toMatchSnapshot();
 
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     expect(fileList).toContain('depends-on-foo.ts');
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('index.ts');
 
     const report = JSON.parse(
-      await fs.readFile(resolve(basePath, '.rehearsal', 'migrate-report.json'), 'utf-8')
+      await fs.readFile(resolve(project.baseDir, '.rehearsal', 'migrate-report.json'), 'utf-8')
     ) as Report;
 
     const { summary, fixedItemCount, items } = report;
