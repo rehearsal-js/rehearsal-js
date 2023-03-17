@@ -43,8 +43,6 @@ export class GlintService implements Service {
     this.service = languageServer;
     this.transformManager = transformManager;
     this.ts = glintConfig.ts;
-
-    this.service = languageServer;
     this.tsService = languageServer.service;
   }
 

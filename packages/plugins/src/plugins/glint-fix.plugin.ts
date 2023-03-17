@@ -90,25 +90,4 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
 
     return transformedActions[0];
   }
-
-  getCodeFixes(
-    fileName: string,
-    diagnostics: Diagnostic[],
-    service: GlintService
-  ): CodeFixAction[] {
-    const glintService = service.getGlintService();
-
-    const actions = diagnostics.flatMap((diagnostic) => {
-      const localActions = glintService.getCodeActions(
-        fileName,
-        CodeActionKind.QuickFix,
-        diagnostic.range,
-        [diagnostic]
-      );
-
-      return localActions;
-    });
-
-    return service.transformCodeActionToCodeFixAction(actions);
-  }
 }
