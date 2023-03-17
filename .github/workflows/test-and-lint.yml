@@ -11,14 +11,44 @@ jobs:
     name: Runs Tests with Linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: pnpm/action-setup@v2.2.4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm lint
-      - run: pnpm test
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          pnpm_store=$(pnpm store path)
+          echo "STORE_PATH<<EOF" >> $GITHUB_OUTPUT
+          echo "$pnpm_store" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
