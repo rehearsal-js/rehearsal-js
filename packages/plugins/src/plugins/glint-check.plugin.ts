@@ -28,7 +28,7 @@ export class GlintCheckPlugin implements Plugin<PluginOptions> {
 
     context.service.setFileText(fileName, updatedContents);
 
-    return [fileName];
+    return Promise.resolve([fileName]);
   }
 
   insertTodo(

@@ -46,7 +46,7 @@ describe('migrate init', () => {
     const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(basePath);
 
     expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
-    
+
     expect(Object.keys(devDeps!)).includes('tmp');
     expect(deps).toHaveProperty('fs-extra');
 

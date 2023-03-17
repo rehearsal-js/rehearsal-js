@@ -1,5 +1,6 @@
 import ts from 'typescript';
 
+import { GlintLanguageServer } from '@glint/core';
 import { RehearsalServiceHost } from './rehearsal-service-host.js';
 import type {
   CompilerOptions,
@@ -9,7 +10,6 @@ import type {
   Node,
   SourceFile,
 } from 'typescript';
-import { GlintLanguageServer } from '@glint/core';
 
 const {
   DiagnosticCategory,

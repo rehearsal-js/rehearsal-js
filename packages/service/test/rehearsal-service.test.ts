@@ -68,7 +68,7 @@ describe('Test service', function () {
     expect(service.getSourceFile(fileName).text).toEqual(originalFileContent);
   });
 
-  test('getDiagnostics', async () => {
+  test('getDiagnostics', () => {
     const service = new RehearsalService(options, fileNames);
 
     let diagnostics: DiagnosticWithLocation[];

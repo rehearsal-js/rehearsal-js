@@ -18,7 +18,7 @@ describe('PluginsRunner', () => {
 
     class Plugin1 implements Plugin<PluginOptions> {
       async run(): Promise<string[]> {
-        return plugin1Spy();
+        return Promise.resolve(plugin1Spy());
       }
     }
 
@@ -26,7 +26,7 @@ describe('PluginsRunner', () => {
 
     class Plugin2 implements Plugin<PluginOptions> {
       async run(): Promise<string[]> {
-        return plugin2Spy();
+        return Promise.resolve(plugin2Spy());
       }
     }
 
@@ -77,7 +77,7 @@ describe('PluginsRunner', () => {
 
       class Plugin3 implements Plugin<PluginOptions> {
         async run(): Promise<string[]> {
-          return plugin3Spy();
+          return Promise.resolve(plugin3Spy());
         }
       }
 

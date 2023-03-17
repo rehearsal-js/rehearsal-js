@@ -32,7 +32,7 @@ const extLookup = {
 
 type ValidExtension = keyof typeof extLookup;
 
-const validExtensions = Object.keys(extLookup) as Array<ValidExtension>;
+const validExtensions = Object.keys(extLookup);
 
 function isValidExtension(ext: string): ext is ValidExtension {
   return validExtensions.includes(ext);
@@ -270,7 +270,7 @@ export default class Foo extends Component {}
     let project: Project;
     let reporter: Reporter;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
 
       reporter = new Reporter({

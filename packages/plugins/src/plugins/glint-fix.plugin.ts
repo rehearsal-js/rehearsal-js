@@ -56,7 +56,7 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
       diagnostics = this.getDiagnostics(service, fileName);
     }
 
-    return Array.from(allFixedFiles);
+    return Promise.resolve(Array.from(allFixedFiles));
   }
 
   getDiagnostics(service: GlintService, fileName: string): Diagnostic[] {

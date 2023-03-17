@@ -27,7 +27,7 @@ describe('Test LintPlugin', () => {
         },
       });
 
-      const resultText = context.rehearsal.getFileText(fileName).trim();
+      const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
       expect(resultText).toMatchSnapshot();
