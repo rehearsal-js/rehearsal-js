@@ -1,0 +1,32 @@
+// Vitest Snapshot v1
+
+exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > postLintSetup hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[DATA] Run postLintSetup from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > run custom config command with user config provided 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+"
+`;
