@@ -1,18 +1,16 @@
 import { resolve } from 'node:path';
-import { readdirSync, writeFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
 
-import { depInstallTask, lintConfigTask } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
-import { UserConfig } from '../../../src/user-config.js';
-
-function createUserConfig(basePath: string, config: CustomConfig): void {
-  const configPath = resolve(basePath, 'rehearsal-config.json');
-  writeJSONSync(configPath, config);
-}
+import { prepareTmpDir } from '../../test-helpers/index.js';
+import {
+  createCustomLintConfig,
+  createLintConfig,
+  extendLintConfig,
+  skipConfigThatExtends,
+  skipCustomConfigThatExtends,
+} from '../../test-helpers/config-lint-test-utils.js';
 
 describe('Task: config-lint', () => {
   let basePath = '';
@@ -37,27 +35,17 @@ describe('Task: config-lint', () => {
   });
 
   test('create .eslintrc.js if not existed', async () => {
-    const options = createMigrateOptions(basePath);
-    // lint task requires dependencies installed first
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
-
+    await createLintConfig(basePath);
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
     expect(output).matchSnapshot();
   });
 
   test('extends .eslintrc.js if existed', async () => {
-    // prepare old .eslintrc.js
     const oldConfig = `
     module.exports = {extends: []};
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.js'), oldConfig);
-
-    const options = createMigrateOptions(basePath);
-    // lint task requires dependencies installed first
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await extendLintConfig(oldConfig, basePath, '.eslintrc.js');
 
     expect(readdirSync(basePath)).toContain('.eslintrc.js');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
@@ -70,18 +58,10 @@ describe('Task: config-lint', () => {
   });
 
   test('skip if .eslintrc.js exists with valid extends', async () => {
-    // prepare old .eslintrc.js and .rehearsal-eslintrc.js
     const oldConfig = `
     module.exports = {extends: ["./.rehearsal-eslintrc.js"]};
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.js'), oldConfig);
-    writeFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), '');
-
-    const options = createMigrateOptions(basePath);
-    // this validation does not need depInstallTask
-    const tasks = [lintConfigTask(options)];
-    await listrTaskRunner(tasks);
-
+    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.js');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 
@@ -89,11 +69,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {"extends": []}
   `;
-    writeFileSync(resolve(basePath, '.eslintrc'), oldConfig);
-
-    const options = createMigrateOptions(basePath);
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await extendLintConfig(oldConfig, basePath, '.eslintrc');
 
     expect(readdirSync(basePath)).toContain('.eslintrc');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc');
@@ -107,17 +83,10 @@ describe('Task: config-lint', () => {
   });
 
   test('skip if .eslintrc exists with valid extends', async () => {
-    // prepare old .eslintrc and .rehearsal-eslintrc.js
     const oldConfig = `
     {extends: ["./.rehearsal-eslintrc.js"]}
   `;
-    writeFileSync(resolve(basePath, '.eslintrc'), oldConfig);
-    writeFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), '');
-
-    const options = createMigrateOptions(basePath);
-    // this validation does not need depInstallTask
-    const tasks = [lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
@@ -126,11 +95,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {"extends": []}
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.json'), oldConfig);
-
-    const options = createMigrateOptions(basePath);
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await extendLintConfig(oldConfig, basePath, '.eslintrc.json');
 
     expect(readdirSync(basePath)).toContain('.eslintrc.json');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.json');
@@ -144,17 +109,10 @@ describe('Task: config-lint', () => {
   });
 
   test('skip if .eslintrc.json exists with valid extends', async () => {
-    // prepare old .eslintrc.json and .rehearsal-eslintrc.js
     const oldConfig = `
     {"extends": ["./.rehearsal-eslintrc.js"]}
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.json'), oldConfig);
-    writeFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), '');
-
-    const options = createMigrateOptions(basePath);
-    // this validation does not need depInstallTask
-    const tasks = [lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.json');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
@@ -163,11 +121,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: []
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.yml'), oldConfig);
-
-    const options = createMigrateOptions(basePath);
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await extendLintConfig(oldConfig, basePath, '.eslintrc.yml');
 
     expect(readdirSync(basePath)).toContain('.eslintrc.yml');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.yml');
@@ -183,18 +137,10 @@ describe('Task: config-lint', () => {
   });
 
   test('skip if .eslintrc.yml exists with valid extends', async () => {
-    // prepare old .eslintrc.yml and .rehearsal-eslintrc.js
     const oldConfig = `
     extends: ["./.rehearsal-eslintrc.js"]
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.yml'), oldConfig);
-    writeFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), '');
-
-    const options = createMigrateOptions(basePath);
-    // this validation does not need depInstallTask
-    const tasks = [lintConfigTask(options)];
-    await listrTaskRunner(tasks);
-
+    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.yml');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 
@@ -202,11 +148,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: []
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.yaml'), oldConfig);
-
-    const options = createMigrateOptions(basePath);
-    const tasks = [depInstallTask(options), lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await extendLintConfig(oldConfig, basePath, '.eslintrc.yaml');
 
     expect(readdirSync(basePath)).toContain('.eslintrc.yaml');
     expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.yaml');
@@ -222,82 +164,55 @@ describe('Task: config-lint', () => {
   });
 
   test('skip if .eslintrc.yaml exists with valid extends', async () => {
-    // prepare old .eslintrc.yaml and .rehearsal-eslintrc.js
     const oldConfig = `
     extends: ["./.rehearsal-eslintrc.js"]
   `;
-    writeFileSync(resolve(basePath, '.eslintrc.yaml'), oldConfig);
-    writeFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), '');
-
-    const options = createMigrateOptions(basePath);
-    // this validation does not need depInstallTask
-    const tasks = [lintConfigTask(options)];
-    await listrTaskRunner(tasks);
+    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.yaml');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 
   test('run custom config command with user config provided', async () => {
-    createUserConfig(basePath, {
+    const customConfig = {
       migrate: {
         setup: {
           lint: { command: 'touch', args: ['custom-lint-config-script'] },
         },
       },
-    });
+    };
+    await createCustomLintConfig(basePath, customConfig);
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [depInstallTask(options), lintConfigTask(options, { userConfig })];
-    await listrTaskRunner(tasks);
-
-    // This proves the custom command works
     expect(readdirSync(basePath)).toContain('custom-lint-config-script');
     expect(output).toMatchSnapshot();
   });
 
   test('postLintSetup hook from user config', async () => {
-    createUserConfig(basePath, {
+    const customConfig = {
       migrate: {
         setup: {
           lint: { command: 'touch', args: ['custom-lint-config-script'] },
           postLintSetup: { command: 'mv', args: ['custom-lint-config-script', 'foo'] },
         },
       },
-    });
+    };
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [depInstallTask(options), lintConfigTask(options, { userConfig })];
-    await listrTaskRunner(tasks);
+    await createCustomLintConfig(basePath, customConfig);
 
-    // This proves the custom command and hook works
     expect(readdirSync(basePath)).toContain('foo');
     expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
     expect(output).toMatchSnapshot();
   });
 
   test('skip if custom config and .eslintrc.js exist', async () => {
-    // prepare old .eslintrc.js
-    const oldConfig = `
-    module.exports = {extends: ["./.rehearsal-eslintrc.js"]};
-  `;
-    writeFileSync(resolve(basePath, '.eslintrc.js'), oldConfig);
-
-    createUserConfig(basePath, {
+    const customConfig = {
       migrate: {
         setup: {
           lint: { command: 'touch', args: ['custom-lint-config-script'] },
         },
       },
-    });
+    };
+    await skipCustomConfigThatExtends(basePath, customConfig);
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
-    const tasks = [lintConfigTask(options, { userConfig })];
-    await listrTaskRunner(tasks);
-
-    // This proves the custom command works
     expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
