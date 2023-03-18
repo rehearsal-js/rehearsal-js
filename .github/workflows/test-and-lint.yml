@@ -50,5 +50,13 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Setup npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-store-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+          ${{ runner.os }}-npm-store-
+
       - name: Test
         run: pnpm test
