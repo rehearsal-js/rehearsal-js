@@ -1,16 +1,20 @@
-import { existsSync } from 'node:fs';
-import { dirname, extname, resolve } from 'node:path';
 import { execSync } from 'node:child_process';
-import { PluginsRunner, RehearsalService } from '@rehearsal/service';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { dirname, extname, resolve } from 'node:path';
+import { GlintService, PluginsRunner, RehearsalService } from '@rehearsal/service';
 import {
   DiagnosticCheckPlugin,
   DiagnosticFixPlugin,
+  GlintCheckPlugin,
+  GlintFixPlugin,
   LintPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
-import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
+import type { PackageJson } from 'type-fest';
+import type { Logger } from 'winston';
 
 export type MigrateInput = {
   basePath: string;
@@ -29,6 +33,33 @@ export type MigrateOutput = {
 };
 
 const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
+
+// The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
+// in any ember/glimmer project, we'll use the glint *service* for all files. This list is only
+// indicating which extensions are handled by the plugins
+const GLINT_EXTENSIONS = ['.gts', '.hbs'];
+
+// The list of dependencies we look for to determine if we're in a glint project. If we find one
+// of these, we use glint. Otherwise, we use the regular Rehearsal service
+const GLINT_PROJECT_FILES = ['ember-source', '@glimmer/component', '@glimmerx/component'];
+
+async function shouldUseGlint(basePath: string): Promise<boolean> {
+  const pkgPath = resolve(basePath, 'package.json');
+  let pkgJson: string;
+
+  try {
+    pkgJson = await readFile(pkgPath, 'utf-8');
+  } catch (err) {
+    throw new Error(`There was an issue reading the package.json file located at ${pkgPath}`);
+  }
+
+  const pkg = JSON.parse(pkgJson) as PackageJson;
+  const deps = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
+
+  return deps.some((pkgName) => {
+    return GLINT_PROJECT_FILES.includes(pkgName);
+  });
+}
 
 export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
   const basePath = resolve(input.basePath);
@@ -72,7 +103,7 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const { options, fileNames: someFiles } = parseJsonConfigFileContent(
     config,
-    sys,
+    ts.sys,
     dirname(configFile),
     {},
     configFile
@@ -84,9 +115,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
 
   const commentTag = '@rehearsal';
 
-  const rehearsal = new RehearsalService(options, fileNames);
+  const useGlint = await shouldUseGlint(basePath);
 
-  const runner = new PluginsRunner({ basePath, rehearsal, reporter, logger })
+  const service = useGlint ? new GlintService(basePath) : new RehearsalService(options, fileNames);
+
+  const runner = new PluginsRunner({ basePath, service, reporter, logger })
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })
@@ -97,6 +130,10 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
+      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+    })
+    .queue(new GlintFixPlugin(), {
+      filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
@@ -104,6 +141,11 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
     })
     .queue(new DiagnosticCheckPlugin(), {
       commentTag: '@rehearsal',
+      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+    })
+    .queue(new GlintCheckPlugin(), {
+      commentTag,
+      filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
@@ -133,9 +175,14 @@ export function gitMove(
 ): string[] {
   return sourceFiles.map((sourceFile) => {
     const ext = extname(sourceFile);
+
+    if (ext === '.hbs') {
+      return sourceFile;
+    }
+
     const pos = sourceFile.lastIndexOf(ext);
     const destFile = `${sourceFile.substring(0, pos)}`;
-    const tsFile = `${destFile}.ts`;
+    const tsFile = ext === '.gjs' ? `${destFile}.gts` : `${destFile}.ts`;
     const dtsFile = `${destFile}.d.ts`;
 
     if (sourceFile === tsFile) {

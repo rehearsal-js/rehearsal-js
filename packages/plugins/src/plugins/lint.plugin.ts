@@ -21,7 +21,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
     options.eslintOptions ??= {};
     options.reportErrors ??= false;
 
-    const text = context.rehearsal.getFileText(fileName);
+    const text = context.service.getFileText(fileName);
 
     try {
       const eslint = new ESLint(options.eslintOptions);
@@ -42,7 +42,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
       if (report && report.output && report.output !== text) {
         DEBUG_CALLBACK(`Plugin 'Lint' run on %O:`, fileName);
 
-        context.rehearsal.setFileText(fileName, report.output);
+        context.service.setFileText(fileName, report.output);
 
         return [fileName];
       }

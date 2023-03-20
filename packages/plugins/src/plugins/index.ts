@@ -3,3 +3,5 @@ export { DiagnosticFixPlugin, DiagnosticFixPluginOptions } from './diagnostic-fi
 export { LintPlugin, LintPluginOptions } from './lint.plugin.js';
 export { PrettierPlugin, PrettierPluginOptions } from './prettier.plugin.js';
 export { ReRehearsePlugin, ReRehearsePluginOptions } from './re-rehearse.plugin.js';
+export { GlintCheckPlugin } from './glint-check.plugin.js';
+export { GlintFixPlugin } from './glint-fix.plugin.js';

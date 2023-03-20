@@ -70,7 +70,7 @@ describe('migrate', () => {
 
   test('should move js file to ts extension', async () => {
     const input: MigrateInput = {
-      basePath: actualDir,
+      basePath,
       sourceFiles,
       logger,
       reporter,
@@ -84,7 +84,7 @@ describe('migrate', () => {
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(/migrate/);
-    expect(report.summary[0].entrypoint).toMatch('index.ts');
+    expect(report.summary[0].entrypoint).toMatch('index.js');
     expect(migratedFiles).includes(`${actualDir}/index.ts`);
     expect(existsSync(`${actualDir}/index.js`)).toBeFalsy();
     rmSync(jsonReport);

@@ -46,6 +46,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "@glint/core": "1.0.0-beta.4",
     "@microsoft/api-documenter": "^7.21.4",
     "@microsoft/api-extractor": "^7.34.3",
     "@rehearsal/reporter": "workspace:*",
