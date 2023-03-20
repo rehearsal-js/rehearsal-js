@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Task: sequential > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
 "[STARTED] Initialize
