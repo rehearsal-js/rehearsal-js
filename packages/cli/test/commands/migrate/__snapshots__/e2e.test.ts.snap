@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`migrate - validation > absolute entrypoint inside project root works 1`] = `
 "info:    @rehearsal/migrate<test-version>
