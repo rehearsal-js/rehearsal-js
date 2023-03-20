@@ -47,10 +47,10 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.28.5"
+    "vitest": "^0.29.2"
   },
   "peerDependencies": {
-    "typescript": "^4.9 || ^5.0"
+    "typescript": "^5.0"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {
