@@ -30,7 +30,7 @@ export { Range, Diagnostic };
 
 export class GlintService implements Service {
   protected readonly service: GlintLanguageServer;
-  protected readonly transformManager: TransformManager;
+  readonly transformManager: TransformManager;
   readonly ts: TS;
 
   private tsService: ts.LanguageService;

@@ -6,6 +6,7 @@ export {
   isEngine as isEmberEngine,
   isAddon as isEmberAddon,
   getEmberAddonName,
+  requirePackageMain,
 } from './utils/ember.js';
 
 export { discoverEmberPackages } from './utils/discover-ember-packages.js';
