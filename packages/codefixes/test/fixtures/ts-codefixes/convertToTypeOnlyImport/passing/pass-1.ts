@@ -1,4 +1,4 @@
-import type { B, C } from '../sample-1.js';
+  import type { B, C } from '../sample-1.js';
 
 declare const b: B;
 declare const c: C;
