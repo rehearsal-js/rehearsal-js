@@ -43,7 +43,7 @@ export class PluginsRunner {
 
   async run(fileNames: string[], logger?: PluginLogger): Promise<void> {
     const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _ of fileIteratorProcessor) {
       const next = async (): Promise<void> => {
         const { done } = await fileIteratorProcessor.next();
