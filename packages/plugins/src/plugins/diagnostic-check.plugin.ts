@@ -1,14 +1,14 @@
+import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import {
   Plugin,
   PluginOptions,
-  type PluginResult,
   PluginsRunnerContext,
-  RehearsalService,
+  Service,
+  type PluginResult,
 } from '@rehearsal/service';
+import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts, { LanguageService } from 'typescript';
-import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/ts-utils';
 import { getLocation } from '../helpers.js';
 
 const {
@@ -34,7 +34,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
     options.addHints ??= true;
     options.commentTag ??= `@rehearsal`;
 
-    let diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
+    let diagnostics = this.getDiagnostics(context.service, fileName, options.commentTag);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticCheck' run on %O:`, fileName);
 
@@ -46,7 +46,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
 
       if (options.addHints) {
         const text = this.addHintComment(diagnostic, hint, options.commentTag);
-        context.rehearsal.setFileText(fileName, text);
+        context.service.setFileText(fileName, text);
 
         allFixedFiles.add(fileName);
         DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
@@ -65,21 +65,17 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
         options.addHints
       );
 
-      diagnostics = this.getDiagnostics(context.rehearsal, fileName, options.commentTag);
+      diagnostics = this.getDiagnostics(context.service, fileName, options.commentTag);
     }
     return Promise.resolve(Array.from(allFixedFiles));
   }
 
-  getDiagnostics(
-    rehearsalService: RehearsalService,
-    fileName: string,
-    tag: string
-  ): DiagnosticWithContext[] {
-    const service = rehearsalService.getLanguageService();
-    const program = service.getProgram()!;
+  getDiagnostics(service: Service, fileName: string, tag: string): DiagnosticWithContext[] {
+    const languageService = service.getLanguageService();
+    const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = rehearsalService.getDiagnostics(fileName);
+    const diagnostics = service.getDiagnostics(fileName);
 
     //Sort diagnostics from top to bottom, so that we add comments from top to bottom
     //This will ensure we calculate the line numbers correctly
@@ -88,7 +84,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
     return diagnostics
       .map((diagnostic) => ({
         ...diagnostic,
-        service,
+        service: languageService,
         program,
         checker,
         node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
@@ -97,7 +93,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
         (diagnostic) =>
           this.isValidDiagnostic(diagnostic) &&
           this.isErrorDiagnostic(diagnostic) &&
-          this.hasNotAddedDiagnosticComment(diagnostic, tag, service)
+          this.hasNotAddedDiagnosticComment(diagnostic, tag, languageService)
       );
   }
 

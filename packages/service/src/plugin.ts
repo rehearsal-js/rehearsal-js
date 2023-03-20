@@ -1,19 +1,21 @@
 import { Reporter } from '@rehearsal/reporter';
 import { Logger } from 'winston';
-import { RehearsalService } from './rehearsal-service.js';
+import { Service } from './rehearsal-service.js';
 
 export interface Plugin<PluginOptions> {
   run(fileName: string, context: PluginsRunnerContext, options: PluginOptions): PluginResult;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PluginOptions {}
+export interface PluginOptions {
+  filter?: (fileName: string) => boolean;
+}
 
 export type PluginResult = Promise<string[]>;
 
 export interface PluginsRunnerContext {
   basePath: string;
-  rehearsal: RehearsalService;
+  service: Service;
   reporter: Reporter;
   logger?: Logger;
 }
@@ -70,7 +72,7 @@ export class PluginsRunner {
         const next = async (): Promise<void> => {
           const { done } = await pluginIteratorProcessor.next();
           // Save file to the filesystem
-          changedFile.forEach((file) => this.context.rehearsal.saveFile(file));
+          changedFile.forEach((file) => this.context.service.saveFile(file));
 
           if (!done) {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -90,6 +92,13 @@ export class PluginsRunner {
     allChangedFiles: Set<string>
   ): AsyncGenerator<Set<string>> {
     for (const plugin of this.plugins) {
+      if (plugin.options.filter) {
+        if (!plugin.options.filter(fileName)) {
+          yield allChangedFiles;
+          continue;
+        }
+      }
+
       const changedFiles = await plugin.plugin.run(fileName, this.context, plugin.options);
 
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);

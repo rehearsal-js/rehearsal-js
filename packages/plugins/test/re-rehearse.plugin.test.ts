@@ -17,7 +17,7 @@ describe('Test ReRehearsalPlugin', () => {
       const fileName = resolve(project.baseDir, file);
 
       const result = await plugin.run(fileName, context, { commentTag: '@rehearsal' });
-      const resultText = context.rehearsal.getFileText(fileName).trim();
+      const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
       expect(resultText).toMatchSnapshot();

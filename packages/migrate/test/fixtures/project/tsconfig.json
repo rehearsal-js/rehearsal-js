@@ -19,7 +19,6 @@
     "target": "es2017",
     "checkJs": true
   },
-  "include": ["tmp/**/*"],
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"],
     "checkStandaloneTemplates": true

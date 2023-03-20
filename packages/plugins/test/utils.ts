@@ -32,5 +32,5 @@ export function mockPluginRunnerContext(project: Project): PluginsRunnerContext 
     commandName: '@rehearsal/migrate',
   });
 
-  return { basePath: project.baseDir, rehearsal, reporter };
+  return { basePath: project.baseDir, service: rehearsal, reporter };
 }
