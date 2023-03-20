@@ -719,26 +719,46 @@ export class Foo {
   }
 }
 
+class GenericClass<something = number, somethingElse = number> {
+  thing(a: something, b: somethingElse): void  {
+    console.log(a, b);
+  }
+}
+
 /**
  * JSDoc
  *
- * @param {number} a
- * @param {(string|number)} b
- * @param {<callbackFunction>} c
- * @param {UnavailableType} d
- *
+ * @param {number} a                                //
+ * @param {(string|number)} b                       // ParenthesizedType.type => UnionType
+ * @param {Foo} c                                   // TypeReference
+ * @param {number|UnavailableType} d                // UnionType
+ * @param {() => boolean} e                         // FunctionType
+ * @param {GenericClass<string, string>} f          // TypeReference
+
+ * @param {<callbackFunction>} g                    // FunctionType
+
+ * @param {UnavailableType} h                       // TypeReference
+ * @param {Foo|UnavailableType} i                   // UnionType
+ * @param {() => UnavailableType} j                 // FunctionType
+ * @param {GenericClass<string, UnavailableType>} k // TypeReference
+ * @param {number|() => UnavailableType} l          // UnionType
+ * @param {(a: UnavailableType) => void} m          // FunctionType
+ * @param {(a, b: string) => void} n                // FunctionType
+
+ * @param {GenericClass<string, string, string>} o  // TypeReference... 3 args instead of 2
+
  * @return {void}
  */
-/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
-export function think(a: number, b: (string | number), c, d: UnavailableType): void {
-  return console.log(a, b, c, d);
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type. */
+export function think(a: number, b: (string | number), c: Foo, d, e: () => boolean, f: GenericClass<string, string>, g, h, i ,j, k, l, m, n: (a, b: string) => void, o, p): void {
+  return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p);
 }
 "
 `;
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 106,
+  "fixedItemCount": 107,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -1448,17 +1468,17 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "analysisTarget": "ts-types.ts",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
-      "hint": "Parameter 'c' implicitly has an 'any' type.",
+      "hint": "Parameter 'd' implicitly has an 'any' type.",
       "hintAdded": true,
-      "message": "Parameter 'c' implicitly has an 'any' type.",
+      "message": "Parameter 'd' implicitly has an 'any' type.",
       "nodeKind": "Parameter",
       "nodeLocation": {
-        "endColumn": 57,
-        "endLine": 74,
-        "startColumn": 56,
-        "startLine": 74,
+        "endColumn": 65,
+        "endLine": 94,
+        "startColumn": 64,
+        "startLine": 94,
       },
-      "nodeText": "c",
+      "nodeText": "d",
       "ruleId": "TS7006",
       "type": 0,
     },

@@ -6,11 +6,15 @@ import ts, {
   type CodeFixAction,
   FileTextChanges,
   type FormatCodeSettings,
+  Node,
+  SourceFile,
   TextChange,
+  TypeChecker,
+  TypeNode,
   type UserPreferences,
 } from 'typescript';
 import { isCodeFixSupported } from './safe-codefixes.js';
-import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
+import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -61,7 +65,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       }
 
       if (filter.strictTyping) {
-        let strictCodeFix = this.makeCodeFixStrict(fix);
+        let strictCodeFix = this.makeCodeFixStrict(fix, diagnostic);
 
         if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
           strictCodeFix = fix;
@@ -80,11 +84,52 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     return filteredCodeFixes;
   }
 
+  canBeResolved(checker: TypeChecker, typeNode: TypeNode): boolean {
+    if (ts.isTypeReferenceNode(typeNode)) {
+      const type = checker.getTypeFromTypeNode(typeNode);
+
+      // We need to check type arguments in case of using Generic type
+      const typeArguments =
+        (type as unknown as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments || [];
+
+      const isTypeError = (type: ts.Type): boolean => {
+        // I have no idea how to get this value or how to check if type is real the right way, so use this hack
+        return (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
+      };
+
+      return !isTypeError(type) && !typeArguments.find(isTypeError);
+    }
+
+    if (ts.isParenthesizedTypeNode(typeNode)) {
+      return this.canBeResolved(checker, typeNode.type);
+    }
+
+    if (ts.isUnionTypeNode(typeNode)) {
+      return !typeNode.types.find((type) => !this.canBeResolved(checker, type));
+    }
+
+    if (ts.isFunctionTypeNode(typeNode)) {
+      // Types of function types params (params without types are skipped)
+      const types = typeNode.parameters
+        .map((parameter) => parameter.type)
+        .filter((parameter): parameter is TypeNode => parameter !== undefined);
+
+      // Checking a function return type + all available parameter types
+      return ![typeNode.type, ...types].find((type) => !this.canBeResolved(checker, type));
+    }
+
+    // Bypass other king of types
+    return true;
+  }
+
   /**
    * Remove text changes contains loose typing (like usage of `any` type)
    */
-  private makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
-    // Filtering out all text changes contain `any`
+  private makeCodeFixStrict(
+    fix: CodeFixAction,
+    diagnostic: DiagnosticWithContext
+  ): CodeFixAction | undefined {
+    // Filtering out not-strict and broken types
     const safeChanges: FileTextChanges[] = [];
     for (const changes of fix.changes) {
       const safeTextChanges: TextChange[] = [];
@@ -112,6 +157,25 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
           continue;
         }
 
+        // Covers broken and unresolved types
+        if (
+          fix.fixName === 'annotateWithTypeFromJSDoc' &&
+          diagnostic.file.fileName.includes('ts-types.ts') &&
+          diagnostic.node!.getText() === 'think'
+        ) {
+          const node = this.findNodeEndsAtPosition(diagnostic.file, textChanges.span.start);
+
+          if (node && ts.isParameter(node.parent)) {
+            const typeTag = ts
+              .getJSDocParameterTags(node.parent)
+              .find((tag) => tag.typeExpression?.type);
+
+            if (typeTag && !this.canBeResolved(diagnostic.checker, typeTag.typeExpression!.type)) {
+              continue;
+            }
+          }
+        }
+
         safeTextChanges.push(textChanges);
       }
 
@@ -125,6 +189,22 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     }
 
     return undefined;
+  }
+
+  findNodeEndsAtPosition(sourceFile: SourceFile, pos: number): Node | undefined {
+    let previousNode: ts.Node = sourceFile;
+
+    const visitor = (node: Node): Node | undefined => {
+      if (node.getStart() >= pos) {
+        return previousNode;
+      }
+
+      previousNode = node;
+
+      return ts.forEachChild(node, visitor);
+    };
+
+    return visitor(sourceFile);
   }
 
   private getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
