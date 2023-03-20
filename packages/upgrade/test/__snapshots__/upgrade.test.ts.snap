@@ -78,7 +78,7 @@ export function Component(): Element  {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more. */
+/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
     return <NonExistingFragment />;
 }
 
@@ -157,7 +157,7 @@ export function Component(): Element  {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more. */
+/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
   return <NonExistingFragment />;
 }
 
@@ -888,9 +888,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
-      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "hintAdded": true,
-      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 36,
@@ -996,9 +996,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "analysisTarget": "react.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
-      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "hintAdded": true,
-      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 164 more.",
+      "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 34,
