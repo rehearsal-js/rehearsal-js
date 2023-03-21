@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test } from 'vitest';
 import {
   getEmberProject,
   getEmberProjectFixture,
@@ -14,6 +14,7 @@ import {
   type GraphNode,
 } from '@rehearsal/migration-graph-shared';
 import fixturify from 'fixturify';
+import { Project } from 'fixturify-project';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
 import {
@@ -29,8 +30,14 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 }
 
 describe('Unit | EmberAppPackageGraph', () => {
+  let project: Project;
+
+  afterEach(() => {
+    project.dispose();
+  });
+
   test('should produce a graph from an ember app', async () => {
-    const project = await getEmberProjectFixture('app');
+    project = await getEmberProjectFixture('app');
 
     const p = new EmberAppPackage(project.baseDir);
     const output: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
@@ -48,7 +55,7 @@ describe('Unit | EmberAppPackageGraph', () => {
   });
 
   test('should create an edge between a test file and app file with appName path', async () => {
-    const project = await getEmberProjectFixture('app-with-utils');
+    project = await getEmberProjectFixture('app-with-utils');
 
     const p = new EmberAppPackage(project.baseDir);
     const packageGraph = new EmberAppPackageGraph(p);
@@ -64,7 +71,7 @@ describe('Unit | EmberAppPackageGraph', () => {
   });
 
   test('should handle nested services', async () => {
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     project.mergeFiles({
       app: {
@@ -115,7 +122,7 @@ describe('Unit | EmberAppPackageGraph', () => {
   });
 
   test('should use options.resolutions.services to ignore non-obvious externals', async () => {
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     project.mergeFiles({
       app: {
@@ -162,7 +169,7 @@ describe('Unit | EmberAppPackageGraph', () => {
   });
 
   test('should find a synthetic package node when an external service is discovered', async () => {
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     project.mergeFiles({
       app: {
@@ -198,7 +205,7 @@ describe('Unit | EmberAppPackageGraph', () => {
   });
 
   test('should update sythetic node with actual packageNode once added', async () => {
-    const project = getEmberProject('app-with-in-repo-addon');
+    project = getEmberProject('app-with-in-repo-addon');
 
     project.mergeFiles({
       app: {
@@ -299,7 +306,7 @@ describe('Unit | EmberAppPackageGraph', () => {
       },
     });
 
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     const files = {
       app: {
@@ -426,7 +433,7 @@ describe('Unit | EmberAppPackageGraph', () => {
       },
     });
 
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     const files: fixturify.DirJSON = {
       lib: {
@@ -524,7 +531,8 @@ describe('Unit | EmberAppPackageGraph', () => {
         },
       },
     });
-    const project = getEmberProject('app');
+
+    project = getEmberProject('app');
 
     const files: fixturify.DirJSON = {
       app: {
@@ -583,7 +591,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
   describe('support .gjs file format', () => {
     test('should parse a .gjs file', async () => {
-      const project = getEmberProject('app');
+      project = getEmberProject('app');
 
       project.mergeFiles({
         app: {
@@ -615,7 +623,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     });
 
     test('should have edges between imports from .gjs file', async () => {
-      const project = getEmberProject('app');
+      project = getEmberProject('app');
 
       project.mergeFiles({
         app: {
