@@ -1,6 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { beforeEach, describe, test, expect } from 'vitest';
 import { Scenario, PreparedApp } from 'scenario-tester';
+import { setGracefulCleanup } from 'tmp';
 import { addonScenarios, clean } from '@rehearsal/test-support';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
@@ -12,6 +13,8 @@ import {
   CUSTOM_CONFIG,
   createUserConfig,
 } from '../../test-helpers/init-command-test-utils.js';
+
+setGracefulCleanup();
 
 describe('migrate init for ember addon variant', () => {
   addonScenarios.forEachScenario((scenario: Scenario) => {

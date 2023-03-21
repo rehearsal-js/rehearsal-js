@@ -4,6 +4,7 @@ import { cosmiconfigSync } from 'cosmiconfig';
 
 import { appScenarios, clean } from '@rehearsal/test-support';
 import { Scenario, PreparedApp } from 'scenario-tester';
+import { setGracefulCleanup } from 'tmp';
 import { describe, beforeEach, afterEach, test, vi, expect } from 'vitest';
 import {
   createCustomLintConfig,
@@ -12,6 +13,8 @@ import {
   skipConfigThatExtends,
   skipCustomConfigThatExtends,
 } from '../../test-helpers/config-lint-test-utils.js';
+
+setGracefulCleanup();
 
 describe('Task: config-lint -- ember-app-matrix', () => {
   appScenarios.forEachScenario((scenario: Scenario) => {

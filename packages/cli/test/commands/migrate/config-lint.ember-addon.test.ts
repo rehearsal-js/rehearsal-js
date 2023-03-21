@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs';
 import { cosmiconfigSync } from 'cosmiconfig';
 
 import { addonScenarios, clean } from '@rehearsal/test-support';
+import { setGracefulCleanup } from 'tmp';
 import { Scenario, PreparedApp } from 'scenario-tester';
 import { describe, beforeEach, afterEach, test, vi, expect } from 'vitest';
 import {
@@ -13,6 +14,7 @@ import {
   skipCustomConfigThatExtends,
 } from '../../test-helpers/config-lint-test-utils.js';
 
+setGracefulCleanup();
 describe('Task: config-lint -- ember-addon-matrix', () => {
   addonScenarios.forEachScenario((scenario: Scenario) => {
     describe(scenario.name, () => {
