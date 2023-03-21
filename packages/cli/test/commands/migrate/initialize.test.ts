@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { setGracefulCleanup } from 'tmp';
 import { writeJSONSync } from 'fs-extra/esm';
 import { initTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
@@ -14,6 +15,8 @@ function createUserConfig(
   const configPath = resolve(basePath, configName);
   writeJSONSync(configPath, config);
 }
+
+setGracefulCleanup();
 
 describe('Task: initialize', () => {
   let project: Project;

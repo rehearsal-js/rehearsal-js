@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import { setGracefulCleanup } from 'tmp';
 
 import { Project } from 'fixturify-project';
 import {
@@ -14,6 +15,8 @@ import {
   validateTask,
 } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+
+setGracefulCleanup();
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

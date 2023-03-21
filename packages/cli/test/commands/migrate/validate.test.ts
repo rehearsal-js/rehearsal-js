@@ -2,10 +2,13 @@ import { resolve } from 'node:path';
 import { rmSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import { setGracefulCleanup } from 'tmp';
 
 import { runValidate } from '../../test-helpers/valdiate-test-utils.js';
 import { prepareProject, cleanOutput } from '../../test-helpers/index.js';
 import type { Project } from 'fixturify-project';
+
+setGracefulCleanup();
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],

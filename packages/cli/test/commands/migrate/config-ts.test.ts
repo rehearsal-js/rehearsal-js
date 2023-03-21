@@ -1,18 +1,13 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { writeJSONSync } from 'fs-extra/esm';
 import { readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig, TSConfig } from '../../../src/types.js';
+import { runTsConfig, createUserConfig } from '../../test-helpers/config-ts-test-utils.js';
+import { TSConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
 import type { Project } from 'fixturify-project';
-
-function createUserConfig(basePath: string, config: CustomConfig): void {
-  const configPath = resolve(basePath, 'rehearsal-config.json');
-  writeJSONSync(configPath, config);
-}
 
 describe('Task: config-ts', () => {
   let output = '';
@@ -35,10 +30,7 @@ describe('Task: config-ts', () => {
   });
 
   test('create tsconfig if not existed', async () => {
-    const options = createMigrateOptions(project.baseDir);
-    const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [tsConfigTask(options, context)];
-    await listrTaskRunner(tasks);
+    await runTsConfig(project.baseDir);
 
     expect(readTSConfig(resolve(project.baseDir, 'tsconfig.json'))).matchSnapshot();
     expect(output).matchSnapshot();
@@ -49,10 +41,7 @@ describe('Task: config-ts', () => {
     const oldTsConfig = { compilerOptions: { strict: false } };
     writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(project.baseDir);
-    const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [tsConfigTask(options, context)];
-    await listrTaskRunner(tasks);
+    await runTsConfig(project.baseDir);
 
     const tsConfig = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
@@ -65,10 +54,7 @@ describe('Task: config-ts', () => {
     const oldTsConfig = { extends: 'invalid-tsconfig.json' };
     writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(project.baseDir);
-    const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [tsConfigTask(options, context)];
-    await listrTaskRunner(tasks);
+    await runTsConfig(project.baseDir);
 
     const tsConfig = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
 
@@ -82,12 +68,9 @@ describe('Task: config-ts', () => {
     const oldTsConfig = { compilerOptions: { strict: true } };
     writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(project.baseDir);
-    const context = { sourceFilesWithRelativePath: [] };
-    const tasks = [tsConfigTask(options, context)];
-    await listrTaskRunner(tasks);
+    await runTsConfig(project.baseDir);
+    await runTsConfig(project.baseDir); //should be skipped
 
-    await listrTaskRunner(tasks); // should be skipped
     expect(output).toMatchSnapshot();
   });
 
@@ -123,11 +106,7 @@ describe('Task: config-ts', () => {
       },
     });
 
-    const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
-    const tasks = [tsConfigTask(options, { userConfig })];
-
-    await listrTaskRunner(tasks); // should be skipped
+    await runTsConfig(project.baseDir, { userConfig: 'rehearsal-config.json' });
 
     // This proves the custom command works not triggered
     expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
