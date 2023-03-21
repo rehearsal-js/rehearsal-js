@@ -224,7 +224,30 @@ exports[`migrate init for ember app variant > emberApp > pass user config emberA
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > emberApp > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > pass user config ember3-appWithInRepoAddon 2`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Initialize
+[DATA] Setting up config for app-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Install dependencies from config
+[DATA] Installing dependecies: fs-extra
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[SUCCESS] Create tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+[STARTED] Add package scripts
+[DATA] Adding \\"lint:tsc\\" script in package.json
+[SUCCESS] Add package scripts
+info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
+`;
+
+exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize

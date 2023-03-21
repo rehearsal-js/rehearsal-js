@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: config-ts ember app > ember3-addon > create tsconfig if not existed 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2021",
+  },
+}
+`;
+
+exports[`Task: config-ts ember app > ember3-addon > create tsconfig if not existed 2`] = `
+"[STARTED] Create tsconfig.json
+[SUCCESS] Create tsconfig.json
+"
+`;
+
+exports[`Task: config-ts ember app > ember3-addon > postTsSetup hook from user config 1`] = `
+"[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[DATA] Run postTsSetup from config
+[SUCCESS] Create tsconfig.json
+"
+`;
+
+exports[`Task: config-ts ember app > ember3-addon > run custom config command with user config provided 1`] = `
+"[STARTED] Create tsconfig.json
+[DATA] Create tsconfig from config
+[SUCCESS] Create tsconfig.json
+"
+`;
+
+exports[`Task: config-ts ember app > ember3-addon > skip custom config command 1`] = `
+"[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+"
+`;
+
+exports[`Task: config-ts ember app > ember3-addon > skip if tsconfig.json exists with strict on 1`] = `
+"[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+"
+`;

@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readTSConfig } from '@rehearsal/utils';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { createLogger, format, transports } from 'winston';
+import { setGracefulCleanup } from 'tmp';
 
 import {
   initTask,
@@ -30,6 +31,8 @@ import type { Project } from 'fixturify-project';
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
+
+setGracefulCleanup();
 
 describe('Task: convert', () => {
   let output = '';

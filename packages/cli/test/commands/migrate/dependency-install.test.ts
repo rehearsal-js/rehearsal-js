@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { existsSync, promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
+import { setGracefulCleanup } from 'tmp';
 
 import {
   REQUIRED_DEPENDENCIES,
@@ -18,6 +19,8 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');
   writeJSONSync(configPath, config);
 }
+
+setGracefulCleanup();
 
 describe('Task: dependency-install', () => {
   let output = '';
