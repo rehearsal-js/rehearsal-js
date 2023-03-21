@@ -119,6 +119,7 @@ describe('migration-strategy', () => {
           'packages/blorp/index.js',
           'packages/foo/lib/a.js',
           'packages/foo/index.js',
+          'index.js',
           'some-util.js',
         ]);
         expect(strategy.sourceType).toBe(SourceType.Library);
@@ -166,9 +167,9 @@ describe('migration-strategy', () => {
           'packages/blorp/build.js',
           'packages/blorp/lib/impl.js',
           'packages/blorp/index.js',
-          'packages/blorp/should-have/index.js',
           'packages/foo/lib/a.js',
           'packages/foo/index.js',
+          'index.js',
           'some-util.js',
         ]);
         expect(strategy.sourceType).toBe(SourceType.Library);
