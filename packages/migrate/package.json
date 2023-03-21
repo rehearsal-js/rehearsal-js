@@ -51,11 +51,11 @@
   "devDependencies": {
     "findup-sync": "^5.0.0",
     "fixturify-project": "^5.2.0",
-    "winston": "^3.8.2",
     "listr2": "^5.0.7",
     "type-fest": "^3.6.1",
     "uuid": "^9.0.0",
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "winston": "^3.8.2"
   },
   "peerDependencies": {
     "@glint/core": "1.0.0-beta.4",
