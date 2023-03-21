@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { describe, expect, test, afterEach } from 'vitest';
 import { getFiles } from '@rehearsal/test-support';
 import { Project } from 'fixturify-project';
@@ -247,11 +248,15 @@ describe('PackageGraph', () => {
   });
 
   test('should not include a file in the module graph if external to the package', async () => {
+    const packageName = 'my-package-name';
+
     project = new Project('my-package', '0.0.0', {
       files: {
         'out-of-package.js': `const a = '1';`,
         'some-dir': {
-          'package.json': `{ name: 'my-package-name' }`,
+          'package.json': JSON.stringify({
+            name: packageName,
+          }),
           'index.js': `import '../out-of-package.js';`,
         },
       },
@@ -259,7 +264,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(
+      new Package(join(project.baseDir, 'some-dir'))
+    ).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['index.js']);

@@ -92,7 +92,7 @@ describe('project-graph', () => {
   });
 
   test('should include loose files in rootDir', async () => {
-    project = new Project('my-package', '0.0.0', {
+    project = new Project('my-package-with-loose-files', '0.0.0', {
       files: getFiles('library-with-loose-files'),
     });
 
@@ -111,6 +111,7 @@ describe('project-graph', () => {
       'State.js',
       'Widget.js',
       'WidgetManager.js',
+      'index.js',
     ]);
   });
 
@@ -238,7 +239,7 @@ describe('project-graph', () => {
 
   describe('workspaces', () => {
     test('should discover all packages in the project', async () => {
-      project = new Project('my-package', '0.0.0', {
+      project = new Project('some-library-with-workspace', '0.0.0', {
         files: getFiles('library-with-workspaces'),
       });
 
@@ -274,7 +275,10 @@ describe('project-graph', () => {
       ]);
       expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual(['some-util.js']);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([
+        'index.js',
+        'some-util.js',
+      ]);
     });
     test('should find edges between packages', async () => {
       project = new Project('my-package', '0.0.0', {
@@ -295,7 +299,7 @@ describe('project-graph', () => {
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
     });
     test('should not include a file out of the package scope', async () => {
-      project = new Project('my-package', '0.0.0', {
+      project = new Project('root-package', '0.0.0', {
         files: getFiles('workspace-with-package-scope-issue'),
       });
 
@@ -334,7 +338,10 @@ describe('project-graph', () => {
         'index.js',
       ]);
       expect(nodes[2].packageName).toBe('root-package');
-      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual(['some-shared-util.js']);
+      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual([
+        'index.js',
+        'some-shared-util.js',
+      ]);
     });
   });
 });
