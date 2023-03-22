@@ -1,6 +1,7 @@
 import { join } from 'node:path';
-import { Scenarios, Scenario, PreparedApp } from 'scenario-tester';
+import { Scenarios, Scenario, PreparedApp, Project } from 'scenario-tester';
 import { rimraf } from 'rimraf';
+import { resolve } from 'path';
 
 import {
   getEmberAppProject,
@@ -13,6 +14,15 @@ import {
 
 export function clean(dir: string): void {
   rimraf.sync(join(dir, 'node_modules'));
+}
+
+async function ember4App(project: Project) {
+  const rehearsalRoot = resolve('../../');
+  const testSupport = resolve(rehearsalRoot, 'packages', 'test-support');
+
+  project.linkDevDependency('ember-source', { baseDir: testSupport, resolveName: 'ember-source-4.4' });
+  project.linkDevDependency('ember-cli', { baseDir: testSupport, resolveName: 'ember-cli-4.4' });
+  project.linkDevDependency('ember-data', { baseDir: testSupport, resolveName: 'ember-data-4.4' });
 }
 
 function supportMatrix(scenarios: Scenarios): Scenarios {
@@ -32,6 +42,7 @@ function appVariants(scenarios: Scenarios): Scenarios {
     app: (project) => {
       getEmberAppProject(project);
     },
+    appEmber4: (project) => ember4App(project),
     appWithInRepoAddon: (project) => {
       getEmberAppWithInRepoAddonProject(project);
     },
@@ -41,7 +52,7 @@ function appVariants(scenarios: Scenarios): Scenarios {
   });
 }
 
-export const appScenarios = appVariants(supportMatrix(Scenarios.fromProject(emberAppTemplate)));
+export const appScenarios = appVariants(Scenarios.fromProject(emberAppTemplate));
 
 function addonVariants(scenarios: Scenarios): Scenarios {
   return scenarios.expand({
