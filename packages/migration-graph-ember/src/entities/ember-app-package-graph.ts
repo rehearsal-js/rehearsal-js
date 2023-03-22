@@ -93,23 +93,6 @@ export class EmberAppPackageGraph extends PackageGraph {
     this.debug('>>> SERVICES DISCOVERD', services);
 
     services.forEach((s) => {
-      const maybePathToService = `app/services/${s.serviceName}.js`;
-
-      // Does the service exist in this package?
-      // If so it will have a node on the graph with the given file path.
-      if (this.graph.hasNode(maybePathToService)) {
-        const someService = this.graph.getNode(maybePathToService);
-        if (!someService) {
-          throw new Error(
-            'EmberAppPackageDependencyGraph: Unknown error occured. Unable to retrieve existing service'
-          );
-        }
-        this.graph.addEdge(n, someService);
-        return;
-      }
-
-      // If the service doesn't exist we need to determine if it exists in the app or an in-repo addon.
-
       // If the service is a external resolution, we can ignore it.
       // We look this up in our resolution map to short-circuit this process
       if (this.hasServiceResolution(s.serviceName)) {
@@ -155,32 +138,33 @@ export class EmberAppPackageGraph extends PackageGraph {
             const emberAddonPackage = pkg as EmberAddonPackage;
 
             // Looking for the implementation at addon/ becase some addons may not have an app/ for re-exports of the service
-            const key = `addon/services/${s.serviceName}.js`;
-
-            const someServiceInAnInRepoAddon = join(emberAddonPackage.path, key);
+            const base = `addon/services/${s.serviceName}`;
+            const potentialPaths = ['.js', '.ts'].map((ext) => `${base}${ext}`); // Expand to look for .ts or .js file implementations.
 
             this.debug(emberAddonPackage.path);
-            this.debug(someServiceInAnInRepoAddon);
+            this.debug('Potential paths to service implementation: %s', potentialPaths);
 
-            if (key) {
-              const dest = emberAddonPackage.getModuleGraph().hasNode(key);
-              if (!dest) {
-                const sourceFile = join(this.baseDir, moduleNodeKey);
-                const destFile = join(emberAddonPackage.path);
+            const maybeServicePath = potentialPaths.find((somePath) =>
+              emberAddonPackage.getModuleGraph().hasNode(somePath)
+            );
 
-                throw new Error(
-                  `Unexpected error when parsing ${sourceFile}. Attempting to resolve service "${s.serviceName}" from module/package name "${s.addonName}" in package: ${destFile}.`
-                );
-              }
+            // If no service path then the node doesn't exist in the addon's graph
+            if (!maybeServicePath) {
+              const sourceFile = join(this.baseDir, moduleNodeKey);
+              const destFile = join(emberAddonPackage.path);
 
-              // Create an edge between these packages.
-              // We can create edges between files but I dont know if we want that yet.
-              // Get this package Node<PackageNode> for this package.
+              throw new Error(
+                `Unexpected error when parsing ${sourceFile}. Attempting to resolve service "${s.serviceName}" from module/package name "${s.addonName}" in package: ${destFile}.`
+              );
+            }
 
-              if (this.parent) {
-                this.debug('Adding edge between parent and addon');
-                this.project?.graph.addEdge(this.parent, maybeAddonPackageNode);
-              }
+            // Create an edge between these packages.
+            // We can create edges between files but I dont know if we want that yet.
+            // Get this package Node<PackageNode> for this package.
+
+            if (this.parent) {
+              this.debug('Adding edge between parent and addon');
+              this.project?.graph.addEdge(this.parent, maybeAddonPackageNode);
             }
           } else {
             // Create an edge between these packages.
@@ -203,9 +187,36 @@ export class EmberAppPackageGraph extends PackageGraph {
         }
       }
 
+      // If the service not have a resolution or an addonName prefixed, let's check this package.
+      const maybeService = [`app/services/${s.serviceName}.js`, `app/services/${s.serviceName}.ts`];
+
+      // Does the service exist in this package?
+      // If so it will have a node on the graph with the given file path.
+
+      const foundServiceInGraph = maybeService.find((maybePathToService) =>
+        this.graph.hasNode(maybePathToService)
+      );
+
+      if (foundServiceInGraph) {
+        const someService = this.graph.getNode(foundServiceInGraph);
+        if (!someService) {
+          throw new Error(
+            'EmberAppPackageDependencyGraph: Unknown error occured. Unable to retrieve existing service'
+          );
+        }
+        this.graph.addEdge(n, someService);
+        return;
+      }
+
+      // If the service doesn't exist in the graph yet, then let's stub it out, it may get populated later.
+
+      const foundServiceOnDisk = maybeService.find((maybePathToService) =>
+        this.fileExists(join(this.baseDir, maybePathToService))
+      );
+
       // Does this service exist within this app
-      if (this.fileExists(join(this.baseDir, maybePathToService))) {
-        const serviceNode = this.createSyntheticModuleNode(maybePathToService); // We create this now, and will backfill later as the graph is filled out.
+      if (foundServiceOnDisk) {
+        const serviceNode = this.createSyntheticModuleNode(foundServiceOnDisk); // We create this now, and will backfill later as the graph is filled out.
         this.graph.addEdge(n, serviceNode);
       } else {
         // Lookup resolutions

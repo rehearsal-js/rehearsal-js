@@ -114,6 +114,47 @@ describe('Unit | EmberAppPackageGraph', () => {
     ]);
   });
 
+  test('should handle services written in .ts', async () => {
+    const project = getEmberProject('app');
+
+    project.mergeFiles({
+      app: {
+        services: {
+          'request.ts': `
+              import Service from '@ember/service';
+              import { inject as service } from '@ember/service';
+              export default class Request extends Service {}
+            `,
+          'locale.js': `
+              import Service from '@ember/service';
+              import { inject as service } from '@ember/service';
+              export default class Locale extends Service {
+                @service request;
+                current() {
+                  return 'en-US';
+                }
+              }
+            `,
+        },
+      },
+    });
+
+    await setupProject(project);
+
+    const p = new EmberAppPackage(project.baseDir);
+    const options = {};
+    const graph: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
+
+    // Assert edget between salutation and locale.ts
+
+    const source = graph.getNode('app/services/locale.js');
+    const dest = graph.getNode('app/services/request.ts');
+
+    expect(source).toBeTruthy();
+    expect(dest).toBeTruthy();
+    expect(source.adjacent.has(dest)).toBe(true);
+  });
+
   test('should use options.resolutions.services to ignore non-obvious externals', async () => {
     const project = getEmberProject('app');
 
@@ -249,7 +290,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     const addonNode = projectGraph.addPackageToGraph(emberAddonPackage);
     expect(addonNode.content.synthetic).toBeFalsy();
 
-    // Validate that addonn package has an the edge exists between
+    // Validate that addon package has an the edge exists between
     expect(appNode.adjacent.has(addonNode)).toBe(true);
   });
 
@@ -579,6 +620,58 @@ describe('Unit | EmberAppPackageGraph', () => {
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonPackageName))).toBe(true);
 
     expect(someNode.content.synthetic, 'the node on the graph should be replaced').toBeFalsy();
+  });
+
+  test('should find service with .ts extenstion within an addon', async () => {
+    const project = getEmberProject('app-with-in-repo-addon');
+
+    project.mergeFiles({
+      app: {
+        components: {
+          'greeting.js': `
+            import Component from '@glimmer/component';
+            import { inject as service } from '@ember/service';
+
+            export default class Greeting extends Component {
+              @service('some-addon@date') date;
+            }
+          `,
+        },
+      },
+      lib: {
+        'some-addon': {
+          addon: {
+            services: {
+              'date.ts': `
+                import { inject as service } from '@ember/service';
+                export default class DateService extends Service {}
+              `,
+            },
+          },
+        },
+      },
+    });
+
+    await setupProject(project);
+    const baseDir = project.baseDir;
+    const projectGraph = new EmberAppProjectGraph(baseDir);
+    // We don't use projectGraph.discover() because we want to inspect the state of things as we add package nodes
+    // We ensure the addon is added first to ensure it exists in the projectGraph, so that it doesn't try and
+    // create a synthetic node.
+    const addonPackage = new EmberAddonPackage(join(baseDir, 'lib/some-addon'));
+
+    projectGraph.addPackageToGraph(addonPackage);
+
+    const emberAppPackage = new EmberAppPackage(baseDir);
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage);
+    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+
+    // getModuleGraph will trigger the parsing of file
+    emberAppPackage.getModuleGraph(options);
+
+    const addon = projectGraph.graph.getNode('some-addon');
+    const app = projectGraph.graph.getNode('app-template');
+    expect(app.adjacent.has(addon)).toBe(true);
   });
 
   describe('support .gjs file format', () => {
