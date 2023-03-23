@@ -236,7 +236,7 @@ export default class Hello extends Component {
       project.dispose();
     });
 
-    test.only('it works', async () => {
+    test('it works', async () => {
       const [inputs, outputs] = prepareInputFiles(project, [
         'missing-local-prop.hbs',
         'missing-local-prop.js',
