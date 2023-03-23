@@ -76,8 +76,8 @@ export function Component(): Element {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
-    return <NonExistingFragment />;
+  /* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
+  return <NonExistingFragment />;
 }
 
 export function Test2(): Element {
@@ -161,7 +161,7 @@ export function Component(): Element {
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
+  /* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
   return <NonExistingFragment />;
 }
 
