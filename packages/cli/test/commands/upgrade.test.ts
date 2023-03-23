@@ -1,38 +1,62 @@
 import { dirname, join, resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { readJSONSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getLatestTSVersion } from '@rehearsal/utils';
 import { Project } from 'fixturify-project';
+import { execa } from 'execa';
 
 import { runBin } from '../test-helpers/index.js';
 import type { PackageJson } from 'type-fest';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const FIXTURE_APP_PATH = resolve(__dirname, '../fixtures/app');
 
-// We symlink the dependencies we have into the system temp so we will get whatever version at the root of the project is
-const ROOT_PACKAGE_JSON = readJSONSync(
-  resolve(__dirname, '../../../../package.json')
-) as PackageJson;
-
-const TEST_TSC_VERSION = ROOT_PACKAGE_JSON?.devDependencies?.['typescript']
-  ? ROOT_PACKAGE_JSON?.devDependencies?.['typescript'].replace('^', '')
-  : '';
+const FIXTURE_APP = {
+  packageJSON: readJSONSync(resolve(FIXTURE_APP_PATH, 'package.json')) as PackageJson,
+  tsConfig: readFileSync(resolve(FIXTURE_APP_PATH, 'tsconfig.json'), 'utf8'),
+  eslintrc: readFileSync(resolve(FIXTURE_APP_PATH, '.eslintrc.json'), 'utf8'),
+  fooDir: {
+    'foo.ts': readFileSync(resolve(FIXTURE_APP_PATH, 'foo/foo.ts'), 'utf8'),
+  },
+  fooDir2: {
+    'foo_2a.ts': readFileSync(resolve(FIXTURE_APP_PATH, 'foo_2/foo_2a.ts'), 'utf8'),
+    'foo_2b.ts': readFileSync(resolve(FIXTURE_APP_PATH, 'foo_2/foo_2b.ts'), 'utf8'),
+  },
+};
 
 describe.each(['rc', 'latest', 'beta', 'latestBeta'])(
   'upgrade:command typescript@%s',
   (buildTag) => {
     let project: Project;
 
+    // rewrite the fixture
     beforeEach(async () => {
-      project = Project.fromDir(FIXTURE_APP_PATH, { linkDeps: true, linkDevDeps: true });
+      // linkDevDeps and the static project.fromDir will pull in typescript from the monorepo we do not want this
+      project = new Project('sample-project');
+
+      // this updates the fixturify project.pkg rather project.files['package.json'] they are different
+      // this does NOT install packages (do that with pnpm install later)
+      for (const [dep, version] of Object.entries(
+        FIXTURE_APP.packageJSON['devDependencies'] as Record<string, string>
+      )) {
+        project.addDevDependency(dep, version);
+      }
+      project.files = {
+        'tsconfig.json': FIXTURE_APP.tsConfig,
+        '.eslintrc.json': FIXTURE_APP.eslintrc,
+        ['foo']: FIXTURE_APP.fooDir,
+        ['foo_2']: FIXTURE_APP.fooDir2,
+      };
+
       await project.write();
+      // run pnpm install on the fixturify project to get the binary for the default version of ts
+      await execa('pnpm', ['install'], { cwd: project.baseDir });
     });
 
+    // clean up the fixture
     afterEach(() => {
       project.dispose();
     });
@@ -98,8 +122,26 @@ describe('upgrade:command tsc version check', () => {
   let project: Project;
 
   beforeEach(async () => {
-    project = Project.fromDir(FIXTURE_APP_PATH, { linkDeps: true, linkDevDeps: true });
+    // linkDevDeps and the static project.fromDir will pull in typescript from the monorepo we do not want this
+    project = new Project('sample-project');
+
+    // this updates the fixturify project.pkg rather project.files['package.json'] they are different
+    // this does NOT install packages (do that with pnpm install later)
+    for (const [dep, version] of Object.entries(
+      FIXTURE_APP.packageJSON['devDependencies'] as Record<string, string>
+    )) {
+      project.addDevDependency(dep, version);
+    }
+    project.files = {
+      'tsconfig.json': FIXTURE_APP.tsConfig,
+      '.eslintrc.json': FIXTURE_APP.eslintrc,
+      ['foo']: FIXTURE_APP.fooDir,
+      ['foo_2']: FIXTURE_APP.fooDir2,
+    };
+
     await project.write();
+    // run pnpm install on the fixturify project to get the binary for the default version of ts
+    await execa('pnpm', ['install'], { cwd: project.baseDir });
   });
 
   afterEach(() => {
@@ -127,14 +169,18 @@ describe('upgrade:command tsc version check', () => {
   });
 
   test(`it is on typescript version already tested`, async () => {
+    const devDeps = FIXTURE_APP.packageJSON['devDependencies'] as Record<string, string>;
+    // should be typescript 4.9.5
+    const fixtureTSCVersion = devDeps['typescript'];
+
     const result = await runBin(
       'upgrade',
-      [project.baseDir, '--tsVersion', `${TEST_TSC_VERSION}`, '--dryRun'],
+      [project.baseDir, '--tsVersion', `${fixtureTSCVersion}`, '--dryRun'],
       { cwd: project.baseDir }
     );
 
     expect(result.stdout).toContain(
-      `This application is already on the latest version of TypeScript@${TEST_TSC_VERSION}`
+      `This application is already on the latest version of TypeScript@${fixtureTSCVersion}`
     );
   });
 });

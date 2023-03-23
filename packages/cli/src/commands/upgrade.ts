@@ -76,7 +76,9 @@ upgradeCommand
       }
     }
 
-    const tscPath = await getPathToBinary('tsc');
+    const tscPath = await getPathToBinary('tsc', {
+      cwd: basePath,
+    });
 
     DEBUG_CALLBACK('tscPath: %O', tscPath);
     DEBUG_CALLBACK('options: %O', options);
