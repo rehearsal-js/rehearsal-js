@@ -18,7 +18,12 @@ export function clean(dir: string): void {
 
 function ember4App(project: Project): void {
   const importRoot = dirname(fileURLToPath(import.meta.url));
-  const testSupport = join(importRoot, '../..');
+  const regex = /.+test-support/;
+  let result = importRoot.match(regex);
+  if (!result || !Array.isArray(result)) {
+    return;
+  }
+  let testSupport = result[0];
 
   project.linkDevDependency('ember-source', {
     baseDir: testSupport,
