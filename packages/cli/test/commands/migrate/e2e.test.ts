@@ -340,6 +340,9 @@ describe('migrate: e2e', () => {
   });
 
   test('show warning message for missing config with --regen', async () => {
+    delete project.files['tsconfig.json'];
+    await project.write();
+    // this test expect a fixture app without tsconfig.json and eslint config
     const { stdout } = await runBin('migrate', ['-r', '--ci'], {
       cwd: project.baseDir,
     });
@@ -399,6 +402,7 @@ describe('migrate: e2e', () => {
       ].join('\n');
 
       expect(result.stdout).contains(expected);
+      // need this here since we are using a local project
       project.dispose();
     });
 
@@ -438,6 +442,7 @@ describe('migrate: e2e', () => {
       ].join('\n');
 
       expect(result.stdout).contains(expected);
+      // need this here since we are using a local project
       project.dispose();
     });
   });

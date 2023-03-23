@@ -20,7 +20,7 @@ export function regenTask(options: MigrateCommandOptions, logger: Logger): Listr
 
       const projectName = determineProjectName() || '';
       const { basePath, entrypoint } = options;
-      const tscPath = await getPathToBinary('tsc');
+      const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
       const reporter = new Reporter(
