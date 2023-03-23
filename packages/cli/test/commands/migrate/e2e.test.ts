@@ -340,14 +340,17 @@ describe('migrate: e2e', () => {
   });
 
   test('show warning message for missing config with --regen', async () => {
+    const project = prepareProject('basic_regen');
     delete project.files['tsconfig.json'];
+
     await project.write();
     // this test expect a fixture app without tsconfig.json and eslint config
-    const { stdout } = await runBin('migrate', ['-r', '--ci'], {
+    const { stdout, stderr } = await runBin('migrate', ['-r', '--ci'], {
       cwd: project.baseDir,
     });
     expect(stdout).toContain('Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist');
     expect(stdout).toContain('tsconfig.json does not exist');
+    expect(stderr).toContain(`Config file 'tsconfig.json' not found`);
   });
 
   test('regen result after the first pass', async () => {
