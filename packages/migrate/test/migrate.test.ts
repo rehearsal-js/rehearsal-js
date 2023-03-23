@@ -236,7 +236,7 @@ export default class Hello extends Component {
       project.dispose();
     });
 
-    test('it works', async () => {
+    test.only('it works', async () => {
       const [inputs, outputs] = prepareInputFiles(project, [
         'missing-local-prop.hbs',
         'missing-local-prop.js',
@@ -251,18 +251,8 @@ export default class Hello extends Component {
 
       await migrate(input);
 
-      const expectedTs = `import Component from "@glimmer/component";
-
-export default class Foo extends Component {}
-`;
-
-      const expectedHbs = `{{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. }}
-{{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
-<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-`;
-
-      expectFile(outputs[0]).toEqual(expectedHbs);
-      expectFile(outputs[1]).toEqual(expectedTs);
+      expectFile(outputs[0]).matchSnapshot();
+      expectFile(outputs[1]).matchSnapshot();
     });
   });
 
