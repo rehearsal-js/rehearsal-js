@@ -1,6 +1,5 @@
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'path';
 import { Scenarios, Scenario, PreparedApp, Project } from 'scenario-tester';
 import { rimraf } from 'rimraf';
 
@@ -17,16 +16,22 @@ export function clean(dir: string): void {
   rimraf.sync(join(dir, 'node_modules'));
 }
 
-async function ember4App(project: Project): Promise<void> {
-  const rehearsalRoot = dirname(fileURLToPath(import.meta.url));
-  const testSupport = resolve(rehearsalRoot, 'packages', 'test-support');
+function ember4App(project: Project): void {
+  const importRoot = dirname(fileURLToPath(import.meta.url));
+  const testSupport = join(importRoot, '../..');
 
   project.linkDevDependency('ember-source', {
     baseDir: testSupport,
     resolveName: 'ember-source-4.4',
   });
-  project.linkDevDependency('ember-cli', { baseDir: testSupport, resolveName: 'ember-cli-4.4' });
-  project.linkDevDependency('ember-data', { baseDir: testSupport, resolveName: 'ember-data-4.4' });
+  project.linkDevDependency('ember-cli', {
+    baseDir: testSupport,
+    resolveName: 'ember-cli-4.4',
+  });
+  project.linkDevDependency('ember-data', {
+    baseDir: testSupport,
+    resolveName: 'ember-data-4.4',
+  });
 }
 
 function supportMatrix(scenarios: Scenarios): Scenarios {
