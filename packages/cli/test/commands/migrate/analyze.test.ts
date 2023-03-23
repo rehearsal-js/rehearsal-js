@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { Project } from 'fixturify-project';
 import { analyzeTask, addFilesToIncludes } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareProject,
@@ -13,7 +14,6 @@ import {
   isPackageSelection,
   isActionSelection,
 } from '../../test-helpers/index.js';
-import type { Project } from 'fixturify-project';
 
 describe('Task: analyze', () => {
   let output = '';
@@ -287,13 +287,19 @@ describe('Helper: addFilesToIncludes', () => {
     project.dispose();
   });
 
-  test('do nothing with no tsconfig', () => {
+  test('do nothing with no tsconfig', async () => {
+    const project = new Project();
+    await project.write();
+
+    // expected that no tsconfig.json exists in this project fixture
     const configPath = resolve(project.baseDir, 'tsconfig.json');
     addFilesToIncludes([], configPath);
     expect(existsSync(configPath)).toBeFalsy();
+
+    project.dispose();
   });
 
-  test('repalce include if no include in tsconfig', () => {
+  test('replace include if no include in tsconfig', () => {
     const configPath = resolve(project.baseDir, 'tsconfig.json');
     writeJSONSync(configPath, {});
     const fileList = ['foo', 'bar'];
