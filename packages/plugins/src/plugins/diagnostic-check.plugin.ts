@@ -45,7 +45,8 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
       const hint = hints.getHint(diagnostic);
 
       if (options.addHints) {
-        const text = this.addHintComment(diagnostic, hint, options.commentTag);
+        const text = this.addHintComment(context.service, diagnostic, hint, options.commentTag);
+
         context.service.setFileText(fileName, text);
 
         allFixedFiles.add(fileName);
@@ -162,7 +163,12 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
   /**
    * Builds and adds a `@rehearsal` comment above the affected node
    */
-  addHintComment(diagnostic: DiagnosticWithContext, hint: string, tag: string): string {
+  addHintComment(
+    service: Service,
+    diagnostic: DiagnosticWithContext,
+    hint: string,
+    tag: string
+  ): string {
     // Search for a position to add comment - the first element at the line with affected node
     let line = getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start).line;
 
@@ -185,7 +191,7 @@ export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOption
     // Make sure the comment is a single because we have to place @ tags right above the issue
     comment = comment.replace(/(\n|\r|\r\n)/gm, ' ');
 
-    const text = diagnostic.file.getFullText();
+    const text = service.getFileText(diagnostic.file.fileName);
 
     return text.slice(0, positionToAddComment) + comment + '\n' + text.slice(positionToAddComment);
   }
