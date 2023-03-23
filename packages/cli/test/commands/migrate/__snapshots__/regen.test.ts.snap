@@ -1,5 +1,39 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Task: regen > no effect on JS filse before conversion 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for basic_regen
+[SUCCESS] Initialize
+[STARTED] Validate project
+[SUCCESS] Validate project
+[STARTED] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
+[STARTED] Regenerating report for TS errors and Eslint errors
+[TITLE] Migration Report Generated
+[TITLE] 
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal
+[TITLE] 
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 0 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Report Generated
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   0 ts files have been scanned
+[SUCCESS] 
+[SUCCESS]   0 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 0 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
+
 exports[`Task: regen > update ts and lint errors based on previous conversion 1`] = `
 "[STARTED] Initialize
 [DATA] Setting up config for project
