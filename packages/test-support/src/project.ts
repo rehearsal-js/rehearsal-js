@@ -174,6 +174,31 @@ export function emberAppTemplate(): Project {
   });
 }
 
+export function getEmber4AppProject(): Project {
+  const project = getEmberAppProject();
+
+  const importRoot = dirname(fileURLToPath(import.meta.url));
+  const result = importRoot.match(/.+test-support/);
+  if (!result || !Array.isArray(result)) {
+    return project;
+  }
+  const testSupport = result[0];
+
+  project.linkDevDependency('ember-source', {
+    baseDir: testSupport,
+    resolveName: 'ember-source-4.4',
+  });
+  project.linkDevDependency('ember-cli', {
+    baseDir: testSupport,
+    resolveName: 'ember-cli-4.4',
+  });
+  project.linkDevDependency('ember-data', {
+    baseDir: testSupport,
+    resolveName: 'ember-data-4.4',
+  });
+  return project;
+}
+
 export async function setupProject(project: Project): Promise<Project> {
   const { name: tmpDir } = tmp.dirSync();
   project.baseDir = tmpDir;
