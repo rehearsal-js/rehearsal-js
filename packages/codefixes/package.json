@@ -43,6 +43,7 @@
   "devDependencies": {
     "@rehearsal/service": "workspace:*",
     "@types/prettier": "^2.7.2",
+    "fixturify-project": "^5.2.0",
     "fs-extra": "^11.1.0",
     "prettier": "^2.8.3",
     "tmp": "^0.2.1",

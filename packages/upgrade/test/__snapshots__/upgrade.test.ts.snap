@@ -4,17 +4,17 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "// Test cases for TS2322
 
 /* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_const' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
-const dummy_const: number = 'string';
+const dummy_const: number = \\"string\\";
 
-let dummy_var: number = 0;
+let dummy_var = 0;
 /* @ts-expect-error @rehearsal TODO TS2322: The variable 'dummy_var' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type. */
-dummy_var = 'string';
+dummy_var = \\"string\\";
 
 console.log(dummy_const, dummy_var);
 
 function demo(): void {
-/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
-  return 'dummy-string';
+  /* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'void', but 'string' is returned. Please convert 'string' value to 'void' or update the function's return type. */
+  return \\"dummy-string\\";
 }
 
 demo();
@@ -27,72 +27,70 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 }
 
 let changeable: unknown;
-changeable = 'yes';
+changeable = \\"yes\\";
 
 /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'. Consider specifying type of argument to be 'string', using type assertion: '(changeable as string)', or using type guard: 'if (changeable instanceof string) { ... }'. */
 console.log(removeFirstChar(changeable));
 
-let num = 7;
+const num = 7;
 /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'number' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(num as string)', or using type guard: 'if (num instanceof string) { ... }'. */
-console.log(removeFirstChar(num));"
+console.log(removeFirstChar(num));
+"
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 3`] = `
-"
-import { sep } from 'path';
+"import { sep } from \\"path\\";
 
 sep;
-
-
-
 
 function defined_function_with_params(_defined_param: string): void {
   return;
 }
 
-defined_function_with_params('dummy-string');
+defined_function_with_params(\\"dummy-string\\");
 "
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 4`] = `""`;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 5`] = `
-"import React from 'react';
+"import React from \\"react\\";
 
-export function test(): void  {
-}
+export function test(): void {}
 
-export function Component(): Element  {
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
-    const element1 = <NonExistingElement />;
+export function Component(): Element {
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
+  const element1 = <NonExistingElement />;
 
   const element2 = (
     <h1>
-      The Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y Long Title
-{/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
-            <NonExistingElement>...</NonExistingElement>
-{/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
-            <p>{{ $notExistingVariable }}</p>
+      The
+      Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y
+      Long Title
+      {/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
+      <NonExistingElement>...</NonExistingElement>
+      {/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
+      <p>{{ $notExistingVariable }}</p>
     </h1>
   );
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
-    return <NonExistingFragment />;
+  /* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
+  return <NonExistingFragment />;
 }
 
-export function Test2(): Element  {
+export function Test2(): Element {
   const someBoolean = true;
 
-/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
+  /* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
   return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
 }
 "
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 6`] = `
-"import { Component } from 'react';
+"import { Component } from \\"react\\";
 
 function action(_target: unknown, propertyKey: string): void {
   console.log(propertyKey);
@@ -103,7 +101,11 @@ function action(_target: unknown, propertyKey: string): void {
  */
 export class Radio extends Component {
   args = {
-    onChange: async (one: boolean, two: boolean, v: boolean): Promise<boolean> => one || two || v
+    onChange: async (
+      one: boolean,
+      two: boolean,
+      v: boolean
+    ): Promise<boolean> => one || two || v,
   };
 
   one = true;
@@ -114,12 +116,13 @@ export class Radio extends Component {
    * @return {string}
    */
   @action
-/* @ts-expect-error @rehearsal TODO TS2355: A function whose declared type is neither 'void' nor 'any' must return a value. */
+  /* @ts-expect-error @rehearsal TODO TS2355: A function whose declared type is neither 'void' nor 'any' must return a value. */
   async onRadioChange(value: boolean): Promise<string> {
     this.one = true;
     this.two = false;
 
-    this.args.onChange(this.one, this.two, value)
+    this.args
+      .onChange(this.one, this.two, value)
       .then((status) => {
         if (status) {
           this.one = false;
@@ -136,60 +139,60 @@ export class Radio extends Component {
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 7`] = `
-"import React from 'react';
+"import React from \\"react\\";
 
-export function test(): void  {
-}
+export function test(): void {}
 
-export function Component(): Element  {
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
+export function Component(): Element {
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
   const element1 = <NonExistingElement />;
 
   const element2 = (
     <h1>
-      The Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y Long Title
-{/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
+      The
+      Very-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y-y
+      Long Title
+      {/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */}
       <NonExistingElement>...</NonExistingElement>
-{/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
-      <p>{{$notExistingVariable}}</p>
+      {/* @ts-expect-error @rehearsal TODO TS2322: Type 'notExistingVariable: any' is being returned or assigned, but type 'ReactNode' is expected. Please convert type 'notExistingVariable: any' to type 'ReactNode', or return or assign a variable of type 'ReactNode' */}
+      <p>{{ $notExistingVariable }}</p>
     </h1>
   );
 
   console.log(element1, element2);
 
-/* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
+  /* @ts-expect-error @rehearsal TODO TS2740: Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more. */
   return <NonExistingFragment />;
 }
 
-export function Test2(): Element  {
+export function Test2(): Element {
   const someBoolean = true;
 
-/* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
+  /* @ts-expect-error @rehearsal TODO TS2322: The function expects to return 'Element', but 'JSX.Element' is returned. Please convert 'JSX.Element' value to 'Element' or update the function's return type. */
   return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;
 }
-
 "
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 8`] = `
 "export function template(info: object): string {
-  let text = '';
+  let text = \\"\\";
 
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'one' does not exist on type 'object'. */
+  /* @ts-expect-error @rehearsal TODO TS2339: Property 'one' does not exist on type 'object'. */
   text += \`
     <module>
     <info argumentOne=\\"\${info.one}\\" argumentTwo=\\"\${info.two}\\"/>
     </module>\`;
 
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'two' does not exist on type 'object'. */
+  /* @ts-expect-error @rehearsal TODO TS2339: Property 'two' does not exist on type 'object'. */
   text += \`
     <module>
     <info argumentOne=\\"\${info.two}\\" argumentTwo=\\"\${info.three}\\"/>
     <info argumentOne=\\"\${info.two}\\" argumentTwo=\\"\${info.three}\\"/>
     </module>\`;
 
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'three' does not exist on type 'object'. */
-    text += \`<module>
+  /* @ts-expect-error @rehearsal TODO TS2339: Property 'three' does not exist on type 'object'. */
+  text += \`<module>
     <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
     <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
     <info argumentOne=\\"\${info.three}\\" argumentTwo=\\"\${info.four}\\"/>
@@ -206,7 +209,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * @param {any} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveAny(a: string, b): void  {
+export function oneOfParamsHaveAny(a: string, b): void {
   console.log(a, b);
 }
 
@@ -215,7 +218,7 @@ export function oneOfParamsHaveAny(a: string, b): void  {
  * @param {string | any} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveSomethingOrAny(a: string, b): void  {
+export function oneOfParamsHaveSomethingOrAny(a: string, b): void {
   console.log(a, b);
 }
 
@@ -223,8 +226,8 @@ export function oneOfParamsHaveSomethingOrAny(a: string, b): void  {
  * @param {String} a - A string
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
-export function returnTypeHasGenericAny(a: string): Promise<string>  {
-  return Promise.resolve(a)
+export function returnTypeHasGenericAny(a: string): Promise<string> {
+  return Promise.resolve(a);
 }
 
 /**
@@ -234,7 +237,7 @@ export function returnTypeHasGenericAny(a: string): Promise<string>  {
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
 export function oneOfParamsHaveAnyAndReturnHasGenericAny(a: string, b) {
-  return Promise.resolve([a, b])
+  return Promise.resolve([a, b]);
 }
 
 /**
@@ -262,19 +265,14 @@ export function doSomething(args, name: string): string | undefined {
   }
   return capitalize(name);
 }
-
-
 "
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 10`] = `
-"
-/* Existing comment */
-
-
+"/* Existing comment */
 
 export function usesMissingFunction(): void {
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'whereAmI'. */
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'whereAmI'. */
   return whereAmI();
 }
 
@@ -282,27 +280,23 @@ export function usesMissingVariable(): boolean {
   const something = true;
   const existingVar = true;
 
-  return something
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
-    ? missingVar
-    : existingVar;
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+  return something ? missingVar : existingVar;
 }
 
 export function usesMissingVarWithLongName(): boolean {
   const something = true;
 
   return something
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
-    ? missingVar
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
-    : missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
+    ? /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVar'. */
+      missingVar
+    : /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'. */
+      missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString;
 }
-
-
 
 // The next function call is not properly formatted
 /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'timestamp'. */
-timestamp(   );
+timestamp();
 "
 `;
 
@@ -315,22 +309,21 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * Breakpoint Map
  * @type {Object<string, number>}
  */
-const breakpointMap: { [s: string]: number; } = { s: 1, m: 2, l: 3 };
+const breakpointMap: { [s: string]: number } = { s: 1, m: 2, l: 3 };
 
 /**
  * Ordered Breakpoints
  * @type {Array<[string, number]>}
  */
-const orderedBreakpointsLongNameConstant: Array<[string, number]> = Object.entries(breakpointMap).sort(
-  (a, b) => a[1] - b[1]
-);
+const orderedBreakpointsLongNameConstant: Array<[string, number]> =
+  Object.entries(breakpointMap).sort((a, b) => a[1] - b[1]);
 
 export class Foo {
   /**
    * Size
    * @type {string}
    */
-  @action size: string = 'l';
+  @action size = \\"l\\";
 
   /**
    * Viewport Width
@@ -346,12 +339,15 @@ export class Foo {
   fooMethod(size: string): boolean {
     const nextBreakpointIndex =
       orderedBreakpointsLongNameConstant.indexOf(
-/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
+        /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string, number] | undefined' is not assignable to parameter of type 'string, number'. Consider verifying both types, using type assertion: '(         orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string)', or using type guard: 'if (         orderedBreakpointsLongNameConstant.find(([key]) => key === size) instanceof string) { ... }'. */
         orderedBreakpointsLongNameConstant.find(([key]) => key === size)
       ) + 1;
     if (nextBreakpointIndex < orderedBreakpointsLongNameConstant.length) {
-/* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
-      return this.viewportWidth >= orderedBreakpointsLongNameConstant[nextBreakpointIndex][1];
+      return (
+        /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+        this.viewportWidth >=
+        orderedBreakpointsLongNameConstant[nextBreakpointIndex][1]
+      );
     }
 
     return false;
@@ -372,7 +368,7 @@ export class Foo {
    * @returns {boolean}
    */
   isLess(size: string): boolean {
-/* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
     return this.viewportWidth < breakpointMap[size];
   }
 }
@@ -385,7 +381,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * @param {Object} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveObject(a: string, b): void  {
+export function oneOfParamsHaveObject(a: string, b): void {
   console.log(a, b);
 }
 
@@ -394,7 +390,7 @@ export function oneOfParamsHaveObject(a: string, b): void  {
  * @param {String | Object} b - hardcoded to any just for demonstrative purposes
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveSomethingOrObject(a: string, b): void  {
+export function oneOfParamsHaveSomethingOrObject(a: string, b): void {
   console.log(a, b);
 }
 
@@ -405,7 +401,7 @@ export function oneOfParamsHaveSomethingOrObject(a: string, b): void  {
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
 export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
-  return Promise.resolve([a, b])
+  return Promise.resolve([a, b]);
 }
 "
 `;
@@ -414,45 +410,41 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "/**
  * This is a file with some comments added in a previous run of rehearsal
  */
-import fs from 'fs';
-
-
+import fs from \\"fs\\";
 
 /* This is just a second comment that should not be touch */
 
- fs.existsSync('.');
+fs.existsSync(\\".\\");
 
-fs.existsSync('.'); 
+fs.existsSync(\\".\\");
 
-fs.existsSync('@rehearsal')
-
+fs.existsSync(\\"@rehearsal\\");
 
 // The next two cases has to be fixed
 try {
-  console.log('success');
+  console.log(\\"success\\");
 } catch (e) {
-    console.log((e as Error).message);
-/* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
-    console.log(e.notErrorMember);
+  console.log((e as Error).message);
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  console.log(e.notErrorMember);
 }
 "
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
-"export function test1(): string  {
-  return 'Test this';
+"export function test1(): string {
+  return \\"Test this\\";
 }
 
-export const test2 = () => console.log('Test this')
+export const test2 = () => console.log(\\"Test this\\");
 
-export const test3 = () => 'Test this';
+export const test3 = () => \\"Test this\\";
 
-
-export function test4<Type>(arg: Array<Type>): Type[]  {
+export function test4<Type>(arg: Array<Type>): Type[] {
   return arg;
 }
 
-export async function test5(): Promise<TestClass>  {
+export async function test5(): Promise<TestClass> {
   return new TestClass();
 }
 
@@ -462,16 +454,16 @@ interface TestInterface {
 
 class BaseTestClass {
   test2(param: boolean): number | string {
-    return param ? 0 : '0';
-  };
+    return param ? 0 : \\"0\\";
+  }
 }
 
 export class TestClass extends BaseTestClass implements TestInterface {
-  test1() : string | undefined {
+  test1(): string | undefined {
     return undefined;
   }
 
-  test2() : string | number {
+  test2(): string | number {
     return 0;
   }
 }
@@ -482,7 +474,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "// Basics
 
 class Animal {
-  title: string = '';
+  title = \\"\\";
 
   test(test: string): string {
     return test;
@@ -515,39 +507,39 @@ class Food {
 }
 
 class Dog extends Animal {
-  say(message: string) : string {
+  say(message: string): string {
     console.log(message);
-    return 'bar';
+    return \\"bar\\";
   }
 }
 
 export class WildDog extends Dog implements Wild, Happy {
-  say(message: string) : string {
+  say(message: string): string {
     console.log(message);
-    return 'bar';
+    return \\"bar\\";
   }
 
-  override feed(food: Food, quantity: number) : boolean {
+  override feed(food: Food, quantity: number): boolean {
     console.log(food, quantity);
     return true;
   }
 
-  wild(place: string) : string {
+  wild(place: string): string {
     return place;
   }
 
-  happy(num: number) : void {
+  happy(num: number): void {
     console.log(num);
   }
 }
 
 export class Cat extends Animal {
-  override say(text: string) : string {
+  override say(text: string): string {
     console.log(text);
-    return 'meo';
+    return \\"meo\\";
   }
 
-  feed(something: Food) : boolean {
+  feed(something: Food): boolean {
     console.log(something);
     return false;
   }
@@ -570,19 +562,23 @@ interface ConstrainedThingInterface<C extends Thing> {
 }
 
 export class GenericThingImp1 implements GenericThingInterface {
-  thing(a: number, b: string) : void {
+  thing(a: number, b: string): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
-  thing(a: boolean, b: number) : void {
+export class GenericThingImp2
+  implements GenericThingInterface<boolean, number>
+{
+  thing(a: boolean, b: number): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) : void {
+export class GenericThingImp3
+  implements ConstrainedThingInterface<{ foo: number; bar: string }>
+{
+  thing(c: { foo: number; bar: string }): void {
     console.log(c);
   }
 }
@@ -590,31 +586,34 @@ export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number
 // Generic Classes
 
 class GenericThingClass<A = number, B = string> {
-  thing(a: A, b: B): void  {
+  thing(a: A, b: B): void {
     console.log(a, b);
   }
 }
 
 class ConstrainedThingClass<C extends Thing> {
-  thing(c: C): void  {
+  thing(c: C): void {
     console.log(c);
   }
 }
 
 export class GenericThingExt1 extends GenericThingClass {
-  thing(a: number, b: string) : void {
+  thing(a: number, b: string): void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt2 extends GenericThingClass<boolean, number> {
-  thing(a: boolean, b: number) : void {
+  thing(a: boolean, b: number): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) : void {
+export class GenericThingExt3 extends ConstrainedThingClass<{
+  foo: number;
+  bar: string;
+}> {
+  thing(c: { foo: number; bar: string }): void {
     console.log(c);
   }
 }
@@ -639,17 +638,17 @@ class MultipleClass {
 }
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  boo(ab, b?): boolean  {
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  boo(ab, b?): boolean {
     return !ab || !b;
   }
 
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  foo(ab, b?): boolean  {
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  foo(ab, b?): boolean {
     return !ab || !b;
   }
 
-  moo(b: string) : string {
+  moo(b: string): string {
     return b;
   }
 }
@@ -657,11 +656,11 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
-"export function test1(me: string): string  {
-  return 'This is ' + me;
+"export function test1(me: string): string {
+  return \\"This is \\" + me;
 }
 
-test1('test');
+test1(\\"test\\");
 
 /**
  * JSDoc
@@ -683,8 +682,8 @@ export function test3(me: number): string {
   return me.toString();
 }
 
-/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'. */
-test3('O');
+/* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '(\\"O\\" as string)', or using type guard: 'if (\\"O\\" instanceof string) { ... }'. */
+test3(\\"O\\");
 
 export class A {
   /**
@@ -708,7 +707,7 @@ export class Foo {
     this.value = value;
   }
 
-  boo(value: number): number | null  {
+  boo(value: number): number | null {
     this.value = value;
 
     if (this.value) {
@@ -729,9 +728,62 @@ export class Foo {
  *
  * @return {void}
  */
-/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
-export function think(a: number, b: (string | number), c, d: UnavailableType): void {
+export function think(
+  a: number,
+  b: string | number,
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
+  c,
+  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'UnavailableType'. */
+  d: UnavailableType
+): void {
   return console.log(a, b, c, d);
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
+"{
+  \\"compilerOptions\\": {
+    \\"allowSyntheticDefaultImports\\": true,
+    \\"composite\\": true,
+    \\"declaration\\": true,
+    \\"declarationMap\\": true,
+    \\"esModuleInterop\\": true,
+    \\"experimentalDecorators\\": true,
+    \\"jsx\\": \\"react\\",
+    \\"module\\": \\"commonjs\\",
+    \\"moduleResolution\\": \\"node\\",
+    \\"newLine\\": \\"LF\\",
+    \\"noImplicitReturns\\": false,
+    \\"noUnusedLocals\\": true,
+    \\"noUnusedParameters\\": true,
+    \\"resolveJsonModule\\": true,
+    \\"sourceMap\\": true,
+    \\"strict\\": true,
+    \\"target\\": \\"es2017\\"
+  }
+}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
+"{
+  \\"parser\\": \\"@typescript-eslint/parser\\",
+  \\"root\\": true,
+  \\"env\\": {
+    \\"shared-node-browser\\": true
+  },
+  \\"parserOptions\\": {
+    \\"sourceType\\": \\"module\\"
+  },
+  \\"plugins\\": [\\"@typescript-eslint\\", \\"prettier\\"],
+  \\"extends\\": [
+    \\"plugin:@typescript-eslint/eslint-recommended\\",
+    \\"plugin:@typescript-eslint/recommended\\",
+    \\"eslint:recommended\\",
+    \\"plugin:prettier/recommended\\",
+    \\"prettier\\"
+  ]
 }
 "
 `;
@@ -790,7 +842,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
         "startColumn": 3,
         "startLine": 14,
       },
-      "nodeText": "return 'dummy-string';",
+      "nodeText": "return \\"dummy-string\\";",
       "ruleId": "TS2322",
       "type": 0,
     },
@@ -831,6 +883,60 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "type": 0,
     },
     {
+      "analysisTarget": "2345.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'changeable' is never reassigned. Use 'const' instead.",
+      "hintAdded": false,
+      "message": "'changeable' is never reassigned. Use 'const' instead.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 11,
+        "endLine": 6,
+        "startColumn": 1,
+        "startLine": 6,
+      },
+      "nodeText": "",
+      "ruleId": "prefer-const",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "6133.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_defined_param' is defined but never used.",
+      "hintAdded": false,
+      "message": "'_defined_param' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 61,
+        "endLine": 5,
+        "startColumn": 39,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "6133.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_defined_param' is defined but never used.",
+      "hintAdded": false,
+      "message": "'_defined_param' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 61,
+        "endLine": 5,
+        "startColumn": 39,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "type": 1,
+    },
+    {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
@@ -839,10 +945,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 41,
-        "endLine": 8,
-        "startColumn": 23,
-        "startLine": 8,
+        "endColumn": 39,
+        "endLine": 7,
+        "startColumn": 21,
+        "startLine": 7,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -857,10 +963,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'NonExistingElement'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 32,
-        "endLine": 14,
-        "startColumn": 14,
-        "startLine": 14,
+        "endColumn": 26,
+        "endLine": 15,
+        "startColumn": 8,
+        "startLine": 15,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -875,10 +981,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 39,
-        "endLine": 16,
-        "startColumn": 19,
-        "startLine": 16,
+        "endColumn": 33,
+        "endLine": 17,
+        "startColumn": 13,
+        "startLine": 17,
       },
       "nodeText": "$notExistingVariable",
       "ruleId": "TS2322",
@@ -893,10 +999,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
-        "endColumn": 36,
-        "endLine": 23,
-        "startColumn": 5,
-        "startLine": 23,
+        "endColumn": 34,
+        "endLine": 24,
+        "startColumn": 3,
+        "startLine": 24,
       },
       "nodeText": "return <NonExistingFragment />;",
       "ruleId": "TS2740",
@@ -912,13 +1018,139 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 60,
-        "endLine": 30,
+        "endLine": 31,
         "startColumn": 3,
-        "startLine": 30,
+        "startLine": 31,
       },
       "nodeText": "return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;",
       "ruleId": "TS2322",
       "type": 0,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Unexpected empty function 'test'.",
+      "hintAdded": false,
+      "message": "Unexpected empty function 'test'.",
+      "nodeKind": "FunctionDeclaration",
+      "nodeLocation": {
+        "endColumn": 32,
+        "endLine": 3,
+        "startColumn": 30,
+        "startLine": 3,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-empty-function",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'Element' is not defined.",
+      "hintAdded": false,
+      "message": "'Element' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 37,
+        "endLine": 5,
+        "startColumn": 30,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingElement' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingElement' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 39,
+        "endLine": 7,
+        "startColumn": 21,
+        "startLine": 7,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingElement' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingElement' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 26,
+        "endLine": 15,
+        "startColumn": 8,
+        "startLine": 15,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'$notExistingVariable' is not defined.",
+      "hintAdded": false,
+      "message": "'$notExistingVariable' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 33,
+        "endLine": 17,
+        "startColumn": 13,
+        "startLine": 17,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingFragment' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingFragment' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 30,
+        "endLine": 24,
+        "startColumn": 11,
+        "startLine": 24,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react-processed.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'Element' is not defined.",
+      "hintAdded": false,
+      "message": "'Element' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 33,
+        "endLine": 27,
+        "startColumn": 26,
+        "startLine": 27,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
     },
     {
       "analysisTarget": "react-xx.ts",
@@ -930,9 +1162,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "TypeReference",
       "nodeLocation": {
         "endColumn": 55,
-        "endLine": 24,
+        "endLine": 28,
         "startColumn": 40,
-        "startLine": 24,
+        "startLine": 28,
       },
       "nodeText": "Promise<string>",
       "ruleId": "TS2355",
@@ -948,9 +1180,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 39,
-        "endLine": 8,
+        "endLine": 7,
         "startColumn": 21,
-        "startLine": 8,
+        "startLine": 7,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -966,9 +1198,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 26,
-        "endLine": 14,
+        "endLine": 15,
         "startColumn": 8,
-        "startLine": 14,
+        "startLine": 15,
       },
       "nodeText": "NonExistingElement",
       "ruleId": "TS2304",
@@ -983,10 +1215,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Type '{ $notExistingVariable: any; }' is not assignable to type 'ReactNode'..   Object literal may only specify known properties, and '$notExistingVariable' does not exist in type 'ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal'.",
       "nodeKind": "ShorthandPropertyAssignment",
       "nodeLocation": {
-        "endColumn": 32,
-        "endLine": 16,
-        "startColumn": 12,
-        "startLine": 16,
+        "endColumn": 33,
+        "endLine": 17,
+        "startColumn": 13,
+        "startLine": 17,
       },
       "nodeText": "$notExistingVariable",
       "ruleId": "TS2322",
@@ -1002,9 +1234,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 34,
-        "endLine": 23,
+        "endLine": 24,
         "startColumn": 3,
-        "startLine": 23,
+        "startLine": 24,
       },
       "nodeText": "return <NonExistingFragment />;",
       "ruleId": "TS2740",
@@ -1020,13 +1252,139 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "ReturnStatement",
       "nodeLocation": {
         "endColumn": 60,
-        "endLine": 30,
+        "endLine": 31,
         "startColumn": 3,
-        "startLine": 30,
+        "startLine": 31,
       },
       "nodeText": "return someBoolean ? <br doesNotExist=\\"fail\\" /> : <br />;",
       "ruleId": "TS2322",
       "type": 0,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Unexpected empty function 'test'.",
+      "hintAdded": false,
+      "message": "Unexpected empty function 'test'.",
+      "nodeKind": "FunctionDeclaration",
+      "nodeLocation": {
+        "endColumn": 32,
+        "endLine": 3,
+        "startColumn": 30,
+        "startLine": 3,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-empty-function",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'Element' is not defined.",
+      "hintAdded": false,
+      "message": "'Element' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 37,
+        "endLine": 5,
+        "startColumn": 30,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingElement' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingElement' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 39,
+        "endLine": 7,
+        "startColumn": 21,
+        "startLine": 7,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingElement' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingElement' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 26,
+        "endLine": 15,
+        "startColumn": 8,
+        "startLine": 15,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'$notExistingVariable' is not defined.",
+      "hintAdded": false,
+      "message": "'$notExistingVariable' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 33,
+        "endLine": 17,
+        "startColumn": 13,
+        "startLine": 17,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'NonExistingFragment' is not defined.",
+      "hintAdded": false,
+      "message": "'NonExistingFragment' is not defined.",
+      "nodeKind": "JSXIdentifier",
+      "nodeLocation": {
+        "endColumn": 30,
+        "endLine": 24,
+        "startColumn": 11,
+        "startLine": 24,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "react.tsx",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'Element' is not defined.",
+      "hintAdded": false,
+      "message": "'Element' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 33,
+        "endLine": 27,
+        "startColumn": 26,
+        "startLine": 27,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
     },
     {
       "analysisTarget": "template-literal.ts",
@@ -1182,9 +1540,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 18,
-        "endLine": 8,
+        "endLine": 5,
         "startColumn": 10,
-        "startLine": 8,
+        "startLine": 5,
       },
       "nodeText": "whereAmI",
       "ruleId": "TS2304",
@@ -1199,10 +1557,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Cannot find name 'missingVar'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 17,
-        "endLine": 17,
-        "startColumn": 7,
-        "startLine": 17,
+        "endColumn": 32,
+        "endLine": 13,
+        "startColumn": 22,
+        "startLine": 13,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -1218,9 +1576,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 17,
-        "endLine": 26,
+        "endLine": 21,
         "startColumn": 7,
-        "startLine": 26,
+        "startLine": 21,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -1236,9 +1594,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 97,
-        "endLine": 28,
+        "endLine": 23,
         "startColumn": 7,
-        "startLine": 28,
+        "startLine": 23,
       },
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
       "ruleId": "TS2304",
@@ -1254,13 +1612,103 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 10,
-        "endLine": 35,
+        "endLine": 28,
         "startColumn": 1,
-        "startLine": 35,
+        "startLine": 28,
       },
       "nodeText": "timestamp",
       "ruleId": "TS2304",
       "type": 0,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'whereAmI' is not defined.",
+      "hintAdded": false,
+      "message": "'whereAmI' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 18,
+        "endLine": 5,
+        "startColumn": 10,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'missingVar' is not defined.",
+      "hintAdded": false,
+      "message": "'missingVar' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 32,
+        "endLine": 13,
+        "startColumn": 22,
+        "startLine": 13,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'missingVar' is not defined.",
+      "hintAdded": false,
+      "message": "'missingVar' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 17,
+        "endLine": 21,
+        "startColumn": 7,
+        "startLine": 21,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString' is not defined.",
+      "hintAdded": false,
+      "message": "'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 97,
+        "endLine": 23,
+        "startColumn": 7,
+        "startLine": 23,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'timestamp' is not defined.",
+      "hintAdded": false,
+      "message": "'timestamp' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 10,
+        "endLine": 28,
+        "startColumn": 1,
+        "startLine": 28,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
     },
     {
       "analysisTarget": "ts-multiline-hint.ts",
@@ -1274,9 +1722,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "CallExpression",
       "nodeLocation": {
         "endColumn": 73,
-        "endLine": 41,
+        "endLine": 40,
         "startColumn": 9,
-        "startLine": 41,
+        "startLine": 40,
       },
       "nodeText": "orderedBreakpointsLongNameConstant.find(([key]) => key === size)",
       "ruleId": "TS2345",
@@ -1291,9 +1739,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Object is possibly 'undefined'.",
       "nodeKind": "PropertyAccessExpression",
       "nodeLocation": {
-        "endColumn": 32,
+        "endColumn": 27,
         "endLine": 45,
-        "startColumn": 14,
+        "startColumn": 9,
         "startLine": 45,
       },
       "nodeText": "this.viewportWidth",
@@ -1310,9 +1758,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "PropertyAccessExpression",
       "nodeLocation": {
         "endColumn": 30,
-        "endLine": 67,
+        "endLine": 69,
         "startColumn": 12,
-        "startLine": 67,
+        "startLine": 69,
       },
       "nodeText": "this.viewportWidth",
       "ruleId": "TS2532",
@@ -1381,10 +1829,10 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "'e' is of type 'unknown'.",
       "nodeKind": "Identifier",
       "nodeLocation": {
-        "endColumn": 18,
-        "endLine": 23,
-        "startColumn": 17,
-        "startLine": 23,
+        "endColumn": 16,
+        "endLine": 20,
+        "startColumn": 15,
+        "startLine": 20,
       },
       "nodeText": "e",
       "ruleId": "TS18046",
@@ -1400,9 +1848,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 6,
-        "endLine": 162,
+        "endLine": 169,
         "startColumn": 3,
-        "startLine": 162,
+        "startLine": 169,
       },
       "nodeText": "boo",
       "ruleId": "TS2416",
@@ -1418,19 +1866,325 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 6,
-        "endLine": 167,
+        "endLine": 174,
         "startColumn": 3,
-        "startLine": 167,
+        "startLine": 174,
       },
       "nodeText": "foo",
       "ruleId": "TS2416",
       "type": 0,
     },
     {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'place' is defined but never used.",
+      "hintAdded": false,
+      "message": "'place' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 21,
+        "endLine": 21,
+        "startColumn": 8,
+        "startLine": 21,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'num' is defined but never used.",
+      "hintAdded": false,
+      "message": "'num' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 20,
+        "endLine": 25,
+        "startColumn": 9,
+        "startLine": 25,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 13,
+        "endLine": 84,
+        "startColumn": 9,
+        "startLine": 84,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'b' is defined but never used.",
+      "hintAdded": false,
+      "message": "'b' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 19,
+        "endLine": 84,
+        "startColumn": 15,
+        "startLine": 84,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'c' is defined but never used.",
+      "hintAdded": false,
+      "message": "'c' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 13,
+        "endLine": 88,
+        "startColumn": 9,
+        "startLine": 88,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 151,
+        "startColumn": 7,
+        "startLine": 151,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'b' is defined but never used.",
+      "hintAdded": false,
+      "message": "'b' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 152,
+        "startColumn": 7,
+        "startLine": 152,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 153,
+        "startColumn": 7,
+        "startLine": 153,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'b' is defined but never used.",
+      "hintAdded": false,
+      "message": "'b' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 27,
+        "endLine": 153,
+        "startColumn": 18,
+        "startLine": 153,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 155,
+        "startColumn": 7,
+        "startLine": 155,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 159,
+        "startColumn": 7,
+        "startLine": 159,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Duplicate name 'boo'.",
+      "hintAdded": false,
+      "message": "Duplicate name 'boo'.",
+      "nodeKind": "MethodDefinition",
+      "nodeLocation": {
+        "endColumn": 26,
+        "endLine": 160,
+        "startColumn": 3,
+        "startLine": 160,
+      },
+      "nodeText": "",
+      "ruleId": "no-dupe-class-members",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'b' is defined but never used.",
+      "hintAdded": false,
+      "message": "'b' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 160,
+        "startColumn": 7,
+        "startLine": 160,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Duplicate name 'boo'.",
+      "hintAdded": false,
+      "message": "Duplicate name 'boo'.",
+      "nodeKind": "MethodDefinition",
+      "nodeLocation": {
+        "endColumn": 38,
+        "endLine": 161,
+        "startColumn": 3,
+        "startLine": 161,
+      },
+      "nodeText": "",
+      "ruleId": "no-dupe-class-members",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'a' is defined but never used.",
+      "hintAdded": false,
+      "message": "'a' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 161,
+        "startColumn": 7,
+        "startLine": 161,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'b' is defined but never used.",
+      "hintAdded": false,
+      "message": "'b' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 27,
+        "endLine": 161,
+        "startColumn": 18,
+        "startLine": 161,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-types-extends.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Duplicate name 'boo'.",
+      "hintAdded": false,
+      "message": "Duplicate name 'boo'.",
+      "nodeKind": "MethodDefinition",
+      "nodeLocation": {
+        "endColumn": 4,
+        "endLine": 162,
+        "startColumn": 3,
+        "startLine": 162,
+      },
+      "nodeText": "",
+      "ruleId": "no-dupe-class-members",
+      "type": 1,
+    },
+    {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
       "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
-      "hint": "Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'.",
+      "hint": "Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '(\\"O\\" as string)', or using type guard: 'if (\\"O\\" instanceof string) { ... }'.",
       "hintAdded": true,
       "message": "Argument of type 'string' is not assignable to parameter of type 'number'.",
       "nodeKind": "StringLiteral",
@@ -1440,7 +2194,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
         "startColumn": 7,
         "startLine": 28,
       },
-      "nodeText": "'O'",
+      "nodeText": "\\"O\\"",
       "ruleId": "TS2345",
       "type": 0,
     },
@@ -1453,14 +2207,50 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Parameter 'c' implicitly has an 'any' type.",
       "nodeKind": "Parameter",
       "nodeLocation": {
-        "endColumn": 57,
-        "endLine": 74,
-        "startColumn": 56,
-        "startLine": 74,
+        "endColumn": 4,
+        "endLine": 77,
+        "startColumn": 3,
+        "startLine": 77,
       },
       "nodeText": "c",
       "ruleId": "TS7006",
       "type": 0,
+    },
+    {
+      "analysisTarget": "ts-types.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "hint": "Cannot find name 'UnavailableType'.",
+      "hintAdded": true,
+      "message": "Cannot find name 'UnavailableType'.",
+      "nodeKind": "TypeReference",
+      "nodeLocation": {
+        "endColumn": 21,
+        "endLine": 79,
+        "startColumn": 6,
+        "startLine": 79,
+      },
+      "nodeText": "UnavailableType",
+      "ruleId": "TS2304",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-types.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'UnavailableType' is not defined.",
+      "hintAdded": false,
+      "message": "'UnavailableType' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 21,
+        "endLine": 79,
+        "startColumn": 6,
+        "startLine": 79,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
+      "type": 1,
     },
   ],
   "summary": [

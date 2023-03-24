@@ -1,1 +1,1 @@
-export const DAY_IN_WEEK = 7
+export const DAY_IN_WEEK = 7;

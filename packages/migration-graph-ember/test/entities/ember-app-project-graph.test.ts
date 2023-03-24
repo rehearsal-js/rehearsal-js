@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test } from 'vitest';
 import { getEmberProject, getEmberProjectFixture, setupProject } from '@rehearsal/test-support';
 import { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
+import { Project } from 'fixturify-project';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { EmberAppProjectGraph } from '../../src/entities/ember-app-project-graph.js';
 
@@ -15,8 +16,14 @@ function filter(arr: GraphNode<ModuleNode>[]): GraphNode<ModuleNode>[] {
 }
 
 describe('Unit | EmberAppProjectGraph', () => {
+  let project: Project;
+
+  afterEach(() => {
+    project.dispose();
+  });
+
   test('should discover in-repo-addon from package.json', async () => {
-    const project = getEmberProject('app-with-in-repo-addon');
+    project = getEmberProject('app-with-in-repo-addon');
 
     await setupProject(project);
 
@@ -27,7 +34,7 @@ describe('Unit | EmberAppProjectGraph', () => {
   });
 
   test('should create an edge between app and in-repo addon', async () => {
-    const project = getEmberProject('app-with-in-repo-addon');
+    project = getEmberProject('app-with-in-repo-addon');
 
     await setupProject(project);
 
@@ -60,7 +67,7 @@ describe('Unit | EmberAppProjectGraph', () => {
 
     // To add a entry in the registry for this lookup so we can update the synthetic node that is injected when this service is not found.
 
-    const project = getEmberProject('app-with-in-repo-addon');
+    project = getEmberProject('app-with-in-repo-addon');
 
     const addonPackageJson = `
       {
@@ -163,7 +170,7 @@ export default class Salutation extends Component {
   });
   describe('options.entrypoint', () => {
     test('should discover only one package and it be from the addon', async () => {
-      const project = getEmberProject('app-with-in-repo-addon');
+      project = getEmberProject('app-with-in-repo-addon');
 
       // Augment the app and addon code to have component that uses a service from the addon.
       project.mergeFiles({
@@ -243,7 +250,7 @@ export default class Salutation extends Component {
       ]);
     });
     test('should not include a service dependency', async () => {
-      const project = getEmberProject('app-with-in-repo-addon');
+      project = getEmberProject('app-with-in-repo-addon');
 
       // Augment the app and addon code to have component that uses a service from the addon.
       project.mergeFiles({
@@ -299,7 +306,7 @@ export default class Salutation extends Component {
   });
 
   test('options.exclude', async () => {
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     await setupProject(project);
 
@@ -324,7 +331,7 @@ export default class Salutation extends Component {
   });
 
   test('options.include', async () => {
-    const project = getEmberProject('app');
+    project = getEmberProject('app');
 
     // We exclude public by default see EmberAppPackage
     project.mergeFiles({
@@ -363,7 +370,7 @@ export default class Salutation extends Component {
   });
 
   test('should create an edge between an app using a service and the in-repo addon that provides it', async () => {
-    const project = getEmberProject('app-with-in-repo-addon');
+    project = getEmberProject('app-with-in-repo-addon');
 
     // Augment the app and addon code to have component that uses a service from the addon.
     project.mergeFiles({
@@ -435,10 +442,6 @@ export default class Salutation extends Component {
     ]);
   });
 
-  test.todo('should handle ember packages with relative (../) ember-addon.paths', () => {
-    expect(false).toBe(true);
-  });
-
   describe('variants', () => {
     const EXPECTED_APP_FILES = [
       'app/app.js',
@@ -451,7 +454,7 @@ export default class Salutation extends Component {
     ];
 
     test('app', async () => {
-      const project = await getEmberProjectFixture('app');
+      project = await getEmberProjectFixture('app');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir);
       projectGraph.discover();
@@ -463,7 +466,7 @@ export default class Salutation extends Component {
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-addon', async () => {
-      const project = await getEmberProjectFixture('app-with-in-repo-addon');
+      project = await getEmberProjectFixture('app-with-in-repo-addon');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir);
       projectGraph.discover();
@@ -495,7 +498,7 @@ export default class Salutation extends Component {
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-engine', async () => {
-      const project = await getEmberProjectFixture('app-with-in-repo-engine');
+      project = await getEmberProjectFixture('app-with-in-repo-engine');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir);
       projectGraph.discover();

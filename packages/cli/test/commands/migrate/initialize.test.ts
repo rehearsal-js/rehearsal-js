@@ -2,8 +2,9 @@ import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 import { initTask } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 import { CustomConfig } from '../../../src/types.js';
+import type { Project } from 'fixturify-project';
 
 function createUserConfig(
   basePath: string,
@@ -15,7 +16,7 @@ function createUserConfig(
 }
 
 describe('Task: initialize', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
 
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
@@ -27,16 +28,17 @@ describe('Task: initialize', () => {
 
   beforeEach(() => {
     output = '';
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
   });
 
   afterEach(() => {
     output = '';
     vi.clearAllMocks();
+    project.dispose();
   });
 
   test('read and store default config in context', async () => {
-    createUserConfig(basePath, {
+    createUserConfig(project.baseDir, {
       migrate: {
         include: ['test'],
         exclude: ['docs'],
@@ -51,14 +53,16 @@ describe('Task: initialize', () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { ci: true });
+    await project.write();
+
+    const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(9);
 
     expect(ctx.userConfig).toBeTruthy();
-    expect(ctx?.userConfig?.basePath).toBe(basePath);
+    expect(ctx?.userConfig?.basePath).toBe(project.baseDir);
     expect(ctx?.userConfig?.config).toMatchSnapshot();
     expect(ctx?.userConfig?.hasDependencies).toBeTruthy();
     expect(ctx?.userConfig?.hasLintSetup).toBeTruthy();
@@ -71,7 +75,7 @@ describe('Task: initialize', () => {
 
   test('read and store config via --userConfig', async () => {
     createUserConfig(
-      basePath,
+      project.baseDir,
       {
         migrate: {
           include: ['test'],
@@ -89,14 +93,19 @@ describe('Task: initialize', () => {
       'another-config.json'
     );
 
-    const options = createMigrateOptions(basePath, { ci: true, userConfig: 'another-config.json' });
+    await project.write();
+
+    const options = createMigrateOptions(project.baseDir, {
+      ci: true,
+      userConfig: 'another-config.json',
+    });
     const tasks = [initTask(options)];
     const ctx = await listrTaskRunner(tasks);
 
     expect.assertions(9);
 
     expect(ctx.userConfig).toBeTruthy();
-    expect(ctx?.userConfig?.basePath).toBe(basePath);
+    expect(ctx?.userConfig?.basePath).toBe(project.baseDir);
     expect(ctx?.userConfig?.config).toMatchSnapshot();
     expect(ctx?.userConfig?.hasDependencies).toBeTruthy();
     expect(ctx?.userConfig?.hasLintSetup).toBeTruthy();

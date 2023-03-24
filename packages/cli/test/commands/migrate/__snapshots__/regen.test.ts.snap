@@ -2,10 +2,12 @@
 
 exports[`Task: regen > no effect on JS filse before conversion 1`] = `
 "[STARTED] Initialize
-[DATA] Setting up config for basic
+[DATA] Setting up config for basic_regen
 [SUCCESS] Initialize
+[STARTED] Validate project
+[SUCCESS] Validate project
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
 [STARTED] Regenerating report for TS errors and Eslint errors
 [TITLE] Migration Report Generated
 [TITLE] 
@@ -34,7 +36,7 @@ exports[`Task: regen > no effect on JS filse before conversion 1`] = `
 
 exports[`Task: regen > update ts and lint errors based on previous conversion 1`] = `
 "[STARTED] Initialize
-[DATA] Setting up config for basic
+[DATA] Setting up config for project
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
@@ -45,70 +47,61 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyzing Project
-[DATA] Running migration on basic
+[DATA] Running migration on project
 [SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
-[DATA] git mv /foo.js to /foo.ts
-[DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
-[DATA] git mv /index.js to /index.ts
-[DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] processing file: /index.ts
 [TITLE] Migration Complete
 [TITLE] 
 [TITLE] 
-[TITLE]   3 JS files converted to TS
+[TITLE]   0 JS files converted to TS
 [TITLE] 
-[TITLE]   4 errors caught by rehearsal
+[TITLE]   0 errors caught by rehearsal
 [TITLE] 
-[TITLE]   3 have been fixed by rehearsal
+[TITLE]   0 have been fixed by rehearsal
 [TITLE] 
-[TITLE]   1 errors need to be fixed manually
+[TITLE]   0 errors need to be fixed manually
 [TITLE] 
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE]     -- 0 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
 [SUCCESS] 
-[SUCCESS]   3 JS files converted to TS
+[SUCCESS]   0 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   4 errors caught by rehearsal
+[SUCCESS]   0 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
 [SUCCESS] 
-[SUCCESS]   1 errors need to be fixed manually
+[SUCCESS]   0 errors need to be fixed manually
 [SUCCESS] 
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS]     -- 0 eslint errors, with details in the report
 [SUCCESS] 
 [STARTED] Regenerating report for TS errors and Eslint errors
-[DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] processing file: /index.ts
 [TITLE] Migration Report Generated
 [TITLE] 
 [TITLE] 
-[TITLE]   3 ts files have been scanned
+[TITLE]   0 ts files have been scanned
 [TITLE] 
-[TITLE]   1 errors caught by rehearsal
+[TITLE]   0 errors caught by rehearsal
 [TITLE] 
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE]     -- 0 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Report Generated
 [SUCCESS] 
 [SUCCESS] 
-[SUCCESS]   3 ts files have been scanned
+[SUCCESS]   0 ts files have been scanned
 [SUCCESS] 
-[SUCCESS]   1 errors caught by rehearsal
+[SUCCESS]   0 errors caught by rehearsal
 [SUCCESS] 
 [SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS]     -- 0 eslint errors, with details in the report
 [SUCCESS] 
 "
 `;

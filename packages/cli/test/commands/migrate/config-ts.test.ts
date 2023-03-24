@@ -3,9 +3,10 @@ import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 import { CustomConfig, TSConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
+import type { Project } from 'fixturify-project';
 
 function createUserConfig(basePath: string, config: CustomConfig): void {
   const configPath = resolve(basePath, 'rehearsal-config.json');
@@ -13,8 +14,8 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
 }
 
 describe('Task: config-ts', () => {
-  let basePath = '';
   let output = '';
+  let project: Project;
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
   });
@@ -24,34 +25,35 @@ describe('Task: config-ts', () => {
 
   beforeEach(() => {
     output = '';
-    basePath = prepareTmpDir('initialization');
+    project = prepareProject('initialization');
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    project.dispose();
   });
 
   test('create tsconfig if not existed', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    expect(readJSONSync(resolve(basePath, 'tsconfig.json'))).matchSnapshot();
+    expect(readJSONSync(resolve(project.baseDir, 'tsconfig.json'))).matchSnapshot();
     expect(output).matchSnapshot();
   });
 
   test('update tsconfig if exists', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: false } };
-    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
 
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
@@ -61,14 +63,14 @@ describe('Task: config-ts', () => {
   test('update tsconfig if invalid extends exist', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { extends: 'invalid-tsconfig.json' };
-    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
 
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
@@ -78,9 +80,9 @@ describe('Task: config-ts', () => {
   test('skip if tsconfig.json exists with strict on', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: true } };
-    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
@@ -90,7 +92,7 @@ describe('Task: config-ts', () => {
   });
 
   test('run custom config command with user config provided', async () => {
-    createUserConfig(basePath, {
+    createUserConfig(project.baseDir, {
       migrate: {
         setup: {
           ts: { command: 'touch', args: ['custom-ts-config-script'] },
@@ -98,22 +100,22 @@ describe('Task: config-ts', () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
     const tasks = [tsConfigTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command works
-    expect(readdirSync(basePath)).toContain('custom-ts-config-script');
+    expect(readdirSync(project.baseDir)).toContain('custom-ts-config-script');
     expect(output).toMatchSnapshot();
   });
 
   test('skip custom config command', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: true } };
-    writeJSONSync(resolve(basePath, 'tsconfig.json'), oldTsConfig);
+    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
-    createUserConfig(basePath, {
+    createUserConfig(project.baseDir, {
       migrate: {
         setup: {
           ts: { command: 'touch', args: ['custom-ts-config-script'] },
@@ -121,19 +123,19 @@ describe('Task: config-ts', () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
     const tasks = [tsConfigTask(options, { userConfig })];
 
     await listrTaskRunner(tasks); // should be skipped
 
     // This proves the custom command works not triggered
-    expect(readdirSync(basePath)).not.toContain('custom-ts-config-script');
+    expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
     expect(output).toMatchSnapshot();
   });
 
   test('postTsSetup hook from user config', async () => {
-    createUserConfig(basePath, {
+    createUserConfig(project.baseDir, {
       migrate: {
         setup: {
           ts: { command: 'touch', args: ['custom-ts-config-script'] },
@@ -142,14 +144,14 @@ describe('Task: config-ts', () => {
       },
     });
 
-    const options = createMigrateOptions(basePath, { userConfig: 'rehearsal-config.json' });
-    const userConfig = new UserConfig(basePath, 'rehearsal-config.json', 'migrate');
+    const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
+    const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
     const tasks = [tsConfigTask(options, { userConfig })];
     await listrTaskRunner(tasks);
 
     // This proves the custom command and hook works
-    expect(readdirSync(basePath)).toContain('foo');
-    expect(readdirSync(basePath)).not.toContain('custom-ts-config-script');
+    expect(readdirSync(project.baseDir)).toContain('foo');
+    expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
     expect(output).toMatchSnapshot();
   });
 });

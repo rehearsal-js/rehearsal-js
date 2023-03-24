@@ -1,5 +1,6 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, afterEach } from 'vitest';
 import { getEmberProjectFixture } from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
 import { EmberAddonProjectGraph } from '../../src/entities/ember-addon-project-graph.js';
 import type { GraphNode, ModuleNode, UniqueNode } from '@rehearsal/migration-graph-shared';
 
@@ -14,8 +15,14 @@ function filter(arr: GraphNode<ModuleNode>[]): GraphNode<ModuleNode>[] {
 }
 
 describe('Unit | EmberAddonProjectGraph', () => {
+  let project: Project;
+
+  afterEach(() => {
+    project.dispose();
+  });
+
   test('should produce a graph of all files in an addon', async () => {
-    const project = await getEmberProjectFixture('addon');
+    project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir);
     projectGraph.discover();
@@ -35,7 +42,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
   });
 
   test('options.exclude', async () => {
-    const project = await getEmberProjectFixture('addon');
+    project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, { exclude: ['tests/dummy'] });
     projectGraph.discover();
@@ -53,7 +60,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
   });
 
   test('options.include', async () => {
-    const project = await getEmberProjectFixture('addon');
+    project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, { include: ['^app'] });
     projectGraph.discover();

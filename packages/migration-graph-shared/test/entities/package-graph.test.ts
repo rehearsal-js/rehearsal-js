@@ -1,17 +1,12 @@
-import { join } from 'node:path';
-import { mkdirSync } from 'node:fs';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
-import { getLibrary } from '@rehearsal/test-support';
-import fixturify from 'fixturify';
-import { sync as rimraf } from 'rimraf';
-import tmp from 'tmp';
+import { join } from 'path';
+import { describe, expect, test, afterEach } from 'vitest';
+import { getFiles } from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
 import { Package } from '../../src/entities/package.js';
 import { Graph, GraphNode } from '../../src/graph/index.js';
 import { PackageGraph } from '../../src/entities/package-graph.js';
 
 import type { ModuleNode, PackageNode } from '../../src/types.js';
-
-tmp.setGracefulCleanup();
 
 function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
   return Array.from(arr).map((n) => {
@@ -20,33 +15,25 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 }
 
 describe('PackageGraph', () => {
-  const testSuiteTmpDir = join(process.cwd(), 'tmp');
+  let project: Project;
 
-  function getTmpDir(): string {
-    const { name: tmpDir } = tmp.dirSync({ tmpdir: testSuiteTmpDir });
-    return tmpDir;
-  }
-
-  beforeAll(() => {
-    rimraf(testSuiteTmpDir);
-    mkdirSync(testSuiteTmpDir);
+  afterEach(() => {
+    project.dispose();
   });
 
-  afterAll(() => {
-    rimraf(testSuiteTmpDir);
-  });
+  test('should construct a graph; simple', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'index.js': `import './a'`,
+        'a.js': `import './b'`,
+        'b.js': ``,
+        'package.json': `
+          {}
+        `,
+      },
+    });
 
-  test('should construct a graph; simple', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `import './a'`,
-      'a.js': `import './b'`,
-      'b.js': ``,
-    };
-
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
     const g = new Graph<ModuleNode>();
 
@@ -63,24 +50,24 @@ describe('PackageGraph', () => {
     g.addEdge(index, nodeA);
     g.addEdge(nodeA, nodeB);
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
 
     expect(flatten(output.topSort())).toStrictEqual(flatten(g.topSort()));
   });
 
-  test('should dedupe nodes e.g. reused imports', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `import './lib/a'; import './lib/b';`,
-      lib: {
-        'a.js': `import './b'`,
-        'b.js': ``,
+  test('should dedupe nodes e.g. reused imports', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `import './lib/a'; import './lib/b';`,
+        lib: {
+          'a.js': `import './b'`,
+          'b.js': ``,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
     const g = new Graph<ModuleNode>();
 
@@ -97,287 +84,285 @@ describe('PackageGraph', () => {
     g.addEdge(index, nodeB);
     g.addEdge(nodeA, nodeB);
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
 
     expect(flatten(output.topSort())).toStrictEqual(flatten(g.topSort()));
   });
 
-  test('should handle circular dependencies', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-          import './lib/b';
-          `,
-      lib: {
-        'a.js': `
-            import './b';
-          `,
-        'b.js': `
-            import './a';
-          `,
+  test('should handle circular dependencies', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+            import './lib/b';
+            `,
+        lib: {
+          'a.js': `
+              import './b';
+            `,
+          'b.js': `
+              import './a';
+            `,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/a.js', 'lib/b.js', 'index.js']);
   });
 
-  test('should handle re-exporting', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-        export { foo } from './lib/file';
-        `,
-      lib: {
-        'file.js': `
-          const foo = 2;
-          export { foo }
-        `,
+  test('should handle re-exporting', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+          export { foo } from './lib/file';
+          `,
+        lib: {
+          'file.js': `
+            const foo = 2;
+            export { foo }
+          `,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/file.js', 'index.js']);
   });
 
-  test("should handle aggregating exports e.g. '*' ", () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-        export * from './lib/phrases';
-        `,
-      lib: {
-        'phrases.js': `
-          const phrase1 = 'hello';
-          const phrase2 = 'hola';
-          const phrase3 = 'ciao';
-          export { foo, bar, gnar }
-        `,
+  test("should handle aggregating exports e.g. '*' ", async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+          export * from './lib/phrases';
+          `,
+        lib: {
+          'phrases.js': `
+            const phrase1 = 'hello';
+            const phrase2 = 'hola';
+            const phrase3 = 'ciao';
+            export { foo, bar, gnar }
+          `,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
   });
 
-  test("should handle aggregating exports e.g. '* as phrases' ", () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-        export * as phrases from './lib/phrases';
-        `,
-      lib: {
-        'phrases.js': `
-          const phrase1 = 'hello';
-          const phrase2 = 'hola';
-          const phrase3 = 'ciao';
-          export { phrase1, phrase2, phrase3 }
-        `,
+  test("should handle aggregating exports e.g. '* as phrases' ", async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+          export * as phrases from './lib/phrases';
+          `,
+        lib: {
+          'phrases.js': `
+            const phrase1 = 'hello';
+            const phrase2 = 'hola';
+            const phrase3 = 'ciao';
+            export { phrase1, phrase2, phrase3 }
+          `,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
   });
 
-  test('should ignore node_modules ', () => {
-    const baseDir = getLibrary('simple');
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
+  test('should ignore node_modules ', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('simple'),
+    });
+
+    await project.write();
+
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
+
     expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
   });
 
-  test('should detect file extension in moduleName', () => {
-    const tmpDir = getTmpDir();
+  test('should detect file extension in moduleName', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+          import './a.js';
+          `,
+        'a.js': ``,
+      },
+    });
 
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-        import './a.js';
-        `,
-      'a.js': ``,
-    };
+    await project.write();
 
-    fixturify.writeSync(tmpDir, files);
-
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['a.js', 'index.js']);
   });
 
-  test('should resolve a directory with package.json and main entry', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      'package.json': '{}',
-      'index.js': `
-        import './some-dir';
-        `,
-      'some-dir': {
-        'package.json': JSON.stringify({
-          main: 'not-obvious.js',
-        }),
-        'not-obvious.js': `console.log('hello');`,
+  test('should resolve a directory with package.json and main entry', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'package.json': '{}',
+        'index.js': `
+          import './some-dir';
+          `,
+        'some-dir': {
+          'package.json': JSON.stringify({
+            main: 'not-obvious.js',
+          }),
+          'not-obvious.js': `console.log('hello');`,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['some-dir/not-obvious.js', 'index.js']);
   });
 
-  test('should not include a file in the module graph if external to the package', () => {
-    const tmpDir = getTmpDir();
-
+  test('should not include a file in the module graph if external to the package', async () => {
     const packageName = 'my-package-name';
 
-    const files = {
-      'out-of-package.js': `const a = '1';`,
-      'some-dir': {
-        'package.json': JSON.stringify({
-          name: packageName,
-        }),
-        'index.js': `import '../out-of-package.js';`,
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        'out-of-package.js': `const a = '1';`,
+        'some-dir': {
+          'package.json': JSON.stringify({
+            name: packageName,
+          }),
+          'index.js': `import '../out-of-package.js';`,
+        },
       },
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const baseDir = join(tmpDir, 'some-dir');
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(baseDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(
+      new Package(join(project.baseDir, 'some-dir'))
+    ).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['index.js']);
   });
 
-  test('should exclude *.json files from the module graph', () => {
-    const tmpDir = getTmpDir();
+  test('should exclude *.json files from the module graph', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        lib: {
+          'config.js': `import conf from './config.json`,
+          'config.json': `{ name: 'my-config' }`,
+          'impl.js': `import pkg from '../package.json';`,
+          'member.graphql': '',
+          'main.css': '',
+        },
+        'index.js': `
+          import path from 'path';
+          import data from './lib/member.graphql';
+          import styles from './lib/main.css';
+          import pkg from './package';
+          import impl from './lib/impl;
 
-    const files = {
-      lib: {
-        'config.js': `import conf from './config.json`,
-        'config.json': `{ name: 'my-config' }`,
-        'impl.js': `import pkg from '../package.json';`,
-        'member.graphql': '',
-        'main.css': '',
+          export * from './lib/config';
+          export * from './lib/impl';
+        `,
+        'package.json': `
+          {
+            "name": "basic",
+            "version": "1.0.0",
+            "license": "MIT"
+          }
+        `,
       },
-      'index.js': `
-        import path from 'path';
-        import data from './lib/member.graphql';
-        import styles from './lib/main.css';
-        import pkg from './package';
-        import impl from './lib/impl;
+    });
 
-        export * from './lib/config';
-        export * from './lib/impl';
-      `,
-      'package.json': `
-        {
-          "name": "basic",
-          "version": "1.0.0",
-          "license": "MIT"
-        }
-      `,
-    };
+    await project.write();
 
-    fixturify.writeSync(tmpDir, files);
-
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/config.js', 'lib/impl.js', 'index.js']);
   });
 
-  test('should exclude *.css from the module graph', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      lib: {
-        'member.css': '',
-        'impl.js': `import './member'`,
+  test('should exclude *.css from the module graph', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        lib: {
+          'member.css': '',
+          'impl.js': `import './member'`,
+        },
+        'index.js': `
+          import './lib/member.css';
+          import './lib/impl';
+        `,
+        'package.json': `
+          {
+            "name": "basic",
+            "version": "1.0.0",
+            "license": "MIT"
+          }
+        `,
       },
-      'index.js': `
-        import './lib/member.css';
-        import './lib/impl';
-      `,
-      'package.json': `
-        {
-          "name": "basic",
-          "version": "1.0.0",
-          "license": "MIT"
-        }
-      `,
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);
   });
 
-  test('should exclude *.graphql from the module graph', () => {
-    const tmpDir = getTmpDir();
-
-    const files = {
-      lib: {
-        'member.graphql': '',
-        'impl.js': `import './member'`,
+  test('should exclude *.graphql from the module graph', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: {
+        lib: {
+          'member.graphql': '',
+          'impl.js': `import './member'`,
+        },
+        'index.js': `
+          import './lib/member.graphql';
+          import './lib/impl';
+        `,
+        'package.json': `
+          {
+            "name": "basic",
+            "version": "1.0.0",
+            "license": "MIT"
+          }
+        `,
       },
-      'index.js': `
-        import './lib/member.graphql';
-        import './lib/impl';
-      `,
-      'package.json': `
-        {
-          "name": "basic",
-          "version": "1.0.0",
-          "license": "MIT"
-        }
-      `,
-    };
+    });
 
-    fixturify.writeSync(tmpDir, files);
+    await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(tmpDir)).discover();
-
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
     const actual = flatten(output.topSort());
 
     expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);

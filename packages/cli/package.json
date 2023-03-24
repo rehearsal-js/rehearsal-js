@@ -70,8 +70,8 @@
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^2.0.1",
     "fixturify": "^3.0.0",
+    "fixturify-project": "^5.2.0",
     "scenario-tester": "^2.1.2",
-    "typescript": "^5.0.0",
     "typescript-json-schema": "^0.55.0",
     "vitest": "^0.29.2"
   },

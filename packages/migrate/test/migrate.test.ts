@@ -251,18 +251,8 @@ export default class Hello extends Component {
 
       await migrate(input);
 
-      const expectedTs = `import Component from '@glimmer/component';
-
-export default class Foo extends Component {}
-`;
-
-      const expectedHbs = `{{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. }}
-{{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
-<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-`;
-
-      expectFile(outputs[0]).toEqual(expectedHbs);
-      expectFile(outputs[1]).toEqual(expectedTs);
+      expectFile(outputs[0]).matchSnapshot();
+      expectFile(outputs[1]).matchSnapshot();
     });
 
     test('more involved class', async () => {
@@ -343,7 +333,7 @@ export default class Salutation extends Component {
 
       const expected = `class Foo {
   hello() {
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
+    /* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
     return this.name;
   }
 }

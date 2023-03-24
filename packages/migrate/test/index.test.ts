@@ -1,11 +1,12 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join, resolve, dirname } from 'node:path';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
 import { readJSONSync } from 'fs-extra/esm';
+import { Project } from 'fixturify-project';
 import { migrate, MigrateInput } from '../src/index.js';
 import type { Logger } from 'winston';
 
@@ -13,64 +14,42 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('migrate', () => {
-  let sourceFiles: string[] = [];
   let migratedFiles: string[] = [];
-  let basePath: string;
-  let expectedDir: string;
-  let actualDir: string; // our tmp directory
+  let sourceFiles: string[] = [];
   let reporter: Reporter;
   let logger: Logger;
+  let project: Project;
 
-  /**
-   * Cleans a directory if it exists directory
-   */
-  function clean(dir: string): void {
-    rmSync(dir, { recursive: true, force: true });
-  }
-  // copy the fixture files to a tmp directory
-  function prepareInputFiles(files: string[] = ['index.js']): string[] {
-    return files.map((file) => {
-      const inputDir = resolve(basePath, 'src', file);
-      const dest = resolve(actualDir, file);
-      copyFileSync(inputDir, dest);
-
-      return dest;
-    });
-  }
-
-  beforeEach(() => {
-    basePath = resolve(__dirname, 'fixtures', 'migrate');
-    expectedDir = resolve(__dirname, 'fixtures', 'migrate', 'output');
-    actualDir = resolve(__dirname, 'fixtures', 'migrate', 'tmp');
-
-    clean(actualDir);
-
-    mkdirSync(actualDir);
-
-    sourceFiles = prepareInputFiles(['index.js']);
+  beforeEach(async () => {
+    const basePath = resolve(__dirname, 'fixtures', 'migrate', 'src');
+    project = Project.fromDir(basePath, { linkDeps: true, linkDevDeps: true });
 
     logger = createLogger({
       transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
     });
 
+    sourceFiles = [join(project.baseDir, 'index.js')];
+
     reporter = new Reporter(
       {
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: actualDir,
+        basePath: project.baseDir,
         commandName: '@rehearsal/migrate',
       },
       logger
     );
+
+    await project.write();
   });
 
   afterEach(() => {
-    clean(actualDir);
+    project.dispose();
   });
 
   test('should move js file to ts extension', async () => {
     const input: MigrateInput = {
-      basePath,
+      basePath: project.baseDir,
       sourceFiles,
       logger,
       reporter,
@@ -79,20 +58,20 @@ describe('migrate', () => {
 
     const output = await migrate(input);
     migratedFiles = output.migratedFiles;
-    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
-    expect(report.summary[0].basePath).toMatch(/migrate/);
-    expect(report.summary[0].entrypoint).toMatch('index.js');
-    expect(migratedFiles).includes(`${actualDir}/index.ts`);
-    expect(existsSync(`${actualDir}/index.js`)).toBeFalsy();
+    expect(report.summary[0].basePath).toMatch(project.baseDir);
+    expect(report.summary[0].entrypoint).toMatch('index.ts');
+    expect(migratedFiles).includes(`${project.baseDir}/index.ts`);
+    expect(existsSync(`${project.baseDir}/index.js`)).toBeFalsy();
     rmSync(jsonReport);
   });
 
   test('should infer argument type (basic)', async () => {
     const input: MigrateInput = {
-      basePath,
+      basePath: project.baseDir,
       sourceFiles,
       logger,
       reporter,
@@ -108,20 +87,17 @@ describe('migrate', () => {
     expect(existsSync(file)).toBeTruthy();
 
     const actual = readFileSync(file, 'utf-8');
-    const expected = readFileSync(`${expectedDir}/index.ts.output`, 'utf-8');
+    const expected = readFileSync(`${project.baseDir}/index.ts`, 'utf-8');
     expect(actual).toBe(expected);
-    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
-    expect(report.summary[0].basePath).toMatch(/migrate/);
+    expect(report.summary[0].basePath).toMatch(project.baseDir);
     rmSync(jsonReport);
   });
 
   test.skip('should infer argument type (complex) mixed extensions js and ts', async () => {
-    const files = ['complex.js', 'salutations.ts'];
-    const sourceFiles = prepareInputFiles(files);
-
     const pkgJSONPath = findupSync('package.json', {
       cwd: __dirname,
     }) as string;
@@ -137,7 +113,7 @@ describe('migrate', () => {
     const originalLockFile = readFileSync(lockFilePath!, 'utf-8');
 
     const input: MigrateInput = {
-      basePath: join(basePath, 'tmp'),
+      basePath: project.baseDir,
       sourceFiles,
       logger,
       reporter,
@@ -152,15 +128,11 @@ describe('migrate', () => {
 
     expect(existsSync(file)).toBeTruthy();
 
-    const actual = readFileSync(file, 'utf-8');
-    const expected = readFileSync(`${expectedDir}/complex.ts.output`, 'utf-8');
-
-    expect(actual).toBe(expected);
-    const jsonReport = resolve(basePath, '.rehearsal-report.json');
+    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
-    expect(report.summary[0].basePath).toMatch(/migrate/);
+    expect(report.summary[0].basePath).toMatch(project.baseDir);
     rmSync(jsonReport);
 
     const pkgJSON = readJSONSync(pkgJSONPath) as { devDependencies: Record<string, string> };

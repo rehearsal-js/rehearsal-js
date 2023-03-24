@@ -1,35 +1,33 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Test transform > addErrorTypeGuard 1`] = `
-"
-// Case #1: try ... catch
+"// Case #1: try ... catch
 
-const test = ['dummy'];
+const test = [\\"dummy\\"];
 
 try {
-  console.log('success');
+  console.log(\\"success\\");
 } catch (e) {
   console.log((e as Error).message);
-/* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
   console.log(e.notErrorMember);
 
-  if ((e as Error).name === 'Test') {
+  if ((e as Error).name === \\"Test\\") {
     console.log((e as Error).name);
-    console.log((e as Error)  .name);
-    console.log((e as Error).  name);
-    console.log((e as Error) . name);
+    console.log((e as Error).name);
+    console.log((e as Error).name);
+    console.log((e as Error).name);
   }
 
-  if (test[1] === undefined && (e as Error).name === 'Test') {
+  if (test[1] === undefined && (e as Error).name === \\"Test\\") {
     console.log((e as Error).name);
   }
 }
 
-
 // Case #2: not a try catch
 
 function getObject<T>(): T {
-  const object = ['dummy'];
+  const object = [\\"dummy\\"];
   return object as unknown as T;
 }
 
@@ -40,11 +38,140 @@ dummy.key;
 "
 `;
 
+exports[`Test transform > addMissingExport 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+import React from \\"react\\";
+
+export interface Props {
+  name: string;
+  age: string;
+}
+
+{
+  /* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */
+}
+const Kid = ({ name, age }: Props) => <div>{\`\${name},\${age}\`}</div>;
+
+export default Kid;
+"
+`;
+
+exports[`Test transform > addMissingExport 2`] = `
+"import Kid from \\"./4082-1-import\\";
+
+export default {
+  kid: Kid,
+  title: \\"Kid\\",
+};
+"
+`;
+
+exports[`Test transform > addMissingExport 3`] = `
+"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+import React from \\"react\\";
+
+interface ToDo {
+  id: string;
+  title: string;
+  content: string;
+}
+
+interface ToDoState {
+  todos: ToDo[];
+}
+
+export interface InjectedProps {
+  onAdd: () => void;
+  onRemove: (id: string) => void;
+  todos: ToDo[];
+}
+
+export interface AllProps extends InjectedProps {
+  style: React.CSSProperties;
+}
+
+export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
+  class extends React.Component<Omit<P, keyof InjectedProps>, ToDoState> {
+    state = { todos: [] };
+
+    onRemove = (id: string) => () => {
+      const filteredToDos = (this.state.todos as ToDo[]).filter(
+        (todo) => (todo as ToDo).id !== id
+      );
+      /* @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'. */
+      this.setState({ todos: filteredToDos });
+    };
+
+    onAdd = () => {
+      const todo = {
+        title: \\"\\",
+        content: \\"\\",
+        id: \`\${Date.now}\`,
+      };
+      /* @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'. */
+      this.setState((prev) => {
+        [...prev.todos, todo];
+      });
+    };
+    props: P | undefined;
+
+    render() {
+      return (
+        /* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react/jsx-runtime' or its corresponding type declarations. */
+        <Component
+          {...(this.props as P)}
+          todos={this.state.todos}
+          onAdd={this.onAdd}
+          onRemove={this.onRemove}
+        />
+      );
+    }
+  };
+"
+`;
+
+exports[`Test transform > addMissingExport 4`] = `
+"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+import React from \\"react\\";
+
+import makeToDo, { AllProps } from \\"./4082-2-import\\";
+
+const ToDo = (props: AllProps) => {
+  return (
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+    <div style={props.style}>
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'todo' implicitly has an 'any' type. */
+      {props.todos.map((todo) => (
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+        <div key={todo.id}>
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          <div>{todo.title}</div>
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          <div>{todo.content}</div>
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          <button data-id={todo.id} onClick={() => props.onRemove(todo.id)}>
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'Remove'. */
+            Remove
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'button'. */
+          </button>
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'div'. */
+        </div>
+      ))}
+{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+      <button onClick={props.onAdd}>Add</button>
+/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'div'. */
+    </div>
+  );
+};
+export default makeToDo(ToDo);
+"
+`;
+
 exports[`Test transform > addMissingTypesBasedOnInheritance 1`] = `
 "// Basics
 
 class Animal {
-  title: string = '';
+  title = \\"\\";
 
   test(test: string): string {
     return test;
@@ -77,39 +204,39 @@ class Food {
 }
 
 class Dog extends Animal {
-  say(message: string) : string {
+  say(message: string): string {
     console.log(message);
-    return 'bar';
+    return \\"bar\\";
   }
 }
 
 export class WildDog extends Dog implements Wild, Happy {
-  say(message: string) : string {
+  say(message: string): string {
     console.log(message);
-    return 'bar';
+    return \\"bar\\";
   }
 
-  override feed(food: Food, quantity: number) : boolean {
+  override feed(food: Food, quantity: number): boolean {
     console.log(food, quantity);
     return true;
   }
 
-  wild(place: string) : string {
+  wild(place: string): string {
     return place;
   }
 
-  happy(num: number) : void {
+  happy(num: number): void {
     console.log(num);
   }
 }
 
 export class Cat extends Animal {
-  override say(text: string) : string {
+  override say(text: string): string {
     console.log(text);
-    return 'meo';
+    return \\"meo\\";
   }
 
-  feed(something: Food) : boolean {
+  feed(something: Food): boolean {
     console.log(something);
     return false;
   }
@@ -132,19 +259,23 @@ interface ConstrainedThingInterface<C extends Thing> {
 }
 
 export class GenericThingImp1 implements GenericThingInterface {
-  thing(a: number, b: string) : void {
+  thing(a: number, b: string): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingImp2 implements GenericThingInterface<boolean, number> {
-  thing(a: boolean, b: number) : void {
+export class GenericThingImp2
+  implements GenericThingInterface<boolean, number>
+{
+  thing(a: boolean, b: number): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) : void {
+export class GenericThingImp3
+  implements ConstrainedThingInterface<{ foo: number; bar: string }>
+{
+  thing(c: { foo: number; bar: string }): void {
     console.log(c);
   }
 }
@@ -152,31 +283,34 @@ export class GenericThingImp3 implements ConstrainedThingInterface<{ foo: number
 // Generic Classes
 
 class GenericThingClass<A = number, B = string> {
-  thing(a: A, b: B): void  {
+  thing(a: A, b: B): void {
     console.log(a, b);
   }
 }
 
 class ConstrainedThingClass<C extends Thing> {
-  thing(c: C): void  {
+  thing(c: C): void {
     console.log(c);
   }
 }
 
 export class GenericThingExt1 extends GenericThingClass {
-  thing(a: number, b: string) : void {
+  thing(a: number, b: string): void {
     console.log(a, b);
   }
 }
 
 export class GenericThingExt2 extends GenericThingClass<boolean, number> {
-  thing(a: boolean, b: number) : void {
+  thing(a: boolean, b: number): void {
     console.log(a, b);
   }
 }
 
-export class GenericThingExt3 extends ConstrainedThingClass<{ foo: number; bar: string }> {
-  thing(c: { foo: number; bar: string; }) : void {
+export class GenericThingExt3 extends ConstrainedThingClass<{
+  foo: number;
+  bar: string;
+}> {
+  thing(c: { foo: number; bar: string }): void {
     console.log(c);
   }
 }
@@ -201,17 +335,17 @@ class MultipleClass {
 }
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  boo(ab, b?): boolean  {
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  boo(ab, b?): boolean {
     return !ab || !b;
   }
 
-/* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
-  foo(ab, b?): boolean  {
+  /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  foo(ab, b?): boolean {
     return !ab || !b;
   }
 
-  moo(b: string) : string {
+  moo(b: string): string {
     return b;
   }
 }
@@ -219,21 +353,19 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 `;
 
 exports[`Test transform > addMissingTypesBasedOnInlayHints 1`] = `
-"export function test1(): string  {
-  return 'Test this';
+"export function test1(): string {
+  return \\"Test this\\";
 }
 
-export const test2 = () => console.log('Test this')
+export const test2 = () => console.log(\\"Test this\\");
 
-export const test3 = () => 'Test this';
+export const test3 = () => \\"Test this\\";
 
-
-export function test4<Type>(arg: Array<Type>): Type[]  {
+export function test4<Type>(arg: Array<Type>): Type[] {
   return arg;
 }
 
-
-export async function test5(): Promise<TestClass>  {
+export async function test5(): Promise<TestClass> {
   return new TestClass();
 }
 
@@ -243,16 +375,16 @@ interface TestInterface {
 
 class BaseTestClass {
   test2(param: boolean): number | string {
-    return param ? 0 : '0';
-  };
+    return param ? 0 : \\"0\\";
+  }
 }
 
 export class TestClass extends BaseTestClass implements TestInterface {
-  test1() : string | undefined {
+  test1(): string | undefined {
     return undefined;
   }
 
-  test2() : string | number {
+  test2(): string | number {
     return 0;
   }
 }
@@ -278,54 +410,57 @@ exports[`Test transform > makeMemberOptional 2`] = `
   name: string;
   badgeNumber?: string;
 
-  constructor({name, badgeNumber} : { name: string; badgeNumber: string }) {
+  constructor({ name, badgeNumber }: { name: string; badgeNumber: string }) {
     this.name = name;
     this.badgeNumber = badgeNumber;
   }
-}"
+}
+"
 `;
 
 exports[`Test transform > makeMemberOptional 3`] = `
 "export interface Rabbit {
-    color?: string;
-    species: string;
-    name: string;
+  color?: string;
+  species: string;
+  name: string;
 }
 
-export function feedRabbit(rabbit: Rabbit): void  {
-    console.log(\`Rabbit \${rabbit.name} loves to eat fruit, not hay.\`);
-}"
+export function feedRabbit(rabbit: Rabbit): void {
+  console.log(\`Rabbit \${rabbit.name} loves to eat fruit, not hay.\`);
+}
+"
 `;
 
 exports[`Test transform > makeMemberOptional 4`] = `
 "export default interface Human {
   height?: number;
   weight: number;
-}"
+}
+"
 `;
 
 exports[`Test transform > makeMemberOptional 5`] = `
-"import { Animal, Car } from './2790-import-1';
-import { Employee } from './2790-import-2';
-import * as RabbitStuff from './2790-import-3';
-import Human from './2790-import-4';
+"import { Animal, Car } from \\"./2790-import-1\\";
+import { Employee } from \\"./2790-import-2\\";
+import * as RabbitStuff from \\"./2790-import-3\\";
+import Human from \\"./2790-import-4\\";
 
 const animal: Animal = {
-    species: 'dog',
-    weight: 90,
+  species: \\"dog\\",
+  weight: 90,
 };
 
 delete animal.weight;
 
 const car: Car = {
-    make: 'Ford',
-    model: 'Focus',
-    color: 'red',
+  make: \\"Ford\\",
+  model: \\"Focus\\",
+  color: \\"red\\",
 };
 
 delete car.color;
 
-const employee = new Employee({name: 'Victor', badgeNumber: '12345'});
+const employee = new Employee({ name: \\"Victor\\", badgeNumber: \\"12345\\" });
 delete employee.badgeNumber;
 
 const human: Human = {
@@ -335,50 +470,59 @@ const human: Human = {
 delete human.height;
 
 const rabbit: RabbitStuff.Rabbit = {
-  color: 'butterscotch',
-  species: 'Holland Lop',
-  name: 'Poca',
+  color: \\"butterscotch\\",
+  species: \\"Holland Lop\\",
+  name: \\"Poca\\",
 };
 delete rabbit.color;
 
 interface Person {
-    name: string;
-    age?: number;
-    address?: string | null;
+  name: string;
+  age?: number;
+  address?: string | null;
 }
 
-const person:Person = {
-    name: 'Jane',
-    age: 10,
-    address: '123 Happy St'
+const person: Person = {
+  name: \\"Jane\\",
+  age: 10,
+  address: \\"123 Happy St\\",
 };
 
 delete person.address;
 
-class Student{
+class Student {
+  name: string;
+  grade: number;
+  gender?: string;
+
+  constructor({
+    name,
+    grade,
+    gender,
+  }: {
     name: string;
     grade: number;
-    gender?: string;
-
-    constructor({name, grade, gender}: { name: string; grade: number; gender: string }) {
-        this.name = name;
-        this.grade = grade;
-        this.gender = gender;
-    }
+    gender: string;
+  }) {
+    this.name = name;
+    this.grade = grade;
+    this.gender = gender;
+  }
 }
-const student = new Student({name: '', grade: 3, gender: 'male'});
+const student = new Student({ name: \\"\\", grade: 3, gender: \\"male\\" });
 delete student.gender;
 
 type Tree = {
   species: string;
   age: number;
   height?: number;
-}
+};
 
 const oak: Tree = {
-  species: 'oak',
+  species: \\"oak\\",
   age: 150,
   height: 40,
 };
-delete oak.height;"
+delete oak.height;
+"
 `;
