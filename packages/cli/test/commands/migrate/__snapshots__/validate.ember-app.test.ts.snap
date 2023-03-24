@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: validate > ember3-app > pass with all config files in --regen 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-app > pass with package.json 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-app > show warning message for missing files in --regen 1`] = `
+"[STARTED] Validate project
+Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+<tmp-path>/tsconfig.json does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoAddon > pass with all config files in --regen 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoAddon > pass with package.json 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoAddon > show warning message for missing files in --regen 1`] = `
+"[STARTED] Validate project
+Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+<tmp-path>/tsconfig.json does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoEngine > pass with all config files in --regen 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoEngine > pass with package.json 1`] = `
+"[STARTED] Validate project
+[SUCCESS] Validate project"
+`;
+
+exports[`Task: validate > ember3-appWithInRepoEngine > show warning message for missing files in --regen 1`] = `
+"[STARTED] Validate project
+Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+<tmp-path>/tsconfig.json does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen
+[SUCCESS] Validate project"
+`;
