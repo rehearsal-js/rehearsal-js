@@ -72,7 +72,7 @@ Rehearsal Migrate has performed the following tasks:
 
 ## Interactive Mode - Migrate
 
-Interactive mode will run by default. Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing. If you want to skip interactive mode, you can use the flag `--ci`.
+Interactive mode will run by default. Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing. If you hope to skip interactive mode, you can use the flag `--ci`.
 
 ## Migrate by Directory
 
