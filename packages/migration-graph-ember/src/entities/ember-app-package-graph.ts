@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { join, resolve } from 'node:path';
 import enhancedResolve from 'enhanced-resolve';
 import {
+  Graph,
   GraphNode,
   ModuleNode,
   PackageGraph,
@@ -93,7 +94,6 @@ export class EmberAppPackageGraph extends PackageGraph {
     this.debug('>>> SERVICES DISCOVERD', services);
 
     services.forEach((s) => {
-      // If the service is a external resolution, we can ignore it.
       // We look this up in our resolution map to short-circuit this process
       if (this.hasServiceResolution(s.serviceName)) {
         // Look at the resolution.
@@ -137,19 +137,14 @@ export class EmberAppPackageGraph extends PackageGraph {
           if (!synthetic) {
             const emberAddonPackage = pkg as EmberAddonPackage;
 
-            // Looking for the implementation at addon/ becase some addons may not have an app/ for re-exports of the service
-            const base = `addon/services/${s.serviceName}`;
-            const potentialPaths = ['.js', '.ts'].map((ext) => `${base}${ext}`); // Expand to look for .ts or .js file implementations.
-
-            this.debug(emberAddonPackage.path);
-            this.debug('Potential paths to service implementation: %s', potentialPaths);
-
-            const maybeServicePath = potentialPaths.find((somePath) =>
-              emberAddonPackage.getModuleGraph().hasNode(somePath)
+            const potentialPaths = this.getPotentialServicePaths(s.serviceName);
+            const maybeServiceFound = this.findServiceInPackageGraph(
+              emberAddonPackage.getModuleGraph(),
+              potentialPaths
             );
 
             // If no service path then the node doesn't exist in the addon's graph
-            if (!maybeServicePath) {
+            if (!maybeServiceFound) {
               const sourceFile = join(this.baseDir, moduleNodeKey);
               const destFile = join(emberAddonPackage.path);
 
@@ -187,18 +182,11 @@ export class EmberAppPackageGraph extends PackageGraph {
         }
       }
 
-      // If the service not have a resolution or an addonName prefixed, let's check this package.
-      const maybeService = [`app/services/${s.serviceName}.js`, `app/services/${s.serviceName}.ts`];
+      const potentialPaths = this.getPotentialServicePaths(s.serviceName);
+      const maybeServicePath = this.findServiceInPackageGraph(this.graph, potentialPaths);
 
-      // Does the service exist in this package?
-      // If so it will have a node on the graph with the given file path.
-
-      const foundServiceInGraph = maybeService.find((maybePathToService) =>
-        this.graph.hasNode(maybePathToService)
-      );
-
-      if (foundServiceInGraph) {
-        const someService = this.graph.getNode(foundServiceInGraph);
+      if (maybeServicePath) {
+        const someService = this.graph.getNode(maybeServicePath);
         if (!someService) {
           throw new Error(
             'EmberAppPackageDependencyGraph: Unknown error occured. Unable to retrieve existing service'
@@ -208,9 +196,11 @@ export class EmberAppPackageGraph extends PackageGraph {
         return;
       }
 
-      // If the service doesn't exist in the graph yet, then let's stub it out, it may get populated later.
+      // If the service doesn't exist in the graph for this package yet, then let's stub it out,
+      // it may get populated later.
 
-      const foundServiceOnDisk = maybeService.find((maybePathToService) =>
+      // If it exists on disk we will stub it out, as this would imply that this file hasn't been added yet.
+      const foundServiceOnDisk = potentialPaths.find((maybePathToService) =>
         this.fileExists(join(this.baseDir, maybePathToService))
       );
 
@@ -228,6 +218,26 @@ export class EmberAppPackageGraph extends PackageGraph {
     n.content.parsed = true;
 
     return n;
+  }
+
+  private findServiceInPackageGraph(
+    graph: Graph<ModuleNode>,
+    potentialPaths: string[]
+  ): string | undefined {
+    return potentialPaths.find((somePath) => graph.hasNode(somePath));
+  }
+
+  /**
+   * Creates a list of realitve paths in a ember package for where a service
+   * implementation may exist.
+   *
+   * @param serviceName
+   * @returns an array of paths with .ts or .js extensions
+   */
+  private getPotentialServicePaths(serviceName: string): string[] {
+    return [`app/services/${serviceName}`, `addon/services/${serviceName}`].flatMap((servicePath) =>
+      ['.js', '.ts'].map((ext) => `${servicePath}${ext}`)
+    );
   }
 
   private findPackageNodeByAddonName(addonName: string): GraphNode<PackageNode> | undefined {
