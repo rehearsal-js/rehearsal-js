@@ -5,5 +5,8 @@ export default defineConfig({
   test: {
     testTimeout: 120000,
     exclude: [...configDefaults.exclude, 'fixtures/migrate/some-util.d.ts'],
+    sequence: {
+      shuffle: true,
+    },
   },
 });
