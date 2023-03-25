@@ -8,7 +8,9 @@ describe('migration-strategy', () => {
   let project: Project;
 
   afterEach(() => {
-    project.dispose();
+    if (project) {
+      project.dispose();
+    }
   });
 
   describe('library', () => {

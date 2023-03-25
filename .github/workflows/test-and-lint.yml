@@ -58,5 +58,5 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Test
-        run: pnpm test
+      - name: Test Slow
+        run: pnpm test:slow
