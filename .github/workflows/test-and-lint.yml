@@ -7,9 +7,61 @@ on:
     branches: [master]
 
 jobs:
-  test-and-lint:
+  lint:
+    name:  Runs Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          pnpm_store=$(pnpm store path)
+          echo "STORE_PATH<<EOF" >> $GITHUB_OUTPUT
+          echo "$pnpm_store" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Set up pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Set up npm cache
+        uses: actions/cache@v3
+        with:
+          path: '~/.npm'
+          key: ${{ runner.os }}-npm-store-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+        
+  test-basic:
     name: Runs Tests with Linting
     runs-on: ubuntu-latest
+    needs: [lint]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -55,8 +107,57 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Lint
-        run: pnpm lint
+      - name: Tests
+        run: pnpm test
+        
+  test-slow:
+    name: Runs Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [lint, test-basic]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Test Slow
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          pnpm_store=$(pnpm store path)
+          echo "STORE_PATH<<EOF" >> $GITHUB_OUTPUT
+          echo "$pnpm_store" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Set up pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Set up npm cache
+        uses: actions/cache@v3
+        with:
+          path: '~/.npm'
+          key: ${{ runner.os }}-npm-store-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Slow Tests
         run: pnpm test:slow
