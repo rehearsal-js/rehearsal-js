@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name:  Runs Linting
+    name: Runs Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -59,7 +59,7 @@ jobs:
         run: pnpm lint
         
   test-basic:
-    name: Runs Tests with Linting
+    name: Runs Basic Tests
     runs-on: ubuntu-latest
     needs: [lint]
     steps:
@@ -113,7 +113,7 @@ jobs:
   test-slow:
     name: Runs Smoke Tests
     runs-on: ubuntu-latest
-    needs: [lint, test-basic]
+    needs: [lint]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
