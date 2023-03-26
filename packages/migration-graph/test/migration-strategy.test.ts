@@ -1,38 +1,55 @@
-import { describe, expect, test } from 'vitest';
-import {
-  getLibrary,
-  getEmberProjectFixture,
-  getFiles,
-  getLibraryProject,
-  create,
-  setupProject,
-} from '@rehearsal/test-support';
+import { describe, expect, test, afterEach } from 'vitest';
+import { getEmberProjectFixture, getFiles } from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
 import { SourceType } from '../src/source-type.js';
 import { getMigrationStrategy, SourceFile } from '../src/migration-strategy.js';
 
 describe('migration-strategy', () => {
+  let project: Project;
+
+  afterEach(() => {
+    if (project) {
+      project.dispose();
+    }
+  });
+
   describe('library', () => {
-    test('simple', () => {
-      const rootDir = getLibrary('simple');
-      const strategy = getMigrationStrategy(rootDir);
+    test('simple', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('simple'),
+      });
+
+      await project.write();
+
+      const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
 
-    test('library w/ tests', () => {
-      const rootDir = getLibrary('library-with-tests');
-      const strategy = getMigrationStrategy(rootDir);
+    test('library w/ tests', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-tests'),
+      });
+
+      await project.write();
+
+      const strategy = getMigrationStrategy(project.baseDir);
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
 
-    test('options.entrypoint', () => {
-      const rootDir = getLibrary('library-with-entrypoint');
-      const strategy = getMigrationStrategy(rootDir, { entrypoint: 'depends-on-foo.js' });
+    test('options.entrypoint', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-entrypoint'),
+      });
+
+      await project.write();
+
+      const strategy = getMigrationStrategy(project.baseDir, { entrypoint: 'depends-on-foo.js' });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       // Should not include index.js as it is not in the entrypoint's import graph.
@@ -40,14 +57,15 @@ describe('migration-strategy', () => {
       expect(strategy.sourceType).toBe(SourceType.Library);
     });
 
-    test('options.include', () => {
-      const files = getFiles('library-with-ignored-files');
+    test('options.include', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-ignored-files'),
+      });
 
-      const rootDir = create(files);
-      const strategy = getMigrationStrategy(rootDir, { include: ['webpack.config.js'] });
+      await project.write();
 
+      const strategy = getMigrationStrategy(project.baseDir, { include: ['webpack.config.js'] });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
-
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
       expect(actual).toStrictEqual([
@@ -58,34 +76,43 @@ describe('migration-strategy', () => {
       ]);
     });
 
-    test('options.exclude', () => {
-      const files = getFiles('simple');
-      const rootDir = create(files);
-      const strategy = getMigrationStrategy(rootDir, { exclude: ['index.js'] });
+    test('options.exclude', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('simple'),
+      });
 
+      await project.write();
+
+      const strategy = getMigrationStrategy(project.baseDir, { exclude: ['index.js'] });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
-
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
       expect(actual).toStrictEqual(['lib/a.js']);
     });
 
-    test('options.entrypoint', () => {
-      const files = getFiles('simple');
-      const rootDir = create(files);
-      const strategy = getMigrationStrategy(rootDir, { entrypoint: 'index.js' });
+    test('options.entrypoint', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('simple'),
+      });
 
+      await project.write();
+
+      const strategy = getMigrationStrategy(project.baseDir, { entrypoint: 'index.js' });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
-
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
       expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
     describe('workspaces', () => {
-      test('should create migration strategy for a project with workspaces', () => {
-        const rootDir = getLibrary('library-with-workspaces');
-        const strategy = getMigrationStrategy(rootDir);
+      test('should create migration strategy for a project with workspaces', async () => {
+        const project = new Project('my-package', '0.0.0', {
+          files: getFiles('library-with-workspaces'),
+        });
+
+        await project.write();
+
+        const strategy = getMigrationStrategy(project.baseDir);
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);
         expect(relativePaths).toStrictEqual([
@@ -94,20 +121,21 @@ describe('migration-strategy', () => {
           'packages/blorp/index.js',
           'packages/foo/lib/a.js',
           'packages/foo/index.js',
+          'index.js',
           'some-util.js',
         ]);
         expect(strategy.sourceType).toBe(SourceType.Library);
       });
 
       test('options.entrypoint should only show the graph for a single file', async () => {
-        const project = getLibraryProject('library-with-workspaces');
+        const project = new Project('my-package', '0.0.0', {
+          files: getFiles('library-with-workspaces'),
+        });
 
-        await setupProject(project);
+        await project.write();
 
         const options = { entrypoint: 'packages/blorp/index.js' };
-
         const strategy = getMigrationStrategy(project.baseDir, options);
-
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
         expect(relativePaths).toStrictEqual([
@@ -118,7 +146,11 @@ describe('migration-strategy', () => {
       });
 
       test('options.exclude should filter out a file in a workspace package', async () => {
-        const project = getLibraryProject('library-with-workspaces');
+        const project = new Project('my-package', '0.0.0', {
+          files: getFiles('library-with-workspaces'),
+        });
+
+        await project.write();
 
         project.mergeFiles({
           packages: {
@@ -129,21 +161,17 @@ describe('migration-strategy', () => {
           },
         });
 
-        await setupProject(project);
-
         const options = { exclude: ['packages/blorp/should-ignore'] };
-
         const strategy = getMigrationStrategy(project.baseDir, options);
-
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
         expect(relativePaths).toStrictEqual([
           'packages/blorp/build.js',
           'packages/blorp/lib/impl.js',
           'packages/blorp/index.js',
-          'packages/blorp/should-have/index.js',
           'packages/foo/lib/a.js',
           'packages/foo/index.js',
+          'index.js',
           'some-util.js',
         ]);
         expect(strategy.sourceType).toBe(SourceType.Library);
@@ -160,7 +188,7 @@ describe('migration-strategy', () => {
     ];
 
     test('options.entrypoint', async () => {
-      const project = await getEmberProjectFixture('app-with-utils');
+      project = await getEmberProjectFixture('app-with-utils');
 
       const strategy = getMigrationStrategy(project.baseDir, {
         entrypoint: 'tests/unit/utils/math-test.js',

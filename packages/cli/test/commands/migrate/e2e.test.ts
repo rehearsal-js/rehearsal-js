@@ -1,40 +1,40 @@
 import { resolve } from 'node:path';
 import { readFileSync, readdirSync, promises as fs } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
-import { setGracefulCleanup, dirSync } from 'tmp';
-import { beforeEach, describe, expect, test } from 'vitest';
-import { create, getFiles } from '@rehearsal/test-support';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
-import fixturify from 'fixturify';
+import { Project } from 'fixturify-project';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
-import { runBin, prepareTmpDir, cleanOutput } from '../../test-helpers/index.js';
+import { runBin, prepareProject, cleanOutput } from '../../test-helpers/index.js';
 import { CustomConfig, TSConfig } from '../../../src/types.js';
 import type { PackageJson } from 'type-fest';
 
-setGracefulCleanup();
-
 describe('migrate - validation', () => {
-  let basePath = '';
+  let project: Project;
 
-  beforeEach(() => {
-    basePath = prepareTmpDir('initialization');
+  afterEach(() => {
+    project.dispose();
   });
 
   test('pass in a clean project', async () => {
+    project = prepareProject('initialization');
+
+    await project.write();
+
     const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
 
     expect(stdout).toContain('Migration Complete');
   });
 
   test('throw if not in project root with npm/yarn workspaces', async () => {
-    const { name: basePath } = dirSync();
-    const files = {
-      'package.json': JSON.stringify({
-        workspaces: ['packages/*'],
-      }),
+    project = new Project('workspaces');
+
+    project.pkg.workspaces = ['packages/*'];
+    project.files = {
       packages: {
         'package-a': {
           'package.json': JSON.stringify({
@@ -44,17 +44,19 @@ describe('migrate - validation', () => {
         },
       },
     };
-    fixturify.writeSync(basePath, files);
+
+    await project.write();
 
     const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: resolve(basePath, 'packages', 'package-a'),
+      cwd: resolve(project.baseDir, 'packages', 'package-a'),
     });
+
     expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
   });
 
   test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
-    const { name: basePath } = dirSync();
-    const files = {
+    project = new Project('workspaces-with-error');
+    project.files = {
       'package.json': JSON.stringify({
         workspaces: ['packages/lib/*'],
       }),
@@ -67,17 +69,19 @@ describe('migrate - validation', () => {
         },
       },
     };
-    fixturify.writeSync(basePath, files);
+
+    await project.write();
 
     const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
-      cwd: resolve(basePath, 'packages', 'package-a'),
+      cwd: resolve(project.baseDir, 'packages', 'package-a'),
     });
-    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(secondRunStdout, project.baseDir)).toMatchSnapshot();
   });
 
   test('throw if not in project root with pnpm workspaces', async () => {
-    const { name: basePath } = dirSync();
-    const files = {
+    project = new Project('workspaces-with-pnpm-erorr');
+
+    project.files = {
       'package.json': JSON.stringify({
         name: 'foo',
       }),
@@ -92,17 +96,18 @@ describe('migrate - validation', () => {
         },
       },
     };
-    fixturify.writeSync(basePath, files);
+
+    await project.write();
 
     const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: resolve(basePath, 'packages', 'package-a'),
+      cwd: resolve(project.baseDir, 'packages', 'package-a'),
     });
     expect(stdout).toContain('migrate command needs to be running at project root with workspaces');
   });
 
   test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
-    const { name: basePath } = dirSync();
-    const files = {
+    project = new Project('workspaces-with-pnpm-erorr');
+    project.files = {
       'package.json': JSON.stringify({
         name: 'foo',
       }),
@@ -117,59 +122,72 @@ describe('migrate - validation', () => {
         },
       },
     };
-    fixturify.writeSync(basePath, files);
+
+    await project.write();
 
     const { stdout: secondRunStdout } = await runBin('migrate', ['--ci'], {
-      cwd: resolve(basePath, 'packages', 'package-a'),
+      cwd: resolve(project.baseDir, 'packages', 'package-a'),
     });
-    expect(cleanOutput(secondRunStdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(secondRunStdout, project.baseDir)).toMatchSnapshot();
   });
 
   test('relative entrypoint inside project root works', async () => {
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
+
+    // we validate that this gets created
+    delete project.files['tsconfig.json'];
+
+    await project.write();
 
     const { stdout } = await runBin('migrate', ['-e', 'foo.js', '--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
   });
 
   test('absolute entrypoint inside project root works', async () => {
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
 
-    const { stdout } = await runBin('migrate', ['-e', resolve(basePath, 'foo.js'), '--ci'], {
-      cwd: basePath,
+    // we validate that this gets created
+    delete project.files['tsconfig.json'];
+
+    await project.write();
+
+    const { stdout } = await runBin('migrate', ['-e', resolve(project.baseDir, 'foo.js'), '--ci'], {
+      cwd: project.baseDir,
     });
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
   });
 
   test('entrypoint outside project root does not work', async () => {
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic');
+
+    await project.write();
 
     const { stdout } = await runBin('migrate', ['-e', resolve(__dirname, 'e2e.test.ts'), '--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
     expect(stdout).toContain('Could not find entrypoint');
   });
 });
 
 describe('migrate: e2e', () => {
-  let basePath = '';
-
-  beforeEach(() => {
-    basePath = prepareTmpDir('basic');
+  let project: Project;
+  beforeEach(async () => {
+    project = prepareProject('basic');
+    await project.write();
   });
 
   test('default migrate command', async () => {
     const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
 
     // summary message
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
     // file structures
-    const fileList = readdirSync(basePath);
+    const fileList = readdirSync(project.baseDir);
     expect(fileList).toContain('index.ts');
     expect(fileList).toContain('foo.ts');
     expect(fileList).toContain('depends-on-foo.ts');
@@ -178,33 +196,39 @@ describe('migrate: e2e', () => {
     expect(fileList).not.toContain('depends-on-foo.js');
 
     // file contents
-    expect(readFileSync(resolve(basePath, 'foo.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
     expect(
-      readFileSync(resolve(basePath, 'depends-on-foo.ts'), { encoding: 'utf-8' })
+      readFileSync(resolve(project.baseDir, 'foo.ts'), { encoding: 'utf-8' })
     ).toMatchSnapshot();
-    expect(readFileSync(resolve(basePath, 'index.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
+    expect(
+      readFileSync(resolve(project.baseDir, 'depends-on-foo.ts'), { encoding: 'utf-8' })
+    ).toMatchSnapshot();
+    expect(
+      readFileSync(resolve(project.baseDir, 'index.ts'), { encoding: 'utf-8' })
+    ).toMatchSnapshot();
 
     // Dependencies
     const packageJson = JSON.parse(
-      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+      await fs.readFile(resolve(project.baseDir, 'package.json'), 'utf-8')
     ) as PackageJson;
 
     const devDeps = packageJson.devDependencies;
     expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // report
-    const reportPath = resolve(basePath, '.rehearsal');
+    const reportPath = resolve(project.baseDir, '.rehearsal');
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
     expect(tsConfig).matchSnapshot();
 
     // lint config
     expect(fileList).toContain('.eslintrc.js');
     expect(fileList).toContain('.rehearsal-eslintrc.js');
-    const lintConfig = readFileSync(resolve(basePath, '.eslintrc.js'), { encoding: 'utf-8' });
-    const lintConfigDefualt = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), {
+    const lintConfig = readFileSync(resolve(project.baseDir, '.eslintrc.js'), {
+      encoding: 'utf-8',
+    });
+    const lintConfigDefualt = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
       encoding: 'utf-8',
     });
     expect(lintConfig).toMatchSnapshot();
@@ -217,27 +241,29 @@ describe('migrate: e2e', () => {
   test('migrate would skip steps after migrate init', async () => {
     // migrate init
     await runBin('migrate', ['init'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
 
-    let fileList = readdirSync(basePath);
+    let fileList = readdirSync(project.baseDir);
 
     // Dependencies
     const packageJson = JSON.parse(
-      await fs.readFile(resolve(basePath, 'package.json'), 'utf-8')
+      await fs.readFile(resolve(project.baseDir, 'package.json'), 'utf-8')
     ) as PackageJson;
     const devDeps = packageJson.devDependencies;
     expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
     expect(tsConfig).matchSnapshot();
 
     // lint config
     expect(fileList).toContain('.eslintrc.js');
     expect(fileList).toContain('.rehearsal-eslintrc.js');
-    const lintConfig = readFileSync(resolve(basePath, '.eslintrc.js'), { encoding: 'utf-8' });
-    const lintConfigDefualt = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), {
+    const lintConfig = readFileSync(resolve(project.baseDir, '.eslintrc.js'), {
+      encoding: 'utf-8',
+    });
+    const lintConfigDefualt = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
       encoding: 'utf-8',
     });
     expect(lintConfig).toMatchSnapshot();
@@ -248,13 +274,13 @@ describe('migrate: e2e', () => {
 
     // run migrate
     const { stdout } = await runBin('migrate', ['--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
     // migrate init output
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
     // read files again
-    fileList = readdirSync(basePath);
+    fileList = readdirSync(project.baseDir);
     // file structures
     expect(fileList).toContain('index.ts');
     expect(fileList).toContain('foo.ts');
@@ -264,14 +290,18 @@ describe('migrate: e2e', () => {
     expect(fileList).not.toContain('depends-on-foo.js');
 
     // file contents
-    expect(readFileSync(resolve(basePath, 'foo.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
     expect(
-      readFileSync(resolve(basePath, 'depends-on-foo.ts'), { encoding: 'utf-8' })
+      readFileSync(resolve(project.baseDir, 'foo.ts'), { encoding: 'utf-8' })
     ).toMatchSnapshot();
-    expect(readFileSync(resolve(basePath, 'index.ts'), { encoding: 'utf-8' })).toMatchSnapshot();
+    expect(
+      readFileSync(resolve(project.baseDir, 'depends-on-foo.ts'), { encoding: 'utf-8' })
+    ).toMatchSnapshot();
+    expect(
+      readFileSync(resolve(project.baseDir, 'index.ts'), { encoding: 'utf-8' })
+    ).toMatchSnapshot();
 
     // report
-    const reportPath = resolve(basePath, '.rehearsal');
+    const reportPath = resolve(project.baseDir, '.rehearsal');
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
   });
 
@@ -281,7 +311,7 @@ describe('migrate: e2e', () => {
     expect.assertions(1);
     try {
       const { stdout } = await runBin('migrate', ['--skip-init', '--ci'], {
-        cwd: basePath,
+        cwd: project.baseDir,
       });
       // validate -> initialize -> analyze -> convert
       const expected = [
@@ -303,29 +333,35 @@ describe('migrate: e2e', () => {
 
   test('Print debug messages with --verbose', async () => {
     const { stdout } = await runBin('migrate', ['--verbose', '--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
 
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
   });
 
   test('show warning message for missing config with --regen', async () => {
-    const { stdout } = await runBin('migrate', ['-r', '--ci'], {
-      cwd: basePath,
+    const project = prepareProject('basic_regen');
+    delete project.files['tsconfig.json'];
+
+    await project.write();
+    // this test expect a fixture app without tsconfig.json and eslint config
+    const { stdout, stderr } = await runBin('migrate', ['-r', '--ci'], {
+      cwd: project.baseDir,
     });
     expect(stdout).toContain('Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist');
     expect(stdout).toContain('tsconfig.json does not exist');
+    expect(stderr).toContain(`Config file 'tsconfig.json' not found`);
   });
 
   test('regen result after the first pass', async () => {
     // first run without --regen
     await runBin('migrate', ['--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
     const { stdout } = await runBin('migrate', ['-r', '--ci'], {
-      cwd: basePath,
+      cwd: project.baseDir,
     });
-    expect(cleanOutput(stdout, basePath)).toMatchSnapshot();
+    expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
   });
 
   describe('user defined options passed by --user-config -u', () => {
@@ -338,9 +374,12 @@ describe('migrate: e2e', () => {
       const files = getFiles('simple');
       // Add a directory that we don't want to ignore
       files['some-dir'] = { 'index.js': '// I should be excluded ' };
-      const basePath = create(files);
+      const project = new Project('my-package');
+      project.files = files;
 
-      createUserConfig(basePath, {
+      await project.write();
+
+      createUserConfig(project.baseDir, {
         migrate: {
           setup: {
             ts: { command: 'touch', args: ['custom-ts-config-script'] },
@@ -350,7 +389,7 @@ describe('migrate: e2e', () => {
       });
 
       const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
-        cwd: basePath,
+        cwd: project.baseDir,
       });
 
       const expected = [
@@ -366,6 +405,8 @@ describe('migrate: e2e', () => {
       ].join('\n');
 
       expect(result.stdout).contains(expected);
+      // need this here since we are using a local project
+      project.dispose();
     });
 
     test('migrate.include', async () => {
@@ -374,9 +415,11 @@ describe('migrate: e2e', () => {
       // test is a default ignored directory in Package.ts
       // adding it to the include list should override that value.
       files['test'] = { 'index.js': '// I should be included ' };
-      const basePath = create(files);
+      const project = new Project('my-package');
 
-      createUserConfig(basePath, {
+      project.files = files;
+      await project.write();
+      createUserConfig(project.baseDir, {
         migrate: {
           setup: {
             ts: { command: 'touch', args: ['custom-ts-config-script'] },
@@ -386,7 +429,7 @@ describe('migrate: e2e', () => {
       });
 
       const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
-        cwd: basePath,
+        cwd: project.baseDir,
       });
       const expected = [
         '[STARTED] Initialize',
@@ -402,6 +445,8 @@ describe('migrate: e2e', () => {
       ].join('\n');
 
       expect(result.stdout).contains(expected);
+      // need this here since we are using a local project
+      project.dispose();
     });
   });
 });

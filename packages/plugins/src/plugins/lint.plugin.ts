@@ -48,6 +48,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
       }
     } catch (e) {
       DEBUG_CALLBACK(`Plugin 'Lint' failed on ${fileName}: ${(e as Error).message}`);
+      throw e;
     }
 
     DEBUG_CALLBACK(`Plugin 'Lint' run with no changes on: %O`, fileName);

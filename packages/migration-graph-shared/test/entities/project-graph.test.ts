@@ -1,5 +1,6 @@
-import { getLibrary } from '@rehearsal/test-support';
-import { describe, expect, test } from 'vitest';
+import { getFiles } from '@rehearsal/test-support';
+import { describe, expect, test, afterEach } from 'vitest';
+import { Project } from 'fixturify-project';
 import { ProjectGraph } from '../../src/entities/project-graph.js';
 import { onlyPackage, Package } from '../../src/entities/package.js';
 import type { GraphNode } from '../../src/graph/node.js';
@@ -12,11 +13,21 @@ function flatten(arr: GraphNode<ModuleNode | PackageNode>[]): Array<string> {
 }
 
 describe('project-graph', () => {
+  let project: Project;
   const EXPECTED_FILES = ['lib/a.js', 'index.js', 'test/sample.test.js'];
-  test('should create a graph', () => {
-    const baseDir = getLibrary('library-with-tests');
 
-    const projectGraph = new ProjectGraph(baseDir);
+  afterEach(() => {
+    project.dispose();
+  });
+
+  test('should create a graph', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('library-with-tests'),
+    });
+
+    await project.write();
+
+    const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
     expect.assertions(6);
@@ -34,23 +45,28 @@ describe('project-graph', () => {
     expect(flatten(moduleGraphForPackage?.topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
-  test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', () => {
-    const baseDir = getLibrary('library-with-ignored-files');
+  test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('library-with-ignored-files'),
+    });
 
-    const projectGraph = new ProjectGraph(baseDir);
+    await project.write();
+
+    const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
 
     expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
-  test('should ignore .lock files', () => {
-    // create variant with locks files
-    const baseDir = getLibrary('library-with-ignored-files');
+  test('should ignore .lock files', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('library-with-ignored-files'),
+    });
 
-    // Add dummy lock files package-lock.json, npm-shrinkwrap.json package-lock.json, yarn.lock, pnpm-lock.yaml
+    await project.write();
 
-    const projectGraph = new ProjectGraph(baseDir);
+    const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
@@ -58,10 +74,14 @@ describe('project-graph', () => {
     expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
-  test('library should ignore files', () => {
-    // Create variant with ignored files or directories
-    const baseDir = getLibrary('library-with-ignored-files');
-    const projectGraph = new ProjectGraph(baseDir);
+  test('library should ignore files', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('library-with-ignored-files'),
+    });
+
+    await project.write();
+
+    const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
     const somePackage = projectGraph.graph.topSort()[0].content.pkg;
@@ -71,10 +91,14 @@ describe('project-graph', () => {
     expect(files).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
   });
 
-  test('should include loose files in rootDir', () => {
-    const baseDir = getLibrary('library-with-loose-files');
+  test('should include loose files in rootDir', async () => {
+    project = new Project('my-package-with-loose-files', '0.0.0', {
+      files: getFiles('library-with-loose-files'),
+    });
 
-    const projectGraph = new ProjectGraph(baseDir);
+    await project.write();
+
+    const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
@@ -87,11 +111,16 @@ describe('project-graph', () => {
       'State.js',
       'Widget.js',
       'WidgetManager.js',
+      'index.js',
     ]);
   });
 
-  test('options.eager', () => {
-    const baseDir = getLibrary('simple');
+  test('options.eager', async () => {
+    project = new Project('my-package', '0.0.0', {
+      files: getFiles('simple'),
+    });
+
+    await project.write();
 
     let projectGraph, somePackage;
 
@@ -99,23 +128,27 @@ describe('project-graph', () => {
     // We're trying to see once a package is added, that it's source moduleGraph
     // is created before access via somePackage.moduleGraph();
 
-    projectGraph = new ProjectGraph(baseDir);
+    projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
 
-    projectGraph = new ProjectGraph(baseDir, { eager: true });
+    projectGraph = new ProjectGraph(project.baseDir, { eager: true });
     projectGraph.discover();
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
   });
 
   describe('options.entrypoint', () => {
-    test('should work with a file', () => {
-      const baseDir = getLibrary('simple');
+    test('should work with a file', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('simple'),
+      });
+
+      await project.write();
       let projectGraph: ProjectGraph, sortedPackages: Package[], orderedFiles;
 
-      projectGraph = new ProjectGraph(baseDir, { entrypoint: 'index.js' });
+      projectGraph = new ProjectGraph(project.baseDir, { entrypoint: 'index.js' });
       projectGraph.discover();
 
       const sorted = projectGraph.graph.topSort();
@@ -131,7 +164,7 @@ describe('project-graph', () => {
 
       expect(orderedFiles).toStrictEqual(['lib/a.js', 'index.js']);
 
-      projectGraph = new ProjectGraph(baseDir, { entrypoint: './index.js' });
+      projectGraph = new ProjectGraph(project.baseDir, { entrypoint: './index.js' });
       projectGraph.discover();
 
       sortedPackages = Array.from(projectGraph.graph.topSort())
@@ -146,10 +179,16 @@ describe('project-graph', () => {
       expect(orderedFiles).toStrictEqual(['lib/a.js', 'index.js']);
     });
 
-    test('should work with a directory', () => {
-      const baseDir = getLibrary('library-with-workspaces');
+    test('should work with a directory', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-workspaces'),
+      });
 
-      const projectGraph = new ProjectGraph(baseDir, { entrypoint: 'packages/foo/index.js' });
+      await project.write();
+
+      const projectGraph = new ProjectGraph(project.baseDir, {
+        entrypoint: 'packages/foo/index.js',
+      });
       projectGraph.discover();
 
       const orderedPackages = Array.from(projectGraph.graph.topSort())
@@ -164,34 +203,48 @@ describe('project-graph', () => {
 
       expect(orderedFiles).toStrictEqual(['packages/foo/lib/a.js', 'packages/foo/index.js']);
     });
-  });
 
-  test('options.include', () => {
-    const baseDir = getLibrary('library-with-ignored-files');
+    test('options.include', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-ignored-files'),
+      });
 
-    const projectGraph = new ProjectGraph(baseDir, { include: ['Brocfile.js'] });
-    const [somePackage] = projectGraph.discover();
-    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
-      'Brocfile.js',
-      'lib/a.js',
-      'index.js',
-      'test/sample.test.js',
-    ]);
-  });
+      await project.write();
 
-  test('options.exclude', () => {
-    const baseDir = getLibrary('simple');
+      const projectGraph = new ProjectGraph(project.baseDir, { include: ['Brocfile.js'] });
+      const [somePackage] = projectGraph.discover();
+      expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
+        'Brocfile.js',
+        'lib/a.js',
+        'index.js',
+        'test/sample.test.js',
+      ]);
+    });
 
-    const projectGraph = new ProjectGraph(baseDir, { exclude: ['test'] });
-    const [somePackage] = projectGraph.discover();
-    expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
+    test('options.exclude', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('simple'),
+      });
+
+      await project.write();
+
+      const projectGraph = new ProjectGraph(project.baseDir, { exclude: ['test'] });
+      const [somePackage] = projectGraph.discover();
+      expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
+        'lib/a.js',
+        'index.js',
+      ]);
+    });
   });
 
   describe('workspaces', () => {
-    test('should discover all packages in the project', () => {
-      const baseDir = getLibrary('library-with-workspaces');
+    test('should discover all packages in the project', async () => {
+      project = new Project('some-library-with-workspace', '0.0.0', {
+        files: getFiles('library-with-workspaces'),
+      });
 
-      const projectGraph = new ProjectGraph(baseDir);
+      await project.write();
+      const projectGraph = new ProjectGraph(project.baseDir);
       projectGraph.discover();
 
       expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
@@ -222,12 +275,18 @@ describe('project-graph', () => {
       ]);
       expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
       expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual(['some-util.js']);
+      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([
+        'index.js',
+        'some-util.js',
+      ]);
     });
-    test('should find edges between packages', () => {
-      const baseDir = getLibrary('library-with-workspaces');
+    test('should find edges between packages', async () => {
+      project = new Project('my-package', '0.0.0', {
+        files: getFiles('library-with-workspaces'),
+      });
 
-      const projectGraph = new ProjectGraph(baseDir);
+      await project.write();
+      const projectGraph = new ProjectGraph(project.baseDir);
       projectGraph.discover();
 
       const fooNode = projectGraph.graph.getNode('@something/foo');
@@ -239,10 +298,14 @@ describe('project-graph', () => {
       expect(barNode.adjacent.has(bazNode)).toBe(true);
       expect(barNode.adjacent.has(blorpNode)).toBe(true);
     });
-    test('should not include a file out of the package scope', () => {
-      const baseDir = getLibrary('workspace-with-package-scope-issue');
+    test('should not include a file out of the package scope', async () => {
+      project = new Project('root-package', '0.0.0', {
+        files: getFiles('workspace-with-package-scope-issue'),
+      });
 
-      const projectGraph = new ProjectGraph(baseDir);
+      await project.write();
+
+      const projectGraph = new ProjectGraph(project.baseDir);
       projectGraph.discover();
 
       const rootNode = projectGraph.graph.getNode('root-package');
@@ -275,10 +338,10 @@ describe('project-graph', () => {
         'index.js',
       ]);
       expect(nodes[2].packageName).toBe('root-package');
-      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual(['some-shared-util.js']);
-    });
-    test.todo('should do something if a cycle is found', () => {
-      expect(true).toBe(false);
+      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual([
+        'index.js',
+        'some-shared-util.js',
+      ]);
     });
   });
 });

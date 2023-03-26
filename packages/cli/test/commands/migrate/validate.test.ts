@@ -6,18 +6,19 @@ import { createLogger, format, transports } from 'winston';
 
 import { validateTask } from '../../../src/commands/migrate/tasks/index.js';
 import {
-  prepareTmpDir,
+  prepareProject,
   listrTaskRunner,
   createMigrateOptions,
   cleanOutput,
 } from '../../test-helpers/index.js';
+import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: validate', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
@@ -37,39 +38,43 @@ describe('Task: validate', () => {
     return logger;
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     output = '';
-    basePath = prepareTmpDir('initialization');
+    project = prepareProject('initialization');
+    // tests below assume creation
+    delete project.files['tsconfig.json'];
+    await project.write();
   });
 
   afterEach(() => {
     output = '';
     vi.clearAllMocks();
+    project.dispose();
   });
 
   test('pass with package.json', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const tasks = [validateTask(options, logger)];
 
     await listrTaskRunner(tasks);
-    expect(cleanOutput(output, basePath)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
   test('error if no package.json', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const tasks = [validateTask(options, logger)];
 
-    rmSync(resolve(basePath, 'package.json'));
+    rmSync(resolve(project.baseDir, 'package.json'));
 
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(`package.json does not exists`);
   });
 
   test('error if .gitignore has .rehearsal', async () => {
-    const options = createMigrateOptions(basePath);
+    const options = createMigrateOptions(project.baseDir);
     const tasks = [validateTask(options, logger)];
 
     const gitignore = `.rehearsal\nfoo\nbar`;
-    const gitignorePath = resolve(basePath, '.gitignore');
+    const gitignorePath = resolve(project.baseDir, '.gitignore');
     writeFileSync(gitignorePath, gitignore, 'utf-8');
 
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
@@ -78,21 +83,21 @@ describe('Task: validate', () => {
   });
 
   test('show warning message for missing files in --regen', async () => {
-    const options = createMigrateOptions(basePath, { regen: true });
+    const options = createMigrateOptions(project.baseDir, { regen: true });
     const tasks = [validateTask(options, logger)];
 
     await listrTaskRunner(tasks);
-    expect(cleanOutput(output, basePath)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
   test('pass with all config files in --regen', async () => {
-    const options = createMigrateOptions(basePath, { regen: true });
+    const options = createMigrateOptions(project.baseDir, { regen: true });
     const tasks = [validateTask(options, logger)];
 
-    createFileSync(resolve(basePath, '.eslintrc.js'));
-    createFileSync(resolve(basePath, 'tsconfig.json'));
+    createFileSync(resolve(project.baseDir, '.eslintrc.js'));
+    createFileSync(resolve(project.baseDir, 'tsconfig.json'));
 
     await listrTaskRunner(tasks);
-    expect(cleanOutput(output, basePath)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 });

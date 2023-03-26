@@ -35,7 +35,8 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run",
+    "test": "vitest --run --config ./vitest.config.ts",
+    "test:slow": "vitest --run",
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
   },
@@ -54,7 +55,8 @@
     "listr2": "^5.0.7",
     "type-fest": "^3.6.1",
     "uuid": "^9.0.0",
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "winston": "^3.8.2"
   },
   "peerDependencies": {
     "@glint/core": "1.0.0-beta.4",

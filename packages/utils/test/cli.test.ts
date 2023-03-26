@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { compare } from 'compare-versions';
-import fixturify from 'fixturify';
+import { Project } from 'fixturify-project';
+import { writeSync } from 'fixturify';
 import tmp from 'tmp';
 import { describe, expect, test } from 'vitest';
 import yaml from 'js-yaml';
@@ -23,6 +24,8 @@ import {
   getEditorBinWithArgs,
   findWorkspaceRoot,
 } from '../src/index.js';
+
+tmp.setGracefulCleanup();
 
 describe('utils', () => {
   describe.each([
@@ -58,10 +61,25 @@ describe('utils', () => {
   });
 
   test('getPathToBinary()', async () => {
-    const tscPath = await getPathToBinary('tsc');
+    const project = new Project('my-project', '0.0.0', {
+      files: {
+        'package.json': JSON.stringify({
+          name: 'my-project',
+          version: '0.0.0',
+        }),
+      },
+    });
+
+    project.linkDevDependency('typescript', { baseDir: process.cwd() });
+
+    await project.write();
+
+    const tscPath = await getPathToBinary('tsc', { cwd: project.baseDir });
     const { stdout } = await execa(tscPath, ['--version']);
 
     expect(stdout).toContain(`Version`);
+
+    project.dispose();
   });
 
   // @rehearsal/cli uses pnpm
@@ -210,7 +228,8 @@ describe('utils', () => {
           },
         },
       };
-      fixturify.writeSync(tmpLocation, files);
+
+      writeSync(tmpLocation, files);
 
       const currentDir = resolve(tmpLocation, 'packages', 'package-a');
       expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
@@ -231,7 +250,8 @@ describe('utils', () => {
           },
         },
       };
-      fixturify.writeSync(tmpLocation, files);
+
+      writeSync(tmpLocation, files);
 
       const currentDir = resolve(tmpLocation, 'packages', 'package-a');
       expect(findWorkspaceRoot(currentDir)).toBe(currentDir);
@@ -254,7 +274,8 @@ describe('utils', () => {
           },
         },
       };
-      fixturify.writeSync(tmpLocation, files);
+
+      writeSync(tmpLocation, files);
 
       const currentDir = resolve(tmpLocation, 'packages', 'package-a');
       expect(findWorkspaceRoot(currentDir)).toBe(tmpLocation);
@@ -277,7 +298,8 @@ describe('utils', () => {
           },
         },
       };
-      fixturify.writeSync(tmpLocation, files);
+
+      writeSync(tmpLocation, files);
 
       const currentDir = resolve(tmpLocation, 'packages', 'package-a');
       expect(findWorkspaceRoot(currentDir)).toBe(currentDir);

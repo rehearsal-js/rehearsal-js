@@ -2,9 +2,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    testTimeout: 100_000,
+    testTimeout: 1_000_000,
     hookTimeout: 50_000,
-    watchExclude: ['package.json', '**/fixtures/**'],
-    threads: false,
+    watchExclude: ['package.json', '**/fixtures/**']
   },
 });

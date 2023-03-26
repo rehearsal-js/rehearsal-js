@@ -34,7 +34,8 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run",
+    "test": "vitest --run --config ./vitest.config.ts",
+    "test:slow": "vitest --run",
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
   },
@@ -48,14 +49,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
-    "@typescript-eslint/parser": "^5.50.0",
-    "eslint": "^8.0.0",
-    "eslint-config-prettier": "^8.6.0",
     "fs-extra": "^11.1.0",
     "listr2": "^5.0.7",
-    "prettier": "^2.8.3",
-    "typescript": "^5.0.0",
     "vitest": "^0.29.2"
   },
   "peerDependencies": {

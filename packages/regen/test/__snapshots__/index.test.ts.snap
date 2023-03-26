@@ -1,17 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`regen > should generate correct rehearsal comments for a group of files 1`] = `
+exports[`regen > should scan files and generate report 1`] = `
 "[
   {
-    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"analysisTarget\\": \\"<path>/test3.ts\\",
     \\"type\\": 0,
     \\"ruleId\\": \\"TS2345\\",
     \\"category\\": \\"Error\\",
     \\"message\\": \\"Argument of type 'string' is not assignable to parameter of type 'number'.\\",
-    \\"hint\\": \\"Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('5' as string)', or using type guard: 'if ('5' instanceof string) { ... }'.\\",
+    \\"hint\\": \\"Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '(\\\\\\"5\\\\\\" as string)', or using type guard: 'if (\\\\\\"5\\\\\\" instanceof string) { ... }'.\\",
     \\"hintAdded\\": true,
     \\"nodeKind\\": \\"StringLiteral\\",
-    \\"nodeText\\": \\"'5'\\",
+    \\"nodeText\\": \\"\\\\\\"5\\\\\\"\\",
     \\"helpUrl\\": \\"https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec\\",
     \\"nodeLocation\\": {
       \\"startLine\\": 6,
@@ -21,7 +21,7 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"analysisTarget\\": \\"<path>/test3.ts\\",
     \\"type\\": 0,
     \\"ruleId\\": \\"TS6133\\",
     \\"category\\": \\"Error\\",
@@ -33,31 +33,13 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     \\"helpUrl\\": \\"https://stackoverflow.com/search?tab=votes&q=TS6133\\",
     \\"nodeLocation\\": {
       \\"startLine\\": 9,
-      \\"startColumn\\": 5,
+      \\"startColumn\\": 7,
       \\"endLine\\": 9,
-      \\"endColumn\\": 8
+      \\"endColumn\\": 10
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test3.ts\\",
-    \\"type\\": 0,
-    \\"ruleId\\": \\"TS2322\\",
-    \\"category\\": \\"Error\\",
-    \\"message\\": \\"Type 'number' is not assignable to type 'string'.\\",
-    \\"hint\\": \\"The variable 'baz' has type 'string', but 'number' is assigned. Please convert 'number' to 'string' or change variable's type.\\",
-    \\"hintAdded\\": true,
-    \\"nodeKind\\": \\"Identifier\\",
-    \\"nodeText\\": \\"baz\\",
-    \\"helpUrl\\": \\"https://stackoverflow.com/questions/72139358/ts2322-type-typeof-statusenum-is-not-assignable-to-type-statusenum\\",
-    \\"nodeLocation\\": {
-      \\"startLine\\": 11,
-      \\"startColumn\\": 1,
-      \\"endLine\\": 11,
-      \\"endColumn\\": 4
-    }
-  },
-  {
-    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"analysisTarget\\": \\"<path>/test3.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-unused-vars\\",
     \\"category\\": \\"Error\\",
@@ -68,14 +50,14 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     \\"nodeText\\": \\"\\",
     \\"helpUrl\\": \\"\\",
     \\"nodeLocation\\": {
-      \\"startLine\\": 11,
-      \\"startColumn\\": 1,
-      \\"endLine\\": 11,
-      \\"endColumn\\": 4
+      \\"startLine\\": 9,
+      \\"startColumn\\": 7,
+      \\"endLine\\": 9,
+      \\"endColumn\\": 10
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test3.ts\\",
+    \\"analysisTarget\\": \\"<path>/test3.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"@typescript-eslint/no-unused-vars\\",
     \\"category\\": \\"Error\\",
@@ -86,19 +68,14 @@ exports[`regen > should generate correct rehearsal comments for a group of files
     \\"nodeText\\": \\"\\",
     \\"helpUrl\\": \\"\\",
     \\"nodeLocation\\": {
-      \\"startLine\\": 11,
-      \\"startColumn\\": 1,
-      \\"endLine\\": 11,
-      \\"endColumn\\": 4
+      \\"startLine\\": 9,
+      \\"startColumn\\": 7,
+      \\"endLine\\": 9,
+      \\"endColumn\\": 10
     }
-  }
-]"
-`;
-
-exports[`regen > should report lint errors 1`] = `
-"[
+  },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"@typescript-eslint/no-explicit-any\\",
     \\"category\\": \\"Error\\",
@@ -116,7 +93,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -134,7 +111,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -152,7 +129,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -170,7 +147,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -188,7 +165,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -206,7 +183,7 @@ exports[`regen > should report lint errors 1`] = `
     }
   },
   {
-    \\"analysisTarget\\": \\"tmp/test4.ts\\",
+    \\"analysisTarget\\": \\"<path>/test4.ts\\",
     \\"type\\": 1,
     \\"ruleId\\": \\"no-undef\\",
     \\"category\\": \\"Error\\",
@@ -225,5 +202,3 @@ exports[`regen > should report lint errors 1`] = `
   }
 ]"
 `;
-
-exports[`regen > should scan ts files but ignore js files 1`] = `"[]"`;

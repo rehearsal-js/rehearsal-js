@@ -1,11 +1,18 @@
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test } from 'vitest';
+import { Project } from 'fixturify-project';
 import { getEmberProject, setupProject } from '@rehearsal/test-support';
 import { EmberAddonPackage } from '../../src/entities/ember-addon-package.js';
 import { EmberAddonPackageGraph } from '../../src/entities/ember-addon-package-graph.js';
 
 describe('Unit | EmberAddonPackageGraph', () => {
+  let project: Project;
+
+  afterEach(() => {
+    project.dispose();
+  });
+
   test('should not include app/ dir in module graph', async () => {
-    const project = getEmberProject('addon');
+    project = getEmberProject('addon');
 
     await setupProject(project);
 
@@ -24,13 +31,13 @@ describe('Unit | EmberAddonPackageGraph', () => {
     // Som
     // `import MyComponent from 'some-module/components/some-component';
 
-    const project = getEmberProject('addon');
+    project = getEmberProject('addon');
 
     project.mergeFiles({
       addon: {
         components: {
           'trunk.gjs': `
-            import Branch from 'addon-template/components/branch'; 
+            import Branch from 'addon-template/components/branch';
 
             <template>
               <Branch/>
@@ -48,7 +55,7 @@ describe('Unit | EmberAddonPackageGraph', () => {
             const Flea = <template>
               <p>Hello, {{@name}}!</p>
             </template>;
-            
+
             <template>
               <Flea @name="Littlest"/>
             </template>

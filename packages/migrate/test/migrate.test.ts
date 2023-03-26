@@ -251,18 +251,8 @@ export default class Hello extends Component {
 
       await migrate(input);
 
-      const expectedTs = `import Component from '@glimmer/component';
-
-export default class Foo extends Component {}
-`;
-
-      const expectedHbs = `{{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. }}
-{{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
-<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-`;
-
-      expectFile(outputs[0]).toEqual(expectedHbs);
-      expectFile(outputs[1]).toEqual(expectedTs);
+      expectFile(outputs[0]).matchSnapshot();
+      expectFile(outputs[1]).matchSnapshot();
     });
 
     test('more involved class', async () => {
@@ -277,18 +267,18 @@ export default class Foo extends Component {}
 
       await migrate(input);
 
-      const expectedTs = `import Component from '@glimmer/component';
+      const expectedTs = `import Component from "@glimmer/component";
 /* @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@ember/service' or its corresponding type declarations. */
-import { inject as service } from '@ember/service';
+import { inject as service } from "@ember/service";
 
 export default class Salutation extends Component {
-  @service locale: { current: () => string; } | undefined;
+  @service locale: { current: () => string } | undefined;
   get name() {
-/* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
-    if (this.locale.current() == 'en-US') {
-      return 'Bob';
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    if (this.locale.current() == "en-US") {
+      return "Bob";
     }
-    return 'Unknown';
+    return "Unknown";
   }
 }
 `;
@@ -343,7 +333,7 @@ export default class Salutation extends Component {
 
       const expected = `class Foo {
   hello() {
-/* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
+    /* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
     return this.name;
   }
 }

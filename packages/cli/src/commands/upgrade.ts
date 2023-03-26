@@ -76,7 +76,9 @@ upgradeCommand
       }
     }
 
-    const tscPath = await getPathToBinary('tsc');
+    const tscPath = await getPathToBinary('tsc', {
+      cwd: basePath,
+    });
 
     DEBUG_CALLBACK('tscPath: %O', tscPath);
     DEBUG_CALLBACK('options: %O', options);
@@ -239,14 +241,18 @@ upgradeCommand
     );
 
     try {
-      await tasks.run().then((ctx) => {
+      const ctx = await tasks.run().then((ctx) => {
         DEBUG_CALLBACK('ctx: %O', ctx);
+        return ctx;
       });
 
-      const generateReports = await import('../helpers/report.js').then((m) => m.generateReports);
+      // If we skipped then the report doesn't have enough information to write
+      if (!ctx.skip) {
+        const generateReports = await import('../helpers/report.js').then((m) => m.generateReports);
 
-      const reportOutputPath = resolve(basePath, options.outputPath);
-      generateReports('upgrade', reporter, reportOutputPath, options.format);
+        const reportOutputPath = resolve(basePath, options.outputPath);
+        generateReports('upgrade', reporter, reportOutputPath, options.format);
+      }
     } catch (e) {
       if (e instanceof Error) {
         logger.error(`${e.message + '\n' + (e.stack || '')}`);

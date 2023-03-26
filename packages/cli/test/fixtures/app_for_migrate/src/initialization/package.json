@@ -3,5 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "packageManager": "pnpm@7.12.1"
+  "packageManager": "pnpm@7.12.1",
+  "dependencies": {},
+  "devDependencies": {}
 }

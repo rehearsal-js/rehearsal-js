@@ -30,7 +30,8 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run",
+    "test": "vitest --run --config ./vitest.config.ts",
+    "test:slow": "vitest --run",
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
   },
@@ -42,9 +43,11 @@
     "@types/eslint": "^8.21.0",
     "@types/sarif": "^2.1.4",
     "fs-extra": "^11.1.0",
-    "typescript": "^5.0.0",
     "vitest": "^0.29.2",
     "vitest-mock-extended": "^1.1.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
   "packageManager": "pnpm@7.12.1",
   "engines": {

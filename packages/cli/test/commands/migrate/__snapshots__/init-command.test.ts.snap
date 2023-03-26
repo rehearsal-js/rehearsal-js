@@ -10,7 +10,7 @@ exports[`migrate init > default run 1`] = `
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[SKIPPED] Create tsconfig.json
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
@@ -49,19 +49,26 @@ exports[`migrate init > default run 3`] = `
 
 exports[`migrate init > default run 4`] = `
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
+  "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es2020",
+    ],
     "module": "es2020",
     "moduleResolution": "node",
     "newLine": "lf",
-    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
+    "sourceMap": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
   },
+  "include": [],
 }
 `;
 

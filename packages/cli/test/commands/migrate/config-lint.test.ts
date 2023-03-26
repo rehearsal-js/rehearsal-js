@@ -3,7 +3,7 @@ import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { cosmiconfigSync } from 'cosmiconfig';
 
-import { prepareTmpDir } from '../../test-helpers/index.js';
+import { prepareProject } from '../../test-helpers/index.js';
 import {
   createCustomLintConfig,
   createLintConfig,
@@ -11,9 +11,10 @@ import {
   skipConfigThatExtends,
   skipCustomConfigThatExtends,
 } from '../../test-helpers/config-lint-test-utils.js';
+import type { Project } from 'fixturify-project';
 
 describe('Task: config-lint', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
@@ -24,20 +25,22 @@ describe('Task: config-lint', () => {
 
   let explorerSync;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     output = '';
-    basePath = prepareTmpDir('initialization');
+    project = prepareProject('initialization');
+    await project.write();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
     explorerSync = null;
+    project.dispose();
   });
 
   test('create .eslintrc.js if not existed', async () => {
-    await createLintConfig(basePath);
-    expect(readdirSync(basePath)).toContain('.eslintrc.js');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
+    await createLintConfig(project.baseDir);
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc.js');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.js');
     expect(output).matchSnapshot();
   });
 
@@ -45,15 +48,15 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     module.exports = {extends: []};
   `;
-    await extendLintConfig(oldConfig, basePath, '.eslintrc.js');
+    await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.js');
 
-    expect(readdirSync(basePath)).toContain('.eslintrc.js');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.js');
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc.js');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.js');
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-    const newConfig = require(resolve(basePath, '.eslintrc.js')) as { extends: string[] };
+    const newConfig = require(resolve(project.baseDir, '.eslintrc.js')) as { extends: string[] };
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.js']);
   });
 
@@ -61,7 +64,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     module.exports = {extends: ["./.rehearsal-eslintrc.js"]};
   `;
-    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.js');
+    await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.js');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 
@@ -69,15 +72,15 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {"extends": []}
   `;
-    await extendLintConfig(oldConfig, basePath, '.eslintrc');
+    await extendLintConfig(oldConfig, project.baseDir, '.eslintrc');
 
-    expect(readdirSync(basePath)).toContain('.eslintrc');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc');
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc');
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
-    const loaded = explorerSync.load(resolve(basePath, '.eslintrc'));
+    const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc'));
     const newConfig = loaded?.config as { extends: string[] };
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc']);
   });
@@ -86,7 +89,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {extends: ["./.rehearsal-eslintrc.js"]}
   `;
-    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc');
+    await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
@@ -95,15 +98,15 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {"extends": []}
   `;
-    await extendLintConfig(oldConfig, basePath, '.eslintrc.json');
+    await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.json');
 
-    expect(readdirSync(basePath)).toContain('.eslintrc.json');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.json');
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc.json');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.json');
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
-    const loaded = explorerSync.load(resolve(basePath, '.eslintrc.json'));
+    const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.json'));
     const newConfig = loaded?.config as { extends: string[] };
     expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.json']);
   });
@@ -112,7 +115,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     {"extends": ["./.rehearsal-eslintrc.js"]}
   `;
-    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.json');
+    await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.json');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
@@ -121,15 +124,15 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: []
   `;
-    await extendLintConfig(oldConfig, basePath, '.eslintrc.yml');
+    await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.yml');
 
-    expect(readdirSync(basePath)).toContain('.eslintrc.yml');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.yml');
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc.yml');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yml');
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
-    const loaded = explorerSync.load(resolve(basePath, '.eslintrc.yml'));
+    const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yml'));
     const config = loaded?.config as { extends: string[] };
 
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -140,7 +143,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: ["./.rehearsal-eslintrc.js"]
   `;
-    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.yml');
+    await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.yml');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 
@@ -148,15 +151,15 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: []
   `;
-    await extendLintConfig(oldConfig, basePath, '.eslintrc.yaml');
+    await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.yaml');
 
-    expect(readdirSync(basePath)).toContain('.eslintrc.yaml');
-    expect(readdirSync(basePath)).toContain('.rehearsal-eslintrc.yaml');
+    expect(readdirSync(project.baseDir)).toContain('.eslintrc.yaml');
+    expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yaml');
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('extending Rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
-    const loaded = explorerSync.load(resolve(basePath, '.eslintrc.yaml'));
+    const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yaml'));
     const config = loaded?.config as { extends: string[] };
 
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -167,7 +170,7 @@ describe('Task: config-lint', () => {
     const oldConfig = `
     extends: ["./.rehearsal-eslintrc.js"]
   `;
-    await skipConfigThatExtends(oldConfig, basePath, '.eslintrc.yaml');
+    await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.yaml');
 
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
@@ -180,9 +183,9 @@ describe('Task: config-lint', () => {
         },
       },
     };
-    await createCustomLintConfig(basePath, customConfig);
+    await createCustomLintConfig(project.baseDir, customConfig);
 
-    expect(readdirSync(basePath)).toContain('custom-lint-config-script');
+    expect(readdirSync(project.baseDir)).toContain('custom-lint-config-script');
     expect(output).toMatchSnapshot();
   });
 
@@ -196,10 +199,10 @@ describe('Task: config-lint', () => {
       },
     };
 
-    await createCustomLintConfig(basePath, customConfig);
+    await createCustomLintConfig(project.baseDir, customConfig);
 
-    expect(readdirSync(basePath)).toContain('foo');
-    expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
+    expect(readdirSync(project.baseDir)).toContain('foo');
+    expect(readdirSync(project.baseDir)).not.toContain('custom-lint-config-script');
     expect(output).toMatchSnapshot();
   });
 
@@ -211,9 +214,9 @@ describe('Task: config-lint', () => {
         },
       },
     };
-    await skipCustomConfigThatExtends(basePath, customConfig);
+    await skipCustomConfigThatExtends(project.baseDir, customConfig);
 
-    expect(readdirSync(basePath)).not.toContain('custom-lint-config-script');
+    expect(readdirSync(project.baseDir)).not.toContain('custom-lint-config-script');
     expect(output).toContain('[SKIPPED] Create eslint config');
   });
 });

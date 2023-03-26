@@ -1,13 +1,12 @@
 import { join, resolve, dirname } from 'node:path';
 import { Readable } from 'stream';
-import { rmSync, realpathSync } from 'node:fs';
+import { readFileSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { copySync } from 'fs-extra/esm';
 import { execa } from 'execa';
 import which from 'which';
-import { dirSync } from 'tmp';
 import { ListrTask, Listr } from 'listr2';
 import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
+import { Project } from 'fixturify-project';
 
 import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
 import type { Options, ExecaChildProcess } from 'execa';
@@ -73,14 +72,20 @@ export const afterEachCleanup = async (): Promise<void> => {
 };
 
 // Create tmp dir for migrate test based on fixture selection
-export function prepareTmpDir(dir: string): string {
-  const migrateFixturesDir = resolve(__dirname, '../fixtures/app_for_migrate');
-  const testSrcDir = resolve(migrateFixturesDir, 'src');
-  const srcDir = resolve(testSrcDir, dir);
-  const { name: targetDir } = dirSync();
-  copySync(srcDir, targetDir);
-  // /var is a symlink to /private/var, use realpath to return /private/var
-  return realpathSync(targetDir);
+export function prepareProject(
+  dir: string,
+  options: { linkDeps: boolean; linkDevDeps: boolean } = {
+    linkDeps: true,
+    linkDevDeps: true,
+  }
+): Project {
+  const projects = resolve(__dirname, '../fixtures/app_for_migrate');
+  const migrateFixturesDir = join(projects, 'src', dir);
+  const project = Project.fromDir(migrateFixturesDir, options);
+
+  project.files['tsconfig.json'] = readFileSync(join(projects, 'tsconfig.json'), 'utf-8');
+
+  return project;
 }
 
 // create default options for migrate cli

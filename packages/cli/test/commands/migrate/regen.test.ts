@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
+import { Project } from 'fixturify-project';
 import {
   initTask,
   depInstallTask,
@@ -10,15 +11,16 @@ import {
   lintConfigTask,
   analyzeTask,
   regenTask,
+  validateTask,
 } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareTmpDir, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: regen', () => {
-  let basePath = '';
+  let project: Project;
   let output = '';
   vi.spyOn(console, 'info').mockImplementation((chunk) => {
     output += `${chunk}\n`;
@@ -32,17 +34,20 @@ describe('Task: regen', () => {
 
   beforeEach(() => {
     output = '';
-    basePath = prepareTmpDir('basic');
+    project = prepareProject('basic_regen');
   });
 
   afterEach(() => {
     output = '';
     vi.clearAllMocks();
+    project.dispose();
   });
 
   test('throw error with no tsconfig.json', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [initTask(options), regenTask(options, logger)];
+    delete project.files['tsconfig.json'];
+    await project.write();
+    const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
+    const tasks = [validateTask(options, logger), regenTask(options, logger)];
 
     await expect(async () => await listrTaskRunner(tasks)).rejects.toThrowError(
       `Config file 'tsconfig.json' not found`
@@ -50,15 +55,25 @@ describe('Task: regen', () => {
   });
 
   test('no effect on JS filse before conversion', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
-    const tasks = [initTask(options), tsConfigTask(options), regenTask(options, logger)];
+    project.files['package.json'] = JSON.stringify({
+      name: 'basic_regen',
+      version: '1.0.0',
+    });
+    await project.write();
+    const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
+    const tasks = [
+      initTask(options),
+      validateTask(options, logger),
+      tsConfigTask(options),
+      regenTask(options, logger),
+    ];
 
     await listrTaskRunner(tasks);
     expect(output).matchSnapshot();
   });
 
   test('update ts and lint errors based on previous conversion', async () => {
-    const options = createMigrateOptions(basePath, { ci: true });
+    const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
     const tasks = [
       initTask(options),
       depInstallTask(options),
