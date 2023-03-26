@@ -27,7 +27,6 @@ export function convertTask(
       // Because we have to eagerly import all the tasks we need tolazily load these
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
-      const createMigrateGenerator = await import('@rehearsal/migrate').then((m) => m.createMigrateGenerator);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { generateReports, getReportSummary } = await import('../../../helpers/report.js');
       // If context is provide via external parameter, merge with existed
@@ -54,26 +53,23 @@ export function convertTask(
       );
 
       if (ctx.sourceFilesWithAbsolutePath) {
-        if (!options.ci) {
-          // In interactive mode, go through files one by one
-          // and ask user for actions: Accept/Edit/Discard
+        const input = {
+          basePath: ctx.targetPackagePath,
+          entrypoint,
+          sourceFiles: ctx.sourceFilesWithAbsolutePath,
+          logger: logger,
+          reporter,
+          task,
+        };
 
-          const input = {
-            basePath: ctx.targetPackagePath,
-            entrypoint,
-            sourceFiles: ctx.sourceFilesWithAbsolutePath,
-            logger: logger,
-            reporter,
-            task,
-          };
+        const migratedFiles = [];
 
-          const migrateRunner = createMigrateGenerator(input);
-
-          const migratedFiles = [];
-
-          for await (const f of migrateRunner) {
-            const jsFilePath = f;
-            const tsFilePath = f.replace(/js$/g, 'ts');
+        for await (const f of migrate(input)) {
+          if (!options.ci) {
+            // In interactive mode, yield each file
+            // and ask user for actions: Accept/Edit/Discard
+            const tsFilePath = f; // f from migrate is a TS files
+            const jsFilePath = f.replace(/ts$/g, 'js');
             let completed = false;
 
             // show git diff in a git repo
@@ -84,7 +80,7 @@ export function convertTask(
               // no-ops
             }
 
-            const message = `${chalk.yellow(
+            const message = `${chalk.green(
               `Please view the migration changes for ${f}:`
             )}\n${prettyGitDiff(diffOutput)}`;
 
@@ -95,7 +91,7 @@ export function convertTask(
                 {
                   type: 'Select',
                   name: 'fileActionSelection',
-                  message: 'Select an option to continue',
+                  message: 'Select an option to continue:',
                   choices: ['Accept', 'Edit', 'Discard'],
                 },
               ]);
@@ -128,33 +124,21 @@ export function convertTask(
                 completed = true;
               }
             }
-            // const reportOutputPath = resolve(basePath, options.outputPath);
-            // generateReports('migrate', reporter, reportOutputPath, options.format);
-            // task.title = getReportSummary(reporter.report, migratedFiles.length);
+            if (ctx.state) {
+              ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
+            }
+          } else {
+            // Only track migrated files and let the generator complete
+            migratedFiles.push(f);
           }
-          const reportOutputPath = resolve(basePath, options.outputPath);
-          generateReports('migrate', reporter, reportOutputPath, options.format);
-          task.title = getReportSummary(reporter.report, migratedFiles.length);
-          if (ctx.state) {
-            ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
-          }
-        } else {
-          const input = {
-            basePath: ctx.targetPackagePath,
-            entrypoint,
-            sourceFiles: ctx.sourceFilesWithAbsolutePath,
-            logger: logger,
-            reporter,
-            task,
-          };
-
-          const { migratedFiles } = await migrate(input);
-
-          DEBUG_CALLBACK('migratedFiles', migratedFiles);
-          const reportOutputPath = resolve(options.basePath, options.outputPath);
-          generateReports('migrate', reporter, reportOutputPath, options.format);
-          task.title = getReportSummary(reporter.report, migratedFiles.length);
         }
+        if (ctx.state) {
+          ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
+        }
+        DEBUG_CALLBACK('migratedFiles', migratedFiles);
+        const reportOutputPath = resolve(basePath, options.outputPath);
+        generateReports('migrate', reporter, reportOutputPath, options.format);
+        task.title = getReportSummary(reporter.report, migratedFiles.length);
       } else {
         task.skip('Skip JS -> TS conversion task, no JS files detected');
       }

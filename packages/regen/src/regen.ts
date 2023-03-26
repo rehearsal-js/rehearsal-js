@@ -93,7 +93,7 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
       reportErrors: true,
     });
 
-  await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  await runner.runAll(fileNames, { log: (message) => (listrTask.output = message) });
   reporter.saveCurrentRunToReport(basePath, input.entrypoint || '');
 
   return {

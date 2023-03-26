@@ -32,16 +32,6 @@ export type MigrateOutput = {
   migratedFiles: Array<string>;
 };
 
-export type PreparedOutput = {
-  basePath: string;
-  entrypoint: string;
-  configFile: string;
-  fileNames: Array<string>;
-  listrTask: { output: string };
-  reporter: Reporter;
-  runner: PluginsRunner;
-};
-
 const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 // The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
@@ -71,7 +61,7 @@ async function shouldUseGlint(basePath: string): Promise<boolean> {
   });
 }
 
-async function prepare(input: MigrateInput): Promise<PreparedOutput> {
+export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.js')];
   const configName = input.configName || 'tsconfig.json';
@@ -166,37 +156,8 @@ async function prepare(input: MigrateInput): Promise<PreparedOutput> {
       reportErrors: true,
     });
 
-  return {
-    basePath,
-    entrypoint,
-    configFile,
-    fileNames,
-    listrTask,
-    reporter,
-    runner,
-  };
-}
-
-export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
-  const { basePath, entrypoint, configFile, fileNames, listrTask, reporter, runner } =
-    await prepare(input);
-  await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
-  reporter.saveCurrentRunToReport(basePath, entrypoint);
-
-  return {
-    basePath,
-    configFile,
-    migratedFiles: fileNames,
-  };
-}
-
-// generator version of migrate
-export async function* createMigrateGenerator(input: MigrateInput): AsyncGenerator<string> {
-  const { basePath, entrypoint, fileNames, listrTask, reporter, runner } = await prepare(input);
-  const steps = runner.createRunner(fileNames, { log: (message) => (listrTask.output = message) });
-  for await (const fileName of steps) {
-    yield fileName;
-  }
+  yield *runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  // save report after all yields
   reporter.saveCurrentRunToReport(basePath, entrypoint);
 }
 

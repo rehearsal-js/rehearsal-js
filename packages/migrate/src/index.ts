@@ -1,1 +1,1 @@
-export { migrate, createMigrateGenerator, MigrateInput } from './migrate.js';
+export { migrate, MigrateInput } from './migrate.js';

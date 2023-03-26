@@ -41,7 +41,7 @@ export class PluginsRunner {
     return this;
   }
 
-  async run(fileNames: string[], logger?: PluginLogger): Promise<void> {
+  async runAll(fileNames: string[], logger?: PluginLogger): Promise<void> {
     const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _ of fileIteratorProcessor) {
@@ -57,10 +57,10 @@ export class PluginsRunner {
     }
   }
 
-  // Generator version of this.run
+  // Generator version of runAll
   // Wait for each step in processFilesGenerator completed to continue
   // This is used in @rehearsal/cli interactive mode when we need to wait/pause for every file
-  async *createRunner(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
+  async *run(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
     const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
     for await (const fileName of fileIteratorProcessor) {
       yield fileName;
