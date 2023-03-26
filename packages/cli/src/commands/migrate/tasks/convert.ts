@@ -27,6 +27,7 @@ export function convertTask(
       // Because we have to eagerly import all the tasks we need tolazily load these
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
+      const createMigrateGenerator = await import('@rehearsal/migrate').then((m) => m.createMigrateGenerator);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { generateReports, getReportSummary } = await import('../../../helpers/report.js');
       // If context is provide via external parameter, merge with existed
@@ -56,21 +57,24 @@ export function convertTask(
         if (!options.ci) {
           // In interactive mode, go through files one by one
           // and ask user for actions: Accept/Edit/Discard
-          for (const f of ctx.sourceFilesWithAbsolutePath) {
+
+          const input = {
+            basePath: ctx.targetPackagePath,
+            entrypoint,
+            sourceFiles: ctx.sourceFilesWithAbsolutePath,
+            logger: logger,
+            reporter,
+            task,
+          };
+
+          const migrateRunner = createMigrateGenerator(input);
+
+          const migratedFiles = [];
+
+          for await (const f of migrateRunner) {
             const jsFilePath = f;
             const tsFilePath = f.replace(/js$/g, 'ts');
             let completed = false;
-
-            const input = {
-              basePath: ctx.targetPackagePath,
-              entrypoint,
-              sourceFiles: [f],
-              logger: logger,
-              reporter,
-              task,
-            };
-
-            const { migratedFiles } = await migrate(input);
 
             // show git diff in a git repo
             let diffOutput: string = '';
@@ -81,20 +85,23 @@ export function convertTask(
             }
 
             const message = `${chalk.yellow(
-              `Please view the migration changes for ${f} and select an option to continue:`
+              `Please view the migration changes for ${f}:`
             )}\n${prettyGitDiff(diffOutput)}`;
+
+            task.output = message;
 
             while (!completed) {
               ctx.input = await task.prompt([
                 {
                   type: 'Select',
                   name: 'fileActionSelection',
-                  message,
+                  message: 'Select an option to continue',
                   choices: ['Accept', 'Edit', 'Discard'],
                 },
               ]);
 
               if (ctx.input === 'Accept') {
+                migratedFiles.push(f);
                 completed = true;
               } else if (ctx.input === 'Edit') {
                 if (!process.env['EDITOR']) {
@@ -104,6 +111,7 @@ export function convertTask(
                   continue;
                 } else {
                   await openInEditor(tsFilePath);
+                  migratedFiles.push(f);
                   completed = true;
                 }
               } else {
@@ -120,10 +128,13 @@ export function convertTask(
                 completed = true;
               }
             }
-            const reportOutputPath = resolve(basePath, options.outputPath);
-            generateReports('migrate', reporter, reportOutputPath, options.format);
-            task.title = getReportSummary(reporter.report, migratedFiles.length);
+            // const reportOutputPath = resolve(basePath, options.outputPath);
+            // generateReports('migrate', reporter, reportOutputPath, options.format);
+            // task.title = getReportSummary(reporter.report, migratedFiles.length);
           }
+          const reportOutputPath = resolve(basePath, options.outputPath);
+          generateReports('migrate', reporter, reportOutputPath, options.format);
+          task.title = getReportSummary(reporter.report, migratedFiles.length);
           if (ctx.state) {
             ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
           }

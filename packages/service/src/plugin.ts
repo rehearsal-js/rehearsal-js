@@ -57,10 +57,20 @@ export class PluginsRunner {
     }
   }
 
+  // Generator version of this.run
+  // Wait for each step in processFilesGenerator completed to continue
+  // This is used in @rehearsal/cli interactive mode when we need to wait/pause for every file
+  async *createRunner(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
+    const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
+    for await (const fileName of fileIteratorProcessor) {
+      yield fileName;
+    }
+  }
+
   // Async generator to process files
   // Since this is a long-running process, we need to yield to the event loop
   // So we don't block the main thread
-  async *processFilesGenerator(fileNames: string[], logger?: PluginLogger): AsyncGenerator<void> {
+  async *processFilesGenerator(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
     for (const fileName of fileNames) {
       logger?.log(`processing file: ${fileName.replace(this.context.basePath, '')}`);
 
@@ -82,7 +92,7 @@ export class PluginsRunner {
         await next();
       }
 
-      yield;
+      yield fileName;
     }
   }
 
