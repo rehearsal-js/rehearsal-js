@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/regen",
-  "version": "1.0.12-beta",
+  "version": "1.0.13-beta",
   "description": "Rehearsal JavaScript to TypeScript migration status reporting tool",
   "keywords": [
     "rehearsal",
