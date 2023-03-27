@@ -118,8 +118,6 @@ export function analyzeTask(
           ]);
           // update basePath based on the selection
           ctx.targetPackagePath = menuMap[ctx.input as string];
-          task.output = JSON.stringify(menuMap);
-          task.output = ctx.input as string;
           task.output = `Running migration on ${ctx.targetPackagePath}`;
         } else {
           ctx.targetPackagePath = options.basePath;
