@@ -49,7 +49,7 @@ migrateCommand
   )
   .option(
     '-p, --package <relative path to target package>',
-    `run migrate againt a specific package in your project(${process.cwd()}) `,
+    `run migrate againt a specific child-package in your project(${process.cwd()}) `,
     ''
   )
   .option(
