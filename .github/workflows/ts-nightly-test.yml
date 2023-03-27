@@ -1,14 +1,12 @@
-name: Test Suite
+name: TypeScript Nightly Test
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  schedule: # Run every day at midnight
+    - cron: '0 0 * * *'
 
 jobs:
-  test-and-lint:
-    name: Runs Entire Test Suite with Linting
+  test-ts-nightly:
+    name: TypeScript Nightly - Runs Entire Test Suite with Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,6 +43,8 @@ jobs:
             ${{ runner.os }}-npm-store-
       - name: Install dependencies
         run: pnpm install
+      - name: Install TypeScript Nightly
+        run: pnpm add -d -w typescript@next
       - name: Build
         run: pnpm build
       - name: Lint
