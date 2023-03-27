@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Module from 'node:module';
+import console from 'console';
 import ts, {
   type CodeActionCommand,
   type CodeFixAction,
@@ -88,16 +89,21 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     if (ts.isTypeReferenceNode(typeNode)) {
       const type = checker.getTypeFromTypeNode(typeNode);
 
+      //typeNode.typeArguments;
       // We need to check type arguments in case of using Generic type
-      const typeArguments =
-        (type as unknown as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments || [];
+      //const typeArguments =
+      //  (type as unknown as { resolvedTypeArguments?: ts.Type[] }).resolvedTypeArguments || [];
+
+      const typeArguments = typeNode.typeArguments || [];
 
       const isTypeError = (type: ts.Type): boolean => {
+        // The way to check if Type can't be resolved
+        //return type.flags === ts.TypeFlags.Any && checker.typeToString(type) !== 'any';
         // I have no idea how to get this value or how to check if type is real the right way, so use this hack
         return (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
       };
 
-      return !isTypeError(type) && !typeArguments.find(isTypeError);
+      return !isTypeError(type) && !typeArguments.find((node) => this.canBeResolved(checker, node));
     }
 
     if (ts.isParenthesizedTypeNode(typeNode)) {
@@ -163,7 +169,35 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
           diagnostic.file.fileName.includes('ts-types.ts') &&
           diagnostic.node!.getText() === 'think'
         ) {
-          const node = this.findNodeEndsAtPosition(diagnostic.file, textChanges.span.start);
+          const findNodeEndsAtPosition = (
+            sourceFile: SourceFile,
+            pos: number
+          ): Node | undefined => {
+            let previousNode: ts.Node = sourceFile;
+
+            const visitor = (node: Node): Node | undefined => {
+              // Looking for a not that comes right after the target node...
+              if (node.getStart() >= pos) {
+                console.log('in', node.getStart(), node.getEnd(), node.getText());
+                // ... and check the previous node children
+                return ts.forEachChild(previousNode, visitor);
+              } else {
+                console.log('skip', node.getStart(), node.getEnd(), node.getText());
+              }
+
+              previousNode = node;
+            };
+
+            ts.forEachChild(sourceFile, visitor);
+
+            return previousNode;
+          };
+
+          console.log('look: ', textChanges.newText, textChanges.span.start);
+
+          const node = findNodeEndsAtPosition(diagnostic.file, textChanges.span.start);
+
+          console.log('target: ', node?.getStart(), node?.getEnd(), node?.getText());
 
           if (node && ts.isParameter(node.parent)) {
             const typeTag = ts
@@ -189,22 +223,6 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     }
 
     return undefined;
-  }
-
-  findNodeEndsAtPosition(sourceFile: SourceFile, pos: number): Node | undefined {
-    let previousNode: ts.Node = sourceFile;
-
-    const visitor = (node: Node): Node | undefined => {
-      if (node.getStart() >= pos) {
-        return previousNode;
-      }
-
-      previousNode = node;
-
-      return ts.forEachChild(node, visitor);
-    };
-
-    return visitor(sourceFile);
   }
 
   private getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
