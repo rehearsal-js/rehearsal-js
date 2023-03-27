@@ -1,14 +1,12 @@
-name: Test Suite
+name: TypeScript Nightly Test
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  schedule: # Run every day at midnight
+    - cron: '0 0 * * *'
 
 jobs:
-  test-and-lint:
-    name: Runs Entire Test Suite with Linting
+  test-ts-nightly:
+    name: TypeScript Nightly - Runs Entire Test Suite with Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,9 +43,22 @@ jobs:
             ${{ runner.os }}-npm-store-
       - name: Install dependencies
         run: pnpm install
+      - name: Install TypeScript Nightly
+        run: pnpm add -d -w typescript@next
       - name: Build
         run: pnpm build
       - name: Lint
         run: pnpm lint
       - name: Test Slow
         run: pnpm test:slow
+      - uses: JasonEtco/create-an-issue@v2
+        name: Create GitHub issue if tests fail
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_ACCESS_TOKEN }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.workflow }}
+          JOB: ${{ github.job }}
+          ID: ${{ github.run_id }}
+        with:
+          filename: .github/failed_cron_job_issue_template.md
