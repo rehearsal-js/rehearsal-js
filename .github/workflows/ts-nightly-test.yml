@@ -51,3 +51,14 @@ jobs:
         run: pnpm lint
       - name: Test Slow
         run: pnpm test:slow
+      - uses: JasonEtco/create-an-issue@v2
+        name: Create GitHub issue if tests fail
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_ACCESS_TOKEN }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.workflow }}
+          JOB: ${{ github.job }}
+          ID: ${{ github.run_id }}
+        with:
+          filename: .github/failed_cron_job_issue_template.md
