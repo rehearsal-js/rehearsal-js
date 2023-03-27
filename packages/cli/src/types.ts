@@ -11,6 +11,7 @@ export type MigrateCommandOptions = {
   skipInit: boolean;
   basePath: string;
   entrypoint: string;
+  package: string;
   format: Formats[];
   outputPath: string;
   verbose: boolean | undefined;

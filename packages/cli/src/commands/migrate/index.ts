@@ -48,6 +48,11 @@ migrateCommand
     ''
   )
   .option(
+    '-p, --package <packageName>',
+    `run migrate againt a specific package in your project(${process.cwd()}) `,
+    ''
+  )
+  .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
     parseCommaSeparatedList,
