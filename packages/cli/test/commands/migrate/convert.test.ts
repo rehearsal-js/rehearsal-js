@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync } from 'fs-extra/esm';
+import { readTSConfig } from '@rehearsal/utils';
 import { simpleGit, type SimpleGitOptions } from 'simple-git';
 import { createLogger, format, transports } from 'winston';
 
@@ -87,7 +87,7 @@ describe('Task: convert', () => {
     expect(fileList).not.toContain('foo.js');
     expect(fileList).not.toContain('depends-on-foo.js');
 
-    const config = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
+    const config = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
     expect(config.include).toContain('index.ts');
     expect(config.include).toContain('foo.ts');
     expect(config.include).toContain('depends-on-foo.ts');
@@ -118,7 +118,7 @@ describe('Task: convert', () => {
     expect(fileList).not.toContain('depends-on-foo.js');
     expect(fileList).not.toContain('foo.js');
 
-    const config = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
+    const config = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
     expect(config.include).toContain('depends-on-foo.ts');
     expect(config.include).toContain('foo.ts');
   });

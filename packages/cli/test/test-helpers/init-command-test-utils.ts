@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { readFileSync, readdirSync, promises as fs } from 'node:fs';
-import { readJSONSync, writeJSONSync } from 'fs-extra';
+import { readTSConfig } from '@rehearsal/utils';
+import { writeJSONSync } from 'fs-extra';
 
 import { TSConfig, CustomConfig } from '../../src/types.js';
 import { runBin } from './index.js';
@@ -49,7 +50,7 @@ export async function runDefault(basePath: string): Promise<DefaultRunType> {
 
   const devDeps = packageJson.devDependencies;
 
-  const tsConfig = readJSONSync(resolve(basePath, 'tsconfig.json')) as TSConfig;
+  const tsConfig = readTSConfig<TSConfig>(resolve(basePath, 'tsconfig.json'));
   const lintConfig = readFileSync(resolve(basePath, '.eslintrc.js'), { encoding: 'utf-8' });
   const lintConfigDefault = readFileSync(resolve(basePath, '.rehearsal-eslintrc.js'), {
     encoding: 'utf-8',

@@ -133,7 +133,6 @@ importers:
       fs-extra: ^11.1.0
       get-tsconfig: ^4.4.0
       js-yaml: ^4.1.0
-      json5: 2.2.3
       listr2: ^5.0.7
       minimatch: ^7.4.2
       scenario-tester: ^2.1.2
@@ -165,7 +164,6 @@ importers:
       fs-extra: 11.1.0
       get-tsconfig: 4.4.0
       js-yaml: 4.1.0
-      json5: 2.2.3
       listr2: 5.0.7_enquirer@2.3.6
       minimatch: 7.4.2
       semver: 7.3.8
@@ -534,6 +532,7 @@ importers:
       findup-sync: ^5.0.0
       fixturify: ^3.0.0
       fs-extra: ^11.1.0
+      get-tsconfig: ^4.4.0
       glob: ^8.1.0
       js-yaml: ^4.1.0
       json5: ^2.2.3
@@ -551,6 +550,7 @@ importers:
       execa: 7.0.0
       findup-sync: 5.0.0
       fs-extra: 11.1.0
+      get-tsconfig: 4.4.0
       glob: 8.1.0
       js-yaml: 4.1.0
       json5: 2.2.3

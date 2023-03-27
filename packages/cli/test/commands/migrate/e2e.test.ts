@@ -1,14 +1,15 @@
 import { resolve } from 'node:path';
 import { readFileSync, readdirSync, promises as fs } from 'node:fs';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { writeJSONSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
 import { Project } from 'fixturify-project';
+import { readTSConfig } from '@rehearsal/utils';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { runBin, prepareProject, cleanOutput } from '../../test-helpers/index.js';
-import { CustomConfig, TSConfig } from '../../../src/types.js';
+import { CustomConfig } from '../../../src/types.js';
 import type { PackageJson } from 'type-fest';
 
 describe('migrate - validation', () => {
@@ -219,7 +220,7 @@ describe('migrate: e2e', () => {
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readTSConfig(resolve(project.baseDir, 'tsconfig.json'));
     expect(tsConfig).matchSnapshot();
 
     // lint config
@@ -254,7 +255,7 @@ describe('migrate: e2e', () => {
     expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // tsconfig.json
-    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readTSConfig(resolve(project.baseDir, 'tsconfig.json'));
     expect(tsConfig).matchSnapshot();
 
     // lint config

@@ -186,8 +186,7 @@ export function isPackageSelection(currentLine: string): boolean {
 
 // check if current line is the prompt message for selecting Accept/Edit/Discard in interactive mode
 export function isActionSelection(currentLine: string): boolean {
-  const promptRegex =
-    /Select an option to continue:/gm;
+  const promptRegex = /Select an option to continue:/gm;
   return (
     promptRegex.test(currentLine) &&
     currentLine.includes('Accept') &&

@@ -5,9 +5,8 @@ import {
   getMigrationStrategy,
   SourceFile,
 } from '@rehearsal/migration-graph';
-import { determineProjectName } from '@rehearsal/utils';
+import { determineProjectName, readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import debug from 'debug';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import { minimatch } from 'minimatch';
 import { State } from '../../../helpers/state.js';
@@ -162,7 +161,6 @@ export function analyzeTask(
     },
   };
 }
-
 /**
  * Update "include" in tsconfig.json
  * @param fileList array of relative file paths to the root
@@ -170,7 +168,7 @@ export function analyzeTask(
  */
 export function addFilesToIncludes(fileList: string[], configPath: string): void {
   if (existsSync(configPath)) {
-    const tsConfig = readJSONSync(configPath) as TSConfig;
+    const tsConfig = readTSConfig<TSConfig>(configPath);
     if (!tsConfig.include) {
       tsConfig.include = fileList;
     } else if (Array.isArray(tsConfig.include) && !tsConfig.include.length) {
@@ -187,6 +185,6 @@ export function addFilesToIncludes(fileList: string[], configPath: string): void
       });
       tsConfig.include = [...tsConfig.include, ...uniqueFiles];
     }
-    writeJSONSync(configPath, tsConfig, { spaces: 2 });
+    writeTSConfig(configPath, tsConfig);
   }
 }

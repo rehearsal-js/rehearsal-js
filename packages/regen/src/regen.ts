@@ -96,7 +96,7 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   for await (const _ of runner.run(fileNames, { log: (message) => (listrTask.output = message) })) {
     // no ops for yield
   }
-  
+
   reporter.saveCurrentRunToReport(basePath, input.entrypoint || '');
 
   return {
