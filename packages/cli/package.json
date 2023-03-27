@@ -55,7 +55,6 @@
     "fs-extra": "^11.1.0",
     "get-tsconfig": "^4.4.0",
     "js-yaml": "^4.1.0",
-    "json5": "2.2.3",
     "listr2": "^5.0.7",
     "minimatch": "^7.4.2",
     "semver": "^7.3.8",

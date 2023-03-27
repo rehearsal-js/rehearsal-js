@@ -1,8 +1,7 @@
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ListrTask } from 'listr2';
-import { writeJSONSync } from 'fs-extra/esm';
-import { readJSON, writeTSConfig } from '@rehearsal/utils';
+import { DEFAULT_TS_CONFIG, readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import { parseTsconfig } from 'get-tsconfig';
 
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
@@ -20,6 +19,8 @@ export function shouldRunTsConfigTask(options: MigrateCommandOptions): boolean {
   if (existsSync(configPath)) {
     // Resolve extends
     try {
+      // Using parseTsConfig instead of readTsConfig because we
+      // need to get the resolved values from all the extends.
       const parsedTsconfig = parseTsconfig(configPath);
       return !parsedTsconfig.compilerOptions?.strict === true;
     } catch (e) {
@@ -58,15 +59,15 @@ export function tsConfigTask(
           task.output = `${configPath} already exists, ensuring strict mode is enabled`;
           task.title = `Update tsconfig.json`;
 
-          const tsConfig = readJSON<TSConfig>(configPath) as TSConfig;
+          const tsConfig = readTSConfig<TSConfig>(configPath);
           if (!tsConfig.compilerOptions) {
             tsConfig.compilerOptions = { strict: true };
           } else {
             tsConfig.compilerOptions.strict = true;
           }
-          writeJSONSync(configPath, tsConfig, { spaces: 2 });
+          writeTSConfig(configPath, tsConfig);
         } else {
-          writeTSConfig(options.basePath);
+          writeTSConfig(configPath, DEFAULT_TS_CONFIG);
         }
       }
     },

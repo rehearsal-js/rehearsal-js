@@ -96,6 +96,10 @@ export function readJSON<T>(file: string): T | undefined {
   }
 }
 
+export function writeJSON<T>(file: string, contents: T | unknown): void {
+  writeJSONSync(file, contents, { spaces: 2 });
+}
+
 export function readText(file: string): string | undefined {
   return readFile(file, 'utf8');
 }
@@ -420,26 +424,39 @@ export function validateUserConfig(basePath: string, userConfigPath: string): bo
 }
 
 /**
+ * Reads a tsConfig file
+ * @param configPath
+ * @returns
+ */
+export function readTSConfig<T>(configPath: string): T {
+  return json5.parse(readFileSync(configPath, 'utf-8'));
+}
+
+/**
  * Generate tsconfig
  */
-export function writeTSConfig(basePath: string): void {
-  const config = {
-    $schema: 'https://json.schemastore.org/tsconfig',
-    compilerOptions: {
-      strict: true,
-      esModuleInterop: true,
-      noUncheckedIndexedAccess: true,
-      module: 'es2020',
-      moduleResolution: 'node',
-      newLine: 'lf',
-      target: 'ES2021',
-      forceConsistentCasingInFileNames: true,
-      noFallthroughCasesInSwitch: true,
-      noEmit: true,
-    },
-  };
 
-  writeJSONSync(resolve(basePath, 'tsconfig.json'), config, { spaces: 2 });
+export const DEFAULT_TS_CONFIG = {
+  $schema: 'https://json.schemastore.org/tsconfig',
+  compilerOptions: {
+    strict: true,
+    esModuleInterop: true,
+    noUncheckedIndexedAccess: true,
+    module: 'es2020',
+    moduleResolution: 'node',
+    newLine: 'lf',
+    target: 'ES2021',
+    forceConsistentCasingInFileNames: true,
+    noFallthroughCasesInSwitch: true,
+    noEmit: true,
+  },
+};
+
+export function writeTSConfig(configPath: string, config: unknown): void {
+  configPath = configPath.endsWith('tsconfig.json')
+    ? configPath
+    : resolve(configPath, 'tsconfig.json');
+  writeJSON(configPath, config);
 }
 
 /**

@@ -1,7 +1,8 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { writeJSONSync } from 'fs-extra/esm';
+import { readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
 import { CustomConfig, TSConfig } from '../../../src/types.js';
@@ -39,22 +40,21 @@ describe('Task: config-ts', () => {
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    expect(readJSONSync(resolve(project.baseDir, 'tsconfig.json'))).matchSnapshot();
+    expect(readTSConfig(resolve(project.baseDir, 'tsconfig.json'))).matchSnapshot();
     expect(output).matchSnapshot();
   });
 
   test('update tsconfig if exists', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: false } };
-    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
+    writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
     const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
-
+    const tsConfig = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
     expect(output).toContain('ensuring strict mode is enabled');
@@ -63,14 +63,14 @@ describe('Task: config-ts', () => {
   test('update tsconfig if invalid extends exist', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { extends: 'invalid-tsconfig.json' };
-    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
+    writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
     const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
     const tasks = [tsConfigTask(options, context)];
     await listrTaskRunner(tasks);
 
-    const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
+    const tsConfig = readTSConfig<TSConfig>(resolve(project.baseDir, 'tsconfig.json'));
 
     expect(tsConfig.compilerOptions.strict).toBeTruthy();
     // Do not use snapshot here since there is absolute path in output
@@ -80,7 +80,7 @@ describe('Task: config-ts', () => {
   test('skip if tsconfig.json exists with strict on', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: true } };
-    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
+    writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
     const options = createMigrateOptions(project.baseDir);
     const context = { sourceFilesWithRelativePath: [] };
@@ -113,7 +113,7 @@ describe('Task: config-ts', () => {
   test('skip custom config command', async () => {
     // Prepare old tsconfig
     const oldTsConfig = { compilerOptions: { strict: true } };
-    writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
+    writeTSConfig(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
 
     createUserConfig(project.baseDir, {
       migrate: {

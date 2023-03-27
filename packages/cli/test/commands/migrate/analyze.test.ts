@@ -1,8 +1,9 @@
 import { resolve } from 'node:path';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
+import { writeJSONSync } from 'fs-extra/esm';
 import { Project } from 'fixturify-project';
+import { readFile, readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import { analyzeTask, addFilesToIncludes } from '../../../src/commands/migrate/tasks/index.js';
 import {
   prepareProject,
@@ -14,6 +15,7 @@ import {
   isPackageSelection,
   isActionSelection,
 } from '../../test-helpers/index.js';
+import { TSConfig } from '../../../src/types.js';
 
 describe('Task: analyze', () => {
   let output = '';
@@ -61,14 +63,13 @@ describe('Task: analyze', () => {
 
   test('add files in tsconfig.json include', async () => {
     const configPath = resolve(project.baseDir, 'tsconfig.json');
-    writeJSONSync(configPath, {});
+    writeTSConfig(configPath, {});
 
     const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [analyzeTask(options)];
     await listrTaskRunner(tasks);
-
     // check include tsconfig.json
-    expect(readJSONSync(configPath)).matchSnapshot();
+    expect(readTSConfig(configPath)).matchSnapshot();
   });
 
   test('print files will be attempted to migrate with --dryRun', async () => {
@@ -301,17 +302,6 @@ describe('Task: analyze', () => {
 });
 
 describe('Helper: addFilesToIncludes', () => {
-  let project: Project;
-
-  beforeEach(async () => {
-    project = prepareProject('basic');
-    await project.write();
-  });
-
-  afterEach(() => {
-    project.dispose();
-  });
-
   test('do nothing with no tsconfig', async () => {
     const project = new Project();
     await project.write();
@@ -324,22 +314,51 @@ describe('Helper: addFilesToIncludes', () => {
     project.dispose();
   });
 
-  test('replace include if no include in tsconfig', () => {
+  test('parse tsconfig.json that has a comment /**/ block', async () => {
+    const project = new Project();
+    project.mergeFiles({
+      'tsconfig.json': `{
+                /* */
+      }`,
+    });
+    await project.write();
+
+    // expected that no tsconfig.json exists in this project fixture
     const configPath = resolve(project.baseDir, 'tsconfig.json');
-    writeJSONSync(configPath, {});
+    addFilesToIncludes([], configPath);
+
+    const content = readFile(configPath, 'utf8');
+    expect(content).toMatchSnapshot();
+
+    project.dispose();
+  });
+
+  test('replace include if no include in tsconfig', async () => {
+    const project = new Project();
+    project.mergeFiles({
+      'tsconfig.json': '{}',
+    });
+    await project.write();
+
+    const configPath = resolve(project.baseDir, 'tsconfig.json');
     const fileList = ['foo', 'bar'];
     addFilesToIncludes(fileList, configPath);
 
-    const config = readJSONSync(configPath) as { include: string[] };
+    const config = readTSConfig<TSConfig>(configPath);
     expect(config.include).toStrictEqual(fileList);
+    project.dispose();
   });
 
-  test('only append unique files to existed include', () => {
-    const configPath = resolve(project.baseDir, 'tsconfig.json');
-    const oldInclude = ['lib/*.ts', 'test/**/*.ts'];
-    writeJSONSync(configPath, {
-      include: oldInclude,
+  test('only append unique files to existed include', async () => {
+    const project = new Project();
+    project.mergeFiles({
+      'tsconfig.json': `{
+        include: ['lib/*.ts', 'test/**/*.ts']
+      }`,
     });
+    await project.write();
+
+    const configPath = resolve(project.baseDir, 'tsconfig.json');
     const fileList = [
       'lib/foo/a.ts',
       'lib/a.ts',
@@ -350,7 +369,8 @@ describe('Helper: addFilesToIncludes', () => {
     ];
     addFilesToIncludes(fileList, configPath);
 
-    const config = readJSONSync(configPath) as { include: string[] };
-    expect(config.include).toStrictEqual([...oldInclude, 'lib/foo/a.ts', 'index.ts']);
+    const config = readTSConfig<TSConfig>(configPath);
+    expect(config.include).toStrictEqual(['lib/*.ts', 'test/**/*.ts', 'lib/foo/a.ts', 'index.ts']);
+    project.dispose();
   });
 });

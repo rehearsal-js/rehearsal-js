@@ -1,5 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Helper: addFilesToIncludes > parse tsconfig.json that has a comment /**/ block 1`] = `
+"{
+  \\"include\\": []
+}
+"
+`;
+
 exports[`Task: analyze > accept --package option to skip the selection 1`] = `
 [
   "foo.js",
