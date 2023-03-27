@@ -1,3 +1,10 @@
+## <small>1.0.14-beta (2023-03-27)</small>
+
+* fix: refactor to use json5.parse for read of tsconfig (#883) ([7ccd8b2](https://github.com/rehearsal-js/rehearsal-js/commit/7ccd8b2)), closes [#883](https://github.com/rehearsal-js/rehearsal-js/issues/883)
+* fix(service): move test-support to devDep (#892) ([39fdabd](https://github.com/rehearsal-js/rehearsal-js/commit/39fdabd)), closes [#892](https://github.com/rehearsal-js/rehearsal-js/issues/892)
+
+
+
 ## <small>1.0.13-beta (2023-03-27)</small>
 
 * fix: exclude .graphql files from graph (#786) ([5c812cb](https://github.com/rehearsal-js/rehearsal-js/commit/5c812cb)), closes [#786](https://github.com/rehearsal-js/rehearsal-js/issues/786)
