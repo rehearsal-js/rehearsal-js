@@ -30,7 +30,7 @@ migrateCommand
   // always use default process.cwd()
   .addCommand(initCommand)
   .addOption(
-    new Option('-p, --basePath <project base path>', 'base directory of your project')
+    new Option('-b, --basePath <project base path>', 'base directory of your project')
       .default(process.cwd())
       // use argParser to ensure process.cwd() is basePath
       // even use passes anything accidentally
@@ -48,7 +48,7 @@ migrateCommand
     ''
   )
   .option(
-    '-p, --package <packageName>',
+    '-p, --package <relative path to target package>',
     `run migrate againt a specific package in your project(${process.cwd()}) `,
     ''
   )

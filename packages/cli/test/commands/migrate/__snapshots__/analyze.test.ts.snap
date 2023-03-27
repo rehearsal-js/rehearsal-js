@@ -1,5 +1,20 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Task: analyze > accept --package option to skip the selection 1`] = `
+[
+  "foo.js",
+  "depends-on-foo.js",
+  "index.js",
+]
+`;
+
+exports[`Task: analyze > accept --package option to skip the selection 2`] = `
+"[STARTED] Analyzing Project
+[DATA] Running migration on package .
+[SUCCESS] Analyzing Project
+"
+`;
+
 exports[`Task: analyze > add files in tsconfig.json include 1`] = `
 {
   "include": [
