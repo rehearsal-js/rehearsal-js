@@ -96,7 +96,10 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
       reportErrors: true,
     });
 
-  await runner.runAll(fileNames);
+  for await (const _ of runner.run(fileNames)) {
+    // no ops for yield
+  }
+
   reporter.saveCurrentRunToReport(basePath, input.entrypoint);
 
   return {

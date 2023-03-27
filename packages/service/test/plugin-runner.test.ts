@@ -40,7 +40,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), { filter: () => false });
       runner.queue(new Plugin2(), { filter: () => true });
 
-      await runner.runAll(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).not.toHaveBeenCalled();
       expect(plugin2Spy).toHaveBeenCalled();
@@ -52,7 +54,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), { filter: () => true });
       runner.queue(new Plugin2(), { filter: () => false });
 
-      await runner.runAll(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
@@ -64,7 +68,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), {});
       runner.queue(new Plugin2(), { filter: () => false });
 
-      await runner.runAll(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
@@ -85,25 +91,13 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin2(), { filter: () => false });
       runner.queue(new Plugin3(), { filter: () => true });
 
-      await runner.runAll(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
       expect(plugin3Spy).toHaveBeenCalled();
-    });
-
-    test('*run', async () => {
-      const runner = new PluginsRunner({ reporter, service, basePath: '.' });
-
-      runner.queue(new Plugin1(), {});
-      runner.queue(new Plugin2(), {});
-
-      for await (const _ of runner.run(['foo.js'])) {
-        // no ops
-      }
-
-      expect(plugin1Spy).toHaveBeenCalled();
-      expect(plugin2Spy).toHaveBeenCalled();
     });
   });
 });
