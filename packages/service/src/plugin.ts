@@ -41,26 +41,18 @@ export class PluginsRunner {
     return this;
   }
 
-  async run(fileNames: string[], logger?: PluginLogger): Promise<void> {
+  // generator to yield at every file in processFilesGenerator
+  async *run(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
     const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for await (const _ of fileIteratorProcessor) {
-      const next = async (): Promise<void> => {
-        const { done } = await fileIteratorProcessor.next();
-        if (!done) {
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          setImmediate(next);
-        }
-      };
-
-      await next();
+    for await (const fileName of fileIteratorProcessor) {
+      yield fileName;
     }
   }
 
   // Async generator to process files
   // Since this is a long-running process, we need to yield to the event loop
   // So we don't block the main thread
-  async *processFilesGenerator(fileNames: string[], logger?: PluginLogger): AsyncGenerator<void> {
+  async *processFilesGenerator(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
     for (const fileName of fileNames) {
       logger?.log(`processing file: ${fileName.replace(this.context.basePath, '')}`);
 
@@ -82,7 +74,7 @@ export class PluginsRunner {
         await next();
       }
 
-      yield;
+      yield fileName;
     }
   }
 

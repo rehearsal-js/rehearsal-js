@@ -73,6 +73,11 @@ describe('Task: regen', () => {
   });
 
   test('update ts and lint errors based on previous conversion', async () => {
+    project.files['package.json'] = JSON.stringify({
+      name: 'basic_regen',
+      version: '1.0.0',
+    });
+    await project.write();
     const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
     const tasks = [
       initTask(options),

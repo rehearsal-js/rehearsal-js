@@ -59,14 +59,20 @@ export function sequentialTask(
 
       const currentRunFiles = getSourceFiles(options.basePath, options.entrypoint);
 
-      const { migratedFiles } = await migrate({
+      const input = {
         basePath,
         entrypoint: options.entrypoint,
         sourceFiles: currentRunFiles,
         logger: logger,
         reporter,
         task,
-      });
+      };
+
+      const migratedFiles = [];
+
+      for await (const f of migrate(input)) {
+        migratedFiles.push(f);
+      }
 
       DEBUG_CALLBACK('migratedFiles', migratedFiles);
       const reportOutputPath = resolve(options.basePath, options.outputPath);

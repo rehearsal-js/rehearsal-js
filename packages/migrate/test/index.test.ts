@@ -14,7 +14,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('migrate', () => {
-  let migratedFiles: string[] = [];
   let sourceFiles: string[] = [];
   let reporter: Reporter;
   let logger: Logger;
@@ -56,8 +55,13 @@ describe('migrate', () => {
       entrypoint: 'index.js',
     };
 
-    const output = await migrate(input);
-    migratedFiles = output.migratedFiles;
+    const migratedFiles = [];
+
+    for await (const f of migrate(input)) {
+      if (f) {
+        migratedFiles.push(f);
+      }
+    }
     const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
     reporter.saveReport(jsonReport);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
@@ -78,9 +82,13 @@ describe('migrate', () => {
       entrypoint: '',
     };
 
-    const output = await migrate(input);
+    const migratedFiles = [];
 
-    migratedFiles = output.migratedFiles;
+    for await (const f of migrate(input)) {
+      if (f) {
+        migratedFiles.push(f);
+      }
+    }
 
     const file = migratedFiles.find((file) => file.includes('index.ts')) || '';
 
@@ -120,9 +128,13 @@ describe('migrate', () => {
       entrypoint: '',
     };
 
-    const output = await migrate(input);
+    const migratedFiles = [];
 
-    migratedFiles = output.migratedFiles;
+    for await (const f of migrate(input)) {
+      if (f) {
+        migratedFiles.push(f);
+      }
+    }
 
     const file = migratedFiles.find((file) => file.includes('complex.ts')) || '';
 

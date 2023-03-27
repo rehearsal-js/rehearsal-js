@@ -20,59 +20,40 @@ exports[`Task: convert > accept and discard changes with git 1`] = `
 [SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
-[DATA] processing file: /foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   1 JS file converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   0 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 0 eslint errors, with details in the report
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
-[DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   2 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   1 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 1 eslint errors, with details in the report
 [DATA] git mv /index.js to /index.ts
 [DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] processing file: /index.ts
-[DATA] ? Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA] Please view the migration changes for <tmp-path>/foo.ts:
+[DATA] ? Select an option to continue:  
 [DATA]  Accept
 [DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /depends-on-foo.ts
+[DATA] Please view the migration changes for <tmp-path>/depends-on-foo.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
+[DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /index.ts
+[DATA] Please view the migration changes for <tmp-path>/index.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
+[DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
-[DATA]   Discard
+[DATA]  Select an option to continue:  Discard
+[DATA]  Select an option to continue:  Discard
+[DATA]  Select an option to continue:  Discard
 [TITLE] Migration Complete
-[TITLE]   3 JS files converted to TS
+[TITLE]   2 JS files converted to TS
 [TITLE]   4 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Migration Complete
-[SUCCESS]   3 JS files converted to TS
+[SUCCESS]   2 JS files converted to TS
 [SUCCESS]   4 errors caught by rehearsal
 [SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
@@ -100,46 +81,29 @@ exports[`Task: convert > accept changes without git 1`] = `
 [SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
-[DATA] processing file: /foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   1 JS file converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   0 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 0 eslint errors, with details in the report
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
-[DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   2 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   1 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 1 eslint errors, with details in the report
 [DATA] git mv /index.js to /index.ts
 [DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] processing file: /index.ts
-[DATA] ? Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA] Please view the migration changes for <tmp-path>/foo.ts:
+[DATA] ? Select an option to continue:  
 [DATA]  Accept
 [DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
-[DATA]   Accept
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /depends-on-foo.ts
+[DATA] Please view the migration changes for <tmp-path>/depends-on-foo.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
+[DATA]   Edit
+[DATA]   Discard
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /index.ts
+[DATA] Please view the migration changes for <tmp-path>/index.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
+[DATA]   Edit
+[DATA]   Discard
+[DATA]  Select an option to continue:  Accept
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
 [TITLE]   4 errors caught by rehearsal
@@ -176,12 +140,15 @@ exports[`Task: convert > cancel prompt in interactive mode 1`] = `
 [SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
+[DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
+[DATA] git mv /index.js to /index.ts
 [DATA] processing file: /foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
+[DATA] Please view the migration changes for <tmp-path>/foo.ts:
+[DATA] ? Select an option to continue:  
 [DATA]  Accept
 [DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
+[DATA]  Select an option to continue:  
 [FAILED] Cancelled prompt."
 `;
 
@@ -368,48 +335,30 @@ exports[`Task: convert > view changes in $EDITOR 1`] = `
 [SUCCESS] Analyzing Project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
-[DATA] processing file: /foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   1 JS file converted to TS
-[TITLE]   1 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   0 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 0 eslint errors, with details in the report
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
-[DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] ? Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]  Accept
-[DATA]   Edit
-[DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/depends-on-foo.js and select an option to continue:
-[DATA]   Accept
-[TITLE] Migration Complete
-[TITLE]   2 JS files converted to TS
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
-[TITLE]   1 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 1 eslint errors, with details in the report
 [DATA] git mv /index.js to /index.ts
 [DATA] processing file: /foo.ts
-[DATA] processing file: /depends-on-foo.ts
-[DATA] processing file: /index.ts
-[DATA] ? Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA] Please view the migration changes for <tmp-path>/foo.ts:
+[DATA] ? Select an option to continue:  
 [DATA]  Accept
 [DATA]   Edit
 [DATA]   Discard
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /depends-on-foo.ts
+[DATA] Please view the migration changes for <tmp-path>/depends-on-foo.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
 [DATA]   Edit
-[DATA]  Please view the migration changes for <tmp-path>/index.js and select an option to continue:
+[DATA]   Discard
+[DATA]  Select an option to continue:  Accept
+[DATA] processing file: /index.ts
+[DATA] Please view the migration changes for <tmp-path>/index.ts:
+[DATA] ? Select an option to continue:  
+[DATA]  Accept
 [DATA]   Edit
+[DATA]   Discard
+[DATA]  Select an option to continue:  Edit
+[DATA]  Select an option to continue:  Edit
 [TITLE] Migration Complete
 [TITLE]   3 JS files converted to TS
 [TITLE]   4 errors caught by rehearsal

@@ -96,7 +96,9 @@ describe('migrate', () => {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `<template>
   {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
@@ -122,7 +124,9 @@ describe('migrate', () => {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `const Hello = <template>
   {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
@@ -143,7 +147,9 @@ describe('migrate', () => {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `import Component from '@glimmer/component';
 
@@ -170,7 +176,9 @@ export default class Hello extends Component {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `import Component from '@glimmer/component';
 
@@ -196,7 +204,9 @@ export default class Hello extends Component {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `import Component from '@glimmer/component';
 
@@ -249,7 +259,9 @@ export default class Hello extends Component {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       expectFile(outputs[0]).matchSnapshot();
       expectFile(outputs[1]).matchSnapshot();
@@ -265,7 +277,9 @@ export default class Hello extends Component {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expectedTs = `import Component from "@glimmer/component";
 /* @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@ember/service' or its corresponding type declarations. */
@@ -329,7 +343,9 @@ export default class Salutation extends Component {
         reporter,
       };
 
-      await migrate(input);
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
 
       const expected = `class Foo {
   hello() {

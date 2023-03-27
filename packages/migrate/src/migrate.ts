@@ -61,7 +61,7 @@ async function shouldUseGlint(basePath: string): Promise<boolean> {
   });
 }
 
-export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
+export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.basePath);
   const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.js')];
   const configName = input.configName || 'tsconfig.json';
@@ -156,14 +156,9 @@ export async function migrate(input: MigrateInput): Promise<MigrateOutput> {
       reportErrors: true,
     });
 
-  await runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  yield *runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  // save report after all yields
   reporter.saveCurrentRunToReport(basePath, entrypoint);
-
-  return {
-    basePath,
-    configFile,
-    migratedFiles: fileNames,
-  };
 }
 
 // Rename files to TS extension.

@@ -40,7 +40,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), { filter: () => false });
       runner.queue(new Plugin2(), { filter: () => true });
 
-      await runner.run(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).not.toHaveBeenCalled();
       expect(plugin2Spy).toHaveBeenCalled();
@@ -52,7 +54,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), { filter: () => true });
       runner.queue(new Plugin2(), { filter: () => false });
 
-      await runner.run(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
@@ -64,7 +68,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin1(), {});
       runner.queue(new Plugin2(), { filter: () => false });
 
-      await runner.run(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
@@ -85,7 +91,9 @@ describe('PluginsRunner', () => {
       runner.queue(new Plugin2(), { filter: () => false });
       runner.queue(new Plugin3(), { filter: () => true });
 
-      await runner.run(['foo.js']);
+      for await (const _ of runner.run(['foo.js'])) {
+        // no ops for yield
+      }
 
       expect(plugin1Spy).toHaveBeenCalled();
       expect(plugin2Spy).not.toHaveBeenCalled();
