@@ -12,6 +12,7 @@ const exclude = [
   './test/commands/migrate/config-lint.ember-app.test.ts',
   './test/commands/migrate/init-command.ember-addon.test.ts',
   './test/commands/migrate/init-command.ember-app.test.ts',
+  './test/commands/migrate/validate.ember-app.test.ts',
   './test/commands/upgrade.test.ts',
 ];
 
