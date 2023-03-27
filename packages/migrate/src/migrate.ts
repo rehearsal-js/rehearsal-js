@@ -156,7 +156,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       reportErrors: true,
     });
 
-  yield *runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  yield* runner.run(fileNames, { log: (message) => (listrTask.output = message) });
   // save report after all yields
   reporter.saveCurrentRunToReport(basePath, entrypoint);
 }
