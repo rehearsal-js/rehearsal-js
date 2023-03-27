@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@rehearsal/reporter": "workspace:*",
-    "@rehearsal/test-support": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "findup-sync": "^5.0.0",
     "vscode-languageserver": "^8.1.0",
@@ -47,7 +46,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "@rehearsal/test-support": "workspace:*"
   },
   "peerDependencies": {
     "@glint/core": "1.0.0-beta.4",
