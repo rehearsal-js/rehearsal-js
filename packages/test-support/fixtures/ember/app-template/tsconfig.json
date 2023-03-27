@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "declaration": false,
+    "isolatedModules": true,
+    "importsNotUsedAsValues": "error",
+    "preserveValueImports": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "noEmit": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true
+  },
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {}
+    }
+  }
+}

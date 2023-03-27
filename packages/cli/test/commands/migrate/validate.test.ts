@@ -1,6 +1,5 @@
 import { resolve } from 'node:path';
-import { rmSync, writeFileSync } from 'node:fs';
-import { createFileSync } from 'fs-extra/esm';
+import { rmSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
@@ -63,11 +62,10 @@ describe('Task: validate', () => {
   });
 
   test('error if .gitignore has .rehearsal', async () => {
-    const gitignore = `.rehearsal\nfoo\nbar`;
-    const gitignorePath = resolve(project.baseDir, '.gitignore');
-    writeFileSync(gitignorePath, gitignore, 'utf-8');
+    project.files['.gitignore'] = `.rehearsal\nfoo\nbar`;
+    await project.write();
 
-    await expect(() => runValidate(basePath, logger)).rejects.toThrowError(
+     await expect(() => runValidate(basePath, logger)).rejects.toThrowError(
       `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
     );
   });
@@ -78,8 +76,9 @@ describe('Task: validate', () => {
   });
 
   test('pass with all config files in --regen', async () => {
-    createFileSync(resolve(project.baseDir, '.eslintrc.js'));
-    createFileSync(resolve(project.baseDir, 'tsconfig.json'));
+    project.files['.eslintrc.js'] = 'module.exports = {}';
+    project.files['tsconfig.json'] = '{}';
+    await project.write();
 
     await runValidate(basePath, logger, { regen: true });
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
