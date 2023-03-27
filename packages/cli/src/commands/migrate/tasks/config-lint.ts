@@ -113,7 +113,7 @@ export function lintConfigTask(
         }
       }
     },
-    options: { persistentOutput: true, bottomBar: Infinity },
+    options: { persistentOutput: false, bottomBar: Infinity },
   };
 }
 

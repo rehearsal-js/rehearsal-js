@@ -119,7 +119,7 @@ export function depInstallTask(
       }
     },
     // will print and keep what dpe is currently installing at bottom bar
-    options: { persistentOutput: true, bottomBar: Infinity },
+    options: { persistentOutput: false, bottomBar: Infinity },
   };
 }
 

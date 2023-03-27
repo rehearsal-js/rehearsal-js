@@ -70,6 +70,6 @@ export function tsConfigTask(
         }
       }
     },
-    options: { persistentOutput: true, bottomBar: Infinity },
+    options: { persistentOutput: false, bottomBar: Infinity },
   };
 }
