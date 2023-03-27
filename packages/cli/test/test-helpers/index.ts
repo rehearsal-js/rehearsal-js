@@ -97,6 +97,7 @@ export function createMigrateOptions(
     basePath,
     skipInit: false,
     entrypoint: '',
+    package: '',
     format: ['sarif' as Formats],
     outputPath: '.rehearsal',
     verbose: false,

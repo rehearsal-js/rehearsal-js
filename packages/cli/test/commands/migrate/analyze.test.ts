@@ -27,6 +27,10 @@ describe('Task: analyze', () => {
     output += `${chunk}\n`;
     outputStream.push(`${chunk}\n`);
   });
+  vi.spyOn(console, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
 
   beforeEach(async () => {
     output = '';
@@ -111,6 +115,27 @@ describe('Task: analyze', () => {
     expect(ctx.targetPackagePath).toBe(project.baseDir);
     expect(ctx.sourceFilesWithRelativePath).toStrictEqual(expectedRellativePaths);
     expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual(expectedAbsolutePaths);
+  });
+
+  test('accept --package option to skip the selection', async () => {
+    const options = createMigrateOptions(project.baseDir, { package: '.' });
+    const tasks = [analyzeTask(options)];
+    const ctx = await listrTaskRunner(tasks);
+
+    expect(ctx.targetPackagePath).toBe(`${project.baseDir}`);
+    expect(ctx.sourceFilesWithAbsolutePath).toContain(`${project.baseDir}/index.js`);
+    expect(ctx.sourceFilesWithAbsolutePath).toContain(`${project.baseDir}/foo.js`);
+    expect(ctx.sourceFilesWithRelativePath).matchSnapshot();
+
+    expect(output).matchSnapshot();
+  });
+
+  test('throw if --package option is not valid', async () => {
+    const options = createMigrateOptions(project.baseDir, { package: 'no-valid-pacakge' });
+    const tasks = [analyzeTask(options)];
+    await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
+      `Cannot find package no-valid-pacakge in your project. Please make sure it is a valid package and try again.`
+    );
   });
 
   describe('multi-package', () => {
