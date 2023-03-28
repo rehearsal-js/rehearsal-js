@@ -1,3 +1,9 @@
+## <small>1.0.15-beta (2023-03-28)</small>
+
+* fix(migrate): remove postinstall hook (#894) ([d419c83](https://github.com/rehearsal-js/rehearsal-js/commit/d419c83)), closes [#894](https://github.com/rehearsal-js/rehearsal-js/issues/894)
+
+
+
 ## <small>1.0.14-beta (2023-03-27)</small>
 
 * fix: refactor to use json5.parse for read of tsconfig (#883) ([7ccd8b2](https://github.com/rehearsal-js/rehearsal-js/commit/7ccd8b2)), closes [#883](https://github.com/rehearsal-js/rehearsal-js/issues/883)

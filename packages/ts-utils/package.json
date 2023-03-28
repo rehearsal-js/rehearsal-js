@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/ts-utils",
-  "version": "1.0.14-beta",
+  "version": "1.0.15-beta",
   "description": "Rehearsal TypeScript Utils",
   "keywords": [
     "rehearsal",

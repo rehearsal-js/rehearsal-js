@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph",
-  "version": "1.0.14-beta",
+  "version": "1.0.15-beta",
   "description": "Tool for generating a typescript conversion graph",
   "license": "BSD-2-Clause",
   "type": "module",
