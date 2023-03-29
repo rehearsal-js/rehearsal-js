@@ -10,7 +10,9 @@ exports[`migrate init for ember app variant > ember4App > default run --ember4Ap
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
@@ -51,16 +53,28 @@ exports[`migrate init for ember app variant > ember4App > default run --ember4Ap
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
@@ -97,7 +111,9 @@ exports[`migrate init for ember app variant > ember4App > skip dep install, ts c
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies
 [STARTED] Create tsconfig.json
-[SKIPPED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [SKIPPED] Create eslint config
 [STARTED] Add package scripts
@@ -116,7 +132,9 @@ exports[`migrate init for ember app variant > emberApp > default run --emberApp 
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
@@ -157,16 +175,28 @@ exports[`migrate init for ember app variant > emberApp > default run --emberApp 
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
@@ -203,7 +233,9 @@ exports[`migrate init for ember app variant > emberApp > skip dep install, ts co
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies
 [STARTED] Create tsconfig.json
-[SKIPPED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [SKIPPED] Create eslint config
 [STARTED] Add package scripts
@@ -222,7 +254,9 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default 
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
@@ -263,16 +297,28 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default 
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
@@ -415,7 +461,9 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > skip de
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies
 [STARTED] Create tsconfig.json
-[SKIPPED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [SKIPPED] Create eslint config
 [STARTED] Add package scripts
