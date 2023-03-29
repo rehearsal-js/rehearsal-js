@@ -42,9 +42,9 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "ember-cli-4.4": "npm:ember-cli@~4.4.0",
-    "ember-data-4.4": "npm:ember-data@~4.4.0",
-    "ember-source-4.4": "npm:ember-source@~4.4.0",
+    "ember-cli": "^4.4.0",
+    "ember-data": "^4.4.0",
+    "ember-source": "^4.4.0",
     "vitest": "^0.29.2"
   },
   "peerDependencies": {

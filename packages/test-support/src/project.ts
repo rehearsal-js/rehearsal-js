@@ -186,15 +186,15 @@ export function getEmber4AppProject(): Project {
 
   project.linkDevDependency('ember-source', {
     baseDir: testSupport,
-    resolveName: 'ember-source-4.4',
+    resolveName: 'ember-source',
   });
   project.linkDevDependency('ember-cli', {
     baseDir: testSupport,
-    resolveName: 'ember-cli-4.4',
+    resolveName: 'ember-cli',
   });
   project.linkDevDependency('ember-data', {
     baseDir: testSupport,
-    resolveName: 'ember-data-4.4',
+    resolveName: 'ember-data',
   });
   return project;
 }

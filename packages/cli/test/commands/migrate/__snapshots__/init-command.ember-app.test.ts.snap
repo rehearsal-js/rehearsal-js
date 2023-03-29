@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`migrate init for ember 4 app > default run -- ember 4 app 1`] = `
+exports[`migrate init for ember app variant > ember4App > default run --ember4App 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -20,14 +20,14 @@ exports[`migrate init for ember 4 app > default run -- ember 4 app 1`] = `
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember 4 app > default run -- ember 4 app 2`] = `
+exports[`migrate init for ember app variant > ember4App > default run --ember4App 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init for ember 4 app > default run -- ember 4 app 3`] = `
+exports[`migrate init for ember app variant > ember4App > default run --ember4App 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -47,7 +47,7 @@ exports[`migrate init for ember 4 app > default run -- ember 4 app 3`] = `
 }"
 `;
 
-exports[`migrate init for ember 4 app > default run -- ember 4 app 4`] = `
+exports[`migrate init for ember app variant > ember4App > default run --ember4App 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -65,7 +65,7 @@ exports[`migrate init for ember 4 app > default run -- ember 4 app 4`] = `
 }
 `;
 
-exports[`migrate init for ember 4 app > pass user config - ember 4 app 1`] = `
+exports[`migrate init for ember app variant > ember4App > pass user config ember4App 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -88,7 +88,7 @@ exports[`migrate init for ember 4 app > pass user config - ember 4 app 1`] = `
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember 4 app > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > ember4App > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -106,7 +106,7 @@ exports[`migrate init for ember 4 app > skip dep install, ts config, and lint co
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-app > default run --ember3-app 1`] = `
+exports[`migrate init for ember app variant > emberApp > default run --emberApp 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -126,14 +126,14 @@ exports[`migrate init for ember app variant > ember3-app > default run --ember3-
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-app > default run --ember3-app 2`] = `
+exports[`migrate init for ember app variant > emberApp > default run --emberApp 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init for ember app variant > ember3-app > default run --ember3-app 3`] = `
+exports[`migrate init for ember app variant > emberApp > default run --emberApp 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -153,7 +153,7 @@ exports[`migrate init for ember app variant > ember3-app > default run --ember3-
 }"
 `;
 
-exports[`migrate init for ember app variant > ember3-app > default run --ember3-app 4`] = `
+exports[`migrate init for ember app variant > emberApp > default run --emberApp 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -171,7 +171,7 @@ exports[`migrate init for ember app variant > ember3-app > default run --ember3-
 }
 `;
 
-exports[`migrate init for ember app variant > ember3-app > pass user config ember3-app 1`] = `
+exports[`migrate init for ember app variant > emberApp > pass user config emberApp 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -194,7 +194,7 @@ exports[`migrate init for ember app variant > ember3-app > pass user config embe
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-app > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > emberApp > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -212,7 +212,7 @@ exports[`migrate init for ember app variant > ember3-app > skip dep install, ts 
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > default run --ember3-appWithInRepoAddon 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default run --emberAppWithInRepoAddon 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -232,14 +232,14 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > defaul
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > default run --ember3-appWithInRepoAddon 2`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default run --emberAppWithInRepoAddon 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > default run --ember3-appWithInRepoAddon 3`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default run --emberAppWithInRepoAddon 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -259,7 +259,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > defaul
 }"
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > default run --ember3-appWithInRepoAddon 4`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default run --emberAppWithInRepoAddon 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -277,7 +277,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > defaul
 }
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > pass user config ember3-appWithInRepoAddon 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > pass user config emberAppWithInRepoAddon 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -300,7 +300,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > pass u
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoAddon > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -318,7 +318,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoAddon > skip d
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > default run --ember3-appWithInRepoEngine 1`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -338,14 +338,14 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > defau
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > default run --ember3-appWithInRepoEngine 2`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > default run --ember3-appWithInRepoEngine 3`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -365,7 +365,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > defau
 }"
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > default run --ember3-appWithInRepoEngine 4`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -383,7 +383,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > defau
 }
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > pass user config ember3-appWithInRepoEngine 1`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > pass user config emberAppwithInRepoEngine 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -406,7 +406,7 @@ exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > pass 
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > ember3-appWithInRepoEngine > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > emberAppwithInRepoEngine > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize

@@ -440,9 +440,9 @@ importers:
     specifiers:
       '@types/lodash.merge': ^4.6.7
       '@types/minimatch': ^5.1.2
-      ember-cli-4.4: npm:ember-cli@~4.4.0
-      ember-data-4.4: npm:ember-data@~4.4.0
-      ember-source-4.4: npm:ember-source@~4.4.0
+      ember-cli: ^4.4.0
+      ember-data: ^4.4.0
+      ember-source: ^4.4.0
       findup-sync: ^5.0.0
       fixturify: ^3.0.0
       fixturify-project: ^5.2.0
@@ -466,9 +466,9 @@ importers:
       scenario-tester: 2.1.2
       tmp: 0.2.1
     devDependencies:
-      ember-cli-4.4: /ember-cli/4.4.1
-      ember-data-4.4: /ember-data/4.4.1
-      ember-source-4.4: /ember-source/4.4.4
+      ember-cli: 4.4.1
+      ember-data: 4.4.1
+      ember-source: 4.4.4
       vitest: 0.29.5
 
   packages/ts-utils:
