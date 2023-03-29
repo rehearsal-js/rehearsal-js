@@ -1,30 +1,44 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Task: config-ts ember app > ember3-app > create tsconfig if not existed 1`] = `
+exports[`Task: config-ts ember app > emberApp > create tsconfig if not existed 1`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
 
-exports[`Task: config-ts ember app > ember3-app > create tsconfig if not existed 2`] = `
+exports[`Task: config-ts ember app > emberApp > create tsconfig if not existed 2`] = `
 "[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] /private/var/folders/0z/nxv8kql53p3_6phq_wn6wjlh0021b8/T/tmp-620021hqKzIuXKOUG/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-app > postTsSetup hook from user config 1`] = `
+exports[`Task: config-ts ember app > emberApp > postTsSetup hook from user config 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [DATA] Run postTsSetup from config
@@ -32,20 +46,20 @@ exports[`Task: config-ts ember app > ember3-app > postTsSetup hook from user con
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-app > run custom config command with user config provided 1`] = `
+exports[`Task: config-ts ember app > emberApp > run custom config command with user config provided 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-app > skip custom config command 1`] = `
+exports[`Task: config-ts ember app > emberApp > skip custom config command 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-app > skip if tsconfig.json exists with strict on 1`] = `
+exports[`Task: config-ts ember app > emberApp > skip if tsconfig.json exists with strict on 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 [STARTED] Create tsconfig.json
@@ -53,31 +67,45 @@ exports[`Task: config-ts ember app > ember3-app > skip if tsconfig.json exists w
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > create tsconfig if not existed 1`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > create tsconfig if not existed 1`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > create tsconfig if not existed 2`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > create tsconfig if not existed 2`] = `
 "[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] /private/var/folders/0z/nxv8kql53p3_6phq_wn6wjlh0021b8/T/tmp-62002SISqTMHAT7ts/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > postTsSetup hook from user config 1`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > postTsSetup hook from user config 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [DATA] Run postTsSetup from config
@@ -85,20 +113,20 @@ exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > postTsSetup hoo
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > run custom config command with user config provided 1`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > run custom config command with user config provided 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > skip custom config command 1`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > skip custom config command 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > skip if tsconfig.json exists with strict on 1`] = `
+exports[`Task: config-ts ember app > emberAppWithInRepoAddon > skip if tsconfig.json exists with strict on 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 [STARTED] Create tsconfig.json
@@ -106,31 +134,45 @@ exports[`Task: config-ts ember app > ember3-appWithInRepoAddon > skip if tsconfi
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > create tsconfig if not existed 1`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > create tsconfig if not existed 1`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > create tsconfig if not existed 2`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > create tsconfig if not existed 2`] = `
 "[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] /private/var/folders/0z/nxv8kql53p3_6phq_wn6wjlh0021b8/T/tmp-62002NQTjSDg6eUmY/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > postTsSetup hook from user config 1`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > postTsSetup hook from user config 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [DATA] Run postTsSetup from config
@@ -138,20 +180,20 @@ exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > postTsSetup ho
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > run custom config command with user config provided 1`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > run custom config command with user config provided 1`] = `
 "[STARTED] Create tsconfig.json
 [DATA] Create tsconfig from config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > skip custom config command 1`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > skip custom config command 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 "
 `;
 
-exports[`Task: config-ts ember app > ember3-appWithInRepoEngine > skip if tsconfig.json exists with strict on 1`] = `
+exports[`Task: config-ts ember app > emberAppwithInRepoEngine > skip if tsconfig.json exists with strict on 1`] = `
 "[STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 [STARTED] Create tsconfig.json
