@@ -216,3 +216,127 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > ru
 [SUCCESS] Create eslint config
 "
 `;
+
+exports[`Task: config-lint for ember app > ember4App > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > ember4App > postLintSetup hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[DATA] Run postLintSetup from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > ember4App > run custom config command with user config provided 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberApp > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberApp > postLintSetup hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[DATA] Run postLintSetup from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberApp > run custom config command with user config provided 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppWithInRepoAddon > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppWithInRepoAddon > postLintSetup hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[DATA] Run postLintSetup from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppWithInRepoAddon > run custom config command with user config provided 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppwithInRepoEngine > create .eslintrc.js if not existed 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppwithInRepoEngine > postLintSetup hook from user config 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[DATA] Run postLintSetup from config
+[SUCCESS] Create eslint config
+"
+`;
+
+exports[`Task: config-lint for ember app > emberAppwithInRepoEngine > run custom config command with user config provided 1`] = `
+"[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js from config
+[SUCCESS] Create eslint config
+"
+`;

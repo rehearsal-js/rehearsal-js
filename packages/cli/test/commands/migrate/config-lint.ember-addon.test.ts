@@ -2,9 +2,9 @@ import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
 import { cosmiconfigSync } from 'cosmiconfig';
 
-import { addonScenarios, clean } from '@rehearsal/test-support';
-import { Scenario, PreparedApp } from 'scenario-tester';
-import { describe, beforeEach, afterEach, test, vi, expect } from 'vitest';
+import { getEmberAddonProject } from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
+import { describe, beforeEach, afterEach, afterAll, test, vi, expect } from 'vitest';
 import {
   createCustomLintConfig,
   createLintConfig,
@@ -12,18 +12,23 @@ import {
   skipConfigThatExtends,
   skipCustomConfigThatExtends,
 } from '../../test-helpers/config-lint-test-utils.js';
+const projects = {
+  emberAddon: getEmberAddonProject()
+};
 
 describe('Task: config-lint -- ember-addon-matrix', () => {
-  addonScenarios.forEachScenario((scenario: Scenario) => {
-    describe(scenario.name, () => {
-      let app: PreparedApp;
+  for (const [name, originalProject] of Object.entries(projects)) {
+    describe(name, () => {
+      let project: Project;
       let output = '';
       let explorerSync;
 
       beforeEach(async () => {
-        app = await scenario.prepare();
-        clean(app.dir);
+        project = originalProject.clone();
+        await project.write();
+        
         output = '';
+
         vi.spyOn(console, 'info').mockImplementation((chunk) => {
           output += `${chunk}\n`;
         });
@@ -37,12 +42,17 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         vi.clearAllMocks();
         explorerSync = null;
         output = '';
+        project.dispose();
+      });
+
+      afterAll(() => {
+        originalProject.dispose();
       });
 
       test('create .eslintrc.js if not existed', async () => {
-        await createLintConfig(app.dir);
-        expect(readdirSync(app.dir)).toContain('.eslintrc.js');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc.js');
+        await createLintConfig(project.baseDir);
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc.js');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.js');
         expect(output).matchSnapshot();
       });
 
@@ -50,15 +60,15 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         module.exports = {extends: []};
       `;
-        await extendLintConfig(oldConfig, app.dir, '.eslintrc.js');
+        await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.js');
 
-        expect(readdirSync(app.dir)).toContain('.eslintrc.js');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc.js');
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc.js');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.js');
         // Do not use snapshot here since there is absolute path in output
         expect(output).toContain('extending Rehearsal default eslint-related config');
 
         /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-        const newConfig = require(resolve(app.dir, '.eslintrc.js')) as { extends: string[] };
+        const newConfig = require(resolve(project.baseDir, '.eslintrc.js')) as { extends: string[] };
         expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.js']);
       });
 
@@ -66,7 +76,7 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         module.exports = {extends: ["./.rehearsal-eslintrc.js"]};
       `;
-        await skipConfigThatExtends(oldConfig, app.dir, '.eslintrc.js');
+        await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.js');
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
 
@@ -74,15 +84,15 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         {"extends": []}
       `;
-        await extendLintConfig(oldConfig, app.dir, '.eslintrc');
+        await extendLintConfig(oldConfig, project.baseDir, '.eslintrc');
 
-        expect(readdirSync(app.dir)).toContain('.eslintrc');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc');
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc');
         // Do not use snapshot here since there is absolute path in output
         expect(output).toContain('extending Rehearsal default eslint-related config');
 
         explorerSync = cosmiconfigSync('');
-        const loaded = explorerSync.load(resolve(app.dir, '.eslintrc'));
+        const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc'));
         const newConfig = loaded?.config as { extends: string[] };
         expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc']);
       });
@@ -91,7 +101,7 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         {extends: ["./.rehearsal-eslintrc.js"]}
       `;
-        await skipConfigThatExtends(oldConfig, app.dir, '.eslintrc');
+        await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc');
 
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
@@ -100,15 +110,15 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         {"extends": []}
       `;
-        await extendLintConfig(oldConfig, app.dir, '.eslintrc.json');
+        await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.json');
 
-        expect(readdirSync(app.dir)).toContain('.eslintrc.json');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc.json');
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc.json');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.json');
         // Do not use snapshot here since there is absolute path in output
         expect(output).toContain('extending Rehearsal default eslint-related config');
 
         explorerSync = cosmiconfigSync('');
-        const loaded = explorerSync.load(resolve(app.dir, '.eslintrc.json'));
+        const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.json'));
         const newConfig = loaded?.config as { extends: string[] };
         expect(newConfig.extends).toStrictEqual(['./.rehearsal-eslintrc.json']);
       });
@@ -117,7 +127,7 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         {"extends": ["./.rehearsal-eslintrc.js"]}
       `;
-        await skipConfigThatExtends(oldConfig, app.dir, '.eslintrc.json');
+        await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.json');
 
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
@@ -126,15 +136,15 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         extends: []
       `;
-        await extendLintConfig(oldConfig, app.dir, '.eslintrc.yml');
+        await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.yml');
 
-        expect(readdirSync(app.dir)).toContain('.eslintrc.yml');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc.yml');
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc.yml');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yml');
         // Do not use snapshot here since there is absolute path in output
         expect(output).toContain('extending Rehearsal default eslint-related config');
 
         explorerSync = cosmiconfigSync('');
-        const loaded = explorerSync.load(resolve(app.dir, '.eslintrc.yml'));
+        const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yml'));
         const config = loaded?.config as { extends: string[] };
 
         /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -145,7 +155,7 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         extends: ["./.rehearsal-eslintrc.js"]
       `;
-        await skipConfigThatExtends(oldConfig, app.dir, '.eslintrc.yml');
+        await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.yml');
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
 
@@ -153,15 +163,15 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         extends: []
       `;
-        await extendLintConfig(oldConfig, app.dir, '.eslintrc.yaml');
+        await extendLintConfig(oldConfig, project.baseDir, '.eslintrc.yaml');
 
-        expect(readdirSync(app.dir)).toContain('.eslintrc.yaml');
-        expect(readdirSync(app.dir)).toContain('.rehearsal-eslintrc.yaml');
+        expect(readdirSync(project.baseDir)).toContain('.eslintrc.yaml');
+        expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yaml');
         // Do not use snapshot here since there is absolute path in output
         expect(output).toContain('extending Rehearsal default eslint-related config');
 
         explorerSync = cosmiconfigSync('');
-        const loaded = explorerSync.load(resolve(app.dir, '.eslintrc.yaml'));
+        const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yaml'));
         const config = loaded?.config as { extends: string[] };
 
         /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -172,7 +182,7 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
         const oldConfig = `
         extends: ["./.rehearsal-eslintrc.js"]
       `;
-        await skipConfigThatExtends(oldConfig, app.dir, '.eslintrc.yaml');
+        await skipConfigThatExtends(oldConfig, project.baseDir, '.eslintrc.yaml');
 
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
@@ -185,9 +195,9 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
             },
           },
         };
-        await createCustomLintConfig(app.dir, customConfig);
+        await createCustomLintConfig(project.baseDir, customConfig);
 
-        expect(readdirSync(app.dir)).toContain('custom-lint-config-script');
+        expect(readdirSync(project.baseDir)).toContain('custom-lint-config-script');
         expect(output).toMatchSnapshot();
       });
 
@@ -201,10 +211,10 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
           },
         };
 
-        await createCustomLintConfig(app.dir, customConfig);
+        await createCustomLintConfig(project.baseDir, customConfig);
 
-        expect(readdirSync(app.dir)).toContain('foo');
-        expect(readdirSync(app.dir)).not.toContain('custom-lint-config-script');
+        expect(readdirSync(project.baseDir)).toContain('foo');
+        expect(readdirSync(project.baseDir)).not.toContain('custom-lint-config-script');
         expect(output).toMatchSnapshot();
       });
 
@@ -216,11 +226,11 @@ describe('Task: config-lint -- ember-addon-matrix', () => {
             },
           },
         };
-        await skipCustomConfigThatExtends(app.dir, customConfig);
+        await skipCustomConfigThatExtends(project.baseDir, customConfig);
 
-        expect(readdirSync(app.dir)).not.toContain('custom-lint-config-script');
+        expect(readdirSync(project.baseDir)).not.toContain('custom-lint-config-script');
         expect(output).toContain('[SKIPPED] Create eslint config');
       });
     });
-  });
+  }
 });
