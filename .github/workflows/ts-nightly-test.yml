@@ -1,8 +1,8 @@
 name: TypeScript Nightly Test
 
 on:
-  schedule: # Run every day at midnight
-    - cron: '0 0 * * *'
+  schedule: # Run every monday at midnight
+    - cron: '0 0 * * 1'
 
 jobs:
   test-ts-nightly:
