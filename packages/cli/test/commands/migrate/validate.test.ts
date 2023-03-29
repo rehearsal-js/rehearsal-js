@@ -4,10 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
 import { runValidate } from '../../test-helpers/valdiate-test-utils.js';
-import {
-  prepareProject,
-  cleanOutput,
-} from '../../test-helpers/index.js';
+import { prepareProject, cleanOutput } from '../../test-helpers/index.js';
 import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
@@ -58,14 +55,16 @@ describe('Task: validate', () => {
 
   test('error if no package.json', async () => {
     rmSync(resolve(basePath, 'package.json'));
-    await expect(() => runValidate(basePath, logger)).rejects.toThrowError(`package.json does not exists`);
+    await expect(() => runValidate(basePath, logger)).rejects.toThrowError(
+      `package.json does not exists`
+    );
   });
 
   test('error if .gitignore has .rehearsal', async () => {
     project.files['.gitignore'] = `.rehearsal\nfoo\nbar`;
     await project.write();
 
-     await expect(() => runValidate(basePath, logger)).rejects.toThrowError(
+    await expect(() => runValidate(basePath, logger)).rejects.toThrowError(
       `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
     );
   });

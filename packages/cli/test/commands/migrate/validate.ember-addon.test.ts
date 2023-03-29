@@ -10,7 +10,7 @@ import { cleanOutput } from '../../test-helpers/index.js';
 import { runValidate } from '../../test-helpers/valdiate-test-utils.js';
 
 const logger = createLogger({
-    transports: [new transports.Console({ format: format.cli() })],
+  transports: [new transports.Console({ format: format.cli() })],
 });
 
 describe('Task: validate', () => {
@@ -41,7 +41,6 @@ describe('Task: validate', () => {
           output += `${chunk}\n`;
           return logger;
         });
-
       });
       afterEach(() => {
         output = '';
@@ -52,35 +51,36 @@ describe('Task: validate', () => {
         await runValidate(app.dir, logger);
         expect(cleanOutput(output, app.dir)).toMatchSnapshot();
       });
-    
+
       test('error if no package.json', async () => {
         rmSync(resolve(app.dir, 'package.json'));
-        await expect(() => runValidate(app.dir, logger)).rejects.toThrowError(`package.json does not exists`);
+        await expect(() => runValidate(app.dir, logger)).rejects.toThrowError(
+          `package.json does not exists`
+        );
       });
-    
+
       test('error if .gitignore has .rehearsal', async () => {
         const gitignore = `.rehearsal\nfoo\nbar`;
         const gitignorePath = resolve(app.dir, '.gitignore');
         writeFileSync(gitignorePath, gitignore, 'utf-8');
-    
+
         await expect(() => runValidate(app.dir, logger)).rejects.toThrowError(
           `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
         );
       });
-    
+
       test('show warning message for missing files in --regen', async () => {
         await runValidate(app.dir, logger, { regen: true });
         expect(cleanOutput(output, app.dir)).toMatchSnapshot();
       });
-    
+
       test('pass with all config files in --regen', async () => {
         createFileSync(resolve(app.dir, '.eslintrc.js'));
         createFileSync(resolve(app.dir, 'tsconfig.json'));
-    
+
         await runValidate(app.dir, logger, { regen: true });
         expect(cleanOutput(output, app.dir)).toMatchSnapshot();
       });
     });
   });
-
 });
