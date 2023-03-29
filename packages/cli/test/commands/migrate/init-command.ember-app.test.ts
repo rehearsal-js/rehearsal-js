@@ -1,9 +1,14 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
-import { beforeEach, describe, test, expect } from 'vitest';
-import { Scenario, PreparedApp } from 'scenario-tester';
+import { beforeEach, afterEach, afterAll, describe, test, expect } from 'vitest';
 import { writeJSONSync } from 'fs-extra';
-import { appScenarios, clean } from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
+import {
+  getEmberAppProject,
+  getEmberAppWithInRepoAddonProject,
+  getEmberAppWithInRepoEngineProject,
+  getEmber4AppProject,
+} from '@rehearsal/test-support';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { cleanOutput } from '../../test-helpers/index.js';
@@ -20,17 +25,31 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
   writeJSONSync(configPath, config);
 }
 
+const projects = {
+  emberApp: getEmberAppProject(),
+  emberAppWithInRepoAddon: getEmberAppWithInRepoAddonProject(),
+  emberAppwithInRepoEngine: getEmberAppWithInRepoEngineProject(),
+  ember4App: getEmber4AppProject(),
+};
+
 describe('migrate init for ember app variant', () => {
-  appScenarios.forEachScenario((scenario: Scenario) => {
-    describe(scenario.name, () => {
-      let app: PreparedApp;
+  for (const [name, originalProject] of Object.entries(projects)) {
+    describe(name, () => {
+      let project: Project;
 
       beforeEach(async () => {
-        app = await scenario.prepare();
-        clean(app.dir);
+        project = originalProject.clone();
+        await project.write();
+      });
+      afterEach(() => {
+        project.dispose();
       });
 
-      test(`default run --${scenario.name}`, async () => {
+      afterAll(() => {
+        originalProject.dispose();
+      });
+
+      test(`default run --${name}`, async () => {
         const {
           stdout,
           devDeps,
@@ -39,9 +58,9 @@ describe('migrate init for ember app variant', () => {
           lintConfigDefault,
           tsConfig,
           tscLintScript,
-        } = await runDefault(app.dir);
+        } = await runDefault(project.baseDir);
 
-        expect(cleanOutput(stdout, app.dir)).toMatchSnapshot();
+        expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
         for (const devDep of REQUIRED_DEPENDENCIES) {
           expect(Object.keys(devDeps!).includes(devDep));
@@ -56,27 +75,27 @@ describe('migrate init for ember app variant', () => {
         expect(tscLintScript).toBe('tsc --noEmit');
       });
 
-      test(`pass user config ${scenario.name}`, async () => {
-        createUserConfig(app.dir, CUSTOM_CONFIG);
+      test(`pass user config ${name}`, async () => {
+        createUserConfig(project.baseDir, CUSTOM_CONFIG);
 
-        const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(app.dir);
+        const { stdout, devDeps, deps, tscLintScript } = await runWithUserConfig(project.baseDir);
 
-        expect(cleanOutput(stdout, app.dir)).toMatchSnapshot();
+        expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
 
         expect(Object.keys(devDeps!)).includes('tmp');
         expect(deps).toHaveProperty('fs-extra');
 
-        expect(readdirSync(app.dir)).toContain('custom-ts-config-script');
-        expect(readdirSync(app.dir)).toContain('custom-lint-config-script');
+        expect(readdirSync(project.baseDir)).toContain('custom-ts-config-script');
+        expect(readdirSync(project.baseDir)).toContain('custom-lint-config-script');
 
         expect(tscLintScript).toBe('tsc --noEmit');
       });
 
       test('skip dep install, ts config, and lint config if exists', async () => {
-        const { stdout } = await runTwoTimes(app.dir);
+        const { stdout } = await runTwoTimes(project.baseDir);
 
-        expect(cleanOutput(stdout, app.dir)).toMatchSnapshot();
+        expect(cleanOutput(stdout, project.baseDir)).toMatchSnapshot();
       });
     });
-  });
+  }
 });
