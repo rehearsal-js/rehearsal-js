@@ -183,13 +183,14 @@ export default class Hello extends Component {
 import { inject as service } from '@ember/service';
 
 export default class Hello extends Component {
-  {{! @glint-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. }}
+  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
   @service('authenticated-user') authenticatedUser;
 
   name = 'world';
 
   <template>
-    <span>Hello, I am {{this.authenticatedUser}}</span>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    <span>Hello, I am {{this.authenticatedUser}} and I am {{@age}} years old.</span>
   </template>
 }
 `;

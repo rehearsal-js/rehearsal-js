@@ -7,6 +7,6 @@ export default class Hello extends Component {
   name = 'world';
 
   <template>
-    <span>Hello, I am {{this.authenticatedUser}}</span>
+    <span>Hello, I am {{this.authenticatedUser}} and I am {{@age}} years old.</span>
   </template>
 }
