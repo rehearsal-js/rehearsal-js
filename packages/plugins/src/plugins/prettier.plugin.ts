@@ -1,25 +1,22 @@
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
-import { format, type Options } from 'prettier';
+import pretiter from 'prettier';
 
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:prettier');
 
-export type PrettierPluginOptions = PluginOptions & Options;
-
 /**
  * Source code formatting
  */
-export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: PrettierPluginOptions
-  ): PluginResult {
+export class PrettierPlugin implements Plugin<PluginOptions> {
+  async run(fileName: string, context: PluginsRunnerContext): PluginResult {
     const text = context.service.getFileText(fileName);
 
     try {
-      const result = format(text, options);
+      const prettierOptions = pretiter.resolveConfig.sync(fileName) || {};
+      prettierOptions.filepath = fileName;
+
+      const result = pretiter.format(text, prettierOptions);
 
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.service.setFileText(fileName, result);

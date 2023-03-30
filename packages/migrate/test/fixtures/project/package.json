@@ -15,14 +15,19 @@
     "@glint/environment-ember-loose": "1.0.0-beta.3",
     "@glint/environment-ember-template-imports": "1.0.0-beta.3",
     "@glint/template": "1.0.0-beta.3",
-    "ember-template-imports": "^3.4.1",
-    "typescript": "^5.0.0",
     "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
+    "ember-template-imports": "^3.4.1",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.3"
+    "prettier": "^2.8.3",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "ember-template-lint": "^5.7.2",
+    "ember-template-lint-plugin-prettier": "^4.1.0"
   }
 }
