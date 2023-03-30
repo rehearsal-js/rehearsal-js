@@ -3,6 +3,7 @@ import {
   DiagnosticFixPlugin,
   DiagnosticReportPlugin,
   LintPlugin,
+  PrettierPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
@@ -80,19 +81,13 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
       safeFixes: true,
       strictTyping: true,
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
+    .queue(new PrettierPlugin(), {})
     .queue(new DiagnosticReportPlugin(), {
       commentTag,
     })
+    .queue(new PrettierPlugin(), {})
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
       reportErrors: true,
     });
 

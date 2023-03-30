@@ -1,7 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Test PrettierPlugin > run 1`] = `
+exports[`Test PrettierPlugin > run with config 1`] = `
 "function doSomething(arg: string) {
-  return arg;
+  return arg + 'test';
+}"
+`;
+
+exports[`Test PrettierPlugin > run with config 2`] = `
+"{
+  \\"printWidth\\": 40,
+  \\"singleQuote\\": true,
+  \\"trailingComma\\": \\"es5\\"
+}"
+`;
+
+exports[`Test PrettierPlugin > rung default 1`] = `
+"function doSomething(arg: string) {
+  return arg + \\"test\\";
 }"
 `;

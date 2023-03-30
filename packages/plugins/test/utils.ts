@@ -8,7 +8,7 @@ export async function initProject(
   name: string,
   files: { [key: string]: string }
 ): Promise<Project> {
-  const project: Project = new Project(name, '0.0.0');
+  const project: Project = new Project(name, '0.0.0').clone();
 
   // Delete default file
   delete project.files['index.js'];

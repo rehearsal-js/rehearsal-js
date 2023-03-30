@@ -3,12 +3,11 @@
 exports[`migrate > .hbs > simple class 1`] = `
 "{{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. }}
 {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
-<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-"
+<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>"
 `;
 
 exports[`migrate > .hbs > simple class 2`] = `
-"import Component from \\"@glimmer/component\\";
+"import Component from '@glimmer/component';
 
 export default class Foo extends Component {}
 "

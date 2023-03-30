@@ -1,0 +1,20 @@
+{
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": "*.hbs",
+      "options": {
+        "parser": "glimmer",
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.gjs",
+      "options": {
+        "parser": "glimmer"
+      }
+    }
+  ]
+}

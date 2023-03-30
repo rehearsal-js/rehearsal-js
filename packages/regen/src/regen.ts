@@ -1,6 +1,11 @@
 import { dirname, extname, resolve } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
-import { DiagnosticReportPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
+import {
+  DiagnosticReportPlugin,
+  LintPlugin,
+  PrettierPlugin,
+  ReRehearsePlugin,
+} from '@rehearsal/plugins';
 import ts from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
@@ -84,12 +89,9 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
     .queue(new DiagnosticReportPlugin(), {
       commentTag,
     })
+    .queue(new PrettierPlugin(), {})
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
-      reportErrors: false,
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false, ...input.eslintOptions },
       reportErrors: true,
     });
 
