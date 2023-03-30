@@ -355,7 +355,9 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > skip dep
 [STARTED] Install dependencies
 [SKIPPED] Install dependencies
 [STARTED] Create tsconfig.json
-[SKIPPED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [SKIPPED] Create eslint config
 [STARTED] Add package scripts
@@ -374,7 +376,9 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
 [SUCCESS] Create eslint config
@@ -415,16 +419,28 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
