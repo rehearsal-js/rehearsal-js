@@ -2,9 +2,9 @@ import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import {
   Plugin,
   PluginOptions,
+  type PluginResult,
   PluginsRunnerContext,
   Service,
-  type PluginResult,
 } from '@rehearsal/service';
 import { findNodeAtPosition, isNodeInsideJsx } from '@rehearsal/ts-utils';
 import debug from 'debug';
@@ -20,23 +20,23 @@ const {
 } = ts;
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-check');
 
-export interface DiagnosticCheckPluginOptions extends PluginOptions {
+export interface DiagnosticReportPluginOptions extends PluginOptions {
   addHints?: boolean;
   commentTag?: string;
 }
 
-export class DiagnosticCheckPlugin implements Plugin<DiagnosticCheckPluginOptions> {
+export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOptions> {
   async run(
     fileName: string,
     context: PluginsRunnerContext,
-    options: DiagnosticCheckPluginOptions
+    options: DiagnosticReportPluginOptions
   ): PluginResult {
     options.addHints ??= true;
     options.commentTag ??= `@rehearsal`;
 
     let diagnostics = this.getDiagnostics(context.service, fileName, options.commentTag);
 
-    DEBUG_CALLBACK(`Plugin 'DiagnosticCheck' run on %O:`, fileName);
+    DEBUG_CALLBACK(`Plugin 'DiagnosticReport' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
 
