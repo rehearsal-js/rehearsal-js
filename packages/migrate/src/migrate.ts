@@ -1,8 +1,13 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import { dirname, extname, resolve } from 'node:path';
-import { GlintService, PluginsRunner, RehearsalService } from '@rehearsal/service';
+import {
+  GlintService,
+  PluginsRunner,
+  RehearsalService,
+  isGlintProject,
+  isGlintFile,
+} from '@rehearsal/service';
 import {
   DiagnosticCheckPlugin,
   DiagnosticFixPlugin,
@@ -13,7 +18,6 @@ import {
 } from '@rehearsal/plugins';
 import ts from 'typescript';
 import type { Reporter } from '@rehearsal/reporter';
-import type { PackageJson } from 'type-fest';
 import type { Logger } from 'winston';
 
 export type MigrateInput = {
@@ -33,33 +37,6 @@ export type MigrateOutput = {
 };
 
 const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
-
-// The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
-// in any ember/glimmer project, we'll use the glint *service* for all files. This list is only
-// indicating which extensions are handled by the plugins
-const GLINT_EXTENSIONS = ['.gts', '.hbs'];
-
-// The list of dependencies we look for to determine if we're in a glint project. If we find one
-// of these, we use glint. Otherwise, we use the regular Rehearsal service
-const GLINT_PROJECT_FILES = ['ember-source', '@glimmer/component', '@glimmerx/component'];
-
-async function shouldUseGlint(basePath: string): Promise<boolean> {
-  const pkgPath = resolve(basePath, 'package.json');
-  let pkgJson: string;
-
-  try {
-    pkgJson = await readFile(pkgPath, 'utf-8');
-  } catch (err) {
-    throw new Error(`There was an issue reading the package.json file located at ${pkgPath}`);
-  }
-
-  const pkg = JSON.parse(pkgJson) as PackageJson;
-  const deps = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
-
-  return deps.some((pkgName) => {
-    return GLINT_PROJECT_FILES.includes(pkgName);
-  });
-}
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.basePath);
@@ -115,9 +92,16 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   const commentTag = '@rehearsal';
 
-  const useGlint = await shouldUseGlint(basePath);
+  const useGlint = await isGlintProject(basePath);
 
   const service = useGlint ? new GlintService(basePath) : new RehearsalService(options, fileNames);
+
+  function isGlintService(
+    service: GlintService | RehearsalService,
+    useGlint: boolean
+  ): service is GlintService {
+    return service && useGlint;
+  }
 
   const runner = new PluginsRunner({ basePath, service, reporter, logger })
     .queue(new ReRehearsePlugin(), {
@@ -130,10 +114,11 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
-      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+      filter: (fileName) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
     .queue(new GlintFixPlugin(), {
-      filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
+      filter: (fileName: string) =>
+        isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
@@ -141,11 +126,12 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     })
     .queue(new DiagnosticCheckPlugin(), {
       commentTag: '@rehearsal',
-      filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
+      filter: (fileName) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
     .queue(new GlintCheckPlugin(), {
       commentTag,
-      filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
+      filter: (fileName: string) =>
+        isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },

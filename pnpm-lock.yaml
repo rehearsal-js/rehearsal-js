@@ -421,6 +421,7 @@ importers:
       '@rehearsal/test-support': workspace:*
       '@rehearsal/utils': workspace:*
       findup-sync: ^5.0.0
+      type-fest: ^3.6.1
       vitest: ^0.29.2
       vscode-languageserver: ^8.1.0
       vscode-uri: ^3.0.7
@@ -434,6 +435,7 @@ importers:
       winston: 3.8.2
     devDependencies:
       '@rehearsal/test-support': link:../test-support
+      type-fest: 3.6.1
       vitest: 0.29.5
 
   packages/test-support:
