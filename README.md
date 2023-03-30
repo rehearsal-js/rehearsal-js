@@ -1,4 +1,4 @@
-### **!NOTE:** _REHEARSAL IS A BETA RELEASE TOOL AND AN ACTIVE WORK IN PROGRESS. THE TOOL IS CURRENTLY BEING AUDITED FOR EARLY ACCESS AND BREAKING OFTEN. GENERAL USE IS NOT YET RECOMMENDED._
+### **NOTE:** _REHEARSAL IS A BETA RELEASE TOOL AND AN ACTIVE WORK IN PROGRESS. THE TOOL IS CURRENTLY BEING AUDITED FOR EARLY ACCESS AND BREAKING OFTEN. GENERAL USE IS NOT YET RECOMMENDED._
 
 <br/>
 
@@ -117,6 +117,7 @@ Rehearsal also can read from a custom user config file. This is useful if you wa
 
 Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 U
+
 # Packages
 
 | Folder                                    | Version                                                                                                              | Package                                                                  |
