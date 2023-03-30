@@ -354,18 +354,34 @@ export async function getPathToBinary(binaryName: string, options: Options = {})
   // /usr/local/bin/pnpm
   const moduleManagerBin = getManagerBinPath(moduleManager);
 
-  let stdoutMsg;
+  let binaryDir;
 
+  // Get the binary dir
+  // pnpm, yarn and npm@<9 support "bin", while npm@>=9 drops bin
+  // it is still the best to try bin first
+  // then fallback to get the executable bin directly from node_modules/.bin/
   try {
     const { stdout } = await execa(moduleManagerBin, ['bin', binaryName], options);
-    stdoutMsg = stdout.trim().split(`/${binaryName}`)[0];
+    binaryDir = stdout.trim().split(`/${binaryName}`)[0];
   } catch (e) {
-    throw new Error(`Unable to find binary path to ${binaryName}`);
+    // Now <package manager> bin failed
+    // try to get the executable bin directly from node_modules/.bin/
+    const binPath = resolve(
+      `${options.cwd ? options.cwd : process.cwd()}`,
+      'node_modules',
+      '.bin',
+      binaryName
+    );
+    if (!existsSync(binPath)) {
+      // Now both methods failed, throw error
+      throw new Error(`Unable to find binary path to ${binaryName}`);
+    }
+    binaryDir = binPath.trim().split(`/${binaryName}`)[0];
   }
 
-  // return the path to the binary
+  // Then return the path to the binary
   try {
-    return resolve(join(stdoutMsg, binaryName));
+    return resolve(join(binaryDir, binaryName));
   } catch (error) {
     throw new Error(`Unable to find ${binaryName} with ${moduleManagerBin}`);
   }
