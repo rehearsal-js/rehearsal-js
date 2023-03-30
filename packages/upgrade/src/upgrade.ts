@@ -1,7 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import {
-  DiagnosticCheckPlugin,
   DiagnosticFixPlugin,
+  DiagnosticReportPlugin,
   LintPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
@@ -84,7 +84,7 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
     })
-    .queue(new DiagnosticCheckPlugin(), {
+    .queue(new DiagnosticReportPlugin(), {
       commentTag,
     })
     .queue(new LintPlugin(), {
