@@ -166,8 +166,39 @@ export default class Hello extends Component {
       expectFile(outputs[0]).toEqual(expected);
     });
 
-    test('with service', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['with-service.gjs']);
+    test('with non-qualified service', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      const expected = `import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class Hello extends Component {
+  {{! @glint-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. }}
+  @service('authenticated-user') authenticatedUser;
+
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.authenticatedUser}}</span>
+  </template>
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with qualified service', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gjs']);
 
       const input: MigrateInput = {
         basePath: project.baseDir,
@@ -468,10 +499,38 @@ module("Integration | Helper | grid-list", function (hooks) {
       expectFile(outputs[0]).toEqual(expected);
     });
 
-    test('with service', async () => {
+    test('with non-qualified service', async () => {
       await project.write();
 
-      const [inputs, outputs] = prepareInputFiles(project, ['with-service.js']);
+      const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
+  @service("authenticated-user") authenticatedUser;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with qualified service', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.js']);
 
       const input: MigrateInput = {
         basePath: project.baseDir,
