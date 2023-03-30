@@ -9,6 +9,7 @@ import {
   GlintFixPlugin,
   GlintReportPlugin,
   LintPlugin,
+  PrettierPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
@@ -135,10 +136,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     .queue(new GlintFixPlugin(), {
       filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
+    .queue(new PrettierPlugin(), {})
     .queue(new DiagnosticReportPlugin(), {
       commentTag: '@rehearsal',
       filter: (fileName) => !GLINT_EXTENSIONS.includes(extname(fileName)),
@@ -147,12 +145,9 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       commentTag,
       filter: (fileName: string) => useGlint && GLINT_EXTENSIONS.includes(extname(fileName)),
     })
+    .queue(new PrettierPlugin(), {})
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
       reportErrors: true,
     });
 

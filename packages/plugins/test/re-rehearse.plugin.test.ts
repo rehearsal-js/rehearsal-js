@@ -6,7 +6,7 @@ import { initProject, mockPluginRunnerContext } from './utils.js';
 describe('Test ReRehearsalPlugin', () => {
   test('run', async () => {
     const project = await initProject('prettier-test', {
-      'index.ts': './test/fixtures/re-rehearse.ts.fixture',
+      'index.ts': './test/fixtures/re-rehearse.ts',
     });
 
     const context = mockPluginRunnerContext(project);

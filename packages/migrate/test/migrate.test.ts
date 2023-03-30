@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { MigrateInput, migrate } from '../src/migrate.js';
+import { migrate, MigrateInput } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -281,24 +281,23 @@ export default class Hello extends Component {
         // no ops
       }
 
-      const expectedTs = `import Component from "@glimmer/component";
+      const expectedTs = `import Component from '@glimmer/component';
 /* @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@ember/service' or its corresponding type declarations. */
-import { inject as service } from "@ember/service";
+import { inject as service } from '@ember/service';
 
 export default class Salutation extends Component {
   @service locale: { current: () => string } | undefined;
   get name() {
     /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
-    if (this.locale.current() == "en-US") {
-      return "Bob";
+    if (this.locale.current() == 'en-US') {
+      return 'Bob';
     }
-    return "Unknown";
+    return 'Unknown';
   }
 }
 `;
 
-      const expectedHbs = `<span>Hello {{this.name}}</span>
-`;
+      const expectedHbs = `<span>Hello {{this.name}}</span>`;
 
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
