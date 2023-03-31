@@ -1,12 +1,15 @@
 import { pathUtils } from '@glint/core';
+import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
+import { Reporter } from '@rehearsal/reporter';
 import {
+  GlintService,
   Plugin,
   PluginOptions,
   PluginsRunnerContext,
+  Service,
   type PluginResult,
-  GlintService,
 } from '@rehearsal/service';
-import { type DiagnosticWithLocation } from 'typescript';
+import { getLocation } from '../helpers.js';
 
 export interface GlintReportPluginOptions extends PluginOptions {
   commentTag: string;
@@ -19,7 +22,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     options: GlintReportPluginOptions
   ): PluginResult {
     const service = context.service as GlintService;
-    const diagnostics = service.getDiagnostics(fileName);
+    const diagnostics = this.getDiagnostics(service, fileName);
 
     if (!diagnostics.length) {
       return [];
@@ -27,6 +30,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
 
     const updatedContents = this.insertTodo(
       service,
+      context.reporter,
       diagnostics[0].file.text,
       diagnostics,
       options.commentTag
@@ -37,10 +41,32 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     return Promise.resolve([fileName]);
   }
 
+  getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
+    const languageService = service.getLanguageService();
+    const program = languageService.getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnostics = service.getDiagnostics(fileName);
+
+    //Sort diagnostics from top to bottom, so that we add comments from top to bottom
+    //This will ensure we calculate the line numbers correctly
+    diagnostics.sort((a, b) => a.start - b.start);
+
+    return diagnostics.map((diagnostic) => {
+      return {
+        ...diagnostic,
+        service: languageService,
+        program,
+        checker,
+      };
+    });
+  }
+
   insertTodo(
     service: GlintService,
+    reporter: Reporter,
     fileContents: string,
-    diagnostics: DiagnosticWithLocation[],
+    diagnostics: DiagnosticWithContext[],
     commentTag: string
   ): string {
     const lines = fileContents.split('\n');
@@ -71,6 +97,12 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
         : `${leadingWhitespace}/* @ts-expect-error ${message} */${indentation}`;
 
       lines.splice(index, 0, todo);
+
+      const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+      const hint = hints.getHint(diagnostic);
+      const helpUrl = hints.getHelpUrl(diagnostic);
+
+      reporter.addTSItemToRun(diagnostic, undefined, location, hint, helpUrl);
     }
 
     return lines.join('\n');

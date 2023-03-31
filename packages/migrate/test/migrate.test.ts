@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path, { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
-import { Reporter } from '@rehearsal/reporter';
+import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { migrate, MigrateInput } from '../src/migrate.js';
 
@@ -365,6 +365,13 @@ export default class Salutation extends Component {
 
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
+
+      const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
+      reporter.saveReport(jsonReport);
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });
   });
 
