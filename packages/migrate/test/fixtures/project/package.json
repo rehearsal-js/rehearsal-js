@@ -24,10 +24,5 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.3",
     "typescript": "^5.0.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "ember-template-lint": "^5.7.2",
-    "ember-template-lint-plugin-prettier": "^4.1.0"
   }
 }

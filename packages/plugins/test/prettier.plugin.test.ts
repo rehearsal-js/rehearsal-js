@@ -16,7 +16,7 @@ describe('Test PrettierPlugin', () => {
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
 
-      const result = await plugin.run(fileName, context, {});
+      const result = await plugin.run(fileName, context);
       const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
