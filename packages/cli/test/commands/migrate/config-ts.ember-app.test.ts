@@ -10,9 +10,9 @@ import { UserConfig } from '../../../src/user-config.js';
 import {
   getEmberAppProject,
   getEmberAppWithInRepoAddonProject,
-  getEmberAppWithInRepoEngineProject
- } from '@rehearsal/test-support';
- import { Project } from 'fixturify-project';
+  getEmberAppWithInRepoEngineProject,
+} from '@rehearsal/test-support';
+import { Project } from 'fixturify-project';
 
 const projects = {
   emberApp: getEmberAppProject(),
@@ -31,11 +31,13 @@ describe('Task: config-ts ember app', () => {
         await project.write();
         output = '';
 
-        vi.spyOn(console, 'info').mockImplementation((chunk) => {
+        vi.spyOn(console, 'info').mockImplementation((chunk: string) => {
+          chunk = chunk.replace(new RegExp(`${project.baseDir}`, 'g'), '<tmp-path>');
           output += `${chunk}\n`;
         });
 
-        vi.spyOn(console, 'log').mockImplementation((chunk) => {
+        vi.spyOn(console, 'log').mockImplementation((chunk: string) => {
+          chunk = chunk.replace(new RegExp(`${project.baseDir}`, 'g'), '<tmp-path>');
           output += `${chunk}\n`;
         });
       });
@@ -52,50 +54,48 @@ describe('Task: config-ts ember app', () => {
 
       test('create tsconfig if not existed', async () => {
         await runTsConfig(project.baseDir);
-    
+
         expect(readJSONSync(resolve(project.baseDir, 'tsconfig.json'))).matchSnapshot();
         expect(output).matchSnapshot();
       });
-    
+
       test('update tsconfig if exists', async () => {
         // Prepare old tsconfig
         const oldTsConfig = { compilerOptions: { strict: false } };
         writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
-    
+
         await runTsConfig(project.baseDir);
-    
+
         const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
-    
+
         expect(tsConfig.compilerOptions.strict).toBeTruthy();
-        // Do not use snapshot here since there is absolute path in output
-        expect(output).toContain('ensuring strict mode is enabled');
+        expect(output).toMatchSnapshot();
       });
-    
+
       test('update tsconfig if invalid extends exist', async () => {
         // Prepare old tsconfig
         const oldTsConfig = { extends: 'invalid-tsconfig.json' };
         writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
-    
+
         await runTsConfig(project.baseDir);
-    
+
         const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
-    
+
         expect(tsConfig.compilerOptions.strict).toBeTruthy();
-        // Do not use snapshot here since there is absolute path in output
-        expect(output).toContain('ensuring strict mode is enabled');
+        expect(output).toMatchSnapshot();
       });
-    
+
       test('skip if tsconfig.json exists with strict on', async () => {
         // Prepare old tsconfig
         const oldTsConfig = { compilerOptions: { strict: true } };
         writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
-    
+
         await runTsConfig(project.baseDir);
         await runTsConfig(project.baseDir); //should be skipped
-    
+
         expect(output).toMatchSnapshot();
       });
-    
+
       test('run custom config command with user config provided', async () => {
         createUserConfig(project.baseDir, {
           migrate: {
@@ -104,22 +104,24 @@ describe('Task: config-ts ember app', () => {
             },
           },
         });
-    
-        const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
+
+        const options = createMigrateOptions(project.baseDir, {
+          userConfig: 'rehearsal-config.json',
+        });
         const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
         const tasks = [tsConfigTask(options, { userConfig })];
         await listrTaskRunner(tasks);
-    
+
         // This proves the custom command works
         expect(readdirSync(project.baseDir)).toContain('custom-ts-config-script');
         expect(output).toMatchSnapshot();
       });
-    
+
       test('skip custom config command', async () => {
         // Prepare old tsconfig
         const oldTsConfig = { compilerOptions: { strict: true } };
         writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
-    
+
         createUserConfig(project.baseDir, {
           migrate: {
             setup: {
@@ -127,14 +129,14 @@ describe('Task: config-ts ember app', () => {
             },
           },
         });
-    
+
         await runTsConfig(project.baseDir, { userConfig: 'rehearsal-config.json' });
-    
+
         // This proves the custom command works not triggered
         expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
         expect(output).toMatchSnapshot();
       });
-    
+
       test('postTsSetup hook from user config', async () => {
         createUserConfig(project.baseDir, {
           migrate: {
@@ -144,12 +146,14 @@ describe('Task: config-ts ember app', () => {
             },
           },
         });
-    
-        const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
+
+        const options = createMigrateOptions(project.baseDir, {
+          userConfig: 'rehearsal-config.json',
+        });
         const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
         const tasks = [tsConfigTask(options, { userConfig })];
         await listrTaskRunner(tasks);
-    
+
         // This proves the custom command and hook works
         expect(readdirSync(project.baseDir)).toContain('foo');
         expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
