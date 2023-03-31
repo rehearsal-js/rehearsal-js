@@ -25,11 +25,13 @@ describe('Task: config-ts ember app', () => {
         await project.write();
 
         output = '';
-        vi.spyOn(console, 'info').mockImplementation((chunk) => {
+        vi.spyOn(console, 'info').mockImplementation((chunk: string) => {
+          chunk = chunk.replace(new RegExp(`${project.baseDir}`, 'g'), '<tmp-path>');
           output += `${chunk}\n`;
         });
 
-        vi.spyOn(console, 'log').mockImplementation((chunk) => {
+        vi.spyOn(console, 'log').mockImplementation((chunk: string) => {
+          chunk = chunk.replace(new RegExp(`${project.baseDir}`, 'g'), '<tmp-path>');
           output += `${chunk}\n`;
         });
       });
@@ -61,8 +63,7 @@ describe('Task: config-ts ember app', () => {
         const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
 
         expect(tsConfig.compilerOptions.strict).toBeTruthy();
-        // Do not use snapshot here since there is absolute path in output
-        expect(output).toContain('ensuring strict mode is enabled');
+        expect(output).toMatchSnapshot();
       });
 
       test('update tsconfig if invalid extends exist', async () => {
@@ -75,8 +76,7 @@ describe('Task: config-ts ember app', () => {
         const tsConfig = readJSONSync(resolve(project.baseDir, 'tsconfig.json')) as TSConfig;
 
         expect(tsConfig.compilerOptions.strict).toBeTruthy();
-        // Do not use snapshot here since there is absolute path in output
-        expect(output).toContain('ensuring strict mode is enabled');
+        expect(output).toMatchSnapshot();
       });
 
       test('skip if tsconfig.json exists with strict on', async () => {
@@ -148,7 +148,6 @@ describe('Task: config-ts ember app', () => {
         const tasks = [tsConfigTask(options, { userConfig })];
         await listrTaskRunner(tasks);
 
-        // This proves the custom command and hook works
         expect(readdirSync(project.baseDir)).toContain('foo');
         expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
         expect(output).toMatchSnapshot();

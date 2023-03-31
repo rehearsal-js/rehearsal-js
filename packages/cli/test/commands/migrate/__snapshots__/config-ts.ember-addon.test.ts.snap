@@ -52,3 +52,19 @@ exports[`Task: config-ts ember app > emberAddon > skip if tsconfig.json exists w
 [SKIPPED] Create tsconfig.json
 "
 `;
+
+exports[`Task: config-ts ember app > emberAddon > update tsconfig if exists 1`] = `
+"[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+"
+`;
+
+exports[`Task: config-ts ember app > emberAddon > update tsconfig if invalid extends exist 1`] = `
+"[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+"
+`;
