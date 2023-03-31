@@ -60,6 +60,8 @@ describe('utils', () => {
     expect(end).toBeGreaterThan(start);
   });
 
+  // TODO: add tests for different scenarios
+  // e.g. multiple package managers existed with different version
   test('getPathToBinary()', async () => {
     const project = new Project('my-project', '0.0.0', {
       files: {

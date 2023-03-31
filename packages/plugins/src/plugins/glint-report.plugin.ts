@@ -1,17 +1,17 @@
 import { pathUtils } from '@glint/core';
 
-import { Plugin, PluginOptions, PluginsRunnerContext, type PluginResult } from '@rehearsal/service';
+import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
 import { type DiagnosticWithLocation } from 'typescript';
 
-export interface GlintCheckPluginOptions extends PluginOptions {
+export interface GlintReportPluginOptions extends PluginOptions {
   commentTag: string;
 }
 
-export class GlintCheckPlugin implements Plugin<PluginOptions> {
+export class GlintReportPlugin implements Plugin<PluginOptions> {
   async run(
     fileName: string,
     context: PluginsRunnerContext,
-    options: GlintCheckPluginOptions
+    options: GlintReportPluginOptions
   ): PluginResult {
     const service = context.service;
     const diagnostics = service.getDiagnostics(fileName);

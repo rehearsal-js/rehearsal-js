@@ -9,10 +9,10 @@ import {
   isGlintFile,
 } from '@rehearsal/service';
 import {
-  DiagnosticCheckPlugin,
   DiagnosticFixPlugin,
-  GlintCheckPlugin,
+  DiagnosticReportPlugin,
   GlintFixPlugin,
+  GlintReportPlugin,
   LintPlugin,
   ReRehearsePlugin,
 } from '@rehearsal/plugins';
@@ -124,11 +124,11 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
     })
-    .queue(new DiagnosticCheckPlugin(), {
+    .queue(new DiagnosticReportPlugin(), {
       commentTag: '@rehearsal',
       filter: (fileName) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
-    .queue(new GlintCheckPlugin(), {
+    .queue(new GlintReportPlugin(), {
       commentTag,
       filter: (fileName: string) =>
         isGlintService(service, useGlint) && isGlintFile(service, fileName),
