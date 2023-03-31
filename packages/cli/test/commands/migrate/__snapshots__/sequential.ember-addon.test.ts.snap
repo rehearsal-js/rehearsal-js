@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: sequential - ember addon > emberAddon > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for addon-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on addon-template
+[SUCCESS] Analyzing Project
+[STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
+[TITLE] Rescanning previously migrated files based on existing report:
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal, and will be merged into the migration report
+[TITLE] 
+[TITLE]     
+[DATA] git mv /addon/components/greet.js to /addon/components/greet.ts
+[DATA] git mv /tests/acceptance/addon-template-test.js to /tests/acceptance/addon-template-test.ts
+[DATA] git mv /tests/dummy/app/app.js to /tests/dummy/app/app.ts
+[DATA] git mv /tests/dummy/app/router.js to /tests/dummy/app/router.ts
+[DATA] git mv /tests/test-helper.js to /tests/test-helper.ts
+[DATA] processing file: /addon/components/greet.ts
+[DATA] processing file: /tests/acceptance/addon-template-test.ts
+[DATA] processing file: /tests/dummy/app/app.ts
+[DATA] processing file: /tests/dummy/app/router.ts
+[DATA] processing file: /tests/test-helper.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   5 JS files converted to TS
+[TITLE] 
+[TITLE]   21 errors caught by rehearsal
+[TITLE] 
+[TITLE]   1 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   20 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 19 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   5 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   21 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   20 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 19 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;

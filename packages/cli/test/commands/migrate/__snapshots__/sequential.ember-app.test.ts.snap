@@ -1,0 +1,299 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: sequential - ember app > ember4App > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for app-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on app-template
+[SUCCESS] Analyzing Project
+[STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
+[TITLE] Rescanning previously migrated files based on existing report:
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal, and will be merged into the migration report
+[TITLE] 
+[TITLE]     
+[DATA] git mv /app/app.js to /app/app.ts
+[DATA] git mv /app/services/locale.js to /app/services/locale.ts
+[DATA] git mv /app/components/salutation.js to /app/components/salutation.ts
+[DATA] git mv /app/router.js to /app/router.ts
+[DATA] git mv /tests/acceptance/index-test.js to /tests/acceptance/index-test.ts
+[DATA] git mv /tests/test-helper.js to /tests/test-helper.ts
+[DATA] git mv /tests/unit/services/locale-test.js to /tests/unit/services/locale-test.ts
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/components/salutation.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /tests/acceptance/index-test.ts
+[DATA] processing file: /tests/test-helper.ts
+[DATA] processing file: /tests/unit/services/locale-test.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   7 JS files converted to TS
+[TITLE] 
+[TITLE]   31 errors caught by rehearsal
+[TITLE] 
+[TITLE]   3 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   28 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   7 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   31 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   28 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
+
+exports[`Task: sequential - ember app > emberApp > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for app-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on app-template
+[SUCCESS] Analyzing Project
+[STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
+[TITLE] Rescanning previously migrated files based on existing report:
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal, and will be merged into the migration report
+[TITLE] 
+[TITLE]     
+[DATA] git mv /app/app.js to /app/app.ts
+[DATA] git mv /app/services/locale.js to /app/services/locale.ts
+[DATA] git mv /app/components/salutation.js to /app/components/salutation.ts
+[DATA] git mv /app/router.js to /app/router.ts
+[DATA] git mv /tests/acceptance/index-test.js to /tests/acceptance/index-test.ts
+[DATA] git mv /tests/test-helper.js to /tests/test-helper.ts
+[DATA] git mv /tests/unit/services/locale-test.js to /tests/unit/services/locale-test.ts
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/components/salutation.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /tests/acceptance/index-test.ts
+[DATA] processing file: /tests/test-helper.ts
+[DATA] processing file: /tests/unit/services/locale-test.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   7 JS files converted to TS
+[TITLE] 
+[TITLE]   31 errors caught by rehearsal
+[TITLE] 
+[TITLE]   3 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   28 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   7 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   31 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   28 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
+
+exports[`Task: sequential - ember app > emberAppWithInRepoAddon > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for app-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on app-template
+[SUCCESS] Analyzing Project
+[STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
+[TITLE] Rescanning previously migrated files based on existing report:
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal, and will be merged into the migration report
+[TITLE] 
+[TITLE]     
+[DATA] git mv /lib/some-addon/addon/components/greet.js to /lib/some-addon/addon/components/greet.ts
+[DATA] git mv /app/app.js to /app/app.ts
+[DATA] git mv /app/services/locale.js to /app/services/locale.ts
+[DATA] git mv /app/components/salutation.js to /app/components/salutation.ts
+[DATA] git mv /app/router.js to /app/router.ts
+[DATA] git mv /tests/acceptance/index-test.js to /tests/acceptance/index-test.ts
+[DATA] git mv /tests/test-helper.js to /tests/test-helper.ts
+[DATA] git mv /tests/unit/services/locale-test.js to /tests/unit/services/locale-test.ts
+[DATA] processing file: /lib/some-addon/addon/components/greet.ts
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/components/salutation.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /tests/acceptance/index-test.ts
+[DATA] processing file: /tests/test-helper.ts
+[DATA] processing file: /tests/unit/services/locale-test.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   8 JS files converted to TS
+[TITLE] 
+[TITLE]   32 errors caught by rehearsal
+[TITLE] 
+[TITLE]   3 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   29 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   8 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   32 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   29 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 1 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
+
+exports[`Task: sequential - ember app > emberAppwithInRepoEngine > sequential run regen on the existing report, and run migrate on current base path and entrypoint 1`] = `
+"[STARTED] Initialize
+[DATA] Setting up config for app-template
+[SUCCESS] Initialize
+[STARTED] Install dependencies
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[SUCCESS] Install dependencies
+[STARTED] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
+[STARTED] Create eslint config
+[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[SUCCESS] Create eslint config
+[STARTED] Analyzing Project
+[DATA] Running migration on app-template
+[SUCCESS] Analyzing Project
+[STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
+[TITLE] Rescanning previously migrated files based on existing report:
+[TITLE] 
+[TITLE]   0 ts files have been scanned
+[TITLE] 
+[TITLE]   0 errors caught by rehearsal, and will be merged into the migration report
+[TITLE] 
+[TITLE]     
+[DATA] git mv /lib/some-engine/addon/resolver.js to /lib/some-engine/addon/resolver.ts
+[DATA] git mv /lib/some-engine/addon/engine.js to /lib/some-engine/addon/engine.ts
+[DATA] git mv /lib/some-engine/addon/routes.js to /lib/some-engine/addon/routes.ts
+[DATA] git mv /app/app.js to /app/app.ts
+[DATA] git mv /app/services/locale.js to /app/services/locale.ts
+[DATA] git mv /app/components/salutation.js to /app/components/salutation.ts
+[DATA] git mv /app/router.js to /app/router.ts
+[DATA] git mv /tests/acceptance/index-test.js to /tests/acceptance/index-test.ts
+[DATA] git mv /tests/acceptance/some-engine-test.js to /tests/acceptance/some-engine-test.ts
+[DATA] git mv /tests/test-helper.js to /tests/test-helper.ts
+[DATA] git mv /tests/unit/services/locale-test.js to /tests/unit/services/locale-test.ts
+[DATA] processing file: /lib/some-engine/addon/resolver.ts
+[DATA] processing file: /lib/some-engine/addon/engine.ts
+[DATA] processing file: /lib/some-engine/addon/routes.ts
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/components/salutation.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /tests/acceptance/index-test.ts
+[DATA] processing file: /tests/acceptance/some-engine-test.ts
+[DATA] processing file: /tests/test-helper.ts
+[DATA] processing file: /tests/unit/services/locale-test.ts
+[TITLE] Migration Complete
+[TITLE] 
+[TITLE] 
+[TITLE]   11 JS files converted to TS
+[TITLE] 
+[TITLE]   42 errors caught by rehearsal
+[TITLE] 
+[TITLE]   3 have been fixed by rehearsal
+[TITLE] 
+[TITLE]   39 errors need to be fixed manually
+[TITLE] 
+[TITLE]     -- 39 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE] 
+[TITLE]     -- 0 eslint errors, with details in the report
+[TITLE] 
+[SUCCESS] Migration Complete
+[SUCCESS] 
+[SUCCESS] 
+[SUCCESS]   11 JS files converted to TS
+[SUCCESS] 
+[SUCCESS]   42 errors caught by rehearsal
+[SUCCESS] 
+[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS] 
+[SUCCESS]   39 errors need to be fixed manually
+[SUCCESS] 
+[SUCCESS]     -- 39 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS] 
+[SUCCESS]     -- 0 eslint errors, with details in the report
+[SUCCESS] 
+"
+`;
