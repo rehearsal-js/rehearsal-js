@@ -44,8 +44,6 @@
     "@rehearsal/ts-utils": "workspace:*",
     "@types/object-hash": "^3.0.2",
     "debug": "^4.3.4",
-    "ember-template-lint": "^5.7.2",
-    "ember-template-lint-plugin-prettier": "^4.1.0",
     "eslint": "^8.33.0",
     "object-hash": "^3.0.0",
     "prettier": "^2.8.4",

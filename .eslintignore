@@ -10,3 +10,4 @@ packages/test-support/scripts/setup-fixtures.js
 packages/migrate/scripts/*.js
 packages/codefixes/src/*.generated.ts
 packages/regen/test/tmp/*.ts
+*.snap
