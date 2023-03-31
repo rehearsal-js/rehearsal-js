@@ -2,5 +2,6 @@ export { Plugin, PluginOptions, PluginsRunnerContext, PluginsRunner } from './pl
 export { RehearsalService, type Service } from './rehearsal-service.js';
 export { RehearsalServiceHost } from './rehearsal-service-host.js';
 export { GlintService, type Range } from './glint-service.js';
+export * from './glint-utils.js';
 
 export type { PluginResult } from './plugin.js';

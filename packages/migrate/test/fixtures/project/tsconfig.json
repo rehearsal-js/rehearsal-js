@@ -21,7 +21,7 @@
     "checkJs": true
   },
   "glint": {
-    "environment": ["ember-loose", "ember-template-imports"],
+    "environment": ["ember-loose", "ember-template-imports", "glimmerx"],
     "checkStandaloneTemplates": true
   }
 }

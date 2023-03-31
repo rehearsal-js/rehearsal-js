@@ -357,5 +357,81 @@ export default class Salutation extends Component {
 
       expectFile(outputs[0]).toEqual(expected);
     });
+
+    test('glimmerx inline hbs', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['glimmerx-component.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import Component, { hbs } from "@glimmerx/component";
+
+export default class HelloWorld extends Component {
+  name = "world";
+
+  static template = hbs\`
+  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+  <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+\`;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('inline hbs in tests', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['ember-integration-test.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import "qunit-dom";
+import { render } from "@ember/test-helpers";
+import { hbs } from "ember-cli-htmlbars";
+import { setupRenderingTest } from "ember-qunit";
+import { module, test } from "qunit";
+
+module("Integration | Helper | grid-list", function (hooks) {
+  setupRenderingTest(hooks);
+
+  test("it sets and changes the columns classes", async function (assert) {
+    this.set("styles", "foo");
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'. }}
+    await render(hbs\`<ul data-test-el class="{{this.styles}}">foo</ul>\`);
+
+    this.set("styles", "foo");
+    assert.dom("[data-test-el]").hasClass("some-class", "has the border class");
+
+    this.set("styles", "foo");
+    assert.dom("[data-test-el]").hasClass("some-class", "has the border class");
+
+    this.set("styles", "foo");
+    assert.dom("[data-test-el]").hasClass("some-class", "has the border class");
+  });
+});
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
   });
 });

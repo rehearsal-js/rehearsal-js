@@ -1,4 +1,3 @@
-import { extname } from 'node:path';
 import {
   analyzeProject,
   pathUtils,
@@ -18,6 +17,7 @@ import {
   type CodeAction,
 } from 'vscode-languageserver';
 import { Service } from './rehearsal-service.js';
+import { isGlintFile } from './glint-utils.js';
 
 type TS = typeof import('typescript');
 
@@ -25,8 +25,6 @@ type GlintSourceFile = {
   filename: string;
   contents: string;
 };
-
-const GLINT_EXTENSIONS = ['.gjs', '.gts', '.hbs'];
 
 export { Range, Diagnostic };
 
@@ -72,7 +70,7 @@ export class GlintService implements Service {
    * Gets a SourceFile object from the compiled program
    */
   getSourceFile(fileName: string): ts.SourceFile {
-    if (GLINT_EXTENSIONS.includes(extname(fileName))) {
+    if (isGlintFile(this, fileName)) {
       return createSyntheticSourceFile(this.ts, {
         filename: fileName,
         contents: this.getFileText(fileName),
