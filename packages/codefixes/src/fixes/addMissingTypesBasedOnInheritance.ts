@@ -1,6 +1,8 @@
 import { ChangesFactory } from '@rehearsal/ts-utils';
 import ts from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection.js';
+import { createCodeFixAction } from '../hints-codefix-collection.js';
+import { Diagnostics } from '../diagnosticInformationMap.generated.js';
+import type { CodeFix, DiagnosticWithContext } from '../types.js';
 import type {
   CodeFixAction,
   MethodDeclaration,
@@ -8,13 +10,14 @@ import type {
   Signature,
   TypeChecker,
 } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 const { findAncestor, isClassDeclaration, isMethodDeclaration, isParameter } = ts;
 
 type TypeFinder = (ancestorMethodSignature: Signature, checker: TypeChecker) => string | undefined;
 
 export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
+  getErrorCodes = (): number[] => [Diagnostics.TS7006.code, Diagnostics.TS7050.code];
+
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     if (!diagnostic.node) {
       return undefined;

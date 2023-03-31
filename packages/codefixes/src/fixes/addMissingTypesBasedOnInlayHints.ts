@@ -1,12 +1,15 @@
 import { ChangesFactory } from '@rehearsal/ts-utils';
 import ts from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection.js';
+import { createCodeFixAction } from '../hints-codefix-collection.js';
+import { Diagnostics } from '../diagnosticInformationMap.generated.js';
+import type { CodeFix, DiagnosticWithContext } from '../types.js';
 import type { CodeFixAction } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
 const { isMethodDeclaration, isFunctionDeclaration } = ts;
 
 export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
+  getErrorCodes = (): number[] => [Diagnostics.TS7050.code];
+
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     if (
       diagnostic.node === undefined ||

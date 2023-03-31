@@ -1,11 +1,14 @@
 import { ChangesFactory, findNodeAtPosition, isVariableOfCatchClause } from '@rehearsal/ts-utils';
 import ts, { type CodeFixAction, Node } from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection.js';
-import type { CodeFix, DiagnosticWithContext } from '../../types.js';
+import { createCodeFixAction } from '../hints-codefix-collection.js';
+import { Diagnostics } from '../diagnosticInformationMap.generated.js';
+import type { CodeFix, DiagnosticWithContext } from '../types.js';
 
 const { isIdentifier, isPropertyAccessExpression } = ts;
 
 export class AddErrorTypeGuardCodeFix implements CodeFix {
+  getErrorCodes = (): number[] => [Diagnostics.TS2571.code, Diagnostics.TS18046.code];
+
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !isIdentifier(errorNode) || !isVariableOfCatchClause(errorNode)) {
