@@ -3,55 +3,17 @@
  */
 
 import ts from 'typescript';
-import type {
-  DiagnosticWithLocation,
-  Node,
-  SourceFile,
-  Visitor,
-  TransformerFactory,
-} from 'typescript';
+import type { DiagnosticWithLocation, Node, SourceFile } from 'typescript';
 
 const {
-  createPrinter,
   findAncestor,
-  forEachChild,
   getLineAndCharacterOfPosition,
   isCatchClause,
   isIdentifier,
   isJsxElement,
   isJsxFragment,
   isSourceFile,
-  NewLineKind,
-  transform,
-  visitEachChild,
-  visitNode,
 } = ts;
-
-/**
- * Find the diagnosed node and passes it to `transformer` function.
- * The `transform` function have to return modified node or `undefined` to remove node from AST.
- */
-export function transformDiagnosedNode(
-  diagnostic: DiagnosticWithLocation,
-  transformer: (node: Node) => Node | undefined
-): string {
-  const result = transform(diagnostic.file, [
-    (context) => {
-      const visit: Visitor = (node) => {
-        return isNodeDiagnosed(node, diagnostic)
-          ? transformer(node)
-          : visitEachChild(node, visit, context);
-      };
-
-      return (node) => visitNode(node, visit) as Node;
-    },
-  ] as TransformerFactory<SourceFile>[]);
-
-  return createPrinter({
-    newLine: NewLineKind.LineFeed,
-    removeComments: false,
-  }).printFile(result.transformed[0]);
-}
 
 /**
  * Checks if node starts with `start` position and its length equals to `length`.
@@ -92,8 +54,17 @@ export function findNodeAtPosition(
   start: number,
   length: number
 ): Node | undefined {
-  const visitor = (node: Node): Node | undefined =>
-    isNodeAtPosition(node, start, length) ? node : forEachChild(node, visitor);
+  const visitor = (node: Node): Node | undefined => {
+    if (isNodeAtPosition(node, start, length)) {
+      return node;
+    }
+
+    if (node.getStart() <= start && node.getEnd() >= start + length) {
+      return ts.forEachChild(node, visitor);
+    }
+
+    return undefined;
+  };
 
   return visitor(sourceFile);
 }
