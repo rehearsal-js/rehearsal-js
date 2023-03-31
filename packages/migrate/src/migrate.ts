@@ -1,12 +1,13 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
+import { readJSON } from 'fs-extra/esm';
 import {
   GlintService,
   PluginsRunner,
   RehearsalService,
-  isGlintProject,
   isGlintFile,
+  isGlintProject,
 } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
@@ -15,10 +16,13 @@ import {
   GlintReportPlugin,
   LintPlugin,
   ReRehearsePlugin,
+  ServiceInjectionsTransformPlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
-import type { Reporter } from '@rehearsal/reporter';
+import { addFilePathsForAddonModules, createEmberAddonModuleNameMap } from './glint-utils.js';
 import type { Logger } from 'winston';
+import type { Reporter } from '@rehearsal/reporter';
+import type { TsConfigJson } from 'type-fest';
 
 export type MigrateInput = {
   basePath: string;
@@ -94,6 +98,14 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   const useGlint = await isGlintProject(basePath);
 
+  if (useGlint) {
+    const rawTsConfig = (await readJSON(configFile)) as TsConfigJson;
+    const moduleNameMap = createEmberAddonModuleNameMap(basePath);
+    // Update the tsconfig with any module name mapping so that any subsequent type checking will
+    // be actually work if we happen to encounter any ember addons that specify a `moduleName`
+    await addFilePathsForAddonModules(configFile, rawTsConfig, moduleNameMap);
+  }
+
   const service = useGlint ? new GlintService(basePath) : new RehearsalService(options, fileNames);
 
   function isGlintService(
@@ -111,10 +123,12 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
     })
+    .queue(new ServiceInjectionsTransformPlugin(), {})
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
-      filter: (fileName) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
+      filter: (fileName: string) =>
+        !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
     .queue(new GlintFixPlugin(), {
       filter: (fileName: string) =>
@@ -126,7 +140,8 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     })
     .queue(new DiagnosticReportPlugin(), {
       commentTag: '@rehearsal',
-      filter: (fileName) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
+      filter: (fileName: string) =>
+        !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
     .queue(new GlintReportPlugin(), {
       commentTag,
@@ -142,7 +157,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       reportErrors: true,
     });
 
-  yield* runner.run(fileNames, { log: (message) => (listrTask.output = message) });
+  yield* runner.run(fileNames, { log: (message: string) => (listrTask.output = message) });
   // save report after all yields
   reporter.saveCurrentRunToReport(basePath, entrypoint);
 }

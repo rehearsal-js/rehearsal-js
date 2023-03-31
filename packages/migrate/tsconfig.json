@@ -16,6 +16,12 @@
     },
     {
       "path": "../utils"
+    },
+    {
+      "path": "../migration-graph-shared"
+    },
+    {
+      "path": "../migration-graph-ember"
     }
   ]
 }

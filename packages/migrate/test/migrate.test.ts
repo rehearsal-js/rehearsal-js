@@ -166,6 +166,71 @@ export default class Hello extends Component {
       expectFile(outputs[0]).toEqual(expected);
     });
 
+    test('with non-qualified service', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      const expected = `import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class Hello extends Component {
+  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
+  @service('authenticated-user') authenticatedUser;
+
+  name = 'world';
+
+  <template>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    <span>Hello, I am {{this.authenticatedUser}} and I am {{@age}} years old.</span>
+  </template>
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with qualified service', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      const expected = `import type AuthenticatedUser from 'authentication/services/authenticated-user';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class Hello extends Component {
+  @service("authentication@authenticated-user")
+declare authenticatedUser: AuthenticatedUser;
+
+  name = 'world';
+
+  <template>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
     test('when missing a local prop', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['missing-local-prop.gjs']);
 
@@ -282,7 +347,6 @@ export default class Hello extends Component {
       }
 
       const expectedTs = `import Component from "@glimmer/component";
-/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@ember/service' or its corresponding type declarations. */
 import { inject as service } from "@ember/service";
 
 export default class Salutation extends Component {
@@ -318,6 +382,10 @@ export default class Salutation extends Component {
         basePath: project.baseDir,
         commandName: '@rehearsal/migrate',
       });
+    });
+
+    afterEach(() => {
+      project.dispose();
     });
 
     test('class with missing prop', async () => {
@@ -362,7 +430,6 @@ export default class Salutation extends Component {
       await project.write();
 
       const [inputs, outputs] = prepareInputFiles(project, ['glimmerx-component.js']);
-
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
@@ -385,7 +452,6 @@ export default class HelloWorld extends Component {
 \`;
 }
 `;
-
       expectFile(outputs[0]).toEqual(expected);
     });
 
@@ -431,6 +497,205 @@ module("Integration | Helper | grid-list", function (hooks) {
 });
 `;
 
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with non-qualified service', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
+  @service("authenticated-user") authenticatedUser;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with qualified service', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type FooService from "foo/services/foo-service";
+import type AuthenticatedUser from "authentication/services/authenticated-user";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("authentication@authenticated-user")
+  declare authenticatedUser: AuthenticatedUser;
+
+  @service("foo@foo-service")
+  declare otherProp: FooService;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+  });
+
+  describe('with addon service', () => {
+    let project: Project;
+    let reporter: Reporter;
+
+    const expectedTsConfig = JSON.stringify({
+      $schema: 'http://json.schemastore.org/tsconfig',
+      compilerOptions: {
+        allowSyntheticDefaultImports: true,
+        composite: true,
+        declaration: true,
+        declarationMap: true,
+        esModuleInterop: true,
+        experimentalDecorators: true,
+        module: 'commonjs',
+        moduleResolution: 'node',
+        newLine: 'LF',
+        noImplicitAny: true,
+        noImplicitReturns: true,
+        noUnusedLocals: true,
+        noUnusedParameters: true,
+        resolveJsonModule: true,
+        sourceMap: true,
+        strict: true,
+        target: 'es2017',
+        checkJs: true,
+        paths: {
+          'my-addon': ['node_modules/test-addon'],
+          'my-addon/*': ['node_modules/test-addon/*'],
+        },
+      },
+      glint: {
+        environment: ['ember-loose', 'ember-template-imports', 'glimmerx'],
+        checkStandaloneTemplates: true,
+      },
+    });
+
+    beforeEach(async () => {
+      project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
+
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath: project.baseDir,
+        commandName: '@rehearsal/migrate',
+      });
+
+      const testAddon = project.addDependency('test-addon', '0.0.0');
+      testAddon.pkg.keywords = ['ember-addon'];
+      testAddon.pkg.main = 'index.js';
+      testAddon.pkg.types = 'index.d.ts';
+      testAddon.files = {
+        'index.js': `module.exports = {
+          moduleName() {
+            return 'my-addon'
+          }
+        }`,
+        services: {
+          'foo.js': `module.exports = {
+            go() {
+              return 'go';
+            },
+          };
+          `,
+          'foo.d.ts': `interface Foo {
+            go(): string;
+          }
+
+          export default Foo;
+          `,
+        },
+      };
+
+      await project.write();
+    });
+
+    afterEach(() => {
+      project.dispose();
+    });
+
+    test('.gjs', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type Foo from 'my-addon/services/foo';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class SomeComponent extends Component {
+  @service("my-addon@foo")
+declare foo: Foo;
+
+  <template>Hello</template>
+}
+`;
+
+      expectFile(path.join(project.baseDir, 'tsconfig.json')).toEqual(expectedTsConfig);
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('.js', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type Foo from "my-addon/services/foo";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("my-addon@foo")
+  declare foo: Foo;
+}
+`;
+
+      expectFile(path.join(project.baseDir, 'tsconfig.json')).toEqual(expectedTsConfig);
       expectFile(outputs[0]).toEqual(expected);
     });
   });

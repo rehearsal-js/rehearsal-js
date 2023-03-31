@@ -40,6 +40,8 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@rehearsal/migration-graph-ember": "workspace:*",
+    "@rehearsal/migration-graph-shared": "workspace:*",
     "@rehearsal/plugins": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",

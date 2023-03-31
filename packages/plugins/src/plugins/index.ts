@@ -8,3 +8,4 @@ export { GlintReportPlugin } from './glint-report.plugin.js';
 export { LintPlugin, LintPluginOptions } from './lint.plugin.js';
 export { PrettierPlugin, PrettierPluginOptions } from './prettier.plugin.js';
 export { ReRehearsePlugin, ReRehearsePluginOptions } from './re-rehearse.plugin.js';
+export { ServiceInjectionsTransformPlugin } from './transform.plugin.js';
