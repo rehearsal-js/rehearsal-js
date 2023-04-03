@@ -2,30 +2,23 @@ import { applyTextChange, normalizeTextChanges } from '@rehearsal/ts-utils';
 import { BaseCodeFixCollection } from './base-codefix-collection.js';
 import { CodeFixesProvider } from './codefixes-provider.js';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
-import { Diagnostics } from './diagnosticInformationMap.generated.js';
 
-import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard/index.js';
-import { AddMissingExportCodeFix } from './fixes/addMissingExport/index.js';
-import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional/index.js';
-import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance/index.js';
-import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints/index.js';
+import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard.js';
+import { AddMissingExportCodeFix } from './fixes/addMissingExport.js';
+import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
+import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
+import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints.js';
 import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
-  new BaseCodeFixCollection({
-    [Diagnostics.TS7050.code]: new AddMissingTypesBasedOnInheritanceCodeFix(),
-  }),
-  new BaseCodeFixCollection({
-    [Diagnostics.TS18046.code]: new AddErrorTypeGuardCodeFix(),
-    [Diagnostics.TS2571.code]: new AddErrorTypeGuardCodeFix(),
-    [Diagnostics.TS2790.code]: new MakeMemberOptionalCodeFix(),
-    [Diagnostics.TS4082.code]: new AddMissingExportCodeFix(),
-    [Diagnostics.TS7050.code]: new AddMissingTypesBasedOnInlayHintsCodeFix(),
-  }),
+  new BaseCodeFixCollection([
+    new AddErrorTypeGuardCodeFix(),
+    new AddMissingExportCodeFix(),
+    new AddMissingTypesBasedOnInheritanceCodeFix(),
+    new AddMissingTypesBasedOnInlayHintsCodeFix(),
+    new MakeMemberOptionalCodeFix(),
+  ]),
   new TypescriptCodeFixCollection(),
-  new BaseCodeFixCollection({
-    [Diagnostics.TS7006.code]: new AddMissingTypesBasedOnInheritanceCodeFix(),
-  }),
 ]);
 
 export interface ContentDelegate {

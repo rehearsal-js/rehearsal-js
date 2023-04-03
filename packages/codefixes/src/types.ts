@@ -42,5 +42,6 @@ export interface CodeFixCollection {
 }
 
 export interface CodeFix {
+  getErrorCodes: () => number[];
   getCodeAction: (diagnostic: DiagnosticWithContext) => CodeFixAction | undefined;
 }

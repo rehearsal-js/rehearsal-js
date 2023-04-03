@@ -6,7 +6,8 @@ import {
   isTypeMatched,
 } from '@rehearsal/ts-utils';
 import ts from 'typescript';
-import { createCodeFixAction } from '../../hints-codefix-collection.js';
+import { createCodeFixAction } from '../hints-codefix-collection.js';
+import { Diagnostics } from '../diagnosticInformationMap.generated.js';
 import type {
   CodeFixAction,
   ExportAssignment,
@@ -17,13 +18,15 @@ import type {
   TypeChecker,
   TypeReference,
 } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../../types.js';
+import type { CodeFix, DiagnosticWithContext } from '../types.js';
 
 const { flattenDiagnosticMessageText, isExportAssignment, isObjectLiteralExpression } = ts;
 
 const EXPORT_KEYWORD_WITH_SPACE = 'export ';
 
 export class AddMissingExportCodeFix implements CodeFix {
+  getErrorCodes = (): number[] => [Diagnostics.TS4082.code];
+
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     const errorNode = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length);
     if (!errorNode || !isExportAssignment(errorNode)) {

@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { dirname, parse, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, afterEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import { Reporter } from '../../reporter/src/index.js';
 import { upgrade } from '../../upgrade/src/upgrade.js';
@@ -16,7 +16,7 @@ describe('Test transform', function () {
   let project: Project;
 
   // eg. ["addErrorTypeGuard","addMissingExport","addMissingTypesBasedOnInheritance","makeMemberOptional"]
-  const transforms = readdirSync(codefixesDir);
+  const transforms = readdirSync(codefixesDir).map((file) => parse(file).name);
 
   beforeEach(() => {
     project = Project.fromDir(fixturesDir, { linkDeps: true, linkDevDeps: true });

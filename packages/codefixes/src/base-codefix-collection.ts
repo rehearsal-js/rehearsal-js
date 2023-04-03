@@ -5,23 +5,25 @@ import { CodeFix, CodeFixCollection, DiagnosticWithContext } from './index.js';
  * Provides
  */
 export class BaseCodeFixCollection implements CodeFixCollection {
-  readonly list;
+  readonly fixes: { [key: number]: CodeFix[] } = {};
 
-  constructor(list: { [key: number]: CodeFix }) {
-    this.list = list;
+  constructor(codefixes: CodeFix[]) {
+    for (const codefix of codefixes) {
+      for (const error of codefix.getErrorCodes()) {
+        this.fixes[error] ? this.fixes[error].push(codefix) : (this.fixes[error] = [codefix]);
+      }
+    }
   }
 
   getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[] {
-    if (this.list[diagnostic.code] === undefined) {
+    if (!this.fixes[diagnostic.code]) {
       return [];
     }
 
-    const codeFixAction = this.list[diagnostic.code].getCodeAction(diagnostic);
+    const codeFixActions = this.fixes[diagnostic.code]
+      .map((fix) => fix.getCodeAction(diagnostic))
+      .filter((codefix) => codefix) as CodeFixAction[];
 
-    if (codeFixAction === undefined) {
-      return [];
-    }
-
-    return [codeFixAction];
+    return codeFixActions;
   }
 }
