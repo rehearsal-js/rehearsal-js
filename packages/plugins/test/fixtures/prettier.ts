@@ -1,5 +1,5 @@
 
 
    function   doSomething(  arg: string) {
-return arg;
+return arg + "test";
    }
