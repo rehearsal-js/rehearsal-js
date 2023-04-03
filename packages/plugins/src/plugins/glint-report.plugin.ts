@@ -1,5 +1,5 @@
 import { pathUtils } from '@glint/core';
-import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
+import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import { Reporter } from '@rehearsal/reporter';
 import {
   GlintService,
@@ -46,11 +46,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = service.getDiagnostics(fileName);
-
-    //Sort diagnostics from top to bottom, so that we add comments from top to bottom
-    //This will ensure we calculate the line numbers correctly
-    diagnostics.sort((a, b) => a.start - b.start);
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
 
     return diagnostics.map((diagnostic) => {
       return {
