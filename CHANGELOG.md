@@ -1,3 +1,29 @@
+## <small>1.0.16-beta (2023-04-03)</small>
+
+* test: add config-ts ember tests (#914) ([d25c067](https://github.com/rehearsal-js/rehearsal-js/commit/d25c067)), closes [#914](https://github.com/rehearsal-js/rehearsal-js/issues/914)
+* test: correct snapshot (#904) ([2409d4b](https://github.com/rehearsal-js/rehearsal-js/commit/2409d4b)), closes [#904](https://github.com/rehearsal-js/rehearsal-js/issues/904)
+* test: enable ember4 for ember app (#872) ([e51e702](https://github.com/rehearsal-js/rehearsal-js/commit/e51e702)), closes [#872](https://github.com/rehearsal-js/rehearsal-js/issues/872)
+* test: validate ember tests (#881) ([83b97a7](https://github.com/rehearsal-js/rehearsal-js/commit/83b97a7)), closes [#881](https://github.com/rehearsal-js/rehearsal-js/issues/881)
+* chore: adding new diagnostics ([d5f2faf](https://github.com/rehearsal-js/rehearsal-js/commit/d5f2faf))
+* chore: adding new diagnostics ([b20ae00](https://github.com/rehearsal-js/rehearsal-js/commit/b20ae00))
+* chore: extends hookTimeout (#899) ([8686748](https://github.com/rehearsal-js/rehearsal-js/commit/8686748)), closes [#899](https://github.com/rehearsal-js/rehearsal-js/issues/899)
+* chore: improve performance of AST node searching (#912) ([24586a9](https://github.com/rehearsal-js/rehearsal-js/commit/24586a9)), closes [#912](https://github.com/rehearsal-js/rehearsal-js/issues/912)
+* chore: rename check plugins to report (#906) ([6048b53](https://github.com/rehearsal-js/rehearsal-js/commit/6048b53)), closes [#906](https://github.com/rehearsal-js/rehearsal-js/issues/906)
+* chore: reorganize codefixes (#911) ([fbec829](https://github.com/rehearsal-js/rehearsal-js/commit/fbec829)), closes [#911](https://github.com/rehearsal-js/rehearsal-js/issues/911)
+* chore(gh-action-bot): adding new diagnostics ([9d9e58e](https://github.com/rehearsal-js/rehearsal-js/commit/9d9e58e))
+* chore(gh-action-bot): adding new diagnostics ([4d801cd](https://github.com/rehearsal-js/rehearsal-js/commit/4d801cd))
+* chore(service): sort package.json ([b387d39](https://github.com/rehearsal-js/rehearsal-js/commit/b387d39))
+* feat: handle fully qualified service injections (#865) ([79ec2f7](https://github.com/rehearsal-js/rehearsal-js/commit/79ec2f7)), closes [#865](https://github.com/rehearsal-js/rehearsal-js/issues/865)
+* fix: handle inline hbs (#908) ([4068017](https://github.com/rehearsal-js/rehearsal-js/commit/4068017)), closes [#908](https://github.com/rehearsal-js/rehearsal-js/issues/908)
+* fix: unable to get bin path with npm@9 (#903) ([be14afa](https://github.com/rehearsal-js/rehearsal-js/commit/be14afa)), closes [#903](https://github.com/rehearsal-js/rehearsal-js/issues/903)
+* Update get-diagnostics.yml ([0b55019](https://github.com/rehearsal-js/rehearsal-js/commit/0b55019))
+* Update package.json ([5bf8fb8](https://github.com/rehearsal-js/rehearsal-js/commit/5bf8fb8))
+* Update release.js ([87af445](https://github.com/rehearsal-js/rehearsal-js/commit/87af445))
+* Update test-and-lint.yml ([20b3340](https://github.com/rehearsal-js/rehearsal-js/commit/20b3340))
+* Update ts-nightly-test.yml ([6fc80e5](https://github.com/rehearsal-js/rehearsal-js/commit/6fc80e5))
+
+
+
 ## <small>1.0.15-beta (2023-03-28)</small>
 
 * fix(migrate): remove postinstall hook (#894) ([d419c83](https://github.com/rehearsal-js/rehearsal-js/commit/d419c83)), closes [#894](https://github.com/rehearsal-js/rehearsal-js/issues/894)

@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph-shared",
-  "version": "1.0.15-beta",
+  "version": "1.0.16-beta",
   "description": "Tool for generating a typescript migration graph",
   "license": "BSD-2-Clause",
   "type": "module",
