@@ -1,6 +1,12 @@
 import { dirname, extname, resolve } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
-import { DiagnosticReportPlugin, LintPlugin, ReRehearsePlugin } from '@rehearsal/plugins';
+import {
+  DiagnosticReportPlugin,
+  isPrettierUsedForFormatting,
+  LintPlugin,
+  PrettierPlugin,
+  ReRehearsePlugin,
+} from '@rehearsal/plugins';
 import ts from 'typescript';
 import type { ListrContext } from 'listr2';
 import type { Logger } from 'winston';
@@ -74,22 +80,33 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
   const service = new RehearsalService(options, fileNames);
 
   const runner = new PluginsRunner({ basePath, service, reporter, logger })
+    // Reset
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
       reportErrors: false,
     })
+    // Add ts-expect-error comments and report those errors
     .queue(new DiagnosticReportPlugin(), {
       commentTag,
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
-      reportErrors: false,
+    // Format previously added comments
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
     })
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false, ...input.eslintOptions },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
+    })
+    // Report linter issues
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
       reportErrors: true,
     });
 

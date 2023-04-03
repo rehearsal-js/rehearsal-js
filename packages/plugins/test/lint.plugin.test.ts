@@ -6,7 +6,7 @@ import { initProject, mockPluginRunnerContext } from './utils.js';
 describe('Test LintPlugin', () => {
   test('run', async () => {
     const project = await initProject('prettier-test', {
-      'index.js': './test/fixtures/lint.ts.fixture',
+      'index.js': './test/fixtures/lint.ts',
     });
 
     const context = mockPluginRunnerContext(project);

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { MigrateInput, migrate } from '../src/migrate.js';
+import { migrate, MigrateInput } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -361,8 +361,7 @@ export default class Salutation extends Component {
 }
 `;
 
-      const expectedHbs = `<span>Hello {{this.name}}</span>
-`;
+      const expectedHbs = `<span>Hello {{this.name}}</span>`;
 
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
