@@ -1,25 +1,22 @@
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
-import { format, type Options } from 'prettier';
+import prettier from 'prettier';
 
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:prettier');
 
-export type PrettierPluginOptions = PluginOptions & Options;
-
 /**
  * Source code formatting
  */
-export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: PrettierPluginOptions
-  ): PluginResult {
+export class PrettierPlugin implements Plugin<PluginOptions> {
+  async run(fileName: string, context: PluginsRunnerContext): PluginResult {
     const text = context.service.getFileText(fileName);
 
     try {
-      const result = format(text, options);
+      const prettierOptions = prettier.resolveConfig.sync(fileName) || {};
+      prettierOptions.filepath = fileName;
+
+      const result = prettier.format(text, prettierOptions);
 
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.service.setFileText(fileName, result);
@@ -31,4 +28,12 @@ export class PrettierPlugin implements Plugin<PrettierPluginOptions> {
 
     return Promise.resolve([]);
   }
+}
+
+/**
+ * Checks if prettier is used for formatting of the current application independent of eslint
+ */
+export function isPrettierUsedForFormatting(fileName: string): boolean {
+  // TODO: Better validation can be implemented
+  return prettier.resolveConfigFile.sync(fileName) !== null;
 }

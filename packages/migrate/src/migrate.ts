@@ -4,17 +4,19 @@ import { dirname, extname, resolve } from 'node:path';
 import { readJSON } from 'fs-extra/esm';
 import {
   GlintService,
-  PluginsRunner,
-  RehearsalService,
   isGlintFile,
   isGlintProject,
+  PluginsRunner,
+  RehearsalService,
 } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
   DiagnosticReportPlugin,
   GlintFixPlugin,
   GlintReportPlugin,
+  isPrettierUsedForFormatting,
   LintPlugin,
+  PrettierPlugin,
   ReRehearsePlugin,
   ServiceInjectionsTransformPlugin,
 } from '@rehearsal/plugins';
@@ -116,13 +118,11 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   }
 
   const runner = new PluginsRunner({ basePath, service, reporter, logger })
+    // Resetting
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
+    // Fix errors
     .queue(new ServiceInjectionsTransformPlugin(), {})
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
@@ -134,12 +134,18 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       filter: (fileName: string) =>
         isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
+    // Fix formatting
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
+      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
     })
+    // Add ts-expect-error comments and report those errors
     .queue(new DiagnosticReportPlugin(), {
-      commentTag: '@rehearsal',
+      commentTag,
       filter: (fileName: string) =>
         !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
@@ -148,10 +154,16 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       filter: (fileName: string) =>
         isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
+    // Format previously added comments
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    })
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
+      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
     })
+    // Report linter issues
     .queue(new LintPlugin(), {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
       reportErrors: true,
