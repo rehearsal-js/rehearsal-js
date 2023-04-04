@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
-import { existsSync, readFileSync, mkdirSync } from 'node:fs';
-import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 
-// The reaosn to have packageMap is getting all files in a package faster
-// than loop through everyhing in the files
+// The reason to have packageMap is getting all files in a package faster
+// than loop through everything in the files
 export type Store = {
   name: string | null;
   packageMap: PackageMap;
@@ -112,11 +112,11 @@ export class State {
   addFilesToPackage(packageName: string, files: string[]): void {
     const fileMap: FileStateMap = {};
     const relativePackageName = getRelativePath(this.basePath, packageName);
-    const fileListWithRelateivePath = files.map((f) => getRelativePath(this.basePath, f));
+    const fileListWithRelativePath = files.map((f) => getRelativePath(this.basePath, f));
     // save files to package map for easier retrieve
-    this.store.packageMap[relativePackageName] = fileListWithRelateivePath;
+    this.store.packageMap[relativePackageName] = fileListWithRelativePath;
 
-    fileListWithRelateivePath.forEach((f) => {
+    fileListWithRelativePath.forEach((f) => {
       const relativeTsPath = f.replace(/js$/g, 'ts');
       const absoluteTsPath = getAbsolutePath(this.basePath, relativeTsPath);
       const isConverted = existsSync(absoluteTsPath);

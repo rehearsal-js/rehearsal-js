@@ -11,10 +11,10 @@ import type { ProjectGraph } from './project-graph.js';
 import type {
   ICruiseOptions,
   ICruiseResult,
-  IModule,
   IDependency,
-  IResolveOptions,
+  IModule,
   IReporterOutput,
+  IResolveOptions,
 } from '../../types/dependency-cruiser/index.js';
 
 const EXCLUDE_FILE_EXTS = ['\\.css$', '\\.json$', '\\.graphql$'];
@@ -34,7 +34,7 @@ export type PackageGraphOptions = {
   project?: ProjectGraph;
 };
 export class PackageGraph {
-  protected debug: Debugger = debug(`rehearsal:migration-graph-sahred:${this.constructor.name}`);
+  protected debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
 
   protected baseDir: string;
   protected package: Package;
@@ -83,7 +83,7 @@ export class PackageGraph {
 
     let result: IReporterOutput;
 
-    // TODO get entrypoint  Package (maybePckage) and instantiate with that value if provided from API.
+    // TODO get entrypoint  Package (maybePackage) and instantiate with that value if provided from API.
     const target = entrypoint ? [entrypoint] : [...include];
 
     const resolveOptions = this.resolveOptions;
@@ -111,7 +111,7 @@ export class PackageGraph {
       }
 
       // IModule.source and IDependency.resolved paths from dependency-cruiser can
-      // have awkward paths when using a tmpDir in MacOS resolveing the paths to the
+      // have awkward paths when using a tmpDir in MacOS resolving the paths to the
       // baseDir helps ensure we always get a file path relative to the baseDir.
 
       const sourcePath = resolveRelative(baseDir, m.source);
@@ -120,7 +120,7 @@ export class PackageGraph {
         this.debug(
           `The target file "${sourcePath}" is external to package "${this.package.packageName}" (${baseDir}), omitting target file form package-graph.`
         );
-        // Should resolve path completely relativeto the project and find which package it belongs to.
+        // Should resolve path completely relative to the project and find which package it belongs to.
         // Ask project which package does this belong maybe create an edge?
         return;
       }

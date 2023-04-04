@@ -49,7 +49,7 @@ describe('Test isSubtypeOf', () => {
     hasSubtype(9, 'Student');
   });
 
-  test('should return false when empty string is passed in as the subttype string', () => {
+  test('should return false when empty string is passed in as the subtype string', () => {
     hasNotSubtype(1, '');
   });
 });

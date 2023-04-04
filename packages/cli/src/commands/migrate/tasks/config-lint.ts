@@ -1,4 +1,4 @@
-import { resolve, extname } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { ESLint } from 'eslint';
 import { outputFileSync } from 'fs-extra/esm';
 import { cosmiconfigSync } from 'cosmiconfig';
@@ -173,7 +173,7 @@ async function writeLintConfig(
 ): Promise<void> {
   outputFileSync(configPath, config);
 
-  //yml and ymal don't need formatting. yamlStringify does the formatting already.
+  //yml and yaml don't need formatting. yamlStringify does the formatting already.
   if (format === FORMAT.JS || format === FORMAT.CJS) {
     const formattedConfig = await lintJSConfig(config, configPath, basePath);
     formattedConfig && outputFileSync(configPath, formattedConfig);

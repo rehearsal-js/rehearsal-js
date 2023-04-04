@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { clean, getEmberAppScenario } from '../src/scenarios.js';
 
-// Enable these tests to validate if our scenarios fixtures build a funciton all
+// Enable these tests to validate if our scenarios fixtures build a function all
 describe('scenarios - validate scenarios for npm install + test', () => {
   test.skip('debug scenario test', async () => {
     const app = await getEmberAppScenario('app'); // Choose a scenario to debug

@@ -49,10 +49,10 @@ export class RehearsalServiceHost implements LanguageServiceHost {
 
   async installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult> {
     if (this.seenTypingsRequest.has(options.fileName)) {
-      return { successMessage: `Succussfully installed ${options.packageName}` };
+      return { successMessage: `Successfully installed ${options.packageName}` };
     }
 
-    // Save the intall request information so we don't continuously download
+    // Save the install request information, so we don't continuously download
     this.seenTypingsRequest.set(options.fileName, options.packageName);
 
     const nearestPackageJSON = findupSync('package.json', {
@@ -69,7 +69,7 @@ export class RehearsalServiceHost implements LanguageServiceHost {
       // types we just downloaded
       this.typeRootVersion++;
 
-      return { successMessage: `Succussfully installed ${options.packageName}` };
+      return { successMessage: `Successfully installed ${options.packageName}` };
     }
 
     return Promise.reject({ error: `Could not install ${options.packageName}` });

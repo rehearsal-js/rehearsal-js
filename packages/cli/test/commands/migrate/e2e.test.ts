@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readFileSync, readdirSync, promises as fs } from 'node:fs';
+import { promises as fs, readdirSync, readFileSync } from 'node:fs';
 import { writeJSONSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getFiles } from '@rehearsal/test-support';
@@ -8,7 +8,7 @@ import { Project } from 'fixturify-project';
 import { readTSConfig } from '@rehearsal/utils';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
-import { runBin, prepareProject, cleanOutput } from '../../test-helpers/index.js';
+import { cleanOutput, prepareProject, runBin } from '../../test-helpers/index.js';
 import { CustomConfig } from '../../../src/types.js';
 import type { PackageJson } from 'type-fest';
 
@@ -80,7 +80,7 @@ describe('migrate - validation', () => {
   });
 
   test('throw if not in project root with pnpm workspaces', async () => {
-    project = new Project('workspaces-with-pnpm-erorr');
+    project = new Project('workspaces-with-pnpm-error');
 
     project.files = {
       'package.json': JSON.stringify({
@@ -107,7 +107,7 @@ describe('migrate - validation', () => {
   });
 
   test('not throw if in project root with unrelated npm/yarn workspaces', async () => {
-    project = new Project('workspaces-with-pnpm-erorr');
+    project = new Project('workspaces-with-pnpm-error');
     project.files = {
       'package.json': JSON.stringify({
         name: 'foo',
@@ -229,11 +229,11 @@ describe('migrate: e2e', () => {
     const lintConfig = readFileSync(resolve(project.baseDir, '.eslintrc.js'), {
       encoding: 'utf-8',
     });
-    const lintConfigDefualt = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
+    const lintConfigDefault = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
       encoding: 'utf-8',
     });
     expect(lintConfig).toMatchSnapshot();
-    expect(lintConfigDefualt).toMatchSnapshot();
+    expect(lintConfigDefault).toMatchSnapshot();
 
     // new scripts
     expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');
@@ -264,11 +264,11 @@ describe('migrate: e2e', () => {
     const lintConfig = readFileSync(resolve(project.baseDir, '.eslintrc.js'), {
       encoding: 'utf-8',
     });
-    const lintConfigDefualt = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
+    const lintConfigDefault = readFileSync(resolve(project.baseDir, '.rehearsal-eslintrc.js'), {
       encoding: 'utf-8',
     });
     expect(lintConfig).toMatchSnapshot();
-    expect(lintConfigDefualt).toMatchSnapshot();
+    expect(lintConfigDefault).toMatchSnapshot();
 
     // new scripts
     expect(packageJson?.scripts?.['lint:tsc']).toBe('tsc --noEmit');

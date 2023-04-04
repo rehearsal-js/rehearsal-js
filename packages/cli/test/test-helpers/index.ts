@@ -1,15 +1,15 @@
-import { join, resolve, dirname } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { Readable } from 'stream';
 import { readFileSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import which from 'which';
-import { ListrTask, Listr } from 'listr2';
+import { Listr, ListrTask } from 'listr2';
 import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 import { Project } from 'fixturify-project';
 
-import { MigrateCommandOptions, Formats, MigrateCommandContext } from '../../src/types.js';
-import type { Options, ExecaChildProcess } from 'execa';
+import { Formats, MigrateCommandContext, MigrateCommandOptions } from '../../src/types.js';
+import type { ExecaChildProcess, Options } from 'execa';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,7 +39,7 @@ export async function gitDeleteLocalBranch(checkoutBranch?: string): Promise<voi
   }
 }
 
-// helper funcion to run a command via the actual bin
+// helper function to run a command via the actual bin
 // stdout of commands available via ExecaChildProcess.stdout
 export function runBin(command: string, args: string[], options: Options = {}): ExecaChildProcess {
   const cliPath = resolve(__dirname, `../../bin/rehearsal.js`);
@@ -134,7 +134,7 @@ export function sendKey(key: KEYS): void {
 
 // clear all special chars for snapshot test
 // especially in interactive mode, the enquirer prompt would produce difference chars in different environment
-// which makes snapshot test improssible
+// which makes snapshot test impossible
 export function removeSpecialChars(input: string): string {
   const specialCharRegex = /[^A-Za-z 0-9 .,?""!@#$%^&*()-_=+;:<>/\\|}{[\]`~\n]*/g;
   const colorCharRegex = /\[\d+m/g;

@@ -12,7 +12,7 @@ export function regenTask(options: MigrateCommandOptions, logger: Logger): Listr
     title: 'Regenerating report for TS errors and Eslint errors',
     enabled: (): boolean => !options.dryRun,
     task: async (_: MigrateCommandContext, task): Promise<void> => {
-      // Because we have to eagerly import all the tasks we need tolazily load these
+      // Because we have to eagerly import all the tasks we need to lazily load these
       // modules because they refer to typescript which may or may not be installed
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { generateReports, getRegenSummary } = await import('../../../helpers/report.js');

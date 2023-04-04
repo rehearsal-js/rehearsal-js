@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { resolve, relative, isAbsolute } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
 import { existsSync, promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
-import { parseCommaSeparatedList, gitIsRepoDirty, findWorkspaceRoot } from '@rehearsal/utils';
+import { findWorkspaceRoot, gitIsRepoDirty, parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
 import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
 import { initCommand } from './init-command.js';
@@ -49,7 +49,7 @@ migrateCommand
   )
   .option(
     '-p, --package <relative path to target package>',
-    `run migrate againt a specific child-package in your project(${process.cwd()}) `,
+    `run migrate against a specific child-package in your project(${process.cwd()}) `,
     ''
   )
   .option(

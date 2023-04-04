@@ -27,7 +27,7 @@ function extractDepName(dep: string): string {
   return matched ? matched[0] : dep;
 }
 
-// check if package.json has all required dependecies
+// check if package.json has all required dependencies
 // from rehearsal default and user config
 export async function shouldRunDepInstallTask(
   options: MigrateCommandOptions,
@@ -97,7 +97,7 @@ export function depInstallTask(
       // for deps
       if (dependencies.length) {
         try {
-          task.output = `Installing dependecies: ${dependencies.join(', ')}`;
+          task.output = `Installing dependencies: ${dependencies.join(', ')}`;
           await addDep(dependencies, false, { cwd: options.basePath });
         } catch (e) {
           errorMessages.push(formatErrorMessage(dependencies, false));

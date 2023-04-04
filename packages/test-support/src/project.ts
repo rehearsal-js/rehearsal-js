@@ -4,9 +4,9 @@ import findupSync from 'findup-sync';
 import tmp from 'tmp';
 import { Project } from 'fixturify-project';
 import {
+  getEmberAddonFiles,
   getEmberAppFiles,
   getEmberAppWithInRepoAddonFiles,
-  getEmberAddonFiles,
   getEmberAppWithInRepoEngine,
 } from './files.js';
 
@@ -17,7 +17,7 @@ const __dirname = dirname(__filename);
 const maybePackageJson = findupSync('./package.json', { cwd: __dirname });
 
 if (!maybePackageJson) {
-  throw new Error('Unable to dermien rooDir for @rehearsal/test-support');
+  throw new Error('Unable to determine rooDir for @rehearsal/test-support');
 }
 
 const ROOT_DIR = dirname(maybePackageJson);
@@ -94,7 +94,7 @@ function addUtilDirectory(project: Project): Project {
 }
 
 /**
- * Augments the project to have an in-repo addon with an acceptance test to evalute the composition.
+ * Augments the project to have an in-repo addon with an acceptance test to evaluate the composition.
  * @param {Project} project
  * @param {string} [addonName='some-addon']
  */
@@ -232,7 +232,7 @@ export function getEmberProject(variant: EmberProjectFixture): Project {
       project = getEmberAddonProject();
       break;
     default:
-      throw new Error(`Unable to getProjectVaraint for '${variant}'.`);
+      throw new Error(`Unable to getProjectVariant for '${variant}'.`);
   }
 
   return project;

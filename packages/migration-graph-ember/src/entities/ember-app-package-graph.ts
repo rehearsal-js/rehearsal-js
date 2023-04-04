@@ -57,7 +57,7 @@ export class EmberAppPackageGraph extends PackageGraph {
    *  In this case we are processing that file.
    *
    *  We need to update that Node with the complete ModuleNode data.
-   *  Then we parse that service file for any other service depdendencies.
+   *  Then we parse that service file for any other service dependencies.
    *
    * @param m A `ModuleNode` with the path information
    * @returns Node<ModuleNode> the new or existing Node<ModuleNode>
@@ -91,7 +91,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
     const services = discoverServiceDependencies(this.baseDir, n.content.path);
 
-    this.debug('>>> SERVICES DISCOVERD', services);
+    this.debug('>>> SERVICES DISCOVERED', services);
 
     services.forEach((s) => {
       // We look this up in our resolution map to short-circuit this process
@@ -101,7 +101,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
         if (!maybePackage) {
           throw new Error(
-            `Unknown error occured. Invalid resolution for service '${s.serviceName}' in options.resolutions.services`
+            `Unknown error occurred. Invalid resolution for service '${s.serviceName}' in options.resolutions.services`
           );
         }
 
@@ -109,7 +109,7 @@ export class EmberAppPackageGraph extends PackageGraph {
         // If yes then it's truly external and we can ignore it
         if (this.package.dependencies && this.package.dependencies[maybePackage]) {
           this.debug(
-            `Ignore! A resolution was found for serivce '${s.serviceName}' in file '${m.path}'.`
+            `Ignore! A resolution was found for service '${s.serviceName}' in file '${m.path}'.`
           );
           return;
         }
@@ -119,7 +119,7 @@ export class EmberAppPackageGraph extends PackageGraph {
         );
       }
 
-      // If we found an addonName we potentially have a resolution within project to a service implmentation
+      // If we found an addonName we potentially have a resolution within project to a service implementation
       if (s.addonName) {
         this.debug(`Coordinates: s.addonName: ${s.addonName} for ${s.serviceName}`);
         // Lookup the addonName in the package graph
@@ -164,7 +164,7 @@ export class EmberAppPackageGraph extends PackageGraph {
           } else {
             // Create an edge between these packages.
             // We can create edges between packages in the project.
-            // When the actual implmentation is added to the project, it will
+            // When the actual implementation is added to the project, it will
             // get updated.
 
             if (this.parent) {
@@ -189,7 +189,7 @@ export class EmberAppPackageGraph extends PackageGraph {
         const someService = this.graph.getNode(maybeServicePath);
         if (!someService) {
           throw new Error(
-            'EmberAppPackageDependencyGraph: Unknown error occured. Unable to retrieve existing service'
+            'EmberAppPackageDependencyGraph: Unknown error occurred. Unable to retrieve existing service'
           );
         }
         this.graph.addEdge(n, someService);
@@ -228,7 +228,7 @@ export class EmberAppPackageGraph extends PackageGraph {
   }
 
   /**
-   * Creates a list of realitve paths in a ember package for where a service
+   * Creates a list of relative paths in an ember package for where a service
    * implementation may exist.
    *
    * @param serviceName

@@ -49,7 +49,7 @@ describe('graph', () => {
 
     // We expect a leaf-to-root output.
     // const expected = ['0', '1', '3', '2', '4', '5'];
-    // This order is determiend by the order for which the node was added to the graph.
+    // This order is determined by the order for which the node was added to the graph.
     // Node f was added first and it's dependencies are in the order of adjacencies.
     const expected = ['1', '3', '2', '0', '5', '4'];
     const nodes = graph.topSort();

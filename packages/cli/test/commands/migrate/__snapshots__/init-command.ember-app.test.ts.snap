@@ -87,7 +87,7 @@ exports[`migrate init for ember app variant > ember4App > pass user config ember
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -209,7 +209,7 @@ exports[`migrate init for ember app variant > emberApp > pass user config emberA
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -331,7 +331,7 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > pass use
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -366,7 +366,7 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > skip dep
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default run --emberAppWithInRepoEngine 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -388,14 +388,14 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 2`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default run --emberAppWithInRepoEngine 2`] = `
 "module.exports = {
   extends: [\\"./.rehearsal-eslintrc.js\\"],
 };
 "
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 3`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default run --emberAppWithInRepoEngine 3`] = `
 "module.exports = {
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"parserOptions\\": {
@@ -415,7 +415,7 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default
 }"
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default run --emberAppwithInRepoEngine 4`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default run --emberAppWithInRepoEngine 4`] = `
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
@@ -445,7 +445,7 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > default
 }
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > pass user config emberAppwithInRepoEngine 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > pass user config emberAppWithInRepoEngine 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize
@@ -453,7 +453,7 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > pass us
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -468,7 +468,7 @@ exports[`migrate init for ember app variant > emberAppwithInRepoEngine > pass us
 info:    The project is ready for migration. Please run \\"rehearsal migrate\\" to start the migration."
 `;
 
-exports[`migrate init for ember app variant > emberAppwithInRepoEngine > skip dep install, ts config, and lint config if exists 1`] = `
+exports[`migrate init for ember app variant > emberAppWithInRepoEngine > skip dep install, ts config, and lint config if exists 1`] = `
 "[STARTED] Validate project
 [SUCCESS] Validate project
 [STARTED] Initialize

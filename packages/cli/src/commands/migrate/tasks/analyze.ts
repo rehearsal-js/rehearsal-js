@@ -73,7 +73,7 @@ export function analyzeTask(
           const menuList = packageSelections.map((p) => {
             const { migratedFileCount, totalFileCount, isCompleted } =
               ctx.state.getPackageMigrateProgress(
-                p.path // pacakge fullpath is the key of the packageMap in state
+                p.path // package fullpath is the key of the packageMap in state
               );
             const errorCount = ctx.state.getPackageErrorCount(p.path);
             // default text to show per package
@@ -81,7 +81,7 @@ export function analyzeTask(
             let icon = '';
             let isOptionDisabled = false;
             if (totalFileCount !== 0) {
-              // has previous migratoin
+              // has previous migration
               progressText = `${migratedFileCount} of ${totalFileCount} files migrated, ${errorCount} @ts-expect-error(s) need to be fixed`;
               icon = IN_PROGRESS_MARK;
 

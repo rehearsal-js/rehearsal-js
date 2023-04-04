@@ -1,22 +1,22 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
-import { beforeEach, afterEach, afterAll, describe, test, expect } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { writeJSONSync } from 'fs-extra';
 import { Project } from 'fixturify-project';
 import {
+  getEmber4AppProject,
   getEmberAppProject,
   getEmberAppWithInRepoAddonProject,
   getEmberAppWithInRepoEngineProject,
-  getEmber4AppProject,
 } from '@rehearsal/test-support';
 import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
 
 import { cleanOutput } from '../../test-helpers/index.js';
 import {
-  runDefault,
-  runWithUserConfig,
-  runTwoTimes,
   CUSTOM_CONFIG,
+  runDefault,
+  runTwoTimes,
+  runWithUserConfig,
 } from '../../test-helpers/init-command-test-utils.js';
 import { CustomConfig } from '../../../src/types.js';
 
@@ -28,7 +28,7 @@ function createUserConfig(basePath: string, config: CustomConfig): void {
 const projects = {
   emberApp: getEmberAppProject(),
   emberAppWithInRepoAddon: getEmberAppWithInRepoAddonProject(),
-  emberAppwithInRepoEngine: getEmberAppWithInRepoEngineProject(),
+  emberAppWithInRepoEngine: getEmberAppWithInRepoEngineProject(),
   ember4App: getEmber4AppProject(),
 };
 

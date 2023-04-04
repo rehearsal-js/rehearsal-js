@@ -20,13 +20,13 @@ const EMBER_FIXTURE_NAMES = {
   ADDON_WITH_COMPLEX_CUSTOM_PACKAGE_MAIN: 'addon-with-complex-custom-module-name',
   WORKSPACE_CONTAINER: 'workspace-container',
   NON_WORKSPACE_IN_WORKSPACE_CONTAINER: 'non-workspace',
-  SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER: 'simple-workspace-addon',
+  SIMPLE_ADDON_IN_WORKSPACE_CONTAINER: 'simple-workspace-addon',
   MULTIPLE_EXPORTS_FROM_ADDON_MAIN: 'multiple-exports-from-addon-main',
 };
 
 const EMBER_FIXTURES: { [key: string]: any } = {};
 
-// Stub this with a package.json becuase this directory of FIXTURES is use for genearting module mappings.
+// Stub this with a package.json because this directory of FIXTURES is use for generating module mappings.
 EMBER_FIXTURES['package.json'] = json({
   name: 'some-root',
   version: '0.0.0',
@@ -231,11 +231,11 @@ EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER][
 };
 
 EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
-  EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER
+  EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORKSPACE_CONTAINER
 ] = {
   'index.js': readFileSync(join(__dirname, 'simple-addon', 'index.js'), 'utf-8'),
   'package.json': json({
-    name: EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORSKAPCE_CONTAINER,
+    name: EMBER_FIXTURE_NAMES.SIMPLE_ADDON_IN_WORKSPACE_CONTAINER,
     version: '1.0.0',
     keywords: ['ember-addon'],
     'ember-addon': {
@@ -243,8 +243,6 @@ EMBER_FIXTURES[EMBER_FIXTURE_NAMES.WORKSPACE_CONTAINER].packages[
     },
   }),
 };
-
-
 
 // export the fixture and names for easier mapping
 export { EMBER_FIXTURES as FIXTURES, EMBER_FIXTURE_NAMES as FIXTURE_NAMES };

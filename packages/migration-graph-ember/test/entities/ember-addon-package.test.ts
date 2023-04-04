@@ -59,7 +59,7 @@ describe('Unit | Entities | EmberAddonPackage', () => {
     excludes.forEach((pattern) => {
       expect(
         pkg.excludePatterns.has(pattern),
-        `expect EmberrAddonPackage to exclude ${pattern}`
+        `expect EmberAddonPackage to exclude ${pattern}`
       ).toBeTruthy();
     });
   });
