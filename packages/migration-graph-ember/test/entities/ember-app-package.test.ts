@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
-import { describe, test, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { writeSync } from 'fixturify';
 import { DirResult, dirSync, setGracefulCleanup } from 'tmp';
-import { FIXTURES, FIXTURE_NAMES } from '../fixtures/package-fixtures.js';
+import { FIXTURE_NAMES, FIXTURES } from '../fixtures/package-fixtures.js';
 import { EmberAppPackage } from '../../src/entities/ember-app-package.js';
 import { getEmberExcludePatterns } from '../../src/utils/excludes.js';
 
@@ -46,7 +46,7 @@ describe('Unit | Entities | EmberAppPackage', () => {
     excludes.forEach((pattern) => {
       expect(
         pkg.excludePatterns.has(pattern),
-        `expect EmberrAddonPackage to exclude ${pattern}`
+        `expect EmberAddonPackage to exclude ${pattern}`
       ).toBeTruthy();
     });
   });

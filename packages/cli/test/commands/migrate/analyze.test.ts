@@ -4,16 +4,16 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 import { Project } from 'fixturify-project';
 import { readFile, readTSConfig, writeTSConfig } from '@rehearsal/utils';
-import { analyzeTask, addFilesToIncludes } from '../../../src/commands/migrate/tasks/index.js';
+import { addFilesToIncludes, analyzeTask } from '../../../src/commands/migrate/tasks/index.js';
 import {
-  prepareProject,
-  listrTaskRunner,
   createMigrateOptions,
-  KEYS,
-  sendKey,
   createOutputStream,
-  isPackageSelection,
   isActionSelection,
+  isPackageSelection,
+  KEYS,
+  listrTaskRunner,
+  prepareProject,
+  sendKey,
 } from '../../test-helpers/index.js';
 import { TSConfig } from '../../../src/types.js';
 
@@ -108,13 +108,13 @@ describe('Task: analyze', () => {
     expect(output).toContain('[SUCCESS] Analyzing Project');
 
     // check context
-    const expectedRellativePaths = ['foo.js', 'depends-on-foo.js', 'index.js'];
-    const expectedAbsolutePaths = expectedRellativePaths.map((f) => {
+    const expectedRelativePaths = ['foo.js', 'depends-on-foo.js', 'index.js'];
+    const expectedAbsolutePaths = expectedRelativePaths.map((f) => {
       return resolve(project.baseDir, f);
     });
     expect(ctx.input).toBe('basic(no progress found)');
     expect(ctx.targetPackagePath).toBe(project.baseDir);
-    expect(ctx.sourceFilesWithRelativePath).toStrictEqual(expectedRellativePaths);
+    expect(ctx.sourceFilesWithRelativePath).toStrictEqual(expectedRelativePaths);
     expect(ctx.sourceFilesWithAbsolutePath).toStrictEqual(expectedAbsolutePaths);
   });
 
@@ -132,10 +132,10 @@ describe('Task: analyze', () => {
   });
 
   test('throw if --package option is not valid', async () => {
-    const options = createMigrateOptions(project.baseDir, { package: 'no-valid-pacakge' });
+    const options = createMigrateOptions(project.baseDir, { package: 'no-valid-package' });
     const tasks = [analyzeTask(options)];
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
-      `Cannot find package no-valid-pacakge in your project. Please make sure it is a valid package and try again.`
+      `Cannot find package no-valid-package in your project. Please make sure it is a valid package and try again.`
     );
   });
 

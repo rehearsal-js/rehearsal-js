@@ -1,4 +1,4 @@
-import { dirname, join, resolve, relative } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import fastGlob from 'fast-glob';
 import { findUpSync } from 'find-up';
 import debug, { type Debugger } from 'debug';
@@ -245,7 +245,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     // This allows for all package.json files when read to construct a complete graph of dependencies.
     // Regardless of workspaces or ember-engines.
     //
-    // The downside is that we don't limit the scope of direcotires we crawl. We may need to add more
+    // The downside is that we don't limit the scope of directories we crawl. We may need to add more
     //  exclusions to the fastglob above to constrain packageJson discovery.
     //
     // This is why we can ignore workspace data defined in root package.json during discovery.

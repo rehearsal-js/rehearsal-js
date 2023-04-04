@@ -191,7 +191,7 @@ upgradeCommand
                               ctx.skip = true;
                               task.skip('Skipping task because dryRun flag is set');
                             }
-                            // the diff has been added and commited to the branch
+                            // the diff has been added and committed to the branch
                             // do PR work here and push branch upstream
                             task.title = `Pull-Request Link "https://github.com/foo/foo/pull/00000"`;
                             // on success skip the rest of the tasks
@@ -200,7 +200,7 @@ upgradeCommand
                         },
                       ]);
                     } catch (error) {
-                      // catch the tsc build compliation error
+                      // catch the tsc build compilation error
                       // re-run with tsc --clean and try and mitigate the error with ts-migrate plugins
                       throw new Error('Compilation Error');
                     }

@@ -74,7 +74,7 @@ export function requirePackageMain(
 export function getNameFromMain(pathToPackage: string): string | undefined {
   const addonEntryPoint = requirePackageMain(pathToPackage);
 
-  // presence of this method idicates that the module names in code are different
+  // presence of this method indicates that the module names in code are different
   // than the actual module name in package.json
   if (addonEntryPoint.moduleName) {
     return addonEntryPoint.moduleName();

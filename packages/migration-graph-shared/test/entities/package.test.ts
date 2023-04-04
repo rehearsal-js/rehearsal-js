@@ -117,12 +117,12 @@ describe('Unit | Entities | Package', function () {
       const p = new Package(pathToPackage);
       expect(p.isConvertedToTypescript()).toBe(false);
     });
-    test('should be true if tsconfig.json and atleast one .ts file exists', () => {
+    test('should be true if tsconfig.json and at least one .ts file exists', () => {
       pathToPackage = getPathToPackage(FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT);
       const p = new Package(pathToPackage);
       expect(p.isConvertedToTypescript()).toBe(true);
     });
-    test('should be true if tsconfig.json and atleast one .ts file exists', () => {
+    test('should be true if tsconfig.json and at least one .ts file exists', () => {
       pathToPackage = getPathToPackage(FIXTURE_NAMES.PACKAGE_CONTAINS_TYPESCRIPT);
       const p = new Package(pathToPackage);
       expect(p.isConvertedToTypescript()).toBe(true);

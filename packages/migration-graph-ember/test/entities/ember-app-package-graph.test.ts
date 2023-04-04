@@ -8,10 +8,10 @@ import {
 } from '@rehearsal/test-support';
 import merge from 'lodash.merge';
 import {
-  type ModuleNode,
-  type PackageNode,
   type Graph,
   type GraphNode,
+  type ModuleNode,
+  type PackageNode,
 } from '@rehearsal/migration-graph-shared';
 import fixturify from 'fixturify';
 import { Project } from 'fixturify-project';
@@ -152,7 +152,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     const options = {};
     const graph: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
 
-    // Assert edget between salutation and locale.ts
+    // Assert edged between salutation and locale.ts
 
     const source = graph.getNode('app/services/locale.js');
     const dest = graph.getNode('app/services/request.ts');
@@ -245,7 +245,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     ).toBe(true);
   });
 
-  test('should update sythetic node with actual packageNode once added', async () => {
+  test('should update synthetic node with actual packageNode once added', async () => {
     project = getEmberProject('app-with-in-repo-addon');
 
     project.mergeFiles({
@@ -383,7 +383,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
     emberAppPackage.getModuleGraph(options);
 
-    // Validate that there is a syntehtic node to firstAddon and that there
+    // Validate that there is a synthetic node to firstAddon and that there
     // is an edge between the app and the addon
 
     let firstAddonNode = m.graph.getNode(firstAddonName);
@@ -528,7 +528,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     // app uses a service `date` from `some-addon`
     // └── some-addon exposes `date`
 
-    // We start creating the proejct graph
+    // We start creating the project graph
 
     // We add walk the app first
     // Then we walk the addon.
@@ -609,7 +609,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
     emberAppPackage.getModuleGraph(options);
 
-    // Validate that there is a syntehtic node to firstAddon and that there
+    // Validate that there is a synthetic node to firstAddon and that there
     // is an edge between the app and the addon
 
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonModuleName))).toBe(true);
@@ -630,7 +630,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     expect(someNode.content.synthetic, 'the node on the graph should be replaced').toBeFalsy();
   });
 
-  test('should find service with .ts extenstion within an addon', async () => {
+  test('should find service with .ts extension within an addon', async () => {
     const project = getEmberProject('app-with-in-repo-addon');
 
     project.mergeFiles({

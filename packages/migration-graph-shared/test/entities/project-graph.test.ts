@@ -1,5 +1,5 @@
 import { getFiles } from '@rehearsal/test-support';
-import { describe, expect, test, afterEach } from 'vitest';
+import { afterEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import { ProjectGraph } from '../../src/entities/project-graph.js';
 import { onlyPackage, Package } from '../../src/entities/package.js';
@@ -260,7 +260,7 @@ describe('project-graph', () => {
         '@something/blorp',
         '@something/bar',
         '@something/foo',
-        'some-library-with-workspace', // Root Pacakge is last.
+        'some-library-with-workspace', // Root Package is last.
       ]);
 
       const [package0, package1, package2, package3, package4] = sortedPackages

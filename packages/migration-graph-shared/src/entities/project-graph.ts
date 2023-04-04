@@ -84,7 +84,7 @@ export class ProjectGraph {
       this.debug('Package %s appears to been migrated to Typescript.', p.packageName);
     }
 
-    // Find in-project dependnecies/devDepenencies
+    // Find in-project dependencies/devDependencies
     if (crawl) {
       this.discoverEdgesFromDependencies(node);
     }
@@ -144,7 +144,7 @@ export class ProjectGraph {
 
     if (deps) {
       this.debug(
-        'Found explicit depedencies for %s: %s',
+        'Found explicit dependencies for %s: %s',
         pkg.packageName,
         deps.map((p) => p.packageName)
       );

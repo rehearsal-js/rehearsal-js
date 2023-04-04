@@ -4,16 +4,16 @@ import { createLogger, format, transports } from 'winston';
 
 import { Project } from 'fixturify-project';
 import {
-  initTask,
-  depInstallTask,
-  convertTask,
-  tsConfigTask,
-  lintConfigTask,
   analyzeTask,
+  convertTask,
+  depInstallTask,
+  initTask,
+  lintConfigTask,
   regenTask,
+  tsConfigTask,
   validateTask,
 } from '../../../src/commands/migrate/tasks/index.js';
-import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
+import { createMigrateOptions, listrTaskRunner, prepareProject } from '../../test-helpers/index.js';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
@@ -54,7 +54,7 @@ describe('Task: regen', () => {
     );
   });
 
-  test('no effect on JS filse before conversion', async () => {
+  test('no effect on JS files before conversion', async () => {
     project.files['package.json'] = JSON.stringify({
       name: 'basic_regen',
       version: '1.0.0',

@@ -1,12 +1,12 @@
 import { join } from 'node:path';
-import { Scenarios, Scenario, PreparedApp } from 'scenario-tester';
+import { PreparedApp, Scenario, Scenarios } from 'scenario-tester';
 import { rimraf } from 'rimraf';
 
 import {
-  getEmberAppProject,
-  emberAppTemplate,
   emberAddonTemplate,
+  emberAppTemplate,
   getEmberAddonProject,
+  getEmberAppProject,
   getEmberAppWithInRepoAddonProject,
   getEmberAppWithInRepoEngineProject,
 } from './project.js';
@@ -72,7 +72,7 @@ async function getPreparedApp(scenario: Scenario, cache = false): Promise<Prepar
     const maybeApp = preparedAppCache.get(scenario);
 
     if (!maybeApp) {
-      throw new Error(`Unable to retrieve parepared app for ${scenario.name}`);
+      throw new Error(`Unable to retrieve prepared app for ${scenario.name}`);
     }
 
     return maybeApp;

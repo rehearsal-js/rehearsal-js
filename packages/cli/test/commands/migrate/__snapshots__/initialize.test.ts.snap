@@ -1,12 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Task: initialize > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Initialize
-[DATA] Setting up config for basic
-[SUCCESS] Initialize
-"
-`;
-
 exports[`Task: initialize > read and store config via --userConfig 1`] = `
 {
   "exclude": [

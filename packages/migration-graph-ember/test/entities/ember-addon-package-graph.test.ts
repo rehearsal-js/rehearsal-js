@@ -26,7 +26,7 @@ describe('Unit | EmberAddonPackageGraph', () => {
 
   test('should create an edge between files when path references moduleName', async () => {
     // Some addons
-    // Use Case where an addon is reference files from within the addon but using the modulenName in the path
+    // Use Case where an addon is reference files from within the addon but using the moduleName in the path
     // e.g. moduleName of some-module
     // Som
     // `import MyComponent from 'some-module/components/some-component';

@@ -3,11 +3,11 @@ import { resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { RehearsalService } from '@rehearsal/service';
 import {
+  ImportsNotUsedAsValues,
+  JsxEmit,
   ModuleKind,
   ModuleResolutionKind,
   ScriptTarget,
-  ImportsNotUsedAsValues,
-  JsxEmit,
 } from 'typescript';
 import { TypescriptCodeFixCollection } from '../src/typescript-codefix-collection.js';
 import { getDiagnosticOrder } from '../src/get-diagnostics.js';
@@ -89,7 +89,7 @@ describe('ts-codefixes', () => {
     expect(service.getFileText(input)).toEqual(await fs.readFile(expectation, 'utf-8'));
   }
 
-  test('addMissingAync', async () => {
+  test('addMissingAsync', async () => {
     await runTest('addMissingAsync/failing/fail-1.ts', 'addMissingAsync/passing/pass-1.ts');
   });
 

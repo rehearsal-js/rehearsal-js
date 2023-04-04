@@ -159,7 +159,7 @@ export const FILES_EMBER_APP = {
   },
 };
 
-export function getEmberAddonConfigEmberyTryFile(): string {
+export function getEmberAddonConfigEmberTryFile(): string {
   return FILE_EMBER_ADDON_CONFIG_EMBER_TRY;
 }
 export function getEmberAppFiles(): fixturify.DirJSON {
@@ -370,7 +370,7 @@ export function getEmberAppWithInRepoEngine(engineName = 'some-engine'): fixturi
       `,
     },
     lib: {
-      // Add the egine to lib directory
+      // Add the engine to lib directory
       [engineName]: {
         addon: {
           'engine.js': `

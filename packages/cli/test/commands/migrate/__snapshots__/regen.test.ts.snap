@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Task: regen > no effect on JS filse before conversion 1`] = `
+exports[`Task: regen > no effect on JS files before conversion 1`] = `
 "[STARTED] Initialize
 [DATA] Setting up config for basic_regen
 [SUCCESS] Initialize

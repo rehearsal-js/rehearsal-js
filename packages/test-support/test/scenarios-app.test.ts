@@ -2,7 +2,7 @@ import { PreparedApp, Scenario } from 'scenario-tester';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { appScenarios, clean } from '../src/scenarios.js';
 
-// Enable these tests to validate if our scenarios fixtures build a funciton all
+// Enable these tests to validate if our scenarios fixtures build a function all
 describe('scenarios - app-variants', () => {
   appScenarios.forEachScenario((scenario: Scenario) => {
     describe(scenario.name, () => {

@@ -222,11 +222,11 @@ describe('discoverServiceDependencies', () => {
 
     fixturify.writeSync(tmpDir, files);
 
-    const resultss = discoverServiceDependencies(tmpDir, 'service.js');
+    const results = discoverServiceDependencies(tmpDir, 'service.js');
 
-    expect(resultss).toBeTruthy();
-    expect(resultss.length).toBe(1);
-    expect(resultss[0].serviceName).toBe('request');
+    expect(results).toBeTruthy();
+    expect(results.length).toBe(1);
+    expect(results[0].serviceName).toBe('request');
   });
 
   test('should handle default export and named exports from @ember/service', () => {

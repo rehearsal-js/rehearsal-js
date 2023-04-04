@@ -52,7 +52,7 @@ describe('Unit | EmberAppProjectGraph', () => {
   test('options.eager=true should create a synthetic node and then backfill when packageName differs from addonName', async () => {
     // If a parent app is crawled first eagerly, it may create some synthetic nodes.
 
-    // Create an app where the app users a service with ambigous coordinates
+    // Create an app where the app users a service with ambiguous coordinates
 
     // package.name is @some-org/some-addon
 
@@ -63,9 +63,9 @@ describe('Unit | EmberAppProjectGraph', () => {
 
     // We put packages in the graph by their packageName
 
-    // This tests the logic in EmberAppprojectGraph.addPackageToGrpah()
+    // This tests the logic in EmberAppProjectGraph.addPackageToGraph()
 
-    // To add a entry in the registry for this lookup so we can update the synthetic node that is injected when this service is not found.
+    // To add a entry in the registry for this lookup, so we can update the synthetic node that is injected when this service is not found.
 
     project = getEmberProject('app-with-in-repo-addon');
 
@@ -131,7 +131,7 @@ export default class Salutation extends Component {
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { eager: true });
 
-    // Manualy add the RootPackage or AppPackage for the project, so it will parse the source files.
+    // Manually add the RootPackage or AppPackage for the project, so it will parse the source files.
     const appPackage = new EmberAppPackage(project.baseDir);
     const rootPackageNode = projectGraph.addPackageToGraph(appPackage);
 
@@ -489,12 +489,12 @@ export default class Salutation extends Component {
 
       expect(
         flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
-        'expected migraiton order for addon'
+        'expected migration order for addon'
       ).toStrictEqual(['addon/components/greet.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
-        'expected migraiton order for app'
+        'expected migration order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-engine', async () => {
@@ -509,12 +509,12 @@ export default class Salutation extends Component {
       expect(flatten(orderedPackages)).toStrictEqual(['some-engine', 'app-template']);
       expect(
         flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
-        'expected migraiton order for in-repo-engine'
+        'expected migration order for in-repo-engine'
       ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
-        'expected migraiton order for app'
+        'expected migration order for app'
       ).toStrictEqual([
         'app/app.js',
         'app/services/locale.js',

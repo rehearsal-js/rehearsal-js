@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { readdirSync } from 'node:fs';
-import { afterEach, beforeEach, afterAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import {
   getEmberAppProject,
@@ -9,15 +9,15 @@ import {
 } from '@rehearsal/test-support';
 import { Project } from 'fixturify-project';
 import { tsConfigTask } from '../../../src/commands/migrate/tasks/index.js';
-import { listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { runTsConfig, createUserConfig } from '../../test-helpers/config-ts-test-utils.js';
+import { createMigrateOptions, listrTaskRunner } from '../../test-helpers/index.js';
+import { createUserConfig, runTsConfig } from '../../test-helpers/config-ts-test-utils.js';
 import { TSConfig } from '../../../src/types.js';
 import { UserConfig } from '../../../src/user-config.js';
 
 const projects = {
   emberApp: getEmberAppProject(),
   emberAppWithInRepoAddon: getEmberAppWithInRepoAddonProject(),
-  emberAppwithInRepoEngine: getEmberAppWithInRepoEngineProject(),
+  emberAppWithInRepoEngine: getEmberAppWithInRepoEngineProject(),
 };
 
 describe('Task: config-ts ember app', () => {

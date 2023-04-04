@@ -5,8 +5,8 @@ import chalk from 'chalk';
 import { execa } from 'execa';
 import {
   determineProjectName,
-  openInEditor,
   getPathToBinary,
+  openInEditor,
   prettyGitDiff,
 } from '@rehearsal/utils';
 
@@ -24,12 +24,12 @@ export function convertTask(
     title: 'Convert JS files to TS',
     enabled: (): boolean => !options.dryRun,
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
-      // Because we have to eagerly import all the tasks we need tolazily load these
+      // Because we have to eagerly import all the tasks we need to lazily load these
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { generateReports, getReportSummary } = await import('../../../helpers/report.js');
-      // If context is provide via external parameter, merge with existed
+      // If context is provided via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
       }

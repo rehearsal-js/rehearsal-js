@@ -80,7 +80,7 @@ exports[`migrate init > pass user config 1`] = `
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json

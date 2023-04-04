@@ -1,10 +1,9 @@
-import { join, extname } from 'node:path';
+import { extname, join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { parseSync } from '@swc/core';
 import debug from 'debug';
 
 import { transformGjs } from './transform-gjs.js';
-
 import type {
   CallExpression,
   ClassDeclaration,
@@ -101,10 +100,10 @@ export function discoverServiceDependencies(
   let foundClasses: Array<ClassExpression | ClassDeclaration> = [];
 
   // Find all ClassDeclaration in body of the parsed file
-  const classDeclrations = findClassDeclarations(parsed.body);
+  const classDeclarations = findClassDeclarations(parsed.body);
 
-  if (classDeclrations) {
-    foundClasses = foundClasses.concat(Array.from(classDeclrations));
+  if (classDeclarations) {
+    foundClasses = foundClasses.concat(Array.from(classDeclarations));
   }
 
   // Typical use case will have ExportDefaultDeclaration where the body is a ClassExpression
@@ -205,16 +204,16 @@ function findDecoratorWithName(
   return decorators.find((d) => {
     let identifier: Identifier | undefined;
 
-    // For a given decorate it's expression proeprty can either
+    // For a given decorate its expression property can either
     // be an Identifier or CallExpression
 
     // If it's an identifier it would look like
     // e.g. `@service name;`
-    if (isDecoratorWithExpressionTypeIdenfitier(d)) {
+    if (isDecoratorWithExpressionTypeIdentifier(d)) {
       identifier = d.expression as Identifier;
     }
 
-    // If it's a CallExpression this is the case where we pass meta data
+    // If it's a CallExpression this is the case where we pass metadata
     // into the decorator
     // e.g. `@service('someAddon@serviceName') myVariable;`
     else if (isDecoratorWithExpressionTypeCallExpression(d)) {
@@ -230,7 +229,7 @@ function hasDecoratorWithName(decorators: Decorator[], decoratorName: string): b
   return !!findDecoratorWithName(decorators, decoratorName);
 }
 
-function isDecoratorWithExpressionTypeIdenfitier(d: Decorator): boolean {
+function isDecoratorWithExpressionTypeIdentifier(d: Decorator): boolean {
   return d.expression.type === 'Identifier';
 }
 

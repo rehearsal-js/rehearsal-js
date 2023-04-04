@@ -1,10 +1,10 @@
-import { join, resolve, normalize, dirname, relative } from 'node:path';
-import { readFileSync, existsSync } from 'node:fs';
-import { writeJSONSync, readJSONSync } from 'fs-extra/esm';
+import { dirname, join, normalize, relative, resolve } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
 import json5 from 'json5';
 import { valid } from 'semver';
-import { type SimpleGit, type SimpleGitOptions, simpleGit } from 'simple-git';
+import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
@@ -13,8 +13,8 @@ import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 import findupSync from 'findup-sync';
-import type { GitDescribe } from './types.js';
 import type { Options } from 'execa';
+import type { GitDescribe } from './types.js';
 import type { PackageJson } from 'type-fest';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
@@ -30,7 +30,7 @@ export async function gitCommit(msg: string, msgType = 'chore(deps-dev)'): Promi
   await git.commit(`${msgType.trim()}: [REHEARSAL-BOT] ${msg.trim()}`, '--no-verify');
 }
 
-// we want a seperate branch & PR for each diagnostic
+// we want a separate branch & PR for each diagnostic
 // eg. await gitCheckoutNewBranch('4.8.0-beta', 'typescript', 'diagnostic-4082')
 export async function gitCheckoutNewLocalBranch(
   depSemVersion: string,

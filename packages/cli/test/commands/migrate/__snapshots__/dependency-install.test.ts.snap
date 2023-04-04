@@ -11,7 +11,7 @@ exports[`Task: dependency-install > do not run postInstall command if empty 1`] 
 exports[`Task: dependency-install > install custom dependencies 1`] = `
 "[STARTED] Install dependencies
 [DATA] Install dependencies from config
-[DATA] Installing dependecies: fs-extra
+[DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
 [SUCCESS] Install dependencies
 "
