@@ -35,7 +35,7 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
       const [report] = await eslint.lintText(text, { filePath: fileName });
       this.terminalOutput(true);
 
-      if (options.reportErrors) {
+      if (options.reportErrors && report) {
         const { messages: errors } = report;
         for (const error of errors) {
           context.reporter.addLintItemToRun(fileName, error);
