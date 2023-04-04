@@ -7,28 +7,37 @@ import { parseTsconfig } from 'get-tsconfig';
 import type { MigrateCommandContext, MigrateCommandOptions, TSConfig } from '../../../types.js';
 
 // check if we need to run tsConfigTask
-export function shouldRunTsConfigTask(options: MigrateCommandOptions): boolean {
+export function shouldRunTsConfigTask(
+  options: MigrateCommandOptions,
+  ctx: MigrateCommandContext
+): boolean {
   // customized ts setup command/scripts from user config is nearly impossible to validate or predict
   // since we couldn't know anything about how they deal with tsconfig.json
-  // for now we would not run tsConfigTask if:
-  // 1. tsconfig.json exists
-  // 2. it is in strict mode
+  // for now we should run tsConfigTask if:
+  // - tsconfig.json does not exist, Or
+  // - it is not in strict mode, Or
+  // - user config for ts-setup exists
   const { basePath } = options;
   const configPath = resolve(basePath, 'tsconfig.json');
 
+  let existed = false;
+  let isStrict = false;
+  const hasCustomTsSetup = !!(ctx.userConfig && ctx.userConfig.hasTsSetup);
+
   if (existsSync(configPath)) {
+    existed = true;
     // Resolve extends
     try {
       // Using parseTsConfig instead of readTsConfig because we
       // need to get the resolved values from all the extends.
       const parsedTsconfig = parseTsconfig(configPath);
-      return !parsedTsconfig.compilerOptions?.strict === true;
+      isStrict = parsedTsconfig.compilerOptions?.strict === true;
     } catch (e) {
       // if cannot resolve the extends in tsconfig.json
-      return true;
+      // no-ops
     }
   }
-  return true;
+  return !existed || !isStrict || hasCustomTsSetup;
 }
 
 export function tsConfigTask(
@@ -38,7 +47,8 @@ export function tsConfigTask(
   return {
     title: 'Create tsconfig.json',
     enabled: (): boolean => !options.dryRun,
-    skip: (): boolean => !shouldRunTsConfigTask(options),
+    skip: (ctx: MigrateCommandContext): boolean =>
+      !shouldRunTsConfigTask(options, { ...ctx, ...context }),
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {

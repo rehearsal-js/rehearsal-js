@@ -117,7 +117,7 @@ describe('Task: config-ts ember app', () => {
         expect(output).toMatchSnapshot();
       });
 
-      test('skip custom config command', async () => {
+      test('do not skip if custom config exists', async () => {
         // Prepare old tsconfig
         const oldTsConfig = { compilerOptions: { strict: true } };
         writeJSONSync(resolve(project.baseDir, 'tsconfig.json'), oldTsConfig);
@@ -130,10 +130,15 @@ describe('Task: config-ts ember app', () => {
           },
         });
 
-        await runTsConfig(project.baseDir, { userConfig: 'rehearsal-config.json' });
+        const options = createMigrateOptions(project.baseDir, {
+          userConfig: 'rehearsal-config.json',
+        });
+        const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
+        const tasks = [tsConfigTask(options, { userConfig })];
+        await listrTaskRunner(tasks);
 
         // This proves the custom command works not triggered
-        expect(readdirSync(project.baseDir)).not.toContain('custom-ts-config-script');
+        expect(readdirSync(project.baseDir)).toContain('custom-ts-config-script');
         expect(output).toMatchSnapshot();
       });
 
