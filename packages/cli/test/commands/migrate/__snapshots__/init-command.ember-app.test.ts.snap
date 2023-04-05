@@ -7,7 +7,7 @@ exports[`migrate init for ember app variant > ember4App > default run --ember4Ap
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -87,9 +87,8 @@ exports[`migrate init for ember app variant > ember4App > pass user config ember
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript, tmp
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -131,7 +130,7 @@ exports[`migrate init for ember app variant > emberApp > default run --emberApp 
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -211,9 +210,8 @@ exports[`migrate init for ember app variant > emberApp > pass user config emberA
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript, tmp
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -255,7 +253,7 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default 
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -335,9 +333,8 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > pass use
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript, tmp
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -379,7 +376,7 @@ exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -459,9 +456,8 @@ exports[`migrate init for ember app variant > emberAppWithInRepoEngine > pass us
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript, tmp
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json

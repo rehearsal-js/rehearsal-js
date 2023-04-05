@@ -2,7 +2,7 @@
 
 exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > create .eslintrc.js if not existed 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
@@ -13,7 +13,7 @@ exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > create .eslint
 
 exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > postLintSetup hook from user config 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
@@ -25,7 +25,7 @@ exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > postLintSetup 
 
 exports[`Task: config-lint -- ember-addon-matrix > ember3-addon > run custom config command with user config provided 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
 [DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
