@@ -1,6 +1,5 @@
 import { pathUtils } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
-import { Reporter } from '@rehearsal/reporter';
 import {
   GlintService,
   Plugin,
@@ -28,17 +27,32 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
       return [];
     }
 
-    const updatedContents = this.insertTodo(
-      service,
-      context.reporter,
-      diagnostics[0].file.text,
-      diagnostics,
-      options.commentTag
-    );
+    const fixedFiles: Set<string> = new Set();
 
-    service.setFileText(fileName, updatedContents);
+    const numDiagnostics = diagnostics.length;
 
-    return Promise.resolve([fileName]);
+    diagnostics.reverse().forEach((diagnostic, index) => {
+      const fileName = diagnostic.file.fileName;
+      const updatedText = this.insertTodo(service, options.commentTag, diagnostic);
+      context.service.setFileText(fileName, updatedText);
+
+      const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+      // Since each TODO comment adds a line to the file, we calculate an offset that takes into
+      // account the number of comments already added (index) subtracted from the number of
+      // diagnostics (to account for the fact that we reverse the diagnostic list) and subtracting
+      // 1 to account for the additional line added by `getLocation`
+      const locationOffset = numDiagnostics - index - 1;
+      location.startLine += locationOffset;
+      location.endLine += locationOffset;
+
+      const hint = hints.getHint(diagnostic);
+      const helpUrl = hints.getHelpUrl(diagnostic);
+
+      context.reporter.addTSItemToRun(diagnostic, undefined, location, hint, helpUrl);
+      fixedFiles.add(fileName);
+    });
+
+    return Promise.resolve(Array.from(fixedFiles));
   }
 
   getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
@@ -58,48 +72,34 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     });
   }
 
-  insertTodo(
-    service: GlintService,
-    reporter: Reporter,
-    fileContents: string,
-    diagnostics: DiagnosticWithContext[],
-    commentTag: string
-  ): string {
+  insertTodo(service: GlintService, commentTag: string, diagnostic: DiagnosticWithContext): string {
+    const filePath = diagnostic.file.fileName;
+    const fileContents = service.getFileText(filePath);
     const lines = fileContents.split('\n');
+    const info = service.transformManager.findTransformInfoForOriginalFile(filePath);
+    let useHbsComment = false;
 
-    for (const diagnostic of diagnostics.reverse()) {
-      const filePath = diagnostic.file.fileName;
-      const info = service.transformManager.findTransformInfoForOriginalFile(filePath);
-      let useHbsComment = false;
+    const module = info && info.transformedModule;
 
-      const module = info && info.transformedModule;
-
-      if (module) {
-        const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
-        // If we're able to find a template associated with the diagnostic, then we know the error
-        // is pointing to the body of a template and we need to use HBS comments
-        if (template) {
-          useHbsComment = true;
-        }
+    if (module) {
+      const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
+      // If we're able to find a template associated with the diagnostic, then we know the error
+      // is pointing to the body of a template and we need to use HBS comments
+      if (template) {
+        useHbsComment = true;
       }
-
-      const start = pathUtils.offsetToPosition(fileContents, diagnostic.start);
-      const index = start.line;
-      const [leadingWhitespace, indentation] = /^\s*\n?(\s*)/.exec(lines[index]) ?? ['', ''];
-      const message = `${commentTag} TODO TS${diagnostic.code}: ${diagnostic.messageText}`;
-
-      const todo = useHbsComment
-        ? `${leadingWhitespace}{{! @glint-expect-error ${message} }}${indentation}`
-        : `${leadingWhitespace}/* @ts-expect-error ${message} */${indentation}`;
-
-      lines.splice(index, 0, todo);
-
-      const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-      const hint = hints.getHint(diagnostic);
-      const helpUrl = hints.getHelpUrl(diagnostic);
-
-      reporter.addTSItemToRun(diagnostic, undefined, location, hint, helpUrl);
     }
+
+    const start = pathUtils.offsetToPosition(fileContents, diagnostic.start);
+    const index = start.line;
+    const [leadingWhitespace, indentation] = /^\s*\n?(\s*)/.exec(lines[index]) ?? ['', ''];
+    const message = `${commentTag} TODO TS${diagnostic.code}: ${diagnostic.messageText}`;
+
+    const todo = useHbsComment
+      ? `${leadingWhitespace}{{! @glint-expect-error ${message} }}${indentation}`
+      : `${leadingWhitespace}/* @ts-expect-error ${message} */${indentation}`;
+
+    lines.splice(index, 0, todo);
 
     return lines.join('\n');
   }

@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
 import { ESLint } from 'eslint';
 import debug from 'debug';
@@ -20,6 +21,10 @@ export class LintPlugin implements Plugin<LintPluginOptions> {
   ): PluginResult {
     options.eslintOptions ??= {};
     options.reportErrors ??= false;
+
+    if (path.extname(fileName) === '.hbs') {
+      return [];
+    }
 
     const text = context.service.getFileText(fileName);
 
