@@ -8,7 +8,7 @@ exports[`Task: regen > no effect on JS files before conversion 1`] = `
 [SUCCESS] Validate project
 [STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
-[STARTED] Regenerating report for TS errors and Eslint errors
+[STARTED] Regenerating report for TS errors and ESLint errors
 [TITLE] Migration Report Generated
 [TITLE] 
 [TITLE] 
@@ -43,11 +43,11 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
-[STARTED] Analyzing Project
+[STARTED] Analyze project
 [DATA] Running migration on basic_regen
-[SUCCESS] Analyzing Project
+[SUCCESS] Analyze project
 [STARTED] Convert JS files to TS
 [DATA] git mv /foo.js to /foo.ts
 [DATA] git mv /depends-on-foo.js to /depends-on-foo.ts
@@ -85,7 +85,7 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [SUCCESS] 
 [SUCCESS]     -- 1 eslint errors, with details in the report
 [SUCCESS] 
-[STARTED] Regenerating report for TS errors and Eslint errors
+[STARTED] Regenerating report for TS errors and ESLint errors
 [DATA] processing file: /foo.ts
 [DATA] processing file: /depends-on-foo.ts
 [DATA] processing file: /index.ts

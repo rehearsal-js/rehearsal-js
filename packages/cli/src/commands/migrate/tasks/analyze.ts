@@ -27,7 +27,7 @@ export function analyzeTask(
   options: MigrateCommandOptions
 ): ListrTask<MigrateCommandContext, ListrDefaultRenderer> {
   return {
-    title: 'Analyzing Project',
+    title: 'Analyze project',
     async task(ctx: MigrateCommandContext, task) {
       const projectName = determineProjectName(options.basePath);
       const packages = discoverEmberPackages(options.basePath);
@@ -41,7 +41,7 @@ export function analyzeTask(
           !existsSync(resolve(options.basePath, options.package, 'package.json'))
         ) {
           throw Error(
-            `Cannot find package ${options.package} in your project. Please make sure it is a valid package and try again.`
+            `Cannot find package ${options.package} in your project. Make sure its a valid package and try again.`
           );
         }
         // set targetPackagePath to the absolute path or the package and continue

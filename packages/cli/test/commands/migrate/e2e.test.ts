@@ -321,9 +321,9 @@ describe('migrate: e2e', () => {
         '[STARTED] Initialize',
         '[DATA] Setting up config for initialization',
         '[SUCCESS] Initialize',
-        '[STARTED] Analyzing Project',
+        '[STARTED] Analyze project',
         '[DATA] Running migration on initialization',
-        '[SUCCESS] Analyzing Project',
+        '[SUCCESS] Analyze project',
         '[STARTED] Convert JS files to TS`;',
       ].join('\n');
       expect(stdout).toContain(expected);
@@ -397,12 +397,12 @@ describe('migrate: e2e', () => {
         '[STARTED] Initialize',
         '[DATA] Setting up config for my-package',
         '[SUCCESS] Initialize',
-        '[STARTED] Analyzing Project',
+        '[STARTED] Analyze project',
         '[DATA] Running migration on my-package',
         '[DATA] List of files will be attempted to migrate:',
         '[DATA]  lib/a.js',
         '[DATA] index.js',
-        '[SUCCESS] Analyzing Project',
+        '[SUCCESS] Analyze project',
       ].join('\n');
 
       expect(result.stdout).contains(expected);
@@ -436,13 +436,13 @@ describe('migrate: e2e', () => {
         '[STARTED] Initialize',
         '[DATA] Setting up config for my-package',
         '[SUCCESS] Initialize',
-        '[STARTED] Analyzing Project',
+        '[STARTED] Analyze project',
         '[DATA] Running migration on my-package',
         '[DATA] List of files will be attempted to migrate:',
         '[DATA]  lib/a.js',
         '[DATA] index.js',
         '[DATA] test/index.js',
-        '[SUCCESS] Analyzing Project',
+        '[SUCCESS] Analyze project',
       ].join('\n');
 
       expect(result.stdout).contains(expected);

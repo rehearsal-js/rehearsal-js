@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { existsSync, promises as fs } from 'node:fs';
 import { ListrTask } from 'listr2';
 
-import { addDep } from '@rehearsal/utils';
+import { addDep, setModuleResolution, getModuleVersion } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
 import { MigrateCommandContext, MigrateCommandOptions } from '../../../types.js';
 
@@ -83,7 +83,7 @@ export function depInstallTask(
       let devDependencies = REQUIRED_DEPENDENCIES;
       // install custom dependencies
       if (ctx.userConfig?.hasDependencies) {
-        task.output = `Install dependencies from config`;
+        task.output = `Install dependencies from rehearsal config`;
         dependencies = [...dependencies, ...ctx.userConfig.dependencies];
         devDependencies = [...devDependencies, ...ctx.userConfig.devDependencies];
         if (ctx.userConfig?.hasPostInstallHook) {
@@ -116,6 +116,20 @@ export function depInstallTask(
         if (errorMessages.length) {
           throw new Error(errorMessages.join('\n'));
         }
+      }
+
+      // set module resolution for typescript after dep install
+      try {
+        const tsVersion = await getModuleVersion('typescript', 'devDep', options.basePath);
+        // if the tsVersion being return is an empty string or falsy
+        if (!tsVersion) {
+          throw new Error(`cannot set resolution for typescript`);
+        }
+
+        task.output = `Setting resolutions: typescript@${tsVersion}`;
+        await setModuleResolution('typescript', tsVersion, options.basePath);
+      } catch (e) {
+        throw new Error(`${e}`);
       }
     },
     // will print and keep what dpe is currently installing at bottom bar

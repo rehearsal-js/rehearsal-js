@@ -26,22 +26,22 @@ exports[`Task: config-ts ember app > emberAddon > create tsconfig if not existed
 
 exports[`Task: config-ts ember app > emberAddon > do not skip if custom config exists 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
 exports[`Task: config-ts ember app > emberAddon > postTsSetup hook from user config 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
-[DATA] Run postTsSetup from config
+[DATA] Create tsconfig from rehearsal config
+[DATA] Run postTsSetup from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
 exports[`Task: config-ts ember app > emberAddon > run custom config command with user config provided 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;

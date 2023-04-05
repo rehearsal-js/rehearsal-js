@@ -105,7 +105,7 @@ describe('Task: analyze', () => {
 
     // migration would continue after sending "enter" key
     expect(output).toContain(`[DATA] Running migration on ${project.baseDir}`);
-    expect(output).toContain('[SUCCESS] Analyzing Project');
+    expect(output).toContain('[SUCCESS] Analyze project');
 
     // check context
     const expectedRelativePaths = ['foo.js', 'depends-on-foo.js', 'index.js'];
@@ -135,7 +135,7 @@ describe('Task: analyze', () => {
     const options = createMigrateOptions(project.baseDir, { package: 'no-valid-package' });
     const tasks = [analyzeTask(options)];
     await expect(() => listrTaskRunner(tasks)).rejects.toThrowError(
-      `Cannot find package no-valid-package in your project. Please make sure it is a valid package and try again.`
+      `Cannot find package no-valid-package in your project. Make sure its a valid package and try again.`
     );
   });
 

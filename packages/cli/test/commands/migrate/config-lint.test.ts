@@ -53,7 +53,7 @@ describe('Task: config-lint', () => {
     expect(readdirSync(project.baseDir)).toContain('.eslintrc.js');
     expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.js');
     // Do not use snapshot here since there is absolute path in output
-    expect(output).toContain('extending Rehearsal default eslint-related config');
+    expect(output).toContain('extending rehearsal default eslint-related config');
 
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
     const newConfig = require(resolve(project.baseDir, '.eslintrc.js')) as { extends: string[] };
@@ -77,7 +77,7 @@ describe('Task: config-lint', () => {
     expect(readdirSync(project.baseDir)).toContain('.eslintrc');
     expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc');
     // Do not use snapshot here since there is absolute path in output
-    expect(output).toContain('extending Rehearsal default eslint-related config');
+    expect(output).toContain('extending rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
     const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc'));
@@ -103,7 +103,7 @@ describe('Task: config-lint', () => {
     expect(readdirSync(project.baseDir)).toContain('.eslintrc.json');
     expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.json');
     // Do not use snapshot here since there is absolute path in output
-    expect(output).toContain('extending Rehearsal default eslint-related config');
+    expect(output).toContain('extending rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
     const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.json'));
@@ -129,7 +129,7 @@ describe('Task: config-lint', () => {
     expect(readdirSync(project.baseDir)).toContain('.eslintrc.yml');
     expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yml');
     // Do not use snapshot here since there is absolute path in output
-    expect(output).toContain('extending Rehearsal default eslint-related config');
+    expect(output).toContain('extending rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
     const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yml'));
@@ -156,7 +156,7 @@ describe('Task: config-lint', () => {
     expect(readdirSync(project.baseDir)).toContain('.eslintrc.yaml');
     expect(readdirSync(project.baseDir)).toContain('.rehearsal-eslintrc.yaml');
     // Do not use snapshot here since there is absolute path in output
-    expect(output).toContain('extending Rehearsal default eslint-related config');
+    expect(output).toContain('extending rehearsal default eslint-related config');
 
     explorerSync = cosmiconfigSync('');
     const loaded = explorerSync.load(resolve(project.baseDir, '.eslintrc.yaml'));

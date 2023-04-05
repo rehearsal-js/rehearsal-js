@@ -57,11 +57,11 @@ export function tsConfigTask(
       const configPath = resolve(options.basePath, 'tsconfig.json');
 
       if (ctx.userConfig?.hasTsSetup) {
-        task.output = `Create tsconfig from config`;
+        task.output = `Create tsconfig from rehearsal config`;
         await ctx.userConfig.tsSetup();
 
         if (ctx.userConfig.hasPostTsSetupHook) {
-          task.output = `Run postTsSetup from config`;
+          task.output = `Run postTsSetup from rehearsal config`;
           await ctx.userConfig.postTsSetup();
         }
       } else {
