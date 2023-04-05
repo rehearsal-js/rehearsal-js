@@ -32,7 +32,7 @@ export class HintsProvider {
   }
 
   getHelpUrl(diagnostic: DiagnosticWithLocation): string {
-    const defaultHelpUrl = `https://stackoverflow.com/search?tab=votes&q=ts${diagnostic.code}}`;
+    const defaultHelpUrl = `https://stackoverflow.com/search?tab=votes&q=ts${diagnostic.code}`;
 
     return this.list[diagnostic.code]?.helpUrl || defaultHelpUrl;
   }

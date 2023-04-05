@@ -939,7 +939,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'NonExistingElement'.",
       "hintAdded": true,
       "message": "Cannot find name 'NonExistingElement'.",
@@ -957,7 +957,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'NonExistingElement'.",
       "hintAdded": true,
       "message": "Cannot find name 'NonExistingElement'.",
@@ -993,7 +993,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-processed.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740",
       "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "hintAdded": true,
       "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
@@ -1155,7 +1155,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-xx.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2355}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2355",
       "hint": "A function whose declared type is neither 'void' nor 'any' must return a value.",
       "hintAdded": true,
       "message": "A function whose declared type is neither 'void' nor 'any' must return a value.",
@@ -1173,7 +1173,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'NonExistingElement'.",
       "hintAdded": true,
       "message": "Cannot find name 'NonExistingElement'.",
@@ -1191,7 +1191,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'NonExistingElement'.",
       "hintAdded": true,
       "message": "Cannot find name 'NonExistingElement'.",
@@ -1227,7 +1227,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react.tsx",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2740",
       "hint": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
       "hintAdded": true,
       "message": "Type 'ReactElement<any, any>' is missing the following properties from type 'Element': attributes, classList, className, clientHeight, and 163 more.",
@@ -1389,7 +1389,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "template-literal.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339",
       "hint": "Property 'one' does not exist on type 'object'.",
       "hintAdded": true,
       "message": "Property 'one' does not exist on type 'object'.",
@@ -1407,7 +1407,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "template-literal.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339",
       "hint": "Property 'two' does not exist on type 'object'.",
       "hintAdded": true,
       "message": "Property 'two' does not exist on type 'object'.",
@@ -1425,7 +1425,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "template-literal.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2339",
       "hint": "Property 'three' does not exist on type 'object'.",
       "hintAdded": true,
       "message": "Property 'three' does not exist on type 'object'.",
@@ -1533,7 +1533,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'whereAmI'.",
       "hintAdded": true,
       "message": "Cannot find name 'whereAmI'.",
@@ -1551,7 +1551,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'missingVar'.",
       "hintAdded": true,
       "message": "Cannot find name 'missingVar'.",
@@ -1569,7 +1569,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'missingVar'.",
       "hintAdded": true,
       "message": "Cannot find name 'missingVar'.",
@@ -1587,7 +1587,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
       "hintAdded": true,
       "message": "Cannot find name 'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString'.",
@@ -1605,7 +1605,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'timestamp'.",
       "hintAdded": true,
       "message": "Cannot find name 'timestamp'.",
@@ -1733,7 +1733,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-multiline-hint.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532",
       "hint": "Object is possibly 'undefined'.",
       "hintAdded": true,
       "message": "Object is possibly 'undefined'.",
@@ -1751,7 +1751,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-multiline-hint.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532",
       "hint": "Object is possibly 'undefined'.",
       "hintAdded": true,
       "message": "Object is possibly 'undefined'.",
@@ -1823,7 +1823,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-processed.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts18046}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts18046",
       "hint": "'e' is of type 'unknown'.",
       "hintAdded": true,
       "message": "'e' is of type 'unknown'.",
@@ -1841,7 +1841,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types-extends.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2416}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2416",
       "hint": "Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'.",
       "hintAdded": true,
       "message": "Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..   Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..     Type 'boolean' is not assignable to type 'number'.",
@@ -1859,7 +1859,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types-extends.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2416}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2416",
       "hint": "Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'.",
       "hintAdded": true,
       "message": "Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..   Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..     Type 'boolean' is not assignable to type 'number'.",
@@ -2219,7 +2219,7 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304}",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'UnavailableType'.",
       "hintAdded": true,
       "message": "Cannot find name 'UnavailableType'.",
