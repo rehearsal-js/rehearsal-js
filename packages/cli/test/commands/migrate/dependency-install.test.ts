@@ -75,7 +75,93 @@ describe('Task: dependency-install', () => {
       devDependencies: requiredDevDepsMap,
     });
 
-    expect(await shouldRunDepInstallTask(options)).toBeFalsy();
+    const { isInstallRequired } = await shouldRunDepInstallTask(options);
+
+    expect(isInstallRequired).toBeFalsy();
+  });
+
+  test('shouldRunDepInstallTask should return empty deps to install', async () => {
+    const options = createMigrateOptions(project.baseDir);
+
+    // convert array of deps to object-ish
+    const requiredDevDepsMap = REQUIRED_DEPENDENCIES.reduce(
+      (map, d) => ({ ...map, [d]: '1.0.0' }),
+      {}
+    );
+    // update package.json with required deps
+    const packageJsonPath = resolve(project.baseDir, 'package.json');
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
+    writeJSONSync(packageJsonPath, {
+      ...packageJson,
+      devDependencies: requiredDevDepsMap,
+    });
+
+    const { isInstallRequired, devDependencies, dependencies } = await shouldRunDepInstallTask(
+      options
+    );
+
+    // all deps should be installed already coming from package.json collision avoided
+    expect(devDependencies).toEqual([]);
+    expect(dependencies).toEqual([]);
+    expect(isInstallRequired).toBeFalsy();
+  });
+
+  test('shouldRunDepInstallTask should return all required deps to install without collisions', async () => {
+    const options = createMigrateOptions(project.baseDir);
+    const { isInstallRequired, devDependencies, dependencies } = await shouldRunDepInstallTask(
+      options
+    );
+
+    // all deps should be installed as package.json doesnt have any of them
+    expect(devDependencies).toEqual(REQUIRED_DEPENDENCIES);
+    expect(dependencies).toEqual([]);
+    expect(isInstallRequired).toBeTruthy();
+  });
+
+  test('shouldRunDepInstallTask should return partial required deps to install without collisions', async () => {
+    const options = createMigrateOptions(project.baseDir);
+
+    // we need to grab the types from the REQUIRED_DEPENDENCIES array so the compiler doesnt complain
+    type RequiredDeps = { [key in (typeof REQUIRED_DEPENDENCIES)[number]]: string };
+
+    // convert array of deps to object-ish
+    const packageJSONDevDeps: RequiredDeps = REQUIRED_DEPENDENCIES.reduce(
+      (map, d) => ({ ...map, [d]: '1.0.0' }),
+      {}
+    );
+
+    // remove prettier, eslint-config-prettier and typescript from dev deps of project package.json
+    // in this scenario typescript is installed as a dependency already and should NOT be installed by rehearsal as a devDep
+    // all REQUIRED_DEPENDENCIES should already be installed in package.json expect prettier
+    delete packageJSONDevDeps['prettier'];
+    delete packageJSONDevDeps['eslint-config-prettier'];
+    delete packageJSONDevDeps['typescript'];
+
+    // update package.json with required deps
+    const packageJsonPath = resolve(project.baseDir, 'package.json');
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
+    const packageJSONDeps = {
+      typescript: '1.0.0',
+    };
+
+    writeJSONSync(
+      packageJsonPath,
+      {
+        ...packageJson,
+        devDependencies: packageJSONDevDeps,
+        dependencies: packageJSONDeps,
+      },
+      { spaces: 2 }
+    );
+
+    const { isInstallRequired, devDependencies, dependencies } = await shouldRunDepInstallTask(
+      options
+    );
+
+    // only 2 devDeps needs to be installed as package.json has all the others
+    expect(devDependencies).toEqual(['eslint-config-prettier', 'prettier']);
+    expect(dependencies).toEqual([]);
+    expect(isInstallRequired).toBeTruthy();
   });
 
   test('skip install required dependencies', async () => {
@@ -151,7 +237,10 @@ describe('Task: dependency-install', () => {
       dependencies: requiredDepsMap,
       devDependencies: requiredDevDepsMap,
     });
-    expect(await shouldRunDepInstallTask(options, { userConfig })).toBeFalsy();
+
+    const { isInstallRequired } = await shouldRunDepInstallTask(options, { userConfig });
+
+    expect(isInstallRequired).toBeFalsy();
   });
 
   test('skip install custom deps', async () => {
