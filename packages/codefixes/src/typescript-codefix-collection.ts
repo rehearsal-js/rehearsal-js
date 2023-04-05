@@ -10,7 +10,7 @@ import ts, {
   type UserPreferences,
 } from 'typescript';
 import { isCodeFixSupported } from './safe-codefixes.js';
-import type { CodeFixCollectionFilter, CodeFixCollection, DiagnosticWithContext } from './types.js';
+import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -157,14 +157,14 @@ export function makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined
         continue;
       }
 
-      // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, and same cases with `any[]`
-      const anyTypeUsageRegex = /[:<|]\s*any|any(\[])*\s*[|>]/i;
+      // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, `=> any`, and same cases with `any[]`
+      const anyTypeUsageRegex = /(=>|[:<|])\s*any|any(\[])*\s*[|>]/i;
       if (anyTypeUsageRegex.test(textChanges.newText)) {
         continue;
       }
 
-      // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, and same cases with `object[]`
-      const objectTypeUsageRegex = /[:<|]\s*object|object(\[])*\s*[|>]/i;
+      // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, `=> object`, and same cases with `object[]`
+      const objectTypeUsageRegex = /(=>[:<|])\s*object|object(\[])*\s*[|>]/i;
       if (objectTypeUsageRegex.test(textChanges.newText)) {
         continue;
       }
