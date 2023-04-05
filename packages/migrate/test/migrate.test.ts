@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path, { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
-import { Reporter } from '@rehearsal/reporter';
+import { type Report, type Location, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { migrate, MigrateInput } from '../src/migrate.js';
 
@@ -60,6 +60,13 @@ function prepareInputFiles(project: Project, files: string[] = ['index.js']): st
   });
 
   return [inputs, outputs];
+}
+
+function getStringAtLocation(filePath: string, location: Location): string {
+  const contents = readFileSync(filePath, 'utf-8');
+  const lines = contents.split('\n');
+
+  return lines[location.startLine - 1].substring(location.startColumn - 1, location.endColumn - 1);
 }
 
 describe('migrate', () => {
@@ -196,6 +203,19 @@ export default class Hello extends Component {
 `;
 
       expectFile(outputs[0]).toEqual(expected);
+
+      const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
+      reporter.saveReport(jsonReport);
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      expect(getStringAtLocation(outputs[0], report.items[0].nodeLocation as Location)).toEqual(
+        'age'
+      );
+      expect(getStringAtLocation(outputs[0], report.items[1].nodeLocation as Location)).toEqual(
+        'authenticatedUser'
+      );
+
+      expect(report.summary[0].basePath).toMatch(project.baseDir);
     });
 
     test('with qualified service', async () => {
@@ -365,6 +385,17 @@ export default class Salutation extends Component {
 
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
+
+      const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
+      reporter.saveReport(jsonReport);
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(getStringAtLocation(outputs[1], report.items[0].nodeLocation as Location)).toEqual(
+        'this.locale'
+      );
+      expect(report.items).toHaveLength(1);
+      expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });
   });
 
@@ -565,37 +596,41 @@ export default class SomeComponent extends Component {
     let project: Project;
     let reporter: Reporter;
 
-    const expectedTsConfig = JSON.stringify({
-      $schema: 'http://json.schemastore.org/tsconfig',
-      compilerOptions: {
-        allowSyntheticDefaultImports: true,
-        composite: true,
-        declaration: true,
-        declarationMap: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'commonjs',
-        moduleResolution: 'node',
-        newLine: 'LF',
-        noImplicitAny: true,
-        noImplicitReturns: true,
-        noUnusedLocals: true,
-        noUnusedParameters: true,
-        resolveJsonModule: true,
-        sourceMap: true,
-        strict: true,
-        target: 'es2017',
-        checkJs: true,
-        paths: {
-          'my-addon': ['node_modules/test-addon'],
-          'my-addon/*': ['node_modules/test-addon/*'],
+    const expectedTsConfig = JSON.stringify(
+      {
+        $schema: 'http://json.schemastore.org/tsconfig',
+        compilerOptions: {
+          allowSyntheticDefaultImports: true,
+          composite: true,
+          declaration: true,
+          declarationMap: true,
+          esModuleInterop: true,
+          experimentalDecorators: true,
+          module: 'commonjs',
+          moduleResolution: 'node',
+          newLine: 'LF',
+          noImplicitAny: true,
+          noImplicitReturns: true,
+          noUnusedLocals: true,
+          noUnusedParameters: true,
+          resolveJsonModule: true,
+          sourceMap: true,
+          strict: true,
+          target: 'es2017',
+          checkJs: true,
+          paths: {
+            'my-addon': ['node_modules/test-addon'],
+            'my-addon/*': ['node_modules/test-addon/*'],
+          },
+        },
+        glint: {
+          environment: ['ember-loose', 'ember-template-imports', 'glimmerx'],
+          checkStandaloneTemplates: true,
         },
       },
-      glint: {
-        environment: ['ember-loose', 'ember-template-imports', 'glimmerx'],
-        checkStandaloneTemplates: true,
-      },
-    });
+      null,
+      2
+    );
 
     beforeEach(async () => {
       project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });

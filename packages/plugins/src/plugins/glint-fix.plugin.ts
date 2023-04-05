@@ -52,6 +52,8 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
         },
       });
 
+      context.reporter.incrementRunFixedItemCount();
+
       // Get updated list of diagnostics
       diagnostics = this.getDiagnostics(service, fileName);
     }
