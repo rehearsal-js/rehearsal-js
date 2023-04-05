@@ -572,37 +572,41 @@ export default class SomeComponent extends Component {
     let project: Project;
     let reporter: Reporter;
 
-    const expectedTsConfig = JSON.stringify({
-      $schema: 'http://json.schemastore.org/tsconfig',
-      compilerOptions: {
-        allowSyntheticDefaultImports: true,
-        composite: true,
-        declaration: true,
-        declarationMap: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'commonjs',
-        moduleResolution: 'node',
-        newLine: 'LF',
-        noImplicitAny: true,
-        noImplicitReturns: true,
-        noUnusedLocals: true,
-        noUnusedParameters: true,
-        resolveJsonModule: true,
-        sourceMap: true,
-        strict: true,
-        target: 'es2017',
-        checkJs: true,
-        paths: {
-          'my-addon': ['node_modules/test-addon'],
-          'my-addon/*': ['node_modules/test-addon/*'],
+    const expectedTsConfig = JSON.stringify(
+      {
+        $schema: 'http://json.schemastore.org/tsconfig',
+        compilerOptions: {
+          allowSyntheticDefaultImports: true,
+          composite: true,
+          declaration: true,
+          declarationMap: true,
+          esModuleInterop: true,
+          experimentalDecorators: true,
+          module: 'commonjs',
+          moduleResolution: 'node',
+          newLine: 'LF',
+          noImplicitAny: true,
+          noImplicitReturns: true,
+          noUnusedLocals: true,
+          noUnusedParameters: true,
+          resolveJsonModule: true,
+          sourceMap: true,
+          strict: true,
+          target: 'es2017',
+          checkJs: true,
+          paths: {
+            'my-addon': ['node_modules/test-addon'],
+            'my-addon/*': ['node_modules/test-addon/*'],
+          },
+        },
+        glint: {
+          environment: ['ember-loose', 'ember-template-imports', 'glimmerx'],
+          checkStandaloneTemplates: true,
         },
       },
-      glint: {
-        environment: ['ember-loose', 'ember-template-imports', 'glimmerx'],
-        checkStandaloneTemplates: true,
-      },
-    });
+      null,
+      2
+    );
 
     beforeEach(async () => {
       project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });

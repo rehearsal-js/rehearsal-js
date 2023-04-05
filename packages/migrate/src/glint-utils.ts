@@ -61,7 +61,7 @@ export async function addFilePathsForAddonModules(
     tsConfig.compilerOptions ??= {};
     tsConfig.compilerOptions.paths ??= {};
     Object.assign(tsConfig.compilerOptions.paths, newPaths);
-    await writeFile(configFile, JSON.stringify(tsConfig));
+    await writeFile(configFile, JSON.stringify(tsConfig, null, 2));
   }
 }
 
