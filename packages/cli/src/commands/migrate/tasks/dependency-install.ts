@@ -29,39 +29,56 @@ function extractDepName(dep: string): string {
 
 // check if package.json has all required dependencies
 // from rehearsal default and user config
+// return which deps to install and if we should install
 export async function shouldRunDepInstallTask(
   options: MigrateCommandOptions,
   context: Partial<MigrateCommandContext> = {}
-): Promise<boolean> {
+): Promise<{
+  dependencies: string[];
+  devDependencies: string[];
+  isInstallRequired: boolean;
+}> {
   const { basePath } = options;
-  // add extra required dependencies from user config if there is any
+  const packageJsonPath = resolve(basePath, 'package.json');
+  // these will be the deps and devDeps we need to install after filtering
   let dependencies: string[] = [];
   let devDependencies = REQUIRED_DEPENDENCIES;
-  if (context.userConfig?.hasDependencies) {
-    // check if package.json has all the dependencies listed in user config
-    dependencies = [...dependencies, ...context.userConfig.dependencies];
-    devDependencies = [...devDependencies, ...context.userConfig.devDependencies];
+  // grab the userConfig dependencies and devDependencies
+  const userConfigDeps = context.userConfig?.dependencies || [];
+  const userConfigDevDeps = context.userConfig?.devDependencies || [];
+
+  // filter out duplicates
+  dependencies = [...new Set([...dependencies, ...userConfigDeps])];
+  devDependencies = [...new Set([...devDependencies, ...userConfigDevDeps])];
+
+  // no package.json always install
+  if (!existsSync(packageJsonPath)) {
+    return {
+      dependencies,
+      devDependencies,
+      isInstallRequired: true,
+    };
   }
 
-  const packageJsonPath = resolve(basePath, 'package.json');
-  if (existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
-    for (const d of dependencies) {
-      if (!packageJson.dependencies || !packageJson.dependencies[extractDepName(d)]) {
-        return true;
-      }
-    }
+  // parse package.json since it exists
+  const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8')) as PackageJson;
 
-    for (const d of devDependencies) {
-      if (!packageJson.devDependencies || !packageJson.devDependencies[extractDepName(d)]) {
-        return true;
-      }
-    }
-  } else {
-    // no package.json
-    return true;
-  }
-  return false;
+  // grab ALL packageJson dependencies and devDependencies as a single array
+  const packageJSONDeps = Object.keys({
+    ...packageJson.dependencies,
+    ...packageJson.devDependencies,
+  });
+
+  // filter out from dependencies and devDependencies from those that are already installed in the migrating app
+  dependencies = dependencies.filter((dep) => !packageJSONDeps.includes(extractDepName(dep)));
+  devDependencies = devDependencies.filter((dep) => !packageJSONDeps.includes(extractDepName(dep)));
+
+  // if dependencies OR devDependencies are truthy then we need to install and return true
+  return {
+    dependencies,
+    devDependencies,
+    isInstallRequired: dependencies.length > 0 || devDependencies.length > 0,
+  };
 }
 
 export function depInstallTask(
@@ -71,21 +88,20 @@ export function depInstallTask(
   return {
     title: 'Install dependencies',
     enabled: (): boolean => !options.dryRun,
-    skip: async (ctx: MigrateCommandContext): Promise<boolean> =>
-      !(await shouldRunDepInstallTask(options, ctx)),
+    skip: async (ctx: MigrateCommandContext): Promise<boolean> => {
+      const { isInstallRequired } = await shouldRunDepInstallTask(options, ctx);
+      return !isInstallRequired;
+    },
     task: async (ctx: MigrateCommandContext, task): Promise<void> => {
       // If context is provide via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
       }
 
-      let dependencies: string[] = [];
-      let devDependencies = REQUIRED_DEPENDENCIES;
-      // install custom dependencies
+      const { dependencies, devDependencies } = await shouldRunDepInstallTask(options, ctx);
+
+      // install userConfig postInstall hook
       if (ctx.userConfig?.hasDependencies) {
-        task.output = `Install dependencies from rehearsal config`;
-        dependencies = [...dependencies, ...ctx.userConfig.dependencies];
-        devDependencies = [...devDependencies, ...ctx.userConfig.devDependencies];
         if (ctx.userConfig?.hasPostInstallHook) {
           task.output = `Run postInstall hook from config`;
           await ctx.userConfig.postInstall();
