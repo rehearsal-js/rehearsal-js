@@ -4,23 +4,37 @@ exports[`Task: config-ts ember app > emberAddon > create tsconfig if not existed
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "newLine": "lf",
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
   },
 }
 `;
 
 exports[`Task: config-ts ember app > emberAddon > create tsconfig if not existed 2`] = `
 "[STARTED] Create tsconfig.json
-[SUCCESS] Create tsconfig.json
+[DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
+[TITLE] Update tsconfig.json
+[SUCCESS] Update tsconfig.json
 "
 `;
 

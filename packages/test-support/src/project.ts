@@ -4,9 +4,10 @@ import findupSync from 'findup-sync';
 import tmp from 'tmp';
 import { Project } from 'fixturify-project';
 import {
-  getEmberAddonFiles,
   getEmberAppFiles,
   getEmberAppWithInRepoAddonFiles,
+  getEmberAddonFiles,
+  getEmberAddonGjsFiles,
   getEmberAppWithInRepoEngine,
 } from './files.js';
 
@@ -158,6 +159,13 @@ export function getEmberAddonProject(project: Project = emberAddonTemplate()): P
   // For now we are only making compat tests for ember-source >=3.24 and < 4.0
   // Add acceptance test for validating that our engine is mounted and routable;
   project.mergeFiles(getEmberAddonFiles());
+  return project;
+}
+
+export function getEmberAddonGjsProject(
+  project: Project = emberAddonTemplate('dummy-app')
+): Project {
+  project.mergeFiles(getEmberAddonGjsFiles());
   return project;
 }
 

@@ -10,5 +10,6 @@ export default defineConfig({
     testTimeout: 100_000_000,
     hookTimeout: 100_000_000,
     watchExclude: ['package.json', '**/fixtures/**'],
+    outputDiffMaxSize: 60000,
   },
 });

@@ -1,0 +1,577 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app components directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@glimmer/component'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class Salutation extends Component {
+  @service locale: { current: () => string } | undefined;
+  get name() {
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    if (this.locale.current() == \\"en-US\\") {
+      return \\"Bob\\";
+    }
+    return \\"Unknown\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app directory 1`] = `
+"import Application from \\"@ember/application\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+loadInitializers(App, config.modulePrefix);
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app directory 2`] = `
+"import EmberRouter from \\"@ember/routing/router\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class Router extends EmberRouter {
+  override location = config.locationType;
+  override rootURL = config.rootURL;
+}
+
+Router.map(function () {});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app services directory 1`] = `
+"import Service from \\"@ember/service\\";
+
+export default class LocaleService extends Service {
+  current() {
+    return \\"en-US\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app templates directory 1`] = `
+"
+          <div id='app-container'>
+            {{outlet}}
+          </div>
+        "
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the app templates directory 2`] = `"<Salutation/>"`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the base directory 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
+    "strict": true,
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
+  },
+  "include": [
+    "app/app.ts",
+    "app/services/locale.ts",
+    "app/components/salutation.ts",
+    "app/router.ts",
+    "tests/acceptance/index-test.ts",
+    "tests/test-helper.ts",
+    "tests/unit/services/locale-test.ts",
+  ],
+}
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the tests directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/app'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"app-template/app\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+import QUnit from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setApplication } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit-dom'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setup } from \\"qunit-dom\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { start } from \\"ember-qunit\\";
+
+setApplication(Application.create(config.APP));
+
+setup(QUnit.assert);
+
+start();
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the tests directory 2`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { visit, currentURL } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupApplicationTest } from \\"ember-qunit\\";
+
+module(\\"Acceptance | Index\\", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test(\\"visiting /\\", async function (assert) {
+    await visit(\\"/\\");
+
+    assert.equal(currentURL(), \\"/\\");
+
+    assert
+      /* @ts-expect-error @rehearsal TODO TS2339: Property 'dom' does not exist on type 'Assert'. */
+      .dom(\\"#app-container\\")
+      .hasText(
+        \\"Hello Bob\\",
+        \\"The user can see usage of the Salutation component\\"
+      );
+  });
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app > should have the correct files in the tests directory 3`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupTest } from \\"ember-qunit\\";
+
+module(\\"Unit | Service | locale\\", function (hooks) {
+  setupTest(hooks);
+
+  test(\\"it exists\\", function (assert) {
+    /* @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation. */
+    const service = this.owner.lookup(\\"service:locale\\");
+    assert.ok(service);
+    assert.equal(service.current(), \\"en-US\\", \\"should match current() locale\\");
+  });
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the app components directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@glimmer/component'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class Salutation extends Component {
+  @service locale: { current: () => string } | undefined;
+  get name() {
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    if (this.locale.current() == \\"en-US\\") {
+      return \\"Bob\\";
+    }
+    return \\"Unknown\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the app directory 1`] = `
+"import Application from \\"@ember/application\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+loadInitializers(App, config.modulePrefix);
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the app directory 2`] = `
+"import EmberRouter from \\"@ember/routing/router\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class Router extends EmberRouter {
+  override location = config.locationType;
+  override rootURL = config.rootURL;
+}
+
+Router.map(function () {});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the app templates directory 1`] = `
+"
+          <div id='app-container'>
+            {{outlet}}
+          </div>
+        "
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the app templates directory 2`] = `"<Salutation/>"`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the base directory 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
+    "strict": true,
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
+  },
+  "include": [
+    "lib/some-addon/addon/components/greet.ts",
+    "app/app.ts",
+    "app/services/locale.ts",
+    "app/components/salutation.ts",
+    "app/router.ts",
+    "tests/acceptance/index-test.ts",
+    "tests/test-helper.ts",
+    "tests/unit/services/locale-test.ts",
+  ],
+}
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the lib some-addon directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@glimmer/component'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Component from \\"@glimmer/component\\";
+
+export default class Greet extends Component {
+  get name() {
+    return \\"Sue\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the tests directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/app'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"app-template/app\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+import QUnit from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setApplication } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit-dom'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setup } from \\"qunit-dom\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { start } from \\"ember-qunit\\";
+
+setApplication(Application.create(config.APP));
+
+setup(QUnit.assert);
+
+start();
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the tests directory 2`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { visit, currentURL } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupApplicationTest } from \\"ember-qunit\\";
+
+module(\\"Acceptance | Index\\", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test(\\"visiting /\\", async function (assert) {
+    await visit(\\"/\\");
+
+    assert.equal(currentURL(), \\"/\\");
+
+    assert
+      /* @ts-expect-error @rehearsal TODO TS2339: Property 'dom' does not exist on type 'Assert'. */
+      .dom(\\"#app-container\\")
+      .hasText(
+        \\"Hello Sue, from an in-repo-addon!\\",
+        \\"The in-repo-addon is being used to render\\"
+      );
+  });
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo addon > should have the correct files in the tests directory 3`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupTest } from \\"ember-qunit\\";
+
+module(\\"Unit | Service | locale\\", function (hooks) {
+  setupTest(hooks);
+
+  test(\\"it exists\\", function (assert) {
+    /* @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation. */
+    const service = this.owner.lookup(\\"service:locale\\");
+    assert.ok(service);
+    assert.equal(service.current(), \\"en-US\\", \\"should match current() locale\\");
+  });
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the app components directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@glimmer/component'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class Salutation extends Component {
+  @service locale: { current: () => string } | undefined;
+  get name() {
+    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    if (this.locale.current() == \\"en-US\\") {
+      return \\"Bob\\";
+    }
+    return \\"Unknown\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the app directory 1`] = `
+"import Application from \\"@ember/application\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+loadInitializers(App, config.modulePrefix);
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the app directory 2`] = `
+"import EmberRouter from \\"@ember/routing/router\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+
+export default class Router extends EmberRouter {
+  override location = config.locationType;
+  override rootURL = config.rootURL;
+}
+
+Router.map(function () {
+  this.mount(\\"some-engine\\");
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the app templates directory 1`] = `
+"
+          <div id='app-container'>
+            {{outlet}}
+          </div>
+        "
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the app templates directory 2`] = `"<Salutation/>"`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the base directory 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
+    "strict": true,
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
+  },
+  "include": [
+    "lib/some-engine/addon/resolver.ts",
+    "lib/some-engine/addon/engine.ts",
+    "lib/some-engine/addon/routes.ts",
+    "app/app.ts",
+    "app/services/locale.ts",
+    "app/components/salutation.ts",
+    "app/router.ts",
+    "tests/acceptance/index-test.ts",
+    "tests/acceptance/some-engine-test.ts",
+    "tests/test-helper.ts",
+    "tests/unit/services/locale-test.ts",
+  ],
+}
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine addon templates directory 1`] = `"{{outlet}}"`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine addon templates directory 2`] = `"Hello from some-engine/index"`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine addon templates directory 3`] = `"Hello from some-engine/some-page"`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-engines/routes'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import buildRoutes from \\"ember-engines/routes\\";
+
+export default buildRoutes(function () {
+  // Define your engine's route map here
+  /* @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation. */
+  this.route(\\"some-page\\");
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine directory 2`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-engines/engine'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Engine from \\"ember-engines/engine\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+import Resolver from \\"./resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module './config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"./config/environment\\";
+
+const { modulePrefix } = config;
+
+const Eng = Engine.extend({
+  modulePrefix,
+  Resolver,
+});
+
+loadInitializers(Eng, modulePrefix);
+
+export default Eng;
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the lib some-engine directory 3`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+
+export default Resolver;
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the tests directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/app'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"app-template/app\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'app-template/config/environment'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import config from \\"app-template/config/environment\\";
+import QUnit from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setApplication } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit-dom'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setup } from \\"qunit-dom\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { start } from \\"ember-qunit\\";
+
+setApplication(Application.create(config.APP));
+
+setup(QUnit.assert);
+
+start();
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the tests directory 2`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { visit, currentURL } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupApplicationTest } from \\"ember-qunit\\";
+
+module(\\"Acceptance | Index\\", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test(\\"visiting /\\", async function (assert) {
+    await visit(\\"/\\");
+
+    assert.equal(currentURL(), \\"/\\");
+
+    assert
+      /* @ts-expect-error @rehearsal TODO TS2339: Property 'dom' does not exist on type 'Assert'. */
+      .dom(\\"#app-container\\")
+      .hasText(
+        \\"Hello Bob\\",
+        \\"The user can see usage of the Salutation component\\"
+      );
+  });
+});
+"
+`;
+
+exports[`migrate - ember app: e2e > ember app with in-repo engine > should have the correct files in the tests directory 3`] = `
+"import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupTest } from \\"ember-qunit\\";
+
+module(\\"Unit | Service | locale\\", function (hooks) {
+  setupTest(hooks);
+
+  test(\\"it exists\\", function (assert) {
+    /* @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation. */
+    const service = this.owner.lookup(\\"service:locale\\");
+    assert.ok(service);
+    assert.equal(service.current(), \\"en-US\\", \\"should match current() locale\\");
+  });
+});
+"
+`;

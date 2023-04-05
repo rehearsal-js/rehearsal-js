@@ -1,0 +1,281 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the addon components directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@glimmer/component'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Component from \\"@glimmer/component\\";
+
+export default class Greet extends Component {
+  get name() {
+    return \\"Sue\\";
+  }
+}
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the addon components directory 2`] = `"Hello {{this.name}}, from an addon!"`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the base directory 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
+    "strict": true,
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
+  },
+  "include": [
+    "addon/components/greet.ts",
+    "tests/acceptance/addon-template-test.ts",
+    "tests/dummy/app/app.ts",
+    "tests/dummy/app/router.ts",
+    "tests/test-helper.ts",
+  ],
+}
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests acceptance directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { module, test } from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { visit, currentURL } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setupApplicationTest } from \\"ember-qunit\\";
+
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'hooks' implicitly has an 'any' type. */
+module(\\"Acceptance | addon-template\\", function (hooks) {
+  setupApplicationTest(hooks);
+
+  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'assert' implicitly has an 'any' type. */
+  test(\\"visiting /\\", async function (assert) {
+    await visit(\\"/\\");
+
+    assert.equal(currentURL(), \\"/\\");
+
+    assert
+      .dom(\\"#app-container\\")
+      .hasText(\\"Hello Sue, from an addon!\\", \\"The user can see Hello World\\");
+  });
+});
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'dummy/app'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"dummy/app\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import * as QUnit from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setApplication } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit-dom'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setup } from \\"qunit-dom\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { start } from \\"ember-qunit\\";
+
+setApplication(Application.create(config.APP));
+
+setup(QUnit.assert);
+
+start();
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests dummy app directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/application'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"@ember/application\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+loadInitializers(App, config.modulePrefix);
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests dummy app directory 2`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/routing/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import EmberRouter from \\"@ember/routing/router\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+
+export default class Router extends EmberRouter {
+  location = config.locationType;
+  rootURL = config.rootURL;
+}
+
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'map' does not exist on type 'typeof Router'. */
+Router.map(function () {});
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests dummy app templates directory 1`] = `
+"
+              <div id='app-container'>
+                {{outlet}}
+              </div>
+            "
+`;
+
+exports[`migrate - ember addon: e2e > ember addon > should have the correct files in the tests dummy app templates directory 2`] = `"<Greet/>"`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the addon components directory 1`] = `
+"
+          {{! @glint-expect-error @rehearsal TODO TS2792: Cannot find module '@glint/environment-ember-template-imports/-private/dsl'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? }}
+          {{! @glint-expect-error @rehearsal TODO TS7006: Parameter '𝚪' implicitly has an 'any' type. }}
+          const Flea = <template>
+            <p>Hello, {{@name}}!</p>
+          </template>;
+          
+          {{! @glint-expect-error @rehearsal TODO TS2792: Cannot find module '@glint/environment-ember-template-imports/-private/dsl'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? }}
+          {{! @glint-expect-error @rehearsal TODO TS7006: Parameter '𝚪' implicitly has an 'any' type. }}
+          <template>
+            <Flea @name=\\"Littlest\\"/>
+          </template>
+        "
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the addon components directory 2`] = `
+"
+          /* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'addon-template/components/branch'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+          import Branch from 'addon-template/components/branch'; 
+
+          {{! @glint-expect-error @rehearsal TODO TS2792: Cannot find module '@glint/environment-ember-template-imports/-private/dsl'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? }}
+          {{! @glint-expect-error @rehearsal TODO TS7006: Parameter '𝚪' implicitly has an 'any' type. }}
+          <template>
+            <Branch/>
+          </template>
+        "
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the base directory 1`] = `
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "importsNotUsedAsValues": "error",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "preserveValueImports": true,
+    "strict": true,
+    "target": "es2020",
+  },
+  "display": "Ember App",
+  "extends": "../base.tsconfig.json",
+  "glint": {
+    "environment": {
+      "ember-loose": {},
+      "ember-template-imports": {},
+    },
+  },
+  "include": [
+    "addon/components/leaf.gts",
+    "addon/components/branch.gts",
+    "addon/components/trunk.gts",
+    "tests/dummy/app/app.ts",
+    "tests/dummy/app/router.ts",
+    "tests/test-helper.ts",
+  ],
+}
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the tests directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'dummy/app'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"dummy/app\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import * as QUnit from \\"qunit\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/test-helpers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setApplication } from \\"@ember/test-helpers\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'qunit-dom'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { setup } from \\"qunit-dom\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-qunit'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import { start } from \\"ember-qunit\\";
+
+setApplication(Application.create(config.APP));
+
+setup(QUnit.assert);
+
+start();
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the tests dummy app directory 1`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/application'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Application from \\"@ember/application\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-resolver'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import Resolver from \\"ember-resolver\\";
+/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'ember-load-initializers'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import loadInitializers from \\"ember-load-initializers\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+loadInitializers(App, config.modulePrefix);
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the tests dummy app directory 2`] = `
+"/* @ts-expect-error @rehearsal TODO TS2792: Cannot find module '@ember/routing/router'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option? */
+import EmberRouter from \\"@ember/routing/router\\";
+/* @ts-expect-error @rehearsal TODO TS7016: Could not find a declaration file for module 'dummy/config/environment'. '<tmp-path>/tests/dummy/config/environment.js' implicitly has an 'any' type. */
+import config from \\"dummy/config/environment\\";
+
+export default class Router extends EmberRouter {
+  location = config.locationType;
+  rootURL = config.rootURL;
+}
+
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'map' does not exist on type 'typeof Router'. */
+Router.map(function () {});
+"
+`;
+
+exports[`migrate - ember addon: e2e > ember addon gjs > should have the correct files in the tests dummy app templates directory 1`] = `
+"{{page-title \\"Dummy\\"}}
+
+{{!-- The following component displays Ember's default welcome message. --}}
+<WelcomePage />
+{{!-- Feel free to remove this! --}}
+
+{{outlet}}"
+`;

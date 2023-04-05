@@ -290,6 +290,39 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fix
   };
 }
 
+export function getEmberAddonGjsFiles(): fixturify.DirJSON {
+  return {
+    addon: {
+      components: {
+        'trunk.gjs': `
+          import Branch from 'addon-template/components/branch'; 
+
+          <template>
+            <Branch/>
+          </template>
+        `,
+        'branch.gjs': `
+          import Component from '@glimmer/component';
+          import Leaf from 'addon-template/components/leaf';
+
+          export default class Branch extends Component {
+            <template><Leaf/></template>
+          };
+        `,
+        'leaf.gjs': `
+          const Flea = <template>
+            <p>Hello, {{@name}}!</p>
+          </template>;
+          
+          <template>
+            <Flea @name="Littlest"/>
+          </template>
+        `,
+      },
+    },
+  };
+}
+
 export function getEmberAddonFiles(): fixturify.DirJSON {
   return {
     config: {
