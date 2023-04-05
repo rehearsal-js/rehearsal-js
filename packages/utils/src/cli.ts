@@ -2,6 +2,7 @@ import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
+import findupSync from 'findup-sync';
 import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
@@ -12,9 +13,8 @@ import glob from 'glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
-import findupSync from 'findup-sync';
-import type { Options } from 'execa';
 import type { GitDescribe } from './types.js';
+import type { Options } from 'execa';
 import type { PackageJson } from 'type-fest';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
@@ -314,6 +314,102 @@ export function getModuleManagerInstaller(
           : [...voltaNpmArgs, 'install', ...depList, '--ignore-scripts'],
       };
   }
+}
+
+// root only force the resolution of a given module to a specific version this does NOT modify lock file
+export async function setModuleResolution(
+  moduleName: string,
+  version: string,
+  cwd = process.cwd()
+): Promise<void> {
+  // using npm pkg api (preferred)
+  async function setVersionFromPkg(dir: string): Promise<void> {
+    try {
+      const npmPath = getManagerBinPath('npm');
+
+      await execa(npmPath, ['pkg', 'set', `resolutions.${moduleName}=${version}`], { cwd: dir });
+    } catch (err) {
+      throw new Error(`${err}`);
+    }
+  }
+
+  // when thats not possible and for tests, use package.json
+  function setVersionFromPackageJSON(dir: string): void {
+    try {
+      const pkgPath = findupSync('package.json', {
+        cwd: dir,
+      }) as string;
+      // wrapping in try catch so casting is safe
+      const pkg = readJSON(pkgPath) as PackageJson;
+
+      pkg.resolutions = pkg.resolutions || {};
+      pkg.resolutions[moduleName] = version;
+
+      writeJSONSync(pkgPath, pkg, { spaces: 2 });
+    } catch (err) {
+      throw new Error(`${err}`);
+    }
+  }
+
+  try {
+    await setVersionFromPkg(cwd);
+  } catch (err) {
+    try {
+      setVersionFromPackageJSON(cwd);
+    } catch (err) {
+      throw new Error(`Failed to set resolution for ${moduleName} to ${version} in ${cwd}`);
+    }
+  }
+}
+
+// version specified in package.json NOT resolved version from lock file
+export async function getModuleVersion(
+  moduleName: string,
+  type: 'devDep' | 'dep',
+  cwd = process.cwd()
+): Promise<string> {
+  const depType = type === 'dep' ? 'dependencies' : 'devDependencies';
+
+  // using npm pkg api (preferred)
+  async function getVersionFromPkg(dir: string): Promise<string> {
+    try {
+      const npmPath = getManagerBinPath('npm');
+      const { stdout } = await execa(npmPath, ['pkg', 'get', `${depType}.${moduleName}`], {
+        cwd: dir,
+      });
+
+      if (stdout === '{}') {
+        return '';
+      } else {
+        // eg "^2.3.2"
+        return stdout.replace(/"/g, '');
+      }
+    } catch (err) {
+      return '';
+    }
+  }
+
+  // when thats not possible and for tests, use package.json
+  function getVersionFromPkgJson(dir: string): string {
+    try {
+      const pkgPath = findupSync('package.json', {
+        cwd: dir,
+      });
+      // wrapping in try catch so casting is safe
+      const pkg = readJSON(pkgPath as string) as PackageJson;
+
+      return pkg[depType]?.[moduleName] ?? '';
+    } catch (err) {
+      return '';
+    }
+  }
+
+  const version = {
+    pkg: await getVersionFromPkg(cwd),
+    packageJson: getVersionFromPkgJson(cwd),
+  };
+
+  return version.pkg || version.packageJson;
 }
 
 // devDep: dep@version eg. typescript@4.4.4 or typescript or etc

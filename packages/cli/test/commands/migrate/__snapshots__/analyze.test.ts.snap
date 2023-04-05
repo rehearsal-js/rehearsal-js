@@ -16,9 +16,9 @@ exports[`Task: analyze > accept --package option to skip the selection 1`] = `
 `;
 
 exports[`Task: analyze > accept --package option to skip the selection 2`] = `
-"[STARTED] Analyzing Project
+"[STARTED] Analyze project
 [DATA] Running migration on package .
-[SUCCESS] Analyzing Project
+[SUCCESS] Analyze project
 "
 `;
 
@@ -41,9 +41,9 @@ exports[`Task: analyze > get files that will be migrated 1`] = `
 `;
 
 exports[`Task: analyze > get files that will be migrated 2`] = `
-"[STARTED] Analyzing Project
+"[STARTED] Analyze project
 [DATA] Running migration on basic
-[SUCCESS] Analyzing Project
+[SUCCESS] Analyze project
 "
 `;
 
@@ -90,12 +90,12 @@ exports[`Task: analyze > multi-package > show package progress in interactive mo
 `;
 
 exports[`Task: analyze > print files will be attempted to migrate with --dryRun 1`] = `
-"[STARTED] Analyzing Project
+"[STARTED] Analyze project
 [DATA] Running migration on basic
 [DATA] List of files will be attempted to migrate:
 [DATA]  foo.js
 [DATA] depends-on-foo.js
 [DATA] index.js
-[SUCCESS] Analyzing Project
+[SUCCESS] Analyze project
 "
 `;

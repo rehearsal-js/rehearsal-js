@@ -79,11 +79,11 @@ export function lintConfigTask(
       }
 
       if (ctx.userConfig?.hasLintSetup) {
-        task.output = `Create .eslintrc.js from config`;
+        task.output = `Create .eslintrc.js from rehearsal config`;
         await ctx.userConfig.lintSetup();
 
         if (ctx.userConfig.hasPostLintSetup) {
-          task.output = `Run postLintSetup from config`;
+          task.output = `Run postLintSetup from rehearsal config`;
           await ctx.userConfig.postLintSetup();
         }
       } else {
@@ -96,7 +96,7 @@ export function lintConfigTask(
         createRehearsalConfig(options.basePath, format);
 
         if (relativeConfigPath) {
-          task.output = `${relativeConfigPath} already exists, extending Rehearsal default eslint-related config`;
+          task.output = `${relativeConfigPath} already exists, extending rehearsal default eslint-related config`;
           task.title = `Update .eslintrc${format === FORMAT.NO_EXTENSION ? '' : '.' + format}`;
 
           const absoluteConfigPath = resolve(relativeConfigPath);
@@ -108,7 +108,7 @@ export function lintConfigTask(
             options.basePath
           );
         } else {
-          task.output = `Create .eslintrc.${FORMAT.JS}, extending Rehearsal default eslint-related config`;
+          task.output = `Create .eslintrc.${FORMAT.JS}, extending rehearsal default eslint-related config`;
           await extendsRehearsalInNewConfig(options.basePath, `.eslintrc.${FORMAT.JS}`);
         }
       }

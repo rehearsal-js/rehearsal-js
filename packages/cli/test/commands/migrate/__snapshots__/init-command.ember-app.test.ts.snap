@@ -8,13 +8,14 @@ exports[`migrate init for ember app variant > ember4App > default run --ember4Ap
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
 [TITLE] Update tsconfig.json
 [SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -86,15 +87,16 @@ exports[`migrate init for ember app variant > ember4App > pass user config ember
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from config
+[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js from config
+[DATA] Create .eslintrc.js from rehearsal config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -130,13 +132,14 @@ exports[`migrate init for ember app variant > emberApp > default run --emberApp 
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
 [TITLE] Update tsconfig.json
 [SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -208,15 +211,16 @@ exports[`migrate init for ember app variant > emberApp > pass user config emberA
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from config
+[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js from config
+[DATA] Create .eslintrc.js from rehearsal config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -252,13 +256,14 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > default 
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
 [TITLE] Update tsconfig.json
 [SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -330,15 +335,16 @@ exports[`migrate init for ember app variant > emberAppWithInRepoAddon > pass use
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from config
+[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js from config
+[DATA] Create .eslintrc.js from rehearsal config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -374,13 +380,14 @@ exports[`migrate init for ember app variant > emberAppWithInRepoEngine > default
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] <tmp-path>/tsconfig.json already exists, ensuring strict mode is enabled
 [TITLE] Update tsconfig.json
 [SUCCESS] Update tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json
@@ -452,15 +459,16 @@ exports[`migrate init for ember app variant > emberAppWithInRepoEngine > pass us
 [DATA] Setting up config for app-template
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Install dependencies from config
+[DATA] Install dependencies from rehearsal config
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js from config
+[DATA] Create .eslintrc.js from rehearsal config
 [SUCCESS] Create eslint config
 [STARTED] Add package scripts
 [DATA] Adding \\"lint:tsc\\" script in package.json

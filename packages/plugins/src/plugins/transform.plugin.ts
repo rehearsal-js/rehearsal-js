@@ -8,11 +8,17 @@ import {
 } from '@rehearsal/service';
 import { applyTextChanges } from '@rehearsal/ts-utils';
 import ts, { TextChange } from 'typescript';
+import debug from 'debug';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:transform');
 
 export class ServiceInjectionsTransformPlugin implements Plugin<PluginOptions> {
   async run(fileName: string, context: PluginsRunnerContext): PluginResult {
     const service = context.service;
     let sourceFile = service.getSourceFile(fileName);
+
+    // debug callback the version of ts
+    DEBUG_CALLBACK('TS API VERSION: %O', ts.version);
 
     if (!sourceFile) {
       return [];

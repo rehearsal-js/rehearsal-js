@@ -26,22 +26,22 @@ exports[`Task: config-ts > create tsconfig if not existed 2`] = `
 
 exports[`Task: config-ts > do not skip if custom config exists 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
 exports[`Task: config-ts > postTsSetup hook from user config 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
-[DATA] Run postTsSetup from config
+[DATA] Create tsconfig from rehearsal config
+[DATA] Run postTsSetup from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;
 
 exports[`Task: config-ts > run custom config command with user config provided 1`] = `
 "[STARTED] Create tsconfig.json
-[DATA] Create tsconfig from config
+[DATA] Create tsconfig from rehearsal config
 [SUCCESS] Create tsconfig.json
 "
 `;

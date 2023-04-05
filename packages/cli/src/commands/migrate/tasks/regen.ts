@@ -9,7 +9,7 @@ import type { MigrateCommandContext, MigrateCommandOptions } from '../../../type
 
 export function regenTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
   return {
-    title: 'Regenerating report for TS errors and Eslint errors',
+    title: 'Regenerating report for TS errors and ESLint errors',
     enabled: (): boolean => !options.dryRun,
     task: async (_: MigrateCommandContext, task): Promise<void> => {
       // Because we have to eagerly import all the tasks we need to lazily load these

@@ -6,15 +6,16 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Setting resolutions: typescript@^5.0.3
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
 [STARTED] Create eslint config
-[DATA] Create .eslintrc.js, extending Rehearsal default eslint-related config
+[DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
-[STARTED] Analyzing Project
+[STARTED] Analyze project
 [DATA] Running migration on sequential
-[SUCCESS] Analyzing Project
+[SUCCESS] Analyze project
 [STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports
 [DATA] processing file: /foo.ts
 [DATA] processing file: /index.ts
