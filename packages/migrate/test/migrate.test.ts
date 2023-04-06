@@ -512,11 +512,24 @@ module("Integration | Helper | grid-list", function (hooks) {
 
   test("it sets and changes the columns classes", async function (assert) {
     this.set("styles", "foo");
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'. }}
+    /* @ts-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'. */
     await render(hbs\`<ul data-test-el class="{{this.styles}}">foo</ul>\`);
 
     this.set("styles", "foo");
     assert.dom("[data-test-el]").hasClass("some-class", "has the border class");
+
+    await render(hbs\`<Map
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'lat' does not exist on type 'void'. }}
+      @lat={{this.lat}}
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'lng' does not exist on type 'void'. }}
+      @lng={{this.lng}}
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'zoom' does not exist on type 'void'. }}
+      @zoom={{this.zoom}}
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'width' does not exist on type 'void'. }}
+      @width={{this.width}}
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'height' does not exist on type 'void'. }}
+      @height={{this.height}}
+    />\`);
 
     this.set("styles", "foo");
     assert.dom("[data-test-el]").hasClass("some-class", "has the border class");
