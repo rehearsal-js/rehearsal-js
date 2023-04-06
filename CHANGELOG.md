@@ -1,3 +1,17 @@
+## <small>1.0.17-beta (2023-04-06)</small>
+
+* fix: check report before accessing prop ([68fa64e](https://github.com/rehearsal-js/rehearsal-js/commit/68fa64e))
+* fix: filter additional case of `any` type usage (#938) ([84c33cc](https://github.com/rehearsal-js/rehearsal-js/commit/84c33cc)), closes [#938](https://github.com/rehearsal-js/rehearsal-js/issues/938)
+* fix: make path to file relative in hint messages (#939) ([90d2864](https://github.com/rehearsal-js/rehearsal-js/commit/90d2864)), closes [#939](https://github.com/rehearsal-js/rehearsal-js/issues/939)
+* fix(cli): dep install collision (#937) ([480d764](https://github.com/rehearsal-js/rehearsal-js/commit/480d764)), closes [#937](https://github.com/rehearsal-js/rehearsal-js/issues/937)
+* feat: add glint plugin fixes to reporter (#915) ([e8d8fed](https://github.com/rehearsal-js/rehearsal-js/commit/e8d8fed)), closes [#915](https://github.com/rehearsal-js/rehearsal-js/issues/915)
+* feat: enable prettier plugin for formatting (if it's configured) instead of linter ([879fc1f](https://github.com/rehearsal-js/rehearsal-js/commit/879fc1f))
+* feat(cli): set resolution of ts in migrated app (#931) ([8a9c9c9](https://github.com/rehearsal-js/rehearsal-js/commit/8a9c9c9)), closes [#931](https://github.com/rehearsal-js/rehearsal-js/issues/931)
+* chore: fix typos ([679e99c](https://github.com/rehearsal-js/rehearsal-js/commit/679e99c))
+* fix: do not skip config-ts if user config exists (#925) ([84b3cd2](https://github.com/rehearsal-js/rehearsal-js/commit/84b3cd2)), closes [#925](https://github.com/rehearsal-js/rehearsal-js/issues/925)
+
+
+
 ## <small>1.0.16-beta (2023-04-03)</small>
 
 * test: add config-ts ember tests (#914) ([d25c067](https://github.com/rehearsal-js/rehearsal-js/commit/d25c067)), closes [#914](https://github.com/rehearsal-js/rehearsal-js/issues/914)
