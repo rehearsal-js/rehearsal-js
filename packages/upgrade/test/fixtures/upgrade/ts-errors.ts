@@ -48,3 +48,7 @@ function notProperlyFormatted(file: string): string {
 
 // The next function call is not properly formatted
 timestamp(   );
+   
+import testModule from './module';
+
+testModule();

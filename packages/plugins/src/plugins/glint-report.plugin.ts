@@ -32,8 +32,12 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const numDiagnostics = diagnostics.length;
 
     diagnostics.reverse().forEach((diagnostic, index) => {
+      const hint = hints.getHint(diagnostic).replace(context.basePath, '.');
+      const helpUrl = hints.getHelpUrl(diagnostic);
+
+      const updatedText = this.insertTodo(service, diagnostic, hint, options.commentTag);
+
       const fileName = diagnostic.file.fileName;
-      const updatedText = this.insertTodo(service, options.commentTag, diagnostic);
       context.service.setFileText(fileName, updatedText);
 
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
@@ -44,9 +48,6 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
       const locationOffset = numDiagnostics - index - 1;
       location.startLine += locationOffset;
       location.endLine += locationOffset;
-
-      const hint = hints.getHint(diagnostic);
-      const helpUrl = hints.getHelpUrl(diagnostic);
 
       context.reporter.addTSItemToRun(diagnostic, undefined, location, hint, helpUrl);
       fixedFiles.add(fileName);
@@ -72,7 +73,12 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     });
   }
 
-  insertTodo(service: GlintService, commentTag: string, diagnostic: DiagnosticWithContext): string {
+  insertTodo(
+    service: GlintService,
+    diagnostic: DiagnosticWithContext,
+    hint: string,
+    commentTag: string
+  ): string {
     const filePath = diagnostic.file.fileName;
     const fileContents = service.getFileText(filePath);
     const lines = fileContents.split('\n');
@@ -84,7 +90,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     if (module) {
       const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
       // If we're able to find a template associated with the diagnostic, then we know the error
-      // is pointing to the body of a template and we need to use HBS comments
+      // is pointing to the body of a template, and we need to use HBS comments
       if (template) {
         useHbsComment = true;
       }
@@ -93,7 +99,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const start = pathUtils.offsetToPosition(fileContents, diagnostic.start);
     const index = start.line;
     const [leadingWhitespace, indentation] = /^\s*\n?(\s*)/.exec(lines[index]) ?? ['', ''];
-    const message = `${commentTag} TODO TS${diagnostic.code}: ${diagnostic.messageText}`;
+    const message = `${commentTag} TODO TS${diagnostic.code}: ${hint}`;
 
     const todo = useHbsComment
       ? `${leadingWhitespace}{{! @glint-expect-error ${message} }}${indentation}`

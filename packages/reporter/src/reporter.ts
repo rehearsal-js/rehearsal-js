@@ -91,7 +91,10 @@ export class Reporter {
       type: ReportItemType.ts,
       ruleId: `TS${diagnostic.code}`,
       category: DiagnosticCategory[diagnostic.category],
-      message: flattenDiagnosticMessageText(diagnostic.messageText, '. '),
+      message: flattenDiagnosticMessageText(diagnostic.messageText, '. ').replace(
+        this.basePath,
+        '.'
+      ),
       hint: hint,
       hintAdded,
       nodeKind: node ? SyntaxKind[node.kind] : undefined,
