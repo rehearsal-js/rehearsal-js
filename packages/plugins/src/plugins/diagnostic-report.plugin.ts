@@ -42,7 +42,7 @@ export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOpti
 
     while (diagnostics.length > 0) {
       const diagnostic = diagnostics.shift()!;
-      const hint = hints.getHint(diagnostic);
+      const hint = hints.getHint(diagnostic).replace(context.basePath, '.');
 
       if (options.addHints) {
         const text = this.addHintComment(context.service, diagnostic, hint, options.commentTag);

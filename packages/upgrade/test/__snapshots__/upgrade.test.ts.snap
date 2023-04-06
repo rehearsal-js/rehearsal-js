@@ -54,6 +54,15 @@ defined_function_with_params(\\"dummy-string\\");
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 4`] = `""`;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 5`] = `
+"const testModule = function () {
+  return \\"test\\";
+};
+
+module.exports = testModule;
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 6`] = `
 "import React from \\"react\\";
 
 export function test(): void {}
@@ -89,7 +98,7 @@ export function Test2(): Element {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 6`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 7`] = `
 "import { Component } from \\"react\\";
 
 function action(_target: unknown, propertyKey: string): void {
@@ -138,7 +147,7 @@ export class Radio extends Component {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 7`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 8`] = `
 "import React from \\"react\\";
 
 export function test(): void {}
@@ -174,7 +183,7 @@ export function Test2(): Element {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 8`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 9`] = `
 "export function template(info: object): string {
   let text = \\"\\";
 
@@ -203,7 +212,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 9`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 10`] = `
 "/**
  * @param {String} a - some string
  * @param {any} b - hardcoded to any just for demonstrative purposes
@@ -268,7 +277,7 @@ export function doSomething(args, name: string): string | undefined {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 10`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
 "/* Existing comment */
 
 export function usesMissingFunction(): void {
@@ -297,10 +306,15 @@ export function usesMissingVarWithLongName(): boolean {
 // The next function call is not properly formatted
 /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'timestamp'. */
 timestamp();
+
+/* @ts-expect-error @rehearsal TODO TS2306: File './module.ts' is not a module. */
+import testModule from \\"./module\\";
+
+testModule();
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 12`] = `
 "function action(_target: unknown, propertyKey: string): void {
   console.log(propertyKey);
 }
@@ -375,7 +389,7 @@ export class Foo {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 12`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
 "/**
  * @param {String} a - some string
  * @param {Object} b - hardcoded to any just for demonstrative purposes
@@ -406,7 +420,7 @@ export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
 "/**
  * This is a file with some comments added in a previous run of rehearsal
  */
@@ -431,7 +445,7 @@ try {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
 "export function test1(): string {
   return \\"Test this\\";
 }
@@ -470,7 +484,7 @@ export class TestClass extends BaseTestClass implements TestInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
 "// Basics
 
 class Animal {
@@ -655,7 +669,7 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
 "export function test1(me: string): string {
   return \\"This is \\" + me;
 }
@@ -741,7 +755,7 @@ export function think(
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
 "{
   \\"compilerOptions\\": {
     \\"allowSyntheticDefaultImports\\": true,
@@ -766,7 +780,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 19`] = `
 "{
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"root\\": true,
@@ -934,6 +948,24 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       },
       "nodeText": "",
       "ruleId": "@typescript-eslint/no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "module.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'module' is not defined.",
+      "hintAdded": false,
+      "message": "'module' is not defined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 7,
+        "endLine": 5,
+        "startColumn": 1,
+        "startLine": 5,
+      },
+      "nodeText": "",
+      "ruleId": "no-undef",
       "type": 1,
     },
     {
@@ -1618,6 +1650,24 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       },
       "nodeText": "timestamp",
       "ruleId": "TS2304",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2306",
+      "hint": "File './module.ts' is not a module.",
+      "hintAdded": true,
+      "message": "File './module.ts' is not a module.",
+      "nodeKind": "StringLiteral",
+      "nodeLocation": {
+        "endColumn": 34,
+        "endLine": 31,
+        "startColumn": 24,
+        "startLine": 31,
+      },
+      "nodeText": "\\"./module\\"",
+      "ruleId": "TS2306",
       "type": 0,
     },
     {
