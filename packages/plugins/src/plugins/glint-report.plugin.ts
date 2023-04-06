@@ -1,4 +1,5 @@
-import { pathUtils } from '@glint/core';
+import { extname } from 'node:path';
+import { pathUtils, type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import {
   GlintService,
@@ -13,6 +14,10 @@ import { getLocation } from '../helpers.js';
 export interface GlintReportPluginOptions extends PluginOptions {
   commentTag: string;
 }
+
+type TransformedInfo = NonNullable<
+  ReturnType<TransformManager['findTransformInfoForOriginalFile']>
+>;
 
 export class GlintReportPlugin implements Plugin<PluginOptions> {
   async run(
@@ -83,21 +88,11 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const fileContents = service.getFileText(filePath);
     const lines = fileContents.split('\n');
     const info = service.transformManager.findTransformInfoForOriginalFile(filePath);
-    let useHbsComment = false;
-
-    const module = info && info.transformedModule;
-
-    if (module) {
-      const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
-      // If we're able to find a template associated with the diagnostic, then we know the error
-      // is pointing to the body of a template, and we need to use HBS comments
-      if (template) {
-        useHbsComment = true;
-      }
-    }
-
     const start = pathUtils.offsetToPosition(fileContents, diagnostic.start);
     const index = start.line;
+
+    const useHbsComment = this.shouldUseHbsComment(info, filePath, fileContents, diagnostic, index);
+
     const [leadingWhitespace, indentation] = /^\s*\n?(\s*)/.exec(lines[index]) ?? ['', ''];
     const message = `${commentTag} TODO TS${diagnostic.code}: ${hint}`;
 
@@ -108,5 +103,48 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     lines.splice(index, 0, todo);
 
     return lines.join('\n');
+  }
+
+  shouldUseHbsComment(
+    info: TransformedInfo | null,
+    filePath: string,
+    fileContents: string,
+    diagnostic: DiagnosticWithContext,
+    startLine: number
+  ): boolean {
+    const module = info && info.transformedModule;
+
+    if (module) {
+      const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
+      // If we're able to find a template associated with the diagnostic, then we know the error
+      // is pointing to the body of a template, and we likely to use HBS comments
+      if (template) {
+        // If the template is *not* an HBS file, then it means we've encountered
+        // either a <template> tag or an `hbs` invocation, in which case we need to be careful
+        // where we insert hbs comments
+        if (extname(filePath) === '.hbs') {
+          return true;
+        }
+
+        const isMultiline = /\n/.test(template.originalContent);
+
+        if (isMultiline) {
+          // If the template is multiline, we check to see if the diagnostic occurs on the first
+          // line or not. If it is on the first line, then we want to use `@ts-expect-error` since
+          // the line above will be outside the template body. If the diagnostic points to a line
+          // within the body of the template, then we should insert an hbs comment instead
+          const templateStart = pathUtils.offsetToPosition(
+            fileContents,
+            template.originalContentStart
+          );
+
+          if (templateStart.line !== startLine) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 }
