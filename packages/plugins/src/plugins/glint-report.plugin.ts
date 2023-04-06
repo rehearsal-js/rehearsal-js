@@ -9,6 +9,7 @@ import {
   Service,
   type PluginResult,
 } from '@rehearsal/service';
+import { type Location } from '@rehearsal/reporter';
 import { getLocation } from '../helpers.js';
 
 export interface GlintReportPluginOptions extends PluginOptions {
@@ -18,6 +19,10 @@ export interface GlintReportPluginOptions extends PluginOptions {
 type TransformedInfo = NonNullable<
   ReturnType<TransformManager['findTransformInfoForOriginalFile']>
 >;
+
+export interface DiagnosticWithLocation extends DiagnosticWithContext {
+  location: Location;
+}
 
 export class GlintReportPlugin implements Plugin<PluginOptions> {
   async run(
@@ -45,7 +50,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
       const fileName = diagnostic.file.fileName;
       context.service.setFileText(fileName, updatedText);
 
-      const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+      const location = diagnostic.location;
       // Since each TODO comment adds a line to the file, we calculate an offset that takes into
       // account the number of comments already added (index) subtracted from the number of
       // diagnostics (to account for the fact that we reverse the diagnostic list) and subtracting
@@ -61,21 +66,31 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     return Promise.resolve(Array.from(fixedFiles));
   }
 
-  getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
+  getDiagnostics(service: Service, fileName: string): DiagnosticWithLocation[] {
     const languageService = service.getLanguageService();
     const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
     const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
 
-    return diagnostics.map((diagnostic) => {
-      return {
+    return diagnostics.reduce<DiagnosticWithLocation[]>((acc, diagnostic) => {
+      const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
+      const startLine = location.startLine;
+
+      if (acc.some((v) => v.location.startLine === startLine)) {
+        return acc;
+      }
+
+      acc.push({
         ...diagnostic,
+        location,
         service: languageService,
         program,
         checker,
-      };
-    });
+      });
+
+      return acc;
+    }, []);
   }
 
   insertTodo(
