@@ -270,7 +270,6 @@ declare authenticatedUser: AuthenticatedUser;
 export default class Hello extends Component {
   <template>
     {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Hello'. }}
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
   </template>
 }
