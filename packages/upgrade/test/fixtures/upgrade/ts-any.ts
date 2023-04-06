@@ -19,7 +19,7 @@ export function oneOfParamsHaveSomethingOrAny(a, b) {
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
 export function returnTypeHasGenericAny(a) {
-  return Promise.resolve(a)
+  return Promise.resolve(a);
 }
 
 /**
@@ -28,7 +28,7 @@ export function returnTypeHasGenericAny(a) {
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
 export function oneOfParamsHaveAnyAndReturnHasGenericAny(a, b) {
-  return Promise.resolve([a, b])
+  return Promise.resolve([a, b]);
 }
 
 /**
@@ -45,7 +45,7 @@ function capitalize(str: string): string {
   return str[0].toUpperCase() + str.substring(1);
 }
 
-export function doSomething(args, name){
+export function doSomething(args, name) {
   if (!name) {
     return;
   }
@@ -55,4 +55,6 @@ export function doSomething(args, name){
   return capitalize(name);
 }
 
-
+export function handle(text: string, handler) {
+  return handler.string(text);
+}
