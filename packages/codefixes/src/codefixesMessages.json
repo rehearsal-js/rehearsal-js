@@ -155,11 +155,6 @@
     "description": "Removes `await` where the function is not async.",
     "diagnostics": [80007]
   },
-  "requireInTs": {
-    "title": "Convert Requires In TypeScript",
-    "description": "Converts CJS to ES Modules",
-    "diagnostics": [80005]
-  },
   "strictClassInitialization": {
     "title": "Strict Class Initialization",
     "description": "Fixes classes so they are initialized correctly.",

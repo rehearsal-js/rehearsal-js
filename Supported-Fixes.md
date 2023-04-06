@@ -706,27 +706,6 @@ export function foo() {
 ```
 
 
-## Convert Requires In TypeScript
-
-id: _requireInTs_
-
-Converts CJS to ES Modules
-**Input:**
-
-```ts
-const { a } = require('../a');
-export const b = a;
-
-```
-**Output:**
-
-```ts
-  import { a } from '../a';
-export const b = a;
-
-```
-
-
 ## Strict Class Initialization
 
 id: _strictClassInitialization_

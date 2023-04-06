@@ -224,11 +224,13 @@ describe('ts-codefixes', () => {
     );
   });
 
+  /*
   test('requireInTs', async () => {
     await runTest('requireInTs/failing/fail-1.ts', 'requireInTs/passing/pass-1.ts', [
       'requireInTs/a.ts',
     ]);
   });
+   */
 
   test('unusedIdentifier', async () => {
     await runTest('unusedIdentifier/failing/fail-1.ts', 'unusedIdentifier/passing/pass-1.ts');
