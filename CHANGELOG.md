@@ -1,3 +1,11 @@
+## <small>1.0.18-beta (2023-04-07)</small>
+
+* chore: disable requireInTs codefix (#940) ([1d22b2b](https://github.com/rehearsal-js/rehearsal-js/commit/1d22b2b)), closes [#940](https://github.com/rehearsal-js/rehearsal-js/issues/940)
+* fix: don't add multiple todo comments for the same line ([730cec8](https://github.com/rehearsal-js/rehearsal-js/commit/730cec8))
+* fix: don’t insert hbs comments in TS lines (#942) ([4eaae80](https://github.com/rehearsal-js/rehearsal-js/commit/4eaae80)), closes [#942](https://github.com/rehearsal-js/rehearsal-js/issues/942)
+
+
+
 ## <small>1.0.17-beta (2023-04-06)</small>
 
 * fix: check report before accessing prop ([68fa64e](https://github.com/rehearsal-js/rehearsal-js/commit/68fa64e))
