@@ -3,7 +3,7 @@
 exports[`Task: dependency-install > do not run postInstall command if empty 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
 `;
@@ -12,7 +12,7 @@ exports[`Task: dependency-install > install custom dependencies 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
 `;
@@ -20,7 +20,7 @@ exports[`Task: dependency-install > install custom dependencies 1`] = `
 exports[`Task: dependency-install > install required dependencies 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
 `;
@@ -29,7 +29,7 @@ exports[`Task: dependency-install > multiple postInstall commands from user conf
 "[STARTED] Install dependencies
 [DATA] Run postInstall hook from config
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
 `;
@@ -53,7 +53,7 @@ exports[`Task: dependency-install > single postInstall command from user config 
 "[STARTED] Install dependencies
 [DATA] Run postInstall hook from config
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, fs-extra
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
 `;
