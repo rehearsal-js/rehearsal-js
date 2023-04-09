@@ -8,7 +8,7 @@ exports[`migrate init > default run 1`] = `
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SKIPPED] Create tsconfig.json
@@ -82,7 +82,7 @@ exports[`migrate init > pass user config 1`] = `
 [STARTED] Install dependencies
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] Create tsconfig from rehearsal config

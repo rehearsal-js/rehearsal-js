@@ -6,7 +6,7 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json

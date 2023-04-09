@@ -3,7 +3,7 @@
 exports[`Task: config-lint -- ember-app-matrix > ember3-app > create .eslintrc.js if not existed 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
@@ -14,7 +14,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-app > create .eslintrc.j
 exports[`Task: config-lint -- ember-app-matrix > ember3-app > postLintSetup hook from user config 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config
@@ -26,7 +26,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-app > postLintSetup hook
 exports[`Task: config-lint -- ember-app-matrix > ember3-app > run custom config command with user config provided 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config
@@ -37,7 +37,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-app > run custom config 
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > create .eslintrc.js if not existed 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
@@ -48,7 +48,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > cre
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > postLintSetup hook from user config 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config
@@ -60,7 +60,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > pos
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > run custom config command with user config provided 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config
@@ -71,7 +71,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoAddon > run
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > create .eslintrc.js if not existed 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
@@ -82,7 +82,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > cr
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > postLintSetup hook from user config 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config
@@ -94,7 +94,7 @@ exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > po
 exports[`Task: config-lint -- ember-app-matrix > ember3-appWithInRepoEngine > run custom config command with user config provided 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create eslint config
 [DATA] Create .eslintrc.js from rehearsal config

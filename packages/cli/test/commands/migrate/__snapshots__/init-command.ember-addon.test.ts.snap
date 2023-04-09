@@ -8,7 +8,7 @@ exports[`migrate init for ember addon variant > ember3-addon > default run --emb
 [SUCCESS] Initialize
 [STARTED] Install dependencies
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [SUCCESS] Create tsconfig.json
@@ -75,7 +75,7 @@ exports[`migrate init for ember addon variant > ember3-addon > pass user config 
 [STARTED] Install dependencies
 [DATA] Installing dependencies: fs-extra
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, typescript, tmp
-[DATA] Setting resolutions: typescript@^5.0.3
+[DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
 [DATA] Create tsconfig from rehearsal config
