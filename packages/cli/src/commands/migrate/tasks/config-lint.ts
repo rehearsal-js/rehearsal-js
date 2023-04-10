@@ -187,7 +187,7 @@ async function lintJSConfig(
 ): Promise<string | undefined> {
   const eslint = new ESLint({ fix: true, useEslintrc: true, cwd: basePath });
   const [report] = await eslint.lintText(configStr, { filePath: filePath });
-  return report.output ?? '';
+  return report?.output ?? '';
 }
 
 function getRehearsalFilename(format: FORMAT): string {
