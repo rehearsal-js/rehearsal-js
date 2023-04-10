@@ -27,8 +27,8 @@ exports[`Task: dependency-install > install required dependencies 1`] = `
 
 exports[`Task: dependency-install > multiple postInstall commands from user config 1`] = `
 "[STARTED] Install dependencies
-[DATA] Run postInstall hook from config
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Run postInstall hook from config
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
@@ -51,8 +51,8 @@ We ran into an error when installing devDependencies, please install the followi
 
 exports[`Task: dependency-install > single postInstall command from user config 1`] = `
 "[STARTED] Install dependencies
-[DATA] Run postInstall hook from config
 [DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, fs-extra
+[DATA] Run postInstall hook from config
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
