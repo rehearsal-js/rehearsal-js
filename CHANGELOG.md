@@ -1,3 +1,11 @@
+## <small>1.0.19-beta (2023-04-10)</small>
+
+* fix: add resolution for @swc/core@1.3.44 (#943) ([2e20b2f](https://github.com/rehearsal-js/rehearsal-js/commit/2e20b2f)), closes [#943](https://github.com/rehearsal-js/rehearsal-js/issues/943)
+* fix: run post-install hooks after install (#956) ([f9dc16d](https://github.com/rehearsal-js/rehearsal-js/commit/f9dc16d)), closes [#956](https://github.com/rehearsal-js/rehearsal-js/issues/956)
+* chore(gh-action-bot): adding new diagnostics ([5838214](https://github.com/rehearsal-js/rehearsal-js/commit/5838214))
+
+
+
 ## <small>1.0.18-beta (2023-04-07)</small>
 
 * chore: disable requireInTs codefix (#940) ([1d22b2b](https://github.com/rehearsal-js/rehearsal-js/commit/1d22b2b)), closes [#940](https://github.com/rehearsal-js/rehearsal-js/issues/940)

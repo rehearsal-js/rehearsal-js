@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/test-support",
-  "version": "1.0.18-beta",
+  "version": "1.0.19-beta",
   "description": "Test support utilities for rehearsal",
   "license": "BSD-2-Clause",
   "type": "module",
