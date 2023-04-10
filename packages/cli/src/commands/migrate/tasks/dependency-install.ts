@@ -100,14 +100,6 @@ export function depInstallTask(
 
       const { dependencies, devDependencies } = await shouldRunDepInstallTask(options, ctx);
 
-      // install userConfig postInstall hook
-      if (ctx.userConfig?.hasDependencies) {
-        if (ctx.userConfig?.hasPostInstallHook) {
-          task.output = `Run postInstall hook from config`;
-          await ctx.userConfig.postInstall();
-        }
-      }
-
       const errorMessages: string[] = [];
 
       // for deps
@@ -131,6 +123,14 @@ export function depInstallTask(
 
         if (errorMessages.length) {
           throw new Error(errorMessages.join('\n'));
+        }
+      }
+
+      // install userConfig postInstall hook
+      if (ctx.userConfig?.hasDependencies) {
+        if (ctx.userConfig?.hasPostInstallHook) {
+          task.output = `Run postInstall hook from config`;
+          await ctx.userConfig.postInstall();
         }
       }
 
