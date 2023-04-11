@@ -51,7 +51,7 @@ export function getPackageMainFileName(pathToPackage: string): string {
   return result['ember-addon']?.main ?? result.main ?? 'index.js';
 }
 
-type EmberMainModule = {
+export type EmberMainModule = {
   name?: string;
   moduleName?(): string;
 };

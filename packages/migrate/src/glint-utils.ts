@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import path, { resolve } from 'node:path';
-import { requirePackageMain } from '@rehearsal/migration-graph-ember';
+import { dirname, resolve } from 'node:path';
+import { createRequire } from 'node:module';
+import { type EmberMainModule } from '@rehearsal/migration-graph-ember';
 import { readPackageJson } from '@rehearsal/migration-graph-shared';
 import type { PackageJson, TsConfigJson } from 'type-fest';
 
@@ -19,16 +20,21 @@ export function createEmberAddonModuleNameMap(basePath: string): Record<string, 
   const pkg = readPackageJson(basePath);
   const depNames = Object.keys(pkg.dependencies ?? {});
 
+  const require = createRequire(basePath);
+
   return depNames.reduce<Record<string, string>>((acc, name) => {
-    const modulePath = path.resolve(basePath, 'node_modules', name);
+    const mainFile = require.resolve(name);
+    const modulePath = dirname(mainFile);
     const pkg = readPackageJson(modulePath);
 
     if (!(pkg.keywords && pkg.keywords.includes('ember-addon'))) {
       return acc;
     }
 
-    const addon = requirePackageMain(modulePath);
-    const moduleName = addon.moduleName ? addon.moduleName() : name;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const addon: EmberMainModule = require(name) as EmberMainModule;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const moduleName: string = addon.moduleName ? addon.moduleName() : name;
 
     acc[name] = moduleName;
 

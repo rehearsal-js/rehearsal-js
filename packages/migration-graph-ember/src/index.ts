@@ -7,6 +7,7 @@ export {
   isAddon as isEmberAddon,
   getEmberAddonName,
   requirePackageMain,
+  type EmberMainModule,
 } from './utils/ember.js';
 
 export { discoverEmberPackages } from './utils/discover-ember-packages.js';

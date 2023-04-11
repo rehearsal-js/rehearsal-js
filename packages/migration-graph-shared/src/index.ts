@@ -1,9 +1,14 @@
-import { resolve } from 'node:path';
 import { readJsonSync } from 'fs-extra/esm';
+import findupSync from 'findup-sync';
 import type { PackageJson } from 'type-fest';
 
 export function readPackageJson(pathToPackage: string): PackageJson {
-  return readJsonSync(resolve(pathToPackage, 'package.json')) as PackageJson;
+  const pkgJson = findupSync('package.json', { cwd: pathToPackage });
+
+  if (!pkgJson) {
+    throw new Error('Cannot find package.json');
+  }
+  return readJsonSync(pkgJson) as PackageJson;
 }
 
 export { Package, type PackageOptions, onlyPackage } from './entities/package.js';

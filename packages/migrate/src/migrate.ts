@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
-import { readJSON } from 'fs-extra/esm';
+import { readJSON } from '@rehearsal/utils';
 import {
   GlintService,
   isGlintFile,
