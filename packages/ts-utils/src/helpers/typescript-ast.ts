@@ -3,7 +3,7 @@
  */
 
 import ts from 'typescript';
-import type { DiagnosticWithLocation, Node, SourceFile } from 'typescript';
+import type { DiagnosticWithLocation, Node, SourceFile, TypeChecker, TypeNode } from 'typescript';
 
 const {
   findAncestor,
@@ -13,6 +13,7 @@ const {
   isJsxElement,
   isJsxFragment,
   isSourceFile,
+  isTypeReferenceNode,
 } = ts;
 
 /**
@@ -69,6 +70,24 @@ export function findNodeAtPosition(
   return visitor(sourceFile);
 }
 
+export function findNodeEndsAtPosition(sourceFile: SourceFile, pos: number): Node | undefined {
+  let previousNode: ts.Node = sourceFile;
+
+  const visitor = (node: Node): Node | undefined => {
+    // Looking for a not that comes right after the target node...
+    if (node.getStart() >= pos) {
+      // ... and check the previous node children
+      return ts.forEachChild(previousNode, visitor);
+    }
+
+    previousNode = node;
+  };
+
+  ts.forEachChild(sourceFile, visitor);
+
+  return previousNode;
+}
+
 /**
  * Finds the first node in the line.
  * e.g. in `function revert(...)` the `revert` node has `function` node is the first in the line.
@@ -106,4 +125,48 @@ export function isVariableOfCatchClause(node: Node): boolean {
   }
 
   return node.getText() === catchClauseNode.variableDeclaration.getText();
+}
+
+export function canTypeBeResolved(checker: TypeChecker, typeNode: TypeNode): boolean {
+  if (isTypeReferenceNode(typeNode)) {
+    const type = checker.getTypeFromTypeNode(typeNode);
+    const typeArguments = typeNode.typeArguments || [];
+
+    const isTypeError = (type: ts.Type): boolean => {
+      // Check if Type can't be resolved
+      //return (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
+      return type.flags === ts.TypeFlags.Any;
+    };
+
+    return !isTypeError(type) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
+  }
+
+  if (ts.isParenthesizedTypeNode(typeNode)) {
+    return canTypeBeResolved(checker, typeNode.type);
+  }
+
+  if (ts.isTypeLiteralNode(typeNode)) {
+    const types = typeNode.members
+      .map((member) => (ts.isPropertySignature(member) ? member.type : undefined))
+      .filter((member): member is TypeNode => member !== undefined);
+
+    return !types.find((type) => !canTypeBeResolved(checker, type));
+  }
+
+  if (ts.isUnionTypeNode(typeNode)) {
+    return !typeNode.types.find((type) => !canTypeBeResolved(checker, type));
+  }
+
+  if (ts.isFunctionTypeNode(typeNode)) {
+    // Types of function types params (params without types are skipped)
+    const types = typeNode.parameters
+      .map((parameter) => parameter.type)
+      .filter((parameter): parameter is TypeNode => parameter !== undefined);
+
+    // Checking a function return type + all available parameter types
+    return ![typeNode.type, ...types].find((type) => !canTypeBeResolved(checker, type));
+  }
+
+  // Bypass other king of types
+  return true;
 }

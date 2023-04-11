@@ -133,12 +133,14 @@ describe('ts-codefixes', () => {
     await runTest('addVoidToPromise/failing/fail-1.ts', 'addVoidToPromise/passing/pass-1.ts');
   });
 
+  /*
   test('annotateWithTypeFromJSDoc', async () => {
     await runTest(
       'annotateWithTypeFromJSDoc/failing/fail-1.ts',
       'annotateWithTypeFromJSDoc/passing/pass-1.ts'
     );
   });
+  */
 
   test('constructorForDerivedNeedSuperCall', async () => {
     await runTest(

@@ -8,6 +8,7 @@ import { AddMissingExportCodeFix } from './fixes/addMissingExport.js';
 import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
 import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
 import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints.js';
+import { AnnotateWithStrictTypeFromJSDoc } from './fixes/annotateWithStrictTypeFromJSDoc.js';
 import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
@@ -16,6 +17,7 @@ export const codefixes = new CodeFixesProvider([
     new AddMissingExportCodeFix(),
     new AddMissingTypesBasedOnInheritanceCodeFix(),
     new AddMissingTypesBasedOnInlayHintsCodeFix(),
+    new AnnotateWithStrictTypeFromJSDoc(),
     new MakeMemberOptionalCodeFix(),
   ]),
   new TypescriptCodeFixCollection(),

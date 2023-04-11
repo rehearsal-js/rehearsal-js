@@ -750,14 +750,8 @@ export class Foo {
  *
  * @return {void}
  */
-export function think(
-  a: number,
-  b: string | number,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
-  c,
-  /* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'UnavailableType'. */
-  d: UnavailableType
-): void {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type. */
+export function think(a: number, b: string | number, c, d): void {
   return console.log(a, b, c, d);
 }
 "
@@ -812,7 +806,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 106,
+  "fixedItemCount": 107,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -2229,50 +2223,14 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "message": "Parameter 'c' implicitly has an 'any' type.",
       "nodeKind": "Parameter",
       "nodeLocation": {
-        "endColumn": 4,
-        "endLine": 77,
-        "startColumn": 3,
-        "startLine": 77,
+        "endColumn": 55,
+        "endLine": 74,
+        "startColumn": 54,
+        "startLine": 74,
       },
       "nodeText": "c",
       "ruleId": "TS7006",
       "type": 0,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
-      "hint": "Cannot find name 'UnavailableType'.",
-      "hintAdded": true,
-      "message": "Cannot find name 'UnavailableType'.",
-      "nodeKind": "TypeReference",
-      "nodeLocation": {
-        "endColumn": 21,
-        "endLine": 79,
-        "startColumn": 6,
-        "startLine": 79,
-      },
-      "nodeText": "UnavailableType",
-      "ruleId": "TS2304",
-      "type": 0,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'UnavailableType' is not defined.",
-      "hintAdded": false,
-      "message": "'UnavailableType' is not defined.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 21,
-        "endLine": 79,
-        "startColumn": 6,
-        "startLine": 79,
-      },
-      "nodeText": "",
-      "ruleId": "no-undef",
-      "type": 1,
     },
   ],
   "summary": [
