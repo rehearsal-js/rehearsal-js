@@ -52,11 +52,6 @@
     "description": "Adds the `void` as the type parameter of `Promise` where appropriate.",
     "diagnostics": [2810, 2794]
   },
-  "annotateWithTypeFromJSDoc": {
-    "title": "Annotate From JSDoc",
-    "description": "Annotates code with the types from the declared JSDoc comments.",
-    "diagnostics": [80004]
-  },
   "constructorForDerivedNeedSuperCall": {
     "title": "Add Super To Constructor",
     "description": "Adds a call the super class within the constructor.",
@@ -173,35 +168,38 @@
 
   "addErrorTypeGuard": {
     "title": "Add Error Cast",
-    "builtIn": true,
     "description": "Adds a cast to Error objects in catch clauses",
-    "diagnostics": [18046, 2571]
+    "diagnostics": [18046, 2571],
+    "builtIn": true
   },
   "addMissingTypesBasedOnInheritance": {
     "title": "Add Missing Types From Inheritance Chain",
-    "builtIn": true,
     "description": "Adds types to sub-class by looking at the types from the heritage.",
-    "diagnostics": [7050, 7006]
+    "diagnostics": [7050, 7006],
+    "builtIn": true
   },
-
   "makeMemberOptional": {
     "title": "Make Member Optional",
-    "builtIn": true,
     "description": "Safely makes the access to properties optional.",
-    "diagnostics": [2790]
+    "diagnostics": [2790],
+    "builtIn": true
   },
-
   "addMissingExport": {
     "title": "Add Missing Export",
-    "builtIn": true,
     "description": "Exports members that are required and used by other exports.",
-    "diagnostics": [4082]
+    "diagnostics": [4082],
+    "builtIn": true
   },
-
   "inferReturnType": {
     "title": "Add Missing Return Type",
-    "builtIn": true,
     "description": "Adds the return type to methods and functions.",
-    "diagnostics": [7050]
+    "diagnostics": [7050],
+    "builtIn": true
+  },
+  "annotateWithStrictTypeFromJSDoc": {
+    "title": "Annotate Strict Types From JSDoc",
+    "description": "Annotates code with the only strict types from the declared JSDoc comments.",
+    "diagnostics": [80004],
+    "builtIn": true
   }
 }

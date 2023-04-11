@@ -273,37 +273,6 @@ export const p1 = new Promise<void>((resolve) => resolve());
 ```
 
 
-## Annotate From JSDoc
-
-id: _annotateWithTypeFromJSDoc_
-
-Annotates code with the types from the declared JSDoc comments.
-**Input:**
-
-```ts
-/**
- * @param {number} x
- * @returns {number}
- */
-export function f(x) {
-  return x;
-}
-
-```
-**Output:**
-
-```ts
-/**
- * @param {number} x
- * @returns {number}
- */
-export function f(x: number): number {
-  return x;
-}
-
-```
-
-
 ## Add Super To Constructor
 
 id: _constructorForDerivedNeedSuperCall_
@@ -786,6 +755,14 @@ Exports members that are required and used by other exports.
 id: _inferReturnType_
 
 Adds the return type to methods and functions.
+
+
+
+## Annotate Strict Types From JSDoc
+
+id: _annotateWithStrictTypeFromJSDoc_
+
+Annotates code with the only strict types from the declared JSDoc comments.
 
 
 

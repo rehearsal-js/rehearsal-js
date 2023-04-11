@@ -10,7 +10,7 @@ import type fixturify from 'fixturify';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-describe('Test transform', function () {
+describe('Test base codefixes', function () {
   const fixturesDir = resolve(__dirname, 'fixtures');
   const codefixesDir = resolve(__dirname, '../src/fixes');
   let project: Project;
@@ -44,6 +44,7 @@ describe('Test transform', function () {
   }
 
   test.each(transforms)('%s', async (transform) => {
+    console.log(transform);
     const upgradeProjectDir = resolve(project.baseDir, transform);
 
     await runUpgrade(upgradeProjectDir);
