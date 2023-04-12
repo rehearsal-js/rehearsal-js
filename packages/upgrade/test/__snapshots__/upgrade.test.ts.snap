@@ -242,11 +242,12 @@ export function returnTypeHasGenericAny(a: string): Promise<string> {
 /**
  * @param {String} a - some string
  * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @param {object} c
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
-export function oneOfParamsHaveAnyAndReturnHasGenericAny(a: string, b) {
-  return Promise.resolve([a, b]);
+export function oneOfParamsHaveAnyAndReturnHasGenericAny(a: string, b, c) {
+  return Promise.resolve([a, b, c]);
 }
 
 /**
@@ -278,6 +279,13 @@ export function doSomething(args, name: string): string | undefined {
 /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'handler' implicitly has an 'any' type. */
 export function handle(text: string, handler) {
   return handler.string(text);
+}
+
+const models = new WeakMap();
+
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'model' implicitly has an 'any' type. */
+export function collectModel(model, value): void {
+  models.set(model, value);
 }
 "
 `;
@@ -399,7 +407,8 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
  * @param {String} a - some string
  * @param {Object} b - hardcoded to any just for demonstrative purposes
  */
-export function oneOfParamsHaveObject(a: string, b: object): void {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveObject(a: string, b): void {
   console.log(a, b);
 }
 
@@ -407,10 +416,8 @@ export function oneOfParamsHaveObject(a: string, b: object): void {
  * @param {String} a - some string
  * @param {String | Object} b - hardcoded to any just for demonstrative purposes
  */
-export function oneOfParamsHaveSomethingOrObject(
-  a: string,
-  b: string | object
-): void {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveSomethingOrObject(a: string, b): void {
   console.log(a, b);
 }
 
@@ -419,10 +426,8 @@ export function oneOfParamsHaveSomethingOrObject(
  * @param {Object[]} b - hardcoded to any just for demonstrative purposes
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
-export function oneOfParamsHaveObjectAndReturnHasGenericObject(
-  a: string,
-  b: object[]
-) {
+/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'b' implicitly has an 'any' type. */
+export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
   return Promise.resolve([a, b]);
 }
 "
@@ -806,7 +811,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 107,
+  "fixedItemCount": 108,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -1520,9 +1525,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 70,
-        "endLine": 33,
+        "endLine": 34,
         "startColumn": 69,
-        "startLine": 33,
+        "startLine": 34,
       },
       "nodeText": "b",
       "ruleId": "TS7006",
@@ -1538,9 +1543,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 62,
-        "endLine": 43,
+        "endLine": 44,
         "startColumn": 61,
-        "startLine": 43,
+        "startLine": 44,
       },
       "nodeText": "b",
       "ruleId": "TS7006",
@@ -1556,9 +1561,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 33,
-        "endLine": 53,
+        "endLine": 54,
         "startColumn": 29,
-        "startLine": 53,
+        "startLine": 54,
       },
       "nodeText": "args",
       "ruleId": "TS7006",
@@ -1574,11 +1579,29 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 45,
-        "endLine": 64,
+        "endLine": 65,
         "startColumn": 38,
-        "startLine": 64,
+        "startLine": 65,
       },
       "nodeText": "handler",
+      "ruleId": "TS7006",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-any.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
+      "hint": "Parameter 'model' implicitly has an 'any' type.",
+      "hintAdded": true,
+      "message": "Parameter 'model' implicitly has an 'any' type.",
+      "nodeKind": "Parameter",
+      "nodeLocation": {
+        "endColumn": 35,
+        "endLine": 72,
+        "startColumn": 30,
+        "startLine": 72,
+      },
+      "nodeText": "model",
       "ruleId": "TS7006",
       "type": 0,
     },
@@ -1834,6 +1857,60 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       },
       "nodeText": "this.viewportWidth",
       "ruleId": "TS2532",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-object.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
+      "hint": "Parameter 'b' implicitly has an 'any' type.",
+      "hintAdded": true,
+      "message": "Parameter 'b' implicitly has an 'any' type.",
+      "nodeKind": "Parameter",
+      "nodeLocation": {
+        "endColumn": 51,
+        "endLine": 6,
+        "startColumn": 50,
+        "startLine": 6,
+      },
+      "nodeText": "b",
+      "ruleId": "TS7006",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-object.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
+      "hint": "Parameter 'b' implicitly has an 'any' type.",
+      "hintAdded": true,
+      "message": "Parameter 'b' implicitly has an 'any' type.",
+      "nodeKind": "Parameter",
+      "nodeLocation": {
+        "endColumn": 62,
+        "endLine": 15,
+        "startColumn": 61,
+        "startLine": 15,
+      },
+      "nodeText": "b",
+      "ruleId": "TS7006",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-object.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
+      "hint": "Parameter 'b' implicitly has an 'any' type.",
+      "hintAdded": true,
+      "message": "Parameter 'b' implicitly has an 'any' type.",
+      "nodeKind": "Parameter",
+      "nodeLocation": {
+        "endColumn": 76,
+        "endLine": 25,
+        "startColumn": 75,
+        "startLine": 25,
+      },
+      "nodeText": "b",
+      "ruleId": "TS7006",
       "type": 0,
     },
     {

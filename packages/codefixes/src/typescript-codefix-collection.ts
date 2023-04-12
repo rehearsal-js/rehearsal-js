@@ -164,7 +164,7 @@ export function makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined
       }
 
       // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, `=> object`, and same cases with `object[]`
-      const objectTypeUsageRegex = /(=>[:<|])\s*object|object(\[])*\s*[|>]/i;
+      const objectTypeUsageRegex = /(=>|[:<|])\s*object|object(\[])*\s*[|>]/i;
       if (objectTypeUsageRegex.test(textChanges.newText)) {
         continue;
       }

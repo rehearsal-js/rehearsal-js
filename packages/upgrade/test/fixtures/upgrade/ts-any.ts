@@ -25,10 +25,11 @@ export function returnTypeHasGenericAny(a) {
 /**
  * @param {String} a - some string
  * @param {any} b - hardcoded to any just for demonstrative purposes
+ * @param {object} c
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
-export function oneOfParamsHaveAnyAndReturnHasGenericAny(a, b) {
-  return Promise.resolve([a, b]);
+export function oneOfParamsHaveAnyAndReturnHasGenericAny(a, b, c) {
+  return Promise.resolve([a, b, c]);
 }
 
 /**
@@ -57,4 +58,10 @@ export function doSomething(args, name) {
 
 export function handle(text: string, handler) {
   return handler.string(text);
+}
+
+const models = new WeakMap();
+
+export function collectModel(model, value) {
+  models.set(model, value);
 }
