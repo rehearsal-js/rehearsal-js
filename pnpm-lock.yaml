@@ -796,21 +796,15 @@ importers:
       '@rehearsal/plugins': workspace:*
       '@rehearsal/reporter': workspace:*
       '@rehearsal/service': workspace:*
+      '@rehearsal/utils': workspace:*
       '@vitest/coverage-c8': ^0.30.1
+      execa: ^7.0.0
       findup-sync: ^5.0.0
       fixturify-project: ^5.2.0
-<<<<<<< HEAD
-      fs-extra: ^11.1.0
-      listr2: ^5.0.7
-      resolve-package-path: ^4.0.3
-      type-fest: ^3.6.1
-      uuid: ^9.0.0
-      vitest: ^0.29.2
-=======
       fs-extra: ^11.1.1
+      resolve-package-path: ^4.0.3
       type-fest: ^3.8.0
       vitest: ^0.29.8
->>>>>>> 3eeb25e7 (chore(all): bump deps and remove unused deps, coverage)
       winston: ^3.8.2
     dependencies:
       '@rehearsal/migration-graph-ember': link:../migration-graph-ember
@@ -818,14 +812,10 @@ importers:
       '@rehearsal/plugins': link:../plugins
       '@rehearsal/reporter': link:../reporter
       '@rehearsal/service': link:../service
-<<<<<<< HEAD
       '@rehearsal/utils': link:../utils
-      execa: 7.0.0
-      fs-extra: 11.1.0
-      resolve-package-path: 4.0.3
-=======
+      execa: 7.1.1
       fs-extra: 11.1.1
->>>>>>> 3eeb25e7 (chore(all): bump deps and remove unused deps, coverage)
+      resolve-package-path: 4.0.3
       winston: 3.8.2
     devDependencies:
       '@vitest/coverage-c8': 0.30.1_vitest@0.29.8
