@@ -403,6 +403,25 @@ export class Foo {
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
+"function bar(): void {
+  /* @ts-expect-error @rehearsal TODO TS7034: Variable 'emtpy' implicitly has type 'any[]' in some locations where its type cannot be determined. */
+  const emtpy = [];
+  /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'any' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(emtpy as string)', or using type guard: 'if (emtpy instanceof string) { ... }'. */
+  thing(emtpy, \\"foo\\");
+}
+
+function thing(_bar = [], thing: string): void {
+  const fiz = [];
+  fiz.push(thing);
+  /* @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(fiz as string)', or using type guard: 'if (fiz instanceof string) { ... }'. */
+  baz(fiz);
+}
+
+function baz(_bar = []): void {}
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
 "/**
  * @param {String} a - some string
  * @param {Object} b - hardcoded to any just for demonstrative purposes
@@ -433,7 +452,7 @@ export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
 "/**
  * This is a file with some comments added in a previous run of rehearsal
  */
@@ -458,7 +477,7 @@ try {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
 "export function test1(): string {
   return \\"Test this\\";
 }
@@ -497,7 +516,7 @@ export class TestClass extends BaseTestClass implements TestInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
 "// Basics
 
 class Animal {
@@ -682,7 +701,7 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
 "export function test1(me: string): string {
   return \\"This is \\" + me;
 }
@@ -762,7 +781,7 @@ export function think(a: number, b: string | number, c, d): void {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 19`] = `
 "{
   \\"compilerOptions\\": {
     \\"allowSyntheticDefaultImports\\": true,
@@ -787,7 +806,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 19`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 20`] = `
 "{
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"root\\": true,
@@ -811,7 +830,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 108,
+  "fixedItemCount": 114,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -1858,6 +1877,186 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeText": "this.viewportWidth",
       "ruleId": "TS2532",
       "type": 0,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts7034",
+      "hint": "Variable 'emtpy' implicitly has type 'any[]' in some locations where its type cannot be determined.",
+      "hintAdded": true,
+      "message": "Variable 'emtpy' implicitly has type 'any[]' in some locations where its type cannot be determined.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 14,
+        "endLine": 3,
+        "startColumn": 9,
+        "startLine": 3,
+      },
+      "nodeText": "emtpy",
+      "ruleId": "TS7034",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
+      "hint": "Argument of type 'any' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(emtpy as string)', or using type guard: 'if (emtpy instanceof string) { ... }'.",
+      "hintAdded": true,
+      "message": "Argument of type 'any[]' is not assignable to parameter of type 'never[]'..   Type 'any' is not assignable to type 'never'.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 14,
+        "endLine": 5,
+        "startColumn": 9,
+        "startLine": 5,
+      },
+      "nodeText": "emtpy",
+      "ruleId": "TS2345",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
+      "hint": "Argument of type 'string' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(fiz as string)', or using type guard: 'if (fiz instanceof string) { ... }'.",
+      "hintAdded": true,
+      "message": "Argument of type 'string[]' is not assignable to parameter of type 'never[]'..   Type 'string' is not assignable to type 'never'.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 10,
+        "endLine": 12,
+        "startColumn": 7,
+        "startLine": 12,
+      },
+      "nodeText": "fiz",
+      "ruleId": "TS2345",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'bar' is defined but never used.",
+      "hintAdded": false,
+      "message": "'bar' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 13,
+        "endLine": 1,
+        "startColumn": 10,
+        "startLine": 1,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'bar' is defined but never used.",
+      "hintAdded": false,
+      "message": "'bar' is defined but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 13,
+        "endLine": 1,
+        "startColumn": 10,
+        "startLine": 1,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_bar' is assigned a value but never used.",
+      "hintAdded": false,
+      "message": "'_bar' is assigned a value but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 20,
+        "endLine": 8,
+        "startColumn": 16,
+        "startLine": 8,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_bar' is assigned a value but never used.",
+      "hintAdded": false,
+      "message": "'_bar' is assigned a value but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 20,
+        "endLine": 8,
+        "startColumn": 16,
+        "startLine": 8,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_bar' is assigned a value but never used.",
+      "hintAdded": false,
+      "message": "'_bar' is assigned a value but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 18,
+        "endLine": 15,
+        "startColumn": 14,
+        "startLine": 15,
+      },
+      "nodeText": "",
+      "ruleId": "no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "'_bar' is assigned a value but never used.",
+      "hintAdded": false,
+      "message": "'_bar' is assigned a value but never used.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 18,
+        "endLine": 15,
+        "startColumn": 14,
+        "startLine": 15,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-unused-vars",
+      "type": 1,
+    },
+    {
+      "analysisTarget": "ts-never.ts",
+      "category": "Error",
+      "helpUrl": "",
+      "hint": "Unexpected empty function 'baz'.",
+      "hintAdded": false,
+      "message": "Unexpected empty function 'baz'.",
+      "nodeKind": "FunctionDeclaration",
+      "nodeLocation": {
+        "endColumn": 33,
+        "endLine": 15,
+        "startColumn": 31,
+        "startLine": 15,
+      },
+      "nodeText": "",
+      "ruleId": "@typescript-eslint/no-empty-function",
+      "type": 1,
     },
     {
       "analysisTarget": "ts-object.ts",

@@ -157,6 +157,11 @@ export function makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined
         continue;
       }
 
+      const neverTypeUsageRegex = /(=>|[:<|])\s*never|never(\[])*\s*[|>]/i;
+      if (neverTypeUsageRegex.test(textChanges.newText)) {
+        continue;
+      }
+
       // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, `=> any`, and same cases with `any[]`
       const anyTypeUsageRegex = /(=>|[:<|])\s*any|any(\[])*\s*[|>]/i;
       if (anyTypeUsageRegex.test(textChanges.newText)) {
