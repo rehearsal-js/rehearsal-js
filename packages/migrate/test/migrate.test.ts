@@ -42,9 +42,13 @@ function expectFile(filePath: string): Vi.Assertion<string> {
   return expect(readFileSync(filePath, 'utf-8'));
 }
 
-function prepareInputFiles(project: Project, files: string[] = ['index.js']): string[][] {
+function prepareInputFiles(
+  project: Project,
+  files: string[] = ['index.js'],
+  dirPath: string = 'src'
+): string[][] {
   const inputs = files.map((file) => {
-    return resolve(project.baseDir, 'src', file);
+    return resolve(project.baseDir, dirPath, file);
   });
 
   const outputs = inputs.map((file) => {
@@ -577,6 +581,43 @@ export default class SomeComponent extends Component {
 
       const input: MigrateInput = {
         basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type FooService from "foo/services/foo-service";
+import type AuthenticatedUser from "authentication/services/authenticated-user";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("authentication@authenticated-user")
+  declare authenticatedUser: AuthenticatedUser;
+
+  @service("foo@foo-service")
+  declare otherProp: FooService;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with qualified service in subpackage', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(
+        project,
+        ['with-qualified-service.js'],
+        'packages/foo'
+      );
+
+      const input: MigrateInput = {
+        basePath: resolve(project.baseDir, 'packages/foo'),
         sourceFiles: inputs,
         entrypoint: '',
         reporter,

@@ -217,6 +217,7 @@ importers:
       fixturify-project: ^5.2.0
       fs-extra: ^11.1.0
       listr2: ^5.0.7
+      resolve-package-path: ^4.0.3
       type-fest: ^3.6.1
       uuid: ^9.0.0
       vitest: ^0.29.2
@@ -230,6 +231,7 @@ importers:
       '@rehearsal/utils': link:../utils
       execa: 7.0.0
       fs-extra: 11.1.0
+      resolve-package-path: 4.0.3
       winston: 3.8.2
     devDependencies:
       findup-sync: 5.0.0
