@@ -34,7 +34,7 @@ describe('project-graph', () => {
 
     expect(projectGraph.graph.hasNode('my-package')).toBe(true);
     expect(projectGraph.sourceType).toBe('JavaScript Library');
-    const ordered = projectGraph.graph.topSort();
+    const ordered = projectGraph.graph.getSortedNodes();
     expect(flatten(ordered)).toStrictEqual(['my-package']);
     const packageNode = ordered[0];
     const somePackage = packageNode.content.pkg;
@@ -42,7 +42,7 @@ describe('project-graph', () => {
     expect(somePackage?.hasModuleGraph()).toBe(false);
     const moduleGraphForPackage = somePackage?.getModuleGraph(); // Forces creation of moduleGraph
     expect(somePackage?.hasModuleGraph()).toBe(true);
-    expect(flatten(moduleGraphForPackage?.topSort() || [])).toStrictEqual(EXPECTED_FILES);
+    expect(flatten(moduleGraphForPackage?.getSortedNodes() || [])).toStrictEqual(EXPECTED_FILES);
   });
 
   test('should ignore `.<name>.js files (eg. .babelrc.js or .eslintrc.js)', async () => {
@@ -54,9 +54,11 @@ describe('project-graph', () => {
 
     const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
-    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
+    const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
-    expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
+    expect(flatten(somePackage?.getModuleGraph().getSortedNodes() || [])).toStrictEqual(
+      EXPECTED_FILES
+    );
   });
 
   test('should ignore .lock files', async () => {
@@ -69,9 +71,11 @@ describe('project-graph', () => {
     const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
-    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
+    const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
-    expect(flatten(somePackage?.getModuleGraph().topSort() || [])).toStrictEqual(EXPECTED_FILES);
+    expect(flatten(somePackage?.getModuleGraph().getSortedNodes() || [])).toStrictEqual(
+      EXPECTED_FILES
+    );
   });
 
   test('library should ignore files', async () => {
@@ -84,9 +88,9 @@ describe('project-graph', () => {
     const projectGraph = new ProjectGraph(project.baseDir);
     projectGraph.discover();
 
-    const somePackage = projectGraph.graph.topSort()[0].content.pkg;
+    const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
-    const files = flatten(somePackage?.getModuleGraph().topSort() || []);
+    const files = flatten(somePackage?.getModuleGraph().getSortedNodes() || []);
 
     expect(files).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
   });
@@ -102,9 +106,13 @@ describe('project-graph', () => {
     projectGraph.discover();
 
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
-    expect(flatten(projectGraph.graph.topSort())).toStrictEqual(['my-package-with-loose-files']);
+    expect(flatten(projectGraph.graph.getSortedNodes())).toStrictEqual([
+      'my-package-with-loose-files',
+    ]);
     expect(
-      flatten(projectGraph.graph.topSort()[0].content.pkg?.getModuleGraph().topSort() || [])
+      flatten(
+        projectGraph.graph.getSortedNodes()[0].content.pkg?.getModuleGraph().getSortedNodes() || []
+      )
     ).toStrictEqual([
       'Events.js',
       'utils/Defaults.js',
@@ -151,14 +159,14 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, { entrypoint: 'index.js' });
       projectGraph.discover();
 
-      const sorted = projectGraph.graph.topSort();
+      const sorted = projectGraph.graph.getSortedNodes();
 
       sortedPackages = Array.from(sorted)
         .map((node) => node.content.pkg)
         .filter(onlyPackage);
 
       orderedFiles = sortedPackages.reduce((allFiles, p) => {
-        const files = flatten(p.getModuleGraph().topSort());
+        const files = flatten(p.getModuleGraph().getSortedNodes());
         return [...allFiles, ...files];
       }, new Array<string>());
 
@@ -167,12 +175,12 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, { entrypoint: './index.js' });
       projectGraph.discover();
 
-      sortedPackages = Array.from(projectGraph.graph.topSort())
+      sortedPackages = Array.from(projectGraph.graph.getSortedNodes())
         .map((node) => node.content.pkg)
         .filter(onlyPackage);
 
       orderedFiles = sortedPackages.reduce((allFiles, p) => {
-        const files = flatten(p.getModuleGraph().topSort() || []);
+        const files = flatten(p.getModuleGraph().getSortedNodes() || []);
         return [...allFiles, ...files];
       }, new Array<string>());
 
@@ -191,12 +199,12 @@ describe('project-graph', () => {
       });
       projectGraph.discover();
 
-      const orderedPackages = Array.from(projectGraph.graph.topSort())
+      const orderedPackages = Array.from(projectGraph.graph.getSortedNodes())
         .map((node) => node.content.pkg)
         .filter(onlyPackage);
 
       const orderedFiles = orderedPackages.reduce((allFiles, p) => {
-        const moduleNodes = Array.from(p.getModuleGraph().topSort());
+        const moduleNodes = Array.from(p.getModuleGraph().getSortedNodes());
         const files = moduleNodes.map((moduleNode) => moduleNode.content.path);
         return [...allFiles, ...files];
       }, new Array<string>());
@@ -213,7 +221,7 @@ describe('project-graph', () => {
 
       const projectGraph = new ProjectGraph(project.baseDir, { include: ['Brocfile.js'] });
       const [somePackage] = projectGraph.discover();
-      expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(somePackage.getModuleGraph().getSortedNodes())).toStrictEqual([
         'Brocfile.js',
         'lib/a.js',
         'index.js',
@@ -230,7 +238,7 @@ describe('project-graph', () => {
 
       const projectGraph = new ProjectGraph(project.baseDir, { exclude: ['test'] });
       const [somePackage] = projectGraph.discover();
-      expect(flatten(somePackage.getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(somePackage.getModuleGraph().getSortedNodes())).toStrictEqual([
         'lib/a.js',
         'index.js',
       ]);
@@ -253,7 +261,7 @@ describe('project-graph', () => {
       expect(projectGraph.graph.hasNode('@something/baz')).toBe(true);
       expect(projectGraph.graph.hasNode('@something/blorp')).toBe(true);
 
-      const sortedPackages = projectGraph.graph.topSort();
+      const sortedPackages = projectGraph.graph.getSortedNodes();
 
       expect(flatten(sortedPackages)).toStrictEqual([
         '@something/baz',
@@ -267,15 +275,18 @@ describe('project-graph', () => {
         .map((node) => node.content.pkg)
         .filter(onlyPackage);
 
-      expect(flatten(package0.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(package1.getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(package0.getModuleGraph().getSortedNodes())).toStrictEqual([]);
+      expect(flatten(package1.getModuleGraph().getSortedNodes())).toStrictEqual([
         'build.js',
         'lib/impl.js',
         'index.js',
       ]);
-      expect(flatten(package2.getModuleGraph().topSort())).toStrictEqual([]);
-      expect(flatten(package3.getModuleGraph().topSort())).toStrictEqual(['lib/a.js', 'index.js']);
-      expect(flatten(package4.getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(package2.getModuleGraph().getSortedNodes())).toStrictEqual([]);
+      expect(flatten(package3.getModuleGraph().getSortedNodes())).toStrictEqual([
+        'lib/a.js',
+        'index.js',
+      ]);
+      expect(flatten(package4.getModuleGraph().getSortedNodes())).toStrictEqual([
         'index.js',
         'some-util.js',
       ]);
@@ -319,26 +330,26 @@ describe('project-graph', () => {
 
       // Validate graph order correctness
       const nodes = projectGraph.graph
-        .topSort()
+        .getSortedNodes()
         .map((node) => node.content.pkg)
         .filter(onlyPackage);
 
       expect(nodes.length).toBe(3);
 
       expect(nodes[0].packageName).toBe('@some-workspace/leaf');
-      expect(flatten(nodes[0].getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(nodes[0].getModuleGraph().getSortedNodes())).toStrictEqual([
         'build.js',
         'lib/impl.js',
         'index.js',
       ]);
       expect(nodes[1].packageName).toBe('@some-workspace/branch');
-      expect(flatten(nodes[1].getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(nodes[1].getModuleGraph().getSortedNodes())).toStrictEqual([
         'build.js',
         'lib/a.js',
         'index.js',
       ]);
       expect(nodes[2].packageName).toBe('root-package');
-      expect(flatten(nodes[2].getModuleGraph().topSort())).toStrictEqual([
+      expect(flatten(nodes[2].getModuleGraph().getSortedNodes())).toStrictEqual([
         'index.js',
         'some-shared-util.js',
       ]);

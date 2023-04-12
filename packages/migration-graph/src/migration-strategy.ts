@@ -82,7 +82,7 @@ export function getMigrationStrategy(
   const strategy = new MigrationStrategy(rootDir, sourceType);
 
   projectGraph.graph
-    .topSort()
+    .getSortedNodes()
     // Iterate through each package
     .forEach((packageNode: GraphNode<PackageNode>) => {
       const packagePath = packageNode.content?.pkg?.path;
@@ -101,7 +101,7 @@ export function getMigrationStrategy(
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = moduleGraph
-        .topSort()
+        .getSortedNodes()
         .filter((node) => !node.content?.synthetic) // Remove synthetic nodes
         .map((node) => node.content);
 

@@ -5,7 +5,7 @@ import type { EmberProjectPackage } from '../types.js';
 export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackage> {
   const projectGraph = new EmberAppProjectGraph(rootDir);
   projectGraph.discover();
-  const nodes = projectGraph.graph.topSort();
+  const nodes = projectGraph.graph.getSortedNodes();
   return (
     Array.from(nodes)
       .map((node) => node.content.pkg)

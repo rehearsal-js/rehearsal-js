@@ -59,24 +59,24 @@ export class Graph<T extends UniqueNode> {
     return this;
   }
 
-  topSort(start: GraphNode<T> | undefined = undefined): GraphNode<T>[] {
+  getSortedNodes(start: GraphNode<T> | undefined = undefined): GraphNode<T>[] {
     const visited = new Set<GraphNode<T>>();
     const stack = new Array<GraphNode<T>>();
 
     if (start) {
-      this.topSortUtil(start, visited, stack);
+      this.sortUtil(start, visited, stack);
     }
 
     Array.from(this.#nodes).forEach((node: GraphNode<T>) => {
       if (!visited.has(node)) {
-        this.topSortUtil(node, visited, stack);
+        this.sortUtil(node, visited, stack);
       }
     });
 
     return stack; // stack.reverse() would be leaf first.
   }
 
-  private topSortUtil(
+  private sortUtil(
     node: GraphNode<T>,
     visited = new Set<GraphNode<T>>(),
     stack = new Array<GraphNode<T>>()
@@ -85,7 +85,7 @@ export class Graph<T extends UniqueNode> {
 
     node.adjacent.forEach((adj) => {
       if (adj && !visited.has(adj)) {
-        this.topSortUtil(adj, visited, stack);
+        this.sortUtil(adj, visited, stack);
       }
     });
 

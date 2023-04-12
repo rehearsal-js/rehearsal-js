@@ -27,11 +27,11 @@ describe('Unit | EmberAddonProjectGraph', () => {
     const projectGraph = new EmberAddonProjectGraph(project.baseDir);
     projectGraph.discover();
 
-    const orderedPackages = projectGraph.graph.topSort();
+    const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -47,11 +47,11 @@ describe('Unit | EmberAddonProjectGraph', () => {
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, { exclude: ['tests/dummy'] });
     projectGraph.discover();
 
-    const orderedPackages = projectGraph.graph.topSort();
+    const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -65,11 +65,11 @@ describe('Unit | EmberAddonProjectGraph', () => {
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, { include: ['^app'] });
     projectGraph.discover();
 
-    const orderedPackages = projectGraph.graph.topSort();
+    const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
+      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
     ).toStrictEqual([
       'addon/components/greet.js',
       'app/components/greet.js',

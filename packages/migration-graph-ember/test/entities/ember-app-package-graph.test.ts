@@ -41,7 +41,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const p = new EmberAppPackage(project.baseDir);
     const output: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
-    const actual = flatten(output.topSort());
+    const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual([
       'app/app.js',
@@ -106,7 +106,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     const p = new EmberAppPackage(project.baseDir);
     const options = {};
     const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
-    const actual = flatten(output.topSort());
+    const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual([
       'app/app.js',
@@ -195,7 +195,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     };
 
     const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
-    const actual = flatten(output.topSort());
+    const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual([
       'app/app.js',
@@ -421,11 +421,10 @@ describe('Unit | EmberAppPackageGraph', () => {
       'some-addon should depend on another-addon'
     ).toBe(true);
 
-    expect(flatten(m.graph.topSort()), 'package graph should have another-addon first').toEqual([
-      'second-addon',
-      'first-addon',
-      'app-template',
-    ]);
+    expect(
+      flatten(m.graph.getSortedNodes()),
+      'package graph should have another-addon first'
+    ).toEqual(['second-addon', 'first-addon', 'app-template']);
   });
 
   test('should stub a GraphNode and backfill for only addons', async () => {
@@ -518,10 +517,10 @@ describe('Unit | EmberAppPackageGraph', () => {
       'some-addon should depend on another-addon'
     ).toBe(true);
 
-    expect(flatten(m.graph.topSort()), 'package graph should have another-addon first').toEqual([
-      'second-addon',
-      'first-addon',
-    ]);
+    expect(
+      flatten(m.graph.getSortedNodes()),
+      'package graph should have another-addon first'
+    ).toEqual(['second-addon', 'first-addon']);
   });
 
   test('should stub a GraphNode and backfill when moduleName differs from packageName', async () => {
