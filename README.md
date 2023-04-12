@@ -21,28 +21,36 @@ Rehearsal Upgrade can be executed both manually and automated. Rehearsal creates
 
 ## Installation
 
-Simply run `rehearsal` after installing. Currently there are two subcommands (`migrate`, `upgrade`), and a lot of options/flag. Run any command with flag `-h` to check the detailed information.
-
+Add `@rehearsal/cli` to your project as a **devDepndency**.
 ```bash
-volta install @rehearsal/cli
+yarn add -D @rehearsal/cli
 # or
-yarn global add  @rehearsal/cli
-# or
-pnpm install -g @rehearsal/cli
+pnpm add -D @rehearsal/cli
 ```
+
+Once installed, invoke using your package manager:
+```bash
+yarn rehearsal
+# or
+pnpm rehearsal
+```
+
+Currently there are two subcommands (`migrate`, `upgrade`), and a lot of options/flag. Run any command with flag `-h` to check the detailed information.
+
+Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
 
 ## Quick Start - Migrate
 
 ```bash
-# install rehearsal cli
-pnpm install -g @rehearsal/cli
-
 # cd into your javascript project
 cd my-js-project
 
+# Add rehearsal cli as a devDependency
+pnpm add -D @rehearsal/cli
+
 # run rehearsal migrate with an entrypoint to your source file directory
 # entrypiont should be inside your project root directory (where you run rehearsal migrate)
-~/my-js-project rehearsal migrate --entrypoint ./src
+~/my-js-project pnpm rehearsal migrate --entrypoint ./src
 
 # ... rehearsal does some magic
 
