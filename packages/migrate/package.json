@@ -48,6 +48,7 @@
     "@rehearsal/utils": "workspace:*",
     "execa": "^7.0.0",
     "fs-extra": "^11.1.0",
+    "resolve-package-path": "^4.0.3",
     "winston": "^3.8.2"
   },
   "devDependencies": {

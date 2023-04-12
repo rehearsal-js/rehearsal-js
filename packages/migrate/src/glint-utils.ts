@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import path, { resolve } from 'node:path';
-import { requirePackageMain } from '@rehearsal/migration-graph-ember';
+import path from 'node:path';
 import { readPackageJson } from '@rehearsal/migration-graph-shared';
+import { requirePackageMain } from '@rehearsal/migration-graph-ember';
+import resolvePackagePath from 'resolve-package-path';
 import type { PackageJson, TsConfigJson } from 'type-fest';
 
 // The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
@@ -20,7 +21,11 @@ export function createEmberAddonModuleNameMap(basePath: string): Record<string, 
   const depNames = Object.keys(pkg.dependencies ?? {});
 
   return depNames.reduce<Record<string, string>>((acc, name) => {
-    const modulePath = path.resolve(basePath, 'node_modules', name);
+    const pkgJsonPath = resolvePackagePath(name, basePath);
+    if (pkgJsonPath === null) {
+      throw new Error(`Could not resolve path for ${name}`);
+    }
+    const modulePath = path.dirname(pkgJsonPath);
     const pkg = readPackageJson(modulePath);
 
     if (!(pkg.keywords && pkg.keywords.includes('ember-addon'))) {
@@ -66,7 +71,7 @@ export async function addFilePathsForAddonModules(
 }
 
 export async function shouldUseGlint(basePath: string): Promise<boolean> {
-  const pkgPath = resolve(basePath, 'package.json');
+  const pkgPath = path.resolve(basePath, 'package.json');
   let pkgJson: string;
 
   try {
