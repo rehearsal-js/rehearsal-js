@@ -1,0 +1,16 @@
+{
+  "name": "monorepo",
+  "version": "1.0.0",
+  "workspaces": [
+    "./packages/*"
+  ],
+  "devDependencies": {
+    "ember-source": "^3.28.0"
+  },
+  "ember-addon": {
+    "projectRoot": "./packages/voyager-web"
+  },
+  "ember": {
+    "edition": "octane"
+  }
+}

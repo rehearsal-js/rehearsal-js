@@ -1,0 +1,12 @@
+{
+  "name": "@company/d",
+  "version": "1.0.0",
+  "dependencies": {
+    "@company/c": "*"
+  },
+  "main": "./index.js",
+  "keywords": [
+    "ember-addon",
+    "ember-engine"
+  ]
+}

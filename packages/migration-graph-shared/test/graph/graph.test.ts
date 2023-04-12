@@ -52,13 +52,12 @@ describe('graph', () => {
     // This order is determined by the order for which the node was added to the graph.
     // Node f was added first and it's dependencies are in the order of adjacencies.
     const expected = ['1', '3', '2', '0', '5', '4'];
-    const nodes = graph.topSort();
+    const nodes = graph.getSortedNodes();
     const actual = nodes.map((node) => node.content.key);
     expect(actual).toEqual(expected);
   });
 
   test('should print a graph relative to a passed node', () => {
-    // Reference https://www.geeksforgeeks.org/topological-sorting/
     const graph = new Graph<UniqueNode>();
 
     const f = graph.addNode(createNode('5'));
@@ -77,7 +76,8 @@ describe('graph', () => {
 
     // We expect a leaf-to-root output.
     const expected = ['1', '3', '2', '0', '5', '4'];
-    const nodes = graph.topSort(c);
+    // This is currently implementated as topsort in reverse. Leafmost to rootmost
+    const nodes = graph.getSortedNodes(c);
     const actual = nodes.map((node) => node.content.key);
     expect(actual).toEqual(expected);
   });

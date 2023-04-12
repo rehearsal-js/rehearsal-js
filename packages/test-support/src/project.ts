@@ -1,7 +1,6 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import findupSync from 'findup-sync';
-import tmp from 'tmp';
 import { Project } from 'fixturify-project';
 import {
   getEmberAddonFiles,
@@ -9,8 +8,6 @@ import {
   getEmberAppWithInRepoAddonFiles,
   getEmberAppWithInRepoEngine,
 } from './files.js';
-
-tmp.setGracefulCleanup();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,6 +20,7 @@ if (!maybePackageJson) {
 const ROOT_DIR = dirname(maybePackageJson);
 const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
 const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
+const EMBER_MONOREPO = join(ROOT_DIR, 'fixtures/ember/monorepo');
 
 export function getEmberAppProject(project: Project = emberAppTemplate()): Project {
   project.mergeFiles(getEmberAppFiles());
@@ -154,6 +152,12 @@ export function getEmberAppWithInRepoEngineProject(
   return project;
 }
 
+export function getEmberMonorepo(): Project {
+  const project = Project.fromDir(EMBER_MONOREPO, { linkDeps: true, linkDevDeps: true });
+  project.addDevDependency('ember-source');
+  return project;
+}
+
 export function getEmberAddonProject(project: Project = emberAddonTemplate()): Project {
   // For now we are only making compat tests for ember-source >=3.24 and < 4.0
   // Add acceptance test for validating that our engine is mounted and routable;
@@ -200,8 +204,6 @@ export function getEmber4AppProject(): Project {
 }
 
 export async function setupProject(project: Project): Promise<Project> {
-  const { name: tmpDir } = tmp.dirSync();
-  project.baseDir = tmpDir;
   await project.write();
   return project;
 }
@@ -211,7 +213,9 @@ type EmberProjectFixture =
   | 'app-with-utils'
   | 'app-with-in-repo-addon'
   | 'app-with-in-repo-engine'
-  | 'addon';
+  | 'addon'
+  | 'monorepo';
+
 export function getEmberProject(variant: EmberProjectFixture): Project {
   let project;
 
@@ -230,6 +234,9 @@ export function getEmberProject(variant: EmberProjectFixture): Project {
       break;
     case 'addon':
       project = getEmberAddonProject();
+      break;
+    case 'monorepo':
+      project = getEmberMonorepo();
       break;
     default:
       throw new Error(`Unable to getProjectVariant for '${variant}'.`);

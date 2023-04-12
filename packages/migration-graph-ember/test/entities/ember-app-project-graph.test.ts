@@ -221,7 +221,7 @@ export default class Salutation extends Component {
       });
       projectGraph.discover();
 
-      const orderedPackages = projectGraph.graph.topSort();
+      const orderedPackages = projectGraph.graph.getSortedNodes();
 
       expect(orderedPackages.length).toBe(1);
 
@@ -239,7 +239,7 @@ export default class Salutation extends Component {
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
           const graph = pkg.content.pkg?.getModuleGraph();
-          return flatten(graph?.topSort() || []);
+          return flatten(graph?.getSortedNodes() || []);
         })
         .flat();
 
@@ -292,12 +292,12 @@ export default class Salutation extends Component {
       });
       projectGraph.discover();
 
-      const orderedPackages = projectGraph.graph.topSort();
+      const orderedPackages = projectGraph.graph.getSortedNodes();
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
           const modules = pkg.content.pkg?.getModuleGraph();
-          return flatten(modules?.topSort() || []);
+          return flatten(modules?.getSortedNodes() || []);
         })
         .flat();
 
@@ -313,12 +313,12 @@ export default class Salutation extends Component {
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { exclude: ['tests'] });
     projectGraph.discover();
 
-    const orderedPackages = projectGraph.graph.topSort();
+    const orderedPackages = projectGraph.graph.getSortedNodes();
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
         const modules = pkg.content.pkg?.getModuleGraph();
-        return flatten(modules?.topSort() || []);
+        return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
 
@@ -348,12 +348,12 @@ export default class Salutation extends Component {
 
     projectGraph.discover();
 
-    const orderedPackages = projectGraph.graph.topSort();
+    const orderedPackages = projectGraph.graph.getSortedNodes();
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
         const modules = pkg.content.pkg?.getModuleGraph();
-        return flatten(modules?.topSort() || []);
+        return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
 
@@ -417,14 +417,14 @@ export default class Salutation extends Component {
       'should have an edge between app and in-repo-addon'
     ).toBe(true);
 
-    const orderedPackages = projectGraph.graph.topSort(rootNode);
+    const orderedPackages = projectGraph.graph.getSortedNodes(rootNode);
 
     expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
         const modules = pkg.content.pkg?.getModuleGraph();
-        return flatten(modules?.topSort() || []);
+        return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
 
@@ -459,10 +459,10 @@ export default class Salutation extends Component {
       const projectGraph = new EmberAppProjectGraph(project.baseDir);
       projectGraph.discover();
 
-      const orderedPackages = projectGraph.graph.topSort();
+      const orderedPackages = projectGraph.graph.getSortedNodes();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || []))
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-addon', async () => {
@@ -473,7 +473,7 @@ export default class Salutation extends Component {
 
       const rootNode = projectGraph.graph.getNode('app-template');
 
-      const orderedPackages = projectGraph.graph.topSort(rootNode);
+      const orderedPackages = projectGraph.graph.getSortedNodes(rootNode);
 
       const addonNode = projectGraph.graph.getNode('some-addon');
 
@@ -488,12 +488,12 @@ export default class Salutation extends Component {
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
 
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || [])),
         'expected migration order for addon'
       ).toStrictEqual(['addon/components/greet.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
+        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().getSortedNodes() || [])),
         'expected migration order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
@@ -504,16 +504,16 @@ export default class Salutation extends Component {
       projectGraph.discover();
 
       const rootNode = projectGraph.graph.getNode('app-template');
-      const orderedPackages = projectGraph.graph.topSort(rootNode);
+      const orderedPackages = projectGraph.graph.getSortedNodes(rootNode);
 
       expect(flatten(orderedPackages)).toStrictEqual(['some-engine', 'app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().topSort() || [])),
+        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || [])),
         'expected migration order for in-repo-engine'
       ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().topSort() || [])),
+        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().getSortedNodes() || [])),
         'expected migration order for app'
       ).toStrictEqual([
         'app/app.js',
@@ -524,6 +524,30 @@ export default class Salutation extends Component {
         'tests/acceptance/some-engine-test.js',
         'tests/test-helper.js',
         'tests/unit/services/locale-test.js',
+      ]);
+    });
+  });
+
+  describe('ember monorepo', () => {
+    let project: Project;
+
+    afterEach(() => {
+      project.dispose();
+    });
+
+    test('returns the graph in top sort order', async () => {
+      project = getEmberProject('monorepo');
+      await project.write();
+      const projectGraph = new EmberAppProjectGraph(project.baseDir);
+      projectGraph.discover();
+      const nodes = projectGraph.graph.getSortedNodes();
+
+      expect(nodes.map((n) => n.content.pkg?.packageName)).toEqual([
+        '@company/b',
+        '@company/a',
+        '@company/c',
+        '@company/d',
+        'monorepo',
       ]);
     });
   });

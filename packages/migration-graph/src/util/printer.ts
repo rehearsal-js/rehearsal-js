@@ -7,7 +7,7 @@ function printRelationship(source: GraphNode<PackageNode>, dest: GraphNode<Packa
 export function printDirectedGraph(name: string, projectGraph: ProjectGraph): string {
   const rootNode = projectGraph.graph.getNode(name);
 
-  const nodes = projectGraph.graph.topSort(rootNode);
+  const nodes = projectGraph.graph.getSortedNodes(rootNode);
 
   const entries = Array.from(nodes).map((p) => {
     return Array.from(p.adjacent).map((dest) => {

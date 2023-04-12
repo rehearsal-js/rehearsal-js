@@ -288,16 +288,14 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     // Get rootPackage and add it to the graph.
 
-    this.discoveredPackages = found.reduce(
-      (acc: Record<string, Package>, pkg: EmberProjectPackage) => {
-        const node = this.addPackageToGraph(pkg);
-        this.graph.addEdge(rootNode, node);
+    for (const pkg of found) {
+      this.discoveredPackages[pkg.packageName] = pkg;
+    }
 
-        acc[pkg.packageName] = pkg;
-        return acc;
-      },
-      {}
-    );
+    for (const pkg of found) {
+      const node = this.addPackageToGraph(pkg);
+      this.graph.addEdge(rootNode, node);
+    }
 
     return found;
   }
