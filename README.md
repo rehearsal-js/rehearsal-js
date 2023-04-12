@@ -23,7 +23,7 @@ Rehearsal Upgrade can be executed both manually and automated. Rehearsal creates
 
 Add `@rehearsal/cli` to your project as a **devDepndency**.
 ```bash
-yarn add -D  @rehearsal/cli
+yarn add -D @rehearsal/cli
 # or
 pnpm add -D @rehearsal/cli
 ```
