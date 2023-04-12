@@ -8,7 +8,7 @@ exports[`migrate - validation > absolute entrypoint inside project root works 1`
 [DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -49,7 +49,7 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Setting up config for package-a
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -88,7 +88,7 @@ exports[`migrate - validation > not throw if in project root with unrelated npm/
 [DATA] Setting up config for package-a
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -127,7 +127,7 @@ exports[`migrate - validation > relative entrypoint inside project root works 1`
 [DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -168,7 +168,7 @@ exports[`migrate: e2e > Print debug messages with --verbose 1`] = `
 [DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -218,7 +218,7 @@ exports[`migrate: e2e > default migrate command 1`] = `
 [DATA] Setting up config for basic
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json

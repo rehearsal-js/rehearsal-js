@@ -134,7 +134,6 @@ describe('Task: dependency-install', () => {
     // in this scenario typescript is installed as a dependency already and should NOT be installed by rehearsal as a devDep
     // all REQUIRED_DEPENDENCIES should already be installed in package.json expect prettier
     delete packageJSONDevDeps['prettier'];
-    delete packageJSONDevDeps['eslint-config-prettier'];
     delete packageJSONDevDeps['typescript'];
 
     // update package.json with required deps
@@ -158,8 +157,8 @@ describe('Task: dependency-install', () => {
       options
     );
 
-    // only 2 devDeps needs to be installed as package.json has all the others
-    expect(devDependencies).toEqual(['eslint-config-prettier', 'prettier']);
+    // only 1 devDeps needs to be installed as package.json has all the others
+    expect(devDependencies).toEqual(['prettier']);
     expect(dependencies).toEqual([]);
     expect(isInstallRequired).toBeTruthy();
   });

@@ -5,7 +5,7 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [DATA] Setting up config for sequential
 [SUCCESS] Initialize
 [STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 [STARTED] Create tsconfig.json
@@ -34,9 +34,9 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [TITLE] 
 [TITLE]   2 JS files converted to TS
 [TITLE] 
-[TITLE]   6 errors caught by rehearsal
+[TITLE]   5 errors caught by rehearsal
 [TITLE] 
-[TITLE]   4 have been fixed by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE] 
 [TITLE]   2 errors need to be fixed manually
 [TITLE] 
@@ -49,9 +49,9 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [SUCCESS] 
 [SUCCESS]   2 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   6 errors caught by rehearsal
+[SUCCESS]   5 errors caught by rehearsal
 [SUCCESS] 
-[SUCCESS]   4 have been fixed by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS] 
 [SUCCESS]   2 errors need to be fixed manually
 [SUCCESS] 

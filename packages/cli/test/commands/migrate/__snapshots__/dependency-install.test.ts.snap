@@ -2,7 +2,7 @@
 
 exports[`Task: dependency-install > do not run postInstall command if empty 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
@@ -11,7 +11,7 @@ exports[`Task: dependency-install > do not run postInstall command if empty 1`] 
 exports[`Task: dependency-install > install custom dependencies 1`] = `
 "[STARTED] Install dependencies
 [DATA] Installing dependencies: fs-extra
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, tmp
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript, tmp
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
@@ -19,7 +19,7 @@ exports[`Task: dependency-install > install custom dependencies 1`] = `
 
 exports[`Task: dependency-install > install required dependencies 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
 "
@@ -27,7 +27,7 @@ exports[`Task: dependency-install > install required dependencies 1`] = `
 
 exports[`Task: dependency-install > multiple postInstall commands from user config 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript
 [DATA] Run postInstall hook from config
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies
@@ -42,8 +42,6 @@ We ran into an error when installing devDependencies, please install the followi
   - @typescript-eslint/eslint-plugin
   - @typescript-eslint/parser
   - eslint
-  - eslint-config-prettier
-  - eslint-plugin-prettier
   - prettier
   - typescript
   - this-would-fail"
@@ -51,7 +49,7 @@ We ran into an error when installing devDependencies, please install the followi
 
 exports[`Task: dependency-install > single postInstall command from user config 1`] = `
 "[STARTED] Install dependencies
-[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, typescript, fs-extra
+[DATA] Installing devDependencies: @types/node, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint, prettier, typescript, fs-extra
 [DATA] Run postInstall hook from config
 [DATA] Setting resolutions: typescript@^5.0.4
 [SUCCESS] Install dependencies

@@ -11,8 +11,6 @@ export const REQUIRED_DEPENDENCIES = [
   '@typescript-eslint/eslint-plugin',
   '@typescript-eslint/parser',
   'eslint',
-  'eslint-config-prettier',
-  'eslint-plugin-prettier',
   'prettier',
   'typescript',
 ];
