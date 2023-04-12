@@ -3,7 +3,7 @@
 const { execSync } = require('node:child_process');
 const { argv } = require('node:process');
 const semver = require('semver');
-const { version } = require('./packages/cli/package.json');
+const { version } = require('../packages/cli/package.json');
 
 const [_bin, _file, ...args] = argv;
 const [release, prerelease] = args;
