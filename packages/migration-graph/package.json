@@ -30,9 +30,9 @@
   },
   "devDependencies": {
     "@rehearsal/test-support": "workspace:*",
+    "@vitest/coverage-c8": "^0.30.1",
     "fixturify-project": "^5.2.0",
-    "vitest": "^0.29.8",
-    "@vitest/coverage-c8": "^0.30.1"
+    "vitest": "^0.29.8"
   },
   "peerDependencies": {
     "typescript": "^5.0"
