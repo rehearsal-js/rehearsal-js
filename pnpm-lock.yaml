@@ -162,7 +162,7 @@ importers:
     dependencies:
       '@microsoft/api-documenter':
         specifier: ^7.21.3
-        version: 7.21.4(@types/node@16.18.23)
+        version: 7.21.4
       '@rehearsal/migrate':
         specifier: workspace:*
         version: link:../migrate
@@ -272,9 +272,6 @@ importers:
       '@rehearsal/ts-utils':
         specifier: workspace:*
         version: link:../ts-utils
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
     devDependencies:
       '@rehearsal/service':
         specifier: workspace:*
@@ -300,9 +297,6 @@ importers:
 
   packages/migrate:
     dependencies:
-      '@glint/core':
-        specifier: 1.0.0-beta.4
-        version: 1.0.0-beta.4(typescript@5.0.4)
       '@rehearsal/migration-graph-ember':
         specifier: workspace:*
         version: link:../migration-graph-ember
@@ -330,9 +324,6 @@ importers:
       resolve-package-path:
         specifier: ^4.0.3
         version: 4.0.3
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       winston:
         specifier: ^3.8.2
         version: 3.8.2
@@ -345,7 +336,7 @@ importers:
         version: 5.2.0
       listr2:
         specifier: ^5.0.7
-        version: 5.0.8(enquirer@2.3.6)
+        version: 5.0.8
       type-fest:
         specifier: ^3.6.1
         version: 3.8.0
@@ -376,9 +367,6 @@ importers:
       type-fest:
         specifier: ^3.6.1
         version: 3.8.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
     devDependencies:
       '@rehearsal/test-support':
         specifier: workspace:*
@@ -434,9 +422,6 @@ importers:
       type-fest:
         specifier: ^3.6.1
         version: 3.8.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
     devDependencies:
       '@rehearsal/test-support':
         specifier: workspace:*
@@ -492,9 +477,6 @@ importers:
       type-fest:
         specifier: ^3.6.1
         version: 3.8.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
     devDependencies:
       '@rehearsal/test-support':
         specifier: workspace:*
@@ -514,9 +496,6 @@ importers:
 
   packages/plugins:
     dependencies:
-      '@glint/core':
-        specifier: 1.0.0-beta.4
-        version: 1.0.0-beta.4(typescript@5.0.4)
       '@rehearsal/codefixes':
         specifier: workspace:*
         version: link:../codefixes
@@ -550,9 +529,6 @@ importers:
       prettier:
         specifier: ^2.8.4
         version: 2.8.7
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -584,15 +560,9 @@ importers:
       debug:
         specifier: ^4.3.4
         version: 4.3.4
-      eslint:
-        specifier: ^8.0.0
-        version: 8.38.0
       execa:
         specifier: ^7.0.0
         version: 7.1.1
-      typescript:
-        specifier: ^5.0.0
-        version: 5.0.4
       winston:
         specifier: ^3.8.2
         version: 3.8.2
@@ -602,16 +572,13 @@ importers:
         version: 11.1.1
       listr2:
         specifier: ^5.0.7
-        version: 5.0.8(enquirer@2.3.6)
+        version: 5.0.8
       vitest:
         specifier: ^0.29.2
         version: 0.29.8
 
   packages/reporter:
     dependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.0.4
       winston:
         specifier: ^3.8.2
         version: 3.8.2
@@ -628,6 +595,9 @@ importers:
       fs-extra:
         specifier: ^11.1.0
         version: 11.1.1
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
       vitest:
         specifier: ^0.29.2
         version: 0.29.8
@@ -637,9 +607,6 @@ importers:
 
   packages/service:
     dependencies:
-      '@glint/core':
-        specifier: 1.0.0-beta.4
-        version: 1.0.0-beta.4(typescript@5.0.4)
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:../reporter
@@ -649,9 +616,6 @@ importers:
       findup-sync:
         specifier: ^5.0.0
         version: 5.0.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -707,10 +671,19 @@ importers:
       tmp:
         specifier: ^0.2.1
         version: 0.2.1
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
     devDependencies:
+      '@babel/core':
+        specifier: ^7.21.4
+        version: 7.21.4
+      '@ember/string':
+        specifier: ^3.0.1
+        version: 3.0.1
+      '@glimmer/component':
+        specifier: ^1.1.2
+        version: 1.1.2(@babel/core@7.21.4)
+      '@glimmer/tracking':
+        specifier: ^1.1.2
+        version: 1.1.2
       ember-cli:
         specifier: ^4.4.0
         version: 4.12.0
@@ -723,6 +696,9 @@ importers:
       vitest:
         specifier: ^0.29.2
         version: 0.29.8
+      webpack:
+        specifier: ^5.79.0
+        version: 5.79.0
 
   packages/ts-utils:
     dependencies:
@@ -756,9 +732,6 @@ importers:
       simple-git:
         specifier: ^3.16.0
         version: 3.17.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       which:
         specifier: ^3.0.0
         version: 3.0.0
@@ -793,9 +766,6 @@ importers:
       debug:
         specifier: ^4.3.4
         version: 4.3.4
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       winston:
         specifier: ^3.8.2
         version: 3.8.2
@@ -851,9 +821,6 @@ importers:
       type-fest:
         specifier: ^3.6.1
         version: 3.8.0
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
       which:
         specifier: ^3.0.0
         version: 3.0.0
@@ -2969,6 +2936,7 @@ packages:
       yargs: 17.7.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@handlebars/parser@2.0.0:
     resolution: {integrity: sha512-EP9uEDZv/L5Qh9IWuMUGJRfwhXJ4h1dqKTT4/3+tY0eu7sPis7xh23j61SYUnNF4vqCQvvUXpDo9Bh/+q1zASA==}
@@ -3069,13 +3037,13 @@ packages:
       upath: 2.0.1
     dev: false
 
-  /@microsoft/api-documenter@7.21.4(@types/node@16.18.23):
+  /@microsoft/api-documenter@7.21.4:
     resolution: {integrity: sha512-G15pLdo5tBdbEEg2WwKZK/tLF2rR0HckBai8oiAziwWYq/fC/ep6tUby7oIhFqapTnEvbmzXaIgVXHqhjoXLsA==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor-model': 7.26.3(@types/node@16.18.23)
+      '@microsoft/api-extractor-model': 7.26.3
       '@microsoft/tsdoc': 0.14.2
-      '@rushstack/node-core-library': 3.55.1(@types/node@16.18.23)
+      '@rushstack/node-core-library': 3.55.1
       '@rushstack/ts-command-line': 4.13.1
       colors: 1.2.5
       js-yaml: 3.13.1
@@ -3099,12 +3067,12 @@ packages:
       - '@types/node'
     dev: true
 
-  /@microsoft/api-extractor-model@7.26.3(@types/node@16.18.23):
+  /@microsoft/api-extractor-model@7.26.3:
     resolution: {integrity: sha512-1Y/JOkaCF5zE6P56saA0yPzEb7ZJwoF2d8fUYdzZY4I0p1gmqGbNk1h9WguvrN5hANg+2CaqcOX0eh+l4SAhJw==}
     dependencies:
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.55.1(@types/node@16.18.23)
+      '@rushstack/node-core-library': 3.55.1
     transitivePeerDependencies:
       - '@types/node'
     dev: false
@@ -3168,7 +3136,7 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
 
-  /@rushstack/node-core-library@3.55.1(@types/node@16.18.23):
+  /@rushstack/node-core-library@3.55.1:
     resolution: {integrity: sha512-t/nZHq4/4S3ltpYVyIsbbIqmcZx3qEe3Aaw8tI9B6XRNqCFzPxtoTopqTPTuRn8XqCtoDaSe6uMlnn7YCTu8lQ==}
     peerDependencies:
       '@types/node': '*'
@@ -3176,7 +3144,6 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@types/node': 16.18.23
       colors: 1.2.5
       fs-extra: 7.0.1
       import-lazy: 4.0.0
@@ -3567,6 +3534,7 @@ packages:
 
   /@types/node@16.18.23:
     resolution: {integrity: sha512-XAMpaw1s1+6zM+jn2tmw8MyaRDIJfXxqmIQIS0HfoGYPuf7dUWeiUKopwq13KFX9lEp1+THGtlaaYx39Nxr58g==}
+    dev: true
 
   /@types/node@18.15.11:
     resolution: {integrity: sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==}
@@ -4052,10 +4020,8 @@ packages:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  /ajv-formats@2.1.1(ajv@8.12.0):
+  /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -4112,6 +4078,7 @@ packages:
   /ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
     engines: {node: '>=6'}
+    dev: false
 
   /ansi-escapes@3.2.0:
     resolution: {integrity: sha512-cBhpre4ma+U0T1oM5fXg7Dy1Jw7zzwv7lt/GoCpr+hDQJoYnKVPLL4dCvSEFMmQurOQvSrwT7SL/DAlhBI97RQ==}
@@ -6977,6 +6944,7 @@ packages:
     engines: {node: '>=8.6'}
     dependencies:
       ansi-colors: 4.1.3
+    dev: false
 
   /ensure-posix-path@1.1.1:
     resolution: {integrity: sha512-VWU0/zXzVbeJNXvME/5EmLuEj2TauvoaTz6aFYK1Z92JCBlDlZ3Gu0tuGR42kpW1754ywTs+QB0g5TP0oj9Zaw==}
@@ -9328,6 +9296,25 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
+  /listr2@5.0.8:
+    resolution: {integrity: sha512-mC73LitKHj9w6v30nLNGPetZIlfpUniNSsxxrbaPcWOjDb92SHPzJPi/t+v1YC/lxKz/AJ9egOjww0qUuFxBpA==}
+    engines: {node: ^14.13.1 || >=16.0.0}
+    peerDependencies:
+      enquirer: '>= 2.3.0 < 3'
+    peerDependenciesMeta:
+      enquirer:
+        optional: true
+    dependencies:
+      cli-truncate: 2.1.0
+      colorette: 2.0.19
+      log-update: 4.0.0
+      p-map: 4.0.0
+      rfdc: 1.3.0
+      rxjs: 7.8.0
+      through: 2.3.8
+      wrap-ansi: 7.0.0
+    dev: true
+
   /listr2@5.0.8(enquirer@2.3.6):
     resolution: {integrity: sha512-mC73LitKHj9w6v30nLNGPetZIlfpUniNSsxxrbaPcWOjDb92SHPzJPi/t+v1YC/lxKz/AJ9egOjww0qUuFxBpA==}
     engines: {node: ^14.13.1 || >=16.0.0}
@@ -9346,6 +9333,7 @@ packages:
       rxjs: 7.8.0
       through: 2.3.8
       wrap-ansi: 7.0.0
+    dev: false
 
   /livereload-js@3.4.1:
     resolution: {integrity: sha512-5MP0uUeVCec89ZbNOT/i97Mc+q3SxXmiUGhRFOTmhrGPn//uWVQdCvcLJDy64MSBR5MidFdOR7B9viumoavy6g==}
@@ -11468,7 +11456,7 @@ packages:
     dependencies:
       '@types/json-schema': 7.0.11
       ajv: 8.12.0
-      ajv-formats: 2.1.1(ajv@8.12.0)
+      ajv-formats: 2.1.1
       ajv-keywords: 5.1.0(ajv@8.12.0)
     dev: true
 
@@ -12717,6 +12705,7 @@ packages:
     resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
     engines: {node: '>=12.20'}
     hasBin: true
+    dev: true
 
   /uc.micro@1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
@@ -12876,6 +12865,7 @@ packages:
   /uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+    dev: true
 
   /uuid@9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
@@ -13149,6 +13139,7 @@ packages:
 
   /vscode-languageserver-textdocument@1.0.8:
     resolution: {integrity: sha512-1bonkGqQs5/fxGT5UchTgjGVnfysL0O8v1AYMBjqTbWQTFn721zaPGDYFkOKtfDgFiSgXM3KwaG3FMGfW4Ed9Q==}
+    dev: true
 
   /vscode-languageserver-types@3.17.3:
     resolution: {integrity: sha512-SYU4z1dL0PyIMd4Vj8YOqFvHu7Hz/enbWtpfnVbJHU4Nd1YNYx8u0ennumc6h48GQNeOLxmwySmnADouT/AuZA==}

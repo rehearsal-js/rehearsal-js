@@ -45,7 +45,12 @@
     "ember-cli": "^4.4.0",
     "ember-data": "^4.4.0",
     "ember-source": "^4.4.0",
-    "vitest": "^0.29.2"
+    "@babel/core": "^7.21.4",
+    "@ember/string": "^3.0.1",
+    "@glimmer/component": "^1.1.2",
+    "@glimmer/tracking": "^1.1.2",
+    "vitest": "^0.29.2",
+    "webpack": "^5.79.0"
   },
   "peerDependencies": {
     "typescript": "^5.0"
