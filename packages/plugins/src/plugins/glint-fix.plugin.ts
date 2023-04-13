@@ -1,16 +1,16 @@
 import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
-import {
-  GlintService,
-  Plugin,
-  PluginOptions,
-  PluginsRunnerContext,
-  type PluginResult,
-} from '@rehearsal/service';
 import debug from 'debug';
 
 import { pathUtils } from '@glint/core';
 import { CodeFixAction } from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
+import type {
+  GlintService,
+  Plugin,
+  PluginOptions,
+  PluginResult,
+  PluginsRunnerContext,
+} from '@rehearsal/service';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 

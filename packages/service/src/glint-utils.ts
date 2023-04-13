@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { extname, resolve } from 'node:path';
-import { GlintService } from './glint-service.js';
 import { RehearsalService } from './rehearsal-service.js';
+import type { GlintService } from './glint-service.js';
 import type { PackageJson } from 'type-fest';
 
 // The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
