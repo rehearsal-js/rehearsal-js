@@ -1,10 +1,12 @@
 import { dirname, resolve } from 'node:path';
 import {
   DiagnosticFixPlugin,
-  DiagnosticReportPlugin,
+  DiagnosticCommentPlugin,
   LintPlugin,
   PrettierPlugin,
   ReRehearsePlugin,
+  DiagnosticReportPlugin,
+  isPrettierUsedForFormatting,
 } from '@rehearsal/plugins';
 import { Reporter } from '@rehearsal/reporter';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
@@ -73,21 +75,34 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-    })
     .queue(new DiagnosticFixPlugin(), {
       safeFixes: true,
       strictTyping: true,
     })
-    .queue(new PrettierPlugin(), {})
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
+    })
+    .queue(new DiagnosticCommentPlugin(), {
+      commentTag,
+    })
+    .queue(new PrettierPlugin(), {
+      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    })
+    .queue(new LintPlugin(), {
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      reportErrors: false,
+      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
+    })
     .queue(new DiagnosticReportPlugin(), {
       commentTag,
     })
-    .queue(new PrettierPlugin(), {})
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
       reportErrors: true,
     });
 

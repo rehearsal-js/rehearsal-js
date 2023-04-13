@@ -11,12 +11,15 @@ import {
 } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
-  DiagnosticReportPlugin,
+  DiagnosticCommentPlugin,
+  GlintFixPlugin,
+  GlintReportPlugin,
+  isPrettierUsedForFormatting,
   LintPlugin,
   PrettierPlugin,
   ReRehearsePlugin,
   ServiceInjectionsTransformPlugin,
-  isPrettierUsedForFormatting,
+  DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
 import {
@@ -151,7 +154,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
     })
     // Add ts-expect-error comments and report those errors
-    .queue(new DiagnosticReportPlugin(), {
+    .queue(new DiagnosticCommentPlugin(), {
       commentTag,
       filter: (fileName: string) =>
         !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
@@ -169,6 +172,11 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
       filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
+    })
+    .queue(new DiagnosticReportPlugin(), {
+      commentTag,
+      filter: (fileName: string) =>
+        !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
     // Report linter issues
     .queue(new LintPlugin(), {
