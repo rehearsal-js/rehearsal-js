@@ -1,5 +1,5 @@
 import { Reporter } from '@rehearsal/reporter';
-import { describe, expect, test, vi, afterEach } from 'vitest';
+import { describe, expect, test, vi, afterEach, beforeEach, Mock } from 'vitest';
 import { Plugin, PluginOptions, PluginsRunner } from '../src/plugin.js';
 import { RehearsalService } from '../src/rehearsal-service.js';
 
@@ -14,17 +14,23 @@ describe('PluginsRunner', () => {
 
     const service = new RehearsalService({}, []);
 
-    const plugin1Spy = vi.fn(() => []);
+    let plugin1Spy: Mock<[], never[]>;
+    let plugin2Spy: Mock<[], never[]>;
+    let plugin3Spy: Mock<[], never[]>;
 
-    class Plugin1 implements Plugin<PluginOptions> {
+    beforeEach(() => {
+      plugin1Spy = vi.fn(() => []);
+      plugin2Spy = vi.fn(() => []);
+      plugin3Spy = vi.fn(() => []);
+    });
+
+    class Plugin1 extends Plugin<PluginOptions> {
       async run(): Promise<string[]> {
         return Promise.resolve(plugin1Spy());
       }
     }
 
-    const plugin2Spy = vi.fn(() => []);
-
-    class Plugin2 implements Plugin<PluginOptions> {
+    class Plugin2 extends Plugin<PluginOptions> {
       async run(): Promise<string[]> {
         return Promise.resolve(plugin2Spy());
       }
@@ -37,8 +43,8 @@ describe('PluginsRunner', () => {
     test('run after ignored', async () => {
       const runner = new PluginsRunner({ reporter, service, basePath: '.' });
 
-      runner.queue(new Plugin1(), { filter: () => false });
-      runner.queue(new Plugin2(), { filter: () => true });
+      runner.queue(Plugin1, () => false);
+      runner.queue(Plugin2, () => true);
 
       for await (const _ of runner.run(['foo.js'])) {
         // no ops for yield
@@ -51,8 +57,8 @@ describe('PluginsRunner', () => {
     test('ignored after run', async () => {
       const runner = new PluginsRunner({ reporter, service, basePath: '.' });
 
-      runner.queue(new Plugin1(), { filter: () => true });
-      runner.queue(new Plugin2(), { filter: () => false });
+      runner.queue(Plugin1, () => true);
+      runner.queue(Plugin2, () => false);
 
       for await (const _ of runner.run(['foo.js'])) {
         // no ops for yield
@@ -65,8 +71,8 @@ describe('PluginsRunner', () => {
     test('run by default', async () => {
       const runner = new PluginsRunner({ reporter, service, basePath: '.' });
 
-      runner.queue(new Plugin1(), {});
-      runner.queue(new Plugin2(), { filter: () => false });
+      runner.queue(Plugin1);
+      runner.queue(Plugin2, () => false);
 
       for await (const _ of runner.run(['foo.js'])) {
         // no ops for yield
@@ -79,17 +85,15 @@ describe('PluginsRunner', () => {
     test('resume after ignored', async () => {
       const runner = new PluginsRunner({ reporter, service, basePath: '.' });
 
-      const plugin3Spy = vi.fn(() => []);
-
-      class Plugin3 implements Plugin<PluginOptions> {
+      class Plugin3 extends Plugin<PluginOptions> {
         async run(): Promise<string[]> {
           return Promise.resolve(plugin3Spy());
         }
       }
 
-      runner.queue(new Plugin1(), { filter: () => true });
-      runner.queue(new Plugin2(), { filter: () => false });
-      runner.queue(new Plugin3(), { filter: () => true });
+      runner.queue(Plugin1, () => true);
+      runner.queue(Plugin2, () => false);
+      runner.queue(Plugin3, () => true);
 
       for await (const _ of runner.run(['foo.js'])) {
         // no ops for yield

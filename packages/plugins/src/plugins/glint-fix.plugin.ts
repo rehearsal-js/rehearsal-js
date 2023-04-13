@@ -4,13 +4,7 @@ import debug from 'debug';
 
 import ts from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
-import type {
-  GlintService,
-  Plugin,
-  PluginOptions,
-  PluginResult,
-  PluginsRunnerContext,
-} from '@rehearsal/service';
+import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import type MS from 'magic-string';
 
 const require = createRequire(import.meta.url);
@@ -19,15 +13,13 @@ const MagicString = require('magic-string');
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 
-export class GlintFixPlugin implements Plugin<PluginOptions> {
+export class GlintFixPlugin extends Plugin {
   appliedAtOffset: { [file: string]: number[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();
 
-  async run(fileName: string, context: PluginsRunnerContext): PluginResult {
-    // Todo: we should just recreate the plugin class for each file
-    this.resetState();
-
+  async run(): Promise<string[]> {
+    const { fileName, context } = this;
     this.applyFix(fileName, context, ts.DiagnosticCategory.Error);
     this.applyFix(fileName, context, ts.DiagnosticCategory.Suggestion);
 
@@ -129,11 +121,5 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
       }, []);
 
     return transformedActions[0];
-  }
-
-  private resetState(): void {
-    this.appliedAtOffset = {};
-    this.changeTrackers = new Map();
-    this.allFixedFiles = new Set();
   }
 }

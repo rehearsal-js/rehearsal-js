@@ -1,4 +1,4 @@
-import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
+import { Plugin } from '@rehearsal/service';
 import prettier from 'prettier';
 
 import debug from 'debug';
@@ -8,8 +8,10 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:prettier');
 /**
  * Source code formatting
  */
-export class PrettierPlugin implements Plugin<PluginOptions> {
-  async run(fileName: string, context: PluginsRunnerContext): PluginResult {
+export class PrettierPlugin extends Plugin {
+  async run(): Promise<string[]> {
+    const { fileName, context } = this;
+
     const text = context.service.getFileText(fileName);
 
     try {

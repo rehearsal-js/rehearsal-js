@@ -72,36 +72,39 @@ export async function upgrade(input: UpgradeInput): Promise<UpgradeOutput> {
   const service = new RehearsalService(options, fileNames);
 
   const runner = new PluginsRunner({ basePath, service, reporter, logger })
-    .queue(new ReRehearsePlugin(), {
+    .queue(ReRehearsePlugin, {
       commentTag,
     })
-    .queue(new DiagnosticFixPlugin(), {
+    .queue(DiagnosticFixPlugin, {
       safeFixes: true,
       strictTyping: true,
     })
-    .queue(new PrettierPlugin(), {
-      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
+    .queue(PrettierPlugin, (fileName: string) => isPrettierUsedForFormatting(fileName))
+    .queue(
+      LintPlugin,
+      {
+        eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+        reportErrors: false,
+      },
+      (fileName: string) => !isPrettierUsedForFormatting(fileName)
+    )
+    .queue(DiagnosticCommentPlugin, {
+      commentTag,
+      addHints: true,
     })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new DiagnosticCommentPlugin(), {
+    .queue(PrettierPlugin, (fileName: string) => isPrettierUsedForFormatting(fileName))
+    .queue(
+      LintPlugin,
+      {
+        eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+        reportErrors: false,
+      },
+      (fileName: string) => !isPrettierUsedForFormatting(fileName)
+    )
+    .queue(DiagnosticReportPlugin, {
       commentTag,
     })
-    .queue(new PrettierPlugin(), {
-      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new DiagnosticReportPlugin(), {
-      commentTag,
-    })
-    .queue(new LintPlugin(), {
+    .queue(LintPlugin, {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
       reportErrors: true,
     });

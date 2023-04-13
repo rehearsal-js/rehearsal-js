@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
+import { PluginOptions, type PluginResult, Plugin, PluginsRunnerContext } from '@rehearsal/service';
 import { ESLint } from 'eslint';
 import debug from 'debug';
 
@@ -7,20 +7,22 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:formatting');
 
 export interface LintPluginOptions extends PluginOptions {
   eslintOptions?: ESLint.Options;
-  reportErrors?: boolean;
+  reportErrors: boolean;
 }
 
 /**
  * Source code formatting
  */
-export class LintPlugin implements Plugin<LintPluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: LintPluginOptions
-  ): PluginResult {
-    options.eslintOptions ??= {};
-    options.reportErrors ??= false;
+export class LintPlugin extends Plugin<LintPluginOptions> {
+  constructor(fileName: string, context: PluginsRunnerContext, options: LintPluginOptions) {
+    super(fileName, context, options);
+    this.options = {
+      eslintOptions: {},
+      ...options,
+    };
+  }
+  async run(): PluginResult {
+    const { fileName, context, options } = this;
 
     if (path.extname(fileName) === '.hbs') {
       return [];

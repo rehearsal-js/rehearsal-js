@@ -1,24 +1,20 @@
 import ts from 'typescript';
-import { Plugin, PluginOptions, type PluginResult, PluginsRunnerContext } from '@rehearsal/service';
+import { PluginOptions, Plugin } from '@rehearsal/service';
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
 const { isLineBreak } = ts;
 
 export interface ReRehearsePluginOptions extends PluginOptions {
-  commentTag?: string;
+  commentTag: string;
 }
 
 /**
  * Removes all comments with `@rehearsal` tag inside
  */
-export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: ReRehearsePluginOptions
-  ): PluginResult {
-    options.commentTag ??= '@rehearsal';
+export class ReRehearsePlugin extends Plugin<ReRehearsePluginOptions> {
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
 
     let text = context.service.getFileText(fileName);
     const sourceFile = context.service.getSourceFile(fileName);

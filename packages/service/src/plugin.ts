@@ -2,14 +2,31 @@ import { Reporter } from '@rehearsal/reporter';
 import { Logger } from 'winston';
 import { Service } from './rehearsal-service.js';
 
-export interface Plugin<PluginOptions> {
-  run(fileName: string, context: PluginsRunnerContext, options: PluginOptions): PluginResult;
+export abstract class Plugin<Options extends PluginOptions = PluginOptions> {
+  fileName: string;
+  context: PluginsRunnerContext;
+  options: Options;
+  constructor(fileName: string, context: PluginsRunnerContext, options: Options) {
+    this.fileName = fileName;
+    this.context = context;
+    this.options = options;
+  }
+  abstract run(): Promise<string[]>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PluginOptions {
-  filter?: (fileName: string) => boolean;
+export class DummyPlugin extends Plugin {
+  run(): Promise<string[]> {
+    return Promise.resolve([]);
+  }
 }
+
+export type PluginFactory<
+  PluginType extends Plugin = Plugin,
+  PluginOptionsType extends PluginOptions = PluginOptions
+> = new (fileName: string, context: PluginsRunnerContext, options: PluginOptionsType) => PluginType;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface PluginOptions {}
 
 export type PluginResult = Promise<string[]>;
 
@@ -26,18 +43,69 @@ export interface PluginLogger {
 }
 
 export class PluginsRunner {
-  plugins: { plugin: Plugin<PluginOptions>; options: PluginOptions }[] = [];
+  levels: {
+    plugin: PluginFactory;
+    options?: PluginOptions;
+    filter?: (fileName: string) => boolean;
+  }[] = [];
   context: PluginsRunnerContext;
 
   constructor(context: PluginsRunnerContext) {
     this.context = context;
   }
 
-  queue<P extends Plugin<PluginOptions>>(
-    plugin: P,
-    options: P extends Plugin<infer O> ? O : never
+  queue<
+    PluginType extends Plugin = Plugin,
+    PluginOptionsType extends PluginOptions = PluginOptions
+  >(plugin: PluginFactory<PluginType, PluginOptionsType>): this;
+  queue<
+    PluginType extends Plugin = Plugin,
+    PluginOptionsType extends PluginOptions = PluginOptions
+  >(
+    plugin: PluginFactory<PluginType, PluginOptionsType>,
+    filter: (fileName: string) => boolean
+  ): this;
+  queue<
+    PluginType extends Plugin = Plugin,
+    PluginOptionsType extends PluginOptions = PluginOptions
+  >(plugin: PluginFactory<PluginType, PluginOptionsType>, options: PluginOptionsType): this;
+  queue<
+    PluginType extends Plugin = Plugin,
+    PluginOptionsType extends PluginOptions = PluginOptions
+  >(
+    plugin: PluginFactory<PluginType, PluginOptionsType>,
+    options: PluginOptionsType,
+    filter: (fileName: string) => boolean
+  ): this;
+  queue<
+    PluginType extends Plugin = Plugin,
+    PluginOptionsType extends PluginOptions = PluginOptions
+  >(
+    plugin: PluginFactory<PluginType>,
+    ...optionsOrFilter:
+      | []
+      | [PluginOptionsType]
+      | [(fileName: string) => boolean]
+      | [PluginOptionsType, (fileName: string) => boolean]
   ): this {
-    this.plugins.push({ plugin, options });
+    if (optionsOrFilter.length === 2) {
+      const [options, filter] = optionsOrFilter;
+      this.levels.push({ plugin: plugin, options, filter });
+    } else if (optionsOrFilter.length === 1) {
+      if (typeof optionsOrFilter[0] === 'object') {
+        this.levels.push({
+          plugin: plugin,
+          options: optionsOrFilter[0],
+        });
+      } else {
+        this.levels.push({
+          plugin: plugin,
+          filter: optionsOrFilter[0],
+        });
+      }
+    } else {
+      this.levels.push({ plugin });
+    }
     return this;
   }
 
@@ -82,15 +150,17 @@ export class PluginsRunner {
     fileName: string,
     allChangedFiles: Set<string>
   ): AsyncGenerator<Set<string>> {
-    for (const plugin of this.plugins) {
-      if (plugin.options.filter) {
-        if (!plugin.options.filter(fileName)) {
+    for (const level of this.levels) {
+      if (level.filter) {
+        if (!level.filter(fileName)) {
           yield allChangedFiles;
           continue;
         }
       }
 
-      const changedFiles = await plugin.plugin.run(fileName, this.context, plugin.options);
+      const plugin = new level.plugin(fileName, this.context, level.options ? level.options : {});
+
+      const changedFiles = await plugin.run();
 
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
 

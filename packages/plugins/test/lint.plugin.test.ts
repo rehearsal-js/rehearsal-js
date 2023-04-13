@@ -11,12 +11,10 @@ describe('Test LintPlugin', () => {
 
     const context = mockPluginRunnerContext(project);
 
-    const plugin = new LintPlugin();
-
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
 
-      const result = await plugin.run(fileName, context, {
+      const plugin = new LintPlugin(fileName, context, {
         reportErrors: true,
         eslintOptions: {
           useEslintrc: false,
@@ -26,6 +24,8 @@ describe('Test LintPlugin', () => {
           },
         },
       });
+
+      const result = await plugin.run();
 
       const resultText = context.service.getFileText(fileName).trim();
 
