@@ -37,6 +37,18 @@ exports[`Task: dependency-install > multiple postInstall commands from user conf
 exports[`Task: dependency-install > show failed deps 1`] = `
 "We ran into an error when installing dependencies, please install the following as dependencies and try again.
   - this-is-not-existed
+Error: Error: Command failed with exit code 126: volta run npm install this-is-not-existed --ignore-scripts
+npm ERR! code E404
+npm ERR! 404 Not Found - GET https://registry.npmjs.org/this-is-not-existed - Not found
+npm ERR! 404 
+npm ERR! 404  'this-is-not-existed@latest' is not in the npm registry.
+npm ERR! 404 You should bug the author to publish it (or use the name yourself!)
+npm ERR! 404 
+npm ERR! 404 Note that you can also install from a
+npm ERR! 404 tarball, folder, http url, or git url.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/malynch/.npm/_logs/2023-04-13T14_33_52_095Z-debug.log
 We ran into an error when installing devDependencies, please install the following as devDependencies and try again.
   - @types/node
   - @typescript-eslint/eslint-plugin
@@ -46,7 +58,19 @@ We ran into an error when installing devDependencies, please install the followi
   - eslint-plugin-prettier
   - prettier
   - typescript
-  - this-would-fail"
+  - this-would-fail
+Error: Error: Command failed with exit code 126: volta run npm install @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-prettier eslint-plugin-prettier prettier typescript this-would-fail --save-dev --ignore-scripts
+npm ERR! code E404
+npm ERR! 404 Not Found - GET https://registry.npmjs.org/this-would-fail - Not found
+npm ERR! 404 
+npm ERR! 404  'this-would-fail@latest' is not in the npm registry.
+npm ERR! 404 You should bug the author to publish it (or use the name yourself!)
+npm ERR! 404 
+npm ERR! 404 Note that you can also install from a
+npm ERR! 404 tarball, folder, http url, or git url.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/malynch/.npm/_logs/2023-04-13T14_33_54_369Z-debug.log"
 `;
 
 exports[`Task: dependency-install > single postInstall command from user config 1`] = `

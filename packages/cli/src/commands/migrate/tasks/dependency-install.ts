@@ -108,7 +108,7 @@ export function depInstallTask(
           task.output = `Installing dependencies: ${dependencies.join(', ')}`;
           await addDep(dependencies, false, { cwd: options.basePath });
         } catch (e) {
-          errorMessages.push(formatErrorMessage(dependencies, false));
+          errorMessages.push(formatErrorMessage(dependencies, false, e));
         }
       }
 
@@ -118,7 +118,7 @@ export function depInstallTask(
           task.output = `Installing devDependencies: ${devDependencies.join(', ')}`;
           await addDep(devDependencies, true, { cwd: options.basePath });
         } catch (e) {
-          errorMessages.push(formatErrorMessage(devDependencies, true));
+          errorMessages.push(formatErrorMessage(devDependencies, true, e));
         }
 
         if (errorMessages.length) {
@@ -153,10 +153,11 @@ export function depInstallTask(
   };
 }
 
-function formatErrorMessage(deps: string[], dev: boolean): string {
+function formatErrorMessage(deps: string[], dev: boolean, err: unknown): string {
   const depType = dev ? 'devDependencies' : 'dependencies';
   return [
     `We ran into an error when installing ${depType}, please install the following as ${depType} and try again.`,
     `${deps.map((d) => `  - ${d}`).join('\n')}`,
+    `Error: ${err}`,
   ].join('\n');
 }
