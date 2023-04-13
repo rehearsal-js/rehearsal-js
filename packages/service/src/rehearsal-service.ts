@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
-import { GlintLanguageServer } from '@glint/core';
 import { RehearsalServiceHost } from './rehearsal-service-host.js';
+import type { GlintLanguageServer } from '@glint/core';
 import type {
   CompilerOptions,
   Diagnostic,
