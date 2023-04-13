@@ -128,8 +128,8 @@ export class Radio extends Component {
    * @return {string}
    */
   @action
-  // @ts-expect-error @rehearsal TODO TS2355: A function whose declared type is neither 'void' nor 'any' must return a value.
-  async onRadioChange(value: boolean): Promise<string> {
+  // @ts-expect-error @rehearsal TODO TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?
+  async onRadioChange(value: boolean): string {
     this.one = true;
     this.two = false;
 
@@ -247,7 +247,7 @@ export function oneOfParamsHaveSomethingOrAny(a: string, b): void  {
  * @param {String} a - A string
  * @returns {Promise} the promise that resolves when the request has been resumed
  */
-export function returnTypeHasGenericAny(a: string): Promise<string>  {
+export function returnTypeHasGenericAny(a: string) {
   return Promise.resolve(a);
 }
 
@@ -303,7 +303,9 @@ export function collectModel(model, value): void  {
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
-"
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'resolve' is never read or used. Remove the declaration or use it.
+import { resolve } from 'path';
+
 /* Existing comment */
 
 
@@ -334,11 +336,12 @@ export function usesMissingVarWithLongName(): boolean {
 }
 
 
-
+// @ts-expect-error @rehearsal TODO TS2304: Cannot find name '_inSecondsconst'.
+_inSecondsconst _inMinutes
 // The next function call is not properly formatted
 // @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'timestamp'.
 timestamp(   );
-   
+
 // @ts-expect-error @rehearsal TODO TS2306: File './module.ts' is not a module.
 import testModule from './module';
 
@@ -376,7 +379,8 @@ export class Foo {
    * Viewport Width
    * @type {string}
    */
-  @action viewportWidth: string | undefined;
+  // @ts-expect-error @rehearsal TODO TS2564: Property 'viewportWidth' has no initializer and is not definitely assigned in the constructor.
+  @action viewportWidth: number;
 
   /**
    * Foo Method
@@ -392,7 +396,6 @@ export class Foo {
         orderedBreakpointsLongNameConstant.find(([key]) => key === size)
       ) + 1;
     if (nextBreakpointIndex < orderedBreakpointsLongNameConstant.length) {
-      // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
       return this.viewportWidth >= orderedBreakpointsLongNameConstant[nextBreakpointIndex][1];
     }
 
@@ -413,8 +416,7 @@ export class Foo {
    * @param {string} size
    * @returns {boolean}
    */
-  isLess(size: string): boolean {
-    // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
+  isLess(size: string | number): boolean {
     return this.viewportWidth < breakpointMap[size];
   }
 }
@@ -746,12 +748,11 @@ test2(0);
  * @param {number} me
  * @return {string}
  */
-export function test3(me: number): string {
+export function test3(me: string): string {
   return me.toString();
 }
 
 
-// @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'.
 test3('O');
 
 export class A {
@@ -851,7 +852,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 
 exports[`Test upgrade > should output the correct data from upgrade 1`] = `
 {
-  "fixedItemCount": 114,
+  "fixedItemCount": 127,
   "items": [
     {
       "analysisTarget": "2322.ts",
@@ -1234,19 +1235,19 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "react-xx.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2355",
-      "hint": "A function whose declared type is neither 'void' nor 'any' must return a value.",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts1064",
+      "hint": "The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?",
       "hintAdded": true,
-      "message": "A function whose declared type is neither 'void' nor 'any' must return a value.",
-      "nodeKind": "TypeReference",
+      "message": "The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?",
+      "nodeKind": "StringKeyword",
       "nodeLocation": {
-        "endColumn": 55,
+        "endColumn": 46,
         "endLine": 24,
         "startColumn": 40,
         "startLine": 24,
       },
-      "nodeText": "Promise<string>",
-      "ruleId": "TS2355",
+      "nodeText": "string",
+      "ruleId": "TS1064",
       "type": 0,
     },
     {
@@ -1702,6 +1703,24 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=TS6133",
+      "hint": "The declaration 'resolve' is never read or used. Remove the declaration or use it.",
+      "hintAdded": true,
+      "message": "'resolve' is declared but its value is never read.",
+      "nodeKind": "ImportDeclaration",
+      "nodeLocation": {
+        "endColumn": 32,
+        "endLine": 2,
+        "startColumn": 1,
+        "startLine": 2,
+      },
+      "nodeText": "import { resolve } from 'path';",
+      "ruleId": "TS6133",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
       "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
       "hint": "Cannot find name 'whereAmI'.",
       "hintAdded": true,
@@ -1709,9 +1728,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 18,
-        "endLine": 8,
+        "endLine": 10,
         "startColumn": 10,
-        "startLine": 8,
+        "startLine": 10,
       },
       "nodeText": "whereAmI",
       "ruleId": "TS2304",
@@ -1727,9 +1746,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 17,
-        "endLine": 17,
+        "endLine": 19,
         "startColumn": 7,
-        "startLine": 17,
+        "startLine": 19,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -1745,9 +1764,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 17,
-        "endLine": 26,
+        "endLine": 28,
         "startColumn": 7,
-        "startLine": 26,
+        "startLine": 28,
       },
       "nodeText": "missingVar",
       "ruleId": "TS2304",
@@ -1763,11 +1782,29 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 97,
-        "endLine": 28,
+        "endLine": 30,
         "startColumn": 7,
-        "startLine": 28,
+        "startLine": 30,
       },
       "nodeText": "missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString",
+      "ruleId": "TS2304",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "ts-errors.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2304",
+      "hint": "Cannot find name '_inSecondsconst'.",
+      "hintAdded": true,
+      "message": "Cannot find name '_inSecondsconst'.",
+      "nodeKind": "ExpressionStatement",
+      "nodeLocation": {
+        "endColumn": 16,
+        "endLine": 35,
+        "startColumn": 1,
+        "startLine": 35,
+      },
+      "nodeText": "_inSecondsconst",
       "ruleId": "TS2304",
       "type": 0,
     },
@@ -1781,9 +1818,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 10,
-        "endLine": 35,
+        "endLine": 38,
         "startColumn": 1,
-        "startLine": 35,
+        "startLine": 38,
       },
       "nodeText": "timestamp",
       "ruleId": "TS2304",
@@ -1799,9 +1836,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "StringLiteral",
       "nodeLocation": {
         "endColumn": 34,
-        "endLine": 38,
+        "endLine": 41,
         "startColumn": 24,
-        "startLine": 38,
+        "startLine": 41,
       },
       "nodeText": "'./module'",
       "ruleId": "TS2306",
@@ -1811,91 +1848,37 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "analysisTarget": "ts-errors.ts",
       "category": "Error",
       "helpUrl": "",
-      "hint": "'whereAmI' is not defined.",
+      "hint": "Parsing error: Unexpected keyword or identifier.",
       "hintAdded": false,
-      "message": "'whereAmI' is not defined.",
-      "nodeKind": "Identifier",
+      "message": "Parsing error: Unexpected keyword or identifier.",
+      "nodeKind": undefined,
       "nodeLocation": {
-        "endColumn": 18,
-        "endLine": 8,
-        "startColumn": 10,
-        "startLine": 8,
-      },
-      "nodeText": "",
-      "ruleId": "no-undef",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-errors.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'missingVar' is not defined.",
-      "hintAdded": false,
-      "message": "'missingVar' is not defined.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 17,
-        "endLine": 17,
-        "startColumn": 7,
-        "startLine": 17,
-      },
-      "nodeText": "",
-      "ruleId": "no-undef",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-errors.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'missingVar' is not defined.",
-      "hintAdded": false,
-      "message": "'missingVar' is not defined.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 17,
-        "endLine": 26,
-        "startColumn": 7,
-        "startLine": 26,
-      },
-      "nodeText": "",
-      "ruleId": "no-undef",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-errors.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString' is not defined.",
-      "hintAdded": false,
-      "message": "'missingVarAsWellButThisTimeWeUseVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongString' is not defined.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 97,
-        "endLine": 28,
-        "startColumn": 7,
-        "startLine": 28,
-      },
-      "nodeText": "",
-      "ruleId": "no-undef",
-      "type": 1,
-    },
-    {
-      "analysisTarget": "ts-errors.ts",
-      "category": "Error",
-      "helpUrl": "",
-      "hint": "'timestamp' is not defined.",
-      "hintAdded": false,
-      "message": "'timestamp' is not defined.",
-      "nodeKind": "Identifier",
-      "nodeLocation": {
-        "endColumn": 10,
+        "endColumn": 2,
         "endLine": 35,
         "startColumn": 1,
         "startLine": 35,
       },
       "nodeText": "",
-      "ruleId": "no-undef",
+      "ruleId": "error-generated-by-Eslint-core",
       "type": 1,
+    },
+    {
+      "analysisTarget": "ts-multiline-hint.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2564",
+      "hint": "Property 'viewportWidth' has no initializer and is not definitely assigned in the constructor.",
+      "hintAdded": true,
+      "message": "Property 'viewportWidth' has no initializer and is not definitely assigned in the constructor.",
+      "nodeKind": "Identifier",
+      "nodeLocation": {
+        "endColumn": 24,
+        "endLine": 31,
+        "startColumn": 11,
+        "startLine": 31,
+      },
+      "nodeText": "viewportWidth",
+      "ruleId": "TS2564",
+      "type": 0,
     },
     {
       "analysisTarget": "ts-multiline-hint.ts",
@@ -1911,9 +1894,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "AsExpression",
       "nodeLocation": {
         "endColumn": 83,
-        "endLine": 41,
+        "endLine": 42,
         "startColumn": 9,
-        "startLine": 41,
+        "startLine": 42,
       },
       "nodeText": "orderedBreakpointsLongNameConstant.find(([key]) => key === size) as string",
       "ruleId": "TS2345",
@@ -1929,48 +1912,12 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Identifier",
       "nodeLocation": {
         "endColumn": 91,
-        "endLine": 42,
+        "endLine": 43,
         "startColumn": 85,
-        "startLine": 42,
+        "startLine": 43,
       },
       "nodeText": "string",
       "ruleId": "TS2693",
-      "type": 0,
-    },
-    {
-      "analysisTarget": "ts-multiline-hint.ts",
-      "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532",
-      "hint": "Object is possibly 'undefined'.",
-      "hintAdded": true,
-      "message": "Object is possibly 'undefined'.",
-      "nodeKind": "PropertyAccessExpression",
-      "nodeLocation": {
-        "endColumn": 32,
-        "endLine": 47,
-        "startColumn": 14,
-        "startLine": 47,
-      },
-      "nodeText": "this.viewportWidth",
-      "ruleId": "TS2532",
-      "type": 0,
-    },
-    {
-      "analysisTarget": "ts-multiline-hint.ts",
-      "category": "Error",
-      "helpUrl": "https://stackoverflow.com/search?tab=votes&q=ts2532",
-      "hint": "Object is possibly 'undefined'.",
-      "hintAdded": true,
-      "message": "Object is possibly 'undefined'.",
-      "nodeKind": "PropertyAccessExpression",
-      "nodeLocation": {
-        "endColumn": 30,
-        "endLine": 69,
-        "startColumn": 12,
-        "startLine": 69,
-      },
-      "nodeText": "this.viewportWidth",
-      "ruleId": "TS2532",
       "type": 0,
     },
     {
@@ -1983,9 +1930,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": undefined,
       "nodeLocation": {
         "endColumn": 2,
-        "endLine": 41,
+        "endLine": 42,
         "startColumn": 83,
-        "startLine": 41,
+        "startLine": 42,
       },
       "nodeText": "",
       "ruleId": "error-generated-by-Eslint-core",
@@ -2606,24 +2553,6 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
     {
       "analysisTarget": "ts-types.ts",
       "category": "Error",
-      "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
-      "hint": "Argument of type 'string' is not assignable to parameter of type 'number'. Consider verifying both types, using type assertion: '('O' as string)', or using type guard: 'if ('O' instanceof string) { ... }'.",
-      "hintAdded": true,
-      "message": "Argument of type 'string' is not assignable to parameter of type 'number'.",
-      "nodeKind": "StringLiteral",
-      "nodeLocation": {
-        "endColumn": 10,
-        "endLine": 29,
-        "startColumn": 7,
-        "startLine": 29,
-      },
-      "nodeText": "'O'",
-      "ruleId": "TS2345",
-      "type": 0,
-    },
-    {
-      "analysisTarget": "ts-types.ts",
-      "category": "Error",
       "helpUrl": "https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type",
       "hint": "Parameter 'c' implicitly has an 'any' type.",
       "hintAdded": true,
@@ -2631,9 +2560,9 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       "nodeKind": "Parameter",
       "nodeLocation": {
         "endColumn": 57,
-        "endLine": 75,
+        "endLine": 74,
         "startColumn": 56,
-        "startLine": 75,
+        "startLine": 74,
       },
       "nodeText": "c",
       "ruleId": "TS7006",

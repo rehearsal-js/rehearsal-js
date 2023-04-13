@@ -373,9 +373,9 @@ export default class Hello extends Component {
 import { inject as service } from "@ember/service";
 
 export default class Salutation extends Component {
-  @service locale: { current: () => string } | undefined;
+  // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
+  @service locale: { current: () => string };
   get name() {
-    // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
     if (this.locale.current() == "en-US") {
       return "Bob";
     }
@@ -395,7 +395,7 @@ export default class Salutation extends Component {
 
       expect(report.summary[0].basePath).toMatch(project.baseDir);
       expect(getStringAtLocation(outputs[1], report.items[0].nodeLocation as Location)).toEqual(
-        'this.locale'
+        'locale'
       );
       expect(report.items).toHaveLength(1);
       expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
