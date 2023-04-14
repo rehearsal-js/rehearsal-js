@@ -1,9 +1,4 @@
-import {
-  analyzeProject,
-  pathUtils,
-  type GlintLanguageServer,
-  type TransformManager,
-} from '@glint/core';
+import type { GlintLanguageServer, TransformManager } from '@glint/core';
 // This is disabled because vscode-uri is a commonjs module, which causes TS and Eslint to disagree
 // about how it should be imported (╯°□°)╯︵ ┻━┻
 // eslint-disable-next-line import/default
@@ -20,6 +15,8 @@ import { Service } from './rehearsal-service.js';
 import { isGlintFile } from './glint-utils.js';
 
 type TS = typeof import('typescript');
+export type GlintCore = typeof import('@glint/core');
+export type PathUtils = GlintCore['pathUtils'];
 
 type GlintSourceFile = {
   filename: string;
@@ -32,11 +29,14 @@ export class GlintService implements Service {
   protected readonly service: GlintLanguageServer;
   readonly transformManager: TransformManager;
   readonly ts: TS;
+  readonly pathUtils: PathUtils;
 
   private tsService: ts.LanguageService;
 
-  constructor(glintProjectDir: string) {
-    const { languageServer, transformManager, glintConfig } = analyzeProject(glintProjectDir);
+  constructor(glintCore: GlintCore, glintProjectDir: string) {
+    this.pathUtils = glintCore.pathUtils;
+    const { languageServer, transformManager, glintConfig } =
+      glintCore.analyzeProject(glintProjectDir);
 
     this.service = languageServer;
     this.transformManager = transformManager;
@@ -108,8 +108,8 @@ export class GlintService implements Service {
         : diagnosticCode
       : 0;
 
-    const start = pathUtils.positionToOffset(sourceFile.text, diagnostic.range.start);
-    const finish = pathUtils.positionToOffset(sourceFile.text, diagnostic.range.end);
+    const start = this.pathUtils.positionToOffset(sourceFile.text, diagnostic.range.start);
+    const finish = this.pathUtils.positionToOffset(sourceFile.text, diagnostic.range.end);
 
     return {
       source: diagnostic.source,
@@ -129,8 +129,11 @@ export class GlintService implements Service {
       code: diagnostic.code,
       message: diagnostic.messageText as string,
       range: {
-        start: pathUtils.offsetToPosition(diagnostic.file.text, diagnostic.start),
-        end: pathUtils.offsetToPosition(diagnostic.file.text, diagnostic.start + diagnostic.length),
+        start: this.pathUtils.offsetToPosition(diagnostic.file.text, diagnostic.start),
+        end: this.pathUtils.offsetToPosition(
+          diagnostic.file.text,
+          diagnostic.start + diagnostic.length
+        ),
       },
     };
   }
@@ -155,8 +158,8 @@ export class GlintService implements Service {
           return {
             fileName: filePath,
             textChanges: change.edits.map((edit) => {
-              const start = pathUtils.positionToOffset(fixSourceFile.text, edit.range.start);
-              const finish = pathUtils.positionToOffset(fixSourceFile.text, edit.range.end);
+              const start = this.pathUtils.positionToOffset(fixSourceFile.text, edit.range.start);
+              const finish = this.pathUtils.positionToOffset(fixSourceFile.text, edit.range.end);
               return {
                 newText: edit.newText,
                 span: {

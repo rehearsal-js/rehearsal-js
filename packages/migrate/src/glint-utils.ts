@@ -100,9 +100,10 @@ export const DummyPlugin = {
 // for non-Ember projects, so we need to lazily import and instantiate anything that depends on it
 // or else we get "module not found" errors
 export async function createGlintService(basePath: string): Promise<GlintService> {
+  const glintCore = await import('@glint/core');
   const GlintService = (await import('@rehearsal/service')).GlintService;
 
-  return new GlintService(basePath);
+  return new GlintService(glintCore, basePath);
 }
 
 export async function createGlintFixPlugin(): Promise<GlintFixPlugin> {
