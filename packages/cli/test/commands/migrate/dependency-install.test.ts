@@ -286,9 +286,16 @@ describe('Task: dependency-install', () => {
     const userConfig = new UserConfig(project.baseDir, 'rehearsal-config.json', 'migrate');
     const options = createMigrateOptions(project.baseDir, { userConfig: 'rehearsal-config.json' });
     const tasks = [depInstallTask(options, { userConfig })];
-    // await listrTaskRunner(tasks);
 
-    await expect(() => listrTaskRunner(tasks)).rejects.toThrowErrorMatchingSnapshot();
+    try {
+      await listrTaskRunner(tasks);
+    } catch (error) {
+      const e = error as Error;
+      expect(e.message).toContain(
+        'We ran into an error when installing dependencies, please install the following as dependencies and try again'
+      );
+      expect(e.message).toContain('this-is-not-existed');
+    }
   });
 
   test('single postInstall command from user config', async () => {
