@@ -6,7 +6,6 @@ import {
   PluginsRunnerContext,
   Service,
   type PluginResult,
-  PathUtils,
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import debug from 'debug';

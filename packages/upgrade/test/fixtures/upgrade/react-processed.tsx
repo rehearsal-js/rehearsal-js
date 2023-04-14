@@ -1,12 +1,12 @@
 import React from 'react';
 
 export function test() {
-  /* @rehearsal TODO TS6133: The variable 'unused' is never read or used. */
+  // @rehearsal TODO TS6133: The variable 'unused' is never read or used.
   const unused = 'something';
 }
 
 export function Component() {
-  /* @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'. */
+  // @rehearsal TODO TS2304: Cannot find name 'NonExistingElement'.
   const element1 = <NonExistingElement />;
 
   const element2 = (
@@ -21,7 +21,7 @@ export function Component() {
 
   console.log(element1, element2);
 
-  /* @ts-expect-error @rehearsal TODO TS2304: ... */
+  // @ts-expect-error @rehearsal TODO TS2304: ...
   return <NonExistingFragment />;
 }
 

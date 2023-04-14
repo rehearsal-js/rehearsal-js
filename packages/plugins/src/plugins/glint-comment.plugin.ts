@@ -1,6 +1,6 @@
 import { extname } from 'node:path';
 import { createRequire } from 'node:module';
-import { pathUtils, type TransformManager } from '@glint/core';
+import { type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import {
   GlintService,
@@ -9,6 +9,7 @@ import {
   PluginsRunnerContext,
   Service,
   type PluginResult,
+  PathUtils,
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import ts from 'typescript';
@@ -124,10 +125,11 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
       diagnostic.file.fileName
     );
 
-    const position = pathUtils.offsetToPosition(changeTracker.original, diagnostic.start);
+    const position = service.pathUtils.offsetToPosition(changeTracker.original, diagnostic.start);
     const index = position.line;
 
     const isInHbsContext = this.shouldUseHbsComment(
+      service.pathUtils,
       info,
       diagnostic.file.fileName,
       changeTracker.original,
@@ -175,6 +177,7 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
   }
 
   shouldUseHbsComment(
+    pathUtils: PathUtils,
     info: TransformedInfo | null,
     filePath: string,
     fileContents: string,
