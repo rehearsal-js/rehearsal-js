@@ -32,7 +32,7 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run --config ./vitest.config.ts",
+    "test": "vitest --run --config ./vitest.config.ts --coverage",
     "test:slow": "vitest --run",
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
@@ -44,17 +44,16 @@
     "@rehearsal/ts-utils": "workspace:*",
     "@types/object-hash": "^3.0.2",
     "debug": "^4.3.4",
-    "ember-template-lint": "^5.7.2",
-    "ember-template-lint-plugin-prettier": "^4.1.0",
-    "eslint": "^8.33.0",
+    "eslint": "^8.37.0",
     "object-hash": "^3.0.0",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.7",
     "vscode-languageserver": "^8.1.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.21.0",
+    "@types/eslint": "^8.37.0",
+    "@vitest/coverage-c8": "^0.30.1",
     "fixturify-project": "^5.2.0",
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.8"
   },
   "peerDependencies": {
     "@glint/core": "1.0.0-beta.4",

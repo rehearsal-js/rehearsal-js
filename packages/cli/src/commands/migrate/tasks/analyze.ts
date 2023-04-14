@@ -1,10 +1,5 @@
 import { resolve } from 'path';
 import { existsSync } from 'node:fs';
-import {
-  discoverEmberPackages,
-  getMigrationStrategy,
-  SourceFile,
-} from '@rehearsal/migration-graph';
 import { determineProjectName, readTSConfig, writeTSConfig } from '@rehearsal/utils';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
@@ -17,6 +12,8 @@ import {
   PackageSelection,
   TSConfig,
 } from '../../../types.js';
+// eslint-disable-next-line no-restricted-imports -- type import
+import type { SourceFile } from '@rehearsal/migration-graph';
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate:analyze');
 
@@ -29,6 +26,10 @@ export function analyzeTask(
   return {
     title: 'Analyze project',
     async task(ctx: MigrateCommandContext, task) {
+      const { discoverEmberPackages, getMigrationStrategy } = await import(
+        '@rehearsal/migration-graph'
+      ).then((m) => m);
+
       const projectName = determineProjectName(options.basePath);
       const packages = discoverEmberPackages(options.basePath);
 

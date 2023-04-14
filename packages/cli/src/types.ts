@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports -- type import
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { UserConfig } from './user-config.js';
 import type { State } from './helpers/state.js';

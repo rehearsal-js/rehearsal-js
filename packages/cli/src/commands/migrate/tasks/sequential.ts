@@ -44,7 +44,7 @@ export function sequentialTask(
       );
 
       for (const runPath of previousRuns.paths) {
-        const files = getSourceFiles(runPath.basePath, runPath.entrypoint);
+        const files = await getSourceFiles(runPath.basePath, runPath.entrypoint);
         const { scannedFiles } = await regen({
           basePath: runPath.basePath,
           entrypoint: runPath.entrypoint,
@@ -57,7 +57,7 @@ export function sequentialTask(
         task.title = getRegenSummary(reporter.lastRun!, scannedFiles.length, true);
       }
 
-      const currentRunFiles = getSourceFiles(options.basePath, options.entrypoint);
+      const currentRunFiles = await getSourceFiles(options.basePath, options.entrypoint);
 
       const input = {
         basePath,

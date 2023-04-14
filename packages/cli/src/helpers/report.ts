@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+// eslint-disable-next-line no-restricted-imports -- these functions are all lazy loaded in consumers
 import {
   jsonFormatter,
   Report,

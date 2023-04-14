@@ -43,7 +43,7 @@ module.exports = {
       }
     },
     {
-      files: ['./packages/cli/**/*.ts'],
+      files: ['./packages/cli/src/**/*.ts'],
       rules: {
         'no-restricted-imports': [
           'error',
@@ -55,7 +55,6 @@ module.exports = {
         ],
       },
     },
-
     {
       files: ['./packages/utils/**/*.ts'],
       rules: {
@@ -113,6 +112,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-non-null-assertion': ['off'],
     '@typescript-eslint/no-inferrable-types': ['off'],
+    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '_' }],
   },
   ignorePatterns: [
     'dist',

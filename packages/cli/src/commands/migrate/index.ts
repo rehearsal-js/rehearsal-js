@@ -10,6 +10,7 @@ import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../.
 import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';
+// eslint-disable-next-line no-restricted-imports -- this is a type import
 import type { Report } from '@rehearsal/reporter';
 
 const __dirname = new URL('.', import.meta.url).pathname;
