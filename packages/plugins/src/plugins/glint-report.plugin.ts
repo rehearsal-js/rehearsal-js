@@ -1,5 +1,5 @@
 import { extname } from 'node:path';
-import { pathUtils, type TransformManager } from '@glint/core';
+import { type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import {
   GlintService,
@@ -8,6 +8,7 @@ import {
   PluginsRunnerContext,
   Service,
   type PluginResult,
+  PathUtils,
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import { getLocation } from '../helpers.js';
@@ -103,10 +104,17 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const fileContents = service.getFileText(filePath);
     const lines = fileContents.split('\n');
     const info = service.transformManager.findTransformInfoForOriginalFile(filePath);
-    const start = pathUtils.offsetToPosition(fileContents, diagnostic.start);
+    const start = service.pathUtils.offsetToPosition(fileContents, diagnostic.start);
     const index = start.line;
 
-    const useHbsComment = this.shouldUseHbsComment(info, filePath, fileContents, diagnostic, index);
+    const useHbsComment = this.shouldUseHbsComment(
+      service.pathUtils,
+      info,
+      filePath,
+      fileContents,
+      diagnostic,
+      index
+    );
 
     const [leadingWhitespace, indentation] = /^\s*\n?(\s*)/.exec(lines[index]) ?? ['', ''];
     const message = `${commentTag} TODO TS${diagnostic.code}: ${hint}`;
@@ -121,6 +129,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
   }
 
   shouldUseHbsComment(
+    pathUtils: PathUtils,
     info: TransformedInfo | null,
     filePath: string,
     fileContents: string,

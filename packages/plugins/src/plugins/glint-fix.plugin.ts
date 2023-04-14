@@ -1,7 +1,6 @@
 import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
 import debug from 'debug';
 
-import { pathUtils } from '@glint/core';
 import { CodeFixAction } from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import type {
@@ -28,7 +27,7 @@ export class GlintFixPlugin implements Plugin<PluginOptions> {
         break;
       }
       const fileText = service.getFileText(fileName);
-      const start = pathUtils.positionToOffset(fileText, diagnostic.range.start);
+      const start = service.pathUtils.positionToOffset(fileText, diagnostic.range.start);
 
       const fix = this.getCodeFix(fileName, diagnostic, service);
 
