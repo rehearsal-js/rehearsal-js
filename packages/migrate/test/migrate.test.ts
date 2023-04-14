@@ -194,7 +194,7 @@ export default class Hello extends Component {
 import { inject as service } from '@ember/service';
 
 export default class Hello extends Component {
-  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service('authenticated-user') authenticatedUser;
 
   name = 'world';
@@ -213,10 +213,10 @@ export default class Hello extends Component {
       const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
       expect(getStringAtLocation(outputs[0], report.items[0].nodeLocation as Location)).toEqual(
-        'age'
+        'authenticatedUser'
       );
       expect(getStringAtLocation(outputs[0], report.items[1].nodeLocation as Location)).toEqual(
-        'authenticatedUser'
+        'age'
       );
 
       expect(report.summary[0].basePath).toMatch(project.baseDir);
@@ -375,7 +375,7 @@ import { inject as service } from "@ember/service";
 export default class Salutation extends Component {
   @service locale: { current: () => string } | undefined;
   get name() {
-    /* @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'. */
+    // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
     if (this.locale.current() == "en-US") {
       return "Bob";
     }
@@ -450,7 +450,7 @@ export default class Salutation extends Component {
 
       const expected = `class Foo {
   hello() {
-    /* @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. */
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
     return this.name;
   }
 }
@@ -515,7 +515,7 @@ module("Integration | Helper | grid-list", function (hooks) {
 
   test("it sets and changes the columns classes", async function (assert) {
     this.set("styles", "foo");
-    /* @ts-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'. */
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'.
     await render(hbs\`<ul data-test-el class="{{this.styles}}">foo</ul>\`);
 
     this.set("styles", "foo");
@@ -566,7 +566,7 @@ module("Integration | Helper | grid-list", function (hooks) {
 import { inject as service } from "@ember/service";
 
 export default class SomeComponent extends Component {
-  /* @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service("authenticated-user") authenticatedUser;
 }
 `;

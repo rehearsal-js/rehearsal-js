@@ -8,7 +8,8 @@ export {
   DiagnosticReportPluginOptions,
 } from './diagnostic-report.plugin.js';
 export { GlintFixPlugin } from './glint-fix.plugin.js';
-export { GlintCommentPlugin as GlintReportPlugin } from './glint-comment.plugin.js';
+export { GlintCommentPlugin } from './glint-comment.plugin.js';
+export { GlintReportPlugin } from './glint-report.plugin.js';
 export { LintPlugin, LintPluginOptions } from './lint.plugin.js';
 export { PrettierPlugin, isPrettierUsedForFormatting } from './prettier.plugin.js';
 export { ReRehearsePlugin, ReRehearsePluginOptions } from './re-rehearse.plugin.js';

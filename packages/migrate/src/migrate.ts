@@ -12,8 +12,6 @@ import {
 import {
   DiagnosticFixPlugin,
   DiagnosticCommentPlugin,
-  GlintFixPlugin,
-  GlintReportPlugin,
   isPrettierUsedForFormatting,
   LintPlugin,
   PrettierPlugin,
@@ -28,6 +26,7 @@ import {
   createEmberAddonModuleNameMap,
   createGlintFixPlugin,
   createGlintReportPlugin,
+  createGlintCommentPlugin,
   createGlintService,
 } from './glint-utils.js';
 import type { Logger } from 'winston';
@@ -159,7 +158,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       filter: (fileName: string) =>
         !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
-    .queue(useGlint ? await createGlintReportPlugin() : DummyPlugin, {
+    .queue(useGlint ? await createGlintCommentPlugin() : DummyPlugin, {
       commentTag,
       filter: (fileName: string) =>
         isGlintService(service, useGlint) && isGlintFile(service, fileName),
@@ -177,6 +176,11 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       commentTag,
       filter: (fileName: string) =>
         !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
+    })
+    .queue(useGlint ? await createGlintReportPlugin() : DummyPlugin, {
+      commentTag,
+      filter: (fileName: string) =>
+        isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
     // Report linter issues
     .queue(new LintPlugin(), {

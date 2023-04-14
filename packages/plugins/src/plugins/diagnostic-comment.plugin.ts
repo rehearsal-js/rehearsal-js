@@ -33,6 +33,7 @@ export interface DiagnosticCommentPluginOptions extends PluginOptions {
 export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOptions> {
   private changeTrackers: Map<string, MS.default> = new Map();
   private ignoreLines: { [line: number]: boolean } = {};
+
   async run(
     fileName: string,
     context: PluginsRunnerContext,
@@ -48,6 +49,7 @@ export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOp
     const allFixedFiles: Set<string> = new Set();
 
     this.ignoreLines = {};
+    this.changeTrackers = new Map();
 
     for (const diagnostic of diagnostics) {
       if (!this.changeTrackers.has(diagnostic.file.fileName)) {
@@ -182,13 +184,8 @@ export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOp
      * It correctly finds the valid place to stick the inline comment
      */
     if (!this.ignoreLines[lineAndChar.line]) {
-      let commentLine = lineAndChar.line;
-      let pos = getPositionOfLineAndCharacter(diagnostic.file, commentLine, 0);
-
-      const previousLine = commentLine - 1;
-      const prevLinePos = getPositionOfLineAndCharacter(diagnostic.file, commentLine, 0);
-      commentLine = previousLine;
-      pos = prevLinePos;
+      const commentLine = lineAndChar.line;
+      const pos = getPositionOfLineAndCharacter(diagnostic.file, commentLine, 0);
 
       let ws = '';
       let i = pos;

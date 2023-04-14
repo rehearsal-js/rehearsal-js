@@ -5,7 +5,7 @@ import { requirePackageMain } from '@rehearsal/migration-graph-ember';
 import resolvePackagePath from 'resolve-package-path';
 import type { PackageJson, TsConfigJson } from 'type-fest';
 import type { GlintService } from '@rehearsal/service';
-import type { GlintFixPlugin, GlintReportPlugin } from '@rehearsal/plugins';
+import type { GlintCommentPlugin, GlintFixPlugin, GlintReportPlugin } from '@rehearsal/plugins';
 
 // The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
 // in any ember/glimmer project, we'll use the glint *service* for all files. This list is only
@@ -116,4 +116,10 @@ export async function createGlintReportPlugin(): Promise<GlintReportPlugin> {
   const GlintReportPlugin = (await import('@rehearsal/plugins')).GlintReportPlugin;
 
   return new GlintReportPlugin();
+}
+
+export async function createGlintCommentPlugin(): Promise<GlintCommentPlugin> {
+  const GlintReportPlugin = (await import('@rehearsal/plugins')).GlintCommentPlugin;
+
+  return new GlintCommentPlugin();
 }

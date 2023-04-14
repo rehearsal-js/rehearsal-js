@@ -1,4 +1,5 @@
 import { extname } from 'node:path';
+import { createRequire } from 'node:module';
 import { pathUtils, type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import {
@@ -10,8 +11,13 @@ import {
   type PluginResult,
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
-import MagicString from 'magic-string';
+import ts from 'typescript';
 import { getLocation } from '../helpers.js';
+import type MS from 'magic-string';
+
+const require = createRequire(import.meta.url);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const MagicString = require('magic-string');
 
 export interface GlintCommentPluginOptions extends PluginOptions {
   commentTag: string;
@@ -26,12 +32,15 @@ export interface DiagnosticWithLocation extends DiagnosticWithContext {
 }
 
 export class GlintCommentPlugin implements Plugin<PluginOptions> {
-  changeTrackers: Map<string, MagicString.default> = new Map();
+  changeTrackers: Map<string, MS.default> = new Map();
+  ignoreLines: { [line: number]: boolean } = {};
   async run(
     fileName: string,
     context: PluginsRunnerContext,
     options: GlintCommentPluginOptions
   ): PluginResult {
+    this.changeTrackers = new Map();
+    this.ignoreLines = {};
     const service = context.service as GlintService;
     const diagnostics = this.getDiagnostics(service, fileName);
 
@@ -45,13 +54,13 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
       if (!this.changeTrackers.has(diagnostic.file.fileName)) {
         const originalText = context.service.getFileText(diagnostic.file.fileName);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-        const changeTracker: MagicString.default = new MagicString.default(originalText);
+        const changeTracker: MS.default = new MagicString(originalText);
 
         this.changeTrackers.set(diagnostic.file.fileName, changeTracker);
       }
 
       const hint = hints.getHint(diagnostic).replace(context.basePath, '.');
-      this.insertTodo(service, diagnostic, hint, options.commentTag);
+      this.addHintComment(service, diagnostic, hint, options.commentTag);
       fixedFiles.add(fileName);
     }
 
@@ -89,27 +98,33 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
     }, []);
   }
 
-  insertTodo(
+  /*
+    Builds and adds a `@rehearsal` comment above the affected node
+   */
+  addHintComment(
     service: GlintService,
     diagnostic: DiagnosticWithContext,
     hint: string,
     commentTag: string
   ): void {
-    const filePath = diagnostic.file.fileName;
-    const changeTracker = this.changeTrackers.get(filePath);
+    const changeTracker = this.changeTrackers.get(diagnostic.file.fileName);
 
     if (!changeTracker) {
       throw new Error('Invariant');
     }
 
-    const info = service.transformManager.findTransformInfoForOriginalFile(filePath);
+    // Search for a position to add comment - the first element at the line with affected node
+
+    const info = service.transformManager.findTransformInfoForOriginalFile(
+      diagnostic.file.fileName
+    );
+
     const position = pathUtils.offsetToPosition(changeTracker.original, diagnostic.start);
     const index = position.line;
-    const head = changeTracker.slice(0, position.character);
 
-    const useHbsComment = this.shouldUseHbsComment(
+    const isInHbsContext = this.shouldUseHbsComment(
       info,
-      filePath,
+      diagnostic.file.fileName,
       changeTracker.original,
       diagnostic,
       index
@@ -117,12 +132,41 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
 
     const message = `${commentTag} TODO TS${diagnostic.code}: ${hint}`;
 
-    const todo = useHbsComment
-      ? `{{! @glint-expect-error ${message} }}`
-      : `/* @ts-expect-error ${message} */`;
+    const tsIgnoreCommentText = isInHbsContext
+      ? `@glint-expect-error ${message}`
+      : `@ts-expect-error ${message}`;
 
-    changeTracker.update(position.character, position.character + todo.length, todo);
-    changeTracker.update(0, position.character, head);
+    const lineAndChar = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
+
+    /**
+     * The following logic has been ported from  https://github.com/airbnb/ts-migrate/blob/master/packages/ts-migrate-plugins/src/plugins/ts-ignore.ts#L199
+     *
+     * It correctly finds the valid place to stick the inline comment
+     */
+    if (!this.ignoreLines[lineAndChar.line]) {
+      const commentLine = lineAndChar.line;
+      const pos = ts.getPositionOfLineAndCharacter(diagnostic.file, commentLine, 0);
+
+      let ws = '';
+      let i = pos;
+      while (diagnostic.file.text[i] === ' ') {
+        i += 1;
+        ws += ' ';
+      }
+
+      if (isInHbsContext) {
+        changeTracker.appendRight(pos, `${ws}{{! ${tsIgnoreCommentText} }}${ts.sys.newLine}`);
+      } else if (onMultilineConditionalTokenLine(diagnostic.file, diagnostic.start)) {
+        changeTracker.appendRight(
+          getConditionalCommentPos(diagnostic.file, diagnostic.start),
+          ` // ${tsIgnoreCommentText}${ts.sys.newLine}${ws} `
+        );
+      } else {
+        changeTracker.appendRight(pos, `${ws}// ${tsIgnoreCommentText}${ts.sys.newLine}`);
+      }
+
+      this.ignoreLines[lineAndChar.line] = true;
+    }
   }
 
   shouldUseHbsComment(
@@ -167,4 +211,81 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
 
     return false;
   }
+}
+
+function onMultilineConditionalTokenLine(sourceFile: ts.SourceFile, pos: number): boolean {
+  const conditionalExpression = getConditionalExpressionAtPos(sourceFile, pos);
+  // Not in a conditional expression.
+  if (!conditionalExpression) {
+    return false;
+  }
+
+  const { line: questionTokenLine } = ts.getLineAndCharacterOfPosition(
+    sourceFile,
+    conditionalExpression.questionToken.end
+  );
+  const { line: colonTokenLine } = ts.getLineAndCharacterOfPosition(
+    sourceFile,
+    conditionalExpression.colonToken.end
+  );
+  // Single line conditional expression.
+  if (questionTokenLine === colonTokenLine) {
+    return false;
+  }
+
+  const { line } = ts.getLineAndCharacterOfPosition(sourceFile, pos);
+  return visitConditionalExpressionWhen(conditionalExpression, pos, {
+    // On question token line of multiline conditional expression.
+    whenTrue: () => line === questionTokenLine,
+    // On colon token line of multiline conditional expression.
+    whenFalse: () => line === colonTokenLine,
+    otherwise: () => false,
+  });
+}
+
+function visitConditionalExpressionWhen<T>(
+  node: ts.ConditionalExpression | undefined,
+  pos: number,
+  visitor: {
+    whenTrue(node: ts.ConditionalExpression): T;
+    whenFalse(node: ts.ConditionalExpression): T;
+    otherwise(): T;
+  }
+): T {
+  if (!node) {
+    return visitor.otherwise();
+  }
+
+  const inWhenTrue = node.whenTrue.pos <= pos && pos < node.whenTrue.end;
+  if (inWhenTrue) {
+    return visitor.whenTrue(node);
+  }
+
+  const inWhenFalse = node.whenFalse.pos <= pos && pos < node.whenFalse.end;
+  if (inWhenFalse) {
+    return visitor.whenFalse(node);
+  }
+
+  return visitor.otherwise();
+}
+
+function getConditionalExpressionAtPos(
+  sourceFile: ts.SourceFile,
+  pos: number
+): ts.ConditionalExpression | undefined {
+  const visitor = (node: ts.Node): ts.ConditionalExpression | undefined => {
+    if (node.pos <= pos && pos < node.end && ts.isConditionalExpression(node)) {
+      return node;
+    }
+    return ts.forEachChild(node, visitor);
+  };
+  return ts.forEachChild(sourceFile, visitor);
+}
+
+function getConditionalCommentPos(sourceFile: ts.SourceFile, pos: number): number {
+  return visitConditionalExpressionWhen(getConditionalExpressionAtPos(sourceFile, pos), pos, {
+    whenTrue: (node) => node.questionToken.end,
+    whenFalse: (node) => node.colonToken.end,
+    otherwise: () => pos,
+  });
 }
