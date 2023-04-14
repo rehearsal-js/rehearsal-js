@@ -92,6 +92,6 @@ describe('Task: sequential', () => {
     expect(summary?.[0].entrypoint).toBe('depends-on-foo.ts');
     expect(summary?.[1].entrypoint).toBe('index.ts');
     expect(fixedItemCount).toBe(4);
-    expect(items?.length).toBe(3);
+    expect(items?.length).toBe(2);
   });
 });

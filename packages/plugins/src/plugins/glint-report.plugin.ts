@@ -10,6 +10,7 @@ import {
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import debug from 'debug';
+import ts from 'typescript';
 import { getLocation } from '../helpers.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-report');
@@ -32,6 +33,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
 
     DEBUG_CALLBACK(`Plugin 'GlintReport' run on %O:`, fileName);
 
+    const lineHasSupression: { [line: number]: boolean } = {};
     const originalConentWithErrorsSupressed = context.service.getFileText(fileName);
 
     let contentWithErrors = originalConentWithErrorsSupressed;
@@ -69,7 +71,12 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
       const hint = hints.getHint(diagnostic).replace(context.basePath, '.');
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
-      context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
+
+      // We only allow for a single entry per line
+      if (!lineHasSupression[location.startLine]) {
+        context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
+        lineHasSupression[location.startLine] = true;
+      }
     }
 
     // Set the document back to the content with the errors supressed
@@ -83,7 +90,9 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName)).filter((d) =>
+      this.isErrorDiagnostic(d)
+    );
 
     return diagnostics.reduce<DiagnosticWithLocation[]>((acc, diagnostic) => {
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
@@ -103,5 +112,9 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
 
       return acc;
     }, []);
+  }
+
+  isErrorDiagnostic(diagnostic: ts.DiagnosticWithLocation): boolean {
+    return diagnostic.category === ts.DiagnosticCategory.Error;
   }
 }

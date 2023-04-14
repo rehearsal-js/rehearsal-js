@@ -33,6 +33,7 @@ export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOpti
 
     const originalConentWithErrorsSupressed = context.service.getFileText(fileName);
 
+    const lineHasSupression: { [line: number]: boolean } = {};
     let contentWithErrors = originalConentWithErrorsSupressed;
     const sourceFile = context.service.getSourceFile(fileName);
     const tagStarts = [...contentWithErrors.matchAll(new RegExp(options.commentTag, 'g'))].map(
@@ -70,14 +71,18 @@ export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOpti
       const helpUrl = hints.getHelpUrl(diagnostic);
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
 
-      context.reporter.addTSItemToRun(
-        diagnostic,
-        diagnostic.node,
-        location,
-        hint,
-        helpUrl,
-        options.addHints
-      );
+      // We only allow for a single entry per line
+      if (!lineHasSupression[location.startLine]) {
+        context.reporter.addTSItemToRun(
+          diagnostic,
+          diagnostic.node,
+          location,
+          hint,
+          helpUrl,
+          options.addHints
+        );
+        lineHasSupression[location.startLine] = true;
+      }
     }
 
     // We have now collected the correct line / cols of the errors. We can now set the document back to one without errors.
@@ -111,12 +116,24 @@ export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOpti
 
     const diagnostics = service.getDiagnostics(fileName);
 
-    return diagnostics.map((diagnostic) => ({
-      ...diagnostic,
-      service: languageService,
-      program,
-      checker,
-      node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
-    }));
+    return diagnostics
+      .map((diagnostic) => ({
+        ...diagnostic,
+        service: languageService,
+        program,
+        checker,
+        node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+      }))
+      .filter(
+        (diagnostic) => this.isValidDiagnostic(diagnostic) && this.isErrorDiagnostic(diagnostic)
+      );
+  }
+
+  isValidDiagnostic(diagnostic: DiagnosticWithContext): boolean {
+    return !!diagnostic.node;
+  }
+
+  isErrorDiagnostic(diagnostic: DiagnosticWithContext): boolean {
+    return diagnostic.category === ts.DiagnosticCategory.Error;
   }
 }

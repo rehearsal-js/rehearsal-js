@@ -24,7 +24,7 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [TITLE] 
 [TITLE]   3 ts files have been scanned
 [TITLE] 
-[TITLE]   7 errors caught by rehearsal, and will be merged into the migration report
+[TITLE]   4 errors caught by rehearsal, and will be merged into the migration report
 [TITLE] 
 [TITLE]     
 [DATA] processing file: /foo.ts
@@ -34,30 +34,30 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [TITLE] 
 [TITLE]   2 JS files converted to TS
 [TITLE] 
-[TITLE]   7 errors caught by rehearsal
+[TITLE]   6 errors caught by rehearsal
 [TITLE] 
 [TITLE]   4 have been fixed by rehearsal
 [TITLE] 
-[TITLE]   3 errors need to be fixed manually
+[TITLE]   2 errors need to be fixed manually
 [TITLE] 
-[TITLE]     -- 3 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE] 
-[TITLE]     -- 0 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [TITLE] 
 [SUCCESS] Migration Complete
 [SUCCESS] 
 [SUCCESS] 
 [SUCCESS]   2 JS files converted to TS
 [SUCCESS] 
-[SUCCESS]   7 errors caught by rehearsal
+[SUCCESS]   6 errors caught by rehearsal
 [SUCCESS] 
 [SUCCESS]   4 have been fixed by rehearsal
 [SUCCESS] 
-[SUCCESS]   3 errors need to be fixed manually
+[SUCCESS]   2 errors need to be fixed manually
 [SUCCESS] 
-[SUCCESS]     -- 3 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS] 
-[SUCCESS]     -- 0 eslint errors, with details in the report
+[SUCCESS]     -- 1 eslint errors, with details in the report
 [SUCCESS] 
 "
 `;

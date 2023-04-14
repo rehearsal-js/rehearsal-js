@@ -9,7 +9,7 @@ import {
 } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
-import ts, { LanguageService } from 'typescript';
+import ts from 'typescript';
 import {
   findDiagnosticNode,
   getConditionalCommentPos,
@@ -23,13 +23,7 @@ const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const MagicString = require('magic-string');
 
-const {
-  isTemplateLiteral,
-  findAncestor,
-  DiagnosticCategory,
-  getLineAndCharacterOfPosition,
-  getPositionOfLineAndCharacter,
-} = ts;
+const { DiagnosticCategory, getLineAndCharacterOfPosition, getPositionOfLineAndCharacter } = ts;
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-comment');
 
 export interface DiagnosticCommentPluginOptions extends PluginOptions {
@@ -49,7 +43,7 @@ export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOp
     options.addHints ??= true;
     options.commentTag ??= `@rehearsal`;
 
-    const diagnostics = this.getDiagnostics(context.service, fileName, options.commentTag);
+    const diagnostics = this.getDiagnostics(context.service, fileName);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticCommentPlugin' run on %O:`, fileName);
 
@@ -85,7 +79,7 @@ export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOp
     return Promise.resolve(Array.from(allFixedFiles));
   }
 
-  getDiagnostics(service: Service, fileName: string, tag: string): DiagnosticWithContext[] {
+  getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
     const languageService = service.getLanguageService();
     const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
@@ -101,73 +95,8 @@ export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOp
         node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
       }))
       .filter(
-        (diagnostic) =>
-          this.isValidDiagnostic(diagnostic) &&
-          this.isErrorDiagnostic(diagnostic) &&
-          this.hasNotAddedDiagnosticComment(diagnostic, tag, languageService)
+        (diagnostic) => this.isValidDiagnostic(diagnostic) && this.isErrorDiagnostic(diagnostic)
       );
-  }
-
-  /**
-   * Tries to find a `@rehearsal` on the first non-empty line above the affected node
-   * It uses ts.getSpanOfEnclosingComment to check if the @rehearsal is a part of comment line
-   */
-  hasNotAddedDiagnosticComment(
-    diagnostic: DiagnosticWithContext,
-    tag: string,
-    service: LanguageService
-  ): boolean {
-    // Search for a position to add comment - the first element at the line with affected node
-    const sourceFile = diagnostic.file;
-
-    let lineWithNode = sourceFile.getLineAndCharacterOfPosition(diagnostic.start).line;
-
-    // In case of issue inside template literal the node line will the start of template literal
-    const templateLiteralNode = findAncestor(diagnostic.node, isTemplateLiteral);
-    if (templateLiteralNode) {
-      lineWithNode = sourceFile.getLineAndCharacterOfPosition(templateLiteralNode.getStart()).line;
-    }
-
-    if (lineWithNode === 0) {
-      return true;
-    }
-
-    // Search for the first non-empty line above the node
-    let lineAbove = lineWithNode - 1;
-    let lineAboveText = '';
-    let lineAboveStart = 0;
-
-    do {
-      lineAboveStart = sourceFile.getPositionOfLineAndCharacter(lineAbove, 0);
-      const lineAboveEnd = sourceFile.getLineEndOfPosition(lineAboveStart);
-
-      lineAboveText = sourceFile.getFullText().substring(lineAboveStart, lineAboveEnd).trim();
-
-      lineAbove -= 1;
-    } while (lineAbove > 0 && lineAboveText === '');
-
-    // Check if line contains `@rehearsal` tag
-    const tagIndex = lineAboveText.indexOf(tag);
-
-    if (tagIndex === -1) {
-      return true;
-    }
-
-    const tagStart = lineAboveStart + tagIndex;
-
-    // Make sure the tag within a comment (not a part of string value)
-    const commentSpan = service.getSpanOfEnclosingComment(sourceFile.fileName, tagStart, false);
-
-    if (commentSpan === undefined) {
-      return true;
-    }
-
-    const comment = sourceFile
-      .getFullText()
-      .substring(tagStart + tag.length, commentSpan.start + commentSpan.length) // grab `@rehearsal ... */`
-      .replace(/\*\/(})?$/gm, '') // remove */ or */} from the end
-      .trim();
-    return !comment;
   }
 
   /**
