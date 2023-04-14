@@ -1,6 +1,7 @@
 import { dirname, extname, resolve } from 'path';
 import { PluginsRunner, RehearsalService } from '@rehearsal/service';
 import {
+  DiagnosticCommentPlugin,
   DiagnosticReportPlugin,
   isPrettierUsedForFormatting,
   LintPlugin,
@@ -84,15 +85,8 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
     .queue(new ReRehearsePlugin(), {
       commentTag,
     })
-    .queue(new PrettierPlugin(), {
-      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
-      reportErrors: false,
-    })
-    // Add ts-expect-error comments and report those errors
-    .queue(new DiagnosticReportPlugin(), {
+    // Add ts-expect-error comments
+    .queue(new DiagnosticCommentPlugin(), {
       commentTag,
     })
     // Format previously added comments
@@ -104,9 +98,12 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
       reportErrors: false,
       filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
     })
+    .queue(new DiagnosticReportPlugin(), {
+      commentTag,
+    })
     // Report linter issues
     .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true, ...input.eslintOptions },
+      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false, ...input.eslintOptions },
       reportErrors: true,
     });
 

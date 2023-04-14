@@ -1,4 +1,3 @@
-import type { GlintLanguageServer, TransformManager } from '@glint/core';
 // This is disabled because vscode-uri is a commonjs module, which causes TS and Eslint to disagree
 // about how it should be imported (╯°□°)╯︵ ┻━┻
 // eslint-disable-next-line import/default
@@ -13,6 +12,7 @@ import {
 } from 'vscode-languageserver';
 import { Service } from './rehearsal-service.js';
 import { isGlintFile } from './glint-utils.js';
+import type { GlintLanguageServer, TransformManager } from '@glint/core';
 
 type TS = typeof import('typescript');
 export type GlintCore = typeof import('@glint/core');

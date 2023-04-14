@@ -54,17 +54,17 @@ describe('regen', () => {
     const { items } = report;
     expect(JSON.stringify(items, null, 2)).toMatchSnapshot();
 
-    expect(fileOutputMatched('test1.ts')).toBeTruthy();
-    expect(fileOutputMatched('test2.js')).toBeTruthy();
-    expect(fileOutputMatched('test3.ts')).toBeTruthy();
-    expect(fileOutputMatched('test4.ts')).toBeTruthy();
+    fileOutputMatched('test1.ts');
+    fileOutputMatched('test2.js');
+    fileOutputMatched('test3.ts');
+    fileOutputMatched('test4.ts');
   });
 });
 
-function fileOutputMatched(filename: string): boolean {
+function fileOutputMatched(filename: string): void {
   const outputFile = resolve(project.baseDir, filename);
   const outputFileContent = readFileSync(outputFile, 'utf-8');
-  return outputFileContent === project.files[filename];
+  expect(outputFileContent).toEqual(project.files[filename]);
 }
 
 function cleanReport(report: Report): Report {

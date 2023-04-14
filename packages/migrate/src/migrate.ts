@@ -11,12 +11,13 @@ import {
 } from '@rehearsal/service';
 import {
   DiagnosticFixPlugin,
-  DiagnosticReportPlugin,
+  DiagnosticCommentPlugin,
+  isPrettierUsedForFormatting,
   LintPlugin,
   PrettierPlugin,
   ReRehearsePlugin,
   ServiceInjectionsTransformPlugin,
-  isPrettierUsedForFormatting,
+  DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
 import ts from 'typescript';
 import {
@@ -25,6 +26,7 @@ import {
   createEmberAddonModuleNameMap,
   createGlintFixPlugin,
   createGlintReportPlugin,
+  createGlintCommentPlugin,
   createGlintService,
 } from './glint-utils.js';
 import type { Logger } from 'winston';
@@ -151,12 +153,12 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
     })
     // Add ts-expect-error comments and report those errors
-    .queue(new DiagnosticReportPlugin(), {
+    .queue(new DiagnosticCommentPlugin(), {
       commentTag,
       filter: (fileName: string) =>
         !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
     })
-    .queue(useGlint ? await createGlintReportPlugin() : DummyPlugin, {
+    .queue(useGlint ? await createGlintCommentPlugin() : DummyPlugin, {
       commentTag,
       filter: (fileName: string) =>
         isGlintService(service, useGlint) && isGlintFile(service, fileName),
@@ -169,6 +171,16 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
       reportErrors: false,
       filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
+    })
+    .queue(new DiagnosticReportPlugin(), {
+      commentTag,
+      filter: (fileName: string) =>
+        !(isGlintService(service, useGlint) && isGlintFile(service, fileName)),
+    })
+    .queue(useGlint ? await createGlintReportPlugin() : DummyPlugin, {
+      commentTag,
+      filter: (fileName: string) =>
+        isGlintService(service, useGlint) && isGlintFile(service, fileName),
     })
     // Report linter issues
     .queue(new LintPlugin(), {

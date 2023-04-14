@@ -9,7 +9,7 @@ try {
   console.log(\\"success\\");
 } catch (e) {
   console.log((e as Error).message);
-  /* @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'. */
+  // @ts-expect-error @rehearsal TODO TS18046: 'e' is of type 'unknown'.
   console.log(e.notErrorMember);
 
   if ((e as Error).name === \\"Test\\") {
@@ -33,13 +33,13 @@ function getObject<T>(): T {
 
 const dummy = getObject();
 
-/* @ts-expect-error @rehearsal TODO TS18046: 'dummy' is of type 'unknown'. */
+// @ts-expect-error @rehearsal TODO TS18046: 'dummy' is of type 'unknown'.
 dummy.key;
 "
 `;
 
 exports[`Test base codefixes > addMissingExport 1`] = `
-"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations.
 import React from \\"react\\";
 
 export interface Props {
@@ -47,9 +47,7 @@ export interface Props {
   age: string;
 }
 
-{
-  /* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */
-}
+// @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
 const Kid = ({ name, age }: Props) => <div>{\`\${name},\${age}\`}</div>;
 
 export default Kid;
@@ -67,7 +65,7 @@ export default {
 `;
 
 exports[`Test base codefixes > addMissingExport 3`] = `
-"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations.
 import React from \\"react\\";
 
 interface ToDo {
@@ -98,7 +96,7 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
       const filteredToDos = (this.state.todos as ToDo[]).filter(
         (todo) => (todo as ToDo).id !== id
       );
-      /* @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'. */
+      // @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'.
       this.setState({ todos: filteredToDos });
     };
 
@@ -108,7 +106,7 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
         content: \\"\\",
         id: \`\${Date.now}\`,
       };
-      /* @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'. */
+      // @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'.
       this.setState((prev) => {
         [...prev.todos, todo];
       });
@@ -117,7 +115,7 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
 
     render() {
       return (
-        /* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react/jsx-runtime' or its corresponding type declarations. */
+        // @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react/jsx-runtime' or its corresponding type declarations.
         <Component
           {...(this.props as P)}
           todos={this.state.todos}
@@ -131,35 +129,33 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
 `;
 
 exports[`Test base codefixes > addMissingExport 4`] = `
-"/* @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations. */
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations.
 import React from \\"react\\";
 
 import makeToDo, { AllProps } from \\"./4082-2-import\\";
 
 const ToDo = (props: AllProps) => {
   return (
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+    // @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
     <div style={props.style}>
-/* @ts-expect-error @rehearsal TODO TS7006: Parameter 'todo' implicitly has an 'any' type. */
       {props.todos.map((todo) => (
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+        // @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
         <div key={todo.id}>
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
           <div>{todo.title}</div>
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
           <div>{todo.content}</div>
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+          {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
           <button data-id={todo.id} onClick={() => props.onRemove(todo.id)}>
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'Remove'. */
             Remove
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'button'. */
+            {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
           </button>
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'div'. */
+          {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
         </div>
       ))}
-{/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
+      {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
       <button onClick={props.onAdd}>Add</button>
-/* @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'div'. */
+      {/* @ts-expect-error @rehearsal TODO TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists. */}
     </div>
   );
 };
@@ -335,12 +331,12 @@ class MultipleClass {
 }
 
 export class MultipleImpl extends MultipleClass implements MultipleInterface {
-  /* @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  // @ts-expect-error @rehearsal TODO TS2416: Property 'boo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleClass'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'.
   boo(ab, b?): boolean {
     return !ab || !b;
   }
 
-  /* @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'. */
+  // @ts-expect-error @rehearsal TODO TS2416: Property 'foo' in type 'MultipleImpl' is not assignable to the same property in base type 'MultipleInterface'..  Type '(ab: any, b?: any) => boolean' is not assignable to type '{ (a: number): number; (b: string): string; (a: number, b: string): boolean; }'..    Type 'boolean' is not assignable to type 'number'.
   foo(ab, b?): boolean {
     return !ab || !b;
   }
@@ -450,33 +446,33 @@ export class ThinkClass {
     a: number,
     b: string | number,
     c: Foo,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type.
     d,
     e: () => boolean,
     f: GenericClass<string, string>,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type.
     g,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type.
     h,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type.
     i,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type.
     j,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type.
     k,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type.
     l,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type.
     m,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
     n: (a, b: string) => void,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'o' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'o' implicitly has an 'any' type.
     o,
     p: { a: string; b: Date },
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type.
     q,
     r: (this: { a: string }, arg1: string, arg2: number) => boolean,
-    /* @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type. */
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
     s
   ): void {
     return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
@@ -515,33 +511,33 @@ export function think(
   a: number,
   b: string | number,
   c: Foo,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type.
   d,
   e: () => boolean,
   f: GenericClass<string, string>,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type.
   g,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type.
   h,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type.
   i,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type.
   j,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type.
   k,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type.
   l,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type.
   m,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
   n: (a, b: string) => void,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'o' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'o' implicitly has an 'any' type.
   o,
   p: { a: string; b: Date },
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type.
   q,
   r: (this: { a: string }, arg1: string, arg2: number) => boolean,
-  /* @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type. */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
   s
 ): void {
   return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);

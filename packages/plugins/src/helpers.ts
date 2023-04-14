@@ -2,7 +2,6 @@ import { type SourceFile } from 'typescript';
 import { Location } from '@rehearsal/reporter';
 
 const INDEX_BUMP = 1; //bump line and column numbers from 0 to 1 for sarif reader
-const COMMENT_BUMP = 1; //bump line numbers because added comment pushes the line number down by 1
 
 export function getLocation(sourceFile: SourceFile, start: number, length: number): Location {
   const { line: startLine, character: startColumn } =
@@ -12,9 +11,9 @@ export function getLocation(sourceFile: SourceFile, start: number, length: numbe
   );
 
   return {
-    startLine: startLine + INDEX_BUMP + COMMENT_BUMP,
+    startLine: startLine + INDEX_BUMP,
     startColumn: startColumn + INDEX_BUMP,
-    endLine: endLine + INDEX_BUMP + COMMENT_BUMP,
+    endLine: endLine + INDEX_BUMP,
     endColumn: endColumn + INDEX_BUMP,
   };
 }

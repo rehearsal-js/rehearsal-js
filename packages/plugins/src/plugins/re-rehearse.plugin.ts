@@ -34,9 +34,9 @@ export class ReRehearsePlugin implements Plugin<ReRehearsePluginOptions> {
         continue;
       }
 
-      // Remove comment, together with the {} that wraps around comments in React, and  `\n`
+      // Remove comment, together with the {} that wraps around comments in React
       const boundary = this.getBoundaryOfCommentBlock(commentSpan.start, commentSpan.length, text);
-      text = text.substring(0, boundary.start) + text.substring(boundary.end + 1);
+      text = text.substring(0, boundary.start) + text.substring(boundary.end);
     }
 
     context.service.setFileText(fileName, text);
