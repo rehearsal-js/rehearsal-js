@@ -47,7 +47,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.5.1",
     "@commitlint/config-conventional": "^17.4.4",
-    "@glint/core": "1.0.0-beta.4",
+    "@glint/core": "1.0.0-beta.5",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "@types/debug": "^4.1.7",
