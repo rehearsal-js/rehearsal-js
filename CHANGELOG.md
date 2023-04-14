@@ -1,3 +1,20 @@
+## <small>1.0.20-beta (2023-04-14)</small>
+
+* fix: correctly resolve addon paths (#971) ([405a03b](https://github.com/rehearsal-js/rehearsal-js/commit/405a03b)), closes [#971](https://github.com/rehearsal-js/rehearsal-js/issues/971)
+* fix: filter object types as non-strict ones ([8ceeb08](https://github.com/rehearsal-js/rehearsal-js/commit/8ceeb08))
+* fix: filter out never type (#968) ([a3be6fe](https://github.com/rehearsal-js/rehearsal-js/commit/a3be6fe)), closes [#968](https://github.com/rehearsal-js/rehearsal-js/issues/968)
+* fix: fix graph sorting (#969) ([8d75997](https://github.com/rehearsal-js/rehearsal-js/commit/8d75997)), closes [#969](https://github.com/rehearsal-js/rehearsal-js/issues/969)
+* fix: handles lintText undefined (#955) ([2dcfec5](https://github.com/rehearsal-js/rehearsal-js/commit/2dcfec5)), closes [#955](https://github.com/rehearsal-js/rehearsal-js/issues/955)
+* fix: need to json5 ([caa7a76](https://github.com/rehearsal-js/rehearsal-js/commit/caa7a76))
+* fix: use dynamic imports for glint-related modules (#983) ([d830858](https://github.com/rehearsal-js/rehearsal-js/commit/d830858)), closes [#983](https://github.com/rehearsal-js/rehearsal-js/issues/983)
+* chore: update README.md with devDep install (#973) ([c172d4f](https://github.com/rehearsal-js/rehearsal-js/commit/c172d4f)), closes [#973](https://github.com/rehearsal-js/rehearsal-js/issues/973)
+* chore(all): node env and pnpm to latest LTS ([e19d63f](https://github.com/rehearsal-js/rehearsal-js/commit/e19d63f))
+* chore(gh-actions): bump pnpm and node versions ([da79810](https://github.com/rehearsal-js/rehearsal-js/commit/da79810))
+* chore(gh-actions): get-diagnostics as node 16,18 matrix ([c67e693](https://github.com/rehearsal-js/rehearsal-js/commit/c67e693))
+* feat: improved annotateWithTypeFromJSDoc codefix ([e736d42](https://github.com/rehearsal-js/rehearsal-js/commit/e736d42))
+
+
+
 ## <small>1.0.19-beta (2023-04-10)</small>
 
 * fix: add resolution for @swc/core@1.3.44 (#943) ([2e20b2f](https://github.com/rehearsal-js/rehearsal-js/commit/2e20b2f)), closes [#943](https://github.com/rehearsal-js/rehearsal-js/issues/943)
