@@ -9,7 +9,10 @@ import {
   PathUtils,
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
+import debug from 'debug';
 import { getLocation } from '../helpers.js';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-report');
 
 export interface GlintReportPluginOptions extends PluginOptions {
   commentTag: string;
@@ -26,6 +29,8 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
     options: GlintReportPluginOptions
   ): PluginResult {
     const service = context.service as GlintService;
+
+    DEBUG_CALLBACK(`Plugin 'GlintReport' run on %O:`, fileName);
 
     const originalConentWithErrorsSupressed = context.service.getFileText(fileName);
 
@@ -67,6 +72,7 @@ export class GlintReportPlugin implements Plugin<PluginOptions> {
       context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
     }
 
+    // Set the document back to the content with the errors supressed
     service.setFileText(fileName, originalConentWithErrorsSupressed);
 
     return Promise.resolve([]);

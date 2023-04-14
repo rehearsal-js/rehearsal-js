@@ -12,8 +12,12 @@ import {
 } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import ts from 'typescript';
+import debug from 'debug';
 import { getLocation } from '../helpers.js';
+import { getConditionalCommentPos, onMultilineConditionalTokenLine } from './utils.js';
 import type MS from 'magic-string';
+
+const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-comment');
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -61,6 +65,7 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
 
       const hint = hints.getHint(diagnostic).replace(context.basePath, '.');
       this.addHintComment(service, diagnostic, hint, options.commentTag);
+      DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t comment added`);
       fixedFiles.add(fileName);
     }
 
@@ -211,81 +216,4 @@ export class GlintCommentPlugin implements Plugin<PluginOptions> {
 
     return false;
   }
-}
-
-function onMultilineConditionalTokenLine(sourceFile: ts.SourceFile, pos: number): boolean {
-  const conditionalExpression = getConditionalExpressionAtPos(sourceFile, pos);
-  // Not in a conditional expression.
-  if (!conditionalExpression) {
-    return false;
-  }
-
-  const { line: questionTokenLine } = ts.getLineAndCharacterOfPosition(
-    sourceFile,
-    conditionalExpression.questionToken.end
-  );
-  const { line: colonTokenLine } = ts.getLineAndCharacterOfPosition(
-    sourceFile,
-    conditionalExpression.colonToken.end
-  );
-  // Single line conditional expression.
-  if (questionTokenLine === colonTokenLine) {
-    return false;
-  }
-
-  const { line } = ts.getLineAndCharacterOfPosition(sourceFile, pos);
-  return visitConditionalExpressionWhen(conditionalExpression, pos, {
-    // On question token line of multiline conditional expression.
-    whenTrue: () => line === questionTokenLine,
-    // On colon token line of multiline conditional expression.
-    whenFalse: () => line === colonTokenLine,
-    otherwise: () => false,
-  });
-}
-
-function visitConditionalExpressionWhen<T>(
-  node: ts.ConditionalExpression | undefined,
-  pos: number,
-  visitor: {
-    whenTrue(node: ts.ConditionalExpression): T;
-    whenFalse(node: ts.ConditionalExpression): T;
-    otherwise(): T;
-  }
-): T {
-  if (!node) {
-    return visitor.otherwise();
-  }
-
-  const inWhenTrue = node.whenTrue.pos <= pos && pos < node.whenTrue.end;
-  if (inWhenTrue) {
-    return visitor.whenTrue(node);
-  }
-
-  const inWhenFalse = node.whenFalse.pos <= pos && pos < node.whenFalse.end;
-  if (inWhenFalse) {
-    return visitor.whenFalse(node);
-  }
-
-  return visitor.otherwise();
-}
-
-function getConditionalExpressionAtPos(
-  sourceFile: ts.SourceFile,
-  pos: number
-): ts.ConditionalExpression | undefined {
-  const visitor = (node: ts.Node): ts.ConditionalExpression | undefined => {
-    if (node.pos <= pos && pos < node.end && ts.isConditionalExpression(node)) {
-      return node;
-    }
-    return ts.forEachChild(node, visitor);
-  };
-  return ts.forEachChild(sourceFile, visitor);
-}
-
-function getConditionalCommentPos(sourceFile: ts.SourceFile, pos: number): number {
-  return visitConditionalExpressionWhen(getConditionalExpressionAtPos(sourceFile, pos), pos, {
-    whenTrue: (node) => node.questionToken.end,
-    whenFalse: (node) => node.colonToken.end,
-    otherwise: () => pos,
-  });
 }

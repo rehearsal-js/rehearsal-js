@@ -119,7 +119,7 @@ export async function createGlintReportPlugin(): Promise<GlintReportPlugin> {
 }
 
 export async function createGlintCommentPlugin(): Promise<GlintCommentPlugin> {
-  const GlintReportPlugin = (await import('@rehearsal/plugins')).GlintCommentPlugin;
+  const GlintCommentPlugin = (await import('@rehearsal/plugins')).GlintCommentPlugin;
 
   return new GlintCommentPlugin();
 }
