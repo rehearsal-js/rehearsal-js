@@ -111,7 +111,8 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
         [...prev.todos, todo];
       });
     };
-    props: P | undefined;
+    // @ts-expect-error @rehearsal TODO TS2564: Property 'props' has no initializer and is not definitely assigned in the constructor.
+    props: P;
 
     render() {
       return (

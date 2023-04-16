@@ -16,6 +16,7 @@ const PRIORITIZED_CODES: number[] = [
   Diagnostics.TS7046.code,
   Diagnostics.TS7050.code,
   Diagnostics.TS2612.code,
+  Diagnostics.TS4073.code,
 ];
 
 /**

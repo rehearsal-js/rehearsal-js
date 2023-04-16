@@ -32,7 +32,7 @@ export function usesMissingVarWithLongName(): boolean {
 }
 
 function notProperlyFormatted(file: string): string {
-    return                  doSomething(file);
+    return                  doSomethingInternal(file);
     }
 
    /**
@@ -48,7 +48,7 @@ function notProperlyFormatted(file: string): string {
 
 // The next function call is not properly formatted
 timestamp(   );
-   
+
 import testModule from './module';
 
 testModule();
