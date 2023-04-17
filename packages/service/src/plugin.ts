@@ -43,7 +43,7 @@ export interface PluginLogger {
 }
 
 export class PluginsRunner {
-  levels: {
+  layers: {
     plugin: PluginFactory;
     options?: PluginOptions;
     filter?: (fileName: string) => boolean;
@@ -54,6 +54,17 @@ export class PluginsRunner {
     this.context = context;
   }
 
+  /**
+   * This accounts for all the call signatures. The final call signature needs
+   * to account for all permutations.
+   *
+   * ```
+   * .queue(SomePlugin)
+   * .queue(SomePlugin, { someOption: true })
+   * .queue(SomePlugin, function someFiler() { return true; })
+   * .queue(SomePlugin, { someOption: true }, function someFiler() { return true; })
+   *```
+   */
   queue<
     PluginType extends Plugin = Plugin,
     PluginOptionsType extends PluginOptions = PluginOptions
@@ -90,21 +101,21 @@ export class PluginsRunner {
   ): this {
     if (optionsOrFilter.length === 2) {
       const [options, filter] = optionsOrFilter;
-      this.levels.push({ plugin: plugin, options, filter });
+      this.layers.push({ plugin: plugin, options, filter });
     } else if (optionsOrFilter.length === 1) {
       if (typeof optionsOrFilter[0] === 'object') {
-        this.levels.push({
+        this.layers.push({
           plugin: plugin,
           options: optionsOrFilter[0],
         });
       } else {
-        this.levels.push({
+        this.layers.push({
           plugin: plugin,
           filter: optionsOrFilter[0],
         });
       }
     } else {
-      this.levels.push({ plugin });
+      this.layers.push({ plugin });
     }
     return this;
   }
@@ -150,15 +161,15 @@ export class PluginsRunner {
     fileName: string,
     allChangedFiles: Set<string>
   ): AsyncGenerator<Set<string>> {
-    for (const level of this.levels) {
-      if (level.filter) {
-        if (!level.filter(fileName)) {
+    for (const layer of this.layers) {
+      if (layer.filter) {
+        if (!layer.filter(fileName)) {
           yield allChangedFiles;
           continue;
         }
       }
 
-      const plugin = new level.plugin(fileName, this.context, level.options ? level.options : {});
+      const plugin = new layer.plugin(fileName, this.context, layer.options ? layer.options : {});
 
       const changedFiles = await plugin.run();
 
