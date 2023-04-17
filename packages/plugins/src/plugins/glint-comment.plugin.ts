@@ -2,15 +2,7 @@ import { extname } from 'node:path';
 import { createRequire } from 'node:module';
 import { type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
-import {
-  GlintService,
-  Plugin,
-  PluginOptions,
-  PluginsRunnerContext,
-  Service,
-  type PluginResult,
-  PathUtils,
-} from '@rehearsal/service';
+import { GlintService, PluginOptions, Service, PathUtils, Plugin } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import ts from 'typescript';
 import debug from 'debug';
@@ -36,16 +28,12 @@ export interface DiagnosticWithLocation extends DiagnosticWithContext {
   location: Location;
 }
 
-export class GlintCommentPlugin implements Plugin<PluginOptions> {
+export class GlintCommentPlugin extends Plugin<GlintCommentPluginOptions> {
   changeTrackers: Map<string, MS.default> = new Map();
   ignoreLines: { [line: number]: boolean } = {};
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: GlintCommentPluginOptions
-  ): PluginResult {
-    this.changeTrackers = new Map();
-    this.ignoreLines = {};
+
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
     const service = context.service as GlintService;
     const diagnostics = this.getDiagnostics(service, fileName);
 

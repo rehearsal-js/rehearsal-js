@@ -8,13 +8,7 @@ import {
   isInstallPackageCommand,
   type DiagnosticWithContext,
 } from '@rehearsal/codefixes';
-import {
-  Plugin,
-  PluginOptions,
-  PluginsRunnerContext,
-  Service,
-  type PluginResult,
-} from '@rehearsal/service';
+import { PluginOptions, PluginsRunnerContext, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import type MS from 'magic-string';
 
@@ -32,24 +26,16 @@ export interface DiagnosticFixPluginOptions extends PluginOptions {
 /**
  * Diagnose issues in the file and applied transforms to fix them
  */
-export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
+export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
   attemptedToFix: string[] = [];
   appliedAtOffset: { [file: string]: number[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();
 
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: DiagnosticFixPluginOptions
-  ): PluginResult {
-    options.safeFixes ??= true;
-    options.strictTyping ??= true;
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
-
-    /// Todo: we should just recreate the plugin class for each file
-    this.resetState();
 
     // First attempt to fix all the errors
     await this.applyFixes(context, fileName, ts.DiagnosticCategory.Error, options);
@@ -200,13 +186,6 @@ export class DiagnosticFixPlugin implements Plugin<DiagnosticFixPluginOptions> {
     }
 
     return fix;
-  }
-
-  private resetState(): void {
-    this.appliedAtOffset = {};
-    this.changeTrackers = new Map();
-    this.allFixedFiles = new Set();
-    this.attemptedToFix = [];
   }
 
   private wasAttemptedToFix(diagnostic: DiagnosticWithContext, fix: ts.CodeFixAction): boolean {

@@ -1,12 +1,6 @@
 import { createRequire } from 'node:module';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import {
-  Plugin,
-  PluginOptions,
-  type PluginResult,
-  PluginsRunnerContext,
-  Service,
-} from '@rehearsal/service';
+import { PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts from 'typescript';
@@ -27,30 +21,22 @@ const { DiagnosticCategory, getLineAndCharacterOfPosition, getPositionOfLineAndC
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-comment');
 
 export interface DiagnosticCommentPluginOptions extends PluginOptions {
-  addHints?: boolean;
-  commentTag?: string;
+  addHints: boolean;
+  commentTag: string;
 }
 
-export class DiagnosticCommentPlugin implements Plugin<DiagnosticCommentPluginOptions> {
+export class DiagnosticCommentPlugin extends Plugin<DiagnosticCommentPluginOptions> {
   private changeTrackers: Map<string, MS.default> = new Map();
   private ignoreLines: { [line: number]: boolean } = {};
 
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: DiagnosticCommentPluginOptions
-  ): PluginResult {
-    options.addHints ??= true;
-    options.commentTag ??= `@rehearsal`;
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
 
     const diagnostics = this.getDiagnostics(context.service, fileName);
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticCommentPlugin' run on %O:`, fileName);
 
     const allFixedFiles: Set<string> = new Set();
-
-    this.ignoreLines = {};
-    this.changeTrackers = new Map();
 
     for (const diagnostic of diagnostics) {
       if (!this.changeTrackers.has(diagnostic.file.fileName)) {

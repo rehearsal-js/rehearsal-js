@@ -11,12 +11,11 @@ describe('Test PrettierPlugin', () => {
 
     const context = mockPluginRunnerContext(project);
 
-    const plugin = new PrettierPlugin();
-
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
+      const plugin = new PrettierPlugin(fileName, context, {});
 
-      const result = await plugin.run(fileName, context);
+      const result = await plugin.run();
       const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);
@@ -34,12 +33,10 @@ describe('Test PrettierPlugin', () => {
 
     const context = mockPluginRunnerContext(project);
 
-    const plugin = new PrettierPlugin();
-
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
-
-      const result = await plugin.run(fileName, context);
+      const plugin = new PrettierPlugin(fileName, context, {});
+      const result = await plugin.run();
       const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);

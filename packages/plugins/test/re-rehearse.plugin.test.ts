@@ -11,12 +11,11 @@ describe('Test ReRehearsalPlugin', () => {
 
     const context = mockPluginRunnerContext(project);
 
-    const plugin = new ReRehearsePlugin();
-
     for (const file in project.files) {
       const fileName = resolve(project.baseDir, file);
+      const plugin = new ReRehearsePlugin(fileName, context, { commentTag: '@rehearsal' });
 
-      const result = await plugin.run(fileName, context, { commentTag: '@rehearsal' });
+      const result = await plugin.run();
       const resultText = context.service.getFileText(fileName).trim();
 
       expect(result).toHaveLength(1);

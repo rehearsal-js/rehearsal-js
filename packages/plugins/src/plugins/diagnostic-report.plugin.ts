@@ -1,11 +1,5 @@
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import {
-  Plugin,
-  PluginOptions,
-  type PluginResult,
-  PluginsRunnerContext,
-  Service,
-} from '@rehearsal/service';
+import { PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts from 'typescript';
@@ -20,14 +14,9 @@ export interface DiagnosticReportPluginOptions extends PluginOptions {
   commentTag?: string;
 }
 
-export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: DiagnosticReportPluginOptions
-  ): PluginResult {
-    options.addHints ??= true;
-    options.commentTag ??= `@rehearsal`;
+export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions> {
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticReport' run on %O:`, fileName);
 
@@ -36,7 +25,7 @@ export class DiagnosticReportPlugin implements Plugin<DiagnosticReportPluginOpti
     const lineHasSupression: { [line: number]: boolean } = {};
     let contentWithErrors = originalConentWithErrorsSupressed;
     const sourceFile = context.service.getSourceFile(fileName);
-    const tagStarts = [...contentWithErrors.matchAll(new RegExp(options.commentTag, 'g'))].map(
+    const tagStarts = [...contentWithErrors.matchAll(new RegExp(options.commentTag!, 'g'))].map(
       (m) => m.index!
     );
 

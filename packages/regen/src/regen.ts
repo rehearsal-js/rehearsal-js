@@ -82,27 +82,29 @@ export async function regen(input: RegenInput): Promise<RegenOutput> {
 
   const runner = new PluginsRunner({ basePath, service, reporter, logger })
     // Reset
-    .queue(new ReRehearsePlugin(), {
+    .queue(ReRehearsePlugin, {
       commentTag,
     })
     // Add ts-expect-error comments
-    .queue(new DiagnosticCommentPlugin(), {
+    .queue(DiagnosticCommentPlugin, {
+      addHints: true,
       commentTag,
     })
     // Format previously added comments
-    .queue(new PrettierPlugin(), {
-      filter: (fileName: string) => isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new LintPlugin(), {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
-      reportErrors: false,
-      filter: (fileName: string) => !isPrettierUsedForFormatting(fileName),
-    })
-    .queue(new DiagnosticReportPlugin(), {
+    .queue(PrettierPlugin, (fileName: string) => isPrettierUsedForFormatting(fileName))
+    .queue(
+      LintPlugin,
+      {
+        eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+        reportErrors: false,
+      },
+      (fileName: string) => !isPrettierUsedForFormatting(fileName)
+    )
+    .queue(DiagnosticReportPlugin, {
       commentTag,
     })
     // Report linter issues
-    .queue(new LintPlugin(), {
+    .queue(LintPlugin, {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: false, ...input.eslintOptions },
       reportErrors: true,
     });

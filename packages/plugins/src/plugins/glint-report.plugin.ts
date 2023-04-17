@@ -1,12 +1,5 @@
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
-import {
-  GlintService,
-  Plugin,
-  PluginOptions,
-  PluginsRunnerContext,
-  Service,
-  type PluginResult,
-} from '@rehearsal/service';
+import { GlintService, PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import debug from 'debug';
 import ts from 'typescript';
@@ -22,12 +15,9 @@ export interface DiagnosticWithLocation extends DiagnosticWithContext {
   location: Location;
 }
 
-export class GlintReportPlugin implements Plugin<PluginOptions> {
-  async run(
-    fileName: string,
-    context: PluginsRunnerContext,
-    options: GlintReportPluginOptions
-  ): PluginResult {
+export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
+  async run(): Promise<string[]> {
+    const { fileName, context, options } = this;
     const service = context.service as GlintService;
 
     DEBUG_CALLBACK(`Plugin 'GlintReport' run on %O:`, fileName);

@@ -1,19 +1,14 @@
 import { extname } from 'node:path';
-import {
-  GlintService,
-  Plugin,
-  PluginOptions,
-  PluginsRunnerContext,
-  type PluginResult,
-} from '@rehearsal/service';
+import { GlintService, Plugin } from '@rehearsal/service';
 import { applyTextChanges } from '@rehearsal/ts-utils';
 import ts, { TextChange } from 'typescript';
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:transform');
 
-export class ServiceInjectionsTransformPlugin implements Plugin<PluginOptions> {
-  async run(fileName: string, context: PluginsRunnerContext): PluginResult {
+export class ServiceInjectionsTransformPlugin extends Plugin {
+  async run(): Promise<string[]> {
+    const { fileName, context } = this;
     const service = context.service;
     let sourceFile = service.getSourceFile(fileName);
 

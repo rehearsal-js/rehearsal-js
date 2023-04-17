@@ -397,7 +397,7 @@ export default class Salutation extends Component {
       expect(getStringAtLocation(outputs[1], report.items[0].nodeLocation as Location)).toEqual(
         'locale'
       );
-      expect(report.items).toHaveLength(1);
+      expect(report.items).toHaveLength(2);
       expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });
   });
