@@ -7,7 +7,6 @@ import { createLogger, format, transports } from 'winston';
 import { findWorkspaceRoot, gitIsRepoDirty, parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
 import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
-import { initCommand } from './init-command.js';
 
 import { sequentialTask } from './tasks/sequential.js';
 // eslint-disable-next-line no-restricted-imports -- this is a type import
@@ -27,20 +26,12 @@ process.on('SIGINT', () => {
 migrateCommand
   .name('migrate')
   .description('migrate a javascript project to typescript')
-  // Currently we don't want to expose --basePath to end users
-  // always use default process.cwd()
-  .addCommand(initCommand)
   .addOption(
     new Option('-b, --basePath <project base path>', 'base directory of your project')
       .default(process.cwd())
       // use argParser to ensure process.cwd() is basePath
       // even use passes anything accidentally
       .argParser(() => process.cwd())
-      .hideHelp()
-  )
-  .addOption(
-    new Option('--skip-init', 'skip dep install, and ts/lint/script config')
-      .default(false)
       .hideHelp()
   )
   .option(
