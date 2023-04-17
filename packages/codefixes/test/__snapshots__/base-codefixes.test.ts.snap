@@ -478,6 +478,16 @@ export class ThinkClass {
   ): void {
     return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
   }
+
+  /**
+   * Some function
+   * @param {UnavailableType} a
+   * @return {UnavailableType}
+   */
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
+  twice(a) {
+    return a;
+  }
 }
 
 /**
@@ -542,6 +552,16 @@ export function think(
   s
 ): void {
   return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
+}
+
+/**
+ * Some function
+ * @param {UnavailableType} a
+ * @return {UnavailableType}
+ */
+// @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
+export function thinkTwice(a) {
+  return a;
 }
 "
 `;

@@ -8,8 +8,11 @@ import type { CodeFix, DiagnosticWithContext } from '../types.js';
 const {
   isFunctionDeclaration,
   isMethodDeclaration,
+  isParameter,
   isPropertyDeclaration,
   isVariableDeclaration,
+  getJSDocParameterTags,
+  getJSDocReturnType,
   getJSDocType,
 } = ts;
 
@@ -36,13 +39,13 @@ export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
       isPropertyDeclaration(diagnostic.node.parent) ||
       isVariableDeclaration(diagnostic.node.parent)
     ) {
-      return this.filterFunctionParams(fix, diagnostic);
+      return this.filterUnresolvedTypes(fix, diagnostic);
     }
 
     return fix;
   }
 
-  filterFunctionParams(
+  filterUnresolvedTypes(
     fix: CodeFixAction,
     diagnostic: DiagnosticWithContext
   ): CodeFixAction | undefined {
@@ -50,10 +53,9 @@ export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
     for (const changes of fix.changes) {
       const safeTextChanges: TextChange[] = [];
       for (const textChanges of changes.textChanges) {
-        const node = findNodeEndsAtPosition(diagnostic.file, textChanges.span.start);
-
+        const node = this.findTargetNode(textChanges.span.start, diagnostic);
         if (node) {
-          const typeNode = getJSDocType(node) || getJSDocType(node.parent);
+          const typeNode = this.findTargetJSDocType(node);
 
           if (typeNode && !canTypeBeResolved(diagnostic.checker, typeNode)) {
             continue;
@@ -73,5 +75,43 @@ export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
     }
 
     return undefined;
+  }
+
+  findTargetNode(
+    positionToAddType: number,
+    diagnostic: DiagnosticWithContext
+  ): ts.Node | undefined {
+    const braces = diagnostic.service.getBraceMatchingAtPosition(
+      diagnostic.file.fileName,
+      positionToAddType - 1
+    );
+    if (braces.length) {
+      return findNodeEndsAtPosition(diagnostic.file, braces[0].start);
+    }
+
+    return findNodeEndsAtPosition(diagnostic.file, positionToAddType);
+  }
+
+  findTargetJSDocType(node: ts.Node): ts.TypeNode | undefined {
+    /*
+     TypeScript's parser incorrectly parses JSDoc in some cases (nodes have wrong `kind` value)
+     that causing "Cannot read properties of undefined (reading 'kind')" issue
+     the `try ... catch` is to handle those cases
+     */
+    try {
+      if (isMethodDeclaration(node.parent) || isFunctionDeclaration(node.parent)) {
+        return getJSDocReturnType(node.parent);
+      }
+
+      if (isParameter(node.parent)) {
+        return getJSDocParameterTags(node.parent).find(
+          (tag) => tag.name.getText() === node.getText()
+        )?.typeExpression?.type;
+      }
+
+      return getJSDocType(node) || getJSDocType(node.parent);
+    } catch (_) {
+      return undefined;
+    }
   }
 }
