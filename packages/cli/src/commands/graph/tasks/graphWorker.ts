@@ -4,16 +4,19 @@ import { extname, relative } from 'node:path';
 // eslint-disable-next-line no-restricted-imports
 import { getMigrationOrder } from '@rehearsal/migration-graph';
 
-if (!isMainThread) {
+if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
   const basePath = workerData as string;
 
   const ordered = getMigrationOrder(basePath);
-  parentPort?.postMessage(intoGraphOutput(ordered));
+  parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
 
 export type PackageEntry = { name: string; files: string[] };
 
-export function intoGraphOutput(sortedFiles: import('@rehearsal/migration-graph').SourceFile[]): {
+export function intoGraphOutput(
+  sortedFiles: import('@rehearsal/migration-graph').SourceFile[],
+  basePath = process.cwd()
+): {
   packages: PackageEntry[];
 } {
   let currentPackage;
@@ -23,7 +26,7 @@ export function intoGraphOutput(sortedFiles: import('@rehearsal/migration-graph'
   for (const file of sortedFiles) {
     if (currentPackage !== file.packageName) {
       currentPackage = file.packageName;
-      packages.push({ name: relative(process.cwd(), file.packageName), files: [] });
+      packages.push({ name: relative(basePath, file.packageName) || '.', files: [] });
     }
 
     const ext = extname(file.relativePath);

@@ -33,6 +33,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:import/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   overrides: [
     {

@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: graphOrderTask > can print graph order to stdout 1`] = `
+"[STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] index.js
+[DATA] module-a/index.js
+[DATA] module-b/index.js
+[SUCCESS] Analyzing project dependency graph"
+`;
