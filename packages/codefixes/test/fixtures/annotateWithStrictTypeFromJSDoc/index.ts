@@ -55,6 +55,15 @@ export class ThinkClass {
   more(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
     return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
   }
+
+  /**
+   * Some function
+   * @param {UnavailableType} a
+   * @return {UnavailableType}
+   */
+  twice(a) {
+    return a;
+  }
 }
 
 /**
@@ -87,4 +96,13 @@ export class ThinkClass {
  */
 export function think(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
   return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
+}
+
+/**
+ * Some function
+ * @param {UnavailableType} a
+ * @return {UnavailableType}
+ */
+export function thinkTwice(a) {
+  return a;
 }

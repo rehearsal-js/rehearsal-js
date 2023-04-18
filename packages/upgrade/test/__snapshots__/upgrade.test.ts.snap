@@ -799,7 +799,7 @@ export class Foo {
  * @return {void}
  */
 // @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type.
-export function think(a: number, b: (string | number), c, d): void  {
+export function think(a: number, b: (string | number), c, d): void {
   return console.log(a, b, c, d);
 }
 "
