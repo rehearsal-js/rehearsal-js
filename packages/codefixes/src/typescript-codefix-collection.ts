@@ -10,9 +10,9 @@ import ts, {
   type UserPreferences,
 } from 'typescript';
 import { isCodeFixSupported } from './safe-codefixes.js';
+import { Diagnostics } from './diagnosticInformationMap.generated.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
-import {Diagnostics} from "./diagnosticInformationMap.generated.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
