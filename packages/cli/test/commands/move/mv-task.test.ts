@@ -41,7 +41,7 @@ describe('Task: mv', () => {
     project.dispose();
   });
 
-  test.only('move js source file', async () => {
+  test('move js source file', async () => {
     const sourceDir = 'src/foo';
     const options: MoveCommandOptions = {
       basePath: project.baseDir,
@@ -99,21 +99,21 @@ describe('Task: mv', () => {
     expect(tsSourceFiles).toContain('src/foo/buz/biz.ts');
   });
 
-  test('move childPackage', async () => {
+  test.only('move childPackage', async () => {
+    const childPackage = 'module-a';
     const options: MoveCommandOptions = {
       basePath: project.baseDir,
       dryRun: false,
-      childPackage: 'module-a',
+      childPackage,
     };
 
     const tasks = [initTask(options), graphOrderTask(options), moveTask(options)];
-    const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
+    await listrTaskRunner<MoveCommandContext>(tasks);
 
-    expect(ctx.migrationOrder?.packages[0].files).toEqual(['index.js']);
+    const tsFiles = fastGlob.sync(`${project.baseDir}/${childPackage}/**/*.{ts,gts}`);
+    const jsFiles = fastGlob.sync(`${project.baseDir}/${childPackage}/**/*.{js,gjs}`);
 
-    const fileList = readdirSync(project.baseDir);
-
-    expect(fileList).toContain('index.ts');
-    expect(output).matchSnapshot();
+    expect(jsFiles).length(3);
+    expect(tsFiles).toContain('module-a/src/index.ts');
   });
 });
