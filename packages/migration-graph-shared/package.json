@@ -42,7 +42,7 @@
     "fixturify": "^3.0.0",
     "fixturify-project": "^5.2.0",
     "tmp": "^0.2.1",
-    "vitest": "^0.29.8"
+    "vitest": "^0.30.0"
   },
   "peerDependencies": {
     "typescript": "^5.0"

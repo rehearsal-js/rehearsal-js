@@ -48,7 +48,7 @@
     "fixturify-project": "^5.2.0",
     "lodash.merge": "^4.6.2",
     "tmp": "^0.2.1",
-    "vitest": "^0.29.8"
+    "vitest": "^0.30.0"
   },
   "peerDependencies": {
     "typescript": "^5.0"

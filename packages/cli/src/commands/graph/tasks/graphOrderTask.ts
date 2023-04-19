@@ -1,32 +1,33 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { dirname, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import type { PackageEntry } from './graphWorker.js';
+import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const workerPath = resolve(__dirname, 'graphWorker.js');
 
-export type GraphCommandContext = {
-  skip?: boolean;
-};
-
 export function graphOrderTask(
-  basePath: string,
-  outputPath?: string
+  options: GraphTaskOptions,
+  ctx?: GraphCommandContext
 ): ListrTask<GraphCommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing project dependency graph',
+    skip: (): boolean => !shouldRunGraphTask(ctx?.source),
     options: { persistentOutput: true },
     async task(_ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
+      const { basePath, output } = options;
+
       if (process.env['TEST'] === 'true') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
         order = intoGraphOutput(getMigrationOrder(basePath), basePath);
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
@@ -50,10 +51,17 @@ export function graphOrderTask(
         });
       }
 
-      if (outputPath) {
-        task.title = `Writing graph to ${outputPath} ...`;
+      // dont prompt just set the ctx and return
+      if (ctx?.childPackage) {
+        ctx.packageEntry = getPackageEntry(order, ctx.childPackage);
+        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, order.packages);
+      }
 
-        await writeFile(outputPath, JSON.stringify(order, null, 2));
+      // dont prompt just write the file
+      if (output) {
+        task.title = `Writing graph to ${output} ...`;
+
+        await writeFile(output, JSON.stringify(order, null, 2));
       } else {
         let selectedPackageName: string;
 
@@ -71,12 +79,34 @@ export function graphOrderTask(
           selectedPackageName = order.packages[0].name;
         }
 
-        const entry = order.packages
-          .find((pkg) => pkg.name === selectedPackageName)
-          ?.files.join('\n');
+        const entry = getPackageEntry(order, selectedPackageName);
 
         task.output = `Graph order for '${selectedPackageName}':\n\n${entry}`;
       }
     },
   };
+}
+
+// get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
+function getGraphFilesAbs(basePath: string, graph: PackageEntry[]): string[] {
+  return graph.reduce((acc, pkg) => {
+    const files = pkg.files.map((file) => {
+      // all files are relative to basePath
+      return resolve(basePath, file);
+    });
+
+    return [...acc, ...files];
+  }, [] as string[]);
+}
+
+function getPackageEntry(
+  order: { packages: PackageEntry[] },
+  selectedPackageName: string
+): string | undefined {
+  return order.packages.find((pkg) => pkg.name === selectedPackageName)?.files.join('\n');
+}
+
+function shouldRunGraphTask(source?: string): boolean {
+  // source is explicit and doesnt leverage this task so skip it
+  return !source;
 }

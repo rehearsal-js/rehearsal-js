@@ -1,10 +1,7 @@
 import { Command } from 'commander';
 import { Listr } from 'listr2';
-import { type GraphCommandContext, graphOrderTask } from './tasks/graphOrderTask.js';
-
-interface GraphCommandOptions {
-  output?: string;
-}
+import { graphOrderTask } from './tasks/graphOrderTask.js';
+import type { GraphCommandContext, GraphCommandOptions } from '../../types.js';
 
 export const graphCommand = new Command();
 
@@ -14,5 +11,7 @@ graphCommand
   .argument('[basePath]', 'Path to directory contains a package.json', process.cwd())
   .option('-o, --output <filepath>', 'Output path for a JSON format of the graph order')
   .action(async (basePath: string, options: GraphCommandOptions) => {
-    await new Listr<GraphCommandContext>([graphOrderTask(basePath, options.output)]).run();
+    await new Listr<GraphCommandContext>([
+      graphOrderTask({ basePath, output: options.output }),
+    ]).run();
   });

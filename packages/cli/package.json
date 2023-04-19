@@ -51,6 +51,7 @@
     "enquirer": "^2.3.6",
     "eslint": "^8.37.0",
     "execa": "^7.1.1",
+    "fast-glob": "^3.2.12",
     "fs-extra": "^11.1.1",
     "get-tsconfig": "^4.5.0",
     "js-yaml": "^4.1.0",
@@ -71,11 +72,14 @@
     "fixturify-project": "^5.2.0",
     "scenario-tester": "^2.1.2",
     "typescript-json-schema": "^0.56.0",
-    "vitest": "^0.29.8"
+    "vitest": "^0.30.0"
   },
   "packageManager": "pnpm@8.2.0",
   "engines": {
     "node": ">=14.16.0"
+  },
+  "resolutions": {
+    "listr2": "^5.0"
   },
   "volta": {
     "extends": "../../package.json"
