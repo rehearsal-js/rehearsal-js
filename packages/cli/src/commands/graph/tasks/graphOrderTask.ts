@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { dirname, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
@@ -19,9 +18,10 @@ export function graphOrderTask(
     title: 'Analyzing project dependency graph',
     skip: (): boolean => !shouldRunGraphTask(ctx?.source),
     options: { persistentOutput: true },
-    async task(_ctx: GraphCommandContext, task) {
+    async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
       const { basePath, output } = options;
+      let selectedPackageName: string;
 
       if (process.env['TEST'] === 'true') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
@@ -53,8 +53,11 @@ export function graphOrderTask(
 
       // dont prompt just set the ctx and return
       if (ctx?.childPackage) {
+        selectedPackageName = ctx.childPackage;
         ctx.packageEntry = getPackageEntry(order, ctx.childPackage);
-        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, order.packages);
+        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages);
+
+        return;
       }
 
       // dont prompt just write the file
@@ -63,8 +66,6 @@ export function graphOrderTask(
 
         await writeFile(output, JSON.stringify(order, null, 2));
       } else {
-        let selectedPackageName: string;
-
         if (order.packages.length > 1) {
           selectedPackageName = await task.prompt<string>([
             {
@@ -88,15 +89,20 @@ export function graphOrderTask(
 }
 
 // get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
-function getGraphFilesAbs(basePath: string, graph: PackageEntry[]): string[] {
-  return graph.reduce((acc, pkg) => {
-    const files = pkg.files.map((file) => {
+function getGraphFilesAbs(
+  basePath: string,
+  childPackage: string,
+  entries: PackageEntry[]
+): string[] {
+  const pkg = entries.find((p) => p.name === childPackage);
+
+  // grab all the files from the package and resolve them to absolute paths
+  return (
+    pkg?.files.map((file) => {
       // all files are relative to basePath
       return resolve(basePath, file);
-    });
-
-    return [...acc, ...files];
-  }, [] as string[]);
+    }) ?? []
+  );
 }
 
 function getPackageEntry(

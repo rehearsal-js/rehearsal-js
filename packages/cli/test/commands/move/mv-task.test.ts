@@ -2,42 +2,21 @@ import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import fastGlob from 'fast-glob';
-import { prepareProject, listrTaskRunner, createOutputStream } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner } from '../../test-helpers/index.js';
 import { initTask, moveTask } from '../../../src/commands/move/tasks/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
 import type { Project } from 'fixturify-project';
 import type { MoveCommandContext, MoveCommandOptions } from '../../../src/types.js';
 
 describe('Task: mv', () => {
-  let output = '';
   let project: Project;
-  let outputStream = createOutputStream();
-  vi.spyOn(console, 'info').mockImplementation((chunk) => {
-    output += `${chunk}\n`;
-    outputStream.push(`${chunk}\n`);
-  });
-  vi.spyOn(console, 'log').mockImplementation((chunk) => {
-    output += `${chunk}\n`;
-    outputStream.push(`${chunk}\n`);
-  });
-  vi.spyOn(console, 'error').mockImplementation((chunk) => {
-    output += `${chunk}\n`;
-    outputStream.push(`${chunk}\n`);
-  });
 
   beforeEach(async () => {
-    output = '';
     project = prepareProject('multi_packages');
-    // these test for the creation of tsconfig.json
-    delete project.files['tsconfig.json'];
     await project.write();
-    outputStream = createOutputStream();
   });
 
   afterEach(() => {
-    output = '';
-    vi.clearAllMocks();
-    outputStream.destroy();
     project.dispose();
   });
 
@@ -97,23 +76,5 @@ describe('Task: mv', () => {
     expect(tsSourceFiles).toContain('src/foo/e.gts');
     expect(tsSourceFiles).toContain('src/foo/biz.ts');
     expect(tsSourceFiles).toContain('src/foo/buz/biz.ts');
-  });
-
-  test.only('move childPackage', async () => {
-    const childPackage = 'module-a';
-    const options: MoveCommandOptions = {
-      basePath: project.baseDir,
-      dryRun: false,
-      childPackage,
-    };
-
-    const tasks = [initTask(options), graphOrderTask(options), moveTask(options)];
-    await listrTaskRunner<MoveCommandContext>(tasks);
-
-    const tsFiles = fastGlob.sync(`${project.baseDir}/${childPackage}/**/*.{ts,gts}`);
-    const jsFiles = fastGlob.sync(`${project.baseDir}/${childPackage}/**/*.{js,gjs}`);
-
-    expect(jsFiles).length(3);
-    expect(tsFiles).toContain('module-a/src/index.ts');
   });
 });

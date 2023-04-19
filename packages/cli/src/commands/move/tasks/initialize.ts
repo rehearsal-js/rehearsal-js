@@ -17,9 +17,8 @@ export function initTask(
   return {
     title: `Initialize`,
     task: (ctx: MoveCommandContext): void => {
-      // ! this is always the same as basePath why do we need this?
       ctx.workspaceRoot = getWorkspaceRoot(options.basePath);
-
+      ctx.childPackage = options.childPackage;
       // source file or dir should always exist within the basePath
       if (options.source) {
         [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.basePath, options.source);

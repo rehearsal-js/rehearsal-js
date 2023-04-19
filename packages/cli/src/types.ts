@@ -57,6 +57,7 @@ export type MoveCommandContext = {
   jsSourcesRel?: string[];
   childPackageAbs?: string;
   childPackageRel?: string;
+  childPackage?: string;
   migrationOrder?: { packages: PackageEntry[] };
 };
 

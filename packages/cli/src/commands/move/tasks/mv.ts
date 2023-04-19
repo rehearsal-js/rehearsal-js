@@ -27,11 +27,6 @@ export function moveTask(
         task.skip('JS files not detected');
       }
     },
-    options: {
-      // options for dryRun, since we need to keep the output to see the list of files
-      bottomBar: options.dryRun ? true : false,
-      persistentOutput: options.dryRun ? true : false,
-    },
   };
 }
 

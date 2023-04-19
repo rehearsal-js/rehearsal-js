@@ -4,7 +4,7 @@ import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { readJSON } from '@rehearsal/utils';
-import type { MoveTasks, MoveCommandOptions } from '../../types.js';
+import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
 import type { PackageJson } from 'type-fest';
 
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -70,10 +70,10 @@ async function move(options: MoveCommandOptions): Promise<void> {
 
   // grab the child move tasks
   const { initTask, moveTask } = await loadMoveTasks();
-  // const { graphOrderTask } = await loadGraphTasks();
+  const { graphOrderTask } = await loadGraphTasks();
 
   try {
-    await new Listr([initTask(options), moveTask(options)], {
+    await new Listr([initTask(options), graphOrderTask(options), moveTask(options)], {
       concurrent: false,
     }).run();
   } catch (e) {
@@ -94,12 +94,12 @@ async function loadMoveTasks(): Promise<MoveTasks> {
   });
 }
 
-// async function loadGraphTasks(): Promise<GraphTasks> {
-//   return await import('../graph/tasks/graphOrderTask.js').then((m) => {
-//     const { graphOrderTask } = m;
+async function loadGraphTasks(): Promise<GraphTasks> {
+  return await import('../graph/tasks/graphOrderTask.js').then((m) => {
+    const { graphOrderTask } = m;
 
-//     return {
-//       graphOrderTask,
-//     };
-//   });
-// }
+    return {
+      graphOrderTask,
+    };
+  });
+}
