@@ -6,7 +6,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
 import { Listr } from 'listr2';
-import { cleanOutput, createOutputStream, prepareProject } from '../../test-helpers/index.js';
+import { getEmberProject } from '@rehearsal/test-support';
+import {
+  KEYS,
+  cleanOutput,
+  createOutputStream,
+  prepareProject,
+  sendKey,
+} from '../../test-helpers/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
 import { PackageEntry } from '../../../src/commands/graph/tasks/graphWorker.js';
 import type { Project } from 'fixturify-project';
@@ -81,5 +88,58 @@ describe('Task: graphOrderTask', () => {
     await new Listr([task]).run();
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test('can print graph order to stdout in an ember app with in-repo addons', async () => {
+    project = getEmberProject('app-with-in-repo-addon');
+
+    await project.write();
+
+    const task = graphOrderTask(project.baseDir);
+
+    outputStream.on('data', (line: string) => {
+      if (line.includes('We found the following packages.')) {
+        sendKey(KEYS.ENTER);
+      }
+    });
+
+    await new Listr([task]).run();
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test('can print graph order to a file for an ember app with in-repo addons', async () => {
+    project = getEmberProject('app-with-in-repo-addon');
+
+    await project.write();
+
+    const task = graphOrderTask(project.baseDir, join(project.baseDir, 'graph.json'));
+
+    outputStream.on('data', (line: string) => {
+      if (line.includes('We found the following packages.')) {
+        sendKey(KEYS.ENTER);
+      }
+    });
+
+    await new Listr([task]).run();
+
+    expect(existsSync(join(project.baseDir, 'graph.json'))).toBe(true);
+
+    const graph = JSON.parse(await readFile(join(project.baseDir, 'graph.json'), 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+    expect(graph.packages[0].files).toMatchObject(['lib/some-addon/addon/components/greet.js']);
+
+    expect(graph.packages[1].files).toMatchObject([
+      'app/app.js',
+      'app/services/locale.js',
+      'app/components/salutation.js',
+      'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
+    ]);
   });
 });
