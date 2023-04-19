@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Task: graphOrderTask > can print graph order to stdout 1`] = `
+"[STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] index.js
+[DATA] module-a/index.js
+[DATA] module-b/index.js
+[SUCCESS] Analyzing project dependency graph"
+`;
+
+exports[`Task: graphOrderTask > can print graph order to stdout in an ember app with in-repo addons 1`] = `
+"[STARTED] Analyzing project dependency graph
+[DATA] ? We found the following packages. Select a packages to see the order of files:  
+[DATA]  lib/some-addon
+[DATA]   .
+[DATA]  We found the following packages. Select a packages to see the order of files:  lib/some-addon
+[DATA] Graph order for lib/some-addon:
+[DATA] lib/some-addon/addon/components/greet.js
+[SUCCESS] Analyzing project dependency graph"
+`;

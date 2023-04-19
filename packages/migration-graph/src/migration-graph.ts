@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { ProjectGraph, ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
 import {
   EmberAddonPackageGraphOptions,
@@ -25,6 +25,12 @@ export function buildMigrationGraph(
   // Ember App
   // Ember Addon
   // Library
+
+  if (!existsSync(resolve(rootDir, 'package.json'))) {
+    throw new Error(
+      `A 'package.json' is to be expected in the root of '${rootDir}', but one was not found.`
+    );
+  }
 
   const packageJson = JSON.parse(
     readFileSync(resolve(rootDir, 'package.json'), 'utf-8')

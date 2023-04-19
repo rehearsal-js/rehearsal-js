@@ -3,7 +3,10 @@ export { discoverEmberPackages } from '@rehearsal/migration-graph-ember';
 
 export {
   getMigrationStrategy,
+  getMigrationOrder,
   type MigrationStrategy,
   type MigrationStrategyOptions,
   type SourceFile,
 } from './migration-strategy.js';
+
+export { printDirectedGraph } from './util/printer.js';

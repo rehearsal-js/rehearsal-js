@@ -116,3 +116,10 @@ export function getMigrationStrategy(
 
   return strategy;
 }
+
+export function getMigrationOrder(
+  rootDir: string,
+  options?: MigrationStrategyOptions
+): SourceFile[] {
+  return getMigrationStrategy(rootDir, options).getMigrationOrder();
+}
