@@ -12,6 +12,7 @@ import ts, {
 import { isCodeFixSupported } from './safe-codefixes.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
+import {Diagnostics} from "./diagnosticInformationMap.generated.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,14 +45,27 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       jsxAttributeCompletionStyle: 'auto',
     };
 
-    const fixes = languageService.getCodeFixesAtPosition(
-      diagnostic.file.fileName,
-      diagnostic.start,
-      diagnostic.start + diagnostic.length,
-      [diagnostic.code],
-      this.getFormatCodeSettingsForFile(diagnostic.file.fileName),
-      userPreferences
-    );
+    let fixes: readonly CodeFixAction[] = [];
+
+    try {
+      fixes = languageService.getCodeFixesAtPosition(
+        diagnostic.file.fileName,
+        diagnostic.start,
+        diagnostic.start + diagnostic.length,
+        [diagnostic.code],
+        this.getFormatCodeSettingsForFile(diagnostic.file.fileName),
+        userPreferences
+      );
+    } catch (e) {
+      const hideError =
+        diagnostic.code == Diagnostics.TS2345.code &&
+        e instanceof TypeError &&
+        e.message.includes(`Cannot read properties of undefined (reading 'flags')`);
+
+      if (!hideError) {
+        throw e;
+      }
+    }
 
     const filteredCodeFixes: CodeFixAction[] = [];
 
