@@ -225,6 +225,19 @@ three}\\" argumentTwo=\\"\${info.four}\\"/>
 `;
 
 exports[`Test upgrade > should fix errors or provide hints for errors in the original files 10`] = `
+"(function() {
+  const config = {
+    values: [],
+    value: {},
+  };
+
+  // @ts-expect-error @rehearsal TODO TS2345: Argument of type '{0}' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(config.value as string)', or using type guard: 'if (config.value instanceof string) { ... }'.
+  config.values.push(config.value);
+}());
+"
+`;
+
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
 "/**
  * @param {String} a - some string
  * @param {any} b - hardcoded to any just for demonstrative purposes
@@ -302,7 +315,7 @@ export function collectModel(model, value): void  {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 11`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 12`] = `
 "// @ts-expect-error @rehearsal TODO TS6133: The declaration 'resolve' is never read or used. Remove the declaration or use it.
 import { resolve } from 'path';
 
@@ -349,7 +362,7 @@ testModule();
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 12`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
 "function action(_target: unknown, propertyKey: string): void {
   console.log(propertyKey);
 }
@@ -423,7 +436,7 @@ export class Foo {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 13`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
 "function bar(): void  {
   // @ts-expect-error @rehearsal TODO TS7034: Variable 'emtpy' implicitly has type 'any[]' in some locations where its type cannot be determined.
   const emtpy = [];
@@ -442,7 +455,7 @@ function baz(_bar = []): void  {}
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 14`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
 "/**
  * @param {String} a - some string
  * @param {Object} b - hardcoded to any just for demonstrative purposes
@@ -473,7 +486,7 @@ export function oneOfParamsHaveObjectAndReturnHasGenericObject(a: string, b) {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 15`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
 "/**
  * This is a file with some comments added in a previous run of rehearsal
  */
@@ -507,7 +520,7 @@ try {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 16`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
 "export function test1(): string  {
   return 'Test this';
 }
@@ -547,7 +560,7 @@ export class TestClass extends BaseTestClass implements TestInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 17`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
 "// Basics
 
 class Animal {
@@ -725,7 +738,7 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 18`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 19`] = `
 "export function test1(me: string): string  {
   return 'This is ' + me;
 }
@@ -805,7 +818,7 @@ export function think(a: number, b: (string | number), c, d): void {
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 19`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 20`] = `
 "{
   \\"compilerOptions\\": {
     \\"allowSyntheticDefaultImports\\": true,
@@ -830,7 +843,7 @@ exports[`Test upgrade > should fix errors or provide hints for errors in the ori
 "
 `;
 
-exports[`Test upgrade > should fix errors or provide hints for errors in the original files 20`] = `
+exports[`Test upgrade > should fix errors or provide hints for errors in the original files 21`] = `
 "{
   \\"parser\\": \\"@typescript-eslint/parser\\",
   \\"root\\": true,
@@ -1572,6 +1585,24 @@ exports[`Test upgrade > should output the correct data from upgrade 1`] = `
       },
       "nodeText": "three",
       "ruleId": "TS2339",
+      "type": 0,
+    },
+    {
+      "analysisTarget": "throwing-an-error.ts",
+      "category": "Error",
+      "helpUrl": "https://stackoverflow.com/questions/42421501/error-ts2345-argument-of-type-t-is-not-assignable-to-parameter-of-type-objec",
+      "hint": "Argument of type '{0}' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(config.value as string)', or using type guard: 'if (config.value instanceof string) { ... }'.",
+      "hintAdded": true,
+      "message": "Argument of type '{}' is not assignable to parameter of type 'never'.",
+      "nodeKind": "PropertyAccessExpression",
+      "nodeLocation": {
+        "endColumn": 34,
+        "endLine": 8,
+        "startColumn": 22,
+        "startLine": 8,
+      },
+      "nodeText": "config.value",
+      "ruleId": "TS2345",
       "type": 0,
     },
     {
