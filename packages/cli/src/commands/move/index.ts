@@ -2,6 +2,7 @@
 import { resolve } from 'node:path';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
+import debug from 'debug';
 import { createLogger, format, transports } from 'winston';
 import { readJSON } from '@rehearsal/utils';
 import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
@@ -9,7 +10,9 @@ import type { PackageJson } from 'type-fest';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const { version } = readJSON(resolve(__dirname, '../../../package.json')) as PackageJson;
+
 export const moveCommand = new Command();
+const DEBUG_CALLBACK = debug('rehearsal:cli:move-command');
 
 // winston is leveraged before listr is initialized as logging API
 // for debugging use DEBUG=rehearsal:* | DEBUG=rehearsal:move
@@ -72,8 +75,15 @@ async function move(options: MoveCommandOptions): Promise<void> {
   const { initTask, moveTask } = await loadMoveTasks();
   const { graphOrderTask } = await loadGraphTasks();
 
+  const tasks = options.source
+    ? [initTask(options), moveTask(options)]
+    : [initTask(options), graphOrderTask(options), moveTask(options)];
+
+  DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
+  DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);
+
   try {
-    await new Listr([initTask(options), graphOrderTask(options), moveTask(options)], {
+    await new Listr(tasks, {
       concurrent: false,
     }).run();
   } catch (e) {

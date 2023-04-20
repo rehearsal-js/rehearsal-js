@@ -2,13 +2,11 @@ import { existsSync } from 'node:fs';
 import { isAbsolute, relative, resolve, extname } from 'node:path';
 import { ListrTask, ListrDefaultRenderer } from 'listr2';
 import debug from 'debug';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import fastGlob from 'fast-glob';
-import { findWorkspaceRoot, determineProjectName } from '@rehearsal/utils';
 
 import type { MoveCommandContext, MoveCommandOptions } from '../../../types.js';
 
-const DEBUG_CALLBACK = debug('rehearsal:move:initialize');
+const DEBUG_CALLBACK = debug('rehearsal:cli:initialize');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
@@ -17,7 +15,6 @@ export function initTask(
   return {
     title: `Initialize`,
     task: (ctx: MoveCommandContext): void => {
-      ctx.workspaceRoot = getWorkspaceRoot(options.basePath);
       ctx.childPackage = options.childPackage;
       // source file or dir should always exist within the basePath
       if (options.source) {
@@ -31,23 +28,9 @@ export function initTask(
         );
       }
 
-      ctx.projectName = determineProjectName(options.basePath);
-
       DEBUG_CALLBACK('init ctx %O:', ctx);
     },
   };
-}
-
-// force in project root
-function getWorkspaceRoot(basePath: string): string {
-  const workspaceRoot = findWorkspaceRoot(basePath);
-  if (basePath !== workspaceRoot) {
-    throw new Error(
-      `Rehearsal needs to be running at project root with workspaces. Seems like the project root should be ${workspaceRoot} instead of current directory ${basePath}.`
-    );
-  }
-
-  return workspaceRoot;
 }
 
 // be sure the source exists within the basePath project
@@ -101,7 +84,7 @@ function validateChildPackage(basePath: string, childPackage: string): [string, 
     !existsSync(resolve(basePath, childPackage, 'package.json'))
   ) {
     throw new Error(
-      `Rehearsal could not find the childPackage: ${childPackage} in project: ${basePath}`
+      `Rehearsal could not find the childPackage: "${childPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
     );
   }
 

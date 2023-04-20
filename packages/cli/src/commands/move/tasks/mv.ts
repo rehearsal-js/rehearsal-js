@@ -21,12 +21,15 @@ export function moveTask(
       const { dryRun, basePath } = options;
       const { jsSourcesAbs } = ctx;
 
+      DEBUG_CALLBACK(`jsSourcesAbs: ${jsSourcesAbs}`);
+
       if (jsSourcesAbs) {
-        gitMove(jsSourcesAbs, task, basePath, dryRun);
+        task.output = gitMove(jsSourcesAbs, task, basePath, dryRun);
       } else {
         task.skip('JS files not detected');
       }
     },
+    options: { persistentOutput: true },
   };
 }
 
@@ -36,8 +39,10 @@ export function gitMove(
   listrTask: MoveCommandTask,
   basePath: string,
   dryRun = false
-): string[] {
-  return sourceFiles.map((sourceFile) => {
+): string {
+  let listrOutput = 'renamed: \n';
+
+  sourceFiles.map((sourceFile) => {
     const ext = extname(sourceFile);
 
     if (ext === '.hbs') {
@@ -70,12 +75,9 @@ export function gitMove(
         }
       }
 
-      listrTask.output = `git mv ${sourceFile.replace(basePath, '')} to ${destFile.replace(
-        basePath,
-        ''
-      )}`;
+      listrOutput += `${sourceFile.replace(basePath, '')} -> ${destFile.replace(basePath, '')}\n`;
     }
-
-    return tsFile;
   });
+
+  return listrOutput;
 }

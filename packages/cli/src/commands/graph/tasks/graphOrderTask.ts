@@ -2,6 +2,7 @@ import { dirname, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
 
@@ -10,13 +11,15 @@ const __dirname = dirname(__filename);
 
 const workerPath = resolve(__dirname, 'graphWorker.js');
 
+const DEBUG_CALLBACK = debug('rehearsal:cli:graphOrderTask');
+
 export function graphOrderTask(
   options: GraphTaskOptions,
-  ctx?: GraphCommandContext
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _ctx?: GraphCommandContext
 ): ListrTask<GraphCommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing project dependency graph',
-    skip: (): boolean => !shouldRunGraphTask(ctx?.source),
     options: { persistentOutput: true },
     async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
@@ -51,11 +54,12 @@ export function graphOrderTask(
         });
       }
 
-      // dont prompt just set the ctx and return
+      DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
+      DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
+
+      // if explicit child package is passed in use that
       if (ctx?.childPackage) {
-        selectedPackageName = ctx.childPackage;
-        ctx.packageEntry = getPackageEntry(order, ctx.childPackage);
-        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages);
+        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
 
         return;
       }
@@ -66,6 +70,7 @@ export function graphOrderTask(
 
         await writeFile(output, JSON.stringify(order, null, 2));
       } else {
+        // if more than 1 package found prompt the user to select one
         if (order.packages.length > 1) {
           selectedPackageName = await task.prompt<string>([
             {
@@ -89,16 +94,12 @@ export function graphOrderTask(
 }
 
 // get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
-function getGraphFilesAbs(
-  basePath: string,
-  childPackage: string,
-  entries: PackageEntry[]
-): string[] {
-  const pkg = entries.find((p) => p.name === childPackage);
+function getGraphFilesAbs(basePath: string, childPackage: string, files: string[]): string[] {
+  // filter out files that are not in the child package
+  files = files.filter((file) => file.startsWith(childPackage));
 
-  // grab all the files from the package and resolve them to absolute paths
   return (
-    pkg?.files.map((file) => {
+    files.map((file) => {
       // all files are relative to basePath
       return resolve(basePath, file);
     }) ?? []
@@ -110,9 +111,4 @@ function getPackageEntry(
   selectedPackageName: string
 ): string | undefined {
   return order.packages.find((pkg) => pkg.name === selectedPackageName)?.files.join('\n');
-}
-
-function shouldRunGraphTask(source?: string): boolean {
-  // source is explicit and doesnt leverage this task so skip it
-  return !source;
 }
