@@ -39,6 +39,9 @@
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
   },
+  "resolutions": {
+    "listr2": "^5.0"
+  },
   "dependencies": {
     "@rehearsal/plugins": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
@@ -49,9 +52,6 @@
     "@vitest/coverage-c8": "^0.30.1",
     "listr2": "^5.0.8",
     "vitest": "^0.30.0"
-  },
-  "resolutions": {
-    "listr2": "^5.0"
   },
   "peerDependencies": {
     "eslint": "^8.0.0",

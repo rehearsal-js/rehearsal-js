@@ -36,6 +36,9 @@
     "test:watch": "vitest --coverage --watch --config ./vitest.config.ts",
     "version": "pnpm version"
   },
+  "resolutions": {
+    "listr2": "^5.0"
+  },
   "dependencies": {
     "@rehearsal/migrate": "workspace:*",
     "@rehearsal/migration-graph": "workspace:*",
@@ -77,9 +80,6 @@
   "packageManager": "pnpm@8.2.0",
   "engines": {
     "node": ">=14.16.0"
-  },
-  "resolutions": {
-    "listr2": "^5.0"
   },
   "volta": {
     "extends": "../../package.json"

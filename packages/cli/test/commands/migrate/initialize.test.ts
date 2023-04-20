@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 import { initTask } from '../../../src/commands/migrate/tasks/index.js';
 import { prepareProject, listrTaskRunner, createMigrateOptions } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+import { CustomConfig, MigrateCommandContext } from '../../../src/types.js';
 import type { Project } from 'fixturify-project';
 
 function createUserConfig(
@@ -57,7 +57,7 @@ describe('Task: initialize', () => {
 
     const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [initTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
     expect.assertions(9);
 
@@ -100,7 +100,7 @@ describe('Task: initialize', () => {
       userConfig: 'another-config.json',
     });
     const tasks = [initTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
     expect.assertions(9);
 
