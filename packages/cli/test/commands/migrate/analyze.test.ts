@@ -15,7 +15,7 @@ import {
   prepareProject,
   sendKey,
 } from '../../test-helpers/index.js';
-import { TSConfig } from '../../../src/types.js';
+import type { TSConfig, MigrateCommandContext } from '../../../src/types.js';
 
 describe('Task: analyze', () => {
   let output = '';
@@ -51,7 +51,7 @@ describe('Task: analyze', () => {
   test('get files that will be migrated', async () => {
     const options = createMigrateOptions(project.baseDir, { ci: true });
     const tasks = [analyzeTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
     expect(ctx.targetPackagePath).toBe(`${project.baseDir}`);
     expect(ctx.sourceFilesWithAbsolutePath).toContain(`${project.baseDir}/index.js`);
@@ -95,7 +95,7 @@ describe('Task: analyze', () => {
 
     const options = createMigrateOptions(project.baseDir);
     const tasks = [analyzeTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
     // test message and package selection prompt
     expect(output).toContain(
@@ -121,7 +121,7 @@ describe('Task: analyze', () => {
   test('accept --package option to skip the selection', async () => {
     const options = createMigrateOptions(project.baseDir, { package: '.' });
     const tasks = [analyzeTask(options)];
-    const ctx = await listrTaskRunner(tasks);
+    const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
     expect(ctx.targetPackagePath).toBe(`${project.baseDir}`);
     expect(ctx.sourceFilesWithAbsolutePath).toContain(`${project.baseDir}/index.js`);
@@ -169,7 +169,7 @@ describe('Task: analyze', () => {
 
       const options = createMigrateOptions(project.baseDir);
       const tasks = [analyzeTask(options)];
-      const ctx = await listrTaskRunner(tasks);
+      const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
       // test message and package selection prompt
       expect(output).toContain(
@@ -232,7 +232,7 @@ describe('Task: analyze', () => {
 
       const options = createMigrateOptions(project.baseDir);
       const tasks = [analyzeTask(options)];
-      const ctx = await listrTaskRunner(tasks);
+      const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
       // test message and package selection prompt
       expect(output).toContain(
@@ -284,7 +284,7 @@ describe('Task: analyze', () => {
 
       const options = createMigrateOptions(project.baseDir);
       const tasks = [analyzeTask(options)];
-      const ctx = await listrTaskRunner(tasks);
+      const ctx = await listrTaskRunner<MigrateCommandContext>(tasks);
 
       // test message and package selection prompt
       expect(output).toContain(

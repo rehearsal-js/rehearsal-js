@@ -2,11 +2,64 @@
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { UserConfig } from './user-config.js';
 import type { State } from './helpers/state.js';
+import type { Logger } from 'winston';
+import type { ListrTask } from 'listr2';
 
-export type CliCommand = 'upgrade' | 'migrate';
+export type CliCommand = 'move' | 'migrate' | 'upgrade';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 
 export * from './configs/rehearsal-config.js';
+
+export type MoveTasks = {
+  initTask: (options: MoveCommandOptions) => ListrTask;
+  moveTask: (options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
+};
+
+export type PackageEntry = { name: string; files: string[] };
+
+export type GraphCommandOptions = {
+  output?: string;
+};
+
+export type GraphCommandContext = {
+  skip?: boolean;
+  source?: string;
+  packageEntry?: string;
+  jsSourcesAbs?: string[];
+  childPackage?: string;
+};
+
+export type GraphTaskOptions = {
+  basePath: string;
+  output?: string;
+};
+
+export type GraphTasks = {
+  graphOrderTask: (options: GraphTaskOptions, ctx?: MoveCommandContext) => ListrTask;
+};
+
+export type MoveCommandOptions = {
+  childPackage?: string;
+  source?: string;
+  dryRun: boolean;
+  basePath: string;
+};
+
+export type MoveCommandContext = {
+  skip: boolean;
+  strategy: MigrationStrategy | undefined;
+  input: string;
+  targetPackageAbs: string;
+  workspaceRoot: string;
+  winstonLogger: Logger;
+  projectName: string | null;
+  jsSourcesAbs?: string[];
+  jsSourcesRel?: string[];
+  childPackageAbs?: string;
+  childPackageRel?: string;
+  childPackage?: string;
+  migrationOrder?: { packages: PackageEntry[] };
+};
 
 export type MigrateCommandOptions = {
   skipInit: boolean;

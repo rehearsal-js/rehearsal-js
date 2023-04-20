@@ -5,9 +5,9 @@ import { Readable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
-import { Listr } from 'listr2';
 import { getEmberProject } from '@rehearsal/test-support';
 import {
+  listrTaskRunner,
   KEYS,
   cleanOutput,
   createOutputStream,
@@ -15,7 +15,7 @@ import {
   sendKey,
 } from '../../test-helpers/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
-import { PackageEntry } from '../../../src/commands/graph/tasks/graphWorker.js';
+import type { PackageEntry, GraphCommandContext } from '../../../src/types.js';
 import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
@@ -65,12 +65,16 @@ describe('Task: graphOrderTask', () => {
   });
 
   test('can output a graph.json file', async () => {
-    const task = graphOrderTask(project.baseDir, join(project.baseDir, 'graph.json'));
-    await new Listr([task]).run();
+    const options = {
+      basePath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+    };
 
-    expect(existsSync(join(project.baseDir, 'graph.json'))).toBe(true);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
 
-    const graph = JSON.parse(await readFile(join(project.baseDir, 'graph.json'), 'utf-8')) as {
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
       packages: PackageEntry[];
     };
 
@@ -78,14 +82,24 @@ describe('Task: graphOrderTask', () => {
     expect(graph.packages[0].files).toMatchObject([
       'index.js',
       'module-a/index.js',
+      'module-a/src/baz.js',
+      'module-a/src/foo.js',
       'module-b/index.js',
+      'module-b/src/tires.js',
+      'module-b/src/car.js',
+      'src/foo/baz.js',
+      'src/foo/biz.js',
+      'src/foo/buz/biz.js',
+      'src/index.js',
     ]);
   });
 
   test('can print graph order to stdout', async () => {
-    const task = graphOrderTask(project.baseDir);
+    const options = {
+      basePath: project.baseDir,
+    };
 
-    await new Listr([task]).run();
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -95,7 +109,9 @@ describe('Task: graphOrderTask', () => {
 
     await project.write();
 
-    const task = graphOrderTask(project.baseDir);
+    const options = {
+      basePath: project.baseDir,
+    };
 
     outputStream.on('data', (line: string) => {
       if (line.includes('We found the following packages.')) {
@@ -103,7 +119,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await new Listr([task]).run();
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -113,7 +129,10 @@ describe('Task: graphOrderTask', () => {
 
     await project.write();
 
-    const task = graphOrderTask(project.baseDir, join(project.baseDir, 'graph.json'));
+    const options = {
+      basePath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+    };
 
     outputStream.on('data', (line: string) => {
       if (line.includes('We found the following packages.')) {
@@ -121,11 +140,11 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await new Listr([task]).run();
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
 
-    expect(existsSync(join(project.baseDir, 'graph.json'))).toBe(true);
+    expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(join(project.baseDir, 'graph.json'), 'utf-8')) as {
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
       packages: PackageEntry[];
     };
 

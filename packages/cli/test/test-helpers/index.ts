@@ -7,8 +7,9 @@ import which from 'which';
 import { Listr, ListrTask } from 'listr2';
 import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 import { Project } from 'fixturify-project';
+import { createLogger, format, transports } from 'winston';
 
-import { Formats, MigrateCommandContext, MigrateCommandOptions } from '../../src/types.js';
+import { Formats, MigrateCommandOptions } from '../../src/types.js';
 import type { ExecaChildProcess, Options } from 'execa';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -110,13 +111,13 @@ export function createMigrateOptions(
 }
 
 // Task runner for test
-export async function listrTaskRunner(tasks: ListrTask[]): Promise<MigrateCommandContext> {
+export async function listrTaskRunner<T>(tasks: ListrTask[]): Promise<T> {
   const defaultListrOption = {
     concurrent: false,
     exitOnError: true,
     renderer: 'verbose',
   };
-  return (await new Listr(tasks, defaultListrOption).run()) as Promise<MigrateCommandContext>;
+  return (await new Listr(tasks, defaultListrOption).run()) as Promise<T>;
 }
 
 // keycode for interactive mode test
@@ -194,3 +195,7 @@ export function isActionSelection(currentLine: string): boolean {
     currentLine.includes('Discard')
   );
 }
+
+export const winstonLogger = createLogger({
+  transports: [new transports.Console({ format: format.cli(), level: 'info' })],
+});

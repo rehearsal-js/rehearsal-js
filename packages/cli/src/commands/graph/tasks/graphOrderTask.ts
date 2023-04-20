@@ -2,31 +2,35 @@ import { dirname, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import type { PackageEntry } from './graphWorker.js';
+import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const workerPath = resolve(__dirname, 'graphWorker.js');
 
-export type GraphCommandContext = {
-  skip?: boolean;
-};
+const DEBUG_CALLBACK = debug('rehearsal:cli:graphOrderTask');
 
 export function graphOrderTask(
-  basePath: string,
-  outputPath?: string
+  options: GraphTaskOptions,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _ctx?: GraphCommandContext
 ): ListrTask<GraphCommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing project dependency graph',
     options: { persistentOutput: true },
-    async task(_ctx: GraphCommandContext, task) {
+    async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
+      const { basePath, output } = options;
+      let selectedPackageName: string;
+
       if (process.env['TEST'] === 'true') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
         order = intoGraphOutput(getMigrationOrder(basePath), basePath);
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
@@ -50,13 +54,23 @@ export function graphOrderTask(
         });
       }
 
-      if (outputPath) {
-        task.title = `Writing graph to ${outputPath} ...`;
+      DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
+      DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
 
-        await writeFile(outputPath, JSON.stringify(order, null, 2));
+      // if explicit child package is passed in use that
+      if (ctx?.childPackage) {
+        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
+
+        return;
+      }
+
+      // dont prompt just write the file
+      if (output) {
+        task.title = `Writing graph to ${output} ...`;
+
+        await writeFile(output, JSON.stringify(order, null, 2));
       } else {
-        let selectedPackageName: string;
-
+        // if more than 1 package found prompt the user to select one
         if (order.packages.length > 1) {
           selectedPackageName = await task.prompt<string>([
             {
@@ -71,12 +85,30 @@ export function graphOrderTask(
           selectedPackageName = order.packages[0].name;
         }
 
-        const entry = order.packages
-          .find((pkg) => pkg.name === selectedPackageName)
-          ?.files.join('\n');
+        const entry = getPackageEntry(order, selectedPackageName);
 
         task.output = `Graph order for '${selectedPackageName}':\n\n${entry}`;
       }
     },
   };
+}
+
+// get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
+function getGraphFilesAbs(basePath: string, childPackage: string, files: string[]): string[] {
+  // filter out files that are not in the child package
+  files = files.filter((file) => file.startsWith(childPackage));
+
+  return (
+    files.map((file) => {
+      // all files are relative to basePath
+      return resolve(basePath, file);
+    }) ?? []
+  );
+}
+
+function getPackageEntry(
+  order: { packages: PackageEntry[] },
+  selectedPackageName: string
+): string | undefined {
+  return order.packages.find((pkg) => pkg.name === selectedPackageName)?.files.join('\n');
 }

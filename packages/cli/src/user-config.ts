@@ -4,6 +4,7 @@ import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
 import type {
   MigrateCommandConfig,
+  MoveCommandConfig,
   UpgradeCommandConfig,
   CliCommand,
   CustomConfig,
@@ -12,7 +13,7 @@ import type {
 // Storage and runner for user custom cli config
 export class UserConfig {
   public basePath: string;
-  public config?: MigrateCommandConfig | UpgradeCommandConfig;
+  public config?: MigrateCommandConfig | MoveCommandConfig | UpgradeCommandConfig;
 
   constructor(basePath: string, configPath: string, command: CliCommand) {
     const config = readJSONSync(resolve(basePath, configPath)) as CustomConfig;
@@ -100,9 +101,6 @@ export class UserConfig {
     }
   }
 
-  // TODO: how to make setup tasks more generic instead of separated functions?
-
-  // TODO: it doesn't make sense for migrate and upgrade sharing the same setup tasks,
   // What does upgrade command need for custom config?
   async tsSetup(): Promise<void> {
     if (this.config?.setup?.ts) {

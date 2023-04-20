@@ -28,13 +28,18 @@ export type MigrateCommandConfig = CustomCommandConfig & {
   exclude?: string[];
 };
 
+export type MoveCommandConfig = CustomCommandConfig & {
+  exclude?: string[];
+};
+
 export type UpgradeCommandConfig = CustomCommandConfig;
 
 export type CommandConfig = UpgradeCommandConfig | MigrateCommandConfig;
 
 export interface IRehearsalConfig {
-  upgrade?: UpgradeCommandConfig;
   migrate?: MigrateCommandConfig;
+  upgrade?: UpgradeCommandConfig;
+  move?: MoveCommandConfig;
 }
 
 export type CustomConfig = IRehearsalConfig;

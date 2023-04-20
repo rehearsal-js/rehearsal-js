@@ -3,6 +3,7 @@ import { extname, relative } from 'node:path';
 
 // eslint-disable-next-line no-restricted-imports
 import { getMigrationOrder } from '@rehearsal/migration-graph';
+import type { PackageEntry } from '../../../types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
   const basePath = workerData as string;
@@ -10,8 +11,6 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
   const ordered = getMigrationOrder(basePath);
   parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
-
-export type PackageEntry = { name: string; files: string[] };
 
 export function intoGraphOutput(
   sortedFiles: import('@rehearsal/migration-graph').SourceFile[],
