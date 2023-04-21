@@ -64,6 +64,9 @@ export class HintsProvider {
     // and additional {node.text}, {node.fullText} to corresponding node values
     hint = hint.replace(/{[^}]+}/gm, (key) => replacements[key] || key);
 
+    // Make sure the hint is a single line
+    hint = hint.replace(/(\r\n|\n|\r)/gm, '. ');
+
     return hint;
   }
 }
