@@ -139,9 +139,6 @@ importers:
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:../reporter
-      '@rehearsal/upgrade':
-        specifier: workspace:*
-        version: link:../upgrade
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
@@ -658,37 +655,6 @@ importers:
       '@vitest/coverage-c8':
         specifier: ^0.30.1
         version: 0.30.1(vitest@0.30.0)
-      vitest:
-        specifier: ^0.30.0
-        version: 0.30.0
-
-  packages/upgrade:
-    dependencies:
-      '@rehearsal/plugins':
-        specifier: workspace:*
-        version: link:../plugins
-      '@rehearsal/reporter':
-        specifier: workspace:*
-        version: link:../reporter
-      '@rehearsal/service':
-        specifier: workspace:*
-        version: link:../service
-      debug:
-        specifier: ^4.3.4
-        version: 4.3.4
-      typescript:
-        specifier: ^5.0
-        version: 5.0.4
-      winston:
-        specifier: ^3.8.2
-        version: 3.8.2
-    devDependencies:
-      '@vitest/coverage-c8':
-        specifier: ^0.30.1
-        version: 0.30.1(vitest@0.30.0)
-      fixturify-project:
-        specifier: ^5.2.0
-        version: 5.2.0
       vitest:
         specifier: ^0.30.0
         version: 0.30.0

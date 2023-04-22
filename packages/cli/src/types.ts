@@ -5,7 +5,7 @@ import type { State } from './helpers/state.js';
 import type { Logger } from 'winston';
 import type { ListrTask } from 'listr2';
 
-export type CliCommand = 'move' | 'migrate' | 'upgrade';
+export type CliCommand = 'move' | 'migrate';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 
 export * from './configs/rehearsal-config.js';
@@ -84,22 +84,6 @@ export type MigrateCommandContext = {
   input: unknown;
   targetPackagePath: string;
   state: State;
-};
-
-export type UpgradeCommandContext = {
-  tsVersion: string;
-  latestAvailableBuild: string;
-  currentTSVersion: string;
-  skip: boolean;
-};
-
-export type UpgradeCommandOptions = {
-  build: string;
-  basePath: string;
-  format: Formats[];
-  outputPath: string;
-  tsVersion: string;
-  dryRun: boolean;
 };
 
 export type PackageSelection = {
