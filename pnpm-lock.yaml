@@ -237,6 +237,12 @@ importers:
         specifier: ^5.0
         version: 5.0.4
     devDependencies:
+      '@rehearsal/migrate':
+        specifier: workspace:*
+        version: link:../migrate
+      '@rehearsal/reporter':
+        specifier: workspace:*
+        version: link:../reporter
       '@rehearsal/service':
         specifier: workspace:*
         version: link:../service
