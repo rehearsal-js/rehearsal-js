@@ -1,3 +1,5 @@
+export type Formatters = 'json' | 'sonarqube' | 'md' | 'sarif';
+
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
   basePath: string;
@@ -61,4 +63,13 @@ export interface Run {
   runSummary: ReportSummary;
   fixedItemCount: number;
   items: ReportItem[];
+}
+
+// ts doesnt allow for static properties on interfaces yet
+export class FormatterBase {
+  static extension: string;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static getReport(_report: Report): string {
+    return '';
+  }
 }

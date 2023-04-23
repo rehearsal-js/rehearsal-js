@@ -15,7 +15,7 @@ export function regenTask(options: MigrateCommandOptions, logger: Logger): Listr
       // Because we have to eagerly import all the tasks we need to lazily load these
       // modules because they refer to typescript which may or may not be installed
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getRegenSummary } = await import('../../../helpers/report.js');
+      const { getRegenSummary } = await import('../../../helpers/report.js');
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
 
       const projectName = determineProjectName() || '';
@@ -23,10 +23,12 @@ export function regenTask(options: MigrateCommandOptions, logger: Logger): Listr
       const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
-      const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
-        logger
-      );
+      const reporter = new Reporter({
+        tsVersion,
+        projectName,
+        basePath,
+        commandName: '@rehearsal/migrate',
+      });
 
       const input = {
         basePath,
@@ -39,8 +41,9 @@ export function regenTask(options: MigrateCommandOptions, logger: Logger): Listr
 
       const { scannedFiles } = await regen(input);
 
-      const reportOutputPath = resolve(options.basePath, options.outputPath);
-      generateReports('migrate', reporter, reportOutputPath, options.format);
+      const reportOutputPath = resolve(options.basePath);
+      reporter.printReport(reportOutputPath, options.format);
+
       task.title = getRegenSummary(reporter.report, scannedFiles.length);
     },
   };

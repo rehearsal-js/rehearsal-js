@@ -1,67 +1,10 @@
-import { mkdirSync } from 'node:fs';
-import { resolve } from 'node:path';
-// eslint-disable-next-line no-restricted-imports -- these functions are all lazy loaded in consumers
-import {
-  jsonFormatter,
-  Report,
-  Reporter,
-  sonarqubeFormatter,
-  mdFormatter,
-  sarifFormatter,
-  ReportFormatter,
-  ReportItem,
-} from '@rehearsal/reporter';
-
-import type { CliCommand, Formats } from '../types.js';
+// eslint-disable-next-line no-restricted-imports
+import type { Report, ReportItem } from '@rehearsal/reporter';
 
 type ReportLike = {
   items: ReportItem[];
   fixedItemCount: number;
 };
-
-export function generateReports(
-  command: CliCommand,
-  reporter: Reporter,
-  outputPath: string,
-  formats: Formats[]
-): string[] {
-  const generatedReports: string[] = [];
-
-  if (formats.length === 0) {
-    return generatedReports;
-  }
-  //We make sure json report will be printed out whether user specifies it or not.
-  //json report preserves the detailed raw data.
-  formats = Array.from(new Set([...formats, 'json']));
-
-  mkdirSync(outputPath, { recursive: true });
-
-  const reportBaseName = `${command}-report`;
-
-  formats.forEach((format) => {
-    let reportPath: string;
-    let formatter: ReportFormatter;
-
-    if (format === 'json') {
-      reportPath = resolve(outputPath, `${reportBaseName}.json`);
-      formatter = jsonFormatter;
-    } else if (format === 'sonarqube') {
-      reportPath = resolve(outputPath, `${reportBaseName}.sonarqube.json`);
-      formatter = sonarqubeFormatter;
-    } else if (format === 'md') {
-      reportPath = resolve(outputPath, `${reportBaseName}.md`);
-      formatter = mdFormatter;
-    } else {
-      reportPath = resolve(outputPath, `${reportBaseName}.sarif`);
-      formatter = sarifFormatter;
-    }
-
-    reporter.printReport(reportPath, formatter);
-    generatedReports.push(reportPath);
-  });
-
-  return generatedReports;
-}
 
 /**
  * Reads report and generate migration summary

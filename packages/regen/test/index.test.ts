@@ -45,9 +45,9 @@ describe('regen', () => {
     const { scannedFiles } = await regen(regenInput);
     expect(scannedFiles.length).toBe(3);
 
-    const jsonReportPath = join(project.baseDir, '.rehearsal-report.json');
+    const jsonReportPath = join(project.baseDir, 'rehearsal-report.json');
 
-    reporter.saveReport(jsonReportPath);
+    reporter.printReport(project.baseDir);
 
     expect(existsSync(jsonReportPath)).toBeTruthy();
     const report = cleanReport(JSON.parse(readFileSync(jsonReportPath, 'utf-8')));

@@ -28,7 +28,7 @@ export function convertTask(
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getReportSummary } = await import('../../../helpers/report.js');
+      const { getReportSummary } = await import('../../../helpers/report.js');
       // If context is provided via external parameter, merge with existed
       if (context) {
         ctx = { ...ctx, ...context };
@@ -47,10 +47,12 @@ export function convertTask(
         throw new Error(`Cannot find or access tsc in ${tscPath}`);
       }
 
-      const reporter = new Reporter(
-        { tsVersion, projectName, basePath, commandName: '@rehearsal/migrate' },
-        logger
-      );
+      const reporter = new Reporter({
+        tsVersion,
+        projectName,
+        basePath,
+        commandName: '@rehearsal/migrate',
+      });
 
       if (ctx.sourceFilesWithAbsolutePath) {
         const input = {
@@ -136,8 +138,10 @@ export function convertTask(
           ctx.state.addFilesToPackage(ctx.targetPackagePath, ctx.sourceFilesWithAbsolutePath);
         }
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
-        const reportOutputPath = resolve(basePath, options.outputPath);
-        generateReports('migrate', reporter, reportOutputPath, options.format);
+
+        const reportOutputPath = resolve(basePath);
+        reporter.printReport(reportOutputPath, options.format);
+
         task.title = getReportSummary(reporter.report, migratedFiles.length);
       } else {
         task.skip('Skip JS -> TS conversion task, no JS files detected');

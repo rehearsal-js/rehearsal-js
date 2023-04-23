@@ -141,12 +141,12 @@ describe('Task: convert', () => {
 
     expect(output).toMatchSnapshot();
 
-    const reportPath = resolve(project.baseDir, '.rehearsal');
+    const reportPath = resolve(project.baseDir);
     const reportList = readdirSync(reportPath);
 
-    expect(reportList).toContain('migrate-report.json');
-    expect(reportList).toContain('migrate-report.md');
-    expect(reportList).toContain('migrate-report.sarif');
+    expect(reportList).toContain('rehearsal-report.json');
+    expect(reportList).toContain('rehearsal-report.md');
+    expect(reportList).toContain('rehearsal-report.sarif');
   });
 
   test('accept changes without git', async () => {

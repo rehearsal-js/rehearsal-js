@@ -53,12 +53,11 @@ function checkGitIgnore(basePath: string): boolean {
   return true;
 }
 
-export function reportExisted(basePath: string, outputPath?: string): boolean {
-  const reportRegex = /migrate-report\.(json|md|sarif|sonarqube)/g;
-  const reportDir = outputPath ? resolve(basePath, outputPath) : resolve(basePath, '.rehearsal');
+export function reportExisted(basePath: string): boolean {
+  const reportRegex = /rehearsal-report\.(json|md|sarif|sonarqube)/g;
   return (
-    existsSync(reportDir) &&
-    readdirSync(reportDir).filter((d: string) => reportRegex.test(d)).length > 0
+    existsSync(basePath) &&
+    readdirSync(basePath).filter((d: string) => reportRegex.test(d)).length > 0
   );
 }
 

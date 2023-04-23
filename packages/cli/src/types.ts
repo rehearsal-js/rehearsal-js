@@ -67,7 +67,6 @@ export type MigrateCommandOptions = {
   entrypoint: string;
   package: string;
   format: Formats[];
-  outputPath: string;
   verbose: boolean | undefined;
   userConfig: string | undefined;
   ci: boolean | undefined;
