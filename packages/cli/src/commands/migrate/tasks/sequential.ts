@@ -23,25 +23,20 @@ export function sequentialTask(
       const regen = await import('@rehearsal/regen').then((m) => m.regen);
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { generateReports, getReportSummary, getRegenSummary } = await import(
-        '../../../helpers/report.js'
-      );
+      const { getReportSummary, getRegenSummary } = await import('../../../helpers/report.js');
 
       const projectName = determineProjectName() || '';
       const { basePath } = options;
       const tscPath = await getPathToBinary('tsc', { cwd: options.basePath });
       const { stdout } = await execa(tscPath, ['--version']);
       const tsVersion = stdout.split(' ')[1];
-      const reporter = new Reporter(
-        {
-          tsVersion,
-          projectName,
-          basePath,
-          commandName: '@rehearsal/migrate',
-          previousFixedCount: previousRuns.previousFixedCount,
-        },
-        logger
-      );
+      const reporter = new Reporter({
+        tsVersion,
+        projectName,
+        basePath,
+        commandName: '@rehearsal/migrate',
+        previousFixedCount: previousRuns.previousFixedCount,
+      });
 
       for (const runPath of previousRuns.paths) {
         const files = await getSourceFiles(runPath.basePath, runPath.entrypoint);
@@ -75,9 +70,10 @@ export function sequentialTask(
       }
 
       DEBUG_CALLBACK('migratedFiles', migratedFiles);
-      const reportOutputPath = resolve(options.basePath, options.outputPath);
-      generateReports('migrate', reporter, reportOutputPath, options.format);
+      const reportOutputPath = resolve(options.basePath);
       task.title = getReportSummary(reporter.report, migratedFiles.length);
+
+      reporter.printReport(reportOutputPath, options.format);
     },
   };
 }

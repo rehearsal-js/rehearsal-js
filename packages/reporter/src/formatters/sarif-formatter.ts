@@ -1,7 +1,8 @@
+import type { Report, ReportItem, FormatterBase } from '../types.js';
 import type { Artifact, Location, Log, ReportingDescriptor, Result, Run } from 'sarif';
-import type { Report, ReportItem } from '../types.js';
 
-export class SarifFormatter {
+export class SarifFormatter implements FormatterBase {
+  static extension = '.sarif';
   private report: Report;
   private rules: ReportingDescriptor[] = [];
   private ruleIndexMap: { [ruleId: string]: number } = {};
@@ -13,10 +14,11 @@ export class SarifFormatter {
     this.report = report;
   }
 
-  format(): string {
-    return JSON.stringify(this.buildLog(), null, 2);
+  static getReport(report: Report): string {
+    return new SarifFormatter(report).format();
   }
 
+  // only exposed for SonarqubeFormatter
   buildLog(): Log {
     const runs = this.buildRun();
 
@@ -27,8 +29,12 @@ export class SarifFormatter {
     };
   }
 
+  private format(): string {
+    return JSON.stringify(this.buildLog(), null, 2);
+  }
+
   private buildRun(): Run {
-    const run = createRun(this.report);
+    const run = this.createRun(this.report);
 
     for (const item of this.report.items) {
       this.addRule(item.ruleId, item.message);
@@ -73,7 +79,7 @@ export class SarifFormatter {
 
   private addArtifact(fileName: string): void {
     if (!this.artifactExists(fileName)) {
-      const newArtifact = buildArtifact(fileName);
+      const newArtifact = this.buildArtifact(fileName);
       this.artifacts.push(newArtifact);
 
       this.artifactIndexMap[fileName] = this.artifacts.length - 1;
@@ -89,8 +95,8 @@ export class SarifFormatter {
     return {
       ruleId: item.ruleId,
       ruleIndex: this.ruleIndexMap[item.ruleId],
-      level: levelConverter(item.category),
-      kind: kindConverter(item.category),
+      level: this.levelConverter(item.category),
+      kind: this.kindConverter(item.category),
       message: {
         text: item.hint,
       },
@@ -126,63 +132,59 @@ export class SarifFormatter {
   private artifactExists(artifactName: string): boolean {
     return this.artifactIndexMap[artifactName] !== undefined;
   }
-}
 
-function buildArtifact(fileName: string): Artifact {
-  return {
-    location: {
-      uri: fileName,
-    },
-  };
-}
-function kindConverter(category: string): Result.kind {
-  switch (category) {
-    case 'Warning':
-    case 'Suggestion':
-    case 'Message':
-      return 'review';
-    default:
-      return 'fail';
-  }
-}
-
-function levelConverter(category: string): Result.level {
-  switch (category) {
-    case 'Warning':
-      return 'warning';
-    case 'Error':
-      return 'error';
-    case 'Suggestion':
-      return 'note';
-    case 'Message':
-      return 'note';
-    default:
-      return 'none';
-  }
-}
-
-function createRun(report: Report): Run {
-  return {
-    tool: {
-      driver: {
-        name: `${report.summary[0].commandName}`,
-        informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
-        rules: [],
+  private buildArtifact(fileName: string): Artifact {
+    return {
+      location: {
+        uri: fileName,
       },
-    },
-    artifacts: [],
-    results: [],
-    automationDetails: {
-      description: {
-        //For sequential runs, the time difference between each run is minimal, and ts version should be the same.
-        //So printing out the first timestamp and first ts version.
-        text: `This is the result of ${report.summary[0].commandName} on your product against TypeScript ${report.summary[0].tsVersion} at ${report.summary[0].timestamp}`,
-      },
-    },
-  };
-}
+    };
+  }
 
-export function sarifFormatter(report: Report): string {
-  const formatter = new SarifFormatter(report);
-  return formatter.format();
+  private kindConverter(category: string): Result.kind {
+    switch (category) {
+      case 'Warning':
+      case 'Suggestion':
+      case 'Message':
+        return 'review';
+      default:
+        return 'fail';
+    }
+  }
+
+  private levelConverter(category: string): Result.level {
+    switch (category) {
+      case 'Warning':
+        return 'warning';
+      case 'Error':
+        return 'error';
+      case 'Suggestion':
+        return 'note';
+      case 'Message':
+        return 'note';
+      default:
+        return 'none';
+    }
+  }
+
+  private createRun(report: Report): Run {
+    return {
+      tool: {
+        driver: {
+          name: `${report.summary[0].commandName}`,
+          informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
+          rules: [],
+        },
+      },
+      artifacts: [],
+      results: [],
+      automationDetails: {
+        description: {
+          //For sequential runs, the time difference between each run is minimal, and ts version should be the same.
+          //So printing out the first timestamp and first ts version.
+          text: `This is the result of ${report.summary[0].commandName} on your product against TypeScript ${report.summary[0].tsVersion} at ${report.summary[0].timestamp}`,
+        },
+      },
+    };
+  }
 }

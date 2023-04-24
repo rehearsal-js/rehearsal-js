@@ -1,5 +1,8 @@
-import type { Report } from '../types.js';
+import type { Report, FormatterBase } from '../types.js';
 
-export function jsonFormatter(report: Report): string {
-  return JSON.stringify(report, null, 2);
+export class JSONFormatter implements FormatterBase {
+  static extension = '.json';
+  static getReport(report: Report): string {
+    return JSON.stringify(report, null, 2);
+  }
 }

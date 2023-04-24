@@ -83,7 +83,7 @@ describe('Task: sequential', () => {
     expect(fileList).toContain('index.ts');
 
     const report = JSON.parse(
-      await fs.readFile(resolve(project.baseDir, '.rehearsal', 'migrate-report.json'), 'utf-8')
+      await fs.readFile(resolve(project.baseDir, 'rehearsal-report.json'), 'utf-8')
     ) as Report;
 
     const { summary, fixedItemCount, items } = report;

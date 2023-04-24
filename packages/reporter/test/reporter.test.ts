@@ -1,44 +1,44 @@
-import { existsSync, readFileSync, rmSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { readJSONSync } from 'fs-extra/esm';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { DiagnosticWithLocation, SourceFile, Node } from 'typescript';
-import { afterEach, assert, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
+import { Project } from 'fixturify-project';
+import { Reporter } from '../src/index.js';
+import { prepareProject, getJSONReport } from './test-helpers.js';
 
-import { jsonFormatter, mdFormatter, Reporter } from '../src/index.js';
-import { Run } from '../src/types.js';
+describe('Reporter', () => {
+  let reporter: Reporter;
+  let project: Project;
+  let reportDirectory: string;
+  const currentRunTimestamp = '9/16/2022, 13:24:57';
+  const currentRunBasePath = '/base/path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+  beforeEach(async () => {
+    project = prepareProject('rehearsal-report.json');
 
-describe('Test reporter', function () {
-  const basePath = resolve(__dirname, 'fixtures/reporter');
-  const testDataPath = resolve(basePath, 'rehearsal-run.json');
-  const testData = readJSONSync(testDataPath) as Run;
-  const timestamp = testData.runSummary.timestamp;
-  const runBasePath = testData.runSummary.basePath;
-  const runEntrypoint = testData.runSummary.entrypoint;
+    await project.write();
 
-  let reporter: Reporter | undefined;
-
-  beforeEach(() => {
     reporter = new Reporter({
       tsVersion: '',
       projectName: 'test',
-      basePath,
+      basePath: project.baseDir,
       commandName: '@rehearsal/reporter',
-    }).loadRun(testDataPath);
+    });
+
+    reporter.currentRun = getJSONReport('rehearsal-run.json');
+    reportDirectory = resolve(project.baseDir, 'reports');
   });
 
   afterEach(() => {
-    reporter = undefined;
+    project.dispose();
   });
 
-  test('load', () => {
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
+  test('saveCurrentRunToReport', () => {
+    // current run is being set in beforeEach
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
 
-    const report = reporter!.report;
+    const report = reporter.report;
 
     expect(report.summary.length).toBe(1);
     expect(report.summary[0].basePath).toMatch(/base/);
@@ -46,41 +46,47 @@ describe('Test reporter', function () {
     expect(report).toMatchSnapshot();
   });
 
-  test('save', () => {
-    const testSaveFile = resolve(basePath, 'test-save.json');
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
-    reporter!.saveReport(testSaveFile);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(existsSync(testSaveFile)).toBeTruthy;
-    expect(readFileSync(testSaveFile, 'utf-8')).toMatchSnapshot();
+  test('printReport default formatter', () => {
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory);
 
-    rmSync(testSaveFile);
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.json'), 'utf-8')
+    ).toMatchSnapshot();
   });
 
-  test('print, json', () => {
-    const testPrintJsonFile = resolve(basePath, 'test-print-json.json');
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
-    reporter!.printReport(testPrintJsonFile, jsonFormatter);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(existsSync(testPrintJsonFile)).toBeTruthy;
-    expect(readFileSync(testPrintJsonFile, 'utf-8')).toMatchSnapshot();
+  test('printReport sarif formatter', () => {
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory, ['sarif']);
 
-    rmSync(testPrintJsonFile);
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.sarif'), 'utf-8')
+    ).toMatchSnapshot();
   });
 
-  test('print, pull-request-md', () => {
-    const testPrintMdFile = resolve(basePath, 'test-print-md.md');
+  test('printReport sonarqube formatter', () => {
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory, ['sonarqube']);
 
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
-    reporter!.printReport(testPrintMdFile, mdFormatter);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(existsSync(testPrintMdFile)).toBeTruthy;
-    expect(readFileSync(testPrintMdFile, 'utf-8')).toMatchSnapshot();
-
-    rmSync(testPrintMdFile);
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.sonarqube.json'), 'utf-8')
+    ).toMatchSnapshot();
   });
 
-  test('addTSItem', () => {
+  test('printReport md formatter', () => {
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory, ['md']);
+
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.md'), 'utf-8')
+    ).toMatchSnapshot();
+  });
+
+  test('addTSItemToRun', () => {
     const mockSourceFile = mock<SourceFile>();
     mockSourceFile.fileName = 'testFile1.ts';
     mockSourceFile.getLineAndCharacterOfPosition.mockReturnValue({ line: 0, character: 5 });
@@ -103,20 +109,17 @@ describe('Test reporter', function () {
     const location = { startLine: 3, startColumn: 7, endLine: 3, endColumn: 12 };
     const hint = 'This is the hint.';
 
-    reporter!.addTSItemToRun(mockDiagnostic, mockNode, location, hint);
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
+    reporter.addTSItemToRun(mockDiagnostic, mockNode, location, hint);
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory);
 
-    const testAddTSItemFile = resolve(basePath, 'test-add-item.json');
-
-    reporter!.saveReport(testAddTSItemFile);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(existsSync(testAddTSItemFile)).toBeTruthy;
-    expect(readFileSync(testAddTSItemFile, 'utf-8')).toMatchSnapshot();
-
-    rmSync(testAddTSItemFile);
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.json'), 'utf-8')
+    ).toMatchSnapshot();
   });
 
-  test('addLintItem', () => {
+  test('addLintItemToRun', () => {
     const lintError = {
       ruleId: null,
       message: 'Parsing error: require() of ES Module...from require-from-eslint.js not supported',
@@ -124,27 +127,26 @@ describe('Test reporter', function () {
       column: undefined,
     };
 
-    reporter!.addLintItemToRun('testFile1.ts', lintError);
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
+    reporter.addLintItemToRun('testFile1.ts', lintError);
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.printReport(reportDirectory);
 
-    const testAddLintItemFile = resolve(basePath, 'test-add-lint-item.json');
-
-    reporter!.saveReport(testAddLintItemFile);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(existsSync(testAddLintItemFile)).toBeTruthy;
-    expect(readFileSync(testAddLintItemFile, 'utf-8')).toMatchSnapshot();
-
-    rmSync(testAddLintItemFile);
+    expect(existsSync(reportDirectory)).toBe(true);
+    expect(
+      readFileSync(resolve(reportDirectory, 'rehearsal-report.json'), 'utf-8')
+    ).toMatchSnapshot();
   });
 
   test('getFileNames', () => {
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
-    assert.deepEqual(reporter!.getFileNames(), ['/base/path/file1.ts', '/base/path/file2.ts']);
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+
+    expect(reporter.getFileNames()).toStrictEqual(['/base/path/file1.ts', '/base/path/file2.ts']);
   });
 
-  test('getItemsByFile', () => {
-    reporter!.saveCurrentRunToReport(runBasePath, runEntrypoint, timestamp);
-    const items = reporter!.getItemsByAnalysisTarget('/base/path/file1.ts');
+  test('getItemsByAnalysisTarget', () => {
+    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    const items = reporter.getItemsByAnalysisTarget('/base/path/file1.ts');
+
     expect(items).toMatchSnapshot();
   });
 });

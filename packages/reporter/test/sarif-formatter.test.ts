@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { sarifFormatter } from '../src/index.js';
+import { SarifFormatter } from '../src/formatters/index.js';
 import {
   addArtifactData,
   addResultData,
@@ -9,33 +9,27 @@ import {
 } from './fixtures/sarif-formatter/index.js';
 import type { Log } from 'sarif';
 
-describe('Test sarif-formatter', () => {
+describe('SarifFormatter', () => {
   test('should set the correct version, $schema, and initial data', () => {
-    const sarif = sarifFormatter(initialData);
-    expect(sarif).toMatchSnapshot();
+    expect(SarifFormatter.extension).toBe('.sarif');
+    expect(SarifFormatter.getReport(initialData)).toMatchSnapshot();
   });
 
   test('should add a rule only if the rule does not exist in rules', () => {
-    const sarif = sarifFormatter(addRuleData);
-    const log = JSON.parse(sarif) as Log;
-    const rules = log.runs[0].tool.driver.rules;
-    console.log(rules);
-    expect(rules).toMatchSnapshot();
+    const log = JSON.parse(SarifFormatter.getReport(addRuleData)) as Log;
+
+    expect(log.runs[0].tool.driver.rules).toMatchSnapshot();
   });
 
   test('should have the correct number of results in order, and each result should be assigned the correct property values', () => {
-    const sarif = sarifFormatter(addResultData);
-    const log = JSON.parse(sarif) as Log;
-    const results = log.runs[0].results;
+    const log = JSON.parse(SarifFormatter.getReport(addResultData)) as Log;
 
-    expect(results).toMatchSnapshot();
+    expect(log.runs[0].results).toMatchSnapshot();
   });
 
   test('should add an artifact only if it does not exist, should merge roles and properties correctly', () => {
-    const sarif = sarifFormatter(addArtifactData);
-    const log = JSON.parse(sarif) as Log;
-    const artifacts = log.runs[0].artifacts;
+    const log = JSON.parse(SarifFormatter.getReport(addArtifactData)) as Log;
 
-    expect(artifacts).toMatchSnapshot();
+    expect(log.runs[0].artifacts).toMatchSnapshot();
   });
 });

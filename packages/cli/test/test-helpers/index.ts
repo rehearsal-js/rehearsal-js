@@ -9,7 +9,7 @@ import { git, gitIsRepoDirty, readJSON } from '@rehearsal/utils';
 import { Project } from 'fixturify-project';
 import { createLogger, format, transports } from 'winston';
 
-import { Formats, MigrateCommandOptions } from '../../src/types.js';
+import type { MigrateCommandOptions } from '../../src/types.js';
 import type { ExecaChildProcess, Options } from 'execa';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -99,8 +99,7 @@ export function createMigrateOptions(
     skipInit: false,
     entrypoint: '',
     package: '',
-    format: ['sarif' as Formats],
-    outputPath: '.rehearsal',
+    format: ['sarif'],
     verbose: false,
     userConfig: 'rehearsal-config.json',
     ci: false,

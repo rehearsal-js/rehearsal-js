@@ -29,15 +29,12 @@ describe('migrate', () => {
 
     sourceFiles = [join(project.baseDir, 'index.js')];
 
-    reporter = new Reporter(
-      {
-        tsVersion: '',
-        projectName: '@rehearsal/test',
-        basePath: project.baseDir,
-        commandName: '@rehearsal/migrate',
-      },
-      logger
-    );
+    reporter = new Reporter({
+      tsVersion: '',
+      projectName: '@rehearsal/test',
+      basePath: project.baseDir,
+      commandName: '@rehearsal/migrate',
+    });
 
     await project.write();
   });
@@ -62,8 +59,8 @@ describe('migrate', () => {
         migratedFiles.push(f);
       }
     }
-    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
-    reporter.saveReport(jsonReport);
+    const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+    reporter.printReport(project.baseDir);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(project.baseDir);
@@ -97,8 +94,8 @@ describe('migrate', () => {
     const actual = readFileSync(file, 'utf-8');
     const expected = readFileSync(`${project.baseDir}/index.ts`, 'utf-8');
     expect(actual).toBe(expected);
-    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
-    reporter.saveReport(jsonReport);
+    const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+    reporter.printReport(project.baseDir);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(project.baseDir);
@@ -140,8 +137,8 @@ describe('migrate', () => {
 
     expect(existsSync(file)).toBeTruthy();
 
-    const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
-    reporter.saveReport(jsonReport);
+    const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+    reporter.printReport(project.baseDir);
     const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
     expect(report.summary[0].basePath).toMatch(project.baseDir);

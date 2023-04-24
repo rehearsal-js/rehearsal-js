@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Test sonarqueFormatter > should transform all fields correctly, irregardless of undefined, missing values 1`] = `
+exports[`SonarqubeFormatter > should transform all fields correctly, irregardless of undefined, missing values 1`] = `
 "{
   \\"issues\\": [
     {

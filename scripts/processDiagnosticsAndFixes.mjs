@@ -181,14 +181,21 @@ function convertPropertyName(origName) {
 
 async function writeMarkdown(codeFixMessages, fixes) {
   let buffer = '';
-  codeFixMessages.forEach((fix, name) => {
+  let fixesCounter = 1;
+  let diagnostics = [];
+
+  codeFixMessages.forEach((fix, name, i) => {
     buffer += `## ${fix.title}\n\nid: _${name}_\n\n${fix.description}\n${writeCases(name, fixes)}\n\n\n`
+
+    diagnostics = diagnostics.concat(fix.diagnostics);
+    fixesCounter++;
   });
 
+  const diagnosticsCounter = [...new Set(diagnostics)].length;
   const result = [
     '# Supported CodeFixes',
     '',
-    'The following codefixes are supported by Rehearsal.',
+    `The following ${fixesCounter} codefixes are supported by Rehearsal, which resolve ${diagnosticsCounter} different TypeScript diagnostics errors.`,
     '',
     buffer
   ].join('\n');

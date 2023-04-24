@@ -208,8 +208,8 @@ export default class Hello extends Component {
 
       expectFile(outputs[0]).toEqual(expected);
 
-      const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
-      reporter.saveReport(jsonReport);
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      reporter.printReport(project.baseDir);
       const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
       expect(getStringAtLocation(outputs[0], report.items[0].nodeLocation as Location)).toEqual(
@@ -389,8 +389,8 @@ export default class Salutation extends Component {
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
 
-      const jsonReport = resolve(project.baseDir, '.rehearsal-report.json');
-      reporter.saveReport(jsonReport);
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      reporter.printReport(project.baseDir);
       const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
       expect(report.summary[0].basePath).toMatch(project.baseDir);

@@ -1,6 +1,6 @@
 # Supported CodeFixes
 
-The following codefixes are supported by Rehearsal.
+The following 39 codefixes are supported by Rehearsal, which resolve 109 different TypeScript diagnostics errors.
 
 ## Add Missing `async` Keyword
 

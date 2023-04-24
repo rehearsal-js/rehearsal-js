@@ -46,7 +46,6 @@ migrateCommand
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
   .option(
     '-u, --userConfig <custom json config for migrate command>',
     'path to rehearsal config',
@@ -85,7 +84,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   // 1. Not --dryRun
   // 2. Not --regen
   // 3. First time run (check if any report exists)
-  if (!options.dryRun && !options.regen && !reportExisted(options.basePath, options.outputPath)) {
+  if (!options.dryRun && !options.regen && !reportExisted(options.basePath)) {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(
@@ -162,12 +161,8 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         ],
         defaultListrOption
       ).run();
-    } else if (reportExisted(options.basePath, options.outputPath)) {
-      const previousRuns = await getPreviousRuns(
-        options.basePath,
-        options.outputPath,
-        options.entrypoint
-      );
+    } else if (reportExisted(options.basePath)) {
+      const previousRuns = await getPreviousRuns(options.basePath, options.entrypoint);
       if (previousRuns.paths.length > 0) {
         logger.info(
           `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
@@ -189,12 +184,8 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   }
 }
 
-async function getPreviousRuns(
-  basePath: string,
-  outputDir: string,
-  entrypoint: string
-): Promise<PreviousRuns> {
-  const jsonReportPath = resolve(basePath, outputDir, 'migrate-report.json');
+async function getPreviousRuns(basePath: string, entrypoint: string): Promise<PreviousRuns> {
+  const jsonReportPath = resolve(basePath, 'rehearsal-report.json');
 
   let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
 
