@@ -21,17 +21,17 @@ describe('state', () => {
   });
 
   test('constructor should init state to disk', () => {
-    const configPath = resolve(basePath, 'state.json');
-    const { packages, files } = new State('foo', basePath, [], configPath);
+    const statePath = resolve(basePath, 'state.json');
+    const { packages, files } = new State('foo', basePath, [], statePath);
 
     expect(packages).toEqual({});
     expect(files).toEqual({});
-    expect(existsSync(configPath)).toBeTruthy();
-    expect(readJSONSync(configPath)).matchSnapshot();
+    expect(existsSync(statePath)).toBeTruthy();
+    expect(readJSONSync(statePath)).matchSnapshot();
   });
 
   test('constructor should load existed state', () => {
-    const configPath = resolve(basePath, 'state.json');
+    const statePath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
     const existedStore: Store = {
       name: 'bar',
@@ -48,19 +48,19 @@ describe('state', () => {
     };
 
     // write existed state
-    writeJSONSync(configPath, existedStore);
+    writeJSONSync(statePath, existedStore);
     // write foo file
     writeFileSync(fooPath, '');
 
-    const { packages, files } = new State('foo', basePath, [], configPath);
+    const { packages, files } = new State('foo', basePath, [], statePath);
 
     expect(packages['bar']).toEqual(['./foo']);
     expect(files['./foo'].package).toBe('./bar');
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
   });
 
   test('getVerifiedStore', () => {
-    const configPath = resolve(basePath, 'state.json');
+    const statePath = resolve(basePath, 'state.json');
     const existedStore: Store = {
       name: 'bar',
       packageMap: {
@@ -76,31 +76,31 @@ describe('state', () => {
     };
 
     // write existed state
-    writeJSONSync(configPath, existedStore);
+    writeJSONSync(statePath, existedStore);
 
-    const { packages, files } = new State('foo', basePath, [], configPath);
+    const { packages, files } = new State('foo', basePath, [], statePath);
 
     expect(packages['./bar']).toEqual(['./foo']);
     // there is no actual .foo existed on disk
     // stage would be updated when loading the old state file
     expect(files['./foo'].current).toBe(null);
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
   });
 
   test('addFilesToPackages', () => {
-    const configPath = resolve(basePath, 'state.json');
+    const statePath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
 
     // write foo file
     writeFileSync(fooPath, '');
 
-    const state = new State('bar', basePath, ['./bar'], configPath);
+    const state = new State('bar', basePath, ['./bar'], statePath);
 
     state.addFilesToPackage('./bar', ['./foo']);
 
     expect(state.packages['./bar']).toEqual(['./foo']);
     expect(state.files['./foo'].package).toBe('./bar');
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
   });
 
   test('calculateTSIgnoreCount', () => {
@@ -118,10 +118,8 @@ describe('state', () => {
   });
 
   test('getPackageMigrateProgress', () => {
-    const configPath = resolve(basePath, 'state.json');
-
+    const statePath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo.ts');
-
     const store: Store = {
       name: 'bar',
       packageMap: {
@@ -142,15 +140,15 @@ describe('state', () => {
       errorCount: 2,
     };
 
-    writeJSONSync(configPath, store);
+    writeJSONSync(statePath, store);
     // only have fooPath on disk, so state should know only foo is migrated
     writeFileSync(fooPath, '', 'utf-8');
 
-    let state = new State('bar', basePath, ['sample-package'], configPath);
+    let state = new State('bar', basePath, ['sample-package'], statePath);
     state.addFilesToPackage('sample-package', ['./foo.ts', './bar.ts']);
     // here create the state again, to simulate loading previous state
     // the getVerifiedStore would be triggered here to update files' state
-    state = new State('bar', basePath, ['sample-package'], configPath);
+    state = new State('bar', basePath, ['sample-package'], statePath);
 
     const expected = {
       migratedFileCount: 1,
@@ -159,19 +157,16 @@ describe('state', () => {
     };
 
     expect(state.getPackageMigrateProgress('sample-package')).toStrictEqual(expected);
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
   });
 
   test('getPackageErrorCount', () => {
-    const configPath = resolve(basePath, 'state.json');
-
+    const statePath = resolve(basePath, 'state.json');
     const foo = '@rehearsal TODO foo bar';
     const fooPath = resolve(basePath, 'foo');
-
     const bar = '@rehearsal TODO foo\n@rehearsal TODO bar';
     const barPath = resolve(basePath, 'bar');
-
-    const state = new State('bar', basePath, ['sample-package'], configPath);
+    const state = new State('bar', basePath, ['sample-package'], statePath);
 
     writeFileSync(fooPath, foo, 'utf-8');
     writeFileSync(barPath, bar, 'utf-8');
@@ -182,17 +177,17 @@ describe('state', () => {
   });
 
   test('does not contain absolute paths in state file', () => {
-    const configPath = resolve(basePath, 'state.json');
+    const statePath = resolve(basePath, 'state.json');
     const fooPath = resolve(basePath, 'foo');
     const barPath = resolve(basePath, 'bar');
     const packagePath = resolve(basePath, 'sample-package');
 
-    const state = new State('bar', basePath, [packagePath], configPath);
+    const state = new State('bar', basePath, [packagePath], statePath);
     // check state file after init
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
 
     state.addFilesToPackage(packagePath, [fooPath, barPath]);
     // check state file again after addFilesToPackage
-    expect(readJSONSync(configPath)).toMatchSnapshot();
+    expect(readJSONSync(statePath)).toMatchSnapshot();
   });
 });

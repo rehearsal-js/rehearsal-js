@@ -6,10 +6,9 @@ import { Listr } from 'listr2';
 import { createLogger, format, transports } from 'winston';
 import { findWorkspaceRoot, gitIsRepoDirty, parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
-import { MigrateCommandContext, MigrateCommandOptions, PreviousRuns } from '../../types.js';
+import { FixCommandContext, FixCommandOptions, PreviousRuns } from '../../types.js';
 
-import { sequentialTask } from './tasks/sequential.js';
-// eslint-disable-next-line no-restricted-imports -- this is a type import
+// eslint-disable-next-line no-restricted-imports
 import type { Report } from '@rehearsal/reporter';
 
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -17,11 +16,12 @@ const { version } = JSON.parse(
   await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8')
 ) as PackageJson;
 
-export const migrateCommand = new Command();
+export const fixCommand = new Command();
 
-migrateCommand
-  .name('migrate')
-  .description('migrate a javascript project to typescript')
+fixCommand
+  .alias('infer')
+  .name('fix')
+  .description('provides type inference against typescript projects')
   .addOption(
     new Option('-b, --basePath <project base path>', 'base directory of your project')
       .default(process.cwd())
@@ -46,21 +46,16 @@ migrateCommand
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option(
-    '-u, --userConfig <custom json config for migrate command>',
-    'path to rehearsal config',
-    'rehearsal-config.json'
-  )
+  .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
   .option('--ci', 'non-interactive mode')
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
   .option('-r, --regen', 'print out current migration status')
-  .addOption(new Option('-s, --skipInit', 'skip initialization').default(false).hideHelp())
-  .action(async (options: MigrateCommandOptions) => {
+  .action(async (options: FixCommandOptions) => {
     await migrate(options);
   });
 
-async function migrate(options: MigrateCommandOptions): Promise<void> {
+async function migrate(options: FixCommandOptions): Promise<void> {
   const loggerLevel = options.verbose ? 'debug' : 'info';
   const logger = createLogger({
     transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
@@ -79,13 +74,13 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     reportExisted,
   } = await loadTasks();
 
-  logger.info(`@rehearsal/migrate ${version?.trim()}`);
+  logger.info(`@rehearsal/fix ${version?.trim()}`);
 
   // Show git warning if:
   // 1. Not --dryRun
   // 2. Not --regen
   // 3. First time run (check if any report exists)
-  if (!options.dryRun && !options.regen && !reportExisted(options.basePath)) {
+  if (!options.dryRun && !options.regen && !reportExisted(options.basePath, options.outputPath)) {
     const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
     if (hasUncommittedFiles) {
       logger.warn(
@@ -141,7 +136,7 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
     if (!options.ci) {
       // For issue #549, have to use simple renderer for the interactive edit flow
       // previous ctx is needed for the isolated convertTask
-      const ctx = await new Listr<MigrateCommandContext>(tasks, defaultListrOption).run();
+      const ctx = await new Listr<FixCommandContext>(tasks, defaultListrOption).run();
       await new Listr([convertTask(options, logger, ctx)], {
         renderer: 'simple',
         ...defaultListrOption,
@@ -162,8 +157,12 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
         ],
         defaultListrOption
       ).run();
-    } else if (reportExisted(options.basePath)) {
-      const previousRuns = await getPreviousRuns(options.basePath, options.entrypoint);
+    } else if (reportExisted(options.basePath, options.outputPath)) {
+      const previousRuns = await getPreviousRuns(
+        options.basePath,
+        options.outputPath,
+        options.entrypoint
+      );
       if (previousRuns.paths.length > 0) {
         logger.info(
           `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
@@ -185,8 +184,12 @@ async function migrate(options: MigrateCommandOptions): Promise<void> {
   }
 }
 
-async function getPreviousRuns(basePath: string, entrypoint: string): Promise<PreviousRuns> {
-  const jsonReportPath = resolve(basePath, 'rehearsal-report.json');
+async function getPreviousRuns(
+  basePath: string,
+  outputDir: string,
+  entrypoint: string
+): Promise<PreviousRuns> {
+  const jsonReportPath = resolve(basePath, outputDir, 'migrate-report.json');
 
   let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
 

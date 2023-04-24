@@ -1,17 +1,10 @@
 import { resolve } from 'path';
 import { existsSync } from 'node:fs';
-import { determineProjectName, readTSConfig, writeTSConfig } from '@rehearsal/utils';
+import { determineProjectName } from '@rehearsal/utils';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import { minimatch } from 'minimatch';
 import { State } from '../../../helpers/state.js';
-import {
-  MenuMap,
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  PackageSelection,
-  TSConfig,
-} from '../../../types.js';
+import { MenuMap, FixCommandContext, FixCommandOptions, PackageSelection } from '../../../types.js';
 // eslint-disable-next-line no-restricted-imports -- type import
 import type { SourceFile } from '@rehearsal/migration-graph';
 
@@ -20,12 +13,12 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate:analyze');
 const IN_PROGRESS_MARK = '🚧';
 const COMPLETION_MARK = '✅';
 
-export function analyzeTask(
-  options: MigrateCommandOptions
-): ListrTask<MigrateCommandContext, ListrDefaultRenderer> {
+export function graphTask(
+  options: FixCommandOptions
+): ListrTask<FixCommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyze project',
-    async task(ctx: MigrateCommandContext, task) {
+    async task(ctx: FixCommandContext, task) {
       const { discoverEmberPackages, getMigrationStrategy } = await import(
         '@rehearsal/migration-graph'
       ).then((m) => m);
@@ -144,19 +137,6 @@ export function analyzeTask(
       ctx.strategy = strategy;
       ctx.sourceFilesWithAbsolutePath = files.map((f) => f.path);
       ctx.sourceFilesWithRelativePath = files.map((f) => f.relativePath);
-
-      if (options.dryRun) {
-        // Skip the rest of tasks
-        task.output = `List of files will be attempted to migrate:\n ${ctx.sourceFilesWithRelativePath.join(
-          '\n'
-        )}`;
-      } else {
-        // add files to "include" in tsconfig.json
-        addFilesToIncludes(
-          ctx.sourceFilesWithRelativePath.map((f) => f.replace(/js$/g, 'ts')),
-          resolve(options.basePath, 'tsconfig.json')
-        );
-      }
     },
     options: {
       // options for dryRun, since we need to keep the output to see the list of files
@@ -164,31 +144,4 @@ export function analyzeTask(
       persistentOutput: options.dryRun ? true : false,
     },
   };
-}
-/**
- * Update "include" in tsconfig.json
- * @param fileList array of relative file paths to the root
- * @param configPath tsconfig.json path
- */
-export function addFilesToIncludes(fileList: string[], configPath: string): void {
-  if (existsSync(configPath)) {
-    const tsConfig = readTSConfig<TSConfig>(configPath);
-    if (!tsConfig.include) {
-      tsConfig.include = fileList;
-    } else if (Array.isArray(tsConfig.include) && !tsConfig.include.length) {
-      tsConfig.include = fileList;
-    } else if (Array.isArray(tsConfig.include)) {
-      const uniqueFiles = fileList.filter((f) => {
-        // if a file from fileList matches any file/glob in "include"
-        // will keep it as unique file
-        return (
-          tsConfig.include?.filter((glob: string) => {
-            return minimatch(f, glob);
-          }).length === 0
-        );
-      });
-      tsConfig.include = [...tsConfig.include, ...uniqueFiles];
-    }
-    writeTSConfig(configPath, tsConfig);
-  }
 }

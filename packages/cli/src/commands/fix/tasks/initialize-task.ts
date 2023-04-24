@@ -1,9 +1,51 @@
+import { ListrTask, ListrTask } from 'listr2';
+import debug from 'debug';
+
+import { determineProjectName, validateUserConfig, getEsLintConfigPath } from '@rehearsal/utils';
+import { UserConfig } from '../../../user-config.js';
+import type {
+  MigrateCommandContext,
+  MigrateCommandOptions,
+  MigrateCommandOptions,
+} from '../../../types.js';
+
+const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
+
+export function initTask(
+  options: MigrateCommandOptions,
+  context?: Partial<MigrateCommandContext>
+): ListrTask {
+  return {
+    title: `Initialize`,
+    task: (ctx: MigrateCommandContext, task): void => {
+      // If context is provide via external parameter, merge with existed
+      if (context) {
+        ctx = { ...ctx, ...context };
+      }
+      // get custom config
+      const userConfig =
+        options.userConfig && validateUserConfig(options.basePath, options.userConfig)
+          ? new UserConfig(options.basePath, options.userConfig, 'migrate')
+          : undefined;
+
+      ctx.userConfig = userConfig;
+
+      const projectName = determineProjectName(options.basePath);
+      DEBUG_CALLBACK('projectName', projectName);
+
+      task.output = `Setting up config for ${projectName || 'project'}`;
+    },
+    options: {
+      // options for dryRun, since we need to keep the output to see the list of files
+      bottomBar: options.dryRun ? true : false,
+      persistentOutput: options.dryRun ? true : false,
+    },
+  };
+}
+
 import { resolve } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { ListrTask } from 'listr2';
 import { Logger } from 'winston';
-import { getEsLintConfigPath } from '@rehearsal/utils';
-import type { MigrateCommandOptions } from '../../../types.js';
 
 function checkLintConfig(basePath: string, logger: Logger): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);
@@ -53,11 +95,12 @@ function checkGitIgnore(basePath: string): boolean {
   return true;
 }
 
-export function reportExisted(basePath: string): boolean {
-  const reportRegex = /rehearsal-report\.(json|md|sarif|sonarqube)/g;
+export function reportExisted(basePath: string, outputPath?: string): boolean {
+  const reportRegex = /migrate-report\.(json|md|sarif|sonarqube)/g;
+  const reportDir = outputPath ? resolve(basePath, outputPath) : resolve(basePath, '.rehearsal');
   return (
-    existsSync(basePath) &&
-    readdirSync(basePath).filter((d: string) => reportRegex.test(d)).length > 0
+    existsSync(reportDir) &&
+    readdirSync(reportDir).filter((d: string) => reportRegex.test(d)).length > 0
   );
 }
 

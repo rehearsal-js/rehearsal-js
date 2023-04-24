@@ -1,18 +1,20 @@
 // eslint-disable-next-line no-restricted-imports -- type import
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
-import type { UserConfig } from './user-config.js';
 import type { State } from './helpers/state.js';
 import type { Logger } from 'winston';
 import type { ListrTask } from 'listr2';
 
-export type CliCommand = 'move' | 'migrate';
+export type CliCommand = 'move' | 'graph' | 'fix';
 export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
-
-export * from './configs/rehearsal-config.js';
 
 export type MoveTasks = {
   initTask: (src: string, options: MoveCommandOptions) => ListrTask;
   moveTask: (src: string, options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
+};
+
+export type FixTasks = {
+  initTask: (options: MoveCommandOptions) => ListrTask;
+  moveTask: (options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
 };
 
 export type PackageEntry = { name: string; files: string[] };
@@ -74,22 +76,19 @@ export type MoveCommandContext = {
   migrationOrder?: { packages: PackageEntry[] };
 };
 
-export type MigrateCommandOptions = {
-  skipInit: boolean;
+export type FixCommandOptions = {
   basePath: string;
   entrypoint: string;
   package: string;
   format: Formats[];
   verbose: boolean | undefined;
-  userConfig: string | undefined;
   ci: boolean | undefined;
   dryRun: boolean;
   regen: boolean | undefined;
 };
 
-export type MigrateCommandContext = {
+export type FixCommandContext = {
   skip: boolean;
-  userConfig: UserConfig | undefined;
   strategy: MigrationStrategy;
   sourceFilesWithAbsolutePath: string[];
   sourceFilesWithRelativePath: string[];

@@ -1,6 +1,203 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`SarifFormatter > should add a rule only if the rule does not exist in rules 1`] = `
+<<<<<<< HEAD
+=======
+[
+  {
+    "helpUri": "",
+    "id": "TS6133",
+    "name": "TS6133",
+    "shortDescription": {
+      "text": "'resolve' is declared but its value is never read.",
+    },
+  },
+  {
+    "helpUri": "",
+    "id": "TS2322",
+    "name": "TS2322",
+    "shortDescription": {
+      "text": "Type 'string' is not assignable to type 'number'.",
+    },
+  },
+  {
+    "helpUri": "",
+    "id": "TS2345",
+    "name": "TS2345",
+    "shortDescription": {
+      "text": "Argument of type 'number' is not assignable to parameter of type 'string'.",
+    },
+  },
+  {
+    "helpUri": "",
+    "id": "@typescript-eslint/no-explicit-any",
+    "name": "@typescript-eslint/no-explicit-any",
+    "shortDescription": {
+      "text": "Unexpected any. Specify a different type.",
+    },
+  },
+]
+`;
+
+exports[`SarifFormatter > should add an artifact only if it does not exist, should merge roles and properties correctly 1`] = `
+[
+  {
+    "location": {
+      "uri": "add-artifact-2.ts",
+    },
+  },
+  {
+    "location": {
+      "uri": "add-artifact-4.ts",
+    },
+  },
+]
+`;
+
+exports[`SarifFormatter > should have the correct number of results in order, and each result should be assigned the correct property values 1`] = `
+[
+  {
+    "analysisTarget": {
+      "uri": "add-result-1.ts",
+    },
+    "kind": "fail",
+    "level": "error",
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "index": 0,
+            "uri": "add-result-1.ts",
+          },
+          "region": {
+            "endColumn": 20,
+            "endLine": 1,
+            "startColumn": 1,
+            "startLine": 1,
+          },
+        },
+      },
+    ],
+    "message": {
+      "text": "The declaration 'react' is never read or used. Remove the declaration or use it.",
+    },
+    "ruleId": "TS6133",
+    "ruleIndex": 0,
+  },
+  {
+    "analysisTarget": {
+      "uri": "add-result-1.ts",
+    },
+    "kind": "fail",
+    "level": "error",
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "index": 0,
+            "uri": "add-result-1.ts",
+          },
+          "region": {
+            "endColumn": 5,
+            "endLine": 1,
+            "startColumn": 1,
+            "startLine": 3,
+          },
+        },
+      },
+    ],
+    "message": {
+      "text": "The variable 'a' has type 'number', but 'string' is assigned. Please convert 'string' to 'number' or change variable's type.",
+    },
+    "ruleId": "TS2322",
+    "ruleIndex": 1,
+  },
+  {
+    "analysisTarget": {
+      "uri": "add-result-1.ts",
+    },
+    "kind": "fail",
+    "level": "error",
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "index": 0,
+            "uri": "add-result-1.ts",
+          },
+          "region": {
+            "endColumn": 5,
+            "endLine": 10,
+            "startColumn": 10,
+            "startLine": 3,
+          },
+        },
+      },
+    ],
+    "message": {
+      "text": "Argument of type '{0}' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '({} as string)', or using type guard: 'if ({} instanceof string) { ... }'.",
+    },
+    "ruleId": "TS2345",
+    "ruleIndex": 2,
+  },
+  {
+    "analysisTarget": {
+      "uri": "add-rule-5.ts",
+    },
+    "kind": "fail",
+    "level": "error",
+    "locations": [
+      {
+        "physicalLocation": {
+          "artifactLocation": {
+            "index": 1,
+            "uri": "add-rule-5.ts",
+          },
+          "region": {
+            "endColumn": 7,
+            "endLine": 4,
+            "startColumn": 1,
+            "startLine": 7,
+          },
+        },
+      },
+    ],
+    "message": {
+      "text": "Unexpected any. Specify a different type.",
+    },
+    "ruleId": "@typescript-eslint/no-explicit-any",
+    "ruleIndex": 3,
+  },
+]
+`;
+
+exports[`SarifFormatter > should set the correct version, $schema, and initial data 1`] = `
+"{
+  \\"version\\": \\"2.1.0\\",
+  \\"$schema\\": \\"http://json.schemastore.org/sarif-2.1.0-rtm.4\\",
+  \\"runs\\": [
+    {
+      \\"tool\\": {
+        \\"driver\\": {
+          \\"name\\": \\"@rehearsal/reporter\\",
+          \\"informationUri\\": \\"https://github.com/rehearsal-js/rehearsal-js\\",
+          \\"rules\\": []
+        }
+      },
+      \\"artifacts\\": [],
+      \\"results\\": [],
+      \\"automationDetails\\": {
+        \\"description\\": {
+          \\"text\\": \\"This is the result of @rehearsal/reporter on your product against TypeScript 4.7.4 at 9/16/2022, 20:16:50\\"
+        }
+      }
+    }
+  ]
+}"
+`;
+
+exports[`Test sarif-formatter > should add a rule only if the rule does not exist in rules 1`] = `
+>>>>>>> 3aba574 (refactor(reporter): cleanup)
 [
   {
     "helpUri": "",

@@ -216,8 +216,8 @@ describe('migrate: e2e', () => {
     expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
 
     // report
-    const reportPath = resolve(project.baseDir);
-    expect(readdirSync(reportPath)).toContain('rehearsal-report.sarif');
+    const reportPath = resolve(project.baseDir, '.rehearsal');
+    expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
 
     // tsconfig.json
     const tsConfig = readTSConfig(resolve(project.baseDir, 'tsconfig.json'));

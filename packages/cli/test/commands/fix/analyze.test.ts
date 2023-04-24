@@ -4,9 +4,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 import { Project } from 'fixturify-project';
 import { readFile, readTSConfig, writeTSConfig } from '@rehearsal/utils';
-import { addFilesToIncludes, analyzeTask } from '../../../src/commands/migrate/tasks/index.js';
+import { addFilesToIncludes, analyzeTask } from '../../../src/commands/fix/tasks/index.js';
 import {
-  createMigrateOptions,
+  createFixOptions,
   createOutputStream,
   isActionSelection,
   isPackageSelection,
@@ -15,7 +15,7 @@ import {
   prepareProject,
   sendKey,
 } from '../../test-helpers/index.js';
-import type { TSConfig, MigrateCommandContext } from '../../../src/types.js';
+import type { TSConfig, FixCommandContext } from '../../../src/types.js';
 
 describe('Task: analyze', () => {
   let output = '';
