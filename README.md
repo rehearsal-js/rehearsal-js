@@ -23,6 +23,8 @@ Rehearsal can be executed both manually and automated. Rehearsal creates a syste
 
 Ensure your project has the following dependencies:
 
+TBD
+
 # Installation
 
 Add `@rehearsal/cli` to your project as a **devDependency**.
@@ -256,6 +258,7 @@ BSD 2-Clause, see [LICENSE.md](LICENSE.md) for details
 
 
 # TODO
-- [ ] Impove Typing. Update with corret regen / report command.
-- [ ] Capture `--help` output from commands to add under Avaialable Commands > Arguments
+- [ ] Improve Typing. Update with corret regen / report command.
+- [ ] Capture `--help` output from commands to add under Available Commands > Arguments
 - [ ] Update Packages list.
+- [ ] Add Setup guidance.
