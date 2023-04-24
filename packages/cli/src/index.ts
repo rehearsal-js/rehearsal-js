@@ -4,7 +4,6 @@ import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import { Command } from 'commander';
 import { migrateCommand } from './commands/migrate/index.js';
-import { upgradeCommand } from './commands/upgrade.js';
 import { moveCommand } from './commands/move/index.js';
 import { graphCommand } from './commands/graph/command.js';
 import type { PackageJson } from 'type-fest';
@@ -22,8 +21,7 @@ program
   .name('rehearsal')
   .version(version)
   .addCommand(migrateCommand)
-  .addCommand(upgradeCommand)
   .addCommand(graphCommand)
   .addCommand(moveCommand);
 
-export { program as rehearsal, migrateCommand, upgradeCommand, moveCommand, graphCommand };
+export { program as rehearsal, migrateCommand, moveCommand, graphCommand };

@@ -33,9 +33,6 @@
       "path": "./packages/test-support"
     },
     {
-      "path": "./packages/upgrade"
-    },
-    {
       "path": "./packages/utils"
     },
     {

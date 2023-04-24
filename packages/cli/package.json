@@ -44,7 +44,6 @@
     "@rehearsal/migration-graph": "workspace:*",
     "@rehearsal/regen": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
-    "@rehearsal/upgrade": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",

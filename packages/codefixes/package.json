@@ -42,6 +42,8 @@
     "@rehearsal/ts-utils": "workspace:*"
   },
   "devDependencies": {
+    "@rehearsal/migrate": "workspace:*",
+    "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@types/prettier": "^2.7.2",
     "@vitest/coverage-c8": "^0.30.1",

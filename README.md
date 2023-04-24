@@ -22,6 +22,7 @@ Rehearsal Upgrade can be executed both manually and automated. Rehearsal creates
 ## Installation
 
 Add `@rehearsal/cli` to your project as a **devDepndency**.
+
 ```bash
 yarn add -D @rehearsal/cli
 # or
@@ -29,13 +30,14 @@ pnpm add -D @rehearsal/cli
 ```
 
 Once installed, invoke using your package manager:
+
 ```bash
 yarn rehearsal
 # or
 pnpm rehearsal
 ```
 
-Currently there are two subcommands (`migrate`, `upgrade`), and a lot of options/flag. Run any command with flag `-h` to check the detailed information.
+Currently there are two subcommands (`migrate`), and a lot of options/flag. Run any command with flag `-h` to check the detailed information.
 
 Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
 
@@ -101,7 +103,6 @@ Rehearsal also can read from a custom user config file. This is useful if you wa
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/rehearsal-js/rehearsal-js/master/packages/cli/rehearsal-config-schema.json",
-  "upgrade": {},
   "migrate": {
     "install": {
       "devDependencies": ["foo", "bar"],
@@ -125,13 +126,13 @@ Rehearsal also can read from a custom user config file. This is useful if you wa
 
 Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 U
+
 # Packages
 
 | Folder                                    | Version                                                                                                              | Package                                                                  |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [packages/cli](./packages/cli/)           | [![npm version](https://badge.fury.io/js/@rehearsal%2Fcli.svg)](https://badge.fury.io/js/@rehearsal%2Fcli)           | [@rehearsal/cli](https://www.npmjs.com/package/@rehearsal/cli)           |
 | [packages/migrate](packages/migrate/)     | [![npm version](https://badge.fury.io/js/@rehearsal%2Fmigrate.svg)](https://badge.fury.io/js/@rehearsal%2Fmigrate)   | [@rehearsal/migrate](https://www.npmjs.com/package/@rehearsal/migrate)   |
-| [packages/upgrade](packages/upgrade/)     | [![npm version](https://badge.fury.io/js/@rehearsal%2Fupgrade.svg)](https://badge.fury.io/js/@rehearsal%2Fupgrade)   | [@rehearsal/migrate](https://www.npmjs.com/package/@rehearsal/upgrade)   |
 | [packages/reporter](./packages/reporter/) | [![npm version](https://badge.fury.io/js/@rehearsal%2Freporter.svg)](https://badge.fury.io/js/@rehearsal%2Freporter) | [@rehearsal/reporter](https://www.npmjs.com/package/@rehearsal/reporter) |
 | [packages/service](./packages/service/)   | [![npm version](https://badge.fury.io/js/@rehearsal%2Fservice.svg)](https://badge.fury.io/js/@rehearsal%2Fservice)   | [@rehearsal/service](https://www.npmjs.com/package/@rehearsal/service)   |
 | [packages/utils](./packages/utils/)       | [![npm version](https://badge.fury.io/js/@rehearsal%2Futils.svg)](https://badge.fury.io/js/@rehearsal%2Futils)       | [@rehearsal/utils](https://www.npmjs.com/package/@rehearsal/utils)       |

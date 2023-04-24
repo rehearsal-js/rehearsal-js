@@ -2,18 +2,12 @@ import { resolve } from 'node:path';
 import { addDep } from '@rehearsal/utils';
 import { execa } from 'execa';
 import { readJSONSync } from 'fs-extra/esm';
-import type {
-  MigrateCommandConfig,
-  MoveCommandConfig,
-  UpgradeCommandConfig,
-  CliCommand,
-  CustomConfig,
-} from './types.js';
+import type { MigrateCommandConfig, MoveCommandConfig, CliCommand, CustomConfig } from './types.js';
 
 // Storage and runner for user custom cli config
 export class UserConfig {
   public basePath: string;
-  public config?: MigrateCommandConfig | MoveCommandConfig | UpgradeCommandConfig;
+  public config?: MigrateCommandConfig | MoveCommandConfig;
 
   constructor(basePath: string, configPath: string, command: CliCommand) {
     const config = readJSONSync(resolve(basePath, configPath)) as CustomConfig;
@@ -101,7 +95,6 @@ export class UserConfig {
     }
   }
 
-  // What does upgrade command need for custom config?
   async tsSetup(): Promise<void> {
     if (this.config?.setup?.ts) {
       const { ts: tsSetup } = this.config.setup;
