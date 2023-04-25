@@ -679,15 +679,15 @@ importers:
       execa:
         specifier: ^7.1.1
         version: 7.1.1
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
       findup-sync:
         specifier: ^5.0.0
         version: 5.0.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
-      glob:
-        specifier: ^9.3.4
-        version: 9.3.5
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
