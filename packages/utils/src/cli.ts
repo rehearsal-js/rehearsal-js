@@ -9,7 +9,7 @@ import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
-import glob from 'glob';
+import glob from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
