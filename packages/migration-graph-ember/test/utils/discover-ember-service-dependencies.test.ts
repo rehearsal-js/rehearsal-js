@@ -117,6 +117,50 @@ describe('discoverServiceDependencies', () => {
     expect(discovered.serviceName).toBe('locale');
   });
 
+  test('should find service usage with service export', () => {
+    const files = {
+      'component.js': `
+        import Component from '@glimmer/component';
+        import { service } from '@ember/service';
+
+        export default class Salutation extends Component {
+          @service locale;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
+
+    expect(results).toBeTruthy();
+    expect(results?.length).toBe(1);
+    const discovered = results[0];
+    expect(discovered.serviceName).toBe('locale');
+  });
+
+  test('should find service usage with service export', () => {
+    const files = {
+      'component.js': `
+        import Component from '@glimmer/component';
+        import { service as something } from '@ember/service';
+
+        export default class Salutation extends Component {
+          @something locale;
+        }
+      `,
+    };
+
+    fixturify.writeSync(tmpDir, files);
+
+    const results = discoverServiceDependencies(tmpDir, 'component.js');
+
+    expect(results).toBeTruthy();
+    expect(results?.length).toBe(1);
+    const discovered = results[0];
+    expect(discovered.serviceName).toBe('locale');
+  });
+
   test('should find multiple services', () => {
     const files = {
       'component.js': `

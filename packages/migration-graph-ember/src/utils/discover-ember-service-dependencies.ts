@@ -73,19 +73,33 @@ export function discoverServiceDependencies(
     return EMPTY_RESULT;
   }
 
-  // We need to look through all import declarations to find the one with the export `inject`
-  const importDeclaration = findImportDeclarationWithExportedName(
+  // We need to look through all import declarations to find for exports with either:
+  // `inject` 3.28
+  // `service` 4+
+
+
+  const foundImportDeclarationUsingInject = findImportDeclarationWithExportedName(
     maybeImportDeclarations,
     'inject'
   );
 
+  const foundImportDeclarationUsingService = findImportDeclarationWithExportedName(
+    maybeImportDeclarations,
+    'service'
+  );
+
+  const importDeclaration = foundImportDeclarationUsingInject || foundImportDeclarationUsingService;
+
   if (!importDeclaration) {
-    DEBUG_CALLBACK('No import declaration found with usage of inject');
+    DEBUG_CALLBACK('No import declaration found with exported names: inject or service');
     return EMPTY_RESULT;
   }
 
   // In the case of re-assignment from inject as service, we walk the specifiers
-  const maybeSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'inject');
+  const maybeInjectSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'inject');
+  const maybeServiceSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'service');
+
+  const maybeSpecifier = maybeInjectSpecifier || maybeServiceSpecifier;
 
   if (!maybeSpecifier) {
     return EMPTY_RESULT;
