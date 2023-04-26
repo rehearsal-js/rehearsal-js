@@ -1,43 +1,56 @@
-#!/usr/bin/env node
-import { isAbsolute, relative, resolve } from 'node:path';
-import { existsSync, promises as fs } from 'node:fs';
+import { resolve } from 'node:path';
+import { promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
+import debug from 'debug';
 import { createLogger, format, transports } from 'winston';
-import { findWorkspaceRoot, gitIsRepoDirty, parseCommaSeparatedList } from '@rehearsal/utils';
+import { isDirectory, parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
-import { FixCommandContext, FixCommandOptions, PreviousRuns } from '../../types.js';
-
-// eslint-disable-next-line no-restricted-imports
-import type { Report } from '@rehearsal/reporter';
+import { FixCommandOptions, FixTasks, GraphTasks } from '../../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const { version } = JSON.parse(
   await fs.readFile(resolve(__dirname, '../../../package.json'), 'utf-8')
 ) as PackageJson;
 
+const DEBUG_CALLBACK = debug('rehearsal:cli:fix-command');
+
+const winstonLogger = createLogger({
+  transports: [new transports.Console({ format: format.cli(), level: 'info' })],
+});
+
 export const fixCommand = new Command();
+
+/*
+  @rehearsal/fix workflow
+
+  rehearsal fix --source <path to source file | directory>
+    the explicit source file OR explicit directory with implicit child directories moved.
+    migration strategy is ignored with source-file and leveraged with directory
+
+  rehearsal fix --package <path to child package>
+    specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package.
+    migration strategy is leveraged
+*/
 
 fixCommand
   .alias('infer')
   .name('fix')
   .description('provides type inference against typescript projects')
   .addOption(
-    new Option('-b, --basePath <project base path>', 'base directory of your project')
+    new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
-      // use argParser to ensure process.cwd() is basePath
-      // even use passes anything accidentally
       .argParser(() => process.cwd())
       .hideHelp()
   )
   .option(
-    '-e, --entrypoint <entrypoint>',
-    `path to a entrypoint file inside your project(${process.cwd()})`,
+    '-s, --source <path to source file | directory>',
+    `the explicit source file OR explicit directory with implicit child directories moved. migration strategy is ignored`,
     ''
   )
   .option(
-    '-p, --package <relative path to target package>',
-    `run migrate against a specific child-package in your project(${process.cwd()}) `,
+    '-p, --childPackage <path to child package>',
+    `specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package`,
     ''
   )
   .option(
@@ -46,201 +59,76 @@ fixCommand
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('-o, --outputPath <outputPath>', 'reports output directory', '.rehearsal')
-  .option('--ci', 'non-interactive mode')
-  .option('-v, --verbose', 'print debugging logs')
-  .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
-  .option('-r, --regen', 'print out current migration status')
+  .option('-w, --wizard', 'interactive wizard will prompt on a file-by-file basis', false)
+  .option('-d, --dryRun', `do nothing; only show what would happen`, false)
   .action(async (options: FixCommandOptions) => {
-    await migrate(options);
+    await fix(options);
   });
 
-async function migrate(options: FixCommandOptions): Promise<void> {
-  const loggerLevel = options.verbose ? 'debug' : 'info';
-  const logger = createLogger({
-    transports: [new transports.Console({ format: format.cli(), level: loggerLevel })],
-  });
+async function fix(options: FixCommandOptions): Promise<void> {
+  winstonLogger.info(`@rehearsal/fix ${version?.trim()}`);
 
-  const {
-    validateTask,
-    initTask,
-    depInstallTask,
-    tsConfigTask,
-    lintConfigTask,
-    createScriptsTask,
-    analyzeTask,
-    convertTask,
-    regenTask,
-    reportExisted,
-  } = await loadTasks();
+  const { childPackage, source, wizard } = options;
 
-  logger.info(`@rehearsal/fix ${version?.trim()}`);
-
-  // Show git warning if:
-  // 1. Not --dryRun
-  // 2. Not --regen
-  // 3. First time run (check if any report exists)
-  if (!options.dryRun && !options.regen && !reportExisted(options.basePath, options.outputPath)) {
-    const hasUncommittedFiles = await gitIsRepoDirty(options.basePath);
-    if (hasUncommittedFiles) {
-      logger.warn(
-        'You have uncommitted files in your repo. You might want to commit or stash them.'
-      );
-    }
-  }
-
-  // force in project root
-  const workspaceRoot = findWorkspaceRoot(options.basePath);
-  if (options.basePath !== workspaceRoot) {
-    logger.warn(
-      `migrate command needs to be running at project root with workspaces.
-        Seems like the project root should be ${workspaceRoot} instead of current directory (${options.basePath}).`
+  // if both childPackage and source are specified, throw an error
+  if (childPackage && source) {
+    throw new Error(
+      `@rehearsal/fix: --childPackage AND --source are specified, please specify only one`
     );
-    process.exit(0);
+  } else if (!childPackage && !source) {
+    throw new Error(`@rehearsal/fix: you must specify a flag, either --childPackage OR --source`);
   }
 
-  // ensure entrypoint exists and it is inside options.basePath
-  const relativePath = relative(options.basePath, options.entrypoint);
-  if (
-    options.entrypoint &&
-    (!relativePath ||
-      relativePath.startsWith('..') ||
-      isAbsolute(relativePath) ||
-      !existsSync(resolve(options.basePath, relativePath)))
-  ) {
-    logger.warn(
-      `Could not find entrypoint ${resolve(
-        options.basePath,
-        relativePath
-      )}. Please make sure it is existed and inside your project(${options.basePath}).`
-    );
-    process.exit(0);
-  }
+  // grab the child fix tasks
+  const { convertTask, initTask } = await loadFixTasks();
+  const { graphOrderTask } = await loadGraphTasks();
 
-  const defaultListrOption = {
-    concurrent: false,
-    exitOnError: true,
-  };
+  // source with a direct filepath ignores the migration graph
+  const tasks =
+    source && !isDirectory(source)
+      ? [initTask(options), convertTask(options)]
+      : [initTask(options), graphOrderTask(options), convertTask(options)];
 
-  const tasks = [
-    validateTask(options, logger),
-    initTask(options),
-    depInstallTask(options),
-    tsConfigTask(options),
-    lintConfigTask(options),
-    createScriptsTask(options),
-    analyzeTask(options),
-  ];
+  DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
+  DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);
 
   try {
-    if (!options.ci) {
-      // For issue #549, have to use simple renderer for the interactive edit flow
-      // previous ctx is needed for the isolated convertTask
-      const ctx = await new Listr<FixCommandContext>(tasks, defaultListrOption).run();
-      await new Listr([convertTask(options, logger, ctx)], {
+    // if interactive
+    if (wizard) {
+      // For issue #549, use simple renderer for the interactive edit flow
+      await new Listr(tasks, {
+        concurrent: false,
         renderer: 'simple',
-        ...defaultListrOption,
       }).run();
-    } else if (options.regen) {
-      const tasks = new Listr(
-        [validateTask(options, logger), regenTask(options, logger)],
-        defaultListrOption
-      );
-      await tasks.run();
-    } else if (options.skipInit) {
-      await new Listr(
-        [
-          validateTask(options, logger),
-          initTask(options),
-          analyzeTask(options),
-          convertTask(options, logger),
-        ],
-        defaultListrOption
-      ).run();
-    } else if (reportExisted(options.basePath, options.outputPath)) {
-      const previousRuns = await getPreviousRuns(
-        options.basePath,
-        options.outputPath,
-        options.entrypoint
-      );
-      if (previousRuns.paths.length > 0) {
-        logger.info(
-          `Existing report(s) detected. Existing report(s) will be regenerated and merged into current report.`
-        );
-        await new Listr(
-          [validateTask(options, logger), sequentialTask(options, logger, previousRuns)],
-          defaultListrOption
-        ).run();
-      } else {
-        await new Listr([...tasks, convertTask(options, logger)], defaultListrOption).run();
-      }
     } else {
-      await new Listr([...tasks, convertTask(options, logger)], defaultListrOption).run();
+      await new Listr(tasks, {
+        concurrent: false,
+      }).run();
     }
   } catch (e) {
     if (e instanceof Error) {
-      logger.error(`${e.message + '\n' + (e.stack || '')}`);
+      winstonLogger.error(`${e.message + '\n' + (e.stack || '')}`);
     }
   }
 }
 
-async function getPreviousRuns(
-  basePath: string,
-  outputDir: string,
-  entrypoint: string
-): Promise<PreviousRuns> {
-  const jsonReportPath = resolve(basePath, outputDir, 'migrate-report.json');
-
-  let previousRuns: PreviousRuns = { paths: [], previousFixedCount: 0 };
-
-  if (existsSync(jsonReportPath)) {
-    const report = JSON.parse(await fs.readFile(jsonReportPath, 'utf-8')) as Report;
-    const { summary = [], fixedItemCount: previousFixedCount = 0 } = report;
-    previousRuns = {
-      ...previousRuns,
-      previousFixedCount,
-    };
-
-    for (const s of summary) {
-      // different from current basePath or current entrypoint, need to run regen for previous runs.
-      if (s.basePath !== basePath || s.entrypoint !== entrypoint) {
-        previousRuns = {
-          ...previousRuns,
-          paths: [...previousRuns.paths, { basePath: s.basePath, entrypoint: s.entrypoint }],
-        };
-      }
-    }
-  }
-  return previousRuns;
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function loadTasks() {
+async function loadFixTasks(): Promise<FixTasks> {
   return await import('./tasks/index.js').then((m) => {
-    const {
-      initTask,
-      analyzeTask,
-      depInstallTask,
-      convertTask,
-      tsConfigTask,
-      lintConfigTask,
-      createScriptsTask,
-      regenTask,
-      validateTask,
-      reportExisted,
-    } = m;
+    const { initTask, convertTask } = m;
 
     return {
       initTask,
-      analyzeTask,
-      depInstallTask,
       convertTask,
-      tsConfigTask,
-      lintConfigTask,
-      createScriptsTask,
-      regenTask,
-      validateTask,
-      reportExisted,
+    };
+  });
+}
+
+async function loadGraphTasks(): Promise<GraphTasks> {
+  return await import('../graph/tasks/graphOrderTask.js').then((m) => {
+    const { graphOrderTask } = m;
+
+    return {
+      graphOrderTask,
     };
   });
 }

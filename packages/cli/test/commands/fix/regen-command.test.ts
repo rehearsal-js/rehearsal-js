@@ -46,7 +46,7 @@ describe('Task: regen', () => {
     delete project.files['tsconfig.json'];
     await project.write();
     const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
-    const tasks = [validateTask(options, logger), regenTask(options, logger)];
+    const tasks = [regenTask(options, logger)];
 
     await expect(async () => await listrTaskRunner(tasks)).rejects.toThrowError(
       `Config file 'tsconfig.json' not found`
@@ -60,12 +60,7 @@ describe('Task: regen', () => {
     });
     await project.write();
     const options = createMigrateOptions(project.baseDir, { ci: true, regen: true });
-    const tasks = [
-      initTask(options),
-      validateTask(options, logger),
-      tsConfigTask(options),
-      regenTask(options, logger),
-    ];
+    const tasks = [initTask(options), tsConfigTask(options), regenTask(options, logger)];
 
     await listrTaskRunner(tasks);
     expect(output).matchSnapshot();

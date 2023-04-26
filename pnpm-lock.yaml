@@ -136,12 +136,18 @@ importers:
       '@rehearsal/migration-graph':
         specifier: workspace:*
         version: link:../migration-graph
+      '@rehearsal/migration-graph-ember':
+        specifier: workspace:*
+        version: link:../migration-graph-ember
       '@rehearsal/regen':
         specifier: workspace:*
         version: link:../regen
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:../reporter
+      '@rehearsal/service':
+        specifier: workspace:*
+        version: link:../service
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils

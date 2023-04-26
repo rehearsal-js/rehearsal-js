@@ -1,12 +1,9 @@
-import { existsSync } from 'node:fs';
-import { isAbsolute, relative, resolve, extname } from 'node:path';
 import { ListrTask, ListrDefaultRenderer } from 'listr2';
 import debug from 'debug';
-import fastGlob from 'fast-glob';
-
+import { validateSourcePath, validateChildPackage } from '@rehearsal/utils';
 import type { MoveCommandContext, MoveCommandOptions } from '../../../types.js';
 
-const DEBUG_CALLBACK = debug('rehearsal:cli:initialize');
+const DEBUG_CALLBACK = debug('rehearsal:cli:move:init-task');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(

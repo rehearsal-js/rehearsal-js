@@ -1,5 +1,5 @@
-import { dirname, join, normalize, relative, resolve } from 'node:path';
-import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
 import findupSync from 'findup-sync';
@@ -9,13 +9,14 @@ import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
 import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
-import glob from 'fast-glob';
+import { sync } from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
-import type { GitDescribe } from './types.js';
+
+import { PackageJson } from 'type-fest';
+import type { GitDescribe, TSConfig } from './types.js';
 import type { Options } from 'execa';
-import type { PackageJson } from 'type-fest';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 
@@ -678,7 +679,7 @@ export function prettyGitDiff(text: string): string {
 
 export function getEsLintConfigPath(basePath: string): string {
   // glob against the following file extension patterns and return the first match
-  const configPath = glob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
+  const configPath = sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
   return configPath;
 }
 
@@ -737,4 +738,251 @@ export function findWorkspaceRoot(startDir: string = process.cwd()): string {
   // Or for npm/yarn, cannot find yarn/npm workspaces
   // startDir should be the root
   return startDir;
+}
+
+// be sure the source exists within the basePath project
+export function validateSourcePath(
+  basePath: string,
+  source: string,
+  fileType: 'ts' | 'js'
+): [string[], string[]] {
+  const relativePath = relative(basePath, resolve(basePath, source));
+  const globPaths = fileType === 'js' ? ['.js,.gjs'] : ['.ts,.gts'];
+
+  if (
+    source &&
+    (!relativePath ||
+      relativePath.startsWith('..') ||
+      isAbsolute(relativePath) ||
+      !existsSync(resolve(basePath, relativePath)))
+  ) {
+    throw new Error(`Rehearsal could not find source: ${source} in project: ${basePath}`);
+  }
+
+  // if source is a directory, get all the files otherwise just return the source as abs and rel tuple
+  if (!isDirectory(source)) {
+    // validate that the source is a js | .gjs file
+    if (extname(source) === globPaths[0] || extname(source) === globPaths[1]) {
+      return [[resolve(basePath, source)], [relativePath]];
+    }
+
+    throw new Error(
+      `Rehearsal will only move ${globPaths[0]} or ${globPaths[1]} files. Source: ${source} is neither.`
+    );
+  }
+
+  // otherwise return all the js files in the directory and its subdirectories
+  return getFilesByType(basePath, source, fileType);
+}
+
+// check if the source is a directory
+export function isDirectory(source: string): boolean {
+  return extname(source) === '';
+}
+
+/**
+ * Get files by requested type returns tuple with [abs, rel] paths
+ * @typedef {(ts|js)} FileType
+ * @param {string} basePath - eg process.cwd()
+ * @param {string} source - eg basePath/src or basePath/src/child/file.ts|.js
+ * @param {FileType} fileType - either ts | js, which will glob for 'js,gjs'|'ts,gts'
+ */
+export function getFilesByType(
+  basePath: string,
+  source: string,
+  fileType: 'ts' | 'js'
+): [string[], string[]] {
+  const sourceAbs = resolve(basePath, source);
+  const sourceRel = relative(basePath, sourceAbs);
+  const globPaths = fileType === 'js' ? 'js,gjs' : 'ts,gts';
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+  const sourceFiles = sync(`${sourceRel}/**/*.{${globPaths}}`, { cwd: basePath });
+
+  // if no files are found, throw an error
+  if (!sourceFiles.length) {
+    throw new Error(
+      `Rehearsal could not find any ${fileType} files in the source directory: ${sourceAbs}`
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  return [sourceFiles.map((file) => resolve(basePath, file)), sourceFiles];
+}
+
+// be sure the childPackage exists within the basePath project and returns rel and abs tuple
+export function validateChildPackage(basePath: string, childPackage: string): [string, string] {
+  if (
+    !existsSync(resolve(basePath, childPackage)) ||
+    !existsSync(resolve(basePath, childPackage, 'package.json'))
+  ) {
+    throw new Error(
+      `Rehearsal could not find the childPackage: "${childPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+    );
+  }
+
+  // return the abs path and rel path of the childPackage
+  return [resolve(basePath, childPackage), relative(basePath, resolve(basePath, childPackage))];
+}
+
+export function isExistsESLintConfig(basePath: string): boolean {
+  const lintConfigPath = getEsLintConfigPath(basePath);
+  if (!lintConfigPath) {
+    throw new Error(
+      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+    );
+  }
+  return true;
+}
+
+export function isExistsTSConfig(basePath: string): boolean {
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
+  if (!existsSync(tsConfigPath)) {
+    throw new Error(
+      `${tsConfigPath} does not exists. Please run rehearsal inside a project with a valid tsconfig.json.`
+    );
+  }
+  return true;
+}
+
+export function isExistsPackageJSON(basePath: string): boolean {
+  const packageJsonPath = resolve(basePath, 'package.json');
+  if (!existsSync(packageJsonPath)) {
+    throw new Error(
+      `${packageJsonPath} does not exists. Please run rehearsal inside a project with a valid package.json.`
+    );
+  }
+  return true;
+}
+
+export function isValidGitIgnore(basePath: string): boolean {
+  const gitignorePath = resolve(basePath, '.gitignore');
+  if (!existsSync(gitignorePath)) {
+    return true;
+  }
+
+  const gitignore = readFileSync(gitignorePath, 'utf-8');
+  const rehearsalReportRegex = /\rehearsal-report.*/g;
+  if (rehearsalReportRegex.test(gitignore)) {
+    throw new Error(
+      `rehearsal-report is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
+    );
+  }
+
+  return true;
+}
+
+export function isExistsRehearsalReport(basePath: string): boolean {
+  const rehearsalReportRegex = /\rehearsal-report.*/g;
+  return readdirSync(basePath).filter((d: string) => rehearsalReportRegex.test(d)).length > 0;
+}
+
+export function isDepsPreReq(basePath: string, requiredDeps: Record<string, string>): boolean {
+  // read the package.json
+  const packageJSON = readJSONSync(resolve(basePath, 'package.json')) as PackageJson;
+  const invalidVersion: string[] = [];
+  const message: string[] = [];
+  // grab ALL packageJson dependencies and devDependencies as a single array with versions
+  const packageJSONDeps = {
+    ...packageJSON.dependencies,
+    ...packageJSON.devDependencies,
+  } as Record<string, string>;
+
+  // all the deps which are missing
+  const missingDeps = Object.keys(requiredDeps).filter(
+    (dep) => !Object.keys(packageJSONDeps).includes(extractDepName(dep))
+  );
+
+  // loop over the packageJSONDeps and compare the versions against the requiredDeps
+  for (const dep in packageJSONDeps) {
+    // if the dep is in the requiredDeps, but the versions do not match, throw an error
+    if (Object.keys(requiredDeps).includes(dep)) {
+      if (compare(packageJSONDeps[dep], requiredDeps[dep], '>=')) {
+        invalidVersion.push(dep);
+      }
+    }
+  }
+
+  // combine all the errors and throw them together for both missing and version mismatch
+  if (invalidVersion.length > 0) {
+    message.push(
+      `Please update "${invalidVersion.join(', ')}: ${invalidVersion
+        .map((dep) => requiredDeps[dep])
+        .join(', ')}" to the minimum required version and try again.`
+    );
+  }
+
+  if (missingDeps.length > 0) {
+    message.push(
+      `Please install "${missingDeps.join(', ')}: ${missingDeps
+        .map((dep) => requiredDeps[dep])
+        .join(', ')}" as a devDependency and try again.`
+    );
+  }
+
+  // throw the message if there are any errors
+  if (message.length > 0) {
+    throw new Error(message.join('\n'));
+  }
+
+  return true;
+}
+
+// get the name of dependency from those two format:
+// - foo
+// - foo@{version}
+// Be aware that a package name would start with @, e.g @types/node
+export function extractDepName(dep: string): string {
+  const reg = /^(@?[^@]+)/g;
+  const matched = dep.match(reg);
+  return matched ? matched[0] : dep;
+}
+
+export function isESLintPreReq(basePath: string, requiredParser: string): boolean {
+  const lintConfigPath = getEsLintConfigPath(basePath);
+  if (!lintConfigPath) {
+    throw new Error(
+      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+    );
+  }
+
+  // read the eslint config
+  const lintConfig = readJSONSync(lintConfigPath) as Record<string, string>;
+
+  // if the parser is not requiredParser throw
+  if (!Object.keys(lintConfig).includes('parser')) {
+    throw new Error(`Please add "parser: ${requiredParser}" to your eslint config and try again.`);
+  }
+
+  // if the parser is not the requiredParser throw
+  if (lintConfig['parser'] !== requiredParser) {
+    throw new Error(
+      `Please update "parser: ${lintConfig['parser']}" to "parser: ${requiredParser}" and try again.`
+    );
+  }
+
+  return true;
+}
+
+export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): boolean {
+  // read the tsconfig.json
+  const tsConfig = readTSConfig<TSConfig>(basePath);
+
+  // loop over the requiredTSConfig options and compare them to the tsConfig
+  for (const k in requiredTSConfig) {
+    if (Object.keys(tsConfig).includes(k)) {
+      // TODO
+    }
+  }
+
+  return true;
+}
+
+export function isNodePreReq(requiredNode: string): boolean {
+  const nodeVersion = process.version;
+  if (compare(nodeVersion, requiredNode, '>=')) {
+    throw new Error(`Please update your node version to ${requiredNode} or above and try again.`);
+  }
+
+  return true;
 }

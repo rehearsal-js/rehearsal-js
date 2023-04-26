@@ -1,3 +1,6 @@
+import type { PackageJson, TsConfigJson } from 'type-fest';
+// eslint-disable-next-line no-restricted-imports -- type import
+import type { Formatters } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports -- type import
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { State } from './helpers/state.js';
@@ -5,8 +8,42 @@ import type { Logger } from 'winston';
 import type { ListrTask } from 'listr2';
 
 export type CliCommand = 'move' | 'graph' | 'fix';
-export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
+export type PackageEntry = { name: string; files: string[] };
+export type PackageSelection = {
+  name: string;
+  path: string;
+};
 
+export type ProjectType = 'base' | 'ember' | 'glimmer';
+
+export type PreReqs = {
+  node: string;
+  eslint: {
+    parser: string;
+  };
+  tsconfig: TSConfig;
+  deps: Record<string, string>;
+};
+
+export type MenuMap = {
+  [key: string]: string;
+};
+
+export interface TSConfig extends TsConfigJson {
+  glint?: {
+    environment?: string[];
+    checkStandaloneTemplates?: boolean;
+  };
+}
+
+export type PreviousRuns = {
+  paths: { basePath: string; entrypoint: string }[];
+  previousFixedCount: number;
+};
+
+/*
+  MOVE
+*/
 export type MoveTasks = {
   initTask: (src: string, options: MoveCommandOptions) => ListrTask;
   moveTask: (src: string, options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
@@ -76,49 +113,57 @@ export type MoveCommandContext = {
   migrationOrder?: { packages: PackageEntry[] };
 };
 
+/*
+  FIX
+*/
+export type FixTasks = {
+  initTask: (options: FixCommandOptions, ctx?: FixCommandContext) => ListrTask;
+  convertTask: (options: FixCommandOptions, ctx?: FixCommandContext) => ListrTask;
+};
+
 export type FixCommandOptions = {
-  basePath: string;
-  entrypoint: string;
-  package: string;
-  format: Formats[];
-  verbose: boolean | undefined;
-  ci: boolean | undefined;
+  format: Formatters[];
+  childPackage?: string;
+  source?: string;
   dryRun: boolean;
-  regen: boolean | undefined;
+  basePath: string;
+  wizard: boolean;
 };
 
 export type FixCommandContext = {
   skip: boolean;
   strategy: MigrationStrategy;
-  sourceFilesWithAbsolutePath: string[];
-  sourceFilesWithRelativePath: string[];
+  tsSourcesAbs?: string[];
+  tsSourcesRel?: string[];
   input: unknown;
-  targetPackagePath: string;
   state: State;
+  childPackageAbs: string;
+  childPackageRel: string;
+  isInteractive: boolean;
+  projectType: ProjectType;
+  packageJSON: PackageJson;
 };
 
-export type PackageSelection = {
-  name: string;
-  path: string;
+/*
+  GRAPH
+*/
+export type GraphTasks = {
+  graphOrderTask: (options: GraphTaskOptions, ctx?: MoveCommandContext) => ListrTask;
 };
 
-export type MenuMap = {
-  [key: string]: string;
+export type GraphCommandOptions = {
+  output?: string;
 };
 
-export type TSConfig = {
-  compilerOptions: {
-    strict: boolean;
-  };
-  include?: string[];
+export type GraphCommandContext = {
+  skip?: boolean;
+  source?: string;
+  packageEntry?: string;
+  jsSourcesAbs?: string[];
+  childPackage?: string;
 };
 
-export type RunPath = {
+export type GraphTaskOptions = {
   basePath: string;
-  entrypoint: string;
-};
-
-export type PreviousRuns = {
-  paths: RunPath[];
-  previousFixedCount: number;
+  output?: string;
 };

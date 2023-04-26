@@ -1,39 +1,65 @@
-import { ListrTask, ListrTask } from 'listr2';
+import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
+import {
+  validateSourcePath,
+  validateChildPackage,
+  isExistsPackageJSON,
+  isExistsESLintConfig,
+  isExistsTSConfig,
+  isValidGitIgnore,
+  isDepsPreReq,
+  isESLintPreReq,
+  isTSConfigPreReq,
+  isNodePreReq,
+} from '@rehearsal/utils';
+// eslint-disable-next-line no-restricted-imports
+import { isGlintProject } from '@rehearsal/service';
+import { readJsonSync } from 'fs-extra/esm';
+// eslint-disable-next-line no-restricted-imports
+import { isEmberAddon, isEmberApp } from '@rehearsal/migration-graph-ember';
+import { PackageJson } from 'type-fest';
+import { getPreReqs } from '../../../prereqs.js';
+import type { FixCommandOptions, FixCommandContext, ProjectType } from '../../../types.js';
 
-import { determineProjectName, validateUserConfig, getEsLintConfigPath } from '@rehearsal/utils';
-import { UserConfig } from '../../../user-config.js';
-import type {
-  MigrateCommandContext,
-  MigrateCommandOptions,
-  MigrateCommandOptions,
-} from '../../../types.js';
+const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 
-const DEBUG_CALLBACK = debug('rehearsal:migrate:initialize');
-
+// everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
-  options: MigrateCommandOptions,
-  context?: Partial<MigrateCommandContext>
-): ListrTask {
+  options: FixCommandOptions,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _ctx?: FixCommandContext
+): ListrTask<FixCommandContext, ListrDefaultRenderer> {
   return {
     title: `Initialize`,
-    task: (ctx: MigrateCommandContext, task): void => {
-      // If context is provide via external parameter, merge with existed
-      if (context) {
-        ctx = { ...ctx, ...context };
+    task: async (ctx: FixCommandContext): Promise<void> => {
+      const { basePath, source, childPackage } = options;
+      ctx.packageJSON = readJsonSync(basePath) as PackageJson;
+
+      // check if ember app/addon or glimmer project
+      ctx.projectType = 'base';
+      // if ember app or addon
+      if (isEmberApp(ctx.packageJSON) || isEmberAddon(ctx.packageJSON)) {
+        ctx.projectType = 'ember';
+      } else if (await isGlintProject(basePath)) {
+        ctx.projectType = 'glimmer';
       }
-      // get custom config
-      const userConfig =
-        options.userConfig && validateUserConfig(options.basePath, options.userConfig)
-          ? new UserConfig(options.basePath, options.userConfig, 'migrate')
-          : undefined;
 
-      ctx.userConfig = userConfig;
+      // grab all the ts files in the project - expectation is rehearsal move has already been run on the source
+      if (source) {
+        // expect a tsconfig.json file in basePath
+        preFlightCheck(basePath, ctx.projectType);
 
-      const projectName = determineProjectName(options.basePath);
-      DEBUG_CALLBACK('projectName', projectName);
+        [ctx.tsSourcesAbs, ctx.tsSourcesRel] = validateSourcePath(basePath, source, 'ts');
+      }
 
-      task.output = `Setting up config for ${projectName || 'project'}`;
+      // if a child package is specified grab all the ts files in the child package - expectation is rehearsal move has already been run on the child package
+      if (childPackage) {
+        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(basePath, childPackage);
+        // expect a tsconfig.json file in the root of the child package
+        preFlightCheck(ctx.childPackageAbs, ctx.projectType);
+      }
+
+      DEBUG_CALLBACK('ctx %O:', ctx);
     },
     options: {
       // options for dryRun, since we need to keep the output to see the list of files
@@ -43,79 +69,18 @@ export function initTask(
   };
 }
 
-import { resolve } from 'node:path';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { Logger } from 'winston';
+// each of these sub-tasks will throw on failure
+export function preFlightCheck(basePath: string, projectType: ProjectType): void {
+  const { deps, eslint, tsconfig, node } = getPreReqs(projectType);
 
-function checkLintConfig(basePath: string, logger: Logger): boolean {
-  const lintConfigPath = getEsLintConfigPath(basePath);
-  if (!lintConfigPath) {
-    logger.warn(
-      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-    );
-    return false;
-  }
-  return true;
-}
-
-function checkTsConfig(basePath: string, logger: Logger): boolean {
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
-  if (!existsSync(tsConfigPath)) {
-    logger.warn(
-      `${tsConfigPath} does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-    );
-    return false;
-  }
-  return true;
-}
-
-function checkPackageJson(basePath: string): boolean {
-  const packageJsonPath = resolve(basePath, 'package.json');
-  if (!existsSync(packageJsonPath)) {
-    throw new Error(
-      `${packageJsonPath} does not exists. Please run rehearsal migrate inside a project with a valid package.json.`
-    );
-  }
-  return true;
-}
-
-function checkGitIgnore(basePath: string): boolean {
-  const gitignorePath = resolve(basePath, '.gitignore');
-  if (!existsSync(gitignorePath)) {
-    return true;
-  }
-
-  const gitignore = readFileSync(gitignorePath, 'utf-8');
-  const rehearsalRegex = /\.rehearsal.*/g;
-  if (rehearsalRegex.test(gitignore)) {
-    throw new Error(
-      `.rehearsal directory is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
-    );
-  }
-  return true;
-}
-
-export function reportExisted(basePath: string, outputPath?: string): boolean {
-  const reportRegex = /migrate-report\.(json|md|sarif|sonarqube)/g;
-  const reportDir = outputPath ? resolve(basePath, outputPath) : resolve(basePath, '.rehearsal');
-  return (
-    existsSync(reportDir) &&
-    readdirSync(reportDir).filter((d: string) => reportRegex.test(d)).length > 0
-  );
-}
-
-export function validateTask(options: MigrateCommandOptions, logger: Logger): ListrTask {
-  return {
-    title: 'Validate project',
-    enabled: (): boolean => !options.dryRun,
-    task: (): void => {
-      checkPackageJson(options.basePath);
-      checkGitIgnore(options.basePath);
-
-      if (options.regen) {
-        checkLintConfig(options.basePath, logger);
-        checkTsConfig(options.basePath, logger);
-      }
-    },
-  };
+  // is exists checks these will throw faster than the prereq checks
+  isExistsPackageJSON(basePath);
+  isExistsTSConfig(basePath);
+  isExistsESLintConfig(basePath);
+  isValidGitIgnore(basePath);
+  // prereq checks for both the version and the package
+  isDepsPreReq(basePath, deps);
+  isESLintPreReq(basePath, eslint.parser);
+  isTSConfigPreReq(basePath, tsconfig);
+  isNodePreReq(node);
 }

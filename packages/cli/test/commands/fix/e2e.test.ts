@@ -6,7 +6,7 @@ import { getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
 import { Project } from 'fixturify-project';
 import { readTSConfig } from '@rehearsal/utils';
-import { REQUIRED_DEPENDENCIES } from '../../../src/commands/migrate/tasks/dependency-install.js';
+import { REQUIRED_DEPENDENCIES } from '../../../src/commands/fix/tasks/dependency-install.js';
 
 import { cleanOutput, prepareProject, runBin } from '../../test-helpers/index.js';
 import { CustomConfig } from '../../../src/types.js';
