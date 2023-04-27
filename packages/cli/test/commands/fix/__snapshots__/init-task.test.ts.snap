@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Fix: Init-Task > preFlightCheck base - expect failure deps missing 1`] = `
+[Error: Please install the following missing devDependencies and try again: 
+"typescript >= 5.0.0", 
+"prettier >= 2.0.0", 
+"eslint >= 8.0.0"]
+`;
+
+exports[`Fix: Init-Task > preFlightCheck base - expect failure eslint parser invalid 1`] = `[Error: Please update "parser: @fake/parser" to "parser: @typescript-eslint/parser" in the ESLint config and try again.]`;
+
+exports[`Fix: Init-Task > preFlightCheck base - expect failure tsconfig strict as false 1`] = `
+[Error: Please update the tsconfig.json to include:
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true
+  }
+}]
+`;
+
+exports[`Fix: Init-Task > preFlightCheck ember - expect failure tsconfig glint missing 1`] = `
+[Error: The tsconfig.json is missing the following keys:
+"glint".
+Please update the tsconfig.json to include:
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "glint": {
+    "environment": [
+      "ember-loose",
+      "ember-template-imports"
+    ],
+    "checkStandaloneTemplates": true
+  }
+}]
+`;

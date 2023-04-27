@@ -44,7 +44,7 @@ export function initTask(
         ctx.projectType = 'glimmer';
       }
 
-      // grab all the ts files in the project - expectation is rehearsal move has already been run on the source
+      // source flag - grab all the ts files in the project - expectation is rehearsal move has already been run on the source
       if (source) {
         // expect a tsconfig.json file in basePath
         preFlightCheck(basePath, ctx.projectType);
@@ -52,7 +52,7 @@ export function initTask(
         [ctx.tsSourcesAbs, ctx.tsSourcesRel] = validateSourcePath(basePath, source, 'ts');
       }
 
-      // if a child package is specified grab all the ts files in the child package - expectation is rehearsal move has already been run on the child package
+      // childPackage flag - if a child package is specified grab all the ts files in the child package - expectation is rehearsal move has already been run on the child package
       if (childPackage) {
         [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(basePath, childPackage);
         // expect a tsconfig.json file in the root of the child package

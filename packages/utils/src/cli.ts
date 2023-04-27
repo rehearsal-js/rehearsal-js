@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
@@ -7,69 +12,22 @@ import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
-import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
 import { sync } from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
+import equal from 'fast-deep-equal';
 import { execa, execaSync } from 'execa';
-
-import { PackageJson } from 'type-fest';
-import type { GitDescribe, TSConfig } from './types.js';
+import type { PackageJson } from 'type-fest';
+// this tsconfig includes glint
 import type { Options } from 'execa';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
-
 export const git: SimpleGit = simpleGit({
   baseDir: process.cwd(),
   binary: 'git',
   maxConcurrentProcesses: 6,
 } as Partial<SimpleGitOptions>);
-
-// we might need to check if commitlint is being used and lint against it for msgTypes
-export async function gitCommit(msg: string, msgType = 'chore(deps-dev)'): Promise<void> {
-  await git.commit(`${msgType.trim()}: [REHEARSAL-BOT] ${msg.trim()}`, '--no-verify');
-}
-
-// we want a separate branch & PR for each diagnostic
-// eg. await gitCheckoutNewBranch('4.8.0-beta', 'typescript', 'diagnostic-4082')
-export async function gitCheckoutNewLocalBranch(
-  depSemVersion: string,
-  depName = 'typescript',
-  addPathID?: string
-): Promise<string> {
-  const branchName = `rehearsal-bot/${depName}-${depSemVersion}${addPathID ? `/${addPathID}` : ''}`;
-  await git.checkout(['-b', branchName]);
-
-  return branchName;
-}
-
-export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
-  // if cwd is provided, create a new git instance with the correct cwd
-  const gitClient = cwd
-    ? simpleGit({
-        baseDir: cwd,
-      } as Partial<SimpleGitOptions>)
-    : git;
-  if (await gitClient.checkIsRepo()) {
-    const status = await gitClient.status();
-    return status.isClean() === false;
-  }
-  return false; // false if it's not a git repo
-}
-
-// Stage files in a git repo
-export async function gitAddIfInRepo(fileList: string[] | string, cwd?: string): Promise<void> {
-  // if cwd is provided, create a new git instance with the correct cwd
-  const gitClient = cwd
-    ? simpleGit({
-        baseDir: cwd,
-      } as Partial<SimpleGitOptions>)
-    : git;
-  if (await gitClient.checkIsRepo()) {
-    await gitClient.add(fileList);
-  }
-}
 
 /**
  * Function to introduce a wait
@@ -125,29 +83,6 @@ export function readFile(file: string, encoding?: 'utf8'): string | Buffer | und
  */
 export function timestamp(inSeconds = false): number {
   return inSeconds ? Date.now() / 1000 : Date.now();
-}
-
-/**
- * Parse the string output from git
- *
- * @param desc - String output of "git describe --tags --long"
- * @returns GitDescribe object
- */
-export function parseLongDescribe(desc: string): GitDescribe {
-  const result = /^(.+)-(\d+)-g([a-f0-9]+)(?:-(dirty))?$/.exec(desc);
-
-  if (!result) {
-    throw Error(`Unable to parse ${desc} as a long description`);
-  }
-
-  const [, tag, count, sha, dirty] = result;
-
-  return {
-    tag,
-    count: parseInt(count, 10),
-    sha,
-    dirty: !!dirty,
-  };
 }
 
 /**
@@ -363,56 +298,6 @@ export async function setModuleResolution(
   }
 }
 
-// version specified in package.json NOT resolved version from lock file
-export async function getModuleVersion(
-  moduleName: string,
-  type: 'devDep' | 'dep',
-  cwd = process.cwd()
-): Promise<string> {
-  const depType = type === 'dep' ? 'dependencies' : 'devDependencies';
-
-  // using npm pkg api (preferred)
-  async function getVersionFromPkg(dir: string): Promise<string> {
-    try {
-      const npmPath = getManagerBinPath('npm');
-      const { stdout } = await execa(npmPath, ['pkg', 'get', `${depType}.${moduleName}`], {
-        cwd: dir,
-      });
-
-      if (stdout === '{}') {
-        return '';
-      } else {
-        // eg "^2.3.2"
-        return stdout.replace(/"/g, '');
-      }
-    } catch (err) {
-      return '';
-    }
-  }
-
-  // when thats not possible and for tests, use package.json
-  function getVersionFromPkgJson(dir: string): string {
-    try {
-      const pkgPath = findupSync('package.json', {
-        cwd: dir,
-      });
-      // wrapping in try catch so casting is safe
-      const pkg = readJSON(pkgPath as string) as PackageJson;
-
-      return pkg[depType]?.[moduleName] ?? '';
-    } catch (err) {
-      return '';
-    }
-  }
-
-  const version = {
-    pkg: await getVersionFromPkg(cwd),
-    packageJson: getVersionFromPkgJson(cwd),
-  };
-
-  return version.pkg || version.packageJson;
-}
-
 // devDep: dep@version eg. typescript@4.4.4 or typescript or etc
 export async function addDep(
   depList: string[],
@@ -429,17 +314,6 @@ export async function addDep(
   const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
   await execa(binAndArgs.bin, [...binAndArgs.args], options);
-}
-
-// when executing a command with module manager prefix
-// eg. yarn tsc or pnpm tsc or npm tsc
-export async function runModuleCommand(args: string[], option: Options = {}): Promise<void> {
-  const moduleManager = getModuleManager();
-  const binAndArgs = {
-    bin: moduleManager,
-    args,
-  };
-  await execa(binAndArgs.bin, [...binAndArgs.args], option);
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
@@ -523,96 +397,12 @@ export function parseCommaSeparatedList(value: string): string[] {
 }
 
 /**
- * Ensure a path is absolute based on process.cwd()
- */
-export function ensureAbsolutePath(p: string): string {
-  return p === process.cwd() ? p : resolve(p);
-}
-
-/**
- * check if migration-config.json exists in process.cwd()
- */
-export function validateUserConfig(basePath: string, userConfigPath: string): boolean {
-  return existsSync(resolve(basePath, userConfigPath));
-}
-
-/**
  * Reads a tsConfig file
  * @param configPath
  * @returns
  */
 export function readTSConfig<T>(configPath: string): T {
   return json5.parse(readFileSync(configPath, 'utf-8'));
-}
-
-/**
- * Generate tsconfig
- */
-
-export const DEFAULT_TS_CONFIG = {
-  $schema: 'https://json.schemastore.org/tsconfig',
-  compilerOptions: {
-    strict: true,
-    esModuleInterop: true,
-    noUncheckedIndexedAccess: true,
-    module: 'es2020',
-    moduleResolution: 'node',
-    newLine: 'lf',
-    target: 'ES2021',
-    forceConsistentCasingInFileNames: true,
-    noFallthroughCasesInSwitch: true,
-    noEmit: true,
-  },
-};
-
-export function writeTSConfig(configPath: string, config: unknown): void {
-  configPath = configPath.endsWith('tsconfig.json')
-    ? configPath
-    : resolve(configPath, 'tsconfig.json');
-  writeJSON(configPath, config);
-}
-
-/**
- * Parse the TS Version passed in by the user
- */
-export function parseTsVersion(value: string): string {
-  if (isValidSemver(value)) {
-    return value;
-  } else {
-    throw new InvalidArgumentError(
-      'The tsVersion specified is an invalid string. Please specify a valid version as n.n.n'
-    );
-  }
-}
-
-/**
- * Check if typescript is already installed
- */
-export function isTypescriptInDevdep(basePath: string): boolean {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
-  return !!(
-    packageJSON?.devDependencies?.['typescript'] || packageJSON?.dependencies?.['typescript']
-  );
-}
-
-/**
- * Add/Update scripts in package.json
- */
-export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
-  packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
-  writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
-}
-
-/**
- * Run git reset to get all file changes to the previous state
- */
-export async function resetFiles(): Promise<void> {
-  if (await git.checkIsRepo()) {
-    await git.reset(['--hard']);
-  }
 }
 
 /**
@@ -897,7 +687,10 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
   for (const dep in packageJSONDeps) {
     // if the dep is in the requiredDeps, but the versions do not match, throw an error
     if (Object.keys(requiredDeps).includes(dep)) {
-      if (compare(packageJSONDeps[dep], requiredDeps[dep], '>=')) {
+      const installedVersion = packageJSONDeps[dep].replace(/[\^~]/g, '');
+      const reqVersion = requiredDeps[dep].replace(/[\^~]/g, '');
+      // if the installed dep is < the required dep, throw an error
+      if (compare(installedVersion, reqVersion, '<')) {
         invalidVersion.push(dep);
       }
     }
@@ -906,17 +699,17 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
   // combine all the errors and throw them together for both missing and version mismatch
   if (invalidVersion.length > 0) {
     message.push(
-      `Please update "${invalidVersion.join(', ')}: ${invalidVersion
-        .map((dep) => requiredDeps[dep])
-        .join(', ')}" to the minimum required version and try again.`
+      `Please update the following dependencies to the minimum required versions and try again: ${invalidVersion
+        .map((dep) => `\n"${dep} >= ${requiredDeps[dep]}"`)
+        .join(', ')}`
     );
   }
 
   if (missingDeps.length > 0) {
     message.push(
-      `Please install "${missingDeps.join(', ')}: ${missingDeps
-        .map((dep) => requiredDeps[dep])
-        .join(', ')}" as a devDependency and try again.`
+      `Please install the following missing devDependencies and try again: ${missingDeps
+        .map((dep) => `\n"${dep} >= ${requiredDeps[dep]}"`)
+        .join(', ')}`
     );
   }
 
@@ -942,7 +735,7 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
   const lintConfigPath = getEsLintConfigPath(basePath);
   if (!lintConfigPath) {
     throw new Error(
-      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. Please add one and try again.`
     );
   }
 
@@ -951,28 +744,48 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
 
   // if the parser is not requiredParser throw
   if (!Object.keys(lintConfig).includes('parser')) {
-    throw new Error(`Please add "parser: ${requiredParser}" to your eslint config and try again.`);
+    throw new Error(`Please add "parser: ${requiredParser}" to the ESLint config and try again.`);
   }
 
   // if the parser is not the requiredParser throw
   if (lintConfig['parser'] !== requiredParser) {
     throw new Error(
-      `Please update "parser: ${lintConfig['parser']}" to "parser: ${requiredParser}" and try again.`
+      `Please update "parser: ${lintConfig['parser']}" to "parser: ${requiredParser}" in the ESLint config and try again.`
     );
   }
 
   return true;
 }
 
-export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): boolean {
-  // read the tsconfig.json
-  const tsConfig = readTSConfig<TSConfig>(basePath);
+export function isTSConfigPreReq(
+  basePath: string,
+  // requiredTSConfig: TSConfigBase | TSConfigEmber | TSConfigGlimmer
+  requiredTSConfig: any
+): boolean {
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
+  const tsConfig = readTSConfig<any>(tsConfigPath);
+  const message = `Please update the tsconfig.json to include:\n${JSON.stringify(
+    requiredTSConfig,
+    null,
+    2
+  )}`;
 
-  // loop over the requiredTSConfig options and compare them to the tsConfig
-  for (const k in requiredTSConfig) {
-    if (Object.keys(tsConfig).includes(k)) {
-      // TODO
-    }
+  // !TODO NEED TO COMPARE AGAINST THE COMPILED TSCONFIG EG. EXTENDS WITH TS API
+  // grab all the top level keys from the requiredTSConfig
+  const missingKeys = Object.keys(requiredTSConfig).filter(
+    (key) => !Object.keys(tsConfig).includes(key)
+  );
+
+  if (missingKeys.length > 0) {
+    throw new Error(
+      `The tsconfig.json is missing the following keys:\n${missingKeys
+        .map((key) => `"${key}"`)
+        .join(', ')}.\n${message}`
+    );
+  }
+
+  if (!equal(tsConfig, requiredTSConfig)) {
+    throw new Error(`${message}`);
   }
 
   return true;
@@ -980,8 +793,11 @@ export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): 
 
 export function isNodePreReq(requiredNode: string): boolean {
   const nodeVersion = process.version;
-  if (compare(nodeVersion, requiredNode, '>=')) {
-    throw new Error(`Please update your node version to ${requiredNode} or above and try again.`);
+  // if the version of node is less than the requiredNode throw
+  if (compare(nodeVersion, requiredNode, '<')) {
+    throw new Error(
+      `Please update your current node version "${nodeVersion}" to "${requiredNode}" or above and try again.`
+    );
   }
 
   return true;

@@ -3,10 +3,9 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { writeJSONSync } from 'fs-extra/esm';
 import { Project } from 'fixturify-project';
-import { readFile, readTSConfig, writeTSConfig } from '@rehearsal/utils';
+import { readFile, readTSConfig } from '@rehearsal/utils';
 import { addFilesToIncludes, analyzeTask } from '../../../src/commands/fix/tasks/index.js';
 import {
-  createFixOptions,
   createOutputStream,
   isActionSelection,
   isPackageSelection,

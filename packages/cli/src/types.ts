@@ -15,13 +15,33 @@ export type PackageSelection = {
 };
 
 export type ProjectType = 'base' | 'ember' | 'glimmer';
+export type TSConfigBase = {
+  compilerOptions: {
+    strict: boolean;
+    skipLibCheck: boolean;
+  };
+};
+
+export type TSConfigEmber = TSConfigBase & {
+  glint: {
+    environment: string[];
+    checkStandaloneTemplates: boolean;
+  };
+};
+
+export type TSConfigGlimmer = TSConfigBase & {
+  glint: {
+    environment: string[];
+    checkStandaloneTemplates: boolean;
+  };
+};
 
 export type PreReqs = {
   node: string;
   eslint: {
     parser: string;
   };
-  tsconfig: TSConfig;
+  tsconfig: TSConfigBase | TSConfigEmber | TSConfigGlimmer;
   deps: Record<string, string>;
 };
 

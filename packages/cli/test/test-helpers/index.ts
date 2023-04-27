@@ -36,24 +36,6 @@ export function prepareProject(
   return project;
 }
 
-// create default options for fix cli
-export function createFixOptions(
-  basePath: string,
-  options?: Partial<FixCommandOptions>
-): FixCommandOptions {
-  return {
-    basePath,
-    entrypoint: '',
-    package: '',
-    format: ['sarif'],
-    verbose: false,
-    ci: false,
-    dryRun: false,
-    regen: false,
-    ...options,
-  };
-}
-
 // Task runner for test
 export async function listrTaskRunner<T>(tasks: ListrTask[]): Promise<T> {
   const defaultListrOption = {

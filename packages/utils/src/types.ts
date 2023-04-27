@@ -13,3 +13,24 @@ export interface TSConfig extends TsConfigJson {
     checkStandaloneTemplates?: boolean;
   };
 }
+
+export type TSConfigBase = {
+  compilerOptions: {
+    strict: boolean;
+    skipLibCheck: boolean;
+  };
+};
+
+export type TSConfigEmber = TSConfigBase & {
+  glint: {
+    environment: string[];
+    checkStandaloneTemplates: boolean;
+  };
+};
+
+export type TSConfigGlimmer = TSConfigBase & {
+  glint: {
+    environment: string[];
+    checkStandaloneTemplates: boolean;
+  };
+};

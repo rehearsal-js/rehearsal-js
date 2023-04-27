@@ -1,7 +1,14 @@
 // ! these should be the bare minimum versions and config required for rehearsal to work with type inference
 // ! deps are >= the version specified
 
-import type { PreReqs, ProjectType } from './types.js';
+import type {
+  PreReqs,
+  ProjectType,
+  TSConfigBase,
+  TSConfigEmber,
+  TSConfigGlimmer,
+} from './types.js';
+
 // node package.json config must be gte 14
 const nodeBasePrereq = '14';
 
@@ -11,7 +18,7 @@ const eslintBasePrereq = {
 };
 
 // tsconfig
-const tsconfigBasePrereq = {
+const tsconfigBasePrereq: TSConfigBase = {
   compilerOptions: {
     strict: true,
     skipLibCheck: true,
@@ -19,7 +26,7 @@ const tsconfigBasePrereq = {
 };
 
 // tsconfig ember app/addon
-const tsconfigEmberPrereq = {
+const tsconfigEmberPrereq: TSConfigEmber = {
   ...tsconfigBasePrereq,
   glint: {
     environment: ['ember-loose', 'ember-template-imports'],
@@ -28,7 +35,7 @@ const tsconfigEmberPrereq = {
 };
 
 // tsconfig glimmer
-const tsconfigGlimmerPrereq = {
+const tsconfigGlimmerPrereq: TSConfigGlimmer = {
   ...tsconfigBasePrereq,
   glint: {
     environment: ['glimmerx'],
@@ -39,7 +46,7 @@ const tsconfigGlimmerPrereq = {
 // pre-req dependencies for rehearsal. doesn't matter if they are deps or devDeps
 const depsBasePreReq = {
   typescript: '5.0.0',
-  prettier: '2.8.0',
+  prettier: '2.0.0',
   eslint: '8.0.0',
   'eslint-plugin-prettier': '4.0.0',
   'eslint-config-prettier': '8.0.0',
@@ -54,10 +61,10 @@ const depsBasePreReq = {
 // pre-req dependencies for ember app/addon
 const depsEmberPreReq = {
   ...depsBasePreReq,
-  '@glint/core': '1.0.1',
-  '@glint/environment-ember-loose': '1.0.1',
-  '@glint/environment-ember-template-imports': '1.0.1',
-  '@glint/template': '1.0.1',
+  '@glint/core': '1.0.0',
+  '@glint/environment-ember-loose': '1.0.0',
+  '@glint/environment-ember-template-imports': '1.0.0',
+  '@glint/template': '1.0.0',
   'ember-cli-typescript': '5.0.0',
   'ember-template-imports': '3.0.0',
   'eslint-plugin-ember': '11.0.0',
@@ -67,9 +74,9 @@ const depsEmberPreReq = {
 // pre-req dependencies for glimmer
 const depsGlimmerPreReq = {
   ...depsBasePreReq,
-  '@glint/core': '1.0.1',
-  '@glint/environment-glimmerx': '1.0.1',
-  '@glint/template': '1.0.1',
+  '@glint/core': '1.0.0',
+  '@glint/environment-glimmerx': '1.0.0',
+  '@glint/template': '1.0.0',
   'eslint-plugin-ember': '11.0.0',
   '@glimmerx/prettier-plugin-component-templates': '0.6.0',
 };
