@@ -400,6 +400,54 @@ export default class Salutation extends Component {
       expect(report.items).toHaveLength(2);
       expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });
+
+    test.todo('in app service ', async () => {
+      const [inputs, outputs] = prepareInputFiles(
+        project,
+        ['services/locale.js', 'components/salutation.hbs', 'components/salutation.js'],
+        'app'
+      );
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expectedComponent = `import type Locale from 'app-name/services/locale';
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class Salutation extends Component {
+  @service declare locale: Locale;
+  get name() {
+    if (this.locale.current() == "en-US") {
+      return "Bob";
+    }
+    return "Unknown";
+  }
+}
+`;
+
+      const expectedService = `import Service from "@ember/service";
+
+export default class LocaleService extends Service {
+  current() {
+    return "en-US";
+  }
+}
+ `;
+      console.log(outputs);
+      const [actualService, , actualComponent] = outputs;
+
+      expectFile(actualService).toEqual(expectedService);
+      expectFile(actualComponent).toEqual(expectedComponent);
+    });
   });
 
   describe('.js', () => {
