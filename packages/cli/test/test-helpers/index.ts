@@ -6,7 +6,6 @@ import { execa } from 'execa';
 import { Listr, ListrTask } from 'listr2';
 import { Project } from 'fixturify-project';
 
-import type { FixCommandOptions } from '../../src/types.js';
 import type { ExecaChildProcess, Options } from 'execa';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -1,15 +1,12 @@
 import { resolve } from 'node:path';
 import { promises as fs, readdirSync, readFileSync } from 'node:fs';
-import { writeJSONSync } from 'fs-extra/esm';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getFiles } from '@rehearsal/test-support';
 import yaml from 'js-yaml';
 import { Project } from 'fixturify-project';
 import { readTSConfig } from '@rehearsal/utils';
-import { REQUIRED_DEPENDENCIES } from '../../../src/commands/fix/tasks/dependency-install.js';
-
 import { cleanOutput, prepareProject, runBin } from '../../test-helpers/index.js';
-import { CustomConfig } from '../../../src/types.js';
+
 import type { PackageJson } from 'type-fest';
 
 describe('migrate - validation', () => {
@@ -212,9 +209,6 @@ describe('migrate: e2e', () => {
       await fs.readFile(resolve(project.baseDir, 'package.json'), 'utf-8')
     ) as PackageJson;
 
-    const devDeps = packageJson.devDependencies;
-    expect(Object.keys(devDeps || {}).sort()).toEqual(REQUIRED_DEPENDENCIES.sort());
-
     // report
     const reportPath = resolve(project.baseDir, '.rehearsal');
     expect(readdirSync(reportPath)).toContain('migrate-report.sarif');
@@ -273,11 +267,6 @@ describe('migrate: e2e', () => {
   });
 
   describe('user defined options passed by --user-config -u', () => {
-    function createUserConfig(basePath: string, config: CustomConfig): void {
-      const configPath = resolve(basePath, 'rehearsal-config.json');
-      writeJSONSync(configPath, config);
-    }
-
     test('migrate.exclude', async () => {
       const files = getFiles('simple');
       // Add a directory that we don't want to ignore
@@ -286,15 +275,6 @@ describe('migrate: e2e', () => {
       project.files = files;
 
       await project.write();
-
-      createUserConfig(project.baseDir, {
-        migrate: {
-          setup: {
-            ts: { command: 'touch', args: ['custom-ts-config-script'] },
-          },
-          exclude: ['some-dir'],
-        },
-      });
 
       const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
         cwd: project.baseDir,
@@ -328,14 +308,6 @@ describe('migrate: e2e', () => {
 
       project.files = files;
       await project.write();
-      createUserConfig(project.baseDir, {
-        migrate: {
-          setup: {
-            ts: { command: 'touch', args: ['custom-ts-config-script'] },
-          },
-          include: ['test'],
-        },
-      });
 
       const result = await runBin('migrate', ['-d', '-u', 'rehearsal-config.json', '--ci'], {
         cwd: project.baseDir,

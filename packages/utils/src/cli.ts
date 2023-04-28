@@ -537,7 +537,7 @@ export function validateSourcePath(
   fileType: 'ts' | 'js'
 ): [string[], string[]] {
   const relativePath = relative(basePath, resolve(basePath, source));
-  const globPaths = fileType === 'js' ? ['.js,.gjs'] : ['.ts,.gts'];
+  const groupedExt = fileType === 'js' ? ['.js', '.gjs'] : ['.ts', '.gts'];
 
   if (
     source &&
@@ -551,14 +551,11 @@ export function validateSourcePath(
 
   // if source is a directory, get all the files otherwise just return the source as abs and rel tuple
   if (!isDirectory(source)) {
-    // validate that the source is a js | .gjs file
-    if (extname(source) === globPaths[0] || extname(source) === globPaths[1]) {
+    if (groupedExt.includes(extname(source))) {
       return [[resolve(basePath, source)], [relativePath]];
     }
 
-    throw new Error(
-      `Rehearsal will only move ${globPaths[0]} or ${globPaths[1]} files. Source: ${source} is neither.`
-    );
+    throw new Error(`Rehearsal will only move ${groupedExt} files. Source: ${source} is neither.`);
   }
 
   // otherwise return all the js files in the directory and its subdirectories

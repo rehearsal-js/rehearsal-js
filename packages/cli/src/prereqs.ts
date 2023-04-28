@@ -48,8 +48,6 @@ const depsBasePreReq = {
   typescript: '5.0.0',
   prettier: '2.0.0',
   eslint: '8.0.0',
-  'eslint-plugin-prettier': '4.0.0',
-  'eslint-config-prettier': '8.0.0',
   'eslint-import-resolver-typescript': '3.0.0',
   'eslint-plugin-import': '2.0.0',
   'eslint-plugin-node': '11.0.0',
@@ -66,7 +64,6 @@ const depsEmberPreReq = {
   '@glint/environment-ember-template-imports': '1.0.0',
   '@glint/template': '1.0.0',
   'ember-cli-typescript': '5.0.0',
-  'ember-template-imports': '3.0.0',
   'eslint-plugin-ember': '11.0.0',
   'prettier-plugin-ember-template-tag': '0.3.0',
 };
