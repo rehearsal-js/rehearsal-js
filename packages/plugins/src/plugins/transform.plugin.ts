@@ -1,12 +1,17 @@
 import { extname } from 'node:path';
-import { GlintService, Plugin } from '@rehearsal/service';
+import { GlintService, Plugin, PluginOptions } from '@rehearsal/service';
 import { applyTextChanges } from '@rehearsal/ts-utils';
 import ts, { TextChange } from 'typescript';
 import debug from 'debug';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:transform');
 
-export class ServiceInjectionsTransformPlugin extends Plugin {
+export interface ServiceInjectionsTransformPluginOptions extends PluginOptions {
+  servicesMap?: Map<string, string>;
+  decoratorName?: string;
+}
+
+export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTransformPluginOptions> {
   async run(): Promise<string[]> {
     const { fileName, context } = this;
     const service = context.service;
@@ -29,7 +34,7 @@ export class ServiceInjectionsTransformPlugin extends Plugin {
       );
     }
 
-    const changes = transformFullyQualifiedServiceInjections(sourceFile);
+    const changes = this.transformFullyQualifiedServiceInjections(sourceFile);
 
     if (changes.length) {
       const originalContents = service.getFileText(fileName);
@@ -41,152 +46,208 @@ export class ServiceInjectionsTransformPlugin extends Plugin {
 
     return Promise.resolve([fileName]);
   }
-}
 
-function transformFullyQualifiedServiceInjections(sourceFile: ts.SourceFile): ts.TextChange[] {
-  const source = sourceFile;
-  const printer = ts.createPrinter({});
-  const classes = getClasses(sourceFile);
-  const changes: TextChange[] = [];
-  const importChanges: TextChange[] = [];
+  transformFullyQualifiedServiceInjections(sourceFile: ts.SourceFile): ts.TextChange[] {
+    const source = sourceFile;
+    const printer = ts.createPrinter({});
+    const classes = this.getClasses(sourceFile);
+    const changes: TextChange[] = [];
+    const importChanges: TextChange[] = [];
 
-  classes.forEach((klass) => {
-    getProperties(klass).forEach((prop) => {
-      if (!ts.canHaveDecorators(prop)) {
-        return;
-      }
+    for (const klass of classes) {
+      const properties = this.getProperties(klass);
 
-      const decorators = ts.getDecorators(prop);
-
-      if (decorators === undefined) {
-        return;
-      }
-
-      decorators.forEach((decorator) => {
-        if (getDecoratorName(decorator) !== 'service') {
-          return;
+      for (const prop of properties) {
+        if (!ts.canHaveDecorators(prop)) {
+          continue;
         }
 
-        const [arg] = getArgs(decorator);
+        const decorators = ts.getDecorators(prop);
 
-        if (arg === undefined) {
-          return;
+        if (decorators === undefined) {
+          continue;
         }
 
-        if (!ts.isStringLiteral(arg)) {
-          return;
-        }
+        const serviceDecoratorName = this.options.decoratorName ?? 'service';
 
-        const argValue = arg.text;
+        for (const decorator of decorators) {
+          if (this.getDecoratorName(decorator) !== serviceDecoratorName) {
+            continue;
+          }
 
-        if (isFullyQualifiedService(argValue)) {
-          const [addon, serviceName] = parseFullyQualifiedService(argValue);
+          const qualifiedService = this.getQualifiedServiceName(decorator, prop);
+          if (!qualifiedService) {
+            continue;
+          }
+
+          let serviceClass: string | undefined;
+          let serviceModule: string | undefined;
+
+          if (this.isFullyQualifiedService(qualifiedService)) {
+            // Strategy: Ember fully qualified service names: `addon@service`
+            const [addon, serviceName] = this.parseFullyQualifiedService(qualifiedService);
+            serviceClass = this.toClassName(serviceName);
+            serviceModule = `${addon}/services/${this.toKebabCase(serviceName)}`;
+          } else {
+            // Strategy: Use services map
+            serviceModule = this.findServiceInMap(qualifiedService);
+            if (serviceModule) {
+              serviceClass = this.toClassName(qualifiedService);
+            }
+          }
+
+          if (!serviceClass || !serviceModule) {
+            continue;
+          }
 
           const modifiers = ts.canHaveModifiers(prop) ? ts.getModifiers(prop) ?? [] : [];
 
-          prop = ts.factory.updatePropertyDeclaration(
+          const updatedProp = ts.factory.updatePropertyDeclaration(
             prop,
             [...modifiers, ...decorators, ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
             prop.name,
             undefined,
-            ts.factory.createTypeReferenceNode(classify(serviceName)),
+            ts.factory.createTypeReferenceNode(serviceClass),
             prop.initializer
           );
 
-          const change = createTextChangeForNode(source, printer, prop);
+          const change = this.createTextChangeForNode(source, printer, updatedProp);
 
           changes.push(change);
 
-          const importStatement = `import type ${classify(
-            serviceName
-          )} from '${addon}/services/${serviceName}';`;
+          const importStatement = `import type ${serviceClass} from '${serviceModule}';`;
 
           importChanges.push({
             newText: importStatement,
             span: ts.createTextSpan(0, 0),
           });
         }
-      });
-    });
-  });
-
-  // We have to manually add newlines for `.gts` files because our formatting step doesn't work
-  // on gts
-  if (importChanges.length && extname(sourceFile.fileName) === '.gts') {
-    importChanges.forEach((change) => {
-      change.newText = change.newText + '\n';
-    });
-  }
-
-  changes.push(...importChanges);
-
-  return changes;
-}
-
-function createTextChangeForNode(
-  source: ts.SourceFile,
-  printer: ts.Printer,
-  node: ts.Node
-): ts.TextChange {
-  const start = node.getStart(source);
-  const end = node.getEnd();
-
-  const propContents = printer.printNode(ts.EmitHint.Unspecified, node, source);
-
-  const span = ts.createTextSpan(node.getStart(source), end - start);
-
-  const change: TextChange = {
-    newText: propContents,
-    span,
-  };
-
-  return change;
-}
-
-function getClasses(sourceFile: ts.SourceFile): Array<ts.ClassDeclaration> {
-  if (sourceFile === undefined) {
-    throw new Error('wat');
-  }
-  return sourceFile.statements.filter((statement) => {
-    return ts.isClassDeclaration(statement);
-  }) as Array<ts.ClassDeclaration>;
-}
-
-function getProperties(klass: ts.ClassDeclaration): ts.PropertyDeclaration[] {
-  return klass.members.filter((m) => ts.isPropertyDeclaration(m)) as ts.PropertyDeclaration[];
-}
-
-function getDecoratorName(decorator: ts.Decorator): string {
-  if (ts.isCallExpression(decorator.expression)) {
-    if (ts.isIdentifier(decorator.expression.expression)) {
-      return decorator.expression.expression.escapedText.toString();
+      }
     }
+
+    // We have to manually add newlines for `.gts` files because our formatting step doesn't work
+    // on gts
+    if (importChanges.length && extname(sourceFile.fileName) === '.gts') {
+      importChanges.forEach((change) => {
+        change.newText = change.newText + '\n';
+      });
+    }
+
+    changes.push(...importChanges);
+
+    return changes;
   }
 
-  return '';
-}
+  createTextChangeForNode(
+    source: ts.SourceFile,
+    printer: ts.Printer,
+    node: ts.Node
+  ): ts.TextChange {
+    const start = node.getStart(source);
+    const end = node.getEnd();
 
-function getArgs(decorator: ts.Decorator): Array<ts.Expression> {
-  if (ts.isCallExpression(decorator.expression)) {
-    return [...decorator.expression.arguments];
+    const propContents = printer.printNode(ts.EmitHint.Unspecified, node, source);
+
+    const span = ts.createTextSpan(node.getStart(source), end - start);
+
+    const change: TextChange = {
+      newText: propContents,
+      span,
+    };
+
+    return change;
   }
 
-  return [];
-}
+  getClasses(sourceFile: ts.SourceFile): Array<ts.ClassDeclaration> {
+    if (sourceFile === undefined) {
+      throw new Error('wat');
+    }
+    return sourceFile.statements.filter((statement) => {
+      return ts.isClassDeclaration(statement);
+    }) as Array<ts.ClassDeclaration>;
+  }
 
-function classify(str: string): string {
-  const parts = str.split('-');
-  return parts
-    .map((part) => {
-      return `${part[0].toUpperCase()}${part.substring(1)}`;
-    })
-    .join('');
-}
+  getProperties(klass: ts.ClassDeclaration): ts.PropertyDeclaration[] {
+    return klass.members.filter((m) => ts.isPropertyDeclaration(m)) as ts.PropertyDeclaration[];
+  }
 
-function isFullyQualifiedService(service: string): boolean {
-  return service.includes('@');
-}
+  getDecoratorName(decorator: ts.Decorator): string {
+    const expression = ts.isCallExpression(decorator.expression)
+      ? decorator.expression.expression
+      : decorator.expression;
 
-function parseFullyQualifiedService(service: string): string[] {
-  return service.split('@');
+    return ts.isIdentifier(expression) ? expression.escapedText.toString() : '';
+  }
+
+  getQualifiedServiceName(decorator: ts.Decorator, prop: ts.Node): string | undefined {
+    if (ts.isCallExpression(decorator.expression)) {
+      // Covers `@service('service-name')` and `@service('addon@service-name')`
+      if (decorator.expression.arguments.length) {
+        const arg = decorator.expression.arguments[0];
+        return ts.isStringLiteral(arg) ? arg.text : undefined;
+      }
+    } else {
+      // Covers `@service serviceName`
+      if (ts.isPropertyDeclaration(prop) && ts.isIdentifier(prop.name)) {
+        return this.toKebabCase(prop.name.escapedText.toString());
+      }
+    }
+
+    // Covers @service() propName
+    return undefined;
+  }
+
+  /**
+   * @see https://en.wikipedia.org/wiki/Fully_qualified_domain_name
+   */
+  isFullyQualifiedService(service: string): boolean {
+    return service.includes('@');
+  }
+
+  parseFullyQualifiedService(service: string): string[] {
+    return service.split('@');
+  }
+
+  /**
+   * Converts string to kebab-case
+   */
+  toKebabCase(str: string): string {
+    return str.replace(/[\W_]+|(?<=[a-z0-9])(?=[A-Z])/g, '-').toLowerCase();
+  }
+
+  /**
+   * Converts string to camelCase
+   */
+  toCamelCase(str: string): string {
+    return str.replace(/-./g, (x) => x[1].toUpperCase());
+  }
+
+  /**
+   * Converts string to ClassName (camelCase + upper case the first letter)
+   */
+  toClassName(str: string): string {
+    str = this.toCamelCase(str);
+    return str.replace(/^./, str[0].toUpperCase());
+  }
+
+  /**
+   * Search for service in the services map using camelCase and kebab-case as a key
+   */
+  findServiceInMap(serviceName: string): string | undefined {
+    if (this.options.servicesMap === undefined) {
+      return undefined;
+    }
+
+    const serviceNameKebab = this.toKebabCase(serviceName);
+    if (this.options.servicesMap.has(serviceNameKebab)) {
+      return this.options.servicesMap.get(serviceNameKebab);
+    }
+
+    const serviceNameCamel = this.toCamelCase(serviceName);
+    if (this.options.servicesMap.has(serviceNameCamel)) {
+      return this.options.servicesMap.get(serviceNameCamel);
+    }
+
+    return undefined;
+  }
 }

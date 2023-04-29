@@ -104,6 +104,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
   const commentTag = '@rehearsal';
+  const servicesMap = await readServiceMap(resolve(basePath, '.rehearsal', 'services-map.json'));
 
   const useGlint = await isGlintProject(basePath);
 
@@ -132,7 +133,9 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       commentTag,
     })
     // Fix errors
-    .queue(ServiceInjectionsTransformPlugin)
+    .queue(ServiceInjectionsTransformPlugin, {
+      servicesMap,
+    })
     .queue(
       DiagnosticFixPlugin,
       {
@@ -204,7 +207,9 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   reporter.saveCurrentRunToReport(basePath, entrypoint);
 }
 
-// Rename files to TS extension.
+/**
+ * Renames files to TS extension and use git move to keep edit history
+ */
 export function gitMove(
   sourceFiles: string[],
   listrTask: { output: string },
@@ -249,4 +254,13 @@ export function gitMove(
 
     return tsFile;
   });
+}
+
+async function readServiceMap(pathToMapFile: string): Promise<Map<string, string> | undefined> {
+  try {
+    const map = await readJSON(pathToMapFile);
+    return new Map<string, string>(Object.entries(map as { [key: string]: string }));
+  } catch (e) {
+    return undefined;
+  }
 }

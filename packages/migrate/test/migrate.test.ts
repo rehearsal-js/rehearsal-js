@@ -222,6 +222,45 @@ export default class Hello extends Component {
       expect(report.summary[0].basePath).toMatch(project.baseDir);
     });
 
+    test('with service map', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      const expected = `// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from 'services/moo/moo';
+import type GooService from 'services/goo';
+import type BooService from 'boo/services/boo-service';
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("boo-service")
+declare booService: BooService;
+
+  @service
+declare gooService: GooService;
+
+  @service
+declare mooService: MooService;
+
+  <template>
+    <span>Hello, I am human, and I am 10 years old!</span>
+  </template>
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
     test('with qualified service', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gjs']);
 
@@ -568,6 +607,44 @@ import { inject as service } from "@ember/service";
 export default class SomeComponent extends Component {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service("authenticated-user") authenticatedUser;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('with service map', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.js']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from "services/moo/moo";
+import type GooService from "services/goo";
+import type BooService from "boo/services/boo-service";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("boo-service")
+  declare booService: BooService;
+
+  @service
+  declare gooService: GooService;
+
+  @service
+  declare mooService: MooService;
 }
 `;
 
