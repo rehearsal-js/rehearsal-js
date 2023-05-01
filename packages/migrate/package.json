@@ -46,11 +46,11 @@
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
+    "debug": "^4.3.2",
     "execa": "^7.0.0",
     "fs-extra": "^11.1.1",
     "resolve-package-path": "^4.0.3",
-    "winston": "^3.8.2",
-    "debug": "^4.3.2"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@vitest/coverage-c8": "^0.30.1",

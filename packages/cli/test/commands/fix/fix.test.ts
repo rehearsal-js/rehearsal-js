@@ -30,10 +30,6 @@ function projectInit(project: Project, type: ProjectType): void {
   });
 }
 
-function sanitizeAbsPath(basePath: string, files: string[]): string[] {
-  return files.map((file) => file.replace(basePath, ''));
-}
-
 describe('Command: fix multi_packages fixture', () => {
   let project: Project;
 

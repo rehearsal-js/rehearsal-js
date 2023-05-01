@@ -4,7 +4,6 @@ import type { Formatters } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports -- type import
 import type { MigrationStrategy } from '@rehearsal/migration-graph';
 import type { State } from './helpers/state.js';
-import type { Logger } from 'winston';
 import type { ListrTask } from 'listr2';
 
 export type CliCommand = 'move' | 'graph' | 'fix';
