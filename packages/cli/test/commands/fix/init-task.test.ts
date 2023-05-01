@@ -1,9 +1,11 @@
+import { resolve } from 'node:path';
+import { Project } from 'fixturify-project';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { prepareProject } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, cleanOutput } from '../../test-helpers/index.js';
 import { preFlightCheck } from '../../../src/commands/fix/tasks/initialize-task.js';
 import { getPreReqs } from '../../../src/prereqs.js';
-import type { ProjectType } from '../../../src/types.js';
-import type { Project } from 'fixturify-project';
+import { initTask } from '../../../src/commands/fix/tasks/index.js';
+import type { ProjectType, FixCommandContext, FixCommandOptions } from '../../../src/types.js';
 
 function projectAddDevDeps(project: Project, type: ProjectType): void {
   const prereqs = getPreReqs(type);
@@ -167,5 +169,34 @@ describe('Fix: Init-Task', () => {
       expect(error).toBeDefined();
       expect(error).toMatchSnapshot();
     }
+  });
+
+  test(`validate initTask base works with --source`, async () => {
+    const projectType: ProjectType = 'base';
+
+    project = Project.fromDir(resolve(__dirname, '../../fixtures/base_ts_app'), {
+      linkDeps: true,
+      linkDevDeps: true,
+    });
+
+    projectInit(project, projectType);
+    await project.write();
+
+    const options: FixCommandOptions = {
+      basePath: project.baseDir,
+      dryRun: true,
+      wizard: false,
+      source: resolve(project.baseDir, 'src'),
+      format: ['sarif'],
+    };
+    const tasks = [initTask(options)];
+    const ctx = await listrTaskRunner<FixCommandContext>(tasks);
+    const sanitizedAbsPaths = ctx.tsSourcesAbs?.map((path) => {
+      return cleanOutput(path, project.baseDir);
+    });
+
+    expect(ctx.projectType).toBe('base');
+    expect(sanitizedAbsPaths).toMatchSnapshot();
+    expect(ctx.tsSourcesRel).toMatchSnapshot();
   });
 });

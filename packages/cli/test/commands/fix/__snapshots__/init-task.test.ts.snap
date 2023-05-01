@@ -37,3 +37,21 @@ Please update the tsconfig.json to include:
   }
 }]
 `;
+
+exports[`Fix: Init-Task > validate initTask base works with --source 1`] = `
+[
+  "<tmp-path>/src/index.ts",
+  "<tmp-path>/src/get-live-neighbor-count.ts",
+  "<tmp-path>/src/gen-random-grid.ts",
+  "<tmp-path>/src/apply-rules.ts",
+]
+`;
+
+exports[`Fix: Init-Task > validate initTask base works with --source 2`] = `
+[
+  "src/index.ts",
+  "src/get-live-neighbor-count.ts",
+  "src/gen-random-grid.ts",
+  "src/apply-rules.ts",
+]
+`;

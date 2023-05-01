@@ -1,10 +1,14 @@
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import fastGlob from 'fast-glob';
 import { getPreReqs } from '../../../src/prereqs.js';
-import { prepareProject, runBin } from '../../test-helpers/index.js';
+import { runBin, cleanOutput } from '../../test-helpers/index.js';
 import type { ProjectType } from '../../../src/types.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function projectAddDevDeps(project: Project, type: ProjectType): void {
   const prereqs = getPreReqs(type);
@@ -35,7 +39,14 @@ describe('Command: fix multi_packages fixture', () => {
   let project: Project;
 
   beforeEach(async () => {
-    project = prepareProject('multi_packages');
+    const options = {
+      linkDeps: true,
+      linkDevDeps: true,
+    };
+
+    project = Project.fromDir(resolve(__dirname, '../../fixtures/base_ts_app'), options);
+
+    // init project with tsconfig, eslint, and deps
     projectInit(project, 'base');
     await project.write();
   });
@@ -44,29 +55,19 @@ describe('Command: fix multi_packages fixture', () => {
     project.dispose();
   });
 
-  test('fix file with --source flag', async () => {
-    const sourceDir = 'src/foo';
+  test.only('fix file with --source flag', async () => {
+    const sourceFilepath = 'src/gen-random-grid.ts';
 
     const result = await runBin(
-      'move',
-      ['--source', `${sourceDir}/baz.js`, '--basePath', project.baseDir],
+      'fix',
+      ['--source', `${resolve(project.baseDir, sourceFilepath)}`, '--basePath', project.baseDir],
       {
         cwd: project.baseDir,
       }
     );
-    const projectSourceDir = resolve(project.baseDir, sourceDir);
 
-    const jsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{js,gjs}`, {
-      cwd: project.baseDir,
-    });
-    const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
-      cwd: project.baseDir,
-    });
-
-    expect(result.stdout).toMatchSnapshot();
-    expect(jsSourceFiles).length(3);
-    expect(tsSourceFiles).length(1);
-    expect(sanitizeAbsPath(projectSourceDir, tsSourceFiles)).toMatchObject(['/baz.ts']);
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(project.files[sourceFilepath]).toMatchSnapshot();
   });
 
   test('move dir and sub-dir with --source flag', async () => {

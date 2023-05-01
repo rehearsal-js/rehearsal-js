@@ -1,1 +1,1 @@
-console.log('multi-packages');
+console.log('base_ts_app');

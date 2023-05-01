@@ -3,12 +3,10 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { createLogger, format, transports } from 'winston';
 import findupSync from 'findup-sync';
 import { readJSONSync } from 'fs-extra/esm';
 import { Project } from 'fixturify-project';
 import { migrate, MigrateInput } from '../src/index.js';
-import type { Logger } from 'winston';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,16 +14,11 @@ const __dirname = dirname(__filename);
 describe('migrate', () => {
   let sourceFiles: string[] = [];
   let reporter: Reporter;
-  let logger: Logger;
   let project: Project;
 
   beforeEach(async () => {
     const basePath = resolve(__dirname, 'fixtures', 'migrate', 'src');
     project = Project.fromDir(basePath, { linkDeps: true, linkDevDeps: true });
-
-    logger = createLogger({
-      transports: [new transports.Console({ format: format.cli(), level: 'debug' })],
-    });
 
     sourceFiles = [join(project.baseDir, 'index.js')];
 
@@ -47,9 +40,7 @@ describe('migrate', () => {
     const input: MigrateInput = {
       basePath: project.baseDir,
       sourceFiles,
-      logger,
       reporter,
-      entrypoint: 'index.js',
     };
 
     const migratedFiles = [];
@@ -74,9 +65,7 @@ describe('migrate', () => {
     const input: MigrateInput = {
       basePath: project.baseDir,
       sourceFiles,
-      logger,
       reporter,
-      entrypoint: '',
     };
 
     const migratedFiles = [];
@@ -120,9 +109,7 @@ describe('migrate', () => {
     const input: MigrateInput = {
       basePath: project.baseDir,
       sourceFiles,
-      logger,
       reporter,
-      entrypoint: '',
     };
 
     const migratedFiles = [];

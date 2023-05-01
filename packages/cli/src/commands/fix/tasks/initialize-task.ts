@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
 import {
@@ -33,7 +34,7 @@ export function initTask(
     title: `Initialize`,
     task: async (ctx: FixCommandContext): Promise<void> => {
       const { basePath, source, childPackage } = options;
-      ctx.packageJSON = readJsonSync(basePath) as PackageJson;
+      ctx.packageJSON = readJsonSync(resolve(basePath, 'package.json')) as PackageJson;
 
       // check if ember app/addon or glimmer project
       ctx.projectType = 'base';

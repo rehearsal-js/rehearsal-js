@@ -104,7 +104,6 @@ describe('migrate', () => {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -132,7 +131,6 @@ describe('migrate', () => {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -155,7 +153,6 @@ describe('migrate', () => {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -184,7 +181,6 @@ export default class Hello extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -271,7 +267,6 @@ declare mooService: MooService;
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -304,7 +299,6 @@ declare authenticatedUser: AuthenticatedUser;
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -331,7 +325,6 @@ export default class Hello extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -386,7 +379,6 @@ export default class Hello extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -404,7 +396,6 @@ export default class Hello extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -484,7 +475,6 @@ export default class Salutation extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -510,7 +500,6 @@ export default class Salutation extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -540,7 +529,6 @@ export default class HelloWorld extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -598,7 +586,6 @@ module("Integration | Helper | grid-list", function (hooks) {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -664,7 +651,6 @@ export default class SomeComponent extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -701,7 +687,6 @@ export default class SomeComponent extends Component {
       const input: MigrateInput = {
         basePath: resolve(project.baseDir, 'packages/foo'),
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -945,7 +930,6 @@ declare secondBooService: BooService;
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -975,7 +959,6 @@ declare foo: Foo;
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 

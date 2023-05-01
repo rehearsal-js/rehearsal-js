@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { initTask } from '../../../src/commands/move/tasks/index.js';
 import { prepareProject, listrTaskRunner } from '../../test-helpers/index.js';
 import type { MoveCommandContext, MoveCommandOptions } from '../../../src/types.js';
@@ -14,7 +14,6 @@ describe('Move: Init-Task', () => {
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
     project.dispose();
   });
 
