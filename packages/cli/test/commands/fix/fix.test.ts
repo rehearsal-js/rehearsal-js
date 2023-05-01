@@ -50,7 +50,7 @@ describe('Command: fix multi_packages fixture', () => {
     project.dispose();
   });
 
-  test.only('fix file with --source flag', async () => {
+  test('fix file with --source flag', async () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
 
     const result = await runBin(

@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { initTask } from '../../../src/commands/move/tasks/index.js';
-import { prepareProject, listrTaskRunner } from '../../test-helpers/index.js';
+import { prepareProject, listrTaskRunner, cleanOutput } from '../../test-helpers/index.js';
 import type { CommandContext, MoveCommandOptions } from '../../../src/types.js';
 import type { Project } from 'fixturify-project';
 
@@ -30,7 +30,11 @@ describe('Move: Init-Task', () => {
     const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
 
-    expect(ctx.sourceFilesAbs).toStrictEqual([source]);
+    const sanitizedAbsPaths = ctx.sourceFilesAbs?.map((path) => {
+      return cleanOutput(path, project.baseDir);
+    });
+
+    expect(sanitizedAbsPaths).toMatchSnapshot();
   });
 
   test('validate source option with directory', async () => {

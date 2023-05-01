@@ -13,7 +13,7 @@ import { valid } from 'semver';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
 import chalk from 'chalk';
-import { sync } from 'fast-glob';
+import fastGlob from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import equal from 'fast-deep-equal';
@@ -469,7 +469,7 @@ export function prettyGitDiff(text: string): string {
 
 export function getEsLintConfigPath(basePath: string): string {
   // glob against the following file extension patterns and return the first match
-  const configPath = sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
+  const configPath = fastGlob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
   return configPath;
 }
 
@@ -584,7 +584,7 @@ export function getFilesByType(
   const globPaths = fileType === 'js' ? 'js,gjs' : 'ts,gts';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-  const sourceFiles = sync(`${sourceRel}/**/*.{${globPaths}}`, { cwd: basePath });
+  const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{${globPaths}}`, { cwd: basePath });
 
   // if no files are found, throw an error
   if (!sourceFiles.length) {

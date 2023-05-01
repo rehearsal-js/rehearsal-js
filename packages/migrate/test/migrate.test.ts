@@ -228,7 +228,6 @@ export default class Hello extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 
@@ -613,7 +612,6 @@ export default class SomeComponent extends Component {
       const input: MigrateInput = {
         basePath: project.baseDir,
         sourceFiles: inputs,
-        entrypoint: '',
         reporter,
       };
 

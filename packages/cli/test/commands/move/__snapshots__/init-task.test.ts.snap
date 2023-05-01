@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Move: Init-Task > validate source option with file 1`] = `
+[
+  "<tmp-path>/src/foo/buz/biz.js",
+]
+`;

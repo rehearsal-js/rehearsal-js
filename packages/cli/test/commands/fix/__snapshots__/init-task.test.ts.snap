@@ -1,10 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Fix: Init-Task > preFlightCheck base - expect failure deps missing 1`] = `
-[Error: Please install the following missing devDependencies and try again: 
-"typescript >= 5.0.0", 
-"prettier >= 2.0.0", 
-"eslint >= 8.0.0"]
+[Error: Please install the following missing devDependencies and try again:
+      
+"typescript": "^5.0.0", 
+"prettier": "^2.0.0", 
+"eslint": "^8.0.0"]
 `;
 
 exports[`Fix: Init-Task > preFlightCheck base - expect failure eslint parser invalid 1`] = `[Error: Please update "parser: @fake/parser" to "parser: @typescript-eslint/parser" in the ESLint config and try again.]`;
@@ -40,18 +41,18 @@ Please update the tsconfig.json to include:
 
 exports[`Fix: Init-Task > validate initTask base works with --source 1`] = `
 [
-  "<tmp-path>/src/index.ts",
-  "<tmp-path>/src/get-live-neighbor-count.ts",
-  "<tmp-path>/src/gen-random-grid.ts",
   "<tmp-path>/src/apply-rules.ts",
+  "<tmp-path>/src/gen-random-grid.ts",
+  "<tmp-path>/src/get-live-neighbor-count.ts",
+  "<tmp-path>/src/index.ts",
 ]
 `;
 
 exports[`Fix: Init-Task > validate initTask base works with --source 2`] = `
 [
-  "src/index.ts",
-  "src/get-live-neighbor-count.ts",
-  "src/gen-random-grid.ts",
   "src/apply-rules.ts",
+  "src/gen-random-grid.ts",
+  "src/get-live-neighbor-count.ts",
+  "src/index.ts",
 ]
 `;
