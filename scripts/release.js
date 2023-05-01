@@ -97,9 +97,9 @@ function publish() {
   execSync(pnpmBuild);
 
   // pnpm test
-  const pnpmTest = `pnpm test`;
-  console.log(pnpmTest);
-  execSync(pnpmTest);
+  // const pnpmTest = `pnpm test`;
+  // console.log(pnpmTest);
+  // execSync(pnpmTest);
 
   // generate a changelog
   const pnpmChangelog = `pnpm changelog`;

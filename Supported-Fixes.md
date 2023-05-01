@@ -10,10 +10,12 @@ Adds the missing `async` keyword where a promise should be returned.
 **Input:**
 
 ```ts
-const foo = <T>(x: T): string => {
-  await new Promise((resolve) => resolve(true));
-  return '';
-};
+interface Stuff {
+  b: () => Promise<string>;
+}
+export function foo(): Stuff {
+  return { b: () => 'hello' };
+}
 
 ```
 ```ts
@@ -27,21 +29,21 @@ function foo(): Stuff | Date {
 
 ```
 ```ts
-interface Stuff {
-  b: () => Promise<string>;
-}
-export function foo(): Stuff {
-  return { b: () => 'hello' };
-}
+const foo = <T>(x: T): string => {
+  await new Promise((resolve) => resolve(true));
+  return '';
+};
 
 ```
 **Output:**
 
 ```ts
-const foo = async <T>(x: T): Promise<string> => {
-  await new Promise((resolve) => resolve(true));
-  return '';
-};
+interface Stuff {
+  b: () => Promise<string>;
+}
+export function foo(): Stuff {
+  return { b: async () => 'hello' };
+}
 
 ```
 ```ts
@@ -54,12 +56,10 @@ function foo(): Stuff | Date {
 
 ```
 ```ts
-interface Stuff {
-  b: () => Promise<string>;
-}
-export function foo(): Stuff {
-  return { b: async () => 'hello' };
-}
+const foo = async <T>(x: T): Promise<string> => {
+  await new Promise((resolve) => resolve(true));
+  return '';
+};
 
 ```
 
@@ -72,6 +72,12 @@ Adds the missing `await` keyword where a promise should be returned but not bein
 **Input:**
 
 ```ts
+export async function fn(a: Promise<() => void>) {
+  a();
+}
+
+```
+```ts
 async function fn(a: string, b: Promise<string>) {
   const x = b;
   fn(x, b);
@@ -79,25 +85,19 @@ async function fn(a: string, b: Promise<string>) {
 }
 
 ```
+**Output:**
+
 ```ts
 export async function fn(a: Promise<() => void>) {
-  a();
+  (await a)();
 }
 
 ```
-**Output:**
-
 ```ts
 async function fn(a: string, b: Promise<string>) {
   const x = await b;
   fn(x, b);
   fn(await b, b);
-}
-
-```
-```ts
-export async function fn(a: Promise<() => void>) {
-  (await a)();
 }
 
 ```
@@ -446,6 +446,10 @@ Modifies the file that is being imported to expose the correct members.
 **Input:**
 
 ```ts
+import { T2 } from './fail-1';
+
+```
+```ts
 const a = 1;
 const b = 1;
 export { a, b };
@@ -455,12 +459,12 @@ type T1 = number;
 export type { T1 };
 
 ```
-```ts
-import { T2 } from './fail-1';
-
-```
 **Output:**
 
+```ts
+import { T2 } from './pass-1';
+
+```
 ```ts
 const a = 1;
 const b = 1;
@@ -469,10 +473,6 @@ export { a, b };
 type T2 = number;
 type T1 = number;
 export type { T1, T2 };
-
-```
-```ts
-import { T2 } from './pass-1';
 
 ```
 
