@@ -82,15 +82,15 @@ importers:
       eslint-plugin-prettier:
         specifier: ^4.2.1
         version: 4.2.1(eslint-config-prettier@8.8.0)(eslint@8.38.0)(prettier@2.8.7)
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
       fixturify:
         specifier: ^3.0.0
         version: 3.0.0
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
-      glob:
-        specifier: ^9.3.4
-        version: 9.3.5
       husky:
         specifier: ^8.0.3
         version: 8.0.3
