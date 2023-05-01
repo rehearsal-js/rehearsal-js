@@ -74,6 +74,9 @@ export function graphOrderTask(
         });
       }
 
+      // set the order on the context so we can use it in other tasks
+      ctx.migrationOrder = order;
+
       DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
       DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
 
