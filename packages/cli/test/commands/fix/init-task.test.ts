@@ -5,7 +5,7 @@ import { prepareProject, listrTaskRunner, cleanOutput } from '../../test-helpers
 import { preFlightCheck } from '../../../src/commands/fix/tasks/initialize-task.js';
 import { getPreReqs } from '../../../src/prereqs.js';
 import { initTask } from '../../../src/commands/fix/tasks/index.js';
-import type { ProjectType, FixCommandContext, FixCommandOptions } from '../../../src/types.js';
+import type { ProjectType, CommandContext, FixCommandOptions } from '../../../src/types.js';
 
 function projectAddDevDeps(project: Project, type: ProjectType): void {
   const prereqs = getPreReqs(type);
@@ -190,13 +190,13 @@ describe('Fix: Init-Task', () => {
       format: ['sarif'],
     };
     const tasks = [initTask(options)];
-    const ctx = await listrTaskRunner<FixCommandContext>(tasks);
-    const sanitizedAbsPaths = ctx.tsSourcesAbs?.map((path) => {
+    const ctx = await listrTaskRunner<CommandContext>(tasks);
+    const sanitizedAbsPaths = ctx.sourceFilesAbs?.map((path) => {
       return cleanOutput(path, project.baseDir);
     });
 
     expect(ctx.projectType).toBe('base');
     expect(sanitizedAbsPaths).toMatchSnapshot();
-    expect(ctx.tsSourcesRel).toMatchSnapshot();
+    expect(ctx.sourceFilesRel).toMatchSnapshot();
   });
 });

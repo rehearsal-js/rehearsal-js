@@ -1,6 +1,5 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads';
-import { join, relative } from 'node:path';
-
+import { join, relative, extname } from 'node:path';
 // eslint-disable-next-line no-restricted-imports
 import { getMigrationOrder } from '@rehearsal/migration-graph';
 import type { PackageEntry } from '../../../types.js';
@@ -47,7 +46,12 @@ export function intoGraphOutput(
       });
     }
 
-    if (!seenFiles.has(file.relativePath)) {
+    const ext = extname(file.relativePath);
+
+    if (
+      (ext === '.js' || ext === '.gjs' || ext === '.ts' || ext === '.gts') &&
+      !seenFiles.has(file.relativePath)
+    ) {
       seenFiles.add(file.relativePath);
       packages[packages.length - 1].files.push(
         relative(basePath, join(basePath, file.relativePath))

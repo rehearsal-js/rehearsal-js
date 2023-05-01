@@ -1,7 +1,7 @@
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { graphOrderTask } from './tasks/graphOrderTask.js';
-import type { GraphCommandContext, GraphCommandOptions } from '../../types.js';
+import type { CommandContext, GraphCommandOptions } from '../../types.js';
 
 export const graphCommand = new Command();
 

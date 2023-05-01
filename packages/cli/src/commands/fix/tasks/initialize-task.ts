@@ -20,7 +20,7 @@ import { readJsonSync } from 'fs-extra/esm';
 import { isEmberAddon, isEmberApp } from '@rehearsal/migration-graph-ember';
 import { PackageJson } from 'type-fest';
 import { getPreReqs } from '../../../prereqs.js';
-import type { FixCommandOptions, FixCommandContext, ProjectType } from '../../../types.js';
+import type { FixCommandOptions, CommandContext, ProjectType } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 
@@ -28,11 +28,11 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 export function initTask(
   options: FixCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _ctx?: FixCommandContext
-): ListrTask<FixCommandContext, ListrDefaultRenderer> {
+  _ctx?: CommandContext
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: `Initialize`,
-    task: async (ctx: FixCommandContext): Promise<void> => {
+    task: async (ctx: CommandContext): Promise<void> => {
       const { basePath, source, childPackage } = options;
       ctx.packageJSON = readJsonSync(resolve(basePath, 'package.json')) as PackageJson;
 
@@ -50,10 +50,11 @@ export function initTask(
         // expect a tsconfig.json file in basePath
         preFlightCheck(basePath, ctx.projectType);
 
-        [ctx.tsSourcesAbs, ctx.tsSourcesRel] = validateSourcePath(basePath, source, 'ts');
+        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(basePath, source, 'ts');
       }
 
       // childPackage flag - if a child package is specified grab all the ts files in the child package - expectation is rehearsal move has already been run on the child package
+      // sourceFilesAbs, sourceFilesRel will be set in the graph task as we need proper order
       if (childPackage) {
         [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(basePath, childPackage);
         // expect a tsconfig.json file in the root of the child package

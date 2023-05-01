@@ -61,6 +61,24 @@ export type PreviousRuns = {
   previousFixedCount: number;
 };
 
+export type CommandContext = {
+  skip?: boolean;
+  childPackage?: string;
+  childPackageAbs: string;
+  childPackageRel: string;
+  source?: string;
+  sourceFilesAbs?: string[];
+  sourceFilesRel?: string[];
+  input: string;
+  packageEntry?: string;
+  packageJSON: PackageJson;
+  projectName: string | null;
+  projectType: ProjectType;
+  migrationOrder?: { packages: PackageEntry[] };
+  strategy?: MigrationStrategy;
+  state: State;
+};
+
 /*
   MOVE
 */
@@ -71,7 +89,7 @@ export type MoveTasks = {
 
 export type FixTasks = {
   initTask: (options: MoveCommandOptions) => ListrTask;
-  moveTask: (options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
+  moveTask: (options: MoveCommandOptions, ctx?: CommandContext) => ListrTask;
 };
 
 export type PackageEntry = { name: string; files: string[] };
@@ -137,8 +155,8 @@ export type MoveCommandContext = {
   FIX
 */
 export type FixTasks = {
-  initTask: (options: FixCommandOptions, ctx?: FixCommandContext) => ListrTask;
-  convertTask: (options: FixCommandOptions, ctx?: FixCommandContext) => ListrTask;
+  initTask: (options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
+  convertTask: (options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
 };
 
 export type FixCommandOptions = {
@@ -150,37 +168,15 @@ export type FixCommandOptions = {
   wizard: boolean;
 };
 
-export type FixCommandContext = {
-  skip: boolean;
-  strategy: MigrationStrategy;
-  tsSourcesAbs?: string[];
-  tsSourcesRel?: string[];
-  input: unknown;
-  state: State;
-  childPackageAbs: string;
-  childPackageRel: string;
-  isInteractive: boolean;
-  projectType: ProjectType;
-  packageJSON: PackageJson;
-};
-
 /*
   GRAPH
 */
 export type GraphTasks = {
-  graphOrderTask: (options: GraphTaskOptions, ctx?: MoveCommandContext) => ListrTask;
+  graphOrderTask: (options: GraphTaskOptions, ctx?: CommandContext) => ListrTask;
 };
 
 export type GraphCommandOptions = {
   output?: string;
-};
-
-export type GraphCommandContext = {
-  skip?: boolean;
-  source?: string;
-  packageEntry?: string;
-  jsSourcesAbs?: string[];
-  childPackage?: string;
 };
 
 export type GraphTaskOptions = {

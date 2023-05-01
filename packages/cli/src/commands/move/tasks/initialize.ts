@@ -1,7 +1,7 @@
 import { ListrTask, ListrDefaultRenderer } from 'listr2';
 import debug from 'debug';
 import { validateSourcePath, validateChildPackage } from '@rehearsal/utils';
-import type { MoveCommandContext, MoveCommandOptions } from '../../../types.js';
+import type { CommandContext, MoveCommandOptions } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:move:init-task');
 
@@ -9,7 +9,7 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:move:init-task');
 export function initTask(
   src: string,
   options: MoveCommandOptions
-): ListrTask<MoveCommandContext, ListrDefaultRenderer> {
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: `Validating source path`,
     task: (ctx: MoveCommandContext): void => {

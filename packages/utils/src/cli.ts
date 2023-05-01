@@ -696,17 +696,17 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
   // combine all the errors and throw them together for both missing and version mismatch
   if (invalidVersion.length > 0) {
     message.push(
-      `Please update the following dependencies to the minimum required versions and try again: ${invalidVersion
-        .map((dep) => `\n"${dep} >= ${requiredDeps[dep]}"`)
-        .join(', ')}`
+      `Please update the following dependencies to the minimum required versions and try again:
+      ${invalidVersion.map((dep) => `\n"${dep}": "^${requiredDeps[dep]}"`).join(', ')}`
     );
+
+    // change the message to this format `"ts-node": "^10.9.1"`,
   }
 
   if (missingDeps.length > 0) {
     message.push(
-      `Please install the following missing devDependencies and try again: ${missingDeps
-        .map((dep) => `\n"${dep} >= ${requiredDeps[dep]}"`)
-        .join(', ')}`
+      `Please install the following missing devDependencies and try again:
+      ${missingDeps.map((dep) => `\n"${dep}": "^${requiredDeps[dep]}"`).join(', ')}`
     );
   }
 

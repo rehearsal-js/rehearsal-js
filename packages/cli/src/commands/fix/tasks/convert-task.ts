@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { resolve } from 'node:path';
 import debug from 'debug';
 import chalk from 'chalk';
 import { execa } from 'execa';
@@ -10,15 +11,15 @@ import {
 } from '@rehearsal/utils';
 
 import type { ListrTask } from 'listr2';
-import type { FixCommandContext, FixCommandOptions } from '../../../types.js';
+import type { CommandContext, FixCommandOptions } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:convert-task');
 
-export function convertTask(options: FixCommandOptions, _ctx?: FixCommandContext): ListrTask {
+export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): ListrTask {
   return {
-    title: 'Convert JS files to TS',
+    title: 'Infer Types',
     enabled: (): boolean => !options.dryRun,
-    task: async (ctx: FixCommandContext, task): Promise<void> => {
+    task: async (ctx: CommandContext, task): Promise<void> => {
       // Because we have to eagerly import all the tasks we need to lazily load these
       // modules because they refer to typescript which may or may not be installed
       const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
@@ -44,11 +45,13 @@ export function convertTask(options: FixCommandOptions, _ctx?: FixCommandContext
         commandName: '@rehearsal/fix',
       });
 
+      DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
+
       // this just cares about ts files which are already in the proper migration order
-      if (ctx.tsSourcesAbs) {
+      if (ctx.sourceFilesAbs) {
         const input = {
           basePath: ctx.childPackageAbs,
-          sourceFiles: ctx.tsSourcesAbs,
+          sourceFiles: ctx.sourceFilesAbs,
           reporter,
           task,
         };
@@ -103,7 +106,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: FixCommandContext
               }
             }
             if (ctx.state) {
-              ctx.state.addFilesToPackage(ctx.childPackageAbs, ctx.tsSourcesAbs);
+              ctx.state.addFilesToPackage(ctx.childPackageAbs, ctx.sourceFilesAbs);
             }
           } else {
             // Only track migrated files and let the generator complete
@@ -111,14 +114,18 @@ export function convertTask(options: FixCommandOptions, _ctx?: FixCommandContext
           }
         }
         if (ctx.state) {
-          ctx.state.addFilesToPackage(ctx.childPackageAbs, ctx.tsSourcesAbs);
+          ctx.state.addFilesToPackage(ctx.childPackageAbs, ctx.sourceFilesAbs);
         }
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
 
         reporter.printReport(basePath, options.format);
         task.title = getReportSummary(reporter.report, migratedFiles.length);
       } else {
-        task.skip(`TypeScript files not found in ${basePath}`);
+        const message = options.childPackage
+          ? `TypeScript files not found in child package: ${options.childPackage}`
+          : `TypeScript files not found in source: ${resolve(basePath, options.source as string)}`;
+
+        task.skip(`${message}`);
       }
     },
   };

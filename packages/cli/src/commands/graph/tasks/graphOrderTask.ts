@@ -1,10 +1,10 @@
-import { dirname, resolve } from 'node:path';
+import { dirname, resolve, join } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
+import type { PackageEntry, CommandContext, GraphTaskOptions } from '../../../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,12 +17,12 @@ export function graphOrderTask(
   srcDir: string,
   options: GraphTaskOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _ctx?: GraphCommandContext
-): ListrTask<GraphCommandContext, ListrDefaultRenderer> {
+  _ctx?: CommandContext
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing project dependency graph',
     options: { persistentOutput: true },
-    async task(ctx: GraphCommandContext, task) {
+    async task(ctx: CommandContext, task) {
       let order: { packages: PackageEntry[] };
       const { output, rootPath } = options;
       let selectedPackageName: string;
@@ -45,6 +45,8 @@ export function graphOrderTask(
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
+
+          const workerData = source ? join(basePath, source) : basePath;
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {

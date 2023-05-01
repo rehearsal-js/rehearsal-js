@@ -3,26 +3,26 @@ import { extname } from 'node:path';
 import { execSync } from 'node:child_process';
 import debug from 'debug';
 import { ListrTask } from 'listr2';
-import { MoveCommandContext, MoveCommandOptions } from '../../../types.js';
+import { CommandContext, MoveCommandOptions } from '../../../types.js';
 import type { ListrTaskWrapper, ListrDefaultRenderer } from 'listr2';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:moveTask');
 
-type MoveCommandTask = ListrTaskWrapper<MoveCommandContext, ListrDefaultRenderer>;
+type MoveCommandTask = ListrTaskWrapper<CommandContext, ListrDefaultRenderer>;
 
 export function moveTask(
   src: string,
   options: MoveCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _ctx?: MoveCommandContext
-): ListrTask<MoveCommandContext, ListrDefaultRenderer> {
+  _ctx?: CommandContext
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Executing git mv',
     task(ctx: MoveCommandContext, task: MoveCommandTask) {
       const { dryRun } = options;
       const { jsSourcesAbs } = ctx;
 
-      DEBUG_CALLBACK(`jsSourcesAbs: ${jsSourcesAbs}`);
+      DEBUG_CALLBACK(`sourceFilesAbs: ${sourceFilesAbs}`);
 
       if (jsSourcesAbs) {
         task.output = gitMove(jsSourcesAbs, task, src, dryRun);
