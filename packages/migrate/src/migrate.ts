@@ -1,6 +1,7 @@
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import findup from 'findup-sync';
 import { readJSON } from '@rehearsal/utils';
+import { type TSConfig, readTSConfig } from '@rehearsal/utils';
 import {
   PluginsRunner,
   RehearsalService,
@@ -20,7 +21,6 @@ import {
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
-import ts from 'typescript';
 import {
   addFilePathsForAddonModules,
   createEmberAddonModuleNameMap,
@@ -30,11 +30,11 @@ import {
   createGlintService,
 } from './glint-utils.js';
 import type { Reporter } from '@rehearsal/reporter';
-import type { TsConfigJson } from 'type-fest';
+import type { CompilerOptions } from 'typescript';
 
 export type MigrateInput = {
   basePath: string;
-  sourceFiles: Array<string>;
+  sourceFilesAbs: string[];
   reporter: Reporter; // Reporter
   task?: { output: string };
 };
@@ -42,70 +42,54 @@ export type MigrateInput = {
 export type MigrateOutput = {
   basePath: string;
   configFile: string;
-  migratedFiles: Array<string>;
+  sourceFilesAbs: string[];
 };
-
-const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate');
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.basePath);
-  const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.js')];
+  // these will always be typescript files
+  const sourceFilesAbs = input.sourceFilesAbs;
   const reporter = input.reporter;
   const configName = 'tsconfig.json';
   // output is only for tests
   const listrTask = input.task || { output: '' };
-
-  DEBUG_CALLBACK('migration started');
-  DEBUG_CALLBACK(`Base path: ${basePath}`);
-  DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
-
   const commentTag = '@rehearsal';
   const useGlint = await isGlintProject(basePath);
 
-  const configFile = findConfigFile(
-    basePath,
-    (filePath: string) => sys.fileExists(filePath),
-    configName
-  );
+  DEBUG_CALLBACK('migration started');
+  DEBUG_CALLBACK(`Base path: ${basePath}`);
+  DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFilesAbs)}`);
+
+  // read the tsconfig.json
+  const configFile = readTSConfig(resolve(basePath, configName)) as TSConfig;
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
     throw Error(message);
   }
 
-  DEBUG_CALLBACK(`config file: ${configFile}`);
+  const tsConfigOptions = configFile.compilerOptions as CompilerOptions;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { config } = readConfigFile(configFile, (filePath: string, encoding?: string) =>
-    sys.readFile(filePath, encoding)
-  );
+  DEBUG_CALLBACK(`tsconfig file: ${configFile}`);
 
-  const { options, fileNames: someFiles } = parseJsonConfigFileContent(
-    config,
-    ts.sys,
-    dirname(configFile),
-    {},
-    configFile
-  );
-
-  const fileNames = [...new Set([...someFiles, ...input.sourceFiles])];
+  const fileNames = [...new Set([...input.sourceFilesAbs])];
   const servicesMap = await readServiceMap(resolve(basePath, '.rehearsal/services-map.json'));
 
   DEBUG_CALLBACK(`fileNames: ${JSON.stringify(fileNames)}`);
 
+  // ! mutates the tsconfig.json
   if (useGlint) {
-    const rawTsConfig = (await readJSON(configName)) as TsConfigJson;
     const moduleNameMap = createEmberAddonModuleNameMap(basePath);
     // Update the tsconfig with any module name mapping so that any subsequent type checking will
     // be actually work if we happen to encounter any ember addons that specify a `moduleName`
-    await addFilePathsForAddonModules(configName, rawTsConfig, moduleNameMap);
+    await addFilePathsForAddonModules(resolve(basePath, configName), configFile, moduleNameMap);
   }
 
   const service = useGlint
     ? await createGlintService(basePath)
-    : new RehearsalService(options, fileNames);
+    : new RehearsalService(tsConfigOptions, fileNames);
 
   function isGlintService(
     service: GlintService | RehearsalService,

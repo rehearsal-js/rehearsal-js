@@ -51,7 +51,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): 
       if (ctx.sourceFilesAbs) {
         const input = {
           basePath: ctx.childPackageAbs,
-          sourceFiles: ctx.sourceFilesAbs,
+          sourceFilesAbs: ctx.sourceFilesAbs,
           reporter,
           task,
         };

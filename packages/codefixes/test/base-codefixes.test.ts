@@ -40,7 +40,7 @@ describe('Test base codefixes', function () {
 
     await project.write();
 
-    migrate({ basePath, reporter, sourceFiles: [resolve(basePath, 'index.js')] });
+    migrate({ basePath, reporter, sourceFilesAbs: [resolve(basePath, 'index.ts')] });
   }
 
   test.each(transforms)('%s', async (transform) => {

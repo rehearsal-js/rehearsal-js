@@ -51,7 +51,7 @@ export function createEmberAddonModuleNameMap(basePath: string): Record<string, 
 // specify a `moduleName` to their actual real location in `node_modules` so that TS can actually
 // resolve the types.
 export async function addFilePathsForAddonModules(
-  configFile: string,
+  configFilepath: string,
   tsConfig: TsConfigJson,
   moduleNameMap: Record<string, string>
 ): Promise<void> {
@@ -72,7 +72,7 @@ export async function addFilePathsForAddonModules(
     tsConfig.compilerOptions ??= {};
     tsConfig.compilerOptions.paths ??= {};
     Object.assign(tsConfig.compilerOptions.paths, newPaths);
-    await writeFile(configFile, JSON.stringify(tsConfig, null, 2));
+    await writeFile(configFilepath, JSON.stringify(tsConfig, null, 2));
   }
 }
 

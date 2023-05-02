@@ -52,7 +52,7 @@ describe('Task: graphOrderTask', () => {
 
   beforeEach(async () => {
     output = '';
-    project = prepareProject('multi_packages');
+    project = prepareProject('base_js_app');
     outputStream = createOutputStream();
     // tests below assume creation
     delete project.files['tsconfig.json'];

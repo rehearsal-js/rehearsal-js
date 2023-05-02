@@ -26,7 +26,7 @@ export function prepareProject(
     linkDevDeps: true,
   }
 ): Project {
-  const projects = resolve(__dirname, '../fixtures/app_for_migrate');
+  const projects = resolve(__dirname, '../fixtures/base_js_app');
   const migrateFixturesDir = join(projects, 'src', dir);
   const project = Project.fromDir(migrateFixturesDir, options);
 

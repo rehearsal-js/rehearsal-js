@@ -1,7 +1,6 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
-
     "outDir": "dist",
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -16,6 +15,5 @@
     "declaration": true,
     "sourceMap": true,
     "declarationMap": true
-  },
-  "include": []
+  }
 }

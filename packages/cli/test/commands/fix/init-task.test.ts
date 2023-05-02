@@ -32,7 +32,7 @@ describe('Fix: Init-Task', () => {
   let project: Project;
 
   beforeEach(async () => {
-    project = prepareProject('multi_packages');
+    project = prepareProject('base_js_app');
     await project.write();
   });
 

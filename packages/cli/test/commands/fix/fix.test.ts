@@ -30,7 +30,7 @@ function projectInit(project: Project, type: ProjectType): void {
   });
 }
 
-describe('Command: fix multi_packages fixture', () => {
+describe('Command: fix base_js_app fixture', () => {
   let project: Project;
 
   beforeEach(async () => {
