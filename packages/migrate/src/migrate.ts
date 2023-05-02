@@ -75,7 +75,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(`tsconfig file: ${configFile}`);
 
   const fileNames = [...new Set([...input.sourceFilesAbs])];
-  const servicesMap = await readServiceMap(resolve(basePath, '.rehearsal/services-map.json'));
+  const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
   DEBUG_CALLBACK(`fileNames: ${JSON.stringify(fileNames)}`);
 
