@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
-"[32minfo[39m:    @rehearsal/move 2.0.0-beta
+"[32minfo[39m:    @rehearsal/move 2.0.1-beta
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Executing git mv
@@ -21,7 +21,7 @@ exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
 `;
 
 exports[`Command: move > move file with --source flag 1`] = `
-"[32minfo[39m:    @rehearsal/move 2.0.0-beta
+"[32minfo[39m:    @rehearsal/move 2.0.1-beta
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Executing git mv
@@ -33,7 +33,7 @@ exports[`Command: move > move file with --source flag 1`] = `
 `;
 
 exports[`Command: move > move package with --childPackage flag 1`] = `
-"[32minfo[39m:    @rehearsal/move 2.0.0-beta
+"[32minfo[39m:    @rehearsal/move 2.0.1-beta
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
