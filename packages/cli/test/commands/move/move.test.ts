@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import fastGlob from 'fast-glob';
-import { prepareProject, runBin } from '../../test-helpers/index.js';
+import { cleanOutput, prepareProject, runBin } from '../../test-helpers/index.js';
 
 function sanitizeAbsPath(basePath: string, files: string[]): string[] {
   return files.map((file) => file.replace(basePath, ''));
@@ -39,7 +39,7 @@ describe('Command: move', () => {
       cwd: project.baseDir,
     });
 
-    expect(result.stdout).toMatchSnapshot();
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(3);
     expect(tsSourceFiles).length(1);
     expect(sanitizeAbsPath(projectSourceDir, tsSourceFiles)).toMatchObject(['/baz.ts']);
@@ -65,7 +65,7 @@ describe('Command: move', () => {
       cwd: project.baseDir,
     });
 
-    expect(result.stdout).toMatchSnapshot();
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(0);
     expect(tsSourceFiles).length(5);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
@@ -97,7 +97,7 @@ describe('Command: move', () => {
       cwd: project.baseDir,
     });
 
-    expect(result.stdout).toMatchSnapshot();
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(0);
     expect(tsSourceFiles).length(3);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([

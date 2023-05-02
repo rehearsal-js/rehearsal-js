@@ -160,7 +160,7 @@ export function removeSpecialChars(input: string): string {
 // 3. remove tmp paths
 export function cleanOutput(output: string, basePath: string): string {
   const pathRegex = new RegExp(basePath, 'g');
-  const versionRegex = /(@rehearsal\/migrate)(.+)/g;
+  const versionRegex = /(@rehearsal\/(move|migrate|graph|fix))(.+)/g;
   return removeSpecialChars(
     output.replace(pathRegex, '<tmp-path>').replace(versionRegex, '$1<test-version>')
   );
