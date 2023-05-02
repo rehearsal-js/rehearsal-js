@@ -597,19 +597,19 @@ export default class SomeComponent extends Component {
       }
 
       //! rehearsal should be able to find the FooService; currently broken in fix refactor
-//       const expected = `import type FooService from "foo/services/foo-service";
-// import type AuthenticatedUser from "authentication/services/authenticated-user";
-// import Component from "@glimmer/component";
-// import { inject as service } from "@ember/service";
+      //       const expected = `import type FooService from "foo/services/foo-service";
+      // import type AuthenticatedUser from "authentication/services/authenticated-user";
+      // import Component from "@glimmer/component";
+      // import { inject as service } from "@ember/service";
 
-// export default class SomeComponent extends Component {
-//   @service("authentication@authenticated-user")
-//   declare authenticatedUser: AuthenticatedUser;
+      // export default class SomeComponent extends Component {
+      //   @service("authentication@authenticated-user")
+      //   declare authenticatedUser: AuthenticatedUser;
 
-//   @service("foo@foo-service")
-//   declare otherProp: FooService;
-// }
-// `;
+      //   @service("foo@foo-service")
+      //   declare otherProp: FooService;
+      // }
+      // `;
       expectFile(outputs[0]).toMatchSnapshot();
     });
   });
@@ -839,17 +839,17 @@ declare secondBooService: BooService;
         // no ops
       }
 
-//       const expected = `import type Foo from 'my-addon/services/foo';
-// import Component from '@glimmer/component';
-// import { inject as service } from '@ember/service';
+      //       const expected = `import type Foo from 'my-addon/services/foo';
+      // import Component from '@glimmer/component';
+      // import { inject as service } from '@ember/service';
 
-// export default class SomeComponent extends Component {
-//   @service("my-addon@foo")
-// declare foo: Foo;
+      // export default class SomeComponent extends Component {
+      //   @service("my-addon@foo")
+      // declare foo: Foo;
 
-//   <template>Hello</template>
-// }
-// `;
+      //   <template>Hello</template>
+      // }
+      // `;
 
       expectFile(path.join(project.baseDir, 'tsconfig.json')).toEqual(expectedTsConfig);
       expectFile(outputs[0]).toMatchSnapshot();
@@ -868,15 +868,15 @@ declare secondBooService: BooService;
         // no ops
       }
 
-//       const expected = `import type Foo from "my-addon/services/foo";
-// import Component from "@glimmer/component";
-// import { inject as service } from "@ember/service";
+      //       const expected = `import type Foo from "my-addon/services/foo";
+      // import Component from "@glimmer/component";
+      // import { inject as service } from "@ember/service";
 
-// export default class SomeComponent extends Component {
-//   @service("my-addon@foo")
-//   declare foo: Foo;
-// }
-// `;
+      // export default class SomeComponent extends Component {
+      //   @service("my-addon@foo")
+      //   declare foo: Foo;
+      // }
+      // `;
 
       expectFile(path.join(project.baseDir, 'tsconfig.json')).toEqual(expectedTsConfig);
       expectFile(outputs[0]).toMatchSnapshot();

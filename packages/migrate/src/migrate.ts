@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import findup from 'findup-sync';
-import { readJSON } from '@rehearsal/utils';
-import { type TSConfig, readTSConfig } from '@rehearsal/utils';
+import { type TSConfig, readJSON } from '@rehearsal/utils';
+import { readTSConfig } from '@rehearsal/utils';
 import {
   PluginsRunner,
   RehearsalService,
