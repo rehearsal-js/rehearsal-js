@@ -6,9 +6,6 @@ on:
 
 jobs:
   get_diagnostics:
-    strategy:
-      node-matrix:
-        version: [16, 18]
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
@@ -20,7 +17,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ node-matrix.version }}
+          node-version: 16
       - uses: pnpm/action-setup@v2.2.4
         with:
           version: 8
