@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
+import findup from 'findup-sync';
 import { readJSON } from '@rehearsal/utils';
 import {
   PluginsRunner,
@@ -104,7 +105,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
 
   const commentTag = '@rehearsal';
-  const servicesMap = await readServiceMap(resolve(basePath, '.rehearsal', 'services-map.json'));
+  const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
   const useGlint = await isGlintProject(basePath);
 
@@ -256,11 +257,19 @@ export function gitMove(
   });
 }
 
-async function readServiceMap(pathToMapFile: string): Promise<Map<string, string> | undefined> {
+async function readServiceMap(
+  basePath: string,
+  mapFilePattern: string
+): Promise<Map<string, string> | undefined> {
   try {
-    const map = await readJSON(pathToMapFile);
-    return new Map<string, string>(Object.entries(map as { [key: string]: string }));
+    const maybeMapFile = findup(mapFilePattern, { cwd: basePath });
+    if (maybeMapFile) {
+      const map = await readJSON(maybeMapFile);
+      return new Map<string, string>(Object.entries(map as { [key: string]: string }));
+    }
   } catch (e) {
-    return undefined;
+    /* empty */
   }
+
+  return undefined;
 }
