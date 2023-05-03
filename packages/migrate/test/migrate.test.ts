@@ -73,7 +73,7 @@ function getStringAtLocation(filePath: string, location: Location): string {
   const contents = readFileSync(filePath, 'utf-8');
   const lines = contents.split('\n');
 
-  return lines[location.startLine].substring(location.startColumn - 1, location.endColumn - 1);
+  return lines[location.startLine - 1].substring(location.startColumn - 1, location.endColumn - 1);
 }
 
 describe('fix', () => {
@@ -158,6 +158,7 @@ describe('fix', () => {
         reporter,
       };
 
+      // add a counter to make sure we are not running forever
       for await (const _ of migrate(input)) {
         // no ops
       }
@@ -175,6 +176,10 @@ describe('fix', () => {
 
       expect(getStringAtLocation(outputs[0], report.items[0].nodeLocation as Location)).toEqual(
         'authenticatedUser'
+      );
+
+      expect(getStringAtLocation(outputs[0], report.items[1].nodeLocation as Location)).toEqual(
+        'age'
       );
 
       expect(report.summary[0].basePath).toMatch(project.baseDir);
@@ -335,6 +340,9 @@ export default class Salutation extends Component {
         item.analysisTarget.includes('src/salutation.ts')
       );
       expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(getStringAtLocation(outputs[1], report.items[0].nodeLocation as Location)).toEqual(
+        'locale'
+      );
       expect(report.items).toHaveLength(2);
       expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });

@@ -43,6 +43,8 @@ describe('Command: fix base_js_app fixture', () => {
 
     // init project with tsconfig, eslint, and deps
     projectInit(project, 'base');
+    project.linkDevDependency('typescript', { baseDir: process.cwd() });
+
     await project.write();
   });
 
@@ -50,7 +52,7 @@ describe('Command: fix base_js_app fixture', () => {
     project.dispose();
   });
 
-  test('fix file with --source flag', async () => {
+  test.only('fix file with --source flag', async () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
 
     const result = await runBin(

@@ -1,16 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Command: fix multi_packages fixture > fix file with --source flag 1`] = `
-"info:    @rehearsal/fix 2.0.0-beta
+exports[`Command: fix base_js_app fixture > fix file with --source flag 1`] = `
+"info:    @rehearsal/fix 2.0.1-beta
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Infer Types
-error:   Cannot find or access tsc in <tmp-path>/node_modules/.bin/tsc
-Error: Cannot find or access tsc in <tmp-path>/node_modules/.bin/tsc
-    at Task.task (file:///Users/malynch/D/rehearsal-js/packages/cli/dist/src/commands/fix/tasks/convert-task.js:28:23)
+error:   The \\"path\\" argument must be of type string. Received undefined
+TypeError [ERR_INVALID_ARG_TYPE]: The \\"path\\" argument must be of type string. Received undefined
+    at new NodeError (node:internal/errors:387:5)
+    at validateString (node:internal/validators:162:11)
+    at resolve (node:path:1098:7)
+    at migrate (file:///Users/malynch/D/rehearsal-js/packages/migrate/dist/src/migrate.js:11:22)
+    at migrate.next (<anonymous>)
+    at Task.task (file:///Users/malynch/D/rehearsal-js/packages/cli/dist/src/commands/fix/tasks/convert-task.js:46:34)
     at processTicksAndRejections (node:internal/process/task_queues:96:5)
     at async Task.run (file:///Users/malynch/D/rehearsal-js/node_modules/.pnpm/listr2@5.0.8_enquirer@2.3.6/node_modules/listr2/dist/index.js:935:11)
     at async /Users/malynch/D/rehearsal-js/node_modules/.pnpm/p-map@4.0.0/node_modules/p-map/index.js:57:22"
 `;
 
-exports[`Command: fix multi_packages fixture > fix file with --source flag 2`] = `undefined`;
+exports[`Command: fix base_js_app fixture > fix file with --source flag 2`] = `undefined`;

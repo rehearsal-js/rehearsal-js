@@ -11,6 +11,7 @@ import {
   DummyPlugin,
 } from '@rehearsal/service';
 import debug from 'debug';
+import ts from 'typescript';
 import {
   DiagnosticFixPlugin,
   DiagnosticCommentPlugin,
@@ -22,8 +23,6 @@ import {
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
 import {
-  addFilePathsForAddonModules,
-  createEmberAddonModuleNameMap,
   getGlintFixPlugin,
   getGlintReportPlugin,
   getGlintCommentPlugin,
@@ -46,6 +45,7 @@ export type MigrateOutput = {
 };
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate');
+const { parseJsonConfigFileContent } = ts;
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.basePath);
@@ -63,7 +63,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFilesAbs)}`);
 
   // read the tsconfig.json
-  const configFile = readTSConfig(resolve(basePath, configName)) as TSConfig;
+  const configFile = readTSConfig(resolve(basePath, configName)) as TSConfig
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -74,18 +74,18 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   DEBUG_CALLBACK(`tsconfig file: ${configFile}`);
 
-  const fileNames = [...new Set([...input.sourceFilesAbs])];
+  const { fileNames: someFiles } = parseJsonConfigFileContent(
+    configFile,
+    ts.sys,
+    basePath,
+    {},
+    configName
+  );
+
+  const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
   const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
   DEBUG_CALLBACK(`fileNames: ${JSON.stringify(fileNames)}`);
-
-  // ! mutates the tsconfig.json
-  if (useGlint) {
-    const moduleNameMap = createEmberAddonModuleNameMap(basePath);
-    // Update the tsconfig with any module name mapping so that any subsequent type checking will
-    // be actually work if we happen to encounter any ember addons that specify a `moduleName`
-    await addFilePathsForAddonModules(resolve(basePath, configName), configFile, moduleNameMap);
-  }
 
   const service = useGlint
     ? await createGlintService(basePath)
