@@ -9,7 +9,6 @@ import { getWorkspaceGlobs } from '../utils/workspace.js';
 import { getExcludePatterns } from '../index.js';
 import { PackageGraph, PackageGraphOptions } from './package-graph.js';
 
-import type { IPackage } from './IPackage.js';
 import type { Graph } from '../graph/index.js';
 import type { ModuleNode } from '../types.js';
 import type { PackageJson } from 'type-fest';
@@ -36,7 +35,7 @@ export type PackageOptions = {
  *    - if workspace, manipulate deps and devDeps
  *    - else, remove addon-paths
  */
-export class Package implements IPackage {
+export class Package {
   /**
    * path {string} - the path to this package
    */
@@ -178,7 +177,7 @@ export class Package implements IPackage {
     return this.graph !== undefined;
   }
 
-  getModuleGraph(options: PackageGraphOptions = {}): Graph<ModuleNode> {
+  getModuleGraph(options: PackageGraphOptions): Graph<ModuleNode> {
     if (this.graph) {
       return this.graph;
     }

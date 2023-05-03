@@ -31,7 +31,7 @@ export function graphOrderTask(
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        order = intoGraphOutput(getMigrationOrder(srcDir, { basePath }), srcDir);
+        order = intoGraphOutput(getMigrationOrder(srcDir, { basePath }), basePath);
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';

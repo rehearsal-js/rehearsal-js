@@ -290,6 +290,7 @@ export function getEmberAddonWithInRepoAddonFiles(
         "keywords": [
           "ember-addon"
         ],
+        "version": "1.0.0",
         "dependencies": {
           "ember-cli-babel": "*",
           "ember-cli-htmlbars": "*",

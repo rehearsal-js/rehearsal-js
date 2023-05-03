@@ -80,7 +80,7 @@ export class ProjectGraph {
       : this.#graph.addNode(contents);
 
     if (this.#eager) {
-      p.getModuleGraph({ parent: node, project: this });
+      p.getModuleGraph({ parent: node, project: this, basePath: this.basePath });
     }
 
     if (isConverted) {

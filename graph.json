@@ -1,0 +1,19 @@
+{
+  "packages": [
+    {
+      "name": "lib/some-addon",
+      "files": [
+        "lib/some-addon/addon/components/greet.js",
+        "lib/some-addon/addon/utils/thing.js",
+        "lib/some-addon/app/components/greet.js",
+        "lib/some-addon/index.js"
+      ]
+    },
+    {
+      "name": "lib/some-other-addon",
+      "files": [
+        "lib/some-other-addon/addon/index.js"
+      ]
+    }
+  ]
+}

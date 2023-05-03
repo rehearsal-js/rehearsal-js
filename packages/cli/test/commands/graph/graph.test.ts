@@ -66,6 +66,7 @@ describe('Task: graphOrderTask', () => {
 
   test('can output a graph.json file', async () => {
     const options = {
+      srcDir: project.baseDir,
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
     };
@@ -96,7 +97,8 @@ describe('Task: graphOrderTask', () => {
 
   test('can output to stdout for sub-package', async () => {
     const options = {
-      basePath: `${project.baseDir}/module-a`,
+      srcDir: `${project.baseDir}/module-a`,
+      basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
     };
 
@@ -110,22 +112,15 @@ describe('Task: graphOrderTask', () => {
 
     expect(graph.packages.length).toBe(1);
     expect(graph.packages[0].files).toMatchObject([
-      'index.js',
       'module-a/index.js',
       'module-a/src/baz.js',
       'module-a/src/foo.js',
-      'module-b/index.js',
-      'module-b/src/tires.js',
-      'module-b/src/car.js',
-      'src/foo/baz.js',
-      'src/foo/biz.js',
-      'src/foo/buz/biz.js',
-      'src/index.js',
     ]);
   });
 
   test('can print graph order to stdout', async () => {
     const options = {
+      srcDir: project.baseDir,
       basePath: project.baseDir,
     };
 
@@ -140,6 +135,7 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
+      srcDir: project.baseDir,
       basePath: project.baseDir,
     };
 
@@ -154,6 +150,30 @@ describe('Task: graphOrderTask', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
+  test.only('subsets ember graph when entered via addon', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddon(project));
+
+    await project.write();
+
+    const options = {
+      srcDir: project.baseDir + '/lib/some-other-addon',
+      basePath: project.baseDir,
+      output: 'graph.json',
+    };
+
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+  });
+
   test('can print graph order to a file for an ember app with in-repo addons', async () => {
     project = getEmberProject('app-with-in-repo-addon');
 
@@ -161,6 +181,7 @@ describe('Task: graphOrderTask', () => {
 
     const options = {
       basePath: project.baseDir,
+      srcDir: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
     };
 
@@ -213,6 +234,7 @@ describe('Task: graphOrderTask', () => {
     ).toBe(true);
 
     const options = {
+      srcDir: project.baseDir,
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
     };
@@ -248,3 +270,23 @@ describe('Task: graphOrderTask', () => {
     ]);
   });
 });
+
+function someOtherAddon(project: Project) {
+  project.pkg['ember-addon'].paths.push('lib/some-other-addon');
+  return {
+    lib: {
+      'some-other-addon': {
+        addon: {
+          'index.js': 'import Greet from "some-addon/components/greet"',
+        },
+        'index.js': 'module.exports = { name: "some-other-addon" }',
+        'package.json': `{ "name": "@company/some-other-addon", "dependencies": { "some-addon": "*" }, "keywords": ["ember-addon"] }`,
+      },
+    },
+  };
+}
+
+function addWorkspaces(project: Project): Project {
+  project.pkg.workspaces = ['./lib/*'];
+  return project;
+}

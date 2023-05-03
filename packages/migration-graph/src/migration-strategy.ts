@@ -95,7 +95,10 @@ export function getMigrationStrategy(
 
       const somePackage = packageNode.content.pkg;
 
-      const moduleGraph = somePackage.getModuleGraph({ project: projectGraph });
+      const moduleGraph = somePackage.getModuleGraph({
+        project: projectGraph,
+        basePath: options.basePath,
+      });
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = moduleGraph

@@ -9,7 +9,7 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
   const { srcDir, basePath } = JSON.parse(workerData) as { basePath: string; srcDir: string };
 
   const ordered = getMigrationOrder(srcDir, { basePath, eager: true });
-  parentPort?.postMessage(intoGraphOutput(ordered, srcDir));
+  parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
 
 export function intoGraphOutput(
@@ -33,7 +33,7 @@ export function intoGraphOutput(
     if ((ext === '.js' || ext === '.gjs') && !seenFiles.has(file.relativePath)) {
       seenFiles.add(file.relativePath);
       packages[packages.length - 1].files.push(
-        relative(process.cwd(), join(basePath, file.relativePath))
+        relative(basePath, join(basePath, file.relativePath))
       );
     }
   }

@@ -177,7 +177,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
   private getDiscoveredPackages(): EmberPackageLookup {
     if (!this.lookup) {
-      const foundPackages = Object.values(this.discoveredPackages);
+      const foundPackages = this.discoveredPackages.values();
 
       this.lookup = {
         byAddonName: {},
@@ -274,6 +274,9 @@ export class EmberAppProjectGraph extends ProjectGraph {
     if (this.entrypoint) {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
+
+    // *IMPORTANT* this must be called to populate `discoveredPackages`
+    this.discoverWorkspacePackages();
 
     const { root, found } = this.findProjectPackages();
 

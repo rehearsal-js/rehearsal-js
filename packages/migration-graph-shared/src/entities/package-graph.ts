@@ -29,6 +29,7 @@ function resolveRelative(baseDir: string, somePath: string): string {
 }
 
 export type PackageGraphOptions = {
+  basePath: string;
   entrypoint?: string;
   parent?: GraphNode<PackageNode>;
   project?: ProjectGraph;
@@ -44,7 +45,7 @@ export class PackageGraph {
 
   #graph: Graph<ModuleNode>;
 
-  constructor(p: Package, options: PackageGraphOptions = {}) {
+  constructor(p: Package, options: PackageGraphOptions) {
     this.package = p;
     this.baseDir = p.path;
     this.#graph = new Graph<ModuleNode>();
