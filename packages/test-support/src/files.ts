@@ -166,8 +166,11 @@ export function getEmberAppFiles(): fixturify.DirJSON {
   return FILES_EMBER_APP;
 }
 
-export function getEmberAppWithInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
-  const addon = getEmberAddonWithInRepoAddonFiles(addonName);
+export function getEmberAppWithInRepoAddonFiles(
+  addonName = 'some-addon',
+  varyNames = false
+): fixturify.DirJSON {
+  const addon = getEmberAddonWithInRepoAddonFiles(addonName, varyNames);
 
   const lib: Record<string, fixturify.DirJSON> = {};
 
@@ -242,12 +245,19 @@ export function getEmptyInRepoAddonFiles(addonName = 'some-addon'): fixturify.Di
   };
 }
 
-export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fixturify.DirJSON {
+export function getEmberAddonWithInRepoAddonFiles(
+  addonName = 'some-addon',
+  varyNames = false
+): fixturify.DirJSON {
   return {
     addon: {
+      utils: {
+        'thing.js': 'export const thing = "thing";',
+      },
       components: {
         'greet.js': `
           import Component from '@glimmer/component';
+          import { thing } from '${addonName}/utils/thing';
 
           export default class Greet extends Component {
             get name() {
@@ -267,7 +277,7 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fix
       'use strict';
 
       module.exports = {
-        name: require('./package').name,
+        name: ${varyNames ? `"${addonName}"` : `require('./package').name`},
 
         isDevelopingAddon() {
           return true;
@@ -276,7 +286,7 @@ export function getEmberAddonWithInRepoAddonFiles(addonName = 'some-addon'): fix
       `,
     'package.json': `
       {
-        "name": "${addonName}",
+        "name": "${varyNames ? `@company/${addonName}` : `${addonName}`}",
         "keywords": [
           "ember-addon"
         ],

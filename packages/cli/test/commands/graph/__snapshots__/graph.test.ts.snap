@@ -24,6 +24,7 @@ exports[`Task: graphOrderTask > can print graph order to stdout in an ember app 
 [DATA]   .
 [DATA]  We found the following packages. Select a packages to see the order of files:  lib/some-addon
 [DATA] Graph order for lib/some-addon:
+[DATA] lib/some-addon/addon/utils/thing.js
 [DATA] lib/some-addon/addon/components/greet.js
 [SUCCESS] Analyzing project dependency graph"
 `;

@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -149,7 +149,63 @@ describe('Task: graphOrderTask', () => {
     };
 
     expect(graph.packages.length).toBe(2);
-    expect(graph.packages[0].files).toMatchObject(['lib/some-addon/addon/components/greet.js']);
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject([
+      'app/app.js',
+      'app/services/locale.js',
+      'app/components/salutation.js',
+      'app/router.js',
+      'tests/acceptance/index-test.js',
+      'tests/test-helper.js',
+      'tests/unit/services/locale-test.js',
+    ]);
+  });
+
+  test('can print graph order to a file for an ember app with in-repo addons when the module name and package name differ', async () => {
+    project = getEmberProject('app-with-in-repo-addon', true);
+
+    await project.write();
+
+    expect(
+      readFileSync(join(project.baseDir, 'lib', 'some-addon', 'index.js'), 'utf-8').includes(
+        'name: "some-addon"'
+      )
+    ).toBe(true);
+
+    expect(
+      readFileSync(join(project.baseDir, 'lib', 'some-addon', 'package.json'), 'utf-8').includes(
+        '"name": "@company/some-addon"'
+      )
+    ).toBe(true);
+
+    const options = {
+      basePath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+    };
+
+    outputStream.on('data', (line: string) => {
+      if (line.includes('We found the following packages.')) {
+        sendKey(KEYS.ENTER);
+      }
+    });
+
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
 
     expect(graph.packages[1].files).toMatchObject([
       'app/app.js',

@@ -98,7 +98,8 @@ function addUtilDirectory(project: Project): Project {
  */
 export function getEmberAppWithInRepoAddonProject(
   project: Project = emberAppTemplate(),
-  addonName = 'some-addon'
+  addonName = 'some-addon',
+  varyNames = false
 ): Project {
   getEmberAppProject(project);
 
@@ -107,7 +108,7 @@ export function getEmberAppWithInRepoAddonProject(
     paths: [`lib/${addonName}`],
   };
 
-  project.mergeFiles(getEmberAppWithInRepoAddonFiles(addonName));
+  project.mergeFiles(getEmberAppWithInRepoAddonFiles(addonName, varyNames));
 
   return project;
 }
@@ -216,7 +217,7 @@ type EmberProjectFixture =
   | 'addon'
   | 'monorepo';
 
-export function getEmberProject(variant: EmberProjectFixture): Project {
+export function getEmberProject(variant: EmberProjectFixture, varyNames = false): Project {
   let project;
 
   switch (variant) {
@@ -227,7 +228,7 @@ export function getEmberProject(variant: EmberProjectFixture): Project {
       project = addUtilDirectory(getEmberAppProject());
       break;
     case 'app-with-in-repo-addon':
-      project = getEmberAppWithInRepoAddonProject();
+      project = getEmberAppWithInRepoAddonProject(undefined, undefined, varyNames);
       break;
     case 'app-with-in-repo-engine':
       project = getEmberAppWithInRepoEngineProject();

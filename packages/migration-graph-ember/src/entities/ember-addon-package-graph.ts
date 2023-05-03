@@ -9,15 +9,18 @@ export type EmberAddonPackageGraphOptions = EmberAppPackageGraphOptions;
 
 export class EmberAddonPackageGraph extends EmberAppPackageGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
+  override package: EmberAddonPackage;
 
   constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
     super(p, options);
+    this.package = p;
   }
 
   override get resolveOptions(): IResolveOptions {
-    const alias: Record<string, string> = {};
-
-    alias[this.package.packageName] = resolve(this.baseDir, 'addon');
+    const alias: Record<string, string> = {
+      [this.package.packageName]: resolve(this.baseDir, 'addon'),
+      [this.package.moduleName]: resolve(this.baseDir, 'addon'),
+    };
 
     this.debug({
       baseDir: this.baseDir,
