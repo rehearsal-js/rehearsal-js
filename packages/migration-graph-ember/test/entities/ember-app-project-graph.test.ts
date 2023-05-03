@@ -429,6 +429,7 @@ export default class Salutation extends Component {
       .flat();
 
     expect(allFiles).toStrictEqual([
+      'addon/utils/thing.js',
       'addon/components/greet.js',
       'addon/services/date.js',
       'app/app.js',
@@ -490,7 +491,7 @@ export default class Salutation extends Component {
       expect(
         flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || [])),
         'expected migration order for addon'
-      ).toStrictEqual(['addon/components/greet.js']);
+      ).toStrictEqual(['addon/utils/thing.js', 'addon/components/greet.js']);
 
       expect(
         flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().getSortedNodes() || [])),

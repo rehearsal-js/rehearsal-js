@@ -224,6 +224,7 @@ describe('migration-strategy', () => {
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
+        'lib/some-addon/addon/utils/thing.js',
         'lib/some-addon/addon/components/greet.js',
         ...EXPECTED_APP_FILES,
         'tests/acceptance/index-test.js',
