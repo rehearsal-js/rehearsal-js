@@ -3,10 +3,8 @@
     {
       "name": "lib/some-addon",
       "files": [
-        "lib/some-addon/addon/components/greet.js",
         "lib/some-addon/addon/utils/thing.js",
-        "lib/some-addon/app/components/greet.js",
-        "lib/some-addon/index.js"
+        "lib/some-addon/addon/components/greet.js"
       ]
     },
     {

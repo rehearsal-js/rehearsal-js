@@ -150,7 +150,7 @@ describe('Task: graphOrderTask', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test.only('subsets ember graph when entered via addon', async () => {
+  test('subsets ember graph when entered via addon', async () => {
     project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
 
     project.mergeFiles(someOtherAddon(project));
@@ -172,6 +172,13 @@ describe('Task: graphOrderTask', () => {
     };
 
     expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
   });
 
   test('can print graph order to a file for an ember app with in-repo addons', async () => {

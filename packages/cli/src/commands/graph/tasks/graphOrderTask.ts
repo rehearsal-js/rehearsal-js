@@ -42,7 +42,6 @@ export function graphOrderTask(
           });
 
           worker.on('message', (packages: { packages: PackageEntry[] }) => {
-            console.log(packages);
             resolve(packages);
           });
 

@@ -23,7 +23,7 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
-  private basePath: string;
+  basePath: string;
 
   protected entrypoint: string | undefined;
   protected discoveredPackages: Map<string, Package> = new Map();

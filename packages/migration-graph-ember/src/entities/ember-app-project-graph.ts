@@ -8,6 +8,7 @@ import {
   PackageNode,
   ProjectGraph,
   ProjectGraphOptions,
+  isWorkspace,
   readPackageJson,
 } from '@rehearsal/migration-graph-shared';
 import { isAddon, isApp } from '../utils/ember.js';
@@ -265,6 +266,43 @@ export class EmberAppProjectGraph extends ProjectGraph {
     this.debug('findProjectPackages: %s', entities.length);
 
     return { root, found };
+  }
+
+  protected override discoverWorkspacePackages() {
+    const projectRoot = new Package(this.basePath);
+
+    if (projectRoot.workspaceGlobs) {
+      let pathToPackageJsonList = fastGlob.sync(
+        [
+          ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
+          `!${this.basePath}/**/build/**`,
+          `!${this.basePath}/**/dist/**`,
+          `!${this.basePath}/**/node_modules/**`,
+          `!${this.basePath}/**/tmp/**`,
+        ],
+        {
+          absolute: true,
+        }
+      );
+
+      this.debug('found packages: %s', pathToPackageJsonList);
+
+      pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+      const entities = pathToPackageJsonList
+        .filter(
+          (pathToPackage) =>
+            !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
+        ) // Ensures any package found is in the workspace.
+        .map((pathToPackage) => this.entityFactory(pathToPackage));
+
+      for (const pkg of entities) {
+        if (!this.discoveredPackages.has(pkg.packageName)) {
+          // We must stick
+          this.discoveredPackages.set(pkg.packageName, pkg);
+        }
+      }
+    }
   }
 
   override discover(): Array<EmberProjectPackage> {
