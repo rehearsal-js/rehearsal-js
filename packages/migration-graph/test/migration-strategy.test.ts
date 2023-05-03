@@ -21,7 +21,7 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js']);
@@ -35,7 +35,7 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       expect(relativePaths).toStrictEqual(['lib/a.js', 'index.js', 'test/sample.test.js']);
@@ -49,7 +49,10 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir, { entrypoint: 'depends-on-foo.js' });
+      const strategy = getMigrationStrategy(project.baseDir, {
+        basePath: project.baseDir,
+        entrypoint: 'depends-on-foo.js',
+      });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
       // Should not include index.js as it is not in the entrypoint's import graph.
@@ -64,7 +67,10 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir, { include: ['webpack.config.js'] });
+      const strategy = getMigrationStrategy(project.baseDir, {
+        basePath: project.baseDir,
+        include: ['webpack.config.js'],
+      });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
@@ -83,7 +89,10 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir, { exclude: ['index.js'] });
+      const strategy = getMigrationStrategy(project.baseDir, {
+        basePath: project.baseDir,
+        exclude: ['index.js'],
+      });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
@@ -97,7 +106,10 @@ describe('migration-strategy', () => {
 
       await project.write();
 
-      const strategy = getMigrationStrategy(project.baseDir, { entrypoint: 'index.js' });
+      const strategy = getMigrationStrategy(project.baseDir, {
+        basePath: project.baseDir,
+        entrypoint: 'index.js',
+      });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
 
@@ -112,7 +124,7 @@ describe('migration-strategy', () => {
 
         await project.write();
 
-        const strategy = getMigrationStrategy(project.baseDir);
+        const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);
         expect(relativePaths).toStrictEqual([
@@ -127,20 +139,16 @@ describe('migration-strategy', () => {
         expect(strategy.sourceType).toBe(SourceType.Library);
       });
 
-      test.only('should create migration strategy for a project with workspaces childPackage', async () => {
+      test('should create migration strategy for a project with workspaces childPackage', async () => {
         const project = new Project('my-package', '0.0.0', {
           files: getFiles('library-with-workspaces'),
         });
 
         await project.write();
 
-        const strategy = getMigrationStrategy(
-          project.baseDir + '/packages/foo',
-          {
-            basePath: project.baseDir,
-          },
-          project.baseDir
-        );
+        const strategy = getMigrationStrategy(project.baseDir + '/packages/foo', {
+          basePath: project.baseDir,
+        });
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);
         expect(relativePaths).toStrictEqual([
@@ -160,7 +168,7 @@ describe('migration-strategy', () => {
 
         await project.write();
 
-        const options = { entrypoint: 'packages/blorp/index.js' };
+        const options = { entrypoint: 'packages/blorp/index.js', basePath: project.baseDir };
         const strategy = getMigrationStrategy(project.baseDir, options);
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
@@ -187,7 +195,7 @@ describe('migration-strategy', () => {
           },
         });
 
-        const options = { exclude: ['packages/blorp/should-ignore'] };
+        const options = { exclude: ['packages/blorp/should-ignore'], basePath: project.baseDir };
         const strategy = getMigrationStrategy(project.baseDir, options);
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = orderedFiles.map((f) => f.relativePath);
@@ -217,6 +225,7 @@ describe('migration-strategy', () => {
       project = await getEmberProjectFixture('app-with-utils');
 
       const strategy = getMigrationStrategy(project.baseDir, {
+        basePath: project.baseDir,
         entrypoint: 'tests/unit/utils/math-test.js',
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
@@ -231,7 +240,7 @@ describe('migration-strategy', () => {
     test('app should match migration order', async () => {
       const project = await getEmberProjectFixture('app');
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
@@ -246,7 +255,7 @@ describe('migration-strategy', () => {
     test('app-with-in-repo-addon should match migration order', async () => {
       const project = await getEmberProjectFixture('app-with-in-repo-addon');
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
@@ -263,7 +272,7 @@ describe('migration-strategy', () => {
     test('app-with-in-repo-engine should match migration order', async () => {
       const project = await getEmberProjectFixture('app-with-in-repo-engine');
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([
@@ -282,7 +291,7 @@ describe('migration-strategy', () => {
     test('addon should match migration order', async () => {
       const project = await getEmberProjectFixture('addon');
 
-      const strategy = getMigrationStrategy(project.baseDir);
+      const strategy = getMigrationStrategy(project.baseDir, { basePath: project.baseDir });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
       expect(actual).toStrictEqual([

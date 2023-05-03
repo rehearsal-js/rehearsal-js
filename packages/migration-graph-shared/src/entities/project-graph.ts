@@ -170,6 +170,50 @@ export class ProjectGraph {
     return resolve(this.rootDir) === resolve(somePackage.path);
   }
 
+  /**
+   * To allow entering the package graph at any node in the graph
+   * we must first look for and build any packages that may be part
+   * of a workspace. In doing so we generate the observable set of
+   * packages any given node in the graph may reference in code and
+   * it's package.json
+   */
+  protected discoverWorkspacePackages() {
+    const projectRoot = new Package(this.basePath);
+
+    if (projectRoot.workspaceGlobs) {
+      let pathToPackageJsonList = fastGlob.sync(
+        [
+          ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
+          `!${this.basePath}/**/build/**`,
+          `!${this.basePath}/**/dist/**`,
+          `!${this.basePath}/**/node_modules/**`,
+          `!${this.basePath}/**/tmp/**`,
+        ],
+        {
+          absolute: true,
+        }
+      );
+
+      this.debug('found packages: %s', pathToPackageJsonList);
+
+      pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+      const entities = pathToPackageJsonList
+        .filter(
+          (pathToPackage) =>
+            !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
+        ) // Ensures any package found is in the workspace.
+        .map((pathToPackage) => new Package(pathToPackage));
+
+      for (const pkg of entities) {
+        if (!this.discoveredPackages.has(pkg.packageName)) {
+          // We must stick
+          this.discoveredPackages.set(pkg.packageName, pkg);
+        }
+      }
+    }
+  }
+
   discover(): Array<Package> {
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
@@ -177,43 +221,8 @@ export class ProjectGraph {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
-    if (this.basePath !== resolve(this.basePath, this.rootDir)) {
-      const projectRoot = new Package(this.basePath);
-
-      if (projectRoot.workspaceGlobs) {
-        let pathToPackageJsonList = fastGlob.sync(
-          [
-            ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
-            `!${this.basePath}/**/build/**`,
-            `!${this.basePath}/**/dist/**`,
-            `!${this.basePath}/**/node_modules/**`,
-            `!${this.basePath}/**/tmp/**`,
-          ],
-          {
-            absolute: true,
-          }
-        );
-
-        this.debug('found packages: %s', pathToPackageJsonList);
-
-        pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) =>
-          dirname(pathToPackage)
-        );
-
-        const entities = pathToPackageJsonList
-          .filter(
-            (pathToPackage) =>
-              !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
-          ) // Ensures any package found is in the workspace.
-          .map((pathToPackage) => new Package(pathToPackage));
-
-        for (const pkg of entities) {
-          if (!this.discoveredPackages.has(pkg.packageName)) {
-            this.discoveredPackages.set(pkg.packageName, pkg);
-          }
-        }
-      }
-    }
+    // *IMPORTANT* this must be called to populate `discoveredPackages`
+    this.discoverWorkspacePackages();
 
     // Setup package and return
 
