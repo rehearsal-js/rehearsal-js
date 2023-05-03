@@ -49,7 +49,7 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
 
   transformFullyQualifiedServiceInjections(sourceFile: ts.SourceFile): ts.TextChange[] {
     const source = sourceFile;
-    const printer = ts.createPrinter({});
+    const printer = ts.createPrinter({ removeComments: true });
     const classes = this.getClasses(sourceFile);
     const changes: TextChange[] = [];
     const importChanges: TextChange[] = [];
@@ -59,6 +59,10 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
 
       for (const prop of properties) {
         if (!ts.canHaveDecorators(prop)) {
+          continue;
+        }
+
+        if (!this.hasMissingDeclareKeywordAndType(prop)) {
           continue;
         }
 
@@ -115,12 +119,14 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
 
           changes.push(change);
 
-          const importStatement = `import type ${serviceClass} from '${serviceModule}';`;
+          if (!this.hasTypeImported(serviceClass, sourceFile)) {
+            const importStatement = `import type ${serviceClass} from '${serviceModule}';`;
 
-          importChanges.push({
-            newText: importStatement,
-            span: ts.createTextSpan(0, 0),
-          });
+            importChanges.push({
+              newText: importStatement,
+              span: ts.createTextSpan(0, 0),
+            });
+          }
         }
       }
     }
@@ -136,6 +142,45 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
     changes.push(...importChanges);
 
     return changes;
+  }
+
+  hasMissingDeclareKeywordAndType(prop: ts.PropertyDeclaration): boolean {
+    return (
+      prop.type === undefined &&
+      prop.modifiers?.find((m) => m.kind === ts.SyntaxKind.DeclareKeyword) === undefined
+    );
+  }
+
+  hasTypeImported(type: string, sourceFile: ts.SourceFile): boolean {
+    for (const statement of sourceFile.statements) {
+      if (!ts.isImportDeclaration(statement) || !statement.importClause) {
+        continue;
+      }
+
+      const importCause = statement.importClause;
+
+      if (importCause.name?.escapedText === type) {
+        return true;
+      }
+
+      if (importCause.namedBindings) {
+        if (ts.isNamespaceImport(importCause.namedBindings)) {
+          if (importCause.namedBindings.name.escapedText === type) {
+            return true;
+          }
+        }
+
+        if (ts.isNamedImports(importCause.namedBindings)) {
+          for (const element of importCause.namedBindings.elements) {
+            if (element.name.escapedText === type) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   createTextChangeForNode(

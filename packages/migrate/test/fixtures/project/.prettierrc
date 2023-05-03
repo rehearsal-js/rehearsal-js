@@ -10,7 +10,7 @@
       }
     },
     {
-      "files": "*.gjs",
+      "files": "*.gjs, *.gts",
       "options": {
         "parser": "glimmer"
       }
