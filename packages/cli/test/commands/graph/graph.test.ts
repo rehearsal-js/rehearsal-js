@@ -153,7 +153,7 @@ describe('Task: graphOrderTask', () => {
   test('subsets ember graph when entered via addon', async () => {
     project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
 
-    project.mergeFiles(someOtherAddon(project));
+    project.mergeFiles(someOtherAddons(project));
 
     await project.write();
 
@@ -179,6 +179,67 @@ describe('Task: graphOrderTask', () => {
     ]);
 
     expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+  });
+
+  test('only follows devDependecies when explicitly asked', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      srcDir: project.baseDir + '/lib/some-other-addon',
+      basePath: project.baseDir,
+      output: 'graph.json',
+    };
+
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+
+    const withDevDeps = {
+      srcDir: project.baseDir + '/lib/some-other-addon',
+      basePath: project.baseDir,
+      devDeps: true,
+      output: 'graph.json',
+    };
+
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(withDevDeps)]);
+
+    expect(existsSync(withDevDeps.output)).toBe(true);
+
+    const graphWithDevDeps = JSON.parse(await readFile(withDevDeps.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graphWithDevDeps.packages.length).toBe(3);
+
+    expect(graphWithDevDeps.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graphWithDevDeps.packages[1].files).toMatchObject([
+      'lib/some-test-package/addon-test-support/index.js',
+    ]);
+
+    expect(graphWithDevDeps.packages[2].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+    ]);
   });
 
   test('can print graph order to a file for an ember app with in-repo addons', async () => {
@@ -278,16 +339,29 @@ describe('Task: graphOrderTask', () => {
   });
 });
 
-function someOtherAddon(project: Project) {
+function someOtherAddons(project: Project) {
   project.pkg['ember-addon'].paths.push('lib/some-other-addon');
+  project.pkg['ember-addon'].paths.push('lib/some-test-package');
   return {
     lib: {
+      'some-test-package': {
+        'addon-test-support': {
+          'index.js': 'export const thing = "thing"',
+        },
+        'index.js': 'module.exports = { name: "some-test-package" }',
+        'package.json': JSON.stringify({ name: 'some-test-package', keywords: ['ember-addon'] }),
+      },
       'some-other-addon': {
         addon: {
           'index.js': 'import Greet from "some-addon/components/greet"',
         },
         'index.js': 'module.exports = { name: "some-other-addon" }',
-        'package.json': `{ "name": "@company/some-other-addon", "dependencies": { "some-addon": "*" }, "keywords": ["ember-addon"] }`,
+        'package.json': JSON.stringify({
+          name: '@company/some-other-addon',
+          dependencies: { 'some-addon': '*' },
+          devDependencies: { 'some-test-package': '*' },
+          keywords: ['ember-addon'],
+        }),
       },
     },
   };

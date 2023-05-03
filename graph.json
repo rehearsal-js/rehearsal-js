@@ -8,6 +8,12 @@
       ]
     },
     {
+      "name": "lib/some-test-package",
+      "files": [
+        "lib/some-test-package/addon-test-support/index.js"
+      ]
+    },
+    {
       "name": "lib/some-other-addon",
       "files": [
         "lib/some-other-addon/addon/index.js"

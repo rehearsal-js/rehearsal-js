@@ -7,8 +7,11 @@ export const graphCommand = new Command();
 
 graphCommand
   .name('graph')
-  .description('Produces the migration order of packages or files')
+  .description(
+    `Produces the migration order of 'dependencies' and file order. By default ignores 'devDependencies'.`
+  )
   .argument('[srcDir]', 'Path to directory contains a package.json', process.cwd())
+  .option('-d, --devDeps', `Follow packages in 'devDependencies'`, false)
   .addOption(
     new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

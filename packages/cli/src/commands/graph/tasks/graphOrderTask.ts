@@ -31,14 +31,21 @@ export function graphOrderTask(
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        order = intoGraphOutput(getMigrationOrder(srcDir, { basePath }), basePath);
+        order = intoGraphOutput(
+          getMigrationOrder(srcDir, { basePath, devDeps: options.devDeps }),
+          basePath
+        );
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
-            workerData: JSON.stringify({ srcDir, basePath: options.basePath }),
+            workerData: JSON.stringify({
+              srcDir,
+              basePath: options.basePath,
+              devDeps: options.devDeps,
+            }),
           });
 
           worker.on('message', (packages: { packages: PackageEntry[] }) => {

@@ -6,9 +6,13 @@ import { getMigrationOrder } from '@rehearsal/migration-graph';
 import type { PackageEntry } from '../../../types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const { srcDir, basePath } = JSON.parse(workerData) as { basePath: string; srcDir: string };
+  const { srcDir, basePath, devDeps } = JSON.parse(workerData) as {
+    basePath: string;
+    srcDir: string;
+    devDeps?: boolean;
+  };
 
-  const ordered = getMigrationOrder(srcDir, { basePath, eager: true });
+  const ordered = getMigrationOrder(srcDir, { basePath, devDeps, eager: true });
   parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
 

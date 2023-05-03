@@ -19,6 +19,7 @@ export type PackageEntry = { name: string; files: string[] };
 
 export type GraphCommandOptions = {
   output?: string;
+  devDeps?: boolean;
   basePath: string;
 };
 
@@ -34,6 +35,7 @@ export type GraphTaskOptions = {
   srcDir: string;
   basePath: string;
   output?: string;
+  devDeps?: boolean;
 };
 
 export type GraphTasks = {

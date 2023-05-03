@@ -77,7 +77,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg.devDependencies) {
+    if (pkg.devDependencies && this.includeDevDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
