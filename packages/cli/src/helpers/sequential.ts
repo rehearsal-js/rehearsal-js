@@ -7,6 +7,7 @@ export async function getSourceFiles(basePath: string, entrypoint: string): Prom
   );
 
   const strategy = getMigrationStrategy(basePath, {
+    basePath,
     entrypoint,
   });
   const sourceFiles: SourceFile[] = strategy.getMigrationOrder();

@@ -6,10 +6,10 @@ import { getMigrationOrder } from '@rehearsal/migration-graph';
 import type { PackageEntry } from '../../../types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const basePath = workerData as string;
+  const { srcDir, basePath } = JSON.parse(workerData) as { basePath: string; srcDir: string };
 
-  const ordered = getMigrationOrder(basePath, { eager: true });
-  parentPort?.postMessage(intoGraphOutput(ordered, basePath));
+  const ordered = getMigrationOrder(srcDir, { basePath, eager: true });
+  parentPort?.postMessage(intoGraphOutput(ordered, srcDir));
 }
 
 export function intoGraphOutput(

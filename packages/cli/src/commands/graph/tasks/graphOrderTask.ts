@@ -23,7 +23,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
-      const { basePath, output } = options;
+      const { srcDir, output, basePath } = options;
       let selectedPackageName: string;
 
       if (process.env['TEST'] === 'true') {
@@ -31,14 +31,14 @@ export function graphOrderTask(
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        order = intoGraphOutput(getMigrationOrder(basePath), basePath);
+        order = intoGraphOutput(getMigrationOrder(srcDir, { basePath }), srcDir);
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
-            workerData: ctx.childPackage ? ctx.childPackage : basePath,
+            workerData: JSON.stringify({ srcDir, basePath: options.basePath }),
           });
 
           worker.on('message', (packages: { packages: PackageEntry[] }) => {
@@ -60,7 +60,7 @@ export function graphOrderTask(
 
       // if explicit child package is passed in use that
       if (ctx?.childPackage) {
-        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
+        ctx.jsSourcesAbs = getGraphFilesAbs(srcDir, ctx.childPackage, order.packages[0].files);
 
         return;
       }

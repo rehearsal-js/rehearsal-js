@@ -9,6 +9,7 @@ import type { PackageNode } from '../types.js';
 // TODO this package level dependency data should be surfaced in a report
 
 export type ProjectGraphOptions = {
+  basePath: string;
   eager?: boolean;
   sourceType?: string;
   entrypoint?: string;
@@ -22,8 +23,10 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
+  private basePath: string;
+
   protected entrypoint: string | undefined;
-  protected discoveredPackages: Record<string, Package>;
+  protected discoveredPackages: Map<string, Package> = new Map();
   protected visited: Set<Package>;
 
   debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
@@ -43,10 +46,10 @@ export class ProjectGraph {
     this.#rootDir = rootDir;
     this.entrypoint = entrypoint;
     this.#eager = eager;
+    this.basePath = options?.basePath || process.cwd();
     this.#sourceType = sourceType;
     this.#graph = new Graph<PackageNode>();
     this.visited = new Set<Package>();
-    this.discoveredPackages = {};
   }
 
   get rootDir(): string {
@@ -130,15 +133,17 @@ export class ProjectGraph {
 
     if (pkg.dependencies) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies)
-        .filter((depName) => !!this.discoveredPackages[depName])
-        .map((depName) => this.discoveredPackages[depName]);
+        .filter((depName) => this.discoveredPackages.has(depName))
+        .map((depName) => this.discoveredPackages.get(depName))
+        .filter(onlyPackages);
       deps = deps.concat(...somePackages);
     }
 
     if (pkg.devDependencies) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies)
-        .filter((depName) => !!this.discoveredPackages[depName])
-        .map((depName) => this.discoveredPackages[depName]);
+        .filter((depName) => this.discoveredPackages.has(depName))
+        .map((depName) => this.discoveredPackages.get(depName))
+        .filter(onlyPackages);
       deps = deps.concat(...somePackages);
     }
 
@@ -172,6 +177,44 @@ export class ProjectGraph {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
+    if (this.basePath !== resolve(this.basePath, this.rootDir)) {
+      const projectRoot = new Package(this.basePath);
+
+      if (projectRoot.workspaceGlobs) {
+        let pathToPackageJsonList = fastGlob.sync(
+          [
+            ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
+            `!${this.basePath}/**/build/**`,
+            `!${this.basePath}/**/dist/**`,
+            `!${this.basePath}/**/node_modules/**`,
+            `!${this.basePath}/**/tmp/**`,
+          ],
+          {
+            absolute: true,
+          }
+        );
+
+        this.debug('found packages: %s', pathToPackageJsonList);
+
+        pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) =>
+          dirname(pathToPackage)
+        );
+
+        const entities = pathToPackageJsonList
+          .filter(
+            (pathToPackage) =>
+              !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
+          ) // Ensures any package found is in the workspace.
+          .map((pathToPackage) => new Package(pathToPackage));
+
+        for (const pkg of entities) {
+          if (!this.discoveredPackages.has(pkg.packageName)) {
+            this.discoveredPackages.set(pkg.packageName, pkg);
+          }
+        }
+      }
+    }
+
     // Setup package and return
 
     // Add root package to graph
@@ -183,7 +226,7 @@ export class ProjectGraph {
     this.debug('RootPackage.excludePatterns', rootPackage.excludePatterns);
     this.debug('RootPackage.includePatterns', rootPackage.includePatterns);
 
-    const rootPackageNode = this.addPackageToGraph(rootPackage, false);
+    const rootPackageNode = this.addPackageToGraph(rootPackage, true);
 
     const globs = rootPackage.workspaceGlobs;
 
@@ -220,10 +263,11 @@ export class ProjectGraph {
       ) // Ensures any package found is in the workspace.
       .map((pathToPackage) => new Package(pathToPackage));
 
-    this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
-      acc[pkg.packageName] = pkg;
-      return acc;
-    }, {});
+    for (const pkg of entities) {
+      if (!this.discoveredPackages.has(pkg.packageName)) {
+        this.discoveredPackages.set(pkg.packageName, pkg);
+      }
+    }
 
     entities.forEach((p) => {
       const destNode = this.addPackageToGraph(p);
@@ -232,4 +276,8 @@ export class ProjectGraph {
 
     return entities;
   }
+}
+
+function onlyPackages(entry: Package | undefined): entry is Package {
+  return entry !== undefined;
 }

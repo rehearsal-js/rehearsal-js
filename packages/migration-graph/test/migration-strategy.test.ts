@@ -127,6 +127,32 @@ describe('migration-strategy', () => {
         expect(strategy.sourceType).toBe(SourceType.Library);
       });
 
+      test.only('should create migration strategy for a project with workspaces childPackage', async () => {
+        const project = new Project('my-package', '0.0.0', {
+          files: getFiles('library-with-workspaces'),
+        });
+
+        await project.write();
+
+        const strategy = getMigrationStrategy(
+          project.baseDir + '/packages/foo',
+          {
+            basePath: project.baseDir,
+          },
+          project.baseDir
+        );
+        const files: Array<SourceFile> = strategy.getMigrationOrder();
+        const relativePaths: Array<string> = files.map((f) => f.relativePath);
+        expect(relativePaths).toStrictEqual([
+          'packages/blorp/build.js',
+          'packages/blorp/lib/impl.js',
+          'packages/blorp/index.js',
+          'packages/foo/lib/a.js',
+          'packages/foo/index.js',
+        ]);
+        expect(strategy.sourceType).toBe(SourceType.Library);
+      });
+
       test('options.entrypoint should only show the graph for a single file', async () => {
         const project = new Project('my-package', '0.0.0', {
           files: getFiles('library-with-workspaces'),

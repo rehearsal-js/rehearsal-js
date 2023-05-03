@@ -18,12 +18,12 @@ export function initTask(
       ctx.childPackage = options.childPackage;
       // source file or dir should always exist within the basePath
       if (options.source) {
-        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.basePath, options.source);
+        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.srcDir, options.source);
       }
 
       if (options.childPackage) {
         [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(
-          options.basePath,
+          options.srcDir,
           options.childPackage
         );
       }
@@ -70,10 +70,8 @@ function getAllJSFilesInDir(basePath: string, source: string): [string[], string
   const sourceAbs = resolve(basePath, source);
   const sourceRel = relative(basePath, sourceAbs);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
   const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{js,gjs}`, { cwd: basePath });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
   return [sourceFiles.map((file) => resolve(basePath, file)), sourceFiles];
 }
 

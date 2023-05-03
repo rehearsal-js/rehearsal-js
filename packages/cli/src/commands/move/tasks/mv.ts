@@ -18,7 +18,7 @@ export function moveTask(
   return {
     title: 'Executing git mv',
     task(ctx: MoveCommandContext, task: MoveCommandTask) {
-      const { dryRun, basePath } = options;
+      const { dryRun, srcDir: basePath } = options;
       const { jsSourcesAbs } = ctx;
 
       DEBUG_CALLBACK(`jsSourcesAbs: ${jsSourcesAbs}`);

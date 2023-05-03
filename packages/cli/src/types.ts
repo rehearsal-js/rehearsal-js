@@ -19,6 +19,7 @@ export type PackageEntry = { name: string; files: string[] };
 
 export type GraphCommandOptions = {
   output?: string;
+  basePath: string;
 };
 
 export type GraphCommandContext = {
@@ -30,6 +31,7 @@ export type GraphCommandContext = {
 };
 
 export type GraphTaskOptions = {
+  srcDir: string;
   basePath: string;
   output?: string;
 };
@@ -42,6 +44,7 @@ export type MoveCommandOptions = {
   childPackage?: string;
   source?: string;
   dryRun: boolean;
+  srcDir: string;
   basePath: string;
 };
 

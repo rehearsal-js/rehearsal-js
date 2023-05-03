@@ -27,10 +27,10 @@ export type EmberAppProjectGraphOptions = ProjectGraphOptions;
 
 export class EmberAppProjectGraph extends ProjectGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
-  protected override discoveredPackages: Record<string, EmberProjectPackage> = {};
+  protected override discoveredPackages: Map<string, EmberProjectPackage> = new Map();
   private lookup?: EmberPackageLookup;
 
-  constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
+  constructor(rootDir: string, options: EmberAppProjectGraphOptions) {
     super(rootDir, { sourceType: 'Ember Application', ...options });
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
@@ -167,7 +167,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     if (isAddon(packageJson)) {
-      return new EmberAddonPackage(pathToPackage);
+      return new EmberAddonPackage(pathToPackage, {});
     } else if (isApp(packageJson)) {
       return new EmberAppPackage(pathToPackage);
     } else {
@@ -289,7 +289,9 @@ export class EmberAppProjectGraph extends ProjectGraph {
     // Get rootPackage and add it to the graph.
 
     for (const pkg of found) {
-      this.discoveredPackages[pkg.packageName] = pkg;
+      if (!this.discoveredPackages.has(pkg.packageName)) {
+        this.discoveredPackages.set(pkg.packageName, pkg);
+      }
     }
 
     for (const pkg of found) {

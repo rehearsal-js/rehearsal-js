@@ -17,6 +17,7 @@ import { EmberAddonPackage } from './ember-addon-package.js';
 import { EmberAppProjectGraph } from './ember-app-project-graph.js';
 
 export type EmberAppPackageGraphOptions = {
+  basePath: string;
   parent?: GraphNode<PackageNode>;
   project?: EmberAppProjectGraph;
   resolutions?: { services: Record<string, string> };
@@ -29,10 +30,12 @@ export class EmberAppPackageGraph extends PackageGraph {
   override package: EmberAppPackage;
   parent: GraphNode<PackageNode> | undefined;
   project: EmberAppProjectGraph | undefined;
+  private basePath: string;
 
-  constructor(pkg: EmberAppPackage, options: EmberAppPackageGraphOptions = {}) {
+  constructor(pkg: EmberAppPackage, options: EmberAppPackageGraphOptions) {
     super(pkg, options);
 
+    this.basePath = options.basePath;
     this.package = pkg;
     this.parent = options.parent;
     this.project = options?.project;
@@ -139,7 +142,7 @@ export class EmberAppPackageGraph extends PackageGraph {
 
             const potentialPaths = this.getPotentialServicePaths(s.serviceName);
             const maybeServiceFound = this.findServiceInPackageGraph(
-              emberAddonPackage.getModuleGraph(),
+              emberAddonPackage.getModuleGraph({ basePath: this.basePath }),
               potentialPaths
             );
 
