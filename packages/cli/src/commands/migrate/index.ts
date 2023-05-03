@@ -55,6 +55,7 @@ migrateCommand
   .option('-v, --verbose', 'print debugging logs')
   .option('-d, --dryRun', 'print files that will be attempted to migrate', false)
   .option('-r, --regen', 'print out current migration status')
+  .addOption(new Option('-s, --skipInit', 'skip initialization').default(false).hideHelp())
   .action(async (options: MigrateCommandOptions) => {
     await migrate(options);
   });
