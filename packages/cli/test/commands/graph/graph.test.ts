@@ -94,6 +94,36 @@ describe('Task: graphOrderTask', () => {
     ]);
   });
 
+  test('can output to stdout for sub-package', async () => {
+    const options = {
+      basePath: `${project.baseDir}/module-a`,
+      output: join(project.baseDir, 'graph.json'),
+    };
+
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(1);
+    expect(graph.packages[0].files).toMatchObject([
+      'index.js',
+      'module-a/index.js',
+      'module-a/src/baz.js',
+      'module-a/src/foo.js',
+      'module-b/index.js',
+      'module-b/src/tires.js',
+      'module-b/src/car.js',
+      'src/foo/baz.js',
+      'src/foo/biz.js',
+      'src/foo/buz/biz.js',
+      'src/index.js',
+    ]);
+  });
+
   test('can print graph order to stdout', async () => {
     const options = {
       basePath: project.baseDir,

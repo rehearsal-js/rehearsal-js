@@ -38,10 +38,11 @@ export function graphOrderTask(
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
-            workerData: basePath,
+            workerData: ctx.childPackage ? ctx.childPackage : basePath,
           });
 
           worker.on('message', (packages: { packages: PackageEntry[] }) => {
+            console.log(packages);
             resolve(packages);
           });
 
