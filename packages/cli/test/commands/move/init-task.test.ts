@@ -21,7 +21,8 @@ describe('Move: Init-Task', () => {
   test('validate source option with file', async () => {
     const source = 'src/foo/buz/biz.js';
     const options: MoveCommandOptions = {
-      srcPath: project.baseDir,
+      srcDir: project.baseDir,
+      basePath: project.baseDir,
       dryRun: true,
       source,
     };
@@ -34,7 +35,8 @@ describe('Move: Init-Task', () => {
   test('validate source option with directory', async () => {
     const source = 'src/foo';
     const options: MoveCommandOptions = {
-      srcPath: project.baseDir,
+      srcDir: project.baseDir,
+      basePath: project.baseDir,
       dryRun: true,
       source,
     };
@@ -52,7 +54,8 @@ describe('Move: Init-Task', () => {
     // childPackage is a relative path from basePath
     const childPackage = 'module-b';
     const options: MoveCommandOptions = {
-      srcPath: project.baseDir,
+      srcDir: project.baseDir,
+      basePath: project.baseDir,
       dryRun: true,
       childPackage,
     };
@@ -70,7 +73,8 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask({
-            srcPath: basePath,
+            srcDir: basePath,
+            basePath,
             dryRun: true,
             source: nonExistsSourceFile,
           }),
@@ -87,7 +91,8 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask({
-            srcPath: basePath,
+            srcDir: basePath,
+            basePath,
             dryRun: true,
             source: nonExistsDirectory,
           }),
@@ -104,7 +109,8 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask({
-            srcPath: basePath,
+            srcDir: basePath,
+            basePath,
             dryRun: true,
             childPackage: nonExistsChildPackage,
           }),
@@ -121,7 +127,8 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask({
-            srcPath: basePath,
+            srcDir: basePath,
+            basePath,
             dryRun: true,
             childPackage: nonPackage,
           }),

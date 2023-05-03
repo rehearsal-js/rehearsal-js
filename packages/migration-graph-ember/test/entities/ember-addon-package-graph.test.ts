@@ -16,8 +16,10 @@ describe('Unit | EmberAddonPackageGraph', () => {
 
     await setupProject(project);
 
-    const addonPackage = new EmberAddonPackage(project.baseDir);
-    const addonPackageGraph = new EmberAddonPackageGraph(addonPackage);
+    const addonPackage = new EmberAddonPackage(project.baseDir, {});
+    const addonPackageGraph = new EmberAddonPackageGraph(addonPackage, {
+      basePath: project.baseDir,
+    });
     addonPackageGraph.discover();
 
     expect(addonPackageGraph.graph.hasNode('addon/components/greet.js')).toBeTruthy();
@@ -66,8 +68,10 @@ describe('Unit | EmberAddonPackageGraph', () => {
 
     await setupProject(project);
 
-    const addonPackage = new EmberAddonPackage(project.baseDir);
-    const addonPackageGraph = new EmberAddonPackageGraph(addonPackage);
+    const addonPackage = new EmberAddonPackage(project.baseDir, {});
+    const addonPackageGraph = new EmberAddonPackageGraph(addonPackage, {
+      basePath: project.baseDir,
+    });
     const graph = addonPackageGraph.discover();
 
     const trunkNode = graph.getNode('addon/components/trunk.gjs');

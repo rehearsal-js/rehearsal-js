@@ -143,7 +143,7 @@ export default class Salutation extends Component {
     expect(projectGraph.graph.nodes.size).toBe(2);
 
     const sourceNode = rootPackageNode.content.pkg
-      ?.getModuleGraph()
+      ?.getModuleGraph({ basePath: project.baseDir })
       .getNode('app/components/salutation.js');
 
     expect(sourceNode?.content.parsed, 'the component should have been parsed').toBe(true);
@@ -242,7 +242,7 @@ export default class Salutation extends Component {
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
-          const graph = pkg.content.pkg?.getModuleGraph();
+          const graph = pkg.content.pkg?.getModuleGraph({ basePath: project.baseDir });
           return flatten(graph?.getSortedNodes() || []);
         })
         .flat();
@@ -301,7 +301,7 @@ export default class Salutation extends Component {
 
       const allFiles = Array.from(orderedPackages)
         .map((pkg) => {
-          const modules = pkg.content.pkg?.getModuleGraph();
+          const modules = pkg.content.pkg?.getModuleGraph({ basePath: project.baseDir });
           return flatten(modules?.getSortedNodes() || []);
         })
         .flat();
@@ -325,7 +325,7 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg?.getModuleGraph();
+        const modules = pkg.content.pkg?.getModuleGraph({ basePath: project.baseDir });
         return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
@@ -361,7 +361,7 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg?.getModuleGraph();
+        const modules = pkg.content.pkg?.getModuleGraph({ basePath: project.baseDir });
         return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
@@ -432,7 +432,7 @@ export default class Salutation extends Component {
 
     const allFiles = Array.from(orderedPackages)
       .map((pkg) => {
-        const modules = pkg.content.pkg?.getModuleGraph();
+        const modules = pkg.content.pkg?.getModuleGraph({ basePath: project.baseDir });
         return flatten(modules?.getSortedNodes() || []);
       })
       .flat();
@@ -472,7 +472,13 @@ export default class Salutation extends Component {
       const orderedPackages = projectGraph.graph.getSortedNodes();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
+        flatten(
+          filter(
+            orderedPackages[0].content.pkg
+              ?.getModuleGraph({ basePath: project.baseDir })
+              .getSortedNodes() || []
+          )
+        )
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
     test('app-with-in-repo-addon', async () => {
@@ -498,12 +504,24 @@ export default class Salutation extends Component {
       expect(flatten(orderedPackages)).toStrictEqual(['some-addon', 'app-template']);
 
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || [])),
+        flatten(
+          filter(
+            orderedPackages[0].content.pkg
+              ?.getModuleGraph({ basePath: project.baseDir })
+              .getSortedNodes() || []
+          )
+        ),
         'expected migration order for addon'
       ).toStrictEqual(['addon/utils/thing.js', 'addon/components/greet.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().getSortedNodes() || [])),
+        flatten(
+          filter(
+            orderedPackages[1].content.pkg
+              ?.getModuleGraph({ basePath: project.baseDir })
+              .getSortedNodes() || []
+          )
+        ),
         'expected migration order for app'
       ).toStrictEqual(EXPECTED_APP_FILES);
     });
@@ -519,12 +537,24 @@ export default class Salutation extends Component {
 
       expect(flatten(orderedPackages)).toStrictEqual(['some-engine', 'app-template']);
       expect(
-        flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || [])),
+        flatten(
+          filter(
+            orderedPackages[0].content.pkg
+              ?.getModuleGraph({ basePath: project.baseDir })
+              .getSortedNodes() || []
+          )
+        ),
         'expected migration order for in-repo-engine'
       ).toStrictEqual(['addon/resolver.js', 'addon/engine.js', 'addon/routes.js']);
 
       expect(
-        flatten(filter(orderedPackages[1].content.pkg?.getModuleGraph().getSortedNodes() || [])),
+        flatten(
+          filter(
+            orderedPackages[1].content.pkg
+              ?.getModuleGraph({ basePath: project.baseDir })
+              .getSortedNodes() || []
+          )
+        ),
         'expected migration order for app'
       ).toStrictEqual([
         'app/app.js',

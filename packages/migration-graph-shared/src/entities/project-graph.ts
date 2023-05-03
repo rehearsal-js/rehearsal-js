@@ -182,7 +182,7 @@ export class ProjectGraph {
    * packages any given node in the graph may reference in code and
    * it's package.json
    */
-  protected discoverWorkspacePackages() {
+  protected discoverWorkspacePackages(): void {
     const projectRoot = new Package(this.basePath);
 
     if (projectRoot.workspaceGlobs) {

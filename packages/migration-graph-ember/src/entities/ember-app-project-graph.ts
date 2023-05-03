@@ -268,7 +268,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return { root, found };
   }
 
-  protected override discoverWorkspacePackages() {
+  protected override discoverWorkspacePackages(): void {
     const projectRoot = new Package(this.basePath);
 
     if (projectRoot.workspaceGlobs) {

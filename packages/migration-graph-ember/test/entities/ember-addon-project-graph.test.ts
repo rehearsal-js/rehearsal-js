@@ -24,14 +24,20 @@ describe('Unit | EmberAddonProjectGraph', () => {
   test('should produce a graph of all files in an addon', async () => {
     project = await getEmberProjectFixture('addon');
 
-    const projectGraph = new EmberAddonProjectGraph(project.baseDir);
+    const projectGraph = new EmberAddonProjectGraph(project.baseDir, { basePath: project.baseDir });
     projectGraph.discover();
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
+      flatten(
+        filter(
+          orderedPackages[0].content.pkg
+            ?.getModuleGraph({ basePath: project.baseDir })
+            .getSortedNodes() || []
+        )
+      )
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -44,14 +50,23 @@ describe('Unit | EmberAddonProjectGraph', () => {
   test('options.exclude', async () => {
     project = await getEmberProjectFixture('addon');
 
-    const projectGraph = new EmberAddonProjectGraph(project.baseDir, { exclude: ['tests/dummy'] });
+    const projectGraph = new EmberAddonProjectGraph(project.baseDir, {
+      exclude: ['tests/dummy'],
+      basePath: project.baseDir,
+    });
     projectGraph.discover();
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
+      flatten(
+        filter(
+          orderedPackages[0].content.pkg
+            ?.getModuleGraph({ basePath: project.baseDir })
+            .getSortedNodes() || []
+        )
+      )
     ).toStrictEqual([
       'addon/components/greet.js',
       'tests/acceptance/addon-template-test.js',
@@ -62,14 +77,23 @@ describe('Unit | EmberAddonProjectGraph', () => {
   test('options.include', async () => {
     project = await getEmberProjectFixture('addon');
 
-    const projectGraph = new EmberAddonProjectGraph(project.baseDir, { include: ['^app'] });
+    const projectGraph = new EmberAddonProjectGraph(project.baseDir, {
+      include: ['^app'],
+      basePath: project.baseDir,
+    });
     projectGraph.discover();
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
     expect(flatten(orderedPackages)).toStrictEqual(['addon-template']);
     expect(
-      flatten(filter(orderedPackages[0].content.pkg?.getModuleGraph().getSortedNodes() || []))
+      flatten(
+        filter(
+          orderedPackages[0].content.pkg
+            ?.getModuleGraph({ basePath: project.baseDir })
+            .getSortedNodes() || []
+        )
+      )
     ).toStrictEqual([
       'addon/components/greet.js',
       'app/components/greet.js',

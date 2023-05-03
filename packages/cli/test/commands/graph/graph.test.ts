@@ -16,6 +16,7 @@ import {
 } from '../../test-helpers/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
 import type { PackageEntry, GraphCommandContext } from '../../../src/types.js';
+import type { DirJSON } from 'fixturify';
 import type { Project } from 'fixturify-project';
 
 const logger = createLogger({
@@ -339,8 +340,10 @@ describe('Task: graphOrderTask', () => {
   });
 });
 
-function someOtherAddons(project: Project) {
+function someOtherAddons(project: Project): DirJSON {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   project.pkg['ember-addon'].paths.push('lib/some-other-addon');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   project.pkg['ember-addon'].paths.push('lib/some-test-package');
   return {
     lib: {

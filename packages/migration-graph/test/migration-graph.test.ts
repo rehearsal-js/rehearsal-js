@@ -13,19 +13,19 @@ describe('migration-graph', () => {
 
   test('should create ProjectGraph', async () => {
     project = await getLibraryProjectFixture('simple');
-    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir);
+    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir);
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.Library);
   });
   test('should create EmberAppProjectGraph', async () => {
     project = await getEmberProjectFixture('app');
-    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir);
+    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir);
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberApp);
   });
   test('should create EmberAddonProjectGraph', async () => {
     project = await getEmberProjectFixture('addon');
-    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir);
+    const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir);
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberAddon);
   });

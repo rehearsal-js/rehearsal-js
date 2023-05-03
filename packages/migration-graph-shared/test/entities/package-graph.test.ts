@@ -50,7 +50,9 @@ describe('PackageGraph', () => {
     g.addEdge(index, nodeA);
     g.addEdge(nodeA, nodeB);
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
 
     expect(flatten(output.getSortedNodes())).toStrictEqual(flatten(g.getSortedNodes()));
   });
@@ -84,7 +86,9 @@ describe('PackageGraph', () => {
     g.addEdge(index, nodeB);
     g.addEdge(nodeA, nodeB);
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
 
     expect(flatten(output.getSortedNodes())).toStrictEqual(flatten(g.getSortedNodes()));
   });
@@ -109,7 +113,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/a.js', 'lib/b.js', 'index.js']);
@@ -133,7 +139,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/file.js', 'index.js']);
@@ -159,7 +167,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
@@ -185,7 +195,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/phrases.js', 'index.js']);
@@ -198,7 +210,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/a.js', 'index.js']);
@@ -217,7 +231,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['a.js', 'index.js']);
@@ -241,7 +257,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['some-dir/not-obvious.js', 'index.js']);
@@ -265,7 +283,10 @@ describe('PackageGraph', () => {
     await project.write();
 
     const output: Graph<ModuleNode> = new PackageGraph(
-      new Package(join(project.baseDir, 'some-dir'))
+      new Package(join(project.baseDir, 'some-dir')),
+      {
+        basePath: project.baseDir,
+      }
     ).discover();
     const actual = flatten(output.getSortedNodes());
 
@@ -304,7 +325,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/config.js', 'lib/impl.js', 'index.js']);
@@ -333,7 +356,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);
@@ -362,7 +387,9 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir)).discover();
+    const output: Graph<ModuleNode> = new PackageGraph(new Package(project.baseDir), {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual(['lib/impl.js', 'index.js']);
