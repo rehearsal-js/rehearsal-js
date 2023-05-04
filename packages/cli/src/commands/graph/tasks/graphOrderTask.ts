@@ -66,7 +66,7 @@ export function graphOrderTask(
 
       // if explicit child package is passed in use that
       if (ctx?.childPackage) {
-        ctx.jsSourcesAbs = getGraphFilesAbs(srcDir, ctx.childPackage, order.packages[0].files);
+        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
 
         return;
       }
