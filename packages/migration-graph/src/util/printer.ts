@@ -4,8 +4,10 @@ function printRelationship(source: GraphNode<PackageNode>, dest: GraphNode<Packa
   return `"${source.content.key}" -> "${dest.content.key}";`;
 }
 
-export function printDirectedGraph(_name: string, projectGraph: ProjectGraph): string {
-  const nodes = projectGraph.graph.getSortedNodes();
+export function printDirectedGraph(name: string, projectGraph: ProjectGraph): string {
+  const rootNode = projectGraph.graph.getNode(name);
+
+  const nodes = projectGraph.graph.getSortedNodes(rootNode);
 
   const entries = Array.from(nodes).map((p) => {
     return Array.from(p.adjacent).map((dest) => {
@@ -14,7 +16,7 @@ export function printDirectedGraph(_name: string, projectGraph: ProjectGraph): s
     });
   });
 
-  const output = [`digraph "graph" {`, ...entries.flat().map((s) => `  ${s}`), '}'];
+  const output = [`digraph "${name}" {`, ...entries.flat().map((s) => `  ${s}`), '}'];
 
   return output.join('\n');
 }
