@@ -19,6 +19,7 @@ if (!maybePackageJson) {
 
 const ROOT_DIR = dirname(maybePackageJson);
 const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
+const EMBER_TS_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/ts-app-template/');
 const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
 const EMBER_MONOREPO = join(ROOT_DIR, 'fixtures/ember/monorepo');
 
@@ -113,6 +114,14 @@ export function getEmberAppWithInRepoAddonProject(
   return project;
 }
 
+export function getTSEmberAppProject(
+  project: Project = emberTSAppTemplate(),
+): Project {
+  getEmberAppProject(project);
+
+  return project;
+}
+
 export function getEmberAppWithInRepoEngineProject(
   project: Project = emberAppTemplate(),
   engineName = 'some-engine'
@@ -179,6 +188,14 @@ export function emberAppTemplate(): Project {
   });
 }
 
+
+export function emberTSAppTemplate(): Project {
+  return Project.fromDir(EMBER_TS_APP_TEMPLATE_DIR, {
+    linkDevDeps: false,
+  });
+}
+
+
 export function getEmber4AppProject(): Project {
   const project = getEmberAppProject();
 
@@ -213,6 +230,7 @@ type EmberProjectFixture =
   | 'app'
   | 'app-with-utils'
   | 'app-with-in-repo-addon'
+  | 'ts-app'
   | 'app-with-in-repo-engine'
   | 'addon'
   | 'monorepo';
@@ -226,6 +244,9 @@ export function getEmberProject(variant: EmberProjectFixture, varyNames = false)
       break;
     case 'app-with-utils':
       project = addUtilDirectory(getEmberAppProject());
+      break;
+    case 'ts-app':
+      project = getTSEmberAppProject();
       break;
     case 'app-with-in-repo-addon':
       project = getEmberAppWithInRepoAddonProject(undefined, undefined, varyNames);

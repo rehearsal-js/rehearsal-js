@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsc -b",
     "fixtures:clean": "rm -rf ./fixtures/ember/*/node_modules",
-    "fixtures:prepare": "node ./scripts/setup-fixtures.js ./fixtures/ember/app-template ./fixtures/ember/addon-template",
+    "fixtures:prepare": "node ./scripts/setup-fixtures.js ./fixtures/ember/app-template ./fixtures/ember/addon-template ./fixtures/ember/app-ts-template",
     "postinstall": "pnpm fixtures:prepare",
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",

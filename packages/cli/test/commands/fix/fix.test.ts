@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
+import { getEmberProject } from '@rehearsal/test-support';
 import { getPreReqs } from '../../../src/prereqs.js';
 import { runBin, cleanOutput } from '../../test-helpers/index.js';
 import type { ProjectType } from '../../../src/types.js';
@@ -89,5 +90,34 @@ describe('Command: fix base_ts_app fixture', () => {
     for (const filepath of Object.keys(project.files[sourceDir] as string)) {
       expectFile(resolve(project.baseDir, sourceDir, filepath)).toMatchSnapshot();
     }
+  });
+});
+
+
+describe('Command: fix ember-ts-app fixture', () => {
+  let project: Project;
+
+  beforeEach(async () => {
+    project = getEmberProject('ts-app');
+
+    await project.write();
+  });
+
+  afterEach(() => {
+    project.dispose();
+  });
+
+  test('fix directory with --source flag', async () => {
+    const sourceDir = 'app';
+
+    const result = await runBin(
+      'fix',
+      ['--source', `${resolve(project.baseDir, sourceDir)}`, '--basePath', project.baseDir],
+      {
+        cwd: project.baseDir,
+      }
+    );
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
   });
 });
