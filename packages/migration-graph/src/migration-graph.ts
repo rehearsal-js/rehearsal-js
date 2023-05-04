@@ -20,7 +20,7 @@ export type MigrationGraphOptions =
 export function buildMigrationGraph(
   basePath = process.cwd(),
   srcDir: string,
-  options?: MigrationGraphOptions
+  options: MigrationGraphOptions = { deps: true, devDeps: true, basePath }
 ): { projectGraph: ProjectGraph; sourceType: SourceType } {
   if (!existsSync(resolve(srcDir, 'package.json'))) {
     throw new Error(

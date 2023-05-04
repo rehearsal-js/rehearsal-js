@@ -32,7 +32,7 @@ export function graphOrderTask(
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
         order = intoGraphOutput(
-          getMigrationOrder(srcDir, { basePath, devDeps: options.devDeps }),
+          getMigrationOrder(srcDir, { basePath, devDeps: options.devDeps, deps: options.deps }),
           basePath
         );
       } else {
@@ -45,6 +45,7 @@ export function graphOrderTask(
               srcDir,
               basePath: options.basePath,
               devDeps: options.devDeps,
+              deps: options.deps,
             }),
           });
 

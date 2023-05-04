@@ -166,7 +166,12 @@ describe('project-graph', () => {
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
 
-    projectGraph = new ProjectGraph(project.baseDir, { basePath: project.baseDir, eager: true });
+    projectGraph = new ProjectGraph(project.baseDir, {
+      basePath: project.baseDir,
+      eager: true,
+      devDeps: false,
+      deps: false,
+    });
     projectGraph.discover();
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
@@ -184,6 +189,8 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: 'index.js',
+        devDeps: false,
+        deps: false,
       });
       projectGraph.discover();
 
@@ -203,6 +210,8 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: './index.js',
+        devDeps: false,
+        deps: false,
       });
       projectGraph.discover();
 
@@ -230,6 +239,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         entrypoint: 'packages/foo/index.js',
         basePath: project.baseDir,
+        devDeps: false,
+        deps: false,
       });
       projectGraph.discover();
 
@@ -258,6 +269,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         include: ['Brocfile.js'],
         basePath: project.baseDir,
+        devDeps: false,
+        deps: false,
       });
       const [somePackage] = projectGraph.discover();
       expect(
@@ -275,6 +288,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         exclude: ['test'],
+        devDeps: false,
+        deps: false,
       });
       const [somePackage] = projectGraph.discover();
       expect(
@@ -293,6 +308,7 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         devDeps: true,
+        deps: true,
       });
       projectGraph.discover();
 
@@ -341,6 +357,7 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         devDeps: true,
+        deps: true,
       });
       projectGraph.discover();
 
@@ -360,7 +377,10 @@ describe('project-graph', () => {
 
       await project.write();
 
-      const projectGraph = new ProjectGraph(project.baseDir);
+      const projectGraph = new ProjectGraph(project.baseDir, {
+        basePath: project.baseDir,
+        deps: true,
+      });
       projectGraph.discover();
 
       const rootNode = projectGraph.graph.getNode('root-package');

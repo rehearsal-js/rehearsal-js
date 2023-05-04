@@ -28,6 +28,7 @@ graphCommand
         output: options.output,
         basePath: options.basePath,
         devDeps: options.devDeps,
+        deps: options.deps,
       }),
     ]).run();
   });

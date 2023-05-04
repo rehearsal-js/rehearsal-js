@@ -11,6 +11,7 @@ import type { PackageNode } from '../types.js';
 export type ProjectGraphOptions = {
   basePath: string;
   devDeps?: boolean;
+  deps?: boolean;
   eager?: boolean;
   sourceType?: string;
   entrypoint?: string;
@@ -26,6 +27,7 @@ export class ProjectGraph {
 
   basePath: string;
   includeDevDeps?: boolean;
+  includeDeps?: boolean;
 
   protected entrypoint: string | undefined;
   protected discoveredPackages: Map<string, Package> = new Map();
@@ -36,13 +38,14 @@ export class ProjectGraph {
   exclude: Set<string>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint, exclude, include, devDeps } = {
+    const { eager, sourceType, entrypoint, exclude, include, devDeps, deps } = {
       eager: false,
       sourceType: 'JavaScript Library',
       ...options,
     };
 
     this.includeDevDeps = devDeps;
+    this.includeDeps = deps;
 
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
 
@@ -136,7 +139,7 @@ export class ProjectGraph {
   findInternalPackageDependencies(pkg: Package): Array<Package> {
     let deps: Array<Package> = [];
 
-    if (pkg.dependencies) {
+    if (pkg.dependencies && this.includeDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies)
         .filter((depName) => this.discoveredPackages.has(depName))
         .map((depName) => this.discoveredPackages.get(depName))

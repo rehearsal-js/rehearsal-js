@@ -71,6 +71,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -103,6 +104,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -126,6 +128,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir,
       basePath: project.baseDir,
       devDeps: false,
+      deps: true,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -142,6 +145,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir,
       basePath: project.baseDir,
       devDeps: false,
+      deps: true,
     };
 
     outputStream.on('data', (line: string) => {
@@ -167,6 +171,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -199,6 +204,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -222,6 +228,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
       devDeps: true,
+      deps: true,
       output: join(project.baseDir, 'graph.json'),
     };
 
@@ -259,6 +266,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     outputStream.on('data', (line: string) => {
@@ -314,6 +322,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
+      deps: true,
     };
 
     outputStream.on('data', (line: string) => {

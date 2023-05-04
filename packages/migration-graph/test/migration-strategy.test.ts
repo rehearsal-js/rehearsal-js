@@ -149,6 +149,7 @@ describe('migration-strategy', () => {
         const strategy = getMigrationStrategy(project.baseDir + '/packages/foo', {
           basePath: project.baseDir,
           devDeps: true,
+          deps: true,
         });
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);

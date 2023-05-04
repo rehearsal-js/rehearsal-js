@@ -87,7 +87,12 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
   const tasks = options.graph
     ? [
         initTask(srcDir, options),
-        graphOrderTask({ basePath: options.basePath, srcDir, devDeps: options.devDeps }),
+        graphOrderTask({
+          basePath: options.basePath,
+          srcDir,
+          devDeps: options.devDeps,
+          deps: options.deps,
+        }),
         moveTask(srcDir, options),
       ]
     : [initTask(srcDir, options), moveTask(srcDir, options)];

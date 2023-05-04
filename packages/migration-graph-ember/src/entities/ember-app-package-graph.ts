@@ -19,6 +19,7 @@ import { EmberAppProjectGraph } from './ember-app-project-graph.js';
 export type EmberAppPackageGraphOptions = {
   basePath: string;
   devDeps?: boolean;
+  deps?: boolean;
   parent?: GraphNode<PackageNode>;
   project?: EmberAppProjectGraph;
   resolutions?: { services: Record<string, string> };

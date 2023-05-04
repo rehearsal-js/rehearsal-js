@@ -70,7 +70,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     const { byAddonName: mappingsByAddonName, byPath: mappingsByLocation } =
       this.getDiscoveredPackages();
 
-    if (pkg.dependencies) {
+    if (pkg.dependencies && this.includeDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
