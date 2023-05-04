@@ -23,13 +23,9 @@ describe('Command: move', () => {
   test('move file with --source flag', async () => {
     const sourceDir = 'src/foo';
 
-    const result = await runBin(
-      'move',
-      ['--source', `${sourceDir}/baz.js`, '--basePath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('move', [`${sourceDir}/baz.js`, '--basePath', project.baseDir], {
+      cwd: project.baseDir,
+    });
     const projectSourceDir = resolve(project.baseDir, sourceDir);
 
     const jsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{js,gjs}`, {
@@ -48,13 +44,9 @@ describe('Command: move', () => {
   test('move dir and sub-dir with --source flag', async () => {
     const sourceDir = 'src';
 
-    const result = await runBin(
-      'move',
-      ['--source', `${sourceDir}`, '--basePath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('move', [`${sourceDir}`, '--basePath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     const projectSourceDir = resolve(project.baseDir, sourceDir);
     // check for js and gjs files -> ts and gts files
@@ -82,7 +74,7 @@ describe('Command: move', () => {
 
     const result = await runBin(
       'move',
-      ['--childPackage', `${childPackage}`, '--basePath', project.baseDir],
+      [`${childPackage}`, '--graph', '--basePath', project.baseDir],
       {
         cwd: project.baseDir,
       }

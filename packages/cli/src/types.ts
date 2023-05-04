@@ -11,15 +11,15 @@ export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 export * from './configs/rehearsal-config.js';
 
 export type MoveTasks = {
-  initTask: (options: MoveCommandOptions) => ListrTask;
-  moveTask: (options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
+  initTask: (srcDir: string, options: MoveCommandOptions) => ListrTask;
+  moveTask: (srcDir: string, options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
 };
 
 export type PackageEntry = { name: string; files: string[] };
 
 export type GraphCommandOptions = {
   output?: string;
-  devDeps?: boolean;
+  devDeps: boolean;
   basePath: string;
 };
 
@@ -35,7 +35,7 @@ export type GraphTaskOptions = {
   srcDir: string;
   basePath: string;
   output?: string;
-  devDeps?: boolean;
+  devDeps: boolean;
 };
 
 export type GraphTasks = {
@@ -43,10 +43,9 @@ export type GraphTasks = {
 };
 
 export type MoveCommandOptions = {
-  childPackage?: string;
-  source?: string;
+  graph: boolean;
+  devDeps: boolean;
   dryRun: boolean;
-  srcDir: string;
   basePath: string;
 };
 

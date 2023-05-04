@@ -21,12 +21,12 @@ describe('Move: Init-Task', () => {
   test('validate source option with file', async () => {
     const source = 'src/foo/buz/biz.js';
     const options: MoveCommandOptions = {
-      srcDir: project.baseDir,
       basePath: project.baseDir,
       dryRun: true,
-      source,
+      graph: false,
+      devDeps: false,
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
 
     expect(ctx.jsSourcesRel).toStrictEqual([source]);
@@ -35,12 +35,12 @@ describe('Move: Init-Task', () => {
   test('validate source option with directory', async () => {
     const source = 'src/foo';
     const options: MoveCommandOptions = {
-      srcDir: project.baseDir,
       basePath: project.baseDir,
       dryRun: true,
-      source,
+      graph: false,
+      devDeps: false,
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
     expect(ctx.jsSourcesAbs).toMatchObject([
       resolve(project.baseDir, 'src/foo/baz.js'),
@@ -54,12 +54,12 @@ describe('Move: Init-Task', () => {
     // childPackage is a relative path from basePath
     const childPackage = 'module-b';
     const options: MoveCommandOptions = {
-      srcDir: project.baseDir,
       basePath: project.baseDir,
       dryRun: true,
-      childPackage,
+      graph: true,
+      devDeps: false,
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(childPackage, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
 
     expect(ctx.childPackageAbs).toStrictEqual(resolve(project.baseDir, './module-b'));
@@ -72,11 +72,11 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            srcDir: basePath,
+          initTask(nonExistsSourceFile, {
             basePath,
             dryRun: true,
-            source: nonExistsSourceFile,
+            graph: false,
+            devDeps: false,
           }),
         ])
     ).rejects.toThrowError(
@@ -90,11 +90,11 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            srcDir: basePath,
+          initTask(nonExistsDirectory, {
             basePath,
             dryRun: true,
-            source: nonExistsDirectory,
+            graph: false,
+            devDeps: false,
           }),
         ])
     ).rejects.toThrowError(
@@ -108,11 +108,11 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            srcDir: basePath,
+          initTask(nonExistsChildPackage, {
             basePath,
             dryRun: true,
-            childPackage: nonExistsChildPackage,
+            graph: true,
+            devDeps: false,
           }),
         ])
     ).rejects.toThrowError(
@@ -126,11 +126,11 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            srcDir: basePath,
+          initTask(nonPackage, {
             basePath,
             dryRun: true,
-            childPackage: nonPackage,
+            graph: true,
+            devDeps: false,
           }),
         ])
     ).rejects.toThrowError(

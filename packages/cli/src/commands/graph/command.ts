@@ -21,6 +21,11 @@ graphCommand
   .option('-o, --output <filepath>', 'Output path for a JSON format of the graph order')
   .action(async (srcDir: string, options: GraphCommandOptions) => {
     await new Listr<GraphCommandContext>([
-      graphOrderTask({ srcDir: srcDir, output: options.output, basePath: options.basePath }),
+      graphOrderTask({
+        srcDir: srcDir,
+        output: options.output,
+        basePath: options.basePath,
+        devDeps: options.devDeps,
+      }),
     ]).run();
   });

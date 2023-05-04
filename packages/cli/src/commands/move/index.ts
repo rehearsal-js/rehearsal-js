@@ -23,61 +23,54 @@ const winstonLogger = createLogger({
 /*
   @rehearsal/move workflow
 
-  rehearsal move --source <path to source file | directory>
+  rehearsal move <path to source file | directory>
     the explicit source file OR explicit directory with implicit child directories moved.
     migration strategy is ignored
 
-  rehearsal move --package <path to child package>
+  rehearsal move <path to child package> --graph
     specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package.
     migration strategy is leveraged
+
+  rehearsal move <path to child package> --graph --devDeps
+    same as above but devDependencies are considered in the graph
 */
 
 moveCommand
   .name('move')
   .alias('mv')
   .description('git mv conversion of JS files -> TS files')
-  .option(
-    '-s, --source <path to source file | directory>',
-    `the explicit source file OR explicit directory with implicit child directories moved. migration strategy is ignored`,
-    ''
-  )
-  .option(
-    '-p, --childPackage <path to child package>',
-    `specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package`,
-    ''
-  )
-  .option('-d, --dryRun', `Do nothing; only show what would happen`, false)
+  .argument('[srcDir]', 'the path to a package or file that will be moved', '')
+  .option('-g, --graph', 'Enable graph resolution of files to move', false)
+  .option('-d, --devDeps', `Follow packages in 'devDependencies' when moving `, false)
+  .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
     new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (options: MoveCommandOptions) => {
-    await move(options);
+  .action(async (srcDir: string, options: MoveCommandOptions) => {
+    await move(srcDir, options);
   });
 
-async function move(options: MoveCommandOptions): Promise<void> {
+async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
-  const { childPackage, source } = options;
-
-  // if both childPackage and source are specified, throw an error
-  if (childPackage && source) {
-    throw new Error(
-      `@rehearsal/move: --childPackage AND --source are specified, please specify only one`
-    );
-  } else if (!childPackage && !source) {
-    throw new Error(`@rehearsal/move: you must specify a flag, either --childPackage OR --source`);
+  if (!srcDir) {
+    throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
 
   // grab the child move tasks
   const { initTask, moveTask } = await loadMoveTasks();
   const { graphOrderTask } = await loadGraphTasks();
 
-  const tasks = options.source
-    ? [initTask(options), moveTask(options)]
-    : [initTask(options), graphOrderTask(options), moveTask(options)];
+  const tasks = options.graph
+    ? [
+        initTask(srcDir, options),
+        graphOrderTask({ basePath: options.basePath, srcDir, devDeps: options.devDeps }),
+        moveTask(srcDir, options),
+      ]
+    : [initTask(srcDir, options), moveTask(srcDir, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

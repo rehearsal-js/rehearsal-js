@@ -70,6 +70,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir,
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
+      devDeps: false,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -101,6 +102,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: `${project.baseDir}/module-a`,
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
+      devDeps: false,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -123,6 +125,7 @@ describe('Task: graphOrderTask', () => {
     const options = {
       srcDir: project.baseDir,
       basePath: project.baseDir,
+      devDeps: false,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -138,6 +141,7 @@ describe('Task: graphOrderTask', () => {
     const options = {
       srcDir: project.baseDir,
       basePath: project.baseDir,
+      devDeps: false,
     };
 
     outputStream.on('data', (line: string) => {
@@ -162,6 +166,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
       output: 'graph.json',
+      devDeps: false,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -193,6 +198,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
       output: 'graph.json',
+      devDeps: false,
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -252,6 +258,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       srcDir: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
+      devDeps: false,
     };
 
     outputStream.on('data', (line: string) => {
@@ -306,6 +313,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir,
       basePath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
+      devDeps: false,
     };
 
     outputStream.on('data', (line: string) => {

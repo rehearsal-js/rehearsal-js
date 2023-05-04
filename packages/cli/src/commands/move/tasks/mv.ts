@@ -11,6 +11,7 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:moveTask');
 type MoveCommandTask = ListrTaskWrapper<MoveCommandContext, ListrDefaultRenderer>;
 
 export function moveTask(
+  srcDir: string,
   options: MoveCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: MoveCommandContext
@@ -18,13 +19,13 @@ export function moveTask(
   return {
     title: 'Executing git mv',
     task(ctx: MoveCommandContext, task: MoveCommandTask) {
-      const { dryRun, srcDir: basePath } = options;
+      const { dryRun } = options;
       const { jsSourcesAbs } = ctx;
 
       DEBUG_CALLBACK(`jsSourcesAbs: ${jsSourcesAbs}`);
 
       if (jsSourcesAbs) {
-        task.output = gitMove(jsSourcesAbs, task, basePath, dryRun);
+        task.output = gitMove(jsSourcesAbs, task, srcDir, dryRun);
       } else {
         task.skip('JS files not detected');
       }

@@ -10,22 +10,18 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:initialize');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
+  srcDir: string,
   options: MoveCommandOptions
 ): ListrTask<MoveCommandContext, ListrDefaultRenderer> {
   return {
-    title: `Initialize`,
+    title: `Validating source path`,
     task: (ctx: MoveCommandContext): void => {
-      ctx.childPackage = options.childPackage;
-      // source file or dir should always exist within the basePath
-      if (options.source) {
-        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.srcDir, options.source);
-      }
+      ctx.childPackage = srcDir;
 
-      if (options.childPackage) {
-        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(
-          options.srcDir,
-          options.childPackage
-        );
+      if (options.graph) {
+        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(options.basePath, srcDir);
+      } else {
+        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.basePath, srcDir);
       }
 
       DEBUG_CALLBACK('init ctx %O:', ctx);
