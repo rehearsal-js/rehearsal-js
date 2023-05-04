@@ -82,6 +82,8 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     configName
   );
 
+
+  // these should NOT all go into the report
   const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
   const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 

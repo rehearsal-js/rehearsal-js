@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+
 import type { GlintFixPlugin, GlintCommentPlugin, GlintReportPlugin } from '@rehearsal/plugins';
 import type { PackageJson } from 'type-fest';
 import type { GlintService } from '@rehearsal/service';
@@ -62,63 +63,3 @@ export async function getGlintCommentPlugin(): Promise<GlintCommentPluginCtor> {
 
   return GlintCommentPlugin;
 }
-
-// TODO remove below once green
-
-// Maps `moduleName` to actual package name for all ember addons that specify a `moduleName` in
-// their `ember-addon.main` file
-// ! REMOVE IN FUTURE PR - ALL OF THIS MAPPING WE ARE ASSUMING IS DONE BY THE GLINT SERVICE
-// export function createEmberAddonModuleNameMap(basePath: string): Record<string, string> {
-//   const pkg = readPackageJson(basePath);
-//   const depNames = Object.keys(pkg.dependencies ?? {});
-
-//   return depNames.reduce<Record<string, string>>((acc, name) => {
-//     const pkgJsonPath = resolvePackagePath(name, basePath);
-//     if (pkgJsonPath === null) {
-//       throw new Error(`Could not resolve path for ${name}`);
-//     }
-//     const modulePath = path.dirname(pkgJsonPath);
-//     const pkg = readPackageJson(modulePath);
-
-//     if (!(pkg.keywords && pkg.keywords.includes('ember-addon'))) {
-//       return acc;
-//     }
-
-//     const addon = requirePackageMain(modulePath);
-//     const moduleName = addon.moduleName ? addon.moduleName() : name;
-
-//     acc[name] = moduleName;
-
-//     return acc;
-//   }, {});
-// }
-
-// This function updates tsconfig.compilerOptions.paths with mappings from any ember addons that
-// specify a `moduleName` to their actual real location in `node_modules` so that TS can actually
-// resolve the types.
-// ! REMOVE IN FUTURE PR - THIS NEEDS TO GO AWAY
-// export async function addFilePathsForAddonModules(
-//   configFilepath: string,
-//   tsConfig: TsConfigJson,
-//   moduleNameMap: Record<string, string>
-// ): Promise<void> {
-//   const newPaths = {};
-
-//   for (const [real, fake] of Object.entries(moduleNameMap)) {
-//     if (real === fake) {
-//       continue;
-//     }
-
-//     Object.assign(newPaths, {
-//       [fake]: [`node_modules/${real}`],
-//       [`${fake}/*`]: [`node_modules/${real}/*`],
-//     });
-//   }
-
-//   if (Object.keys(newPaths).length > 0) {
-//     tsConfig.compilerOptions ??= {};
-//     tsConfig.compilerOptions.paths ??= {};
-//     Object.assign(tsConfig.compilerOptions.paths, newPaths);
-//     await writeFile(configFilepath, JSON.stringify(tsConfig, null, 2));
-//   }
-// }

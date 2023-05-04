@@ -18,7 +18,11 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-    "checkJs": true
+    "checkJs": true,
+    "paths": {
+      "my-addon": ["node_modules/test-addon"],
+      "my-addon/*": ["node_modules/test-addon/*"]
+    }
   },
   "glint": {
     "environment": ["ember-loose", "ember-template-imports", "glimmerx"],
