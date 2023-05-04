@@ -1,6 +1,5 @@
 import { dirname, join, resolve } from 'node:path';
 import { Readable } from 'stream';
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import { Listr, ListrTask } from 'listr2';
@@ -26,11 +25,8 @@ export function prepareProject(
     linkDevDeps: true,
   }
 ): Project {
-  const projects = resolve(__dirname, '../fixtures/base_js_app');
-  const migrateFixturesDir = join(projects, 'src', dir);
-  const project = Project.fromDir(migrateFixturesDir, options);
-
-  project.files['tsconfig.json'] = readFileSync(join(projects, 'tsconfig.json'), 'utf-8');
+  const projectPath = resolve(__dirname, '../fixtures/', dir);
+  const project = Project.fromDir(projectPath, options);
 
   return project;
 }
