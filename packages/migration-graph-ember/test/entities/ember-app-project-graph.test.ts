@@ -28,7 +28,7 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     expect(projectGraph.graph.hasNode('some-addon')).toBe(true);
   });
@@ -39,7 +39,7 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const rootNode = projectGraph.graph.getNode('app-template');
     const addonNode = projectGraph.graph.getNode('some-addon');
@@ -136,7 +136,7 @@ export default class Salutation extends Component {
 
     // Manually add the RootPackage or AppPackage for the project, so it will parse the source files.
     const appPackage = new EmberAppPackage(project.baseDir);
-    const rootPackageNode = projectGraph.addPackageToGraph(appPackage);
+    const rootPackageNode = projectGraph.addPackageToGraph(appPackage, true, true, true);
 
     const rootNode = projectGraph.graph.getNode('app-template');
 
@@ -157,7 +157,7 @@ export default class Salutation extends Component {
       'should have an edge between app and in-repo-addon'
     ).toBe(true);
 
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     Array.from(projectGraph.graph.nodes).forEach((node) =>
       expect(node.content.synthetic).toBeFalsy()
@@ -223,7 +223,7 @@ export default class Salutation extends Component {
         entrypoint,
         basePath: project.baseDir,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -295,7 +295,7 @@ export default class Salutation extends Component {
         entrypoint: 'app/components/obtuse.js',
         basePath: project.baseDir,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -319,7 +319,7 @@ export default class Salutation extends Component {
       exclude: ['tests'],
       basePath: project.baseDir,
     });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -355,7 +355,7 @@ export default class Salutation extends Component {
       basePath: project.baseDir,
     });
 
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -416,7 +416,7 @@ export default class Salutation extends Component {
 
     await setupProject(project);
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const rootNode = projectGraph.graph.getNode('app-template');
     const addonNode = projectGraph.graph.getNode('some-addon');
@@ -467,7 +467,7 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
@@ -485,7 +485,7 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app-with-in-repo-addon');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const rootNode = projectGraph.graph.getNode('app-template');
 
@@ -530,7 +530,7 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app-with-in-repo-engine');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const rootNode = projectGraph.graph.getNode('app-template');
       const orderedPackages = projectGraph.graph.getSortedNodes(rootNode);
@@ -580,7 +580,7 @@ export default class Salutation extends Component {
       project = getEmberProject('monorepo');
       await project.write();
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
       const nodes = projectGraph.graph.getSortedNodes();
 
       expect(nodes.map((n) => n.content.pkg?.packageName)).toEqual([

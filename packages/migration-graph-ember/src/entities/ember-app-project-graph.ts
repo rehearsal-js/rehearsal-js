@@ -36,7 +36,12 @@ export class EmberAppProjectGraph extends ProjectGraph {
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
 
-  override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
+  override addPackageToGraph(
+    p: EmberProjectPackage,
+    crawlModule = true,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
@@ -53,7 +58,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         }
       }
     }
-    const node = super.addPackageToGraph(p, crawl);
+    const node = super.addPackageToGraph(p, crawlModule, crawlDeps, crawlDevDeps);
 
     return node;
   }
@@ -64,20 +69,24 @@ export class EmberAppProjectGraph extends ProjectGraph {
    * @param pkg we want
    * @returns an array of found packages
    */
-  override findInternalPackageDependencies(pkg: Package): Array<Package> {
+  override findInternalPackageDependencies(
+    pkg: Package,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): Array<Package> {
     let deps: Array<Package> = [];
 
     const { byAddonName: mappingsByAddonName, byPath: mappingsByLocation } =
       this.getDiscoveredPackages();
 
-    if (pkg.dependencies && this.includeDeps) {
+    if (pkg.dependencies && crawlDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg.devDependencies && this.includeDevDeps) {
+    if (pkg.devDependencies && crawlDevDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
@@ -101,7 +110,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
       }
     }
 
-    deps = deps.concat(super.findInternalPackageDependencies(pkg));
+    deps = deps.concat(super.findInternalPackageDependencies(pkg, crawlDeps, crawlDevDeps));
 
     return deps.filter((dep) => !!dep && !EXCLUDED_PACKAGES.includes(dep.packageName));
   }
@@ -155,7 +164,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const p = this.entityFactory(packageDir);
     p.includePatterns = new Set([relativeEntrypoint]);
-    this.addPackageToGraph(p, false);
+    this.addPackageToGraph(p, false, true, true);
     return p;
   }
 
@@ -268,7 +277,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return { root, found };
   }
 
-  protected override discoverWorkspacePackages(): void {
+  protected override discoverWorkspacePackages(ignoredPackages: string[] = []): void {
     const projectRoot = new Package(this.basePath);
 
     if (projectRoot.workspaceGlobs) {
@@ -297,15 +306,22 @@ export class EmberAppProjectGraph extends ProjectGraph {
         .map((pathToPackage) => this.entityFactory(pathToPackage));
 
       for (const pkg of entities) {
-        if (!this.discoveredPackages.has(pkg.packageName)) {
-          // We must stick
+        if (
+          !this.discoveredPackages.has(pkg.packageName) &&
+          !ignoredPackages.includes(pkg.packageName)
+        ) {
+          console.log(pkg.packageName);
           this.discoveredPackages.set(pkg.packageName, pkg);
         }
       }
     }
   }
 
-  override discover(): Array<EmberProjectPackage> {
+  override discover(
+    crawlDeps: boolean,
+    crawlDevDeps: boolean,
+    ignoredPackages: string[] = []
+  ): Array<EmberProjectPackage> {
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
 
@@ -314,7 +330,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages();
+    this.discoverWorkspacePackages(ignoredPackages);
 
     const { root, found } = this.findProjectPackages();
 
@@ -325,7 +341,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     this.debug('%s.excludePatterns', root.constructor.name, root.excludePatterns);
     this.debug('%s.includePatterns', root.constructor.name, root.includePatterns);
 
-    const rootNode = this.addPackageToGraph(root);
+    const rootNode = this.addPackageToGraph(root, true, crawlDeps, crawlDevDeps);
 
     // Get rootPackage and add it to the graph.
 
@@ -336,7 +352,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     for (const pkg of found) {
-      const node = this.addPackageToGraph(pkg);
+      const node = this.addPackageToGraph(pkg, true, crawlDeps, crawlDevDeps);
       this.graph.addEdge(rootNode, node);
     }
 

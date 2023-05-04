@@ -5,10 +5,8 @@ import type { EmberProjectPackage } from '../types.js';
 export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackage> {
   const projectGraph = new EmberAppProjectGraph(rootDir, {
     basePath: rootDir,
-    deps: true,
-    devDeps: true,
   });
-  projectGraph.discover();
+  projectGraph.discover(true, true);
   const nodes = projectGraph.graph.getSortedNodes();
   return (
     Array.from(nodes)

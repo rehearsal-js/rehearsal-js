@@ -1,8 +1,9 @@
 import { join, relative } from 'node:path';
-import { realpathSync } from 'node:fs';
+import { realpathSync, writeFileSync } from 'node:fs';
 import { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph.js';
 import { type SourceType } from './source-type.js';
+import { printDirectedGraph } from './index.js';
 
 export class SourceFile {
   #packageName: string;
@@ -72,12 +73,14 @@ export type MigrationStrategyOptions = MigrationGraphOptions;
 
 export function getMigrationStrategy(
   srcDir: string,
-  options: MigrationStrategyOptions
+  options: MigrationStrategyOptions & { deps: boolean; devDeps: boolean; ignore: string[] }
 ): MigrationStrategy {
   srcDir = realpathSync(srcDir);
   const { projectGraph, sourceType } = buildMigrationGraph(options.basePath, srcDir, options);
 
   const strategy = new MigrationStrategy(srcDir, sourceType);
+
+  writeFileSync('graph.viz', printDirectedGraph(srcDir, projectGraph));
 
   projectGraph.graph
     .getSortedNodes()
@@ -118,6 +121,9 @@ export function getMigrationStrategy(
   return strategy;
 }
 
-export function getMigrationOrder(srcDir: string, options: MigrationStrategyOptions): SourceFile[] {
+export function getMigrationOrder(
+  srcDir: string,
+  options: MigrationStrategyOptions & { deps: boolean; devDeps: boolean; ignore: string[] }
+): SourceFile[] {
   return getMigrationStrategy(srcDir, options).getMigrationOrder();
 }

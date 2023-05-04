@@ -10,8 +10,6 @@ import type { PackageNode } from '../types.js';
 
 export type ProjectGraphOptions = {
   basePath: string;
-  devDeps?: boolean;
-  deps?: boolean;
   eager?: boolean;
   sourceType?: string;
   entrypoint?: string;
@@ -26,8 +24,6 @@ export class ProjectGraph {
   #eager: boolean;
 
   basePath: string;
-  includeDevDeps?: boolean;
-  includeDeps?: boolean;
 
   protected entrypoint: string | undefined;
   protected discoveredPackages: Map<string, Package> = new Map();
@@ -38,14 +34,11 @@ export class ProjectGraph {
   exclude: Set<string>;
 
   constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint, exclude, include, devDeps, deps } = {
+    const { eager, sourceType, entrypoint, exclude, include } = {
       eager: false,
       sourceType: 'JavaScript Library',
       ...options,
     };
-
-    this.includeDevDeps = devDeps;
-    this.includeDeps = deps;
 
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
 
@@ -72,7 +65,12 @@ export class ProjectGraph {
     return this.#sourceType;
   }
 
-  addPackageToGraph(p: Package, crawl = true): GraphNode<PackageNode> {
+  addPackageToGraph(
+    p: Package,
+    crawlModules = true,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: name: %s, path: %s', p.packageName, p.path);
 
     const isConverted = p.isConvertedToTypescript('source-only');
@@ -96,8 +94,8 @@ export class ProjectGraph {
     }
 
     // Find in-project dependencies/devDependencies
-    if (crawl) {
-      this.discoverEdgesFromDependencies(node);
+    if (crawlModules) {
+      this.discoverEdgesFromDependencies(node, crawlDeps, crawlDevDeps);
     }
 
     return node;
@@ -107,7 +105,11 @@ export class ProjectGraph {
     return this.visited.has(pkg);
   }
 
-  discoverEdgesFromDependencies(source: GraphNode<PackageNode>): void {
+  discoverEdgesFromDependencies(
+    source: GraphNode<PackageNode>,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): void {
     const pkg = source?.content?.pkg;
 
     if (!pkg) {
@@ -119,7 +121,7 @@ export class ProjectGraph {
       return;
     }
 
-    const explicitDependencies = this.findInternalPackageDependencies(pkg);
+    const explicitDependencies = this.findInternalPackageDependencies(pkg, crawlDeps, crawlDevDeps);
 
     this.visited.add(pkg);
 
@@ -130,16 +132,20 @@ export class ProjectGraph {
     );
 
     explicitDependencies.forEach((p: Package) => {
-      const dest = this.addPackageToGraph(p);
+      const dest = this.addPackageToGraph(p, true, crawlDeps, crawlDevDeps);
       this.debug('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
       this.graph.addEdge(source, dest);
     });
   }
 
-  findInternalPackageDependencies(pkg: Package): Array<Package> {
+  findInternalPackageDependencies(
+    pkg: Package,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): Array<Package> {
     let deps: Array<Package> = [];
 
-    if (pkg.dependencies && this.includeDeps) {
+    if (pkg.dependencies && crawlDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies)
         .filter((depName) => this.discoveredPackages.has(depName))
         .map((depName) => this.discoveredPackages.get(depName))
@@ -147,7 +153,7 @@ export class ProjectGraph {
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg.devDependencies && this.includeDevDeps) {
+    if (pkg.devDependencies && crawlDevDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies)
         .filter((depName) => this.discoveredPackages.has(depName))
         .map((depName) => this.discoveredPackages.get(depName))
@@ -170,7 +176,7 @@ export class ProjectGraph {
     // Create an adhoc package to make sure things work, but ignore the rest.
     const p = new Package(this.#rootDir, { excludeWorkspaces: false });
     p.includePatterns = new Set([entrypoint]);
-    this.addPackageToGraph(p, false);
+    this.addPackageToGraph(p, false, true, true);
     return p;
   }
 
@@ -185,7 +191,7 @@ export class ProjectGraph {
    * packages any given node in the graph may reference in code and
    * it's package.json
    */
-  protected discoverWorkspacePackages(): void {
+  protected discoverWorkspacePackages(ignorePackages: string[] = []): void {
     const projectRoot = new Package(this.basePath);
 
     if (projectRoot.workspaceGlobs) {
@@ -214,15 +220,21 @@ export class ProjectGraph {
         .map((pathToPackage) => new Package(pathToPackage));
 
       for (const pkg of entities) {
-        if (!this.discoveredPackages.has(pkg.packageName)) {
-          // We must stick
+        if (
+          !this.discoveredPackages.has(pkg.packageName) &&
+          !ignorePackages.includes(pkg.packageName)
+        ) {
           this.discoveredPackages.set(pkg.packageName, pkg);
         }
       }
     }
   }
 
-  discover(): Array<Package> {
+  discover(
+    crawlDeps: boolean,
+    crawlDevDeps: boolean,
+    ignorePackages: string[] = []
+  ): Array<Package> {
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
     if (this.entrypoint) {
@@ -230,7 +242,7 @@ export class ProjectGraph {
     }
 
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages();
+    this.discoverWorkspacePackages(ignorePackages);
 
     // Setup package and return
 
@@ -243,7 +255,7 @@ export class ProjectGraph {
     this.debug('RootPackage.excludePatterns', rootPackage.excludePatterns);
     this.debug('RootPackage.includePatterns', rootPackage.includePatterns);
 
-    const rootPackageNode = this.addPackageToGraph(rootPackage, true);
+    const rootPackageNode = this.addPackageToGraph(rootPackage, true, crawlDeps, crawlDevDeps);
 
     const globs = rootPackage.workspaceGlobs;
 
@@ -287,7 +299,7 @@ export class ProjectGraph {
     }
 
     entities.forEach((p) => {
-      const destNode = this.addPackageToGraph(p);
+      const destNode = this.addPackageToGraph(p, true, crawlDeps, crawlDevDeps);
       this.graph.addEdge(rootPackageNode, destNode);
     });
 

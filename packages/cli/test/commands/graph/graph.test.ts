@@ -72,6 +72,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -105,6 +106,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -129,6 +131,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -146,6 +149,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     outputStream.on('data', (line: string) => {
@@ -172,6 +176,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -205,6 +210,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
@@ -229,6 +235,7 @@ describe('Task: graphOrderTask', () => {
       basePath: project.baseDir,
       devDeps: true,
       deps: true,
+      ignore: [],
       output: join(project.baseDir, 'graph.json'),
     };
 
@@ -267,6 +274,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     outputStream.on('data', (line: string) => {
@@ -323,6 +331,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
+      ignore: [],
     };
 
     outputStream.on('data', (line: string) => {

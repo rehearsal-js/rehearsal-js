@@ -9,6 +9,9 @@ export async function getSourceFiles(basePath: string, entrypoint: string): Prom
   const strategy = getMigrationStrategy(basePath, {
     basePath,
     entrypoint,
+    deps: true,
+    devDeps: true,
+    ignore: [],
   });
   const sourceFiles: SourceFile[] = strategy.getMigrationOrder();
   const files = sourceFiles.map((f) => f.path);

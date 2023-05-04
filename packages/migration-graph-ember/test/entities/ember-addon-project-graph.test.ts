@@ -25,7 +25,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
     project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -54,7 +54,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
       exclude: ['tests/dummy'],
       basePath: project.baseDir,
     });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -81,7 +81,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
       include: ['^app'],
       basePath: project.baseDir,
     });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 

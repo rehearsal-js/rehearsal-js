@@ -28,7 +28,7 @@ describe('project-graph', () => {
     await project.write();
 
     const projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     expect.assertions(6);
 
@@ -55,7 +55,7 @@ describe('project-graph', () => {
     await project.write();
 
     const projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
     expect(
@@ -77,7 +77,7 @@ describe('project-graph', () => {
     await project.write();
 
     const projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
@@ -100,7 +100,7 @@ describe('project-graph', () => {
     await project.write();
 
     const projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
@@ -123,7 +123,7 @@ describe('project-graph', () => {
     await project.write();
 
     const projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
 
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
     expect(flatten(projectGraph.graph.getSortedNodes())).toStrictEqual([
@@ -162,17 +162,15 @@ describe('project-graph', () => {
     // is created before access via somePackage.moduleGraph();
 
     projectGraph = new ProjectGraph(project.baseDir);
-    projectGraph.discover();
+    projectGraph.discover(true, true);
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
 
     projectGraph = new ProjectGraph(project.baseDir, {
       basePath: project.baseDir,
       eager: true,
-      devDeps: false,
-      deps: false,
     });
-    projectGraph.discover();
+    projectGraph.discover(true, true);
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
   });
@@ -189,10 +187,8 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: 'index.js',
-        devDeps: false,
-        deps: false,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const sorted = projectGraph.graph.getSortedNodes();
 
@@ -210,10 +206,8 @@ describe('project-graph', () => {
       projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: './index.js',
-        devDeps: false,
-        deps: false,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       sortedPackages = Array.from(projectGraph.graph.getSortedNodes())
         .map((node) => node.content.pkg)
@@ -239,10 +233,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         entrypoint: 'packages/foo/index.js',
         basePath: project.baseDir,
-        devDeps: false,
-        deps: false,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const orderedPackages = Array.from(projectGraph.graph.getSortedNodes())
         .map((node) => node.content.pkg)
@@ -269,10 +261,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         include: ['Brocfile.js'],
         basePath: project.baseDir,
-        devDeps: false,
-        deps: false,
       });
-      const [somePackage] = projectGraph.discover();
+      const [somePackage] = projectGraph.discover(true, true);
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
       ).toStrictEqual(['Brocfile.js', 'lib/a.js', 'index.js', 'test/sample.test.js']);
@@ -288,10 +278,8 @@ describe('project-graph', () => {
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
         exclude: ['test'],
-        devDeps: false,
-        deps: false,
       });
-      const [somePackage] = projectGraph.discover();
+      const [somePackage] = projectGraph.discover(true, true);
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
       ).toStrictEqual(['lib/a.js', 'index.js']);
@@ -307,10 +295,8 @@ describe('project-graph', () => {
       await project.write();
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
-        devDeps: true,
-        deps: true,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
       expect(projectGraph.graph.hasNode('@something/foo')).toBe(true);
@@ -356,10 +342,8 @@ describe('project-graph', () => {
       await project.write();
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
-        devDeps: true,
-        deps: true,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const fooNode = projectGraph.graph.getNode('@something/foo');
       const barNode = projectGraph.graph.getNode('@something/bar');
@@ -379,9 +363,8 @@ describe('project-graph', () => {
 
       const projectGraph = new ProjectGraph(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
       });
-      projectGraph.discover();
+      projectGraph.discover(true, true);
 
       const rootNode = projectGraph.graph.getNode('root-package');
       const branchNode = projectGraph.graph.getNode('@some-workspace/branch');

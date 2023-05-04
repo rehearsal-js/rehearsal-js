@@ -43,7 +43,7 @@ moveCommand
   .option('-g, --graph', 'Enable graph resolution of files to move', false)
   .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
   .option('--deps', `Follow packages in 'devDependencies' when moving`)
-  .option('--ignore [srcDirs...]', `A comma deliminated list of packages to ignore`, [])
+  .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
   .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
     new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
@@ -92,6 +92,7 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
           srcDir,
           devDeps: options.devDeps,
           deps: options.deps,
+          ignore: options.ignore,
         }),
         moveTask(srcDir, options),
       ]

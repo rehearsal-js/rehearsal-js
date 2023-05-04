@@ -131,6 +131,9 @@ export function analyzeTask(
         entrypoint: options.entrypoint,
         exclude: ctx.userConfig?.exclude,
         include: ctx.userConfig?.include,
+        deps: true,
+        devDeps: true,
+        ignore: [],
       });
 
       const files: SourceFile[] = strategy.getMigrationOrder();

@@ -22,6 +22,7 @@ export type GraphCommandOptions = {
   devDeps: boolean;
   deps: boolean;
   basePath: string;
+  ignore: string[];
 };
 
 export type GraphCommandContext = {
@@ -38,6 +39,7 @@ export type GraphTaskOptions = {
   output?: string;
   devDeps: boolean;
   deps: boolean;
+  ignore: string[];
 };
 
 export type GraphTasks = {
