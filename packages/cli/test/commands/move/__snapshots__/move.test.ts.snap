@@ -1,5 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Command: move > move dir and sub-dir 1`] = `
+"info:    @rehearsal/move<test-version>
+[STARTED] Validating source path
+[SUCCESS] Validating source path
+[STARTED] Executing git mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] renamed: 
+[DATA] <tmp-path>//index.js -> <tmp-path>//index.ts
+[DATA] <tmp-path>//foo/baz.js -> <tmp-path>//foo/baz.ts
+[DATA] <tmp-path>//foo/biz.js -> <tmp-path>//foo/biz.ts
+[DATA] <tmp-path>//foo/e.gjs -> <tmp-path>//foo/e.gts
+[DATA] <tmp-path>//foo/buz/biz.js -> <tmp-path>//foo/buz/biz.ts
+[SUCCESS] Executing git mv"
+`;
+
 exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
 "info:    @rehearsal/move<test-version>
 [STARTED] Initialize
@@ -16,6 +35,17 @@ exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
 [DATA] <tmp-path>/src/foo/biz.js -> <tmp-path>/src/foo/biz.ts
 [DATA] <tmp-path>/src/foo/e.gjs -> <tmp-path>/src/foo/e.gts
 [DATA] <tmp-path>/src/foo/buz/biz.js -> <tmp-path>/src/foo/buz/biz.ts
+[SUCCESS] Executing git mv"
+`;
+
+exports[`Command: move > move file 1`] = `
+"info:    @rehearsal/move<test-version>
+[STARTED] Validating source path
+[SUCCESS] Validating source path
+[STARTED] Executing git mv
+[DATA] git mv failed, using mv
+[DATA] renamed: 
+[DATA] <tmp-path>/ -> <tmp-path>/src/foo/baz.ts
 [SUCCESS] Executing git mv"
 `;
 
@@ -44,5 +74,22 @@ exports[`Command: move > move package with --childPackage flag 1`] = `
 [DATA] <tmp-path>/module-a/index.js -> <tmp-path>/module-a/index.ts
 [DATA] <tmp-path>/module-a/src/baz.js -> <tmp-path>/module-a/src/baz.ts
 [DATA] <tmp-path>/module-a/src/foo.js -> <tmp-path>/module-a/src/foo.ts
+[SUCCESS] Executing git mv"
+`;
+
+exports[`Command: move > move package with --graph and --deps flag 1`] = `
+"info:    @rehearsal/move<test-version>
+[STARTED] Validating source path
+[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Executing git mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] renamed: 
+[DATA] <tmp-path>//index.js -> <tmp-path>//index.ts
+[DATA] <tmp-path>//src/baz.js -> <tmp-path>//src/baz.ts
+[DATA] <tmp-path>//src/foo.js -> <tmp-path>//src/foo.ts
 [SUCCESS] Executing git mv"
 `;

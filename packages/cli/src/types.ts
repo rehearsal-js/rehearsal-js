@@ -45,6 +45,8 @@ export type GraphTasks = {
 export type MoveCommandOptions = {
   graph: boolean;
   devDeps: boolean;
+  deps: boolean;
+  ignore: string[];
   dryRun: boolean;
   basePath: string;
 };

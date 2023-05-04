@@ -25,6 +25,8 @@ describe('Move: Init-Task', () => {
       dryRun: true,
       graph: false,
       devDeps: false,
+      deps: false,
+      ignore: [''],
     };
     const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
@@ -39,6 +41,8 @@ describe('Move: Init-Task', () => {
       dryRun: true,
       graph: false,
       devDeps: false,
+      deps: false,
+      ignore: [''],
     };
     const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
@@ -58,6 +62,8 @@ describe('Move: Init-Task', () => {
       dryRun: true,
       graph: true,
       devDeps: false,
+      deps: true,
+      ignore: [''],
     };
     const tasks = [initTask(childPackage, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
@@ -77,6 +83,8 @@ describe('Move: Init-Task', () => {
             dryRun: true,
             graph: false,
             devDeps: false,
+            deps: false,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
@@ -95,6 +103,8 @@ describe('Move: Init-Task', () => {
             dryRun: true,
             graph: false,
             devDeps: false,
+            deps: false,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
@@ -113,6 +123,8 @@ describe('Move: Init-Task', () => {
             dryRun: true,
             graph: true,
             devDeps: false,
+            deps: true,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
@@ -131,6 +143,8 @@ describe('Move: Init-Task', () => {
             dryRun: true,
             graph: true,
             devDeps: false,
+            deps: true,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(

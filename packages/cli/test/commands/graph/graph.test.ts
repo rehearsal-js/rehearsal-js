@@ -165,7 +165,7 @@ describe('Task: graphOrderTask', () => {
     const options = {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
-      output: 'graph.json',
+      output: join(project.baseDir, 'graph.json'),
       devDeps: false,
     };
 
@@ -197,7 +197,7 @@ describe('Task: graphOrderTask', () => {
     const options = {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
-      output: 'graph.json',
+      output: join(project.baseDir, 'graph.json'),
       devDeps: false,
     };
 
@@ -222,7 +222,7 @@ describe('Task: graphOrderTask', () => {
       srcDir: project.baseDir + '/lib/some-other-addon',
       basePath: project.baseDir,
       devDeps: true,
-      output: 'graph.json',
+      output: join(project.baseDir, 'graph.json'),
     };
 
     await listrTaskRunner<GraphCommandContext>([graphOrderTask(withDevDeps)]);

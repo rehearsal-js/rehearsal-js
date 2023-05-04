@@ -20,7 +20,7 @@ describe('Command: move', () => {
     project.dispose();
   });
 
-  test('move file with --source flag', async () => {
+  test('move file', async () => {
     const sourceDir = 'src/foo';
 
     const result = await runBin('move', [`${sourceDir}/baz.js`, '--basePath', project.baseDir], {
@@ -41,7 +41,7 @@ describe('Command: move', () => {
     expect(sanitizeAbsPath(projectSourceDir, tsSourceFiles)).toMatchObject(['/baz.ts']);
   });
 
-  test('move dir and sub-dir with --source flag', async () => {
+  test('move dir and sub-dir', async () => {
     const sourceDir = 'src';
 
     const result = await runBin('move', [`${sourceDir}`, '--basePath', project.baseDir], {
@@ -69,12 +69,12 @@ describe('Command: move', () => {
     ]);
   });
 
-  test('move package with --childPackage flag', async () => {
+  test('move package with --graph and --deps flag', async () => {
     const childPackage = 'module-a';
 
     const result = await runBin(
       'move',
-      [`${childPackage}`, '--graph', '--basePath', project.baseDir],
+      [`${childPackage}`, '--graph', '--deps', '--basePath', project.baseDir],
       {
         cwd: project.baseDir,
       }
@@ -99,28 +99,38 @@ describe('Command: move', () => {
     ]);
   });
 
-  test('expect failure when --childPackage AND --source are specified', async () => {
+  test('expect failure when --deps is passed without --graph', async () => {
     const childPackage = 'module-a';
-    const source = 'src';
 
+    await expect(
+      async () =>
+        await runBin('move', [`${childPackage}`, '--deps', '--basePath', project.baseDir], {
+          cwd: project.baseDir,
+        })
+    ).rejects.toThrowError(`'--deps' can only be passed when you pass --graph`);
+  });
+
+  test('expect failure when --devDeps is passed without --graph', async () => {
+    const childPackage = 'module-a';
+    await expect(
+      async () =>
+        await runBin('move', [`${childPackage}`, '--devDeps', '--basePath', project.baseDir], {
+          cwd: project.baseDir,
+        })
+    ).rejects.toThrowError(`'--devDeps' can only be passed when you pass --graph`);
+  });
+
+  test('expect failure when --ignore is passed without --graph', async () => {
+    const childPackage = 'module-a';
     await expect(
       async () =>
         await runBin(
           'move',
-          ['--childPackage', `${childPackage}`, '--basePath', project.baseDir, '--source', source],
+          [`${childPackage}`, '--ignore', 'foo', '--basePath', project.baseDir],
           {
             cwd: project.baseDir,
           }
         )
-    ).rejects.toThrowError(`--childPackage AND --source are specified, please specify only one`);
-  });
-
-  test('expect failure when neither --childPackage NOR --source are specified', async () => {
-    await expect(
-      async () =>
-        await runBin('move', ['--basePath', project.baseDir], {
-          cwd: project.baseDir,
-        })
-    ).rejects.toThrowError(`you must specify a flag, either --childPackage OR --source`);
+    ).rejects.toThrowError(`'--ignore' can only be passed when you pass --graph`);
   });
 });

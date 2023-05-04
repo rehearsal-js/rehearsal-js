@@ -11,7 +11,9 @@ graphCommand
     `Produces the migration order of 'dependencies' and file order. By default ignores 'devDependencies'.`
   )
   .argument('[srcDir]', 'Path to directory contains a package.json', process.cwd())
-  .option('-d, --devDeps', `Follow packages in 'devDependencies'`, false)
+  .option('--devDeps', `Follow packages in 'devDependencies'`)
+  .option('--deps', `Follow packages in 'dependencies'`)
+  .option('--ignore', `A comma deliminated list of packages to ignore`, '')
   .addOption(
     new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

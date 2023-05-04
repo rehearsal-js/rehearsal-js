@@ -41,7 +41,9 @@ moveCommand
   .description('git mv conversion of JS files -> TS files')
   .argument('[srcDir]', 'the path to a package or file that will be moved', '')
   .option('-g, --graph', 'Enable graph resolution of files to move', false)
-  .option('-d, --devDeps', `Follow packages in 'devDependencies' when moving `, false)
+  .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
+  .option('--deps', `Follow packages in 'devDependencies' when moving`)
+  .option('--ignore [srcDirs...]', `A comma deliminated list of packages to ignore`, [])
   .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
     new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
@@ -55,6 +57,24 @@ moveCommand
 
 async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
+
+  if (options.graph && !options.deps && !options.devDeps) {
+    console.warn(
+      `Passing --graph without --deps, --devDeps, or both results in only analyzing the local files in the package.`
+    );
+  }
+
+  if (!options.graph && options.devDeps) {
+    throw new Error(`'--devDeps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.deps) {
+    throw new Error(`'--deps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.ignore.length > 0) {
+    throw new Error(`'--ignore' can only be passed when you pass --graph`);
+  }
 
   if (!srcDir) {
     throw new Error(`@rehearsal/move: you must specify a package or path to move`);
