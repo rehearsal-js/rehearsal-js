@@ -1,5 +1,6 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import { getPreReqs } from '../../../src/prereqs.js';
@@ -30,7 +31,11 @@ function projectInit(project: Project, type: ProjectType): void {
   });
 }
 
-describe('Command: fix base_js_app fixture', () => {
+function expectFile(filePath: string): Vi.Assertion<string> {
+  return expect(readFileSync(filePath, 'utf-8'));
+}
+
+describe('Command: fix base_ts_app fixture', () => {
   let project: Project;
 
   beforeEach(async () => {
@@ -44,6 +49,7 @@ describe('Command: fix base_js_app fixture', () => {
     // init project with tsconfig, eslint, and deps
     projectInit(project, 'base');
     project.linkDevDependency('typescript', { baseDir: process.cwd() });
+    project.linkDevDependency('eslint', { baseDir: process.cwd() });
 
     await project.write();
   });
@@ -52,7 +58,7 @@ describe('Command: fix base_js_app fixture', () => {
     project.dispose();
   });
 
-  test.only('fix file with --source flag', async () => {
+  test('fix file with --source flag', async () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
 
     const result = await runBin(
@@ -64,6 +70,24 @@ describe('Command: fix base_js_app fixture', () => {
     );
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
-    expect(project.files[sourceFilepath]).toMatchSnapshot();
+    expectFile(resolve(project.baseDir, sourceFilepath)).toMatchSnapshot();
+  });
+
+  test('fix directory with --source flag', async () => {
+    const sourceDir = 'src';
+
+    const result = await runBin(
+      'fix',
+      ['--source', `${resolve(project.baseDir, sourceDir)}`, '--basePath', project.baseDir],
+      {
+        cwd: project.baseDir,
+      }
+    );
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+
+    for (const filepath of Object.keys(project.files[sourceDir] as string)) {
+      expectFile(resolve(project.baseDir, sourceDir, filepath)).toMatchSnapshot();
+    }
   });
 });

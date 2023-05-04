@@ -50,7 +50,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): 
       // this just cares about ts files which are already in the proper migration order
       if (ctx.sourceFilesAbs) {
         const input = {
-          basePath: ctx.childPackageAbs,
+          basePath,
           sourceFilesAbs: ctx.sourceFilesAbs,
           reporter,
           task,
