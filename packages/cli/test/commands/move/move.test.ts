@@ -77,7 +77,7 @@ describe('Command: move', () => {
     ]);
   });
 
-  test.only('move package with --childPackage flag', async () => {
+  test('move package with --childPackage flag', async () => {
     const childPackage = 'module-a';
 
     const result = await runBin(
