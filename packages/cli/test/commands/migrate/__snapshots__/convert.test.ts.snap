@@ -169,6 +169,7 @@ exports[`Task: convert > generate reports 1`] = `
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyze project
+
 [DATA] Running migration on basic
 [SUCCESS] Analyze project
 [STARTED] Convert JS files to TS
@@ -225,6 +226,7 @@ exports[`Task: convert > migrate from default all files .js in root 1`] = `
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyze project
+
 [DATA] Running migration on basic
 [SUCCESS] Analyze project
 [STARTED] Convert JS files to TS
@@ -281,6 +283,7 @@ exports[`Task: convert > migrate from specific entrypoint 1`] = `
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyze project
+
 [DATA] Running migration on basic
 [SUCCESS] Analyze project
 [STARTED] Convert JS files to TS

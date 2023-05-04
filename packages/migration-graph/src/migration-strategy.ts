@@ -1,9 +1,8 @@
 import { join, relative } from 'node:path';
-import { realpathSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import { GraphNode, ModuleNode, PackageNode } from '@rehearsal/migration-graph-shared';
 import { buildMigrationGraph, type MigrationGraphOptions } from './migration-graph.js';
 import { type SourceType } from './source-type.js';
-import { printDirectedGraph } from './index.js';
 
 export class SourceFile {
   #packageName: string;
@@ -79,8 +78,6 @@ export function getMigrationStrategy(
   const { projectGraph, sourceType } = buildMigrationGraph(options.basePath, srcDir, options);
 
   const strategy = new MigrationStrategy(srcDir, sourceType);
-
-  writeFileSync('graph.viz', printDirectedGraph(srcDir, projectGraph));
 
   projectGraph.graph
     .getSortedNodes()

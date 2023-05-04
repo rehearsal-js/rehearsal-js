@@ -46,6 +46,7 @@ exports[`Task: regen > update ts and lint errors based on previous conversion 1`
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyze project
+
 [DATA] Running migration on basic_regen
 [SUCCESS] Analyze project
 [STARTED] Convert JS files to TS

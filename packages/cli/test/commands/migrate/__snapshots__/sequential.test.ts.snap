@@ -14,6 +14,7 @@ exports[`Task: sequential > sequential run regen on the existing report, and run
 [DATA] Create .eslintrc.js, extending rehearsal default eslint-related config
 [SUCCESS] Create eslint config
 [STARTED] Analyze project
+
 [DATA] Running migration on sequential
 [SUCCESS] Analyze project
 [STARTED] Regenerating past migrate report(s), generating current migrate report and merging all reports

@@ -310,7 +310,6 @@ export class EmberAppProjectGraph extends ProjectGraph {
           !this.discoveredPackages.has(pkg.packageName) &&
           !ignoredPackages.includes(pkg.packageName)
         ) {
-          console.log(pkg.packageName);
           this.discoveredPackages.set(pkg.packageName, pkg);
         }
       }
