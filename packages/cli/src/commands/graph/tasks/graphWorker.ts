@@ -1,5 +1,5 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads';
-import { extname, join, relative } from 'node:path';
+import { extname, join, relative, sep } from 'node:path';
 
 // eslint-disable-next-line no-restricted-imports
 import { getMigrationOrder } from '@rehearsal/migration-graph';
@@ -42,7 +42,12 @@ export function intoGraphOutput(
   for (const file of sortedFiles) {
     if (currentPackage !== file.packageName) {
       currentPackage = file.packageName;
-      packages.push({ name: relative(basePath, file.packageName) || basePath, files: [] });
+      const fallBackParts = file.packageName.split(sep);
+      packages.push({
+        name:
+          relative(basePath, file.packageName) || fallBackParts[fallBackParts.length - 1] || '.',
+        files: [],
+      });
     }
 
     const ext = extname(file.relativePath);

@@ -55,7 +55,7 @@ moveCommand
     await move(src, options);
   });
 
-async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
+async function move(src: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
   if (options.graph && !options.deps && !options.devDeps) {
@@ -76,7 +76,7 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
     throw new Error(`'--ignore' can only be passed when you pass --graph`);
   }
 
-  if (!srcDir) {
+  if (!src) {
     throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
 
@@ -86,16 +86,16 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
 
   const tasks = options.graph
     ? [
-        initTask(srcDir, options),
-        graphOrderTask(srcDir, {
+        initTask(src, options),
+        graphOrderTask(src, {
           rootPath: options.rootPath,
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,
         }),
-        moveTask(srcDir, options),
+        moveTask(src, options),
       ]
-    : [initTask(srcDir, options), moveTask(srcDir, options)];
+    : [initTask(src, options), moveTask(src, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);
