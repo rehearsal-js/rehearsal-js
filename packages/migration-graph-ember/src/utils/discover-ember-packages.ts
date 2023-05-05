@@ -3,8 +3,16 @@ import { EmberAppProjectGraph } from '../entities/ember-app-project-graph.js';
 import type { EmberProjectPackage } from '../types.js';
 
 export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackage> {
-  const projectGraph = new EmberAppProjectGraph(rootDir);
-  projectGraph.discover();
+  const projectGraph = new EmberAppProjectGraph(rootDir, {
+    basePath: rootDir,
+  });
+  projectGraph.discover({
+    crawlDeps: true,
+    crawlDevDeps: true,
+    ignoredPackages: [],
+    include: [],
+    exclude: [],
+  });
   const nodes = projectGraph.graph.getSortedNodes();
   return (
     Array.from(nodes)

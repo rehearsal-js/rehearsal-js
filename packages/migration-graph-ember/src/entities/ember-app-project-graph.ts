@@ -3,11 +3,13 @@ import fastGlob from 'fast-glob';
 import { findUpSync } from 'find-up';
 import debug, { type Debugger } from 'debug';
 import {
+  DiscoverOptions,
   GraphNode,
   Package,
   PackageNode,
   ProjectGraph,
   ProjectGraphOptions,
+  isWorkspace,
   readPackageJson,
 } from '@rehearsal/migration-graph-shared';
 import { isAddon, isApp } from '../utils/ember.js';
@@ -23,19 +25,22 @@ type EmberPackageLookup = {
   byPath: Record<string, EmberProjectPackage>;
 };
 
-export type EmberAppProjectGraphOptions = ProjectGraphOptions;
-
 export class EmberAppProjectGraph extends ProjectGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
-  protected override discoveredPackages: Record<string, EmberProjectPackage> = {};
+  protected override discoveredPackages: Map<string, EmberProjectPackage> = new Map();
   private lookup?: EmberPackageLookup;
 
-  constructor(rootDir: string, options?: EmberAppProjectGraphOptions) {
-    super(rootDir, { sourceType: 'Ember Application', ...options });
-    this.debug(`rootDir: %s, options: %o`, rootDir, options);
+  constructor(srcDir: string, options: ProjectGraphOptions) {
+    super(srcDir, { ...options });
+    this.debug(`srcDir: %s, options: %o`, srcDir, options);
   }
 
-  override addPackageToGraph(p: EmberProjectPackage, crawl = true): GraphNode<PackageNode> {
+  override addPackageToGraph(
+    p: EmberProjectPackage,
+    crawlModule = true,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: "%s"', p.packageName);
 
     if (p instanceof EmberAddonPackage) {
@@ -52,7 +57,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
         }
       }
     }
-    const node = super.addPackageToGraph(p, crawl);
+    const node = super.addPackageToGraph(p, crawlModule, crawlDeps, crawlDevDeps);
 
     return node;
   }
@@ -63,20 +68,24 @@ export class EmberAppProjectGraph extends ProjectGraph {
    * @param pkg we want
    * @returns an array of found packages
    */
-  override findInternalPackageDependencies(pkg: Package): Array<Package> {
+  override findInternalPackageDependencies(
+    pkg: Package,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): Array<Package> {
     let deps: Array<Package> = [];
 
     const { byAddonName: mappingsByAddonName, byPath: mappingsByLocation } =
       this.getDiscoveredPackages();
 
-    if (pkg.dependencies) {
+    if (pkg.dependencies && crawlDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg.devDependencies) {
+    if (pkg.devDependencies && crawlDevDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies).map(
         (depName) => mappingsByAddonName[depName] as Package
       );
@@ -100,7 +109,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
       }
     }
 
-    deps = deps.concat(super.findInternalPackageDependencies(pkg));
+    deps = deps.concat(super.findInternalPackageDependencies(pkg, crawlDeps, crawlDevDeps));
 
     return deps.filter((dep) => !!dep && !EXCLUDED_PACKAGES.includes(dep.packageName));
   }
@@ -154,7 +163,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const p = this.entityFactory(packageDir);
     p.includePatterns = new Set([relativeEntrypoint]);
-    this.addPackageToGraph(p, false);
+    this.addPackageToGraph(p, false, true, true);
     return p;
   }
 
@@ -167,7 +176,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     if (isAddon(packageJson)) {
-      return new EmberAddonPackage(pathToPackage);
+      return new EmberAddonPackage(pathToPackage, {});
     } else if (isApp(packageJson)) {
       return new EmberAppPackage(pathToPackage);
     } else {
@@ -177,7 +186,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
   private getDiscoveredPackages(): EmberPackageLookup {
     if (!this.lookup) {
-      const foundPackages = Object.values(this.discoveredPackages);
+      const foundPackages = this.discoveredPackages.values();
 
       this.lookup = {
         byAddonName: {},
@@ -267,7 +276,47 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return { root, found };
   }
 
-  override discover(): Array<EmberProjectPackage> {
+  protected override discoverWorkspacePackages(ignoredPackages: string[] = []): void {
+    const projectRoot = new Package(this.basePath);
+
+    if (projectRoot.workspaceGlobs) {
+      let pathToPackageJsonList = fastGlob.sync(
+        [
+          ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
+          `!${this.basePath}/**/build/**`,
+          `!${this.basePath}/**/dist/**`,
+          `!${this.basePath}/**/node_modules/**`,
+          `!${this.basePath}/**/tmp/**`,
+        ],
+        {
+          absolute: true,
+        }
+      );
+
+      this.debug('found packages: %s', pathToPackageJsonList);
+
+      pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+      const entities = pathToPackageJsonList
+        .filter(
+          (pathToPackage) =>
+            !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
+        ) // Ensures any package found is in the workspace.
+        .map((pathToPackage) => this.entityFactory(pathToPackage));
+
+      for (const pkg of entities) {
+        if (
+          !this.discoveredPackages.has(pkg.packageName) &&
+          !ignoredPackages.includes(pkg.packageName)
+        ) {
+          this.discoveredPackages.set(pkg.packageName, pkg);
+        }
+      }
+    }
+  }
+
+  override discover(options: DiscoverOptions): Array<EmberProjectPackage> {
+    const { crawlDeps, crawlDevDeps, include, exclude, ignoredPackages } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
 
@@ -275,25 +324,30 @@ export class EmberAppProjectGraph extends ProjectGraph {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
+    // *IMPORTANT* this must be called to populate `discoveredPackages`
+    this.discoverWorkspacePackages(ignoredPackages);
+
     const { root, found } = this.findProjectPackages();
 
-    root.addExcludePattern(...this.exclude);
-    root.addIncludePattern(...this.include);
+    root.addExcludePattern(...exclude);
+    root.addIncludePattern(...include);
 
     this.debug('Root Package is %s', root.constructor.name);
     this.debug('%s.excludePatterns', root.constructor.name, root.excludePatterns);
     this.debug('%s.includePatterns', root.constructor.name, root.includePatterns);
 
-    const rootNode = this.addPackageToGraph(root);
+    const rootNode = this.addPackageToGraph(root, true, crawlDeps, crawlDevDeps);
 
     // Get rootPackage and add it to the graph.
 
     for (const pkg of found) {
-      this.discoveredPackages[pkg.packageName] = pkg;
+      if (!this.discoveredPackages.has(pkg.packageName)) {
+        this.discoveredPackages.set(pkg.packageName, pkg);
+      }
     }
 
     for (const pkg of found) {
-      const node = this.addPackageToGraph(pkg);
+      const node = this.addPackageToGraph(pkg, true, crawlDeps, crawlDevDeps);
       this.graph.addEdge(rootNode, node);
     }
 

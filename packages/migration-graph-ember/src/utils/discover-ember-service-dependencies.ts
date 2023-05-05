@@ -77,7 +77,6 @@ export function discoverServiceDependencies(
   // `inject` 3.28
   // `service` 4+
 
-
   const foundImportDeclarationUsingInject = findImportDeclarationWithExportedName(
     maybeImportDeclarations,
     'inject'
@@ -97,7 +96,10 @@ export function discoverServiceDependencies(
 
   // In the case of re-assignment from inject as service, we walk the specifiers
   const maybeInjectSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'inject');
-  const maybeServiceSpecifier = findSpecifierByExportedName(importDeclaration.specifiers, 'service');
+  const maybeServiceSpecifier = findSpecifierByExportedName(
+    importDeclaration.specifiers,
+    'service'
+  );
 
   const maybeSpecifier = maybeInjectSpecifier || maybeServiceSpecifier;
 

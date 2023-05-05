@@ -23,61 +23,79 @@ const winstonLogger = createLogger({
 /*
   @rehearsal/move workflow
 
-  rehearsal move --source <path to source file | directory>
+  rehearsal move <path to source file | directory>
     the explicit source file OR explicit directory with implicit child directories moved.
     migration strategy is ignored
 
-  rehearsal move --package <path to child package>
+  rehearsal move <path to child package> --graph
     specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package.
     migration strategy is leveraged
+
+  rehearsal move <path to child package> --graph --devDeps
+    same as above but devDependencies are considered in the graph
 */
 
 moveCommand
   .name('move')
   .alias('mv')
   .description('git mv conversion of JS files -> TS files')
-  .option(
-    '-s, --source <path to source file | directory>',
-    `the explicit source file OR explicit directory with implicit child directories moved. migration strategy is ignored`,
-    ''
-  )
-  .option(
-    '-p, --childPackage <path to child package>',
-    `specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package`,
-    ''
-  )
-  .option('-d, --dryRun', `Do nothing; only show what would happen`, false)
+  .argument('[src]', 'the path to a package or file that will be moved', '')
+  .option('-g, --graph', 'Enable graph resolution of files to move', false)
+  .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
+  .option('--deps', `Follow packages in 'devDependencies' when moving`)
+  .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
+  .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
-    new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+    new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (options: MoveCommandOptions) => {
-    await move(options);
+  .action(async (src: string, options: MoveCommandOptions) => {
+    await move(src, options);
   });
 
-async function move(options: MoveCommandOptions): Promise<void> {
+async function move(src: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
-  const { childPackage, source } = options;
-
-  // if both childPackage and source are specified, throw an error
-  if (childPackage && source) {
-    throw new Error(
-      `@rehearsal/move: --childPackage AND --source are specified, please specify only one`
+  if (options.graph && !options.deps && !options.devDeps) {
+    console.warn(
+      `Passing --graph without --deps, --devDeps, or both results in only analyzing the local files in the package.`
     );
-  } else if (!childPackage && !source) {
-    throw new Error(`@rehearsal/move: you must specify a flag, either --childPackage OR --source`);
+  }
+
+  if (!options.graph && options.devDeps) {
+    throw new Error(`'--devDeps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.deps) {
+    throw new Error(`'--deps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.ignore.length > 0) {
+    throw new Error(`'--ignore' can only be passed when you pass --graph`);
+  }
+
+  if (!src) {
+    throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
 
   // grab the child move tasks
   const { initTask, moveTask } = await loadMoveTasks();
   const { graphOrderTask } = await loadGraphTasks();
 
-  const tasks = options.source
-    ? [initTask(options), moveTask(options)]
-    : [initTask(options), graphOrderTask(options), moveTask(options)];
+  const tasks = options.graph
+    ? [
+        initTask(src, options),
+        graphOrderTask(src, {
+          rootPath: options.rootPath,
+          devDeps: options.devDeps,
+          deps: options.deps,
+          ignore: options.ignore,
+        }),
+        moveTask(options.rootPath, options),
+      ]
+    : [initTask(src, options), moveTask(options.rootPath, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

@@ -48,13 +48,14 @@ describe('Unit | utils | ember', () => {
         FIXTURE_NAMES.SIMPLE_ADDON
       );
       expect(
-        new EmberAddonPackage(getPathToPackage(FIXTURE_NAMES.ADDON_WITH_MODULE_NAME)).packageName,
+        new EmberAddonPackage(getPathToPackage(FIXTURE_NAMES.ADDON_WITH_MODULE_NAME), {})
+          .packageName,
         'fetch the name property even if module name is defined'
       ).toBe(FIXTURE_NAMES.ADDON_WITH_MODULE_NAME);
     });
 
     test('packageJson', () => {
-      const somePackage = new EmberAddonPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON))
+      const somePackage = new EmberAddonPackage(getPathToPackage(FIXTURE_NAMES.SIMPLE_ADDON), {})
         .packageJson;
 
       // returns an object

@@ -8,12 +8,20 @@ import type { PackageNode } from '../types.js';
 
 // TODO this package level dependency data should be surfaced in a report
 
+export type DiscoverOptions = {
+  ignoredPackages: string[];
+  crawlDeps: boolean;
+  crawlDevDeps: boolean;
+  include: string[];
+  exclude: string[];
+};
+
 export type ProjectGraphOptions = {
+  basePath: string;
   eager?: boolean;
-  sourceType?: string;
+
+  // Only used by Project classes
   entrypoint?: string;
-  include?: Array<string>;
-  exclude?: Array<string>;
 };
 
 export class ProjectGraph {
@@ -22,31 +30,30 @@ export class ProjectGraph {
   #sourceType: string;
   #eager: boolean;
 
+  basePath: string;
+
   protected entrypoint: string | undefined;
-  protected discoveredPackages: Record<string, Package>;
+  protected discoveredPackages: Map<string, Package> = new Map();
   protected visited: Set<Package>;
 
   debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
-  include: Set<string>;
-  exclude: Set<string>;
 
-  constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint, exclude, include } = {
+  constructor(srcDir: string, options: ProjectGraphOptions) {
+    const { eager, sourceType, entrypoint } = {
       eager: false,
       sourceType: 'JavaScript Library',
       ...options,
     };
-    this.debug(`rootDir: %s, options: %o`, rootDir, options);
 
-    this.include = new Set(include);
-    this.exclude = new Set(exclude);
-    this.#rootDir = rootDir;
+    this.debug(`srcDir: %s, options: %o`, srcDir, options);
+
+    this.#rootDir = srcDir;
     this.entrypoint = entrypoint;
     this.#eager = eager;
+    this.basePath = options?.basePath || process.cwd();
     this.#sourceType = sourceType;
     this.#graph = new Graph<PackageNode>();
     this.visited = new Set<Package>();
-    this.discoveredPackages = {};
   }
 
   get rootDir(): string {
@@ -61,7 +68,12 @@ export class ProjectGraph {
     return this.#sourceType;
   }
 
-  addPackageToGraph(p: Package, crawl = true): GraphNode<PackageNode> {
+  addPackageToGraph(
+    p: Package,
+    crawlModules = true,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): GraphNode<PackageNode> {
     this.debug('addPackageToGraph: name: %s, path: %s', p.packageName, p.path);
 
     const isConverted = p.isConvertedToTypescript('source-only');
@@ -77,7 +89,7 @@ export class ProjectGraph {
       : this.#graph.addNode(contents);
 
     if (this.#eager) {
-      p.getModuleGraph({ parent: node, project: this });
+      p.getModuleGraph({ parent: node, project: this, basePath: this.basePath });
     }
 
     if (isConverted) {
@@ -85,8 +97,8 @@ export class ProjectGraph {
     }
 
     // Find in-project dependencies/devDependencies
-    if (crawl) {
-      this.discoverEdgesFromDependencies(node);
+    if (crawlModules) {
+      this.discoverEdgesFromDependencies(node, crawlDeps, crawlDevDeps);
     }
 
     return node;
@@ -96,7 +108,11 @@ export class ProjectGraph {
     return this.visited.has(pkg);
   }
 
-  discoverEdgesFromDependencies(source: GraphNode<PackageNode>): void {
+  discoverEdgesFromDependencies(
+    source: GraphNode<PackageNode>,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): void {
     const pkg = source?.content?.pkg;
 
     if (!pkg) {
@@ -108,7 +124,7 @@ export class ProjectGraph {
       return;
     }
 
-    const explicitDependencies = this.findInternalPackageDependencies(pkg);
+    const explicitDependencies = this.findInternalPackageDependencies(pkg, crawlDeps, crawlDevDeps);
 
     this.visited.add(pkg);
 
@@ -119,26 +135,32 @@ export class ProjectGraph {
     );
 
     explicitDependencies.forEach((p: Package) => {
-      const dest = this.addPackageToGraph(p);
+      const dest = this.addPackageToGraph(p, true, crawlDeps, crawlDevDeps);
       this.debug('Adding edge from "%s" to "%s"', source.content.key, dest.content.key);
       this.graph.addEdge(source, dest);
     });
   }
 
-  findInternalPackageDependencies(pkg: Package): Array<Package> {
+  findInternalPackageDependencies(
+    pkg: Package,
+    crawlDeps: boolean,
+    crawlDevDeps: boolean
+  ): Array<Package> {
     let deps: Array<Package> = [];
 
-    if (pkg.dependencies) {
+    if (pkg.dependencies && crawlDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.dependencies)
-        .filter((depName) => !!this.discoveredPackages[depName])
-        .map((depName) => this.discoveredPackages[depName]);
+        .filter((depName) => this.discoveredPackages.has(depName))
+        .map((depName) => this.discoveredPackages.get(depName))
+        .filter(onlyPackages);
       deps = deps.concat(...somePackages);
     }
 
-    if (pkg.devDependencies) {
+    if (pkg.devDependencies && crawlDevDeps) {
       const somePackages: Array<Package> = Object.keys(pkg.devDependencies)
-        .filter((depName) => !!this.discoveredPackages[depName])
-        .map((depName) => this.discoveredPackages[depName]);
+        .filter((depName) => this.discoveredPackages.has(depName))
+        .map((depName) => this.discoveredPackages.get(depName))
+        .filter(onlyPackages);
       deps = deps.concat(...somePackages);
     }
 
@@ -157,7 +179,7 @@ export class ProjectGraph {
     // Create an adhoc package to make sure things work, but ignore the rest.
     const p = new Package(this.#rootDir, { excludeWorkspaces: false });
     p.includePatterns = new Set([entrypoint]);
-    this.addPackageToGraph(p, false);
+    this.addPackageToGraph(p, false, true, true);
     return p;
   }
 
@@ -165,25 +187,75 @@ export class ProjectGraph {
     return resolve(this.rootDir) === resolve(somePackage.path);
   }
 
-  discover(): Array<Package> {
+  /**
+   * To allow entering the package graph at any node in the graph
+   * we must first look for and build any packages that may be part
+   * of a workspace. In doing so we generate the observable set of
+   * packages any given node in the graph may reference in code and
+   * it's package.json
+   */
+  protected discoverWorkspacePackages(ignorePackages: string[] = []): void {
+    const projectRoot = new Package(this.basePath);
+
+    if (projectRoot.workspaceGlobs) {
+      let pathToPackageJsonList = fastGlob.sync(
+        [
+          ...projectRoot.workspaceGlobs.map((glob) => `${glob}/package.json`),
+          `!${this.basePath}/**/build/**`,
+          `!${this.basePath}/**/dist/**`,
+          `!${this.basePath}/**/node_modules/**`,
+          `!${this.basePath}/**/tmp/**`,
+        ],
+        {
+          absolute: true,
+        }
+      );
+
+      this.debug('found packages: %s', pathToPackageJsonList);
+
+      pathToPackageJsonList = pathToPackageJsonList.map((pathToPackage) => dirname(pathToPackage));
+
+      const entities = pathToPackageJsonList
+        .filter(
+          (pathToPackage) =>
+            !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
+        ) // Ensures any package found is in the workspace.
+        .map((pathToPackage) => new Package(pathToPackage));
+
+      for (const pkg of entities) {
+        if (
+          !this.discoveredPackages.has(pkg.packageName) &&
+          !ignorePackages.includes(pkg.packageName)
+        ) {
+          this.discoveredPackages.set(pkg.packageName, pkg);
+        }
+      }
+    }
+  }
+
+  discover(options: DiscoverOptions): Array<Package> {
+    const { ignoredPackages, crawlDeps, crawlDevDeps, include, exclude } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
     if (this.entrypoint) {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
+    // *IMPORTANT* this must be called to populate `discoveredPackages`
+    this.discoverWorkspacePackages(ignoredPackages);
+
     // Setup package and return
 
     // Add root package to graph
     const rootPackage = new Package(this.rootDir);
 
-    rootPackage.addExcludePattern(...this.exclude);
-    rootPackage.addIncludePattern(...this.include);
+    rootPackage.addExcludePattern(...exclude);
+    rootPackage.addIncludePattern(...include);
 
     this.debug('RootPackage.excludePatterns', rootPackage.excludePatterns);
     this.debug('RootPackage.includePatterns', rootPackage.includePatterns);
 
-    const rootPackageNode = this.addPackageToGraph(rootPackage, false);
+    const rootPackageNode = this.addPackageToGraph(rootPackage, true, crawlDeps, crawlDevDeps);
 
     const globs = rootPackage.workspaceGlobs;
 
@@ -220,16 +292,21 @@ export class ProjectGraph {
       ) // Ensures any package found is in the workspace.
       .map((pathToPackage) => new Package(pathToPackage));
 
-    this.discoveredPackages = entities.reduce((acc: Record<string, Package>, pkg: Package) => {
-      acc[pkg.packageName] = pkg;
-      return acc;
-    }, {});
+    for (const pkg of entities) {
+      if (!this.discoveredPackages.has(pkg.packageName)) {
+        this.discoveredPackages.set(pkg.packageName, pkg);
+      }
+    }
 
     entities.forEach((p) => {
-      const destNode = this.addPackageToGraph(p);
+      const destNode = this.addPackageToGraph(p, true, crawlDeps, crawlDevDeps);
       this.graph.addEdge(rootPackageNode, destNode);
     });
 
     return entities;
   }
+}
+
+function onlyPackages(entry: Package | undefined): entry is Package {
+  return entry !== undefined;
 }

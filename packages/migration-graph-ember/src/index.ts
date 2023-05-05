@@ -20,11 +20,5 @@ export {
   EmberAddonPackageGraphOptions,
 } from './entities/ember-addon-package-graph.js';
 
-export {
-  EmberAppProjectGraph,
-  EmberAppProjectGraphOptions,
-} from './entities/ember-app-project-graph.js';
-export {
-  EmberAddonProjectGraph,
-  EmberAddonProjectGraphOptions,
-} from './entities/ember-addon-project-graph.js';
+export { EmberAppProjectGraph } from './entities/ember-app-project-graph.js';
+export { EmberAddonProjectGraph } from './entities/ember-addon-project-graph.js';

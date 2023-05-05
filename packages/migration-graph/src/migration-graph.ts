@@ -1,10 +1,12 @@
 import { resolve } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
-import { ProjectGraph, ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
 import {
-  EmberAddonPackageGraphOptions,
+  DiscoverOptions,
+  ProjectGraph,
+  ProjectGraphOptions,
+} from '@rehearsal/migration-graph-shared';
+import {
   EmberAddonProjectGraph,
-  EmberAppProjectGraphOptions,
   EmberAppProjectGraph,
   isEmberAddon,
   isEmberApp,
@@ -12,28 +14,21 @@ import {
 import { SourceType } from './source-type.js';
 import type { PackageJson } from 'type-fest';
 
-export type MigrationGraphOptions =
-  | ProjectGraphOptions
-  | EmberAppProjectGraphOptions
-  | EmberAddonPackageGraphOptions;
+export type MigrationGraphOptions = ProjectGraphOptions & DiscoverOptions;
 
 export function buildMigrationGraph(
-  rootDir: string,
-  options?: MigrationGraphOptions
+  basePath = process.cwd(),
+  srcDir: string,
+  options: MigrationGraphOptions
 ): { projectGraph: ProjectGraph; sourceType: SourceType } {
-  // Determine what kind of MigrationGraph should be created.
-  // Ember App
-  // Ember Addon
-  // Library
-
-  if (!existsSync(resolve(rootDir, 'package.json'))) {
+  if (!existsSync(resolve(srcDir, 'package.json'))) {
     throw new Error(
-      `A 'package.json' is to be expected in the root of '${rootDir}', but one was not found.`
+      `A 'package.json' is to be expected in the root of '${srcDir}', but one was not found.`
     );
   }
 
   const packageJson = JSON.parse(
-    readFileSync(resolve(rootDir, 'package.json'), 'utf-8')
+    readFileSync(resolve(srcDir, 'package.json'), 'utf-8')
   ) as PackageJson;
 
   let projectGraph: ProjectGraph | EmberAppProjectGraph | EmberAddonProjectGraph;
@@ -41,16 +36,24 @@ export function buildMigrationGraph(
 
   if (isEmberAddon(packageJson)) {
     sourceType = SourceType.EmberAddon;
-    projectGraph = new EmberAddonProjectGraph(rootDir, { sourceType, ...options });
+    projectGraph = new EmberAddonProjectGraph(srcDir, { ...options, basePath });
   } else if (isEmberApp(packageJson)) {
     sourceType = SourceType.EmberApp;
-    projectGraph = new EmberAppProjectGraph(rootDir, { sourceType, ...options });
+    projectGraph = new EmberAppProjectGraph(srcDir, { ...options, basePath });
   } else {
     sourceType = SourceType.Library;
-    projectGraph = new ProjectGraph(rootDir, { sourceType, ...options });
+    projectGraph = new ProjectGraph(srcDir, { ...options, basePath });
   }
 
-  projectGraph.discover();
+  const { crawlDeps, crawlDevDeps, include, exclude, ignoredPackages } = options;
+
+  projectGraph.discover({
+    crawlDeps,
+    crawlDevDeps,
+    include,
+    exclude,
+    ignoredPackages,
+  });
 
   return { projectGraph, sourceType };
 }

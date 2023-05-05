@@ -1,12 +1,11 @@
 import debug, { type Debugger } from 'debug';
-import { EmberAppProjectGraph, EmberAppProjectGraphOptions } from './ember-app-project-graph.js';
-
-export type EmberAddonProjectGraphOptions = EmberAppProjectGraphOptions;
+import { EmberAppProjectGraph } from './ember-app-project-graph.js';
+import { ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
 
 export class EmberAddonProjectGraph extends EmberAppProjectGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
-  constructor(rootDir: string, options?: EmberAddonProjectGraphOptions) {
-    super(rootDir, { sourceType: 'Ember Addon', ...options });
+  constructor(rootDir: string, options: ProjectGraphOptions) {
+    super(rootDir, { ...options });
     this.debug(`rootDir: %s, options: %o`, rootDir, options);
   }
 }

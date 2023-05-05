@@ -68,18 +68,14 @@ export class MigrationStrategy {
   }
 }
 
-export type MigrationStrategyOptions = MigrationGraphOptions;
-
-// TODO make rootDir default to process.cwd()
-// TODO remove other process.cwd() default values elsewhere in code.
 export function getMigrationStrategy(
-  rootDir: string,
-  options?: MigrationStrategyOptions
+  srcDir: string,
+  options: MigrationGraphOptions
 ): MigrationStrategy {
-  rootDir = realpathSync(rootDir);
-  const { projectGraph, sourceType } = buildMigrationGraph(rootDir, options);
+  srcDir = realpathSync(srcDir);
+  const { projectGraph, sourceType } = buildMigrationGraph(options.basePath, srcDir, options);
 
-  const strategy = new MigrationStrategy(rootDir, sourceType);
+  const strategy = new MigrationStrategy(srcDir, sourceType);
 
   projectGraph.graph
     .getSortedNodes()
@@ -97,7 +93,10 @@ export function getMigrationStrategy(
 
       const somePackage = packageNode.content.pkg;
 
-      const moduleGraph = somePackage.getModuleGraph({ project: projectGraph });
+      const moduleGraph = somePackage.getModuleGraph({
+        project: projectGraph,
+        basePath: options.basePath,
+      });
 
       // For this package, get a list of modules (files)
       const ordered: Array<ModuleNode> = moduleGraph
@@ -108,7 +107,7 @@ export function getMigrationStrategy(
       // Iterate through each module (file) node
       ordered.forEach((moduleNode) => {
         const fullPath = join(packagePath, moduleNode.path);
-        const relativePath = relative(rootDir, realpathSync(fullPath));
+        const relativePath = relative(options.basePath, realpathSync(fullPath));
         const f = new SourceFile(fullPath, relativePath, packagePath);
         strategy.addFile(f);
       });
@@ -117,9 +116,6 @@ export function getMigrationStrategy(
   return strategy;
 }
 
-export function getMigrationOrder(
-  rootDir: string,
-  options?: MigrationStrategyOptions
-): SourceFile[] {
-  return getMigrationStrategy(rootDir, options).getMigrationOrder();
+export function getMigrationOrder(srcDir: string, options: MigrationGraphOptions): SourceFile[] {
+  return getMigrationStrategy(srcDir, options).getMigrationOrder();
 }

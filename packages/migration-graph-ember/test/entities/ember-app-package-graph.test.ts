@@ -40,7 +40,9 @@ describe('Unit | EmberAppPackageGraph', () => {
     project = await getEmberProjectFixture('app');
 
     const p = new EmberAppPackage(project.baseDir);
-    const output: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
+    const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, {
+      basePath: project.baseDir,
+    }).discover();
     const actual = flatten(output.getSortedNodes());
 
     expect(actual).toStrictEqual([
@@ -58,7 +60,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     project = await getEmberProjectFixture('app-with-utils');
 
     const p = new EmberAppPackage(project.baseDir);
-    const packageGraph = new EmberAppPackageGraph(p);
+    const packageGraph = new EmberAppPackageGraph(p, { basePath: project.baseDir });
     packageGraph.discover();
 
     const testFileNode = packageGraph.graph.getNode('tests/unit/utils/math-test.js');
@@ -104,7 +106,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     await setupProject(project);
 
     const p = new EmberAppPackage(project.baseDir);
-    const options = {};
+    const options = { basePath: project.baseDir };
     const output: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
     const actual = flatten(output.getSortedNodes());
 
@@ -149,7 +151,7 @@ describe('Unit | EmberAppPackageGraph', () => {
     await setupProject(project);
 
     const p = new EmberAppPackage(project.baseDir);
-    const options = {};
+    const options = { basePath: project.baseDir };
     const graph: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
 
     // Assert edged between salutation and locale.ts
@@ -187,6 +189,7 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     const p = new EmberAppPackage(project.baseDir);
     const options = {
+      basePath: project.baseDir,
       resolutions: {
         services: {
           fastboot: packageName,
@@ -229,10 +232,14 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir);
+    const m = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
     const emberPackage = new EmberAppPackage(project.baseDir);
-    const source = m.addPackageToGraph(emberPackage);
-    const options: EmberAppPackageGraphOptions = { parent: source, project: m };
+    const source = m.addPackageToGraph(emberPackage, true, true, true);
+    const options: EmberAppPackageGraphOptions = {
+      parent: source,
+      project: m,
+      basePath: project.baseDir,
+    };
     emberPackage.getModuleGraph(options);
 
     const dest = m.graph.getNode('some-external');
@@ -282,19 +289,23 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const projectGraph = new EmberAppProjectGraph(project.baseDir);
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
 
     const emberPackage = new EmberAppPackage(project.baseDir);
-    const appNode = projectGraph.addPackageToGraph(emberPackage, false);
+    const appNode = projectGraph.addPackageToGraph(emberPackage, false, true, true);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    const options: EmberAppPackageGraphOptions = {
+      parent: appNode,
+      project: projectGraph,
+      basePath: project.baseDir,
+    };
     emberPackage.getModuleGraph(options);
 
     const node: GraphNode<PackageNode> = projectGraph.graph.getNode('some-addon');
     expect(node?.content.synthetic).toBe(true);
 
-    const emberAddonPackage = new EmberAddonPackage(join(project.baseDir, 'lib/some-addon'));
-    const addonNode = projectGraph.addPackageToGraph(emberAddonPackage);
+    const emberAddonPackage = new EmberAddonPackage(join(project.baseDir, 'lib/some-addon'), {});
+    const addonNode = projectGraph.addPackageToGraph(emberAddonPackage, true, true, true);
     expect(addonNode.content.synthetic).toBeFalsy();
 
     // Validate that addon package has an the edge exists between
@@ -375,12 +386,16 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir);
+    const m = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
 
     const emberAppPackage = new EmberAppPackage(project.baseDir);
-    const appNode = m.addPackageToGraph(emberAppPackage, false);
+    const appNode = m.addPackageToGraph(emberAppPackage, false, true, true);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: m };
+    const options: EmberAppPackageGraphOptions = {
+      parent: appNode,
+      project: m,
+      basePath: project.baseDir,
+    };
     emberAppPackage.getModuleGraph(options);
 
     // Validate that there is a synthetic node to firstAddon and that there
@@ -389,15 +404,18 @@ describe('Unit | EmberAppPackageGraph', () => {
     let firstAddonNode = m.graph.getNode(firstAddonName);
     expect(firstAddonNode?.content.synthetic).toBe(true);
 
-    const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
+    const firstAddonPackage = new EmberAddonPackage(
+      join(project.baseDir, `lib/${firstAddonName}`),
+      {}
+    );
 
     // Add firstAddon
-    firstAddonNode = m.addPackageToGraph(firstAddonPackage);
+    firstAddonNode = m.addPackageToGraph(firstAddonPackage, true, true, true);
     expect(firstAddonNode.content.synthetic).toBeFalsy();
 
     // Force populate the addon's graph by calling IPackage.getModuleGraph, this will
     // force discovery of the edge between firstAddon and secondAddon.
-    const addonOptions = { parent: firstAddonNode, project: m };
+    const addonOptions = { parent: firstAddonNode, project: m, basePath: project.baseDir };
     firstAddonPackage.getModuleGraph(addonOptions);
 
     // Get the synthetic secondAddon, validate it's been added and it stubbed out.
@@ -410,10 +428,11 @@ describe('Unit | EmberAppPackageGraph', () => {
     ).toBe(true);
 
     const secondAddonPackage = new EmberAddonPackage(
-      join(project.baseDir, `lib/${secondAddonName}`)
+      join(project.baseDir, `lib/${secondAddonName}`),
+      {}
     );
 
-    secondAddonNode = m.addPackageToGraph(secondAddonPackage);
+    secondAddonNode = m.addPackageToGraph(secondAddonPackage, true, true, true);
     expect(secondAddonNode.content.synthetic).toBeFalsy();
 
     expect(
@@ -489,27 +508,36 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const m = new EmberAppProjectGraph(project.baseDir, { eager: false });
+    const m = new EmberAppProjectGraph(project.baseDir, {
+      eager: false,
+      basePath: project.baseDir,
+    });
 
-    const firstAddonPackage = new EmberAddonPackage(join(project.baseDir, `lib/${firstAddonName}`));
+    const firstAddonPackage = new EmberAddonPackage(
+      join(project.baseDir, `lib/${firstAddonName}`),
+      {}
+    );
 
-    const firstAddonNode = m.addPackageToGraph(firstAddonPackage);
-    const addonOptions = { parent: firstAddonNode, project: m };
+    const firstAddonNode = m.addPackageToGraph(firstAddonPackage, true, true, true);
+    const addonOptions = { parent: firstAddonNode, project: m, basePath: project.baseDir };
     firstAddonPackage.getModuleGraph(addonOptions);
 
     expect(firstAddonNode.content.synthetic).toBeFalsy();
     expect(
-      firstAddonNode.content.pkg?.getModuleGraph().getNode('addon/services/date.js')?.content.parsed
+      firstAddonNode.content.pkg
+        ?.getModuleGraph({ basePath: project.baseDir })
+        .getNode('addon/services/date.js')?.content.parsed
     ).toBe(true);
 
     let secondAddonNode = m.graph.getNode(secondAddonName);
     expect(secondAddonNode?.content.synthetic).toBe(true);
 
     const secondAddonPackage = new EmberAddonPackage(
-      join(project.baseDir, `lib/${secondAddonName}`)
+      join(project.baseDir, `lib/${secondAddonName}`),
+      {}
     );
 
-    secondAddonNode = m.addPackageToGraph(secondAddonPackage);
+    secondAddonNode = m.addPackageToGraph(secondAddonPackage, true, true, true);
     expect(secondAddonNode.content.synthetic).toBeFalsy();
 
     expect(
@@ -599,13 +627,17 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
 
-    const projectGraph = new EmberAppProjectGraph(project.baseDir);
+    const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
 
     // Add the app to the project graph
     const emberAppPackage = new EmberAppPackage(project.baseDir);
-    const appNode = projectGraph.addPackageToGraph(emberAppPackage, false);
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage, false, true, true);
 
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    const options: EmberAppPackageGraphOptions = {
+      parent: appNode,
+      project: projectGraph,
+      basePath: project.baseDir,
+    };
     emberAppPackage.getModuleGraph(options);
 
     // Validate that there is a synthetic node to firstAddon and that there
@@ -618,10 +650,10 @@ describe('Unit | EmberAppPackageGraph', () => {
     expect(someAddonNode?.content.synthetic).toBe(true);
 
     // Create addon package
-    const somePackage = new EmberAddonPackage(join(project.baseDir, `lib/${someAddonName}`));
+    const somePackage = new EmberAddonPackage(join(project.baseDir, `lib/${someAddonName}`), {});
 
     // Add package to graph
-    const someNode = projectGraph.addPackageToGraph(somePackage);
+    const someNode = projectGraph.addPackageToGraph(somePackage, true, true, true);
 
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonModuleName))).toBe(true);
     expect(appNode.adjacent.has(projectGraph.graph.getNode(someAddonPackageName))).toBe(true);
@@ -661,17 +693,21 @@ describe('Unit | EmberAppPackageGraph', () => {
 
     await setupProject(project);
     const baseDir = project.baseDir;
-    const projectGraph = new EmberAppProjectGraph(baseDir);
+    const projectGraph = new EmberAppProjectGraph(baseDir, { basePath: project.baseDir });
     // We don't use projectGraph.discover() because we want to inspect the state of things as we add package nodes
     // We ensure the addon is added first to ensure it exists in the projectGraph, so that it doesn't try and
     // create a synthetic node.
-    const addonPackage = new EmberAddonPackage(join(baseDir, 'lib/some-addon'));
+    const addonPackage = new EmberAddonPackage(join(baseDir, 'lib/some-addon'), {});
 
-    projectGraph.addPackageToGraph(addonPackage);
+    projectGraph.addPackageToGraph(addonPackage, true, true, true);
 
     const emberAppPackage = new EmberAppPackage(baseDir);
-    const appNode = projectGraph.addPackageToGraph(emberAppPackage);
-    const options: EmberAppPackageGraphOptions = { parent: appNode, project: projectGraph };
+    const appNode = projectGraph.addPackageToGraph(emberAppPackage, true, true, true);
+    const options: EmberAppPackageGraphOptions = {
+      parent: appNode,
+      project: projectGraph,
+      basePath: project.baseDir,
+    };
 
     // getModuleGraph will trigger the parsing of file
     emberAppPackage.getModuleGraph(options);
@@ -709,7 +745,9 @@ describe('Unit | EmberAppPackageGraph', () => {
 
       await setupProject(project);
       const p = new EmberAppPackage(project.baseDir);
-      const packageGraph: Graph<ModuleNode> = new EmberAppPackageGraph(p).discover();
+      const packageGraph: Graph<ModuleNode> = new EmberAppPackageGraph(p, {
+        basePath: project.baseDir,
+      }).discover();
 
       expect(packageGraph.hasNode('app/components/example.gjs')).toBeTruthy();
     });
@@ -756,7 +794,7 @@ describe('Unit | EmberAppPackageGraph', () => {
       await setupProject(project);
 
       const p = new EmberAppPackage(project.baseDir);
-      const options = {};
+      const options = { basePath: project.baseDir };
       const packageGraph: Graph<ModuleNode> = new EmberAppPackageGraph(p, options).discover();
 
       const trunkNode = packageGraph.getNode('app/components/trunk.gjs');

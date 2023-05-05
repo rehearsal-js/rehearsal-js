@@ -10,22 +10,17 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:initialize');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
+  src: string,
   options: MoveCommandOptions
 ): ListrTask<MoveCommandContext, ListrDefaultRenderer> {
   return {
-    title: `Initialize`,
+    title: `Validating source path`,
     task: (ctx: MoveCommandContext): void => {
-      ctx.childPackage = options.childPackage;
-      // source file or dir should always exist within the basePath
-      if (options.source) {
-        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.basePath, options.source);
-      }
-
-      if (options.childPackage) {
-        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(
-          options.basePath,
-          options.childPackage
-        );
+      if (options.graph) {
+        ctx.package = src;
+        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(options.rootPath, src);
+      } else {
+        [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.rootPath, src);
       }
 
       DEBUG_CALLBACK('init ctx %O:', ctx);
@@ -70,21 +65,19 @@ function getAllJSFilesInDir(basePath: string, source: string): [string[], string
   const sourceAbs = resolve(basePath, source);
   const sourceRel = relative(basePath, sourceAbs);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
   const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{js,gjs}`, { cwd: basePath });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
   return [sourceFiles.map((file) => resolve(basePath, file)), sourceFiles];
 }
 
 // be sure the childPackage exists within the basePath project and returns rel and abs tuple
-function validateChildPackage(basePath: string, childPackage: string): [string, string] {
+function validatePackagePath(basePath: string, childPackage: string): [string, string] {
   if (
     !existsSync(resolve(basePath, childPackage)) ||
     !existsSync(resolve(basePath, childPackage, 'package.json'))
   ) {
     throw new Error(
-      `Rehearsal could not find the childPackage: "${childPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
     );
   }
 

@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
+exports[`Command: move > move dir and sub-dir 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Initialize
-[SUCCESS] Initialize
+[STARTED] Validating source path
+[SUCCESS] Validating source path
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
@@ -19,10 +19,10 @@ exports[`Command: move > move dir and sub-dir with --source flag 1`] = `
 [SUCCESS] Executing git mv"
 `;
 
-exports[`Command: move > move file with --source flag 1`] = `
+exports[`Command: move > move file 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Initialize
-[SUCCESS] Initialize
+[STARTED] Validating source path
+[SUCCESS] Validating source path
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] renamed: 
@@ -30,10 +30,10 @@ exports[`Command: move > move file with --source flag 1`] = `
 [SUCCESS] Executing git mv"
 `;
 
-exports[`Command: move > move package with --childPackage flag 1`] = `
+exports[`Command: move > move package with --graph and --deps flag 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Initialize
-[SUCCESS] Initialize
+[STARTED] Validating source path
+[SUCCESS] Validating source path
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
@@ -41,8 +41,8 @@ exports[`Command: move > move package with --childPackage flag 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] renamed: 
-[DATA] /module-a/index.js -> /module-a/index.ts
-[DATA] /module-a/src/baz.js -> /module-a/src/baz.ts
-[DATA] /module-a/src/foo.js -> /module-a/src/foo.ts
+[DATA] module-a/index.js -> module-a/index.ts
+[DATA] module-a/src/baz.js -> module-a/src/baz.ts
+[DATA] module-a/src/foo.js -> module-a/src/foo.ts
 [SUCCESS] Executing git mv"
 `;

@@ -21,11 +21,14 @@ describe('Move: Init-Task', () => {
   test('validate source option with file', async () => {
     const source = 'src/foo/buz/biz.js';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
-      source,
+      graph: false,
+      devDeps: false,
+      deps: false,
+      ignore: [''],
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
 
     expect(ctx.jsSourcesRel).toStrictEqual([source]);
@@ -34,11 +37,14 @@ describe('Move: Init-Task', () => {
   test('validate source option with directory', async () => {
     const source = 'src/foo';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
-      source,
+      graph: false,
+      devDeps: false,
+      deps: false,
+      ignore: [''],
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
     expect(ctx.jsSourcesAbs).toMatchObject([
       resolve(project.baseDir, 'src/foo/baz.js'),
@@ -52,15 +58,18 @@ describe('Move: Init-Task', () => {
     // childPackage is a relative path from basePath
     const childPackage = 'module-b';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
-      childPackage,
+      graph: true,
+      devDeps: false,
+      deps: true,
+      ignore: [''],
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(childPackage, options)];
     const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
 
-    expect(ctx.childPackageAbs).toStrictEqual(resolve(project.baseDir, './module-b'));
-    expect(ctx.childPackageRel).toStrictEqual(childPackage);
+    expect(ctx.packageAbs).toStrictEqual(resolve(project.baseDir, './module-b'));
+    expect(ctx.packageRel).toStrictEqual(childPackage);
   });
 
   test('expect failure source not in project', async () => {
@@ -69,10 +78,13 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            basePath,
+          initTask(nonExistsSourceFile, {
+            rootPath: project.baseDir,
             dryRun: true,
-            source: nonExistsSourceFile,
+            graph: false,
+            devDeps: false,
+            deps: false,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
@@ -86,10 +98,13 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            basePath,
+          initTask(nonExistsDirectory, {
+            rootPath: project.baseDir,
             dryRun: true,
-            source: nonExistsDirectory,
+            graph: false,
+            devDeps: false,
+            deps: false,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
@@ -103,14 +118,17 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            basePath,
+          initTask(nonExistsChildPackage, {
+            rootPath: project.baseDir,
             dryRun: true,
-            childPackage: nonExistsChildPackage,
+            graph: true,
+            devDeps: false,
+            deps: true,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
-      `Rehearsal could not find the childPackage: "${nonExistsChildPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+      `Rehearsal could not find the package: "${nonExistsChildPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
     );
   });
 
@@ -120,14 +138,17 @@ describe('Move: Init-Task', () => {
     await expect(
       async () =>
         await listrTaskRunner<MoveCommandContext>([
-          initTask({
-            basePath,
+          initTask(nonPackage, {
+            rootPath: project.baseDir,
             dryRun: true,
-            childPackage: nonPackage,
+            graph: true,
+            devDeps: false,
+            deps: true,
+            ignore: [''],
           }),
         ])
     ).rejects.toThrowError(
-      `Rehearsal could not find the childPackage: "${nonPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+      `Rehearsal could not find the package: "${nonPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
     );
   });
 });

@@ -5,7 +5,6 @@ export {
   getMigrationStrategy,
   getMigrationOrder,
   type MigrationStrategy,
-  type MigrationStrategyOptions,
   type SourceFile,
 } from './migration-strategy.js';
 

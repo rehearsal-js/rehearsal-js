@@ -14,6 +14,7 @@ const workerPath = resolve(__dirname, 'graphWorker.js');
 const DEBUG_CALLBACK = debug('rehearsal:cli:graphOrderTask');
 
 export function graphOrderTask(
+  srcDir: string,
   options: GraphTaskOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: GraphCommandContext
@@ -23,7 +24,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
-      const { basePath, output } = options;
+      const { output, rootPath } = options;
       let selectedPackageName: string;
 
       if (process.env['TEST'] === 'true') {
@@ -31,14 +32,32 @@ export function graphOrderTask(
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        order = intoGraphOutput(getMigrationOrder(basePath), basePath);
+        order = intoGraphOutput(
+          getMigrationOrder(srcDir, {
+            basePath: rootPath,
+            crawlDevDeps: options.devDeps,
+            crawlDeps: options.deps,
+            ignoredPackages: options.ignore,
+            include: [],
+            exclude: [],
+          }),
+          rootPath
+        );
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
-            workerData: basePath,
+            workerData: JSON.stringify({
+              srcDir,
+              basePath: rootPath,
+              crawlDevDeps: options.devDeps,
+              crawlDeps: options.deps,
+              ignoredPackages: options.ignore,
+              include: [],
+              exclude: [],
+            }),
           });
 
           worker.on('message', (packages: { packages: PackageEntry[] }) => {
@@ -57,9 +76,9 @@ export function graphOrderTask(
       DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
       DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
 
-      // if explicit child package is passed in use that
-      if (ctx?.childPackage) {
-        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
+      // if explicit package is passed in use that
+      if (ctx?.package) {
+        ctx.jsSourcesAbs = order.packages.flatMap((pkg) => pkg.files);
 
         return;
       }
@@ -91,19 +110,6 @@ export function graphOrderTask(
       }
     },
   };
-}
-
-// get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
-function getGraphFilesAbs(basePath: string, childPackage: string, files: string[]): string[] {
-  // filter out files that are not in the child package
-  files = files.filter((file) => file.startsWith(childPackage));
-
-  return (
-    files.map((file) => {
-      // all files are relative to basePath
-      return resolve(basePath, file);
-    }) ?? []
-  );
 }
 
 function getPackageEntry(

@@ -11,7 +11,7 @@ export class EmberAddonPackageGraph extends EmberAppPackageGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
   override package: EmberAddonPackage;
 
-  constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions = {}) {
+  constructor(p: EmberAddonPackage, options: EmberAddonPackageGraphOptions) {
     super(p, options);
     this.package = p;
   }

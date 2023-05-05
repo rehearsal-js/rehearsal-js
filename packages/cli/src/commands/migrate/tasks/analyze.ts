@@ -127,9 +127,13 @@ export function analyzeTask(
 
       // construct migration strategy and prepare all the files needs to be migrated
       const strategy = getMigrationStrategy(ctx.targetPackagePath, {
+        basePath: options.basePath,
         entrypoint: options.entrypoint,
-        exclude: ctx.userConfig?.exclude,
-        include: ctx.userConfig?.include,
+        exclude: ctx.userConfig?.exclude || [],
+        include: ctx.userConfig?.include || [],
+        crawlDevDeps: true,
+        crawlDeps: true,
+        ignoredPackages: [],
       });
 
       const files: SourceFile[] = strategy.getMigrationOrder();

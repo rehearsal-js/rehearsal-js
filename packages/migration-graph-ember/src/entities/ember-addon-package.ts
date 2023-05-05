@@ -15,7 +15,7 @@ export class EmberAddonPackage extends EmberAppPackage {
 
   protected debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
 
-  constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
+  constructor(pathToPackage: string, options: EmberPackageOptions) {
     super(pathToPackage, {
       ...options,
     });
@@ -39,7 +39,7 @@ export class EmberAddonPackage extends EmberAppPackage {
     return isEngine(readPackageJson(this.path));
   }
 
-  override getModuleGraph(options: EmberAddonPackageGraphOptions = {}): Graph<ModuleNode> {
+  override getModuleGraph(options: EmberAddonPackageGraphOptions): Graph<ModuleNode> {
     this.debug('getModuleGraph');
     if (this.graph) {
       return this.graph;

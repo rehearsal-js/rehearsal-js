@@ -29,6 +29,7 @@ function resolveRelative(baseDir: string, somePath: string): string {
 }
 
 export type PackageGraphOptions = {
+  basePath: string;
   entrypoint?: string;
   parent?: GraphNode<PackageNode>;
   project?: ProjectGraph;
@@ -44,7 +45,7 @@ export class PackageGraph {
 
   #graph: Graph<ModuleNode>;
 
-  constructor(p: Package, options: PackageGraphOptions = {}) {
+  constructor(p: Package, options: PackageGraphOptions) {
     this.package = p;
     this.baseDir = p.path;
     this.#graph = new Graph<ModuleNode>();
@@ -64,15 +65,6 @@ export class PackageGraph {
     const include = this.package.includePatterns ? Array.from(this.package.includePatterns) : ['.'];
 
     let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
-
-    if (this.projectGraph) {
-      // This should be moved to the Package constructor.
-      const relativePackagePath = relative(this.projectGraph.rootDir, this.baseDir);
-      const additionalExcludes: string[] = Array.from(this.projectGraph.exclude)
-        .map((match) => relative(relativePackagePath, match))
-        .filter((relativePath) => !relativePath.startsWith('..'));
-      exclude = exclude.concat(additionalExcludes);
-    }
 
     const cruiseOptions: ICruiseOptions = {
       baseDir,

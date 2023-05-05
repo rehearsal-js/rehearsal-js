@@ -11,13 +11,17 @@ export type Formats = 'sarif' | 'json' | 'sonarqube' | 'md';
 export * from './configs/rehearsal-config.js';
 
 export type MoveTasks = {
-  initTask: (options: MoveCommandOptions) => ListrTask;
-  moveTask: (options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
+  initTask: (src: string, options: MoveCommandOptions) => ListrTask;
+  moveTask: (src: string, options: MoveCommandOptions, ctx?: MoveCommandContext) => ListrTask;
 };
 
 export type PackageEntry = { name: string; files: string[] };
 
 export type GraphCommandOptions = {
+  rootPath: string;
+  devDeps: boolean;
+  deps: boolean;
+  ignore: string[];
   output?: string;
 };
 
@@ -26,23 +30,32 @@ export type GraphCommandContext = {
   source?: string;
   packageEntry?: string;
   jsSourcesAbs?: string[];
-  childPackage?: string;
+  package?: string;
 };
 
 export type GraphTaskOptions = {
-  basePath: string;
+  rootPath: string;
+  devDeps: boolean;
+  deps: boolean;
+  ignore: string[];
   output?: string;
 };
 
 export type GraphTasks = {
-  graphOrderTask: (options: GraphTaskOptions, ctx?: MoveCommandContext) => ListrTask;
+  graphOrderTask: (
+    srcDir: string,
+    options: GraphTaskOptions,
+    ctx?: MoveCommandContext
+  ) => ListrTask;
 };
 
 export type MoveCommandOptions = {
-  childPackage?: string;
-  source?: string;
+  rootPath: string;
+  graph: boolean;
+  devDeps: boolean;
+  deps: boolean;
+  ignore: string[];
   dryRun: boolean;
-  basePath: string;
 };
 
 export type MoveCommandContext = {
@@ -55,9 +68,9 @@ export type MoveCommandContext = {
   projectName: string | null;
   jsSourcesAbs?: string[];
   jsSourcesRel?: string[];
-  childPackageAbs?: string;
-  childPackageRel?: string;
-  childPackage?: string;
+  packageAbs?: string;
+  packageRel?: string;
+  package?: string;
   migrationOrder?: { packages: PackageEntry[] };
 };
 

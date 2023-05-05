@@ -24,20 +24,20 @@ describe('Unit | Entities | EmberAddonPackage', () => {
 
   test('get isEngine', () => {
     expect(
-      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ENGINE)).isEngine
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ENGINE), {}).isEngine
     ).toBe(true);
     expect(
-      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON)).isEngine,
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON), {}).isEngine,
       'foo is NOT engine'
     ).toBe(false);
   });
 
   test('get name', () => {
     expect(
-      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON)).packageName
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.SIMPLE_ADDON), {}).packageName
     ).toBe(FIXTURE_NAMES.SIMPLE_ADDON);
     expect(
-      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME))
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME), {})
         .packageName,
       'fetch the name property even if module name is defined'
     ).toBe(FIXTURE_NAMES.ADDON_WITH_MODULE_NAME);
@@ -45,12 +45,16 @@ describe('Unit | Entities | EmberAddonPackage', () => {
 
   test('get moduleName', () => {
     expect(
-      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME)).moduleName
+      new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME), {})
+        .moduleName
     ).toBe(`${FIXTURE_NAMES.ADDON_WITH_MODULE_NAME}-SPECIFIED-IN-MODULENAME`);
   });
 
   test('should have common ember excludes', () => {
-    const pkg = new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME));
+    const pkg = new EmberAddonPackage(
+      resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME),
+      {}
+    );
 
     const excludes = getEmberExcludePatterns();
 
@@ -65,7 +69,10 @@ describe('Unit | Entities | EmberAddonPackage', () => {
   });
 
   test('should explicitly exclude root app dir in addon', () => {
-    const pkg = new EmberAddonPackage(resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME));
+    const pkg = new EmberAddonPackage(
+      resolve(pathToPackage, FIXTURE_NAMES.ADDON_WITH_MODULE_NAME),
+      {}
+    );
 
     expect(
       pkg.excludePatterns.has(`^app`),

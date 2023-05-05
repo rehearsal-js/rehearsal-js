@@ -5,7 +5,7 @@ const EMBER_FILES = [
   '.template-lintrc.js', // ember-template-lint
   'ember-cli-build.js',
   'ember-config.js',
-  'index.js', // Ignore index.js because it's a CJS use to interact with the build pipeline.
+  '^index.js', // Ignore index.js in the root because it's a CJS use to interact with the build pipeline.
   'testem.js',
 ];
 const EMBER_DIRS = ['config', 'ember-config', 'public'];
