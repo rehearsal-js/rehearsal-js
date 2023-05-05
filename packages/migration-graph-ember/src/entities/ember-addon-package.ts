@@ -20,12 +20,12 @@ export class EmberAddonPackage extends EmberAppPackage {
       ...options,
     });
 
-    const { ignoreGlobs = [] } = options;
+    const { ignoredPaths = [] } = options;
 
     this.excludePatterns = new Set([
       ...getEmberExcludePatterns(),
       '^app', // Addons ^app/ folder should not be converted to TS. https://docs.ember-cli-typescript.com/ts/with-addons#key-differences-from-apps
-      ...ignoreGlobs,
+      ...ignoredPaths,
     ]);
 
     this.includePatterns = new Set(['.', '**/*.gjs']);

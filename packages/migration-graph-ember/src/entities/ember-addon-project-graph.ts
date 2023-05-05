@@ -1,6 +1,6 @@
 import debug, { type Debugger } from 'debug';
-import { EmberAppProjectGraph } from './ember-app-project-graph.js';
 import { ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
+import { EmberAppProjectGraph } from './ember-app-project-graph.js';
 
 export class EmberAddonProjectGraph extends EmberAppProjectGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);

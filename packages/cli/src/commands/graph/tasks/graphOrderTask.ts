@@ -37,9 +37,8 @@ export function graphOrderTask(
             basePath: rootPath,
             crawlDevDeps: options.devDeps,
             crawlDeps: options.deps,
-            ignoredGlobs: options.ignore,
+            ignore: options.ignore,
             include: [],
-            exclude: [],
           }),
           rootPath
         );
@@ -54,7 +53,7 @@ export function graphOrderTask(
               basePath: rootPath,
               crawlDevDeps: options.devDeps,
               crawlDeps: options.deps,
-              ignoredPackages: options.ignore,
+              ignore: options.ignore,
               include: [],
               exclude: [],
             }),

@@ -91,6 +91,7 @@ describe('Task: graphOrderTask', () => {
       'module-b/index.js',
       'module-b/src/tires.js',
       'module-b/src/car.js',
+      'src/bizz.ts',
       'src/foo/baz.js',
       'src/foo/biz.js',
       'src/foo/buz/biz.js',

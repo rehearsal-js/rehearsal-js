@@ -9,9 +9,8 @@ export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackag
   projectGraph.discover({
     crawlDeps: true,
     crawlDevDeps: true,
-    ignoredGlobs: [],
+    ignore: [],
     include: [],
-    exclude: [],
   });
   const nodes = projectGraph.graph.getSortedNodes();
   return (

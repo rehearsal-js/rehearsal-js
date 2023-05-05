@@ -13,12 +13,11 @@ import {
   readPackageJson,
 } from '@rehearsal/migration-graph-shared';
 import { isAddon, isApp } from '../utils/ember.js';
+import { getEmberExcludePatterns } from '../utils/excludes.js';
 import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
 import type { PackageJson } from 'type-fest';
-import FastGlob from 'fast-glob';
-import { getEmberExcludePatterns } from '../utils/excludes.js';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -144,7 +143,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
   protected override discoveryByEntrypoint(
     entrypoint: string,
-    ignoredGlobs: string[] = []
+    ignoredPaths: string[] = []
   ): EmberProjectPackage {
     // Create a package to make sure things work, but ignore the rest.
     const someEntrypoint = join(this.rootDir, entrypoint);
@@ -166,13 +165,13 @@ export class EmberAppProjectGraph extends ProjectGraph {
     // Adjust entrypoint to be relative to the package directory
     const relativeEntrypoint = relative(packageDir, someEntrypoint);
 
-    const p = this.entityFactory(packageDir, ignoredGlobs);
+    const p = this.entityFactory(packageDir, ignoredPaths);
     p.includePatterns = new Set([relativeEntrypoint]);
     this.addPackageToGraph(p, false, true, true);
     return p;
   }
 
-  private entityFactory(pathToPackage: string, ignoreGlobs: string[]): EmberProjectPackage {
+  private entityFactory(pathToPackage: string, ignoredPaths: string[]): EmberProjectPackage {
     let packageJson: PackageJson;
     try {
       packageJson = readPackageJson(pathToPackage);
@@ -181,11 +180,11 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
 
     if (isAddon(packageJson)) {
-      return new EmberAddonPackage(pathToPackage, { ignoreGlobs });
+      return new EmberAddonPackage(pathToPackage, { ignoredPaths });
     } else if (isApp(packageJson)) {
-      return new EmberAppPackage(pathToPackage, { ignoreGlobs });
+      return new EmberAppPackage(pathToPackage, { ignoredPaths });
     } else {
-      return new Package(pathToPackage, { ignoreGlobs });
+      return new Package(pathToPackage, { ignoredPaths });
     }
   }
 
@@ -327,7 +326,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
   }
 
   override discover(options: DiscoverOptions): Array<EmberProjectPackage> {
-    const { crawlDeps, crawlDevDeps, include, ignoredGlobs } = options;
+    const { crawlDeps, crawlDevDeps, include, ignore } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
 
@@ -335,14 +334,14 @@ export class EmberAppProjectGraph extends ProjectGraph {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
-    const ignoredPaths = options.ignoredGlobs
+    const ignoredPaths = options.ignore
       .flatMap((glob) => {
-        return FastGlob.sync(glob, { cwd: this.basePath, ignore: getEmberExcludePatterns() });
+        return fastGlob.sync(glob, { cwd: this.basePath, ignore: getEmberExcludePatterns() });
       })
       .map((filePath) => join(this.basePath, filePath));
 
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages(ignoredGlobs, ignoredPaths);
+    this.discoverWorkspacePackages(ignore, ignoredPaths);
 
     const { root, found } = this.findProjectPackages(ignoredPaths);
 

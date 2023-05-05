@@ -64,7 +64,7 @@ export class PackageGraph {
 
     const include = this.package.includePatterns ? Array.from(this.package.includePatterns) : ['.'];
 
-    let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
+    const exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
 
     const nonAbsPaths = exclude.filter((entry) => !isAbsolute(entry));
     const excludedPaths = exclude

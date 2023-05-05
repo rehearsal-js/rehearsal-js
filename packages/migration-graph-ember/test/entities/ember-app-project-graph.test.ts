@@ -32,8 +32,7 @@ describe('Unit | EmberAppProjectGraph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     expect(projectGraph.graph.hasNode('some-addon')).toBe(true);
@@ -49,8 +48,7 @@ describe('Unit | EmberAppProjectGraph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const rootNode = projectGraph.graph.getNode('app-template');
@@ -173,8 +171,7 @@ export default class Salutation extends Component {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     Array.from(projectGraph.graph.nodes).forEach((node) =>
@@ -245,8 +242,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -323,8 +319,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -340,7 +335,7 @@ export default class Salutation extends Component {
     });
   });
 
-  test('options.exclude', async () => {
+  test('options.ignore', async () => {
     project = getEmberProject('app');
 
     await setupProject(project);
@@ -352,8 +347,7 @@ export default class Salutation extends Component {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: ['tests'],
-      ignoredPackages: [],
+      ignore: ['tests/**/*.js'],
     });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -393,8 +387,7 @@ export default class Salutation extends Component {
       crawlDeps: true,
       crawlDevDeps: true,
       include: ['public'],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -460,8 +453,7 @@ export default class Salutation extends Component {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const rootNode = projectGraph.graph.getNode('app-template');
@@ -517,8 +509,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -541,8 +532,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const rootNode = projectGraph.graph.getNode('app-template');
@@ -592,8 +582,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const rootNode = projectGraph.graph.getNode('app-template');
@@ -648,8 +637,7 @@ export default class Salutation extends Component {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
       const nodes = projectGraph.graph.getSortedNodes();
 
