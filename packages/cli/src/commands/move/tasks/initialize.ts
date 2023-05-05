@@ -16,10 +16,9 @@ export function initTask(
   return {
     title: `Validating source path`,
     task: (ctx: MoveCommandContext): void => {
-      ctx.childPackage = src;
-
       if (options.graph) {
-        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(options.rootPath, src);
+        ctx.package = src;
+        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(options.rootPath, src);
       } else {
         [ctx.jsSourcesAbs, ctx.jsSourcesRel] = validateSourcePath(options.rootPath, src);
       }
@@ -72,13 +71,13 @@ function getAllJSFilesInDir(basePath: string, source: string): [string[], string
 }
 
 // be sure the childPackage exists within the basePath project and returns rel and abs tuple
-function validateChildPackage(basePath: string, childPackage: string): [string, string] {
+function validatePackagePath(basePath: string, childPackage: string): [string, string] {
   if (
     !existsSync(resolve(basePath, childPackage)) ||
     !existsSync(resolve(basePath, childPackage, 'package.json'))
   ) {
     throw new Error(
-      `Rehearsal could not find the childPackage: "${childPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
     );
   }
 

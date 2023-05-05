@@ -93,9 +93,9 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
           deps: options.deps,
           ignore: options.ignore,
         }),
-        moveTask(src, options),
+        moveTask(options.rootPath, options),
       ]
-    : [initTask(src, options), moveTask(src, options)];
+    : [initTask(src, options), moveTask(options.rootPath, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

@@ -30,7 +30,7 @@ export type GraphCommandContext = {
   source?: string;
   packageEntry?: string;
   jsSourcesAbs?: string[];
-  childPackage?: string;
+  package?: string;
 };
 
 export type GraphTaskOptions = {
@@ -68,9 +68,9 @@ export type MoveCommandContext = {
   projectName: string | null;
   jsSourcesAbs?: string[];
   jsSourcesRel?: string[];
-  childPackageAbs?: string;
-  childPackageRel?: string;
-  childPackage?: string;
+  packageAbs?: string;
+  packageRel?: string;
+  package?: string;
   migrationOrder?: { packages: PackageEntry[] };
 };
 

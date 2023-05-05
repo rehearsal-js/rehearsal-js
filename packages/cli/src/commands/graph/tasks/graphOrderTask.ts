@@ -76,9 +76,9 @@ export function graphOrderTask(
       DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
       DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
 
-      // if explicit child package is passed in use that
-      if (ctx?.childPackage) {
-        ctx.jsSourcesAbs = getGraphFilesAbs(rootPath, ctx.childPackage, order.packages[0].files);
+      // if explicit package is passed in use that
+      if (ctx?.package) {
+        ctx.jsSourcesAbs = order.packages.flatMap((pkg) => pkg.files);
 
         return;
       }
@@ -110,19 +110,6 @@ export function graphOrderTask(
       }
     },
   };
-}
-
-// get all the js | gjs files from the graph and return as absolute paths. the graph will filter the extensions
-function getGraphFilesAbs(basePath: string, childPackage: string, files: string[]): string[] {
-  // filter out files that are not in the child package
-  files = files.filter((file) => file.startsWith(childPackage));
-
-  return (
-    files.map((file) => {
-      // all files are relative to basePath
-      return resolve(basePath, file);
-    }) ?? []
-  );
 }
 
 function getPackageEntry(
