@@ -17,6 +17,7 @@ import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
 import type { PackageJson } from 'type-fest';
+import FastGlob from 'fast-glob';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -282,7 +283,10 @@ export class EmberAppProjectGraph extends ProjectGraph {
     return { root, found };
   }
 
-  protected override discoverWorkspacePackages(ignoredPackages: string[] = []): void {
+  protected override discoverWorkspacePackages(
+    ignoredPackages: string[] = [],
+    ignoredPaths: string[] = []
+  ): void {
     const projectRoot = new Package(this.basePath);
 
     if (projectRoot.workspaceGlobs) {
@@ -308,7 +312,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
           (pathToPackage) =>
             !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
         ) // Ensures any package found is in the workspace.
-        .map((pathToPackage) => this.entityFactory(pathToPackage, ignoredPackages));
+        .map((pathToPackage) => this.entityFactory(pathToPackage, ignoredPaths));
 
       for (const pkg of entities) {
         if (
@@ -330,12 +334,18 @@ export class EmberAppProjectGraph extends ProjectGraph {
       return [this.discoveryByEntrypoint(this.entrypoint)];
     }
 
+    const ignoredPaths = options.ignoredGlobs
+      .flatMap((glob) => {
+        return FastGlob.sync(glob, { cwd: this.basePath });
+      })
+      .map((filePath) => join(this.basePath, filePath));
+
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages(ignoredGlobs);
+    this.discoverWorkspacePackages(ignoredGlobs, ignoredPaths);
 
-    const { root, found } = this.findProjectPackages(ignoredGlobs);
+    const { root, found } = this.findProjectPackages(ignoredPaths);
 
-    root.addExcludePattern(...ignoredGlobs);
+    root.addExcludePattern(...ignoredPaths);
     root.addIncludePattern(...include);
 
     this.debug('Root Package is %s', root.constructor.name);

@@ -299,7 +299,7 @@ describe('Task: graphOrderTask', () => {
     expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
   });
 
-  test.only('can ignore a file from the from graph', async () => {
+  test('can ignore a file from the from graph', async () => {
     project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
 
     project.mergeFiles(someOtherAddons(project));

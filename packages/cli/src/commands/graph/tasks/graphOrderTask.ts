@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
-import FastGlob from 'fast-glob';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,21 +27,17 @@ export function graphOrderTask(
       const { output, rootPath } = options;
       let selectedPackageName: string;
 
-      if (true) {
+      if (process.env['TEST'] === 'true') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
-        const ignoredPaths = options.ignore.flatMap((glob) => {
-          return FastGlob.sync(glob, { cwd: rootPath });
-        });
 
         order = intoGraphOutput(
           getMigrationOrder(srcDir, {
             basePath: rootPath,
             crawlDevDeps: options.devDeps,
             crawlDeps: options.deps,
-            ignoredGlobs: ignoredPaths,
+            ignoredGlobs: options.ignore,
             include: [],
             exclude: [],
           }),
