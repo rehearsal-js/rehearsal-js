@@ -30,7 +30,6 @@ const extLookup = {
   '.gts': '.gts',
   '.hbs': '.hbs',
   '.ts': '.ts',
-  '.gts': '.gts',
 };
 
 type ValidExtension = keyof typeof extLookup;
@@ -323,6 +322,8 @@ describe('fix', () => {
       const reportedItems = report.items.filter((item) =>
         item.analysisTarget.includes('src/salutation.ts')
       );
+
+      expect(reportedItems.length).toBeGreaterThan(0);
       expect(report.summary[0].basePath).toMatch(project.baseDir);
       expect(report.items[7].analysisTarget).toEqual('src/salutation.ts');
     });
@@ -426,7 +427,7 @@ describe('fix', () => {
         // no ops
       }
 
-      expectFile(outputs[0]).toMatchSnapshot()
+      expectFile(outputs[0]).toMatchSnapshot();
     });
 
     test('with service map', async () => {
@@ -484,7 +485,7 @@ describe('fix', () => {
         // no ops
       }
 
-      expectFile(outputs[0]).toMatchSnapshot()
+      expectFile(outputs[0]).toMatchSnapshot();
     });
   });
 
@@ -514,8 +515,7 @@ describe('fix', () => {
 
       const input: MigrateInput = {
         basePath: project.baseDir,
-        sourceFiles: inputs,
-        entrypoint: '',
+        sourceFilesAbs: inputs,
         reporter,
       };
 
@@ -564,8 +564,7 @@ export default class SomeComponent extends Component {
 
       const input: MigrateInput = {
         basePath: project.baseDir,
-        sourceFiles: inputs,
-        entrypoint: '',
+        sourceFilesAbs: inputs,
         reporter,
       };
 

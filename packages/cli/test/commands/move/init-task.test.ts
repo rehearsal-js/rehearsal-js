@@ -28,7 +28,7 @@ describe('Move: Init-Task', () => {
       ignore: [''],
     };
     const tasks = [initTask(source, options)];
-    const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
+    const ctx = await listrTaskRunner<CommandContext>(tasks);
 
     const sanitizedAbsPaths = ctx.sourceFilesAbs?.map((path) => {
       return cleanOutput(path, project.baseDir);
@@ -48,7 +48,7 @@ describe('Move: Init-Task', () => {
       ignore: [''],
     };
     const tasks = [initTask(source, options)];
-    const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
+    const ctx = await listrTaskRunner<CommandContext>(tasks);
     expect(ctx.jsSourcesAbs).toMatchObject([
       resolve(project.baseDir, 'src/foo/baz.js'),
       resolve(project.baseDir, 'src/foo/biz.js'),
@@ -69,7 +69,7 @@ describe('Move: Init-Task', () => {
       ignore: [''],
     };
     const tasks = [initTask(childPackage, options)];
-    const ctx = await listrTaskRunner<MoveCommandContext>(tasks);
+    const ctx = await listrTaskRunner<CommandContext>(tasks);
 
     expect(ctx.packageAbs).toStrictEqual(resolve(project.baseDir, './module-b'));
     expect(ctx.packageRel).toStrictEqual(childPackage);
@@ -80,7 +80,7 @@ describe('Move: Init-Task', () => {
     const nonExistsSourceFile = 'src/file-does-not-exist-in-project.js';
     await expect(
       async () =>
-        await listrTaskRunner<MoveCommandContext>([
+        await listrTaskRunner<CommandContext>([
           initTask(nonExistsSourceFile, {
             rootPath: project.baseDir,
             dryRun: true,
@@ -100,7 +100,7 @@ describe('Move: Init-Task', () => {
     const nonExistsDirectory = '/dir/dont/exist/in/project';
     await expect(
       async () =>
-        await listrTaskRunner<MoveCommandContext>([
+        await listrTaskRunner<CommandContext>([
           initTask(nonExistsDirectory, {
             rootPath: project.baseDir,
             dryRun: true,
@@ -120,7 +120,7 @@ describe('Move: Init-Task', () => {
     const nonExistsChildPackage = 'module-nope';
     await expect(
       async () =>
-        await listrTaskRunner<MoveCommandContext>([
+        await listrTaskRunner<CommandContext>([
           initTask(nonExistsChildPackage, {
             rootPath: project.baseDir,
             dryRun: true,
@@ -140,7 +140,7 @@ describe('Move: Init-Task', () => {
     const nonPackage = 'src';
     await expect(
       async () =>
-        await listrTaskRunner<MoveCommandContext>([
+        await listrTaskRunner<CommandContext>([
           initTask(nonPackage, {
             rootPath: project.baseDir,
             dryRun: true,

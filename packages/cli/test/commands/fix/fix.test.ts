@@ -93,7 +93,6 @@ describe('Command: fix base_ts_app fixture', () => {
   });
 });
 
-
 describe('Command: fix ember-ts-app fixture', () => {
   let project: Project;
 

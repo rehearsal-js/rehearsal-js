@@ -1,4 +1,4 @@
-import { dirname, resolve, join } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -46,8 +46,6 @@ export function graphOrderTask(
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
 
-          const workerData = source ? join(basePath, source) : basePath;
-
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
             workerData: JSON.stringify({
@@ -82,7 +80,7 @@ export function graphOrderTask(
 
       // if explicit package is passed in use that
       if (ctx?.package) {
-        ctx.jsSourcesAbs = order.packages.flatMap((pkg) => pkg.files);
+        ctx.sourceFilesAbs = order.packages.flatMap((pkg) => pkg.files);
 
         return;
       }

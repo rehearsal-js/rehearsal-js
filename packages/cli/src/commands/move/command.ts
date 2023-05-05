@@ -40,15 +40,15 @@ moveCommand
   .alias('mv')
   .description('git mv conversion of JS files -> TS files')
   .argument('[src]', 'the path to a package or file that will be moved', '')
-  .option('-g, --graph', 'Enable graph resolution of files to move', false)
-  .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
-  .option('--deps', `Follow packages in 'devDependencies' when moving`)
+  .option('-g, --graph', 'enable graph resolution of files to move', false)
+  .option('--devDeps', `follow packages in 'devDependencies' when moving`)
+  .option('--deps', `follow packages in 'dependencies'`)
   .option(
     '--ignore [packagesOrGlobs...]',
     `A space deliminated list of packages or globs to ignore`,
     []
   )
-  .option('--dryRun', `Do nothing; only show what would happen`, false)
+  .option('-d, --dryRun', `do nothing; only show what would happen`, false)
   .addOption(
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

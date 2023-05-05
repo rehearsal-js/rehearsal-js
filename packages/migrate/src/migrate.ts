@@ -1,7 +1,6 @@
 import { resolve } from 'node:path';
 import findup from 'findup-sync';
-import { type TSConfig, readJSON } from '@rehearsal/utils';
-import { readTSConfig } from '@rehearsal/utils';
+import { readTSConfig, readJSON } from '@rehearsal/utils';
 import {
   PluginsRunner,
   RehearsalService,
@@ -30,16 +29,17 @@ import {
 } from './glint-utils.js';
 import type { Reporter } from '@rehearsal/reporter';
 import type { CompilerOptions } from 'typescript';
+import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
-  basePath: string;
+  rootPath: string;
   sourceFilesAbs: string[];
   reporter: Reporter; // Reporter
   task?: { output: string };
 };
 
 export type MigrateOutput = {
-  basePath: string;
+  rootPath: string;
   configFile: string;
   sourceFilesAbs: string[];
 };
@@ -48,7 +48,7 @@ const DEBUG_CALLBACK = debug('rehearsal:migrate');
 const { parseJsonConfigFileContent } = ts;
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
-  const basePath = resolve(input.basePath);
+  const basePath = resolve(input.rootPath);
   // these will always be typescript files
   const sourceFilesAbs = input.sourceFilesAbs;
   const reporter = input.reporter;
@@ -63,7 +63,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFilesAbs)}`);
 
   // read the tsconfig.json
-  const configFile = readTSConfig(resolve(basePath, configName)) as TSConfig
+  const configFile = readTSConfig<TSConfig>(resolve(basePath, configName));
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
@@ -81,7 +81,6 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     {},
     configName
   );
-
 
   // these should NOT all go into the report
   const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];

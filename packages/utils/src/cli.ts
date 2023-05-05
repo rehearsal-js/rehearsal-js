@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
@@ -18,8 +13,8 @@ import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import equal from 'fast-deep-equal';
 import { execa, execaSync } from 'execa';
+import { TSConfig } from './types.js';
 import type { PackageJson } from 'type-fest';
-// this tsconfig includes glint
 import type { Options } from 'execa';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
@@ -754,13 +749,9 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
   return true;
 }
 
-export function isTSConfigPreReq(
-  basePath: string,
-  // requiredTSConfig: TSConfigBase | TSConfigEmber | TSConfigGlimmer
-  requiredTSConfig: any
-): boolean {
+export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): boolean {
   const tsConfigPath = resolve(basePath, 'tsconfig.json');
-  const tsConfig = readTSConfig<any>(tsConfigPath);
+  const tsConfig = readTSConfig<TSConfig>(tsConfigPath);
   const message = `Please update the tsconfig.json to include:\n${JSON.stringify(
     requiredTSConfig,
     null,
@@ -798,4 +789,22 @@ export function isNodePreReq(requiredNode: string): boolean {
   }
 
   return true;
+}
+
+// be sure the childPackage exists within the basePath project and returns rel and abs tuple
+export function validatePackagePath(basePath: string, childPackage: string): [string, string] {
+  if (
+    !existsSync(resolve(basePath, childPackage)) ||
+    !existsSync(resolve(basePath, childPackage, 'package.json'))
+  ) {
+    throw new Error(
+      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
+    );
+  }
+
+  const absPath = resolve(basePath, childPackage);
+  const relPath = relative(basePath, resolve(basePath, childPackage));
+
+  // return the abs path and rel path of the childPackage
+  return [absPath, relPath];
 }

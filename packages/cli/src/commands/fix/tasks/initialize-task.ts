@@ -12,6 +12,7 @@ import {
   isESLintPreReq,
   isTSConfigPreReq,
   isNodePreReq,
+  determineProjectName,
 } from '@rehearsal/utils';
 // eslint-disable-next-line no-restricted-imports
 import { isGlintProject } from '@rehearsal/service';
@@ -20,12 +21,14 @@ import { readJsonSync } from 'fs-extra/esm';
 import { isEmberAddon, isEmberApp } from '@rehearsal/migration-graph-ember';
 import { PackageJson } from 'type-fest';
 import { getPreReqs } from '../../../prereqs.js';
+
 import type { FixCommandOptions, CommandContext, ProjectType } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
+  src: string,
   options: FixCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: CommandContext
@@ -33,32 +36,35 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { basePath, source, childPackage } = options;
-      ctx.packageJSON = readJsonSync(resolve(basePath, 'package.json')) as PackageJson;
+      const { rootPath, graph } = options;
 
-      // check if ember app/addon or glimmer project
+      ctx.packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
       ctx.projectType = 'base';
+      ctx.projectName = determineProjectName(rootPath) || '';
+
       // if ember app or addon
       if (isEmberApp(ctx.packageJSON) || isEmberAddon(ctx.packageJSON)) {
         ctx.projectType = 'ember';
-      } else if (await isGlintProject(basePath)) {
+      } else if (await isGlintProject(rootPath)) {
         ctx.projectType = 'glimmer';
       }
 
-      // source flag - grab all the ts files in the project - expectation is rehearsal move has already been run on the source
-      if (source) {
-        // expect a tsconfig.json file in basePath
-        preFlightCheck(basePath, ctx.projectType);
+      // if a package is specified grab all the ts files in the package
+      // expectation is rehearsal move has already been run on the package
+      // expect a tsconfig.json file in rootPath
+      if (graph) {
+        ctx.package = src;
 
-        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(basePath, source, 'ts');
-      }
-
-      // childPackage flag - if a child package is specified grab all the ts files in the child package - expectation is rehearsal move has already been run on the child package
-      // sourceFilesAbs, sourceFilesRel will be set in the graph task as we need proper order
-      if (childPackage) {
-        [ctx.childPackageAbs, ctx.childPackageRel] = validateChildPackage(basePath, childPackage);
+        [ctx.packageAbs, ctx.packageRel] = validateChildPackage(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(ctx.childPackageAbs, ctx.projectType);
+        preFlightCheck(ctx.packageAbs, ctx.projectType);
+      } else {
+        // grab all the ts files in the project
+        // expectation is rehearsal move has already been run on the source
+        // expect a tsconfig.json file in rootPath
+        preFlightCheck(rootPath, ctx.projectType);
+
+        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'ts');
       }
 
       DEBUG_CALLBACK('ctx %O:', ctx);

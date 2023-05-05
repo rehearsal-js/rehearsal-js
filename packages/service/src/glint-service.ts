@@ -95,7 +95,6 @@ export class GlintService implements Service {
   getDiagnostics(fileName: string): ts.DiagnosticWithLocation[] {
     const diagnostics = this.service.getDiagnostics(fileName);
 
-
     return diagnostics.map((diagnostic) => {
       return this.convertLSPDiagnosticToTs(fileName, diagnostic);
     });

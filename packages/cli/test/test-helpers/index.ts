@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { Readable } from 'stream';
 import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';

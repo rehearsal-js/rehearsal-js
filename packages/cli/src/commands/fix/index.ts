@@ -4,7 +4,7 @@ import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import debug from 'debug';
 import { createLogger, format, transports } from 'winston';
-import { isDirectory, parseCommaSeparatedList } from '@rehearsal/utils';
+import { parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
 import { FixCommandOptions, FixTasks, GraphTasks } from '../../types.js';
 
@@ -24,59 +24,66 @@ export const fixCommand = new Command();
 /*
   @rehearsal/fix workflow
 
-  rehearsal fix --source <path to source file | directory>
-    the explicit source file OR explicit directory with implicit child directories moved.
-    migration strategy is ignored with source-file and leveraged with directory
+  rehearsal fix <path to source file | directory>
+    the explicit source file OR explicit directory with implicit child directories fixed.
+    migration strategy is ignored
 
-  rehearsal fix --package <path to child package>
-    specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package.
+  rehearsal fix <path to child package> --graph
+    specify the child-package relative to process.cwd(). migration strategy is leveraged fixing all necessary files in the dependency graph for this package.
     migration strategy is leveraged
+
+  rehearsal fix <path to child package> --graph --devDeps
+    same as above but devDependencies are considered in the graph
 */
 
 fixCommand
   .alias('infer')
   .name('fix')
-  .description('provides type inference against typescript projects')
-  .addOption(
-    new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
-      .default(process.cwd())
-      .argParser(() => process.cwd())
-      .hideHelp()
-  )
-  .option(
-    '-s, --source <path to source file | directory>',
-    `the explicit source file OR explicit directory with implicit child directories moved. migration strategy is ignored`,
-    ''
-  )
-  .option(
-    '-p, --childPackage <path to child package>',
-    `specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package`,
-    ''
-  )
+  .description('fixes typescript compiler errors by infering types')
+  .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
+  .option('-g, --graph', 'enable graph resolution of files to move', false)
+  .option('--devDeps', `follow packages in 'devDependencies'`)
+  .option('--deps', `follow packages in 'dependencies'`)
+  .option('--ignore [packageNames...]', `comma deliminated list of packages to ignore`, [])
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('-w, --wizard', 'interactive wizard will prompt on a file-by-file basis', false)
   .option('-d, --dryRun', `do nothing; only show what would happen`, false)
-  .action(async (options: FixCommandOptions) => {
-    await fix(options);
+  .addOption(
+    new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+      .default(process.cwd())
+      .argParser(() => process.cwd())
+      .hideHelp()
+  )
+  .action(async (src: string, options: FixCommandOptions) => {
+    await fix(src, options);
   });
 
-async function fix(options: FixCommandOptions): Promise<void> {
+async function fix(src: string, options: FixCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/fix ${version?.trim()}`);
-
-  const { childPackage, source, wizard } = options;
-
-  // if both childPackage and source are specified, throw an error
-  if (childPackage && source) {
-    throw new Error(
-      `@rehearsal/fix: --childPackage AND --source are specified, please specify only one`
+  if (options.graph && !options.deps && !options.devDeps) {
+    console.warn(
+      `Passing --graph without --deps, --devDeps, or both results in only analyzing the local files in the package.`
     );
-  } else if (!childPackage && !source) {
-    throw new Error(`@rehearsal/fix: you must specify a flag, either --childPackage OR --source`);
+  }
+
+  if (!options.graph && options.devDeps) {
+    throw new Error(`'--devDeps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.deps) {
+    throw new Error(`'--deps' can only be passed when you pass --graph`);
+  }
+
+  if (!options.graph && options.ignore.length > 0) {
+    throw new Error(`'--ignore' can only be passed when you pass --graph`);
+  }
+
+  if (!src) {
+    throw new Error(`@rehearsal/fix: you must specify a package or path to move`);
   }
 
   // grab the child fix tasks
@@ -84,27 +91,26 @@ async function fix(options: FixCommandOptions): Promise<void> {
   const { graphOrderTask } = await loadGraphTasks();
 
   // source with a direct filepath ignores the migration graph
-  const tasks =
-    source && !isDirectory(source)
-      ? [initTask(options), convertTask(options)]
-      : [initTask(options), graphOrderTask(options), convertTask(options)];
+  const tasks = options.graph
+    ? [
+        initTask(src, options),
+        graphOrderTask(src, {
+          rootPath: options.rootPath,
+          devDeps: options.devDeps,
+          deps: options.deps,
+          ignore: options.ignore,
+        }),
+        convertTask(options),
+      ]
+    : [initTask(src, options), convertTask(options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);
 
   try {
-    // if interactive
-    if (wizard) {
-      // For issue #549, use simple renderer for the interactive edit flow
-      await new Listr(tasks, {
-        concurrent: false,
-        renderer: 'simple',
-      }).run();
-    } else {
-      await new Listr(tasks, {
-        concurrent: false,
-      }).run();
-    }
+    await new Listr(tasks, {
+      concurrent: false,
+    }).run();
   } catch (e) {
     if (e instanceof Error) {
       winstonLogger.error(`${e.message + '\n' + (e.stack || '')}`);

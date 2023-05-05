@@ -10,7 +10,7 @@ graphCommand
   .description(
     `Produces the migration order of 'dependencies' and file order. By default ignores 'devDependencies'.`
   )
-  .argument('[srcDir]', 'Path to directory contains a package.json', process.cwd())
+  .argument('[srcDir]', 'Path to directory containing a package.json', process.cwd())
   .option('--devDeps', `Follow packages in 'devDependencies'`)
   .option('--deps', `Follow packages in 'dependencies'`)
   .option(
@@ -26,7 +26,7 @@ graphCommand
   )
   .option('-o, --output <filepath>', 'Output path for a JSON format of the graph order')
   .action(async (srcDir: string, options: GraphCommandOptions) => {
-    await new Listr<GraphCommandContext>([
+    await new Listr<CommandContext>([
       graphOrderTask(srcDir, {
         output: options.output,
         rootPath: options.rootPath,

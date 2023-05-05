@@ -114,9 +114,7 @@ export function getEmberAppWithInRepoAddonProject(
   return project;
 }
 
-export function getTSEmberAppProject(
-  project: Project = emberTSAppTemplate(),
-): Project {
+export function getTSEmberAppProject(project: Project = emberTSAppTemplate()): Project {
   getEmberAppProject(project);
 
   return project;
@@ -188,13 +186,11 @@ export function emberAppTemplate(): Project {
   });
 }
 
-
 export function emberTSAppTemplate(): Project {
   return Project.fromDir(EMBER_TS_APP_TEMPLATE_DIR, {
     linkDevDeps: false,
   });
 }
-
 
 export function getEmber4AppProject(): Project {
   const project = getEmberAppProject();
