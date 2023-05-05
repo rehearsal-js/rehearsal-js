@@ -67,15 +67,14 @@ describe('Task: graphOrderTask', () => {
 
   test('can output a graph.json file', async () => {
     const options = {
-      srcDir: project.baseDir,
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -101,15 +100,16 @@ describe('Task: graphOrderTask', () => {
 
   test('can output to stdout for sub-package', async () => {
     const options = {
-      srcDir: `${project.baseDir}/module-a`,
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(`${project.baseDir}/module-a`, options),
+    ]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -127,14 +127,13 @@ describe('Task: graphOrderTask', () => {
 
   test('can print graph order to stdout', async () => {
     const options = {
-      srcDir: project.baseDir,
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       devDeps: false,
       deps: true,
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -145,8 +144,7 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
-      srcDir: project.baseDir,
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       devDeps: false,
       deps: true,
       ignore: [],
@@ -158,7 +156,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -171,15 +169,16 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
-      srcDir: project.baseDir + '/lib/some-other-addon',
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -205,15 +204,16 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
-      srcDir: project.baseDir + '/lib/some-other-addon',
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -231,15 +231,16 @@ describe('Task: graphOrderTask', () => {
     expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
 
     const withDevDeps = {
-      srcDir: project.baseDir + '/lib/some-other-addon',
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       devDeps: true,
       deps: true,
       ignore: [],
       output: join(project.baseDir, 'graph.json'),
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(withDevDeps)]);
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', withDevDeps),
+    ]);
 
     expect(existsSync(withDevDeps.output)).toBe(true);
 
@@ -271,15 +272,16 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
-      srcDir: project.baseDir + '/lib/some-other-addon',
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
       ignore: ['some-test-package'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -303,8 +305,7 @@ describe('Task: graphOrderTask', () => {
     await project.write();
 
     const options = {
-      basePath: project.baseDir,
-      srcDir: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
@@ -317,7 +318,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -360,8 +361,7 @@ describe('Task: graphOrderTask', () => {
     ).toBe(true);
 
     const options = {
-      srcDir: project.baseDir,
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
@@ -374,7 +374,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(options)]);
+    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 

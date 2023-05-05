@@ -66,15 +66,6 @@ export class PackageGraph {
 
     let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
 
-    if (this.projectGraph) {
-      // This should be moved to the Package constructor.
-      const relativePackagePath = relative(this.projectGraph.rootDir, this.baseDir);
-      const additionalExcludes: string[] = Array.from(this.projectGraph.exclude)
-        .map((match) => relative(relativePackagePath, match))
-        .filter((relativePath) => !relativePath.startsWith('..'));
-      exclude = exclude.concat(additionalExcludes);
-    }
-
     const cruiseOptions: ICruiseOptions = {
       baseDir,
       exclude: {

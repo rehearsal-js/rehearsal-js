@@ -13,7 +13,7 @@ export * from './utils/workspace.js';
 export * from './graph/index.js';
 export * from './types.js';
 export { PackageGraph, PackageGraphOptions } from './entities/package-graph.js';
-export { ProjectGraph, ProjectGraphOptions } from './entities/project-graph.js';
+export { ProjectGraph, DiscoverOptions, ProjectGraphOptions } from './entities/project-graph.js';
 
 export type { IPackage } from './entities/IPackage.js';
 

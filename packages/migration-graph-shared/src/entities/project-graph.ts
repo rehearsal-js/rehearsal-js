@@ -8,13 +8,20 @@ import type { PackageNode } from '../types.js';
 
 // TODO this package level dependency data should be surfaced in a report
 
+export type DiscoverOptions = {
+  ignoredPackages: string[];
+  crawlDeps: boolean;
+  crawlDevDeps: boolean;
+  include: string[];
+  exclude: string[];
+};
+
 export type ProjectGraphOptions = {
   basePath: string;
   eager?: boolean;
-  sourceType?: string;
+
+  // Only used by Project classes
   entrypoint?: string;
-  include?: Array<string>;
-  exclude?: Array<string>;
 };
 
 export class ProjectGraph {
@@ -30,21 +37,17 @@ export class ProjectGraph {
   protected visited: Set<Package>;
 
   debug: Debugger = debug(`rehearsal:migration-graph-shared:${this.constructor.name}`);
-  include: Set<string>;
-  exclude: Set<string>;
 
-  constructor(rootDir: string, options?: ProjectGraphOptions) {
-    const { eager, sourceType, entrypoint, exclude, include } = {
+  constructor(srcDir: string, options: ProjectGraphOptions) {
+    const { eager, sourceType, entrypoint } = {
       eager: false,
       sourceType: 'JavaScript Library',
       ...options,
     };
 
-    this.debug(`rootDir: %s, options: %o`, rootDir, options);
+    this.debug(`srcDir: %s, options: %o`, srcDir, options);
 
-    this.include = new Set(include);
-    this.exclude = new Set(exclude);
-    this.#rootDir = rootDir;
+    this.#rootDir = srcDir;
     this.entrypoint = entrypoint;
     this.#eager = eager;
     this.basePath = options?.basePath || process.cwd();
@@ -230,11 +233,8 @@ export class ProjectGraph {
     }
   }
 
-  discover(
-    crawlDeps: boolean,
-    crawlDevDeps: boolean,
-    ignorePackages: string[] = []
-  ): Array<Package> {
+  discover(options: DiscoverOptions): Array<Package> {
+    const { ignoredPackages, crawlDeps, crawlDevDeps, include, exclude } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
     if (this.entrypoint) {
@@ -242,15 +242,15 @@ export class ProjectGraph {
     }
 
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages(ignorePackages);
+    this.discoverWorkspacePackages(ignoredPackages);
 
     // Setup package and return
 
     // Add root package to graph
     const rootPackage = new Package(this.rootDir);
 
-    rootPackage.addExcludePattern(...this.exclude);
-    rootPackage.addIncludePattern(...this.include);
+    rootPackage.addExcludePattern(...exclude);
+    rootPackage.addIncludePattern(...include);
 
     this.debug('RootPackage.excludePatterns', rootPackage.excludePatterns);
     this.debug('RootPackage.includePatterns', rootPackage.includePatterns);

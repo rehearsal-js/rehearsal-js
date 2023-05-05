@@ -15,9 +15,11 @@ describe('migration-graph', () => {
     project = await getLibraryProjectFixture('simple');
     const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir, {
       basePath: project.baseDir,
-      deps: true,
-      devDeps: true,
-      ignore: [],
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.Library);
@@ -26,9 +28,11 @@ describe('migration-graph', () => {
     project = await getEmberProjectFixture('app');
     const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir, {
       basePath: project.baseDir,
-      deps: true,
-      devDeps: true,
-      ignore: [],
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberApp);
@@ -37,9 +41,11 @@ describe('migration-graph', () => {
     project = await getEmberProjectFixture('addon');
     const { projectGraph, sourceType } = buildMigrationGraph(project.baseDir, project.baseDir, {
       basePath: project.baseDir,
-      deps: true,
-      devDeps: true,
-      ignore: [],
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberAddon);

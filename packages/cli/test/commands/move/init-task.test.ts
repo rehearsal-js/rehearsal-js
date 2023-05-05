@@ -21,7 +21,7 @@ describe('Move: Init-Task', () => {
   test('validate source option with file', async () => {
     const source = 'src/foo/buz/biz.js';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
       graph: false,
       devDeps: false,
@@ -37,7 +37,7 @@ describe('Move: Init-Task', () => {
   test('validate source option with directory', async () => {
     const source = 'src/foo';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
       graph: false,
       devDeps: false,
@@ -58,7 +58,7 @@ describe('Move: Init-Task', () => {
     // childPackage is a relative path from basePath
     const childPackage = 'module-b';
     const options: MoveCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
       graph: true,
       devDeps: false,
@@ -79,7 +79,7 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask(nonExistsSourceFile, {
-            basePath,
+            rootPath: project.baseDir,
             dryRun: true,
             graph: false,
             devDeps: false,
@@ -99,7 +99,7 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask(nonExistsDirectory, {
-            basePath,
+            rootPath: project.baseDir,
             dryRun: true,
             graph: false,
             devDeps: false,
@@ -119,7 +119,7 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask(nonExistsChildPackage, {
-            basePath,
+            rootPath: project.baseDir,
             dryRun: true,
             graph: true,
             devDeps: false,
@@ -139,7 +139,7 @@ describe('Move: Init-Task', () => {
       async () =>
         await listrTaskRunner<MoveCommandContext>([
           initTask(nonPackage, {
-            basePath,
+            rootPath: project.baseDir,
             dryRun: true,
             graph: true,
             devDeps: false,

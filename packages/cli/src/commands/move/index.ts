@@ -39,20 +39,20 @@ moveCommand
   .name('move')
   .alias('mv')
   .description('git mv conversion of JS files -> TS files')
-  .argument('[srcDir]', 'the path to a package or file that will be moved', '')
+  .argument('[src]', 'the path to a package or file that will be moved', '')
   .option('-g, --graph', 'Enable graph resolution of files to move', false)
   .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
   .option('--deps', `Follow packages in 'devDependencies' when moving`)
   .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
   .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
-    new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+    new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (srcDir: string, options: MoveCommandOptions) => {
-    await move(srcDir, options);
+  .action(async (src: string, options: MoveCommandOptions) => {
+    await move(src, options);
   });
 
 async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
@@ -87,9 +87,8 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
   const tasks = options.graph
     ? [
         initTask(srcDir, options),
-        graphOrderTask({
-          basePath: options.basePath,
-          srcDir,
+        graphOrderTask(srcDir, {
+          rootPath: options.rootPath,
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,

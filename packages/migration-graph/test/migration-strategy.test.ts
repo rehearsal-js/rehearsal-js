@@ -23,9 +23,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -42,9 +44,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -62,9 +66,11 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: 'depends-on-foo.js',
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -83,9 +89,10 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
         include: ['webpack.config.js'],
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        exclude: [],
+        ignoredPackages: [],
       });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
@@ -108,9 +115,10 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
         exclude: ['index.js'],
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        ignoredPackages: [],
       });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
@@ -128,9 +136,11 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: 'index.js',
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = orderedFiles.map((f) => f.relativePath);
@@ -148,9 +158,11 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir, {
           basePath: project.baseDir,
-          deps: true,
-          devDeps: true,
-          ignore: [],
+          crawlDeps: true,
+          crawlDevDeps: true,
+          include: [],
+          exclude: [],
+          ignoredPackages: [],
         });
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -175,9 +187,11 @@ describe('migration-strategy', () => {
 
         const strategy = getMigrationStrategy(project.baseDir + '/packages/foo', {
           basePath: project.baseDir,
-          devDeps: true,
-          deps: true,
-          ignore: [],
+          crawlDeps: true,
+          crawlDevDeps: true,
+          include: [],
+          exclude: [],
+          ignoredPackages: [],
         });
         const files: Array<SourceFile> = strategy.getMigrationOrder();
         const relativePaths: Array<string> = files.map((f) => f.relativePath);
@@ -201,9 +215,11 @@ describe('migration-strategy', () => {
         const options = {
           entrypoint: 'packages/blorp/index.js',
           basePath: project.baseDir,
-          deps: true,
-          devDeps: true,
-          ignore: [],
+          crawlDeps: true,
+          crawlDevDeps: true,
+          include: [],
+          exclude: [],
+          ignoredPackages: [],
         };
         const strategy = getMigrationStrategy(project.baseDir, options);
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
@@ -234,9 +250,10 @@ describe('migration-strategy', () => {
         const options = {
           exclude: ['packages/blorp/should-ignore'],
           basePath: project.baseDir,
-          deps: true,
-          devDeps: true,
-          ignore: [],
+          crawlDeps: true,
+          crawlDevDeps: true,
+          include: [],
+          ignoredPackages: [],
         };
         const strategy = getMigrationStrategy(project.baseDir, options);
         const orderedFiles: Array<SourceFile> = strategy.getMigrationOrder();
@@ -269,9 +286,11 @@ describe('migration-strategy', () => {
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
         entrypoint: 'tests/unit/utils/math-test.js',
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
@@ -287,9 +306,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
@@ -307,9 +328,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
@@ -329,9 +352,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);
@@ -353,9 +378,11 @@ describe('migration-strategy', () => {
 
       const strategy = getMigrationStrategy(project.baseDir, {
         basePath: project.baseDir,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
       });
       const files: Array<SourceFile> = strategy.getMigrationOrder();
       const actual: Array<string> = files.map((f) => f.relativePath);

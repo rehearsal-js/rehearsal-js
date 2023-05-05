@@ -6,7 +6,13 @@ export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackag
   const projectGraph = new EmberAppProjectGraph(rootDir, {
     basePath: rootDir,
   });
-  projectGraph.discover(true, true);
+  projectGraph.discover({
+    crawlDeps: true,
+    crawlDevDeps: true,
+    ignoredPackages: [],
+    include: [],
+    exclude: [],
+  });
   const nodes = projectGraph.graph.getSortedNodes();
   return (
     Array.from(nodes)

@@ -15,7 +15,7 @@ graphCommand
   .option('--deps', `Follow packages in 'dependencies'`)
   .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
   .addOption(
-    new Option('-b, --basePath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+    new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .argParser(() => process.cwd())
       .hideHelp()
@@ -23,10 +23,9 @@ graphCommand
   .option('-o, --output <filepath>', 'Output path for a JSON format of the graph order')
   .action(async (srcDir: string, options: GraphCommandOptions) => {
     await new Listr<GraphCommandContext>([
-      graphOrderTask({
-        srcDir: srcDir,
+      graphOrderTask(srcDir, {
         output: options.output,
-        basePath: options.basePath,
+        rootPath: options.rootPath,
         devDeps: options.devDeps,
         deps: options.deps,
         ignore: options.ignore,

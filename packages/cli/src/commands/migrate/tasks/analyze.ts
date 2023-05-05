@@ -129,11 +129,11 @@ export function analyzeTask(
       const strategy = getMigrationStrategy(ctx.targetPackagePath, {
         basePath: options.basePath,
         entrypoint: options.entrypoint,
-        exclude: ctx.userConfig?.exclude,
-        include: ctx.userConfig?.include,
-        deps: true,
-        devDeps: true,
-        ignore: [],
+        exclude: ctx.userConfig?.exclude || [],
+        include: ctx.userConfig?.include || [],
+        crawlDevDeps: true,
+        crawlDeps: true,
+        ignoredPackages: [],
       });
 
       const files: SourceFile[] = strategy.getMigrationOrder();

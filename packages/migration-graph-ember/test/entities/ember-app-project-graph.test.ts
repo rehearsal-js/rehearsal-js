@@ -28,7 +28,13 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
+    });
 
     expect(projectGraph.graph.hasNode('some-addon')).toBe(true);
   });
@@ -39,7 +45,13 @@ describe('Unit | EmberAppProjectGraph', () => {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
+    });
 
     const rootNode = projectGraph.graph.getNode('app-template');
     const addonNode = projectGraph.graph.getNode('some-addon');
@@ -157,7 +169,13 @@ export default class Salutation extends Component {
       'should have an edge between app and in-repo-addon'
     ).toBe(true);
 
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
+    });
 
     Array.from(projectGraph.graph.nodes).forEach((node) =>
       expect(node.content.synthetic).toBeFalsy()
@@ -223,7 +241,13 @@ export default class Salutation extends Component {
         entrypoint,
         basePath: project.baseDir,
       });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -295,7 +319,13 @@ export default class Salutation extends Component {
         entrypoint: 'app/components/obtuse.js',
         basePath: project.baseDir,
       });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -316,10 +346,15 @@ export default class Salutation extends Component {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, {
-      exclude: ['tests'],
       basePath: project.baseDir,
     });
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: ['tests'],
+      ignoredPackages: [],
+    });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -351,11 +386,16 @@ export default class Salutation extends Component {
     await setupProject(project);
 
     const projectGraph = new EmberAppProjectGraph(project.baseDir, {
-      include: ['public'],
       basePath: project.baseDir,
     });
 
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: ['public'],
+      exclude: [],
+      ignoredPackages: [],
+    });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
 
@@ -416,7 +456,13 @@ export default class Salutation extends Component {
 
     await setupProject(project);
     const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-    projectGraph.discover(true, true);
+    projectGraph.discover({
+      crawlDeps: true,
+      crawlDevDeps: true,
+      include: [],
+      exclude: [],
+      ignoredPackages: [],
+    });
 
     const rootNode = projectGraph.graph.getNode('app-template');
     const addonNode = projectGraph.graph.getNode('some-addon');
@@ -467,7 +513,13 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
 
       const orderedPackages = projectGraph.graph.getSortedNodes();
       expect(flatten(orderedPackages)).toStrictEqual(['app-template']);
@@ -485,7 +537,13 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app-with-in-repo-addon');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
 
       const rootNode = projectGraph.graph.getNode('app-template');
 
@@ -530,7 +588,13 @@ export default class Salutation extends Component {
       project = await getEmberProjectFixture('app-with-in-repo-engine');
 
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
 
       const rootNode = projectGraph.graph.getNode('app-template');
       const orderedPackages = projectGraph.graph.getSortedNodes(rootNode);
@@ -580,7 +644,13 @@ export default class Salutation extends Component {
       project = getEmberProject('monorepo');
       await project.write();
       const projectGraph = new EmberAppProjectGraph(project.baseDir, { basePath: project.baseDir });
-      projectGraph.discover(true, true);
+      projectGraph.discover({
+        crawlDeps: true,
+        crawlDevDeps: true,
+        include: [],
+        exclude: [],
+        ignoredPackages: [],
+      });
       const nodes = projectGraph.graph.getSortedNodes();
 
       expect(nodes.map((n) => n.content.pkg?.packageName)).toEqual([

@@ -6,15 +6,26 @@ import { getMigrationOrder } from '@rehearsal/migration-graph';
 import type { PackageEntry } from '../../../types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const { srcDir, basePath, devDeps, deps, ignore } = JSON.parse(workerData as string) as {
-    basePath: string;
-    srcDir: string;
-    devDeps: boolean;
-    deps: boolean;
-    ignore: string[];
-  };
+  const { srcDir, basePath, crawlDevDeps, crawlDeps, ignoredPackages, include, exclude } =
+    JSON.parse(workerData as string) as {
+      basePath: string;
+      srcDir: string;
+      crawlDevDeps: boolean;
+      crawlDeps: boolean;
+      ignoredPackages: string[];
+      include: string[];
+      exclude: string[];
+    };
 
-  const ordered = getMigrationOrder(srcDir, { basePath, devDeps, deps, eager: true, ignore });
+  const ordered = getMigrationOrder(srcDir, {
+    basePath,
+    crawlDeps,
+    crawlDevDeps,
+    ignoredPackages,
+    include,
+    exclude,
+    eager: true,
+  });
   parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
 

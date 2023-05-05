@@ -1,10 +1,12 @@
 import { resolve } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
-import { ProjectGraph, ProjectGraphOptions } from '@rehearsal/migration-graph-shared';
 import {
-  EmberAddonPackageGraphOptions,
+  DiscoverOptions,
+  ProjectGraph,
+  ProjectGraphOptions,
+} from '@rehearsal/migration-graph-shared';
+import {
   EmberAddonProjectGraph,
-  EmberAppProjectGraphOptions,
   EmberAppProjectGraph,
   isEmberAddon,
   isEmberApp,
@@ -12,15 +14,12 @@ import {
 import { SourceType } from './source-type.js';
 import type { PackageJson } from 'type-fest';
 
-export type MigrationGraphOptions =
-  | ProjectGraphOptions
-  | EmberAppProjectGraphOptions
-  | EmberAddonPackageGraphOptions;
+export type MigrationGraphOptions = ProjectGraphOptions & DiscoverOptions;
 
 export function buildMigrationGraph(
   basePath = process.cwd(),
   srcDir: string,
-  options: MigrationGraphOptions & { deps: boolean; devDeps: boolean; ignore: string[] }
+  options: MigrationGraphOptions
 ): { projectGraph: ProjectGraph; sourceType: SourceType } {
   if (!existsSync(resolve(srcDir, 'package.json'))) {
     throw new Error(
@@ -37,16 +36,24 @@ export function buildMigrationGraph(
 
   if (isEmberAddon(packageJson)) {
     sourceType = SourceType.EmberAddon;
-    projectGraph = new EmberAddonProjectGraph(srcDir, { sourceType, ...options, basePath });
+    projectGraph = new EmberAddonProjectGraph(srcDir, { ...options, basePath });
   } else if (isEmberApp(packageJson)) {
     sourceType = SourceType.EmberApp;
-    projectGraph = new EmberAppProjectGraph(srcDir, { sourceType, ...options, basePath });
+    projectGraph = new EmberAppProjectGraph(srcDir, { ...options, basePath });
   } else {
     sourceType = SourceType.Library;
-    projectGraph = new ProjectGraph(srcDir, { sourceType, ...options, basePath });
+    projectGraph = new ProjectGraph(srcDir, { ...options, basePath });
   }
 
-  projectGraph.discover(options.deps, options.devDeps, options.ignore);
+  const { crawlDeps, crawlDevDeps, include, exclude, ignoredPackages } = options;
+
+  projectGraph.discover({
+    crawlDeps,
+    crawlDevDeps,
+    include,
+    exclude,
+    ignoredPackages,
+  });
 
   return { projectGraph, sourceType };
 }

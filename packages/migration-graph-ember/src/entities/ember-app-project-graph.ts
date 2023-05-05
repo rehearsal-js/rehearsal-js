@@ -3,6 +3,7 @@ import fastGlob from 'fast-glob';
 import { findUpSync } from 'find-up';
 import debug, { type Debugger } from 'debug';
 import {
+  DiscoverOptions,
   GraphNode,
   Package,
   PackageNode,
@@ -24,16 +25,14 @@ type EmberPackageLookup = {
   byPath: Record<string, EmberProjectPackage>;
 };
 
-export type EmberAppProjectGraphOptions = ProjectGraphOptions;
-
 export class EmberAppProjectGraph extends ProjectGraph {
   override debug: Debugger = debug(`rehearsal:migration-graph-ember:${this.constructor.name}`);
   protected override discoveredPackages: Map<string, EmberProjectPackage> = new Map();
   private lookup?: EmberPackageLookup;
 
-  constructor(rootDir: string, options: EmberAppProjectGraphOptions) {
-    super(rootDir, { sourceType: 'Ember Application', ...options });
-    this.debug(`rootDir: %s, options: %o`, rootDir, options);
+  constructor(srcDir: string, options: ProjectGraphOptions) {
+    super(srcDir, { ...options });
+    this.debug(`srcDir: %s, options: %o`, srcDir, options);
   }
 
   override addPackageToGraph(
@@ -316,11 +315,8 @@ export class EmberAppProjectGraph extends ProjectGraph {
     }
   }
 
-  override discover(
-    crawlDeps: boolean,
-    crawlDevDeps: boolean,
-    ignoredPackages: string[] = []
-  ): Array<EmberProjectPackage> {
+  override discover(options: DiscoverOptions): Array<EmberProjectPackage> {
+    const { crawlDeps, crawlDevDeps, include, exclude, ignoredPackages } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
 
@@ -333,8 +329,8 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const { root, found } = this.findProjectPackages();
 
-    root.addExcludePattern(...this.exclude);
-    root.addIncludePattern(...this.include);
+    root.addExcludePattern(...exclude);
+    root.addIncludePattern(...include);
 
     this.debug('Root Package is %s', root.constructor.name);
     this.debug('%s.excludePatterns', root.constructor.name, root.excludePatterns);

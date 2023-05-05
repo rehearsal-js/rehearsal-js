@@ -68,11 +68,9 @@ export class MigrationStrategy {
   }
 }
 
-export type MigrationStrategyOptions = MigrationGraphOptions;
-
 export function getMigrationStrategy(
   srcDir: string,
-  options: MigrationStrategyOptions & { deps: boolean; devDeps: boolean; ignore: string[] }
+  options: MigrationGraphOptions
 ): MigrationStrategy {
   srcDir = realpathSync(srcDir);
   const { projectGraph, sourceType } = buildMigrationGraph(options.basePath, srcDir, options);
@@ -118,9 +116,6 @@ export function getMigrationStrategy(
   return strategy;
 }
 
-export function getMigrationOrder(
-  srcDir: string,
-  options: MigrationStrategyOptions & { deps: boolean; devDeps: boolean; ignore: string[] }
-): SourceFile[] {
+export function getMigrationOrder(srcDir: string, options: MigrationGraphOptions): SourceFile[] {
   return getMigrationStrategy(srcDir, options).getMigrationOrder();
 }

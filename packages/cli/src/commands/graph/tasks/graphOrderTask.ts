@@ -14,6 +14,7 @@ const workerPath = resolve(__dirname, 'graphWorker.js');
 const DEBUG_CALLBACK = debug('rehearsal:cli:graphOrderTask');
 
 export function graphOrderTask(
+  srcDir: string,
   options: GraphTaskOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: GraphCommandContext
@@ -23,7 +24,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: GraphCommandContext, task) {
       let order: { packages: PackageEntry[] };
-      const { srcDir, output, basePath } = options;
+      const { output, rootPath } = options;
       let selectedPackageName: string;
 
       if (process.env['TEST'] === 'true') {
@@ -33,12 +34,14 @@ export function graphOrderTask(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
         order = intoGraphOutput(
           getMigrationOrder(srcDir, {
-            basePath,
-            devDeps: options.devDeps,
-            deps: options.deps,
-            ignore: options.ignore,
+            basePath: rootPath,
+            crawlDevDeps: options.devDeps,
+            crawlDeps: options.deps,
+            ignoredPackages: options.ignore,
+            include: [],
+            exclude: [],
           }),
-          basePath
+          rootPath
         );
       } else {
         order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
@@ -48,9 +51,12 @@ export function graphOrderTask(
           const worker = new Worker(workerPath, {
             workerData: JSON.stringify({
               srcDir,
-              basePath: options.basePath,
-              devDeps: options.devDeps,
-              deps: options.deps,
+              basePath: rootPath,
+              crawlDevDeps: options.devDeps,
+              crawlDeps: options.deps,
+              ignoredPackages: options.ignore,
+              include: [],
+              exclude: [],
             }),
           });
 
@@ -72,7 +78,7 @@ export function graphOrderTask(
 
       // if explicit child package is passed in use that
       if (ctx?.childPackage) {
-        ctx.jsSourcesAbs = getGraphFilesAbs(basePath, ctx.childPackage, order.packages[0].files);
+        ctx.jsSourcesAbs = getGraphFilesAbs(rootPath, ctx.childPackage, order.packages[0].files);
 
         return;
       }
