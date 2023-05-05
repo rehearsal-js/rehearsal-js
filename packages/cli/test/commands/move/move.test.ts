@@ -43,12 +43,18 @@ describe('Command: move', () => {
 
   test('move dir and sub-dir', async () => {
     const sourceDir = 'src';
+    const projectSourceDir = resolve(project.baseDir, sourceDir);
+
+    const tsSourceFilesBeforeMove = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
+      cwd: project.baseDir,
+    });
+
+    expect(tsSourceFilesBeforeMove).length(1);
 
     const result = await runBin('move', [`${sourceDir}`, '--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
 
-    const projectSourceDir = resolve(project.baseDir, sourceDir);
     // check for js and gjs files -> ts and gts files
     const jsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{js,gjs}`, {
       cwd: project.baseDir,
@@ -59,8 +65,9 @@ describe('Command: move', () => {
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(0);
-    expect(tsSourceFiles).length(5);
+    expect(tsSourceFiles).length(6);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/src/bizz.ts',
       '/src/index.ts',
       '/src/foo/baz.ts',
       '/src/foo/biz.ts',

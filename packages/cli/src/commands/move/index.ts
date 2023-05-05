@@ -58,6 +58,9 @@ moveCommand
 async function move(src: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
+  // We never want to move typescript files
+  options.ignore.push('**/*.ts', '**/*.tsx', '**/*.gts');
+
   if (options.graph && !options.deps && !options.devDeps) {
     console.warn(
       `Passing --graph without --deps, --devDeps, or both results in only analyzing the local files in the package.`

@@ -18,6 +18,7 @@ import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
 import type { PackageJson } from 'type-fest';
 import FastGlob from 'fast-glob';
+import { getEmberExcludePatterns } from '../utils/excludes.js';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -336,7 +337,7 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const ignoredPaths = options.ignoredGlobs
       .flatMap((glob) => {
-        return FastGlob.sync(glob, { cwd: this.basePath });
+        return FastGlob.sync(glob, { cwd: this.basePath, ignore: getEmberExcludePatterns() });
       })
       .map((filePath) => join(this.basePath, filePath));
 

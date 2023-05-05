@@ -6,6 +6,7 @@ import { isWorkspace } from '../../src/utils/workspace.js';
 import { Package } from './package.js';
 import type { PackageNode } from '../types.js';
 import FastGlob from 'fast-glob';
+import { getExcludePatterns } from '../index.js';
 
 // TODO this package level dependency data should be surfaced in a report
 
@@ -247,7 +248,7 @@ export class ProjectGraph {
 
     const ignoredPaths = options.ignoredGlobs
       .flatMap((glob) => {
-        return FastGlob.sync(glob, { cwd: this.basePath });
+        return FastGlob.sync(glob, { cwd: this.basePath, ignore: getExcludePatterns() });
       })
       .map((filePath) => join(this.basePath, filePath));
 
