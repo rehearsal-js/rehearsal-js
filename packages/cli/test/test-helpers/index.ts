@@ -12,9 +12,14 @@ const __dirname = dirname(__filename);
 
 // helper function to run a command via the actual bin
 // stdout of commands available via ExecaChildProcess.stdout
-export function runBin(command: string, args: string[], options: Options = {}): ExecaChildProcess {
+export function runBin(
+  command: string,
+  args: string[] = [],
+  flags: string[] = [],
+  options: Options = {}
+): ExecaChildProcess {
   const cliPath = resolve(__dirname, `../../bin/rehearsal.js`);
-  return execa(cliPath, [command, ...args], options);
+  return execa(cliPath, [command, ...args, ...flags], options);
 }
 
 // Create tmp dir for migrate test based on fixture selection

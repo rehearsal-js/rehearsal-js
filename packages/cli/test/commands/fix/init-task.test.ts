@@ -56,7 +56,7 @@ describe('Fix: Init-Task', () => {
     });
   }
 
-  test('preFlightCheck base - deps/devDeps compare', async () => {
+  test('preFlightCheck "base" - deps/devDeps compare', async () => {
     const projectType: ProjectType = 'base';
 
     projectInit(project, projectType);
@@ -74,7 +74,7 @@ describe('Fix: Init-Task', () => {
     }
   });
 
-  test('preFlightCheck base - expect failure tsconfig strict as false', async () => {
+  test('preFlightCheck "base" - expect failure tsconfig strict as false', async () => {
     const projectType: ProjectType = 'base';
     const prereqs = getPreReqs(projectType);
     project.files['tsconfig.json'] = JSON.stringify({
@@ -100,7 +100,7 @@ describe('Fix: Init-Task', () => {
     }
   });
 
-  test('preFlightCheck ember - expect failure tsconfig glint missing', async () => {
+  test('preFlightCheck "ember" - expect failure tsconfig glint missing', async () => {
     const projectType: ProjectType = 'ember';
 
     project.files['tsconfig.json'] = JSON.stringify({
@@ -126,7 +126,7 @@ describe('Fix: Init-Task', () => {
     }
   });
 
-  test('preFlightCheck base - expect failure eslint parser invalid', async () => {
+  test('preFlightCheck "base" - expect failure eslint parser invalid', async () => {
     const projectType: ProjectType = 'base';
 
     project.files['tsconfig.json'] = JSON.stringify({
@@ -152,7 +152,7 @@ describe('Fix: Init-Task', () => {
     }
   });
 
-  test('preFlightCheck base - expect failure deps missing', async () => {
+  test('preFlightCheck "base" - expect failure deps missing', async () => {
     const projectType: ProjectType = 'base';
 
     projectInit(project, projectType);
@@ -171,7 +171,7 @@ describe('Fix: Init-Task', () => {
     }
   });
 
-  test(`validate initTask base works with --source`, async () => {
+  test(`validate initTask "base" works with src arg`, async () => {
     const projectType: ProjectType = 'base';
 
     project = Project.fromDir(resolve(__dirname, '../../fixtures/base_ts_app'), {
@@ -182,14 +182,17 @@ describe('Fix: Init-Task', () => {
     projectInit(project, projectType);
     await project.write();
 
+    const src = resolve(project.baseDir, 'src');
     const options: FixCommandOptions = {
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       dryRun: true,
-      wizard: false,
-      source: resolve(project.baseDir, 'src'),
       format: ['sarif'],
+      graph: false,
+      devDeps: false,
+      deps: false,
+      ignore: [],
     };
-    const tasks = [initTask(options)];
+    const tasks = [initTask(src, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);
     const sanitizedAbsPaths = ctx.sourceFilesAbs?.map((path) => {
       return cleanOutput(path, project.baseDir);

@@ -23,7 +23,7 @@ describe('Command: move', () => {
   test('move file', async () => {
     const sourceDir = 'src/foo';
 
-    const result = await runBin('move', [`${sourceDir}/baz.js`, '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`${sourceDir}/baz.js`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
     const projectSourceDir = resolve(project.baseDir, sourceDir);
@@ -51,7 +51,7 @@ describe('Command: move', () => {
 
     expect(tsSourceFilesBeforeMove).length(1);
 
-    const result = await runBin('move', [`${sourceDir}`, '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`${sourceDir}`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -81,7 +81,8 @@ describe('Command: move', () => {
 
     const result = await runBin(
       'move',
-      [`${childPackage}`, '--graph', '--deps', '--rootPath', project.baseDir],
+      [`${childPackage}`],
+      ['--graph', '--deps', '--rootPath', project.baseDir],
       {
         cwd: project.baseDir,
       }
@@ -111,7 +112,7 @@ describe('Command: move', () => {
 
     await expect(
       async () =>
-        await runBin('move', [`${childPackage}`, '--deps', '--rootPath', project.baseDir], {
+        await runBin('move', [`${childPackage}`], ['--deps', '--rootPath', project.baseDir], {
           cwd: project.baseDir,
         })
     ).rejects.toThrowError(`'--deps' can only be passed when you pass --graph`);
@@ -121,7 +122,7 @@ describe('Command: move', () => {
     const childPackage = 'module-a';
     await expect(
       async () =>
-        await runBin('move', [`${childPackage}`, '--devDeps', '--rootPath', project.baseDir], {
+        await runBin('move', [`${childPackage}`], ['--devDeps', '--rootPath', project.baseDir], {
           cwd: project.baseDir,
         })
     ).rejects.toThrowError(`'--devDeps' can only be passed when you pass --graph`);
@@ -133,7 +134,8 @@ describe('Command: move', () => {
       async () =>
         await runBin(
           'move',
-          [`${childPackage}`, '--ignore', 'foo', '--rootPath', project.baseDir],
+          [`${childPackage}`],
+          ['--ignore', 'foo', '--rootPath', project.baseDir],
           {
             cwd: project.baseDir,
           }

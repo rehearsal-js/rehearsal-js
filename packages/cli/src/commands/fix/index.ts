@@ -42,8 +42,8 @@ fixCommand
   .description('fixes typescript compiler errors by infering types')
   .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
   .option('-g, --graph', 'enable graph resolution of files to move', false)
-  .option('--devDeps', `follow packages in 'devDependencies'`)
-  .option('--deps', `follow packages in 'dependencies'`)
+  .option('--devDeps', `follow packages in 'devDependencies'`, false)
+  .option('--deps', `follow packages in 'dependencies'`, false)
   .option('--ignore [packageNames...]', `comma deliminated list of packages to ignore`, [])
   .option(
     '-f, --format <format>',

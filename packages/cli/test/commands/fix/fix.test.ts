@@ -36,7 +36,7 @@ function expectFile(filePath: string): Vi.Assertion<string> {
   return expect(readFileSync(filePath, 'utf-8'));
 }
 
-describe('Command: fix base_ts_app fixture', () => {
+describe('Command: fix "base_ts_app" fixture', () => {
   let project: Project;
 
   beforeEach(async () => {
@@ -59,31 +59,25 @@ describe('Command: fix base_ts_app fixture', () => {
     project.dispose();
   });
 
-  test('fix file with --source flag', async () => {
+  test('fix file with src arg', async () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
+    const src = resolve(project.baseDir, sourceFilepath);
 
-    const result = await runBin(
-      'fix',
-      ['--source', `${resolve(project.baseDir, sourceFilepath)}`, '--basePath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('fix', [src], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expectFile(resolve(project.baseDir, sourceFilepath)).toMatchSnapshot();
   });
 
-  test('fix directory with --source flag', async () => {
+  test('fix directory with src arg', async () => {
     const sourceDir = 'src';
+    const src = resolve(project.baseDir, sourceDir);
 
-    const result = await runBin(
-      'fix',
-      ['--source', `${resolve(project.baseDir, sourceDir)}`, '--basePath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('fix', [src], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
 
@@ -106,16 +100,13 @@ describe('Command: fix ember-ts-app fixture', () => {
     project.dispose();
   });
 
-  test('fix directory with --source flag', async () => {
-    const sourceDir = 'app';
+  test('fix package with src arg and graph', async () => {
+    const src = resolve(project.baseDir);
+    const flags = ['--graph', '--deps', '--rootPath', project.baseDir];
 
-    const result = await runBin(
-      'fix',
-      ['--source', `${resolve(project.baseDir, sourceDir)}`, '--basePath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('fix', [src], flags, {
+      cwd: project.baseDir,
+    });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
   });

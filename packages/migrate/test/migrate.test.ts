@@ -90,7 +90,7 @@ describe('fix', () => {
       reporter = new Reporter({
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         commandName: '@rehearsal/fix',
       });
     });
@@ -104,7 +104,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['template-only.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -120,7 +120,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['template-only-variable.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -136,7 +136,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-class.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -155,7 +155,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -194,7 +194,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -211,7 +211,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -227,7 +227,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['missing-local-prop.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -243,7 +243,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['gjs-no-errors.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -270,7 +270,7 @@ describe('fix', () => {
       reporter = new Reporter({
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         commandName: '@rehearsal/fix',
       });
     });
@@ -286,7 +286,7 @@ describe('fix', () => {
       ]);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -303,7 +303,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['salutation.hbs', 'salutation.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -339,7 +339,7 @@ describe('fix', () => {
       reporter = new Reporter({
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         commandName: '@rehearsal/fix',
       });
     });
@@ -365,7 +365,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -382,7 +382,7 @@ describe('fix', () => {
 
       const [inputs, outputs] = prepareInputFiles(project, ['glimmerx-component.ts']);
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -400,7 +400,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['ember-integration-test.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -418,7 +418,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -436,7 +436,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -454,7 +454,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -476,7 +476,7 @@ describe('fix', () => {
       );
 
       const input: MigrateInput = {
-        basePath: resolve(project.baseDir, 'packages/foo'),
+        rootPath: resolve(project.baseDir, 'packages/foo'),
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -499,7 +499,7 @@ describe('fix', () => {
       reporter = new Reporter({
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         commandName: '@rehearsal/migrate',
       });
     });
@@ -514,7 +514,7 @@ describe('fix', () => {
       const [inputs, outputs] = prepareInputFiles(project, ['already-migrated-js-to.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -563,7 +563,7 @@ export default class SomeComponent extends Component {
       const [inputs, outputs] = prepareInputFiles(project, ['already-migrated.gjs']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -626,7 +626,7 @@ declare secondBooService: BooService;
       reporter = new Reporter({
         tsVersion: '',
         projectName: '@rehearsal/test',
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         commandName: '@rehearsal/fix',
       });
 
@@ -668,7 +668,7 @@ declare secondBooService: BooService;
       const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.gts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };
@@ -684,7 +684,7 @@ declare secondBooService: BooService;
       const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.ts']);
 
       const input: MigrateInput = {
-        basePath: project.baseDir,
+        rootPath: project.baseDir,
         sourceFilesAbs: inputs,
         reporter,
       };

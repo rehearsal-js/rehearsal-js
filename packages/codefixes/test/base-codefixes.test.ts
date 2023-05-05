@@ -31,16 +31,18 @@ describe('Test base codefixes', function () {
    * on corresponding diagnostic messages
    */
   async function runMigrate(basePath: string): Promise<void> {
+    const rootPath = resolve(project.baseDir);
+
     const reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
-      basePath: project.baseDir,
+      rootPath,
       commandName: '@rehearsal/migrate',
     });
 
     await project.write();
 
-    migrate({ basePath, reporter, sourceFilesAbs: [resolve(basePath, 'index.ts')] });
+    migrate({ rootPath, reporter, sourceFilesAbs: [resolve(basePath, 'index.ts')] });
   }
 
   test.each(transforms)('%s', async (transform) => {

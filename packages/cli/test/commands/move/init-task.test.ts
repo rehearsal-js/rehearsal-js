@@ -49,7 +49,7 @@ describe('Move: Init-Task', () => {
     };
     const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);
-    expect(ctx.jsSourcesAbs).toMatchObject([
+    expect(ctx.sourceFilesAbs).toMatchObject([
       resolve(project.baseDir, 'src/foo/baz.js'),
       resolve(project.baseDir, 'src/foo/biz.js'),
       resolve(project.baseDir, 'src/foo/e.gjs'),

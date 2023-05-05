@@ -8,7 +8,7 @@ describe('PluginsRunner', () => {
     const reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
-      basePath: '.',
+      rootPath: '.',
       commandName: '@rehearsal/migrate',
     });
 
