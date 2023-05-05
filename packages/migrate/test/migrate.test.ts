@@ -26,6 +26,7 @@ function changeExtension(file: string, ext: string): string {
 const extLookup = {
   '.js': '.ts',
   '.gjs': '.gts',
+  '.gts': '.gts',
   '.hbs': '.hbs',
   '.ts': '.ts',
 };
@@ -208,18 +209,21 @@ export default class Hello extends Component {
 
       expectFile(outputs[0]).toEqual(expected);
 
-      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
       reporter.printReport(project.baseDir);
-      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
-      expect(getStringAtLocation(outputs[0], report.items[0].nodeLocation as Location)).toEqual(
-        'authenticatedUser'
-      );
-      expect(getStringAtLocation(outputs[0], report.items[1].nodeLocation as Location)).toEqual(
-        'age'
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+      const reportedItems = report.items.filter((item) =>
+        item.analysisTarget.includes('with-non-qualified-service.gts')
       );
 
       expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(getStringAtLocation(outputs[0], reportedItems[0].nodeLocation as Location)).toEqual(
+        'authenticatedUser'
+      );
+      expect(getStringAtLocation(outputs[0], reportedItems[1].nodeLocation as Location)).toEqual(
+        'age'
+      );
     });
 
     test('with service map', async () => {
@@ -428,16 +432,18 @@ export default class Salutation extends Component {
       expectFile(outputs[0]).toEqual(expectedHbs);
       expectFile(outputs[1]).toEqual(expectedTs);
 
-      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
       reporter.printReport(project.baseDir);
-      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
 
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+      const reportedItems = report.items.filter((item) =>
+        item.analysisTarget.includes('src/salutation.ts')
+
+      );
       expect(report.summary[0].basePath).toMatch(project.baseDir);
-      expect(getStringAtLocation(outputs[1], report.items[0].nodeLocation as Location)).toEqual(
+      expect(getStringAtLocation(outputs[1], reportedItems[0].nodeLocation as Location)).toEqual(
         'locale'
       );
-      expect(report.items).toHaveLength(2);
-      expect(report.items[0].analysisTarget).toEqual('src/salutation.ts');
     });
   });
 
@@ -715,6 +721,134 @@ export default class SomeComponent extends Component {
 
   @service("foo@foo-service")
   declare otherProp: FooService;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+  });
+
+  describe('.ts, .gts', () => {
+    let project: Project;
+    let reporter: Reporter;
+
+    beforeEach(() => {
+      project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
+
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        basePath: project.baseDir,
+        commandName: '@rehearsal/migrate',
+      });
+    });
+
+    afterEach(() => {
+      project.dispose();
+    });
+
+    test('previously migrated .ts', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['already-migrated-js-to.ts']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type FooService from "foo/services/foo-service";
+
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from "services/moo/moo";
+import type GooService from "services/goo";
+import type BooService from "boo/services/boo-service";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("foo@foo-service")
+  declare fooService: FooService;
+
+  @service("boo-service")
+  declare booService: BooService;
+
+  @service
+  declare gooService: GooService;
+
+  @service
+  declare mooService: MooService;
+
+  // Has to be fixes, but no additional import statement added
+  @service("boo-service")
+  declare secondBooService: BooService;
+
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'nonQualified' implicitly has an 'any' type.
+  @service("non-qualified") nonQualified;
+}
+`;
+
+      expectFile(outputs[0]).toEqual(expected);
+    });
+
+    test('previously migrated .gts', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['already-migrated.gjs']);
+
+      const input: MigrateInput = {
+        basePath: project.baseDir,
+        sourceFiles: inputs,
+        entrypoint: '',
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      const expected = `import type FooService from "foo/services/foo-service";
+
+
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from "services/moo/moo";
+import type GooService from "services/goo";
+import type BooService from "boo/services/boo-service";
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+
+export default class SomeComponent extends Component {
+  @service("foo@foo-service")
+  declare fooService: FooService;
+
+  @service("boo-service")
+  declare booService: BooService;
+
+  @service
+  declare gooService: GooService;
+
+  @service
+  declare mooService: MooService;
+
+  // Has to be fixes, but no additional import statement added
+  @service("boo-service")
+declare secondBooService: BooService;
+
+` +
+        `  ` +
+        `
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'nonQualified' implicitly has an 'any' type.
+  @service('non-qualified') nonQualified;
+
+  <template>
+    <span>Hello, I am human, and I am 10 years old!</span>
+  </template>
 }
 `;
 

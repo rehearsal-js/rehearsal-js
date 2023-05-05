@@ -23,9 +23,9 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
     DEBUG_CALLBACK(`Plugin 'GlintReport' run on %O:`, fileName);
 
     const lineHasSupression: { [line: number]: boolean } = {};
-    const originalConentWithErrorsSupressed = context.service.getFileText(fileName);
+    const originalContentWithErrorsSuppressed = context.service.getFileText(fileName);
 
-    let contentWithErrors = originalConentWithErrorsSupressed;
+    let contentWithErrors = originalContentWithErrorsSuppressed;
 
     // TODO: Investigate if there is a better way of finding the ranges using the actual
     // ast instead of regexing
@@ -69,7 +69,7 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
     }
 
     // Set the document back to the content with the errors supressed
-    service.setFileText(fileName, originalConentWithErrorsSupressed);
+    service.setFileText(fileName, originalContentWithErrorsSuppressed);
 
     return Promise.resolve([]);
   }

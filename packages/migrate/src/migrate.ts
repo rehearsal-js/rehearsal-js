@@ -192,11 +192,13 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       },
       (fileName: string) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName))
     )
-    .queue(useGlint ? await getGlintReportPlugin() : DummyPlugin, {
-      commentTag,
-      filter: (fileName: string) =>
-        isGlintService(service, useGlint) && isGlintFile(service, fileName),
-    })
+    .queue(
+      useGlint ? await getGlintReportPlugin() : DummyPlugin,
+      {
+        commentTag,
+      },
+      (fileName: string) => isGlintService(service, useGlint) && isGlintFile(service, fileName)
+    )
     // Report linter issues
     .queue(LintPlugin, {
       eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
