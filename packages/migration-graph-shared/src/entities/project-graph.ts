@@ -9,7 +9,7 @@ import type { PackageNode } from '../types.js';
 // TODO this package level dependency data should be surfaced in a report
 
 export type DiscoverOptions = {
-  ignoredPackages: string[];
+  ignoredGlobs: string[];
   crawlDeps: boolean;
   crawlDevDeps: boolean;
   include: string[];
@@ -195,7 +195,7 @@ export class ProjectGraph {
    * it's package.json
    */
   protected discoverWorkspacePackages(ignorePackages: string[] = []): void {
-    const projectRoot = new Package(this.basePath);
+    const projectRoot = new Package(this.basePath, { ignoreGlobs: ignorePackages });
 
     if (projectRoot.workspaceGlobs) {
       let pathToPackageJsonList = fastGlob.sync(
@@ -220,7 +220,7 @@ export class ProjectGraph {
           (pathToPackage) =>
             !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
         ) // Ensures any package found is in the workspace.
-        .map((pathToPackage) => new Package(pathToPackage));
+        .map((pathToPackage) => new Package(pathToPackage, { ignoreGlobs: ignorePackages }));
 
       for (const pkg of entities) {
         if (
@@ -234,7 +234,7 @@ export class ProjectGraph {
   }
 
   discover(options: DiscoverOptions): Array<Package> {
-    const { ignoredPackages, crawlDeps, crawlDevDeps, include, exclude } = options;
+    const { ignoredGlobs, crawlDeps, crawlDevDeps, include, exclude } = options;
     // If an entrypoint is defined, we forgo any package discovery logic,
     // and create a stub.
     if (this.entrypoint) {
@@ -242,12 +242,12 @@ export class ProjectGraph {
     }
 
     // *IMPORTANT* this must be called to populate `discoveredPackages`
-    this.discoverWorkspacePackages(ignoredPackages);
+    this.discoverWorkspacePackages(ignoredGlobs);
 
     // Setup package and return
 
     // Add root package to graph
-    const rootPackage = new Package(this.rootDir);
+    const rootPackage = new Package(this.rootDir, { ignoreGlobs: ignoredGlobs });
 
     rootPackage.addExcludePattern(...exclude);
     rootPackage.addIncludePattern(...include);
@@ -290,7 +290,7 @@ export class ProjectGraph {
       .filter(
         (pathToPackage) => !rootPackage.workspaceGlobs || isWorkspace(this.rootDir, pathToPackage)
       ) // Ensures any package found is in the workspace.
-      .map((pathToPackage) => new Package(pathToPackage));
+      .map((pathToPackage) => new Package(pathToPackage, { ignoreGlobs: ignoredGlobs }));
 
     for (const pkg of entities) {
       if (!this.discoveredPackages.has(pkg.packageName)) {

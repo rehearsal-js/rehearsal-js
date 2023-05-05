@@ -11,7 +11,7 @@ export async function getSourceFiles(basePath: string, entrypoint: string): Prom
     entrypoint,
     crawlDeps: true,
     crawlDevDeps: true,
-    ignoredPackages: [],
+    ignoredGlobs: [],
     include: [],
     exclude: [],
   });

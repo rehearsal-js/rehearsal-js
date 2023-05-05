@@ -33,7 +33,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
 
     expect.assertions(6);
@@ -66,7 +66,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
@@ -94,7 +94,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
@@ -123,7 +123,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
@@ -152,7 +152,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
 
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
@@ -197,7 +197,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
@@ -211,7 +211,7 @@ describe('project-graph', () => {
       crawlDevDeps: true,
       include: [],
       exclude: [],
-      ignoredPackages: [],
+      ignoredGlobs: [],
     });
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
@@ -235,7 +235,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       const sorted = projectGraph.graph.getSortedNodes();
@@ -260,7 +260,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       sortedPackages = Array.from(projectGraph.graph.getSortedNodes())
@@ -293,7 +293,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       const orderedPackages = Array.from(projectGraph.graph.getSortedNodes())
@@ -326,7 +326,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: ['Brocfile.js'],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
@@ -348,7 +348,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: ['test'],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
@@ -371,7 +371,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
@@ -424,7 +424,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       const fooNode = projectGraph.graph.getNode('@something/foo');
@@ -451,7 +451,7 @@ describe('project-graph', () => {
         crawlDevDeps: true,
         include: [],
         exclude: [],
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       const rootNode = projectGraph.graph.getNode('root-package');

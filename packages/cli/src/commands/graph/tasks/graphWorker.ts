@@ -21,7 +21,7 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     basePath,
     crawlDeps,
     crawlDevDeps,
-    ignoredPackages,
+    ignoredGlobs: ignoredPackages,
     include,
     exclude,
     eager: true,

@@ -9,9 +9,11 @@ export class EmberAppPackage extends Package {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
     super(pathToPackage, { ...options });
 
+    const { ignoreGlobs = [] } = options;
+
     this.excludePatterns = new Set([...getEmberExcludePatterns(), ...this.addonPaths]);
 
-    this.includePatterns = new Set(['.', '**/*.gjs']); // No longer isolate this to the app directory, include all files in dir.
+    this.includePatterns = new Set(['.', '**/*.gjs', ...ignoreGlobs]); // No longer isolate this to the app directory, include all files in dir.
   }
 
   get addonPaths(): Array<string> {

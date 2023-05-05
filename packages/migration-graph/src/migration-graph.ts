@@ -45,14 +45,14 @@ export function buildMigrationGraph(
     projectGraph = new ProjectGraph(srcDir, { ...options, basePath });
   }
 
-  const { crawlDeps, crawlDevDeps, include, exclude, ignoredPackages } = options;
+  const { crawlDeps, crawlDevDeps, include, exclude, ignoredGlobs } = options;
 
   projectGraph.discover({
     crawlDeps,
     crawlDevDeps,
     include,
     exclude,
-    ignoredPackages,
+    ignoredGlobs,
   });
 
   return { projectGraph, sourceType };

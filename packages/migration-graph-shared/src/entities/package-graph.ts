@@ -1,5 +1,5 @@
 import { realpathSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -66,10 +66,17 @@ export class PackageGraph {
 
     let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
 
+    const excludedPaths = exclude
+      .filter((filePath) => isRelativePathInAbsolutePath(filePath, this.baseDir))
+      .map((filePath) => {
+        const resolved = resolve(filePath);
+        return relative(this.baseDir, resolved);
+      });
+
     const cruiseOptions: ICruiseOptions = {
       baseDir,
       exclude: {
-        path: ['node_modules', ...EXCLUDE_FILE_EXTS, ...exclude],
+        path: ['node_modules', ...EXCLUDE_FILE_EXTS, ...excludedPaths],
       },
     };
 
@@ -165,4 +172,10 @@ export class PackageGraph {
   addNode(m: ModuleNode): GraphNode<ModuleNode> {
     return this.#graph.addNode(m);
   }
+}
+
+function isRelativePathInAbsolutePath(relativePath: string, absolutePath: string): boolean {
+  const resolvedRelativePath = resolve(relativePath);
+  const resolvedAbsolutePath = resolve(absolutePath);
+  return resolvedRelativePath.startsWith(resolvedAbsolutePath);
 }

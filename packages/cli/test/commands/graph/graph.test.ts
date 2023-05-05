@@ -299,6 +299,41 @@ describe('Task: graphOrderTask', () => {
     expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
   });
 
+  test.only('can ignore a file from the from graph', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      rootPath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+      devDeps: true,
+      deps: true,
+      ignore: ['lib/some-test-package/addon-test-support/*.js'],
+    };
+
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+  });
+
   test('can print graph order to a file for an ember app with in-repo addons', async () => {
     project = getEmberProject('app-with-in-repo-addon');
 

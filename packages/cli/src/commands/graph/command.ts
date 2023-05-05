@@ -13,7 +13,11 @@ graphCommand
   .argument('[srcDir]', 'Path to directory contains a package.json', process.cwd())
   .option('--devDeps', `Follow packages in 'devDependencies'`)
   .option('--deps', `Follow packages in 'dependencies'`)
-  .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
+  .option(
+    '--ignore [packagesOrGlobs...]',
+    `A space deliminated list of packages or globs to ignore`,
+    []
+  )
   .addOption(
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

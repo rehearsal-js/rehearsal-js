@@ -18,6 +18,7 @@ export type PackageOptions = {
   rootPackagePath?: string;
   name?: string;
   excludeWorkspaces?: boolean;
+  ignoreGlobs?: string[];
 };
 
 /**
@@ -51,12 +52,12 @@ export class Package {
 
   constructor(
     path: string,
-    { name = '', packageType = '', excludeWorkspaces = true }: PackageOptions = {}
+    { name = '', packageType = '', excludeWorkspaces = true, ignoreGlobs = [] }: PackageOptions = {}
   ) {
     this.path = path;
     this.type = packageType;
     this.packageName = name;
-    this.excludePatterns = new Set([...getExcludePatterns()]);
+    this.excludePatterns = new Set([...getExcludePatterns(), ...ignoreGlobs]);
     this.includePatterns = new Set(['.']);
 
     // Only add the globs if this path contains a package.json

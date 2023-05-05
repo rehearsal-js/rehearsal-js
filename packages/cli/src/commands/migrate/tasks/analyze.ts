@@ -133,7 +133,7 @@ export function analyzeTask(
         include: ctx.userConfig?.include || [],
         crawlDevDeps: true,
         crawlDeps: true,
-        ignoredPackages: [],
+        ignoredGlobs: [],
       });
 
       const files: SourceFile[] = strategy.getMigrationOrder();

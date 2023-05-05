@@ -9,7 +9,7 @@ export function discoverEmberPackages(rootDir: string): Array<EmberProjectPackag
   projectGraph.discover({
     crawlDeps: true,
     crawlDevDeps: true,
-    ignoredPackages: [],
+    ignoredGlobs: [],
     include: [],
     exclude: [],
   });
