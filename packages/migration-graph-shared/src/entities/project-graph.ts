@@ -198,7 +198,7 @@ export class ProjectGraph {
     ignoredPackages: string[] = [],
     ignoredPaths: string[] = []
   ): void {
-    const projectRoot = new Package(this.basePath, { ignoredPaths: ignoredPaths });
+    const projectRoot = new Package(this.basePath, { ignoredPaths });
 
     if (projectRoot.workspaceGlobs) {
       let pathToPackageJsonList = fastGlob.sync(
@@ -223,7 +223,7 @@ export class ProjectGraph {
           (pathToPackage) =>
             !projectRoot.workspaceGlobs || isWorkspace(this.basePath, pathToPackage)
         ) // Ensures any package found is in the workspace.
-        .map((pathToPackage) => new Package(pathToPackage, { ignoredPaths: ignoredPaths }));
+        .map((pathToPackage) => new Package(pathToPackage, { ignoredPaths }));
 
       for (const pkg of entities) {
         if (

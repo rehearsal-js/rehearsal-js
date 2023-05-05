@@ -11,9 +11,13 @@ export class EmberAppPackage extends Package {
 
     const { ignoredPaths = [] } = options;
 
-    this.excludePatterns = new Set([...getEmberExcludePatterns(), ...this.addonPaths]);
+    this.excludePatterns = new Set([
+      ...getEmberExcludePatterns(),
+      ...this.addonPaths,
+      ...ignoredPaths,
+    ]);
 
-    this.includePatterns = new Set(['.', '**/*.gjs', ...ignoredPaths]); // No longer isolate this to the app directory, include all files in dir.
+    this.includePatterns = new Set(['.', '**/*.gjs']); // No longer isolate this to the app directory, include all files in dir.
   }
 
   get addonPaths(): Array<string> {
