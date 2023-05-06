@@ -19,7 +19,7 @@ if (!maybePackageJson) {
 
 const ROOT_DIR = dirname(maybePackageJson);
 const EMBER_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-template/');
-const EMBER_TS_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/ts-app-template/');
+const EMBER_TS_APP_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/app-ts-template/');
 const EMBER_ADDON_TEMPLATE_DIR = join(ROOT_DIR, 'fixtures/ember/addon-template/');
 const EMBER_MONOREPO = join(ROOT_DIR, 'fixtures/ember/monorepo');
 

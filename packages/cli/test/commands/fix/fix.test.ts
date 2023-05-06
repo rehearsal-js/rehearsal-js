@@ -1,15 +1,22 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Project } from 'fixturify-project';
+import { createLogger, format, transports } from 'winston';
 import { getEmberProject } from '@rehearsal/test-support';
 import { getPreReqs } from '../../../src/prereqs.js';
-import { runBin, cleanOutput } from '../../test-helpers/index.js';
+import { runBin, cleanOutput, createOutputStream } from '../../test-helpers/index.js';
+
 import type { ProjectType } from '../../../src/types.js';
+import type { Readable } from 'node:stream';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const logger = createLogger({
+  transports: [new transports.Console({ format: format.cli() })],
+});
 
 function projectAddDevDeps(project: Project, type: ProjectType): void {
   const prereqs = getPreReqs(type);
@@ -38,8 +45,36 @@ function expectFile(filePath: string): Vi.Assertion<string> {
 
 describe('Command: fix "base_ts_app" fixture', () => {
   let project: Project;
+  let outputStream: Readable;
+  let output = '';
+
+  vi.spyOn(console, 'info').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(console, 'log').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(console, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(logger, 'warn').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+    return logger;
+  });
+  vi.spyOn(logger, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+    return logger;
+  });
 
   beforeEach(async () => {
+    output = '';
+    outputStream = createOutputStream();
+
     const options = {
       linkDeps: true,
       linkDevDeps: true,
@@ -56,6 +91,8 @@ describe('Command: fix "base_ts_app" fixture', () => {
   });
 
   afterEach(() => {
+    output = '';
+    vi.clearAllMocks();
     project.dispose();
   });
 
@@ -69,6 +106,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expectFile(resolve(project.baseDir, sourceFilepath)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
   test('fix directory with src arg', async () => {
@@ -80,6 +118,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
 
     for (const filepath of Object.keys(project.files[sourceDir] as string)) {
       expectFile(resolve(project.baseDir, sourceDir, filepath)).toMatchSnapshot();
@@ -89,14 +128,43 @@ describe('Command: fix "base_ts_app" fixture', () => {
 
 describe('Command: fix ember-ts-app fixture', () => {
   let project: Project;
+  let outputStream: Readable;
+  let output = '';
+
+  vi.spyOn(console, 'info').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(console, 'log').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(console, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+  });
+  vi.spyOn(logger, 'warn').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+    return logger;
+  });
+  vi.spyOn(logger, 'error').mockImplementation((chunk) => {
+    output += `${chunk}\n`;
+    outputStream.push(`${chunk}\n`);
+    return logger;
+  });
 
   beforeEach(async () => {
+    output = '';
+    outputStream = createOutputStream();
     project = getEmberProject('ts-app');
 
     await project.write();
   });
 
   afterEach(() => {
+    output = '';
+    vi.clearAllMocks();
     project.dispose();
   });
 
@@ -109,5 +177,6 @@ describe('Command: fix ember-ts-app fixture', () => {
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 });

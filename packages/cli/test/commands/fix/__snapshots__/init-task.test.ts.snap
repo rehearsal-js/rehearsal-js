@@ -1,6 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Fix: Init-Task > preFlightCheck base - expect failure deps missing 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "base" - deps/devDeps compare 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 1`] = `
 [Error: Please install the following missing devDependencies and try again:
       
 "typescript": "^5.0.0", 
@@ -8,9 +10,13 @@ exports[`Fix: Init-Task > preFlightCheck base - expect failure deps missing 1`] 
 "eslint": "^8.0.0"]
 `;
 
-exports[`Fix: Init-Task > preFlightCheck base - expect failure eslint parser invalid 1`] = `[Error: Please update "parser: @fake/parser" to "parser: @typescript-eslint/parser" in the ESLint config and try again.]`;
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck base - expect failure tsconfig strict as false 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 1`] = `[Error: Please update "parser: @fake/parser" to "parser: @typescript-eslint/parser" in the ESLint config and try again.]`;
+
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 2`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 1`] = `
 [Error: Please update the tsconfig.json to include:
 {
   "compilerOptions": {
@@ -20,7 +26,9 @@ exports[`Fix: Init-Task > preFlightCheck base - expect failure tsconfig strict a
 }]
 `;
 
-exports[`Fix: Init-Task > preFlightCheck ember - expect failure tsconfig glint missing 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 2`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
 [Error: The tsconfig.json is missing the following keys:
 "glint".
 Please update the tsconfig.json to include:
@@ -39,20 +47,33 @@ Please update the tsconfig.json to include:
 }]
 `;
 
-exports[`Fix: Init-Task > validate initTask base works with --source 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 2`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck base works 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck ember works 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck glimmer works 1`] = `""`;
+
+exports[`Fix: Init-Task > validate initTask "base" works with src arg 1`] = `
 [
+  "<tmp-path>/src/app.ts",
   "<tmp-path>/src/apply-rules.ts",
   "<tmp-path>/src/gen-random-grid.ts",
   "<tmp-path>/src/get-live-neighbor-count.ts",
-  "<tmp-path>/src/index.ts",
 ]
 `;
 
-exports[`Fix: Init-Task > validate initTask base works with --source 2`] = `
+exports[`Fix: Init-Task > validate initTask "base" works with src arg 2`] = `
 [
+  "src/app.ts",
   "src/apply-rules.ts",
   "src/gen-random-grid.ts",
   "src/get-live-neighbor-count.ts",
-  "src/index.ts",
 ]
+`;
+
+exports[`Fix: Init-Task > validate initTask "base" works with src arg 3`] = `
+"[STARTED] Initialize
+[SUCCESS] Initialize"
 `;
