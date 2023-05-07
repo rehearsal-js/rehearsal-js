@@ -44,7 +44,7 @@
     "@rehearsal/ts-utils": "workspace:*",
     "@types/object-hash": "^3.0.2",
     "debug": "^4.3.4",
-    "eslint": "^8.37.0",
+    "eslint": "^8.40.0",
     "magic-string": "^0.30.0",
     "object-hash": "^3.0.0",
     "prettier": "^2.8.7",
