@@ -283,6 +283,7 @@ describe('Fix: Init-Task', () => {
       devDeps: false,
       deps: false,
       ignore: [],
+      skipChecks: false,
     };
     const tasks = [initTask(src, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);

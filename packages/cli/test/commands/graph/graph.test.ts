@@ -323,7 +323,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/addon-test-support/*.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -361,7 +361,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['**/*.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -391,7 +391,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/*'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -429,7 +429,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/addon-test-support/index.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
