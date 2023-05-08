@@ -114,12 +114,6 @@ export function getEmberAppWithInRepoAddonProject(
   return project;
 }
 
-export function getTSEmberAppProject(project: Project = emberTSAppTemplate()): Project {
-  getEmberAppProject(project);
-
-  return project;
-}
-
 export function getEmberAppWithInRepoEngineProject(
   project: Project = emberAppTemplate(),
   engineName = 'some-engine'
@@ -242,7 +236,7 @@ export function getEmberProject(variant: EmberProjectFixture, varyNames = false)
       project = addUtilDirectory(getEmberAppProject());
       break;
     case 'ts-app':
-      project = getTSEmberAppProject();
+      project = emberTSAppTemplate();
       break;
     case 'app-with-in-repo-addon':
       project = getEmberAppWithInRepoAddonProject(undefined, undefined, varyNames);

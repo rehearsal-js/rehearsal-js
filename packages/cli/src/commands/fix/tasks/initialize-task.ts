@@ -3,7 +3,7 @@ import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
 import {
   validateSourcePath,
-  validateChildPackage,
+  validatePackagePath,
   isExistsPackageJSON,
   isExistsESLintConfig,
   isExistsTSConfig,
@@ -55,7 +55,7 @@ export function initTask(
       if (graph) {
         ctx.package = src;
 
-        [ctx.packageAbs, ctx.packageRel] = validateChildPackage(rootPath, src);
+        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
         preFlightCheck(ctx.packageAbs, ctx.projectType);
       } else {
@@ -88,7 +88,7 @@ export function preFlightCheck(basePath: string, projectType: ProjectType): void
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
   isDepsPreReq(basePath, deps);
-  isESLintPreReq(basePath, eslint.parser);
+  isESLintPreReq(basePath, eslint);
   isTSConfigPreReq(basePath, tsconfig);
   isNodePreReq(node);
 }

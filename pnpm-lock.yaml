@@ -306,6 +306,9 @@ importers:
       execa:
         specifier: ^7.0.0
         version: 7.1.1
+      findup-sync:
+        specifier: ^5.0.0
+        version: 5.0.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -322,9 +325,6 @@ importers:
       '@vitest/coverage-c8':
         specifier: ^0.30.1
         version: 0.30.1(vitest@0.30.0)
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
@@ -676,6 +676,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@rehearsal/ts-utils':
+        specifier: workspace:*
+        version: link:../ts-utils
       chalk:
         specifier: ^5.2.0
         version: 5.2.0
@@ -688,9 +691,6 @@ importers:
       execa:
         specifier: ^7.1.1
         version: 7.1.1
-      fast-deep-equal:
-        specifier: ^3.1.3
-        version: 3.1.3
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
@@ -7158,6 +7158,7 @@ packages:
       is-glob: 4.0.3
       micromatch: 4.0.5
       resolve-dir: 1.0.1
+    dev: false
 
   /fireworm@0.7.2:
     resolution: {integrity: sha512-GjebTzq+NKKhfmDxjKq3RXwQcN9xRmZWhnnuC9L+/x5wBQtR0aaQM50HsjrzJ2wc28v1vSdfOpELok0TKR4ddg==}

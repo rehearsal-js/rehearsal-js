@@ -3,57 +3,54 @@
 exports[`Fix: Init-Task > preFlightCheck "base" - deps/devDeps compare 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 1`] = `
-[Error: Please install the following missing devDependencies and try again:
-      
-"typescript": "^5.0.0", 
-"prettier": "^2.0.0", 
-"eslint": "^8.0.0"]
+"Please install the following missing devDependencies and try again:
+\\"typescript\\": \\"^5.0.0\\", 
+\\"prettier\\": \\"^2.0.0\\", 
+\\"eslint\\": \\"^8.0.0\\""
 `;
 
 exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 1`] = `[Error: Please update "parser: @fake/parser" to "parser: @typescript-eslint/parser" in the ESLint config and try again.]`;
+exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 1`] = `"Please update the parser to \\"@typescript-eslint/parser\\" in the ESLint config and try again."`;
 
 exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 2`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 1`] = `
-[Error: Please update the tsconfig.json to include:
+"please update the tsconfig.json to meet requirements:
 {
-  "compilerOptions": {
-    "strict": true,
-    "skipLibCheck": true
+  \\"compilerOptions\\": {
+    \\"strict\\": true,
+    \\"skipLibCheck\\": true
   }
-}]
+}"
 `;
 
 exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 2`] = `""`;
 
+exports[`Fix: Init-Task > preFlightCheck "base" works 1`] = `""`;
+
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
-[Error: The tsconfig.json is missing the following keys:
-"glint".
-Please update the tsconfig.json to include:
+"\\"glint\\" key and options missing in <tmp-path>/tsconfig.json. please update the tsconfig.json to meet requirements:
 {
-  "compilerOptions": {
-    "strict": true,
-    "skipLibCheck": true
+  \\"compilerOptions\\": {
+    \\"strict\\": true,
+    \\"skipLibCheck\\": true
   },
-  "glint": {
-    "environment": [
-      "ember-loose",
-      "ember-template-imports"
+  \\"glint\\": {
+    \\"environment\\": [
+      \\"ember-loose\\",
+      \\"ember-template-imports\\"
     ],
-    "checkStandaloneTemplates": true
+    \\"checkStandaloneTemplates\\": true
   }
-}]
+}"
 `;
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck base works 1`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "ember" works 1`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck ember works 1`] = `""`;
-
-exports[`Fix: Init-Task > preFlightCheck glimmer works 1`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "glimmer" works 1`] = `""`;
 
 exports[`Fix: Init-Task > validate initTask "base" works with src arg 1`] = `
 [

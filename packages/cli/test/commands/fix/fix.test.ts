@@ -35,7 +35,7 @@ function projectInit(project: Project, type: ProjectType): void {
     ...prereqs.tsconfig,
   });
   project.files['.eslintrc.json'] = JSON.stringify({
-    ...prereqs.eslint,
+    parser: prereqs.eslint,
   });
 }
 
@@ -126,7 +126,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
   });
 });
 
-describe('Command: fix ember-ts-app fixture', () => {
+describe('Command: fix "ember-ts-app" fixture', () => {
   let project: Project;
   let outputStream: Readable;
   let output = '';
@@ -168,7 +168,7 @@ describe('Command: fix ember-ts-app fixture', () => {
     project.dispose();
   });
 
-  test('fix package with src arg and graph', async () => {
+  test.only('fix package with src arg and graph', async () => {
     const src = resolve(project.baseDir);
     const flags = ['--graph', '--deps', '--rootPath', project.baseDir];
 

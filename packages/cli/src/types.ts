@@ -36,9 +36,7 @@ export type TSConfigGlimmer = TSConfigBase & {
 
 export type PreReqs = {
   node: string;
-  eslint: {
-    parser: string;
-  };
+  eslint: string;
   tsconfig: TSConfigBase | TSConfigEmber | TSConfigGlimmer;
   deps: Record<string, string>;
 };

@@ -1,9 +1,14 @@
 import { resolve } from 'node:path';
 import { Project } from 'fixturify-project';
-import { afterEach, beforeEach, describe, expect, test, vi} from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
 
-import { prepareProject, listrTaskRunner, cleanOutput, createOutputStream } from '../../test-helpers/index.js';
+import {
+  prepareProject,
+  listrTaskRunner,
+  cleanOutput,
+  createOutputStream,
+} from '../../test-helpers/index.js';
 import { preFlightCheck } from '../../../src/commands/fix/tasks/initialize-task.js';
 import { getPreReqs } from '../../../src/prereqs.js';
 import { initTask } from '../../../src/commands/fix/tasks/index.js';
@@ -32,7 +37,7 @@ function projectInit(project: Project, type: ProjectType): void {
     ...prereqs.tsconfig,
   });
   project.files['.eslintrc.json'] = JSON.stringify({
-    ...prereqs.eslint,
+    parser: prereqs.eslint,
   });
 }
 
@@ -77,23 +82,53 @@ describe('Fix: Init-Task', () => {
     project.dispose();
   });
 
-  for (const pt of ['base', 'ember', 'glimmer'] as ProjectType[]) {
-    test(`preFlightCheck ${pt} works`, async () => {
-      const projectType: ProjectType = pt;
+  test(`preFlightCheck "base" works`, async () => {
+    const projectType: ProjectType = 'base';
 
-      projectInit(project, projectType);
+    projectInit(project, projectType);
 
-      await project.write();
+    await project.write();
 
-      try {
-        preFlightCheck(project.baseDir, projectType);
-      } catch (error) {
-        expect(error).toBeUndefined();
-      }
+    try {
+      preFlightCheck(project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
 
-      expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
-    });
-  }
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test(`preFlightCheck "ember" works`, async () => {
+    const projectType: ProjectType = 'ember';
+
+    projectInit(project, projectType);
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test(`preFlightCheck "glimmer" works`, async () => {
+    const projectType: ProjectType = 'glimmer';
+
+    projectInit(project, projectType);
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
 
   test('preFlightCheck "base" - deps/devDeps compare', async () => {
     const projectType: ProjectType = 'base';
@@ -125,7 +160,7 @@ describe('Fix: Init-Task', () => {
       },
     });
     project.files['.eslintrc.json'] = JSON.stringify({
-      ...prereqs.eslint,
+      parser: prereqs.eslint,
     });
 
     // adds all the deps from the prereqs for the given `ProjectType`
@@ -137,7 +172,9 @@ describe('Fix: Init-Task', () => {
       preFlightCheck(project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
-      expect(error).toMatchSnapshot();
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
     }
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
@@ -165,7 +202,9 @@ describe('Fix: Init-Task', () => {
       preFlightCheck(project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
-      expect(error).toMatchSnapshot();
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
     }
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
@@ -193,7 +232,9 @@ describe('Fix: Init-Task', () => {
       preFlightCheck(project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
-      expect(error).toMatchSnapshot();
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
     }
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
@@ -214,7 +255,9 @@ describe('Fix: Init-Task', () => {
       preFlightCheck(project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
-      expect(error).toMatchSnapshot();
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
     }
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();

@@ -1,5 +1,5 @@
 import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
 import findupSync from 'findup-sync';
@@ -11,11 +11,13 @@ import chalk from 'chalk';
 import fastGlob from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
-import equal from 'fast-deep-equal';
+import { getTSConfigCompilerOptionsCanonical } from '@rehearsal/ts-utils';
 import { execa, execaSync } from 'execa';
 import { TSConfig } from './types.js';
+
 import type { PackageJson } from 'type-fest';
 import type { Options } from 'execa';
+import type { TSConfigCompilerOptions } from '@rehearsal/ts-utils';
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 export const git: SimpleGit = simpleGit({
@@ -592,26 +594,29 @@ export function getFilesByType(
   return [sourceFiles.map((file) => resolve(basePath, file)), sourceFiles];
 }
 
-// be sure the childPackage exists within the basePath project and returns rel and abs tuple
-export function validateChildPackage(basePath: string, childPackage: string): [string, string] {
+// be sure the package exists within the basePath project and returns rel and abs tuple
+export function validatePackagePath(basePath: string, childPackage: string): [string, string] {
   if (
     !existsSync(resolve(basePath, childPackage)) ||
     !existsSync(resolve(basePath, childPackage, 'package.json'))
   ) {
     throw new Error(
-      `Rehearsal could not find the childPackage: "${childPackage}" in project: "${basePath}" OR the childPackage does not have a package.json file.`
+      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
     );
   }
 
+  const absPath = resolve(basePath, childPackage);
+  const relPath = relative(basePath, resolve(basePath, childPackage));
+
   // return the abs path and rel path of the childPackage
-  return [resolve(basePath, childPackage), relative(basePath, resolve(basePath, childPackage))];
+  return [absPath, relPath];
 }
 
 export function isExistsESLintConfig(basePath: string): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);
   if (!lintConfigPath) {
     throw new Error(
-      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
+      `Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
     );
   }
   return true;
@@ -652,11 +657,6 @@ export function isValidGitIgnore(basePath: string): boolean {
   }
 
   return true;
-}
-
-export function isExistsRehearsalReport(basePath: string): boolean {
-  const rehearsalReportRegex = /\rehearsal-report.*/g;
-  return readdirSync(basePath).filter((d: string) => rehearsalReportRegex.test(d)).length > 0;
 }
 
 export function isDepsPreReq(basePath: string, requiredDeps: Record<string, string>): boolean {
@@ -723,26 +723,21 @@ export function extractDepName(dep: string): string {
   return matched ? matched[0] : dep;
 }
 
+// should cover all eslint extensions
 export function isESLintPreReq(basePath: string, requiredParser: string): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);
   if (!lintConfigPath) {
     throw new Error(
-      `Eslint config (.eslintrc.{js,yml,json,yaml}) does not exist. Please add one and try again.`
+      `Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist. Please add one and try again.`
     );
   }
 
-  // read the eslint config
-  const lintConfig = readJSONSync(lintConfigPath) as Record<string, string>;
+  // read the lintConfigPath as text and check if it has the requiredParser string in it
+  const lintConfigText = readFileSync(lintConfigPath, 'utf-8');
 
-  // if the parser is not requiredParser throw
-  if (!Object.keys(lintConfig).includes('parser')) {
-    throw new Error(`Please add "parser: ${requiredParser}" to the ESLint config and try again.`);
-  }
-
-  // if the parser is not the requiredParser throw
-  if (lintConfig['parser'] !== requiredParser) {
+  if (!lintConfigText.includes(requiredParser)) {
     throw new Error(
-      `Please update "parser: ${lintConfig['parser']}" to "parser: ${requiredParser}" in the ESLint config and try again.`
+      `Please update the parser to "${requiredParser}" in the ESLint config and try again.`
     );
   }
 
@@ -750,33 +745,32 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
 }
 
 export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): boolean {
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
-  const tsConfig = readTSConfig<TSConfig>(tsConfigPath);
-  const message = `Please update the tsconfig.json to include:\n${JSON.stringify(
+  if (!requiredTSConfig) {
+    return true;
+  }
+
+  const message = `please update the tsconfig.json to meet requirements:\n${JSON.stringify(
     requiredTSConfig,
     null,
     2
   )}`;
 
-  // !TODO NEED TO COMPARE AGAINST THE COMPILED TSCONFIG EG. EXTENDS WITH TS API
-  // grab all the top level keys from the requiredTSConfig
-  const missingKeys = Object.keys(requiredTSConfig).filter(
-    (key) => !Object.keys(tsConfig).includes(key)
-  );
+  const { strict: strictRequired, skipLibCheck: skipLibCheckRequired } =
+    requiredTSConfig.compilerOptions as TSConfigCompilerOptions;
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
 
-  if (missingKeys.length > 0) {
-    throw new Error(
-      `The tsconfig.json is missing the following keys:\n${missingKeys
-        .map((key) => `"${key}"`)
-        .join(', ')}.\n${message}`
-    );
+  // only check for it if its required
+  if (requiredTSConfig.glint) {
+    isTSConfigGlintPreReq(tsConfigPath, requiredTSConfig, message);
   }
+  // this will fetch all the compilerOptions from tsconfig extends as well
+  const { strict, skipLibCheck } = getTSConfigCompilerOptionsCanonical(basePath, tsConfigPath);
 
-  if (!equal(tsConfig, requiredTSConfig)) {
-    throw new Error(`${message}`);
+  if (strict === strictRequired && skipLibCheck === skipLibCheckRequired) {
+    return true;
+  } else {
+    throw new Error(message);
   }
-
-  return true;
 }
 
 export function isNodePreReq(requiredNode: string): boolean {
@@ -791,20 +785,54 @@ export function isNodePreReq(requiredNode: string): boolean {
   return true;
 }
 
-// be sure the childPackage exists within the basePath project and returns rel and abs tuple
-export function validatePackagePath(basePath: string, childPackage: string): [string, string] {
-  if (
-    !existsSync(resolve(basePath, childPackage)) ||
-    !existsSync(resolve(basePath, childPackage, 'package.json'))
-  ) {
-    throw new Error(
-      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
-    );
+export function isTSConfigGlintPreReq(
+  tsConfigPath: string,
+  requiredTSConfigGlint: Pick<TSConfig, 'glint'>,
+  message?: string
+): void {
+  // the glint key isn't supported by with ts API so we have to grab it manually
+  const { glint } = readTSConfig<TSConfig>(tsConfigPath);
+  const { glint: glintRequired } = requiredTSConfigGlint;
+
+  if (!glint) {
+    throw new Error(`"glint" key and options missing in tsconfig.json. ${message}`);
+  } else {
+    if (glintRequired) {
+      // check if the glint key has all the required keys
+      const missingKeys = Object.keys(glintRequired).filter(
+        (key) => !Object.keys(glint).includes(key)
+      );
+      if (missingKeys.length > 0) {
+        throw new Error(
+          `"glint" key is missing the following options in tsconfig.json: ${missingKeys.join(
+            ', '
+          )}. ${message}`
+        );
+      }
+
+      // check if the glint values are the same
+      if (glint.checkStandaloneTemplates !== glintRequired.checkStandaloneTemplates) {
+        throw new Error(
+          `"glint.checkStandaloneTemplates" value is incorrect in tsconfig.json. ${message}`
+        );
+      }
+
+      if (glintRequired.environment && glint.environment) {
+        const glintEnv = glint.environment;
+
+        // check if the glint.environment array contains all of the requiredTSConfig.glint.environment in any order
+        const missingEnvironments = glintRequired.environment.filter(
+          (env: string) => !glintEnv.includes(env)
+        );
+
+        if (missingEnvironments.length > 0) {
+          throw new Error(
+            `"glint.environment" is missing the following environments in tsconfig.json: ${missingEnvironments.join(
+              ', '
+            )}. ${message}`
+          );
+        }
+      }
+    }
   }
-
-  const absPath = resolve(basePath, childPackage);
-  const relPath = relative(basePath, resolve(basePath, childPackage));
-
-  // return the abs path and rel path of the childPackage
-  return [absPath, relPath];
 }

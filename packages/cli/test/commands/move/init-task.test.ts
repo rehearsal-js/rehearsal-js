@@ -1,9 +1,14 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { initTask } from '../../../src/commands/move/tasks/index.js';
 import { createLogger, format, transports } from 'winston';
+import { initTask } from '../../../src/commands/move/tasks/index.js';
 
-import { prepareProject, listrTaskRunner, cleanOutput, createOutputStream } from '../../test-helpers/index.js';
+import {
+  prepareProject,
+  listrTaskRunner,
+  cleanOutput,
+  createOutputStream,
+} from '../../test-helpers/index.js';
 
 import type { CommandContext, MoveCommandOptions } from '../../../src/types.js';
 import type { Project } from 'fixturify-project';
@@ -12,7 +17,6 @@ import type { Readable } from 'node:stream';
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
 });
-
 
 describe('Move: Init-Task', () => {
   let project: Project;
@@ -41,7 +45,6 @@ describe('Move: Init-Task', () => {
     outputStream.push(`${chunk}\n`);
     return logger;
   });
-
 
   beforeEach(async () => {
     output = '';

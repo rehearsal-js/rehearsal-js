@@ -3,7 +3,7 @@ import { compare } from 'compare-versions';
 import { Project } from 'fixturify-project';
 import { writeSync } from 'fixturify';
 import tmp from 'tmp';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, afterEach } from 'vitest';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
 
@@ -23,11 +23,52 @@ import {
   getLockfilePath,
   getEditorBinWithArgs,
   findWorkspaceRoot,
+  validatePackagePath,
+  isTSConfigPreReq,
+  isESLintPreReq,
+  isDepsPreReq,
+  getFilesByType,
+  validateSourcePath,
 } from '../src/index.js';
 
-tmp.setGracefulCleanup();
+export function removeSpecialChars(input: string): string {
+  const specialCharRegex = /[^A-Za-z 0-9 .,?""!@#$%^&*()-_=+;:<>/\\|}{[\]`~\n]*/g;
+  const colorCharRegex = /\[\d+m/g;
+  const outputIgnoreTitles = ['[TITLE]', '[ERROR]', '[DATA]', '[SUCCESS]'];
+  return input
+    .replace(specialCharRegex, '')
+    .replace(colorCharRegex, '')
+    .split('\n')
+    .map((line) => {
+      // remove all empty lines which has outputIgnoreTitles
+      if (!line.trim() || outputIgnoreTitles.includes(line.trim())) {
+        return '';
+      }
+      return line;
+    })
+    .filter((line) => line.trim())
+    .join('\n');
+}
+
+function cleanOutput(output: string, basePath: string): string {
+  const pathRegex = new RegExp(basePath, 'g');
+  const versionRegex = /(@rehearsal\/(move|migrate|graph|fix))(.+)/g;
+  return removeSpecialChars(
+    output.replace(pathRegex, '<tmp-path>').replace(versionRegex, '$1<test-version>')
+  );
+}
 
 describe('utils', () => {
+  let project: Project;
+
+  afterEach(() => {
+    tmp.setGracefulCleanup();
+
+    if (project) {
+      project.dispose();
+    }
+  });
+
   describe.each([
     {
       args: ['foo-web_10.2.3'] as const,
@@ -63,7 +104,7 @@ describe('utils', () => {
   // TODO: add tests for different scenarios
   // e.g. multiple package managers existed with different version
   test('getPathToBinary()', async () => {
-    const project = new Project('my-project', '0.0.0', {
+    project = new Project('my-project', '0.0.0', {
       files: {
         'package.json': JSON.stringify({
           name: 'my-project',
@@ -80,8 +121,6 @@ describe('utils', () => {
     const { stdout } = await execa(tscPath, ['--version']);
 
     expect(stdout).toContain(`Version`);
-
-    project.dispose();
   });
 
   // @rehearsal/cli uses pnpm
@@ -212,6 +251,216 @@ describe('utils', () => {
 
     process.env['EDITOR'] = 'nvim';
     expect(getEditorBinWithArgs()).toEqual(['nvim']);
+  });
+
+  test('validatePackagePath()', async () => {
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        'package.json': JSON.stringify({
+          name: 'my-project',
+          version: '0.0.0',
+        }),
+        'index.ts': '',
+        'child-project': {
+          'package.json': JSON.stringify({
+            name: 'child-project',
+            version: '0.0.0',
+          }),
+          src: {
+            'index.ts': '',
+          },
+        },
+      },
+    });
+
+    await project.write();
+
+    const [absPath, relPath] = validatePackagePath(project.baseDir, 'child-project');
+
+    expect(absPath).toContain('/child-project');
+    expect(relPath).toContain('child-project');
+  });
+
+  test('isTSConfigPreReq()', async () => {
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        'tsconfig.json': JSON.stringify({
+          compilerOptions: {
+            strict: true,
+            skipLibCheck: true,
+            noEmit: true,
+          },
+          paths: {
+            '*': ['types/*'],
+          },
+        }),
+      },
+    });
+
+    await project.write();
+
+    expect(
+      isTSConfigPreReq(project.baseDir, {
+        compilerOptions: {
+          strict: true,
+          skipLibCheck: true,
+        },
+      })
+    ).toBeTruthy();
+
+    expect(() =>
+      isTSConfigPreReq(project.baseDir, {
+        compilerOptions: {
+          strict: false,
+          skipLibCheck: false,
+          noEmit: true,
+        },
+        glint: {
+          environment: ['foo'],
+          checkStandaloneTemplates: true,
+        },
+      })
+    ).toThrowErrorMatchingSnapshot();
+  });
+
+  test('isESLintPreReq()', async () => {
+    // JSON
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        '.eslintrc.json': JSON.stringify({
+          parser: '@typescript-eslint/parser',
+        }),
+      },
+    });
+    await project.write();
+    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
+    expect(() => isESLintPreReq(project.baseDir, '@foo/parser')).toThrowErrorMatchingSnapshot();
+    project.dispose();
+
+    // YML
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        '.eslintrc.yml': `parser: '@typescript-eslint/parser'`,
+      },
+    });
+    await project.write();
+    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
+    project.dispose();
+
+    // JS
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        '.eslintrc.js': `module.exports = { parser: '@typescript-eslint/parser' }`,
+      },
+    });
+    await project.write();
+    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
+    project.dispose();
+  });
+
+  test('isDepsPreReq()', async () => {
+    const reqDeps = {
+      typescript: '5.0.0',
+      '@typescript-eslint/parser': '5.0.0',
+    };
+
+    const reqDepsFailure = {
+      ...reqDeps,
+      foo: '1.0.0',
+      bar: '5.1.5',
+    };
+
+    project = new Project('my-project', '0.0.0');
+
+    project.addDependency('typescript', '^5.0.1');
+    project.addDevDependency('eslint', '^8.40.0');
+    project.addDevDependency('eslint-plugin-glint', '^1.0.0');
+    project.addDevDependency('@glint/core', '^1.0.0');
+    project.addDevDependency('@typescript-eslint/parser', '^5.59.2');
+
+    await project.write();
+
+    expect(isDepsPreReq(project.baseDir, reqDeps)).toBeTruthy();
+    expect(() => isDepsPreReq(project.baseDir, reqDepsFailure)).toThrowErrorMatchingSnapshot();
+  });
+
+  test('getFilesByType()', async () => {
+    // TS/GTS
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        'index.ts': '',
+        src: {
+          'index.ts': '',
+          'foo.ts': '',
+          'blag.js': '',
+          foo: {
+            'index.gts': '',
+            'bar.gts': '',
+            'bleep.gjs': '',
+          },
+        },
+      },
+    });
+    await project.write();
+
+    // TS & GTS
+    const [absPathsTS, relPathsTS] = getFilesByType(
+      project.baseDir,
+      resolve(project.baseDir, 'src'),
+      'ts'
+    );
+    expect(absPathsTS).toHaveLength(4);
+    expect(relPathsTS).toHaveLength(4);
+    absPathsTS.forEach((path) => expect(path).toContain('/src/'));
+    relPathsTS.forEach((path) => expect(path.split('/')[0]).toBe('src'));
+
+    // JS & GJS
+    const [absPathsJS, relPathsJS] = getFilesByType(
+      project.baseDir,
+      resolve(project.baseDir, 'src'),
+      'js'
+    );
+    expect(absPathsJS).toHaveLength(2);
+    expect(relPathsJS).toHaveLength(2);
+    absPathsJS.forEach((path) => expect(path).toContain('/src/'));
+    relPathsJS.forEach((path) => expect(path.split('/')[0]).toBe('src'));
+  });
+
+  test('validateSourcePath()', async () => {
+    project = new Project('my-project', '0.0.0', {
+      files: {
+        'index.ts': '',
+        src: {
+          'index.ts': '',
+          'foo.ts': '',
+          'blag.js': '',
+          'foo.fakeext': '',
+          foo: {
+            'index.gts': '',
+            'bar.gts': '',
+            'bleep.gjs': '',
+          },
+        },
+      },
+    });
+    await project.write();
+
+    expect(() =>
+      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/dont/exist'), 'ts')
+    ).toThrowErrorMatchingInlineSnapshot(
+      cleanOutput(
+        'Rehearsal could not find source: <tmp-dir>/src/dont/exist in project: <tmp-dir>',
+        project.baseDir
+      )
+    );
+    expect(() =>
+      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/foo.fakeext'), 'js')
+    ).toThrowErrorMatchingInlineSnapshot(
+      cleanOutput(
+        'Rehearsal will only move .js,.gjs files. Source: <tmp-dir>/src/foo.fakeext is neither.',
+        project.baseDir
+      )
+    );
   });
 
   describe('findWorkspaceRoot', () => {

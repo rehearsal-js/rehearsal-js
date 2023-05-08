@@ -13,9 +13,7 @@ import type {
 const nodeBasePrereq = '14';
 
 // eslint
-const eslintBasePrereq = {
-  parser: '@typescript-eslint/parser',
-};
+const eslintBasePrereq = '@typescript-eslint/parser';
 
 // tsconfig
 const tsconfigBasePrereq: TSConfigBase = {
@@ -81,9 +79,7 @@ const depsGlimmerPreReq = {
 const preReqs: Record<string, PreReqs> = {
   base: {
     node: nodeBasePrereq,
-    eslint: {
-      ...eslintBasePrereq,
-    },
+    eslint: eslintBasePrereq,
     tsconfig: {
       ...tsconfigBasePrereq,
     },
@@ -93,9 +89,7 @@ const preReqs: Record<string, PreReqs> = {
   },
   ember: {
     node: nodeBasePrereq,
-    eslint: {
-      ...eslintBasePrereq,
-    },
+    eslint: eslintBasePrereq,
     tsconfig: {
       ...tsconfigEmberPrereq,
     },
@@ -105,9 +99,7 @@ const preReqs: Record<string, PreReqs> = {
   },
   glimmer: {
     node: nodeBasePrereq,
-    eslint: {
-      ...eslintBasePrereq,
-    },
+    eslint: eslintBasePrereq,
     tsconfig: {
       ...tsconfigGlimmerPrereq,
     },
