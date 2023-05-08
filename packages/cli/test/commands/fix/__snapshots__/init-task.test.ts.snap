@@ -1,21 +1,21 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Fix: Init-Task > preFlightCheck "base" - deps/devDeps compare 1`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - deps/devDeps compare 1`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure deps missing 1`] = `
 "Please install the following missing devDependencies and try again:
 \\"typescript\\": \\"^5.0.0\\", 
 \\"prettier\\": \\"^2.0.0\\", 
 \\"eslint\\": \\"^8.0.0\\""
 `;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure deps missing 2`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure deps missing 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 1`] = `"Please update the parser to \\"@typescript-eslint/parser\\" in the ESLint config and try again."`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure eslint parser invalid 1`] = `"Please update the parser to \\"@typescript-eslint/parser\\" in the ESLint config and try again."`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure eslint parser invalid 2`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure eslint parser invalid 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 1`] = `
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure tsconfig strict as false 1`] = `
 "please update the tsconfig.json to meet requirements:
 {
   \\"compilerOptions\\": {
@@ -25,9 +25,9 @@ exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict
 }"
 `;
 
-exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict as false 2`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure tsconfig strict as false 2`] = `""`;
 
-exports[`Fix: Init-Task > preFlightCheck "base" works 1`] = `""`;
+exports[`Fix: Init-Task > preFlightCheck "base-ts" works 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
 "\\"glint\\" key and options missing in tsconfig.json. please update the tsconfig.json to meet requirements:
@@ -52,7 +52,7 @@ exports[`Fix: Init-Task > preFlightCheck "ember" works 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "glimmer" works 1`] = `""`;
 
-exports[`Fix: Init-Task > validate initTask "base" works with src arg 1`] = `
+exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 1`] = `
 [
   "<tmp-path>/src/app.ts",
   "<tmp-path>/src/apply-rules.ts",
@@ -61,7 +61,7 @@ exports[`Fix: Init-Task > validate initTask "base" works with src arg 1`] = `
 ]
 `;
 
-exports[`Fix: Init-Task > validate initTask "base" works with src arg 2`] = `
+exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 2`] = `
 [
   "src/app.ts",
   "src/apply-rules.ts",
@@ -70,7 +70,7 @@ exports[`Fix: Init-Task > validate initTask "base" works with src arg 2`] = `
 ]
 `;
 
-exports[`Fix: Init-Task > validate initTask "base" works with src arg 3`] = `
+exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 3`] = `
 "[STARTED] Initialize
 [SUCCESS] Initialize"
 `;

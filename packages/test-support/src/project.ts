@@ -182,7 +182,8 @@ export function emberAppTemplate(): Project {
 
 export function emberTSAppTemplate(): Project {
   return Project.fromDir(EMBER_TS_APP_TEMPLATE_DIR, {
-    linkDevDeps: false,
+    linkDevDeps: true,
+    linkDeps: true,
   });
 }
 

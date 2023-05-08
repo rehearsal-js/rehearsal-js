@@ -76,34 +76,36 @@ describe('Command: move', () => {
     ]);
   });
 
-  test('move package with --graph and --deps flag', async () => {
-    const childPackage = 'module-a';
-
+  test('move packages with --graph and --deps flag', async () => {
     const result = await runBin(
       'move',
-      [`${childPackage}`],
+      [`.`],
       ['--graph', '--deps', '--rootPath', project.baseDir],
       {
         cwd: project.baseDir,
       }
     );
 
-    const projectSourceDir = resolve(project.baseDir, childPackage);
-    // check for js and gjs files -> ts and gts files
-    const jsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{js,gjs}`, {
-      cwd: project.baseDir,
-    });
+    const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
-    expect(jsSourceFiles).length(0);
-    expect(tsSourceFiles).length(3);
+    expect(tsSourceFiles).length(12);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/index.ts',
       '/module-a/index.ts',
+      '/module-b/index.ts',
+      '/src/bizz.ts',
+      '/src/index.ts',
       '/module-a/src/baz.ts',
       '/module-a/src/foo.ts',
+      '/module-b/src/car.ts',
+      '/module-b/src/tires.ts',
+      '/src/foo/baz.ts',
+      '/src/foo/biz.ts',
+      '/src/foo/buz/biz.ts',
     ]);
   });
 

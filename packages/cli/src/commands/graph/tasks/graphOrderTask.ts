@@ -80,7 +80,8 @@ export function graphOrderTask(
 
       // if explicit package is passed in use that
       if (ctx?.package) {
-        ctx.sourceFilesAbs = order.packages.flatMap((pkg) => pkg.files);
+        ctx.sourceFilesRel = order.packages.flatMap((pkg) => pkg.files);
+        ctx.sourceFilesAbs = ctx.sourceFilesRel.map((file) => resolve(srcDir, file));
 
         return;
       }

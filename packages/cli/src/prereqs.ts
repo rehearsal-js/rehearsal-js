@@ -77,7 +77,7 @@ const depsGlimmerPreReq = {
 };
 
 const preReqs: Record<string, PreReqs> = {
-  base: {
+  'base-ts': {
     node: nodeBasePrereq,
     eslint: eslintBasePrereq,
     tsconfig: {

@@ -30,7 +30,7 @@ exports[`Command: move > move file 1`] = `
 [SUCCESS] Executing git mv"
 `;
 
-exports[`Command: move > move package with --graph and --deps flag 1`] = `
+exports[`Command: move > move packages with --graph and --deps flag 1`] = `
 "info:    @rehearsal/move<test-version>
 [STARTED] Validating source path
 [SUCCESS] Validating source path
@@ -40,9 +40,25 @@ exports[`Command: move > move package with --graph and --deps flag 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
 [DATA] renamed: 
-[DATA] module-a/index.js -> module-a/index.ts
-[DATA] module-a/src/baz.js -> module-a/src/baz.ts
-[DATA] module-a/src/foo.js -> module-a/src/foo.ts
+[DATA] /index.js -> /index.ts
+[DATA] /module-a/index.js -> /module-a/index.ts
+[DATA] /module-a/src/baz.js -> /module-a/src/baz.ts
+[DATA] /module-a/src/foo.js -> /module-a/src/foo.ts
+[DATA] /module-b/index.js -> /module-b/index.ts
+[DATA] /module-b/src/tires.js -> /module-b/src/tires.ts
+[DATA] /module-b/src/car.js -> /module-b/src/car.ts
+[DATA] /src/foo/baz.js -> /src/foo/baz.ts
+[DATA] /src/foo/biz.js -> /src/foo/biz.ts
+[DATA] /src/foo/buz/biz.js -> /src/foo/buz/biz.ts
+[DATA] /src/index.js -> /src/index.ts
 [SUCCESS] Executing git mv"
 `;

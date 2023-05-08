@@ -287,26 +287,47 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
-error:   Failed to load parser @typescript-eslint/parser declared in .eslintrc.json: Cannot find module @typescript-eslint/scope-manager
-Require stack:
-- <tmp-path>/node_modules/@typescript-eslint/parser/dist/parser.js
-- <tmp-path>/node_modules/@typescript-eslint/parser/dist/index.js
-- /Users/imac/D/rehearsal-js/node_modules/.pnpm/@eslint+eslintrc@2.0.3/node_modules/@eslint/eslintrc/dist/eslintrc.cjs
-Error: Failed to load parser @typescript-eslint/parser declared in .eslintrc.json: Cannot find module @typescript-eslint/scope-manager
-Require stack:
-- <tmp-path>/node_modules/@typescript-eslint/parser/dist/parser.js
-- <tmp-path>/node_modules/@typescript-eslint/parser/dist/index.js
-- /Users/imac/D/rehearsal-js/node_modules/.pnpm/@eslint+eslintrc@2.0.3/node_modules/@eslint/eslintrc/dist/eslintrc.cjs
-    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:995:15)
-    at Function.Module._load (node:internal/modules/cjs/loader:841:27)
-    at Module.require (node:internal/modules/cjs/loader:1067:19)
-    at require (node:internal/modules/cjs/helpers:103:18)
-    at Object.<anonymous> (<tmp-path>/node_modules/@typescript-eslint/parser/dist/parser.js:7:25)
-    at Module._compile (node:internal/modules/cjs/loader:1165:14)
-    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1219:10)
-    at Module.load (node:internal/modules/cjs/loader:1043:32)
-    at Function.Module._load (node:internal/modules/cjs/loader:878:12)
-    at Module.require (node:internal/modules/cjs/loader:1067:19)"
+[DATA] processing file: /app/router.js
+[DATA] processing file: /app/components/ember-component.ts
+[DATA] processing file: /app/components/foo.ts
+[DATA] processing file: /app/components/js-component.js
+[DATA] processing file: /app/components/qux.ts
+[DATA] processing file: /app/components/template-only-module.ts
+[DATA] processing file: /app/components/wrapper-component.ts
+[DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
+[DATA] processing file: /app/controllers/classic-route.ts
+[DATA] processing file: /app/helpers/affix.ts
+[DATA] processing file: /app/helpers/repeat.ts
+[DATA] processing file: /app/pods/components/baz/component.ts
+[DATA] processing file: /app/routes/classic-route.ts
+[DATA] processing file: /tests/test-helper.js
+[DATA] processing file: /tests/helpers/index.ts
+[DATA] processing file: /tests/integration/components/bar-test.ts
+[DATA] processing file: /tests/integration/components/baz-test.ts
+[DATA] processing file: /tests/integration/components/ember-component-test.ts
+[DATA] processing file: /tests/integration/components/qux-test.ts
+[DATA] processing file: /tests/integration/components/render-test.ts
+[DATA] processing file: /tests/integration/components/template-only-module-test.ts
+[DATA] processing file: /tests/integration/helpers/repeat-test.ts
+[DATA] processing file: /tests/integration/types/empty-signature-test.ts
+[DATA] processing file: /types/global.d.ts
+[DATA] processing file: /types/template-registry.d.ts
+[DATA] processing file: /types/ember-data/types/registries/model.d.ts
+[DATA] processing file: /types/ts-ember-app/index.d.ts
+[TITLE] Types Inferred
+[TITLE]   38 errors caught by rehearsal
+[TITLE]   9 have been fixed by rehearsal
+[TITLE]   29 errors need to be fixed manually
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 2 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   38 errors caught by rehearsal
+[SUCCESS]   9 have been fixed by rehearsal
+[SUCCESS]   29 errors need to be fixed manually
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
 exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph 2`] = `""`;
