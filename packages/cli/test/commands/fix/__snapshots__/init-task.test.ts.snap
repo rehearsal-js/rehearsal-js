@@ -59,10 +59,10 @@ exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 1`] = `
 
 exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 2`] = `
 [
-  "src/app.ts",
-  "src/apply-rules.ts",
-  "src/gen-random-grid.ts",
-  "src/get-live-neighbor-count.ts",
+  "/src/app.ts",
+  "/src/apply-rules.ts",
+  "/src/gen-random-grid.ts",
+  "/src/get-live-neighbor-count.ts",
 ]
 `;
 

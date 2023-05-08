@@ -1,11 +1,11 @@
-// This is consumed by CLI. We can rename the import and drop this.
-export { discoverEmberPackages } from '@rehearsal/migration-graph-ember';
-
+export { topSortFiles } from './sort-graph.js';
 export {
-  getMigrationStrategy,
-  getMigrationOrder,
-  type MigrationStrategy,
-  type SourceFile,
-} from './migration-strategy.js';
-
-export { printDirectedGraph } from './util/printer.js';
+  Resolver,
+  SUPPORTED_EXTENSION,
+  SUPPORTED_TS_EXTENSIONS,
+  SUPPORTED_JS_EXTENSIONS,
+} from './resolver.js';
+export { discoverServiceDependencies } from './discover-services.js';
+export { generateDotLanguage } from './dot.js';
+export * from './utils/excludes.js';
+export type { PackageGraph } from './project-graph.js';

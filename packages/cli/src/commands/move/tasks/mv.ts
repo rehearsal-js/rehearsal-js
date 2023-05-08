@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { ListrTask } from 'listr2';
 import debug from 'debug';
 
+import { gitMove } from './mvWorker.js';
 import type { CommandContext, MoveCommandOptions } from '../../../types.js';
 import type { ListrTaskWrapper, ListrDefaultRenderer } from 'listr2';
 
@@ -25,19 +26,18 @@ export function moveTask(
     title: 'Executing git mv',
     task: async (ctx: CommandContext, task: MoveCommandTask): Promise<void> => {
       const { dryRun } = options;
-      const { sourceFilesAbs } = ctx;
+      const { orderedFiles } = ctx;
 
-      DEBUG_CALLBACK(`sourceFilesAbs: ${sourceFilesAbs}`);
+      DEBUG_CALLBACK(`sourceFilesAbs: ${orderedFiles}`);
 
       if (dryRun) {
         task.title = 'Executing git mv (dry run)';
       }
 
-      if (sourceFilesAbs) {
+      if (orderedFiles) {
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
           // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
-          const { gitMove } = await import('./mvWorker.js').then((m) => m);
-          task.output = gitMove(sourceFilesAbs, src, dryRun);
+          task.output = gitMove(orderedFiles, src, dryRun);
         } else {
           await new Promise<string>((resolve, reject) => {
             task.title = 'Executing git mv ...';
@@ -45,7 +45,7 @@ export function moveTask(
             // Run git mv in a worker thread so the ui thread doesn't hang
             const worker = new Worker(workerPath, {
               workerData: JSON.stringify({
-                sourceFiles: sourceFilesAbs,
+                sourceFiles: orderedFiles,
                 basePath: src,
                 dryRun,
               }),

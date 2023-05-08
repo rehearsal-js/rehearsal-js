@@ -6,6 +6,9 @@
   "include": ["src"],
   "references": [
     {
+      "path": "../migration-graph"
+    },
+    {
       "path": "../plugins"
     },
     {
@@ -17,11 +20,5 @@
     {
       "path": "../utils"
     },
-    {
-      "path": "../migration-graph-shared"
-    },
-    {
-      "path": "../migration-graph-ember"
-    }
   ]
 }

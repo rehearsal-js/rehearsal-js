@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`prereq checks > isDepsPreReq() 1`] = `
+"Please install the following missing devDependencies and try again:
+      
+\\"foo\\": \\"^1.0.0\\", 
+\\"bar\\": \\"^5.1.5\\""
+`;
+
+exports[`prereq checks > isESLintPreReq() 1`] = `"Please update the parser to \\"@foo/parser\\" in the ESLint config and try again."`;
+
+exports[`prereq checks > isTSConfigPreReq() 1`] = `
+"\\"glint\\" key and options missing in tsconfig.json. please update the tsconfig.json to meet requirements:
+{
+  \\"compilerOptions\\": {
+    \\"strict\\": false,
+    \\"skipLibCheck\\": false
+  },
+  \\"glint\\": {
+    \\"environment\\": \\"foo\\"
+  }
+}"
+`;

@@ -1,27 +1,23 @@
 import { resolve } from 'node:path';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
-import {
-  validateSourcePath,
-  validatePackagePath,
-  isExistsPackageJSON,
-  isExistsESLintConfig,
-  isExistsTSConfig,
-  isValidGitIgnore,
-  isDepsPreReq,
-  isESLintPreReq,
-  isTSConfigPreReq,
-  isNodePreReq,
-  determineProjectName,
-} from '@rehearsal/utils';
-// eslint-disable-next-line no-restricted-imports
-import { isGlintProject } from '@rehearsal/service';
+import { isGlintProject, isAddon, isApp } from '@rehearsal/service';
 import { readJsonSync } from 'fs-extra/esm';
-// eslint-disable-next-line no-restricted-imports
-import { isEmberAddon, isEmberApp } from '@rehearsal/migration-graph-ember';
 import { PackageJson } from 'type-fest';
 import { getPreReqs } from '../../../prereqs.js';
+import { validateSourcePath } from '../../../utils/paths.js';
 
+import {
+  determineProjectName,
+  isDepsPreReq,
+  isESLintPreReq,
+  isExistsESLintConfig,
+  isExistsPackageJSON,
+  isExistsTSConfig,
+  isNodePreReq,
+  isTSConfigPreReq,
+  isValidGitIgnore,
+} from '../../../utils/prereq-checks.js';
 import type { FixCommandOptions, CommandContext, ProjectType } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
@@ -38,32 +34,22 @@ export function initTask(
     task: async (ctx: CommandContext): Promise<void> => {
       const { rootPath, graph } = options;
 
-      ctx.packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
-      ctx.projectType = 'base-ts';
+      let projectType: ProjectType = 'base-ts';
+      const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
       ctx.projectName = determineProjectName(rootPath) || '';
 
       // if ember app or addon
-      if (isEmberApp(ctx.packageJSON) || isEmberAddon(ctx.packageJSON)) {
-        ctx.projectType = 'ember';
+      if (isApp(packageJSON) || isAddon(packageJSON)) {
+        projectType = 'ember';
       } else if (await isGlintProject(rootPath)) {
-        ctx.projectType = 'glimmer';
+        projectType = 'glimmer';
       }
 
-      // if a package is specified grab all the ts files in the package
-      // expectation is rehearsal move has already been run on the package
-      // expect a tsconfig.json file in rootPath
-      if (graph) {
-        // for graph ctx.sourceFilesAbs, ctx.sourceFilesRel will be set in the graph task
-        validatePackagePath(rootPath, src);
-        // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(rootPath, ctx.projectType);
-      } else {
-        // grab all the ts files in the project
-        // expectation is rehearsal move has already been run on the source
-        // expect a tsconfig.json file in rootPath
-        preFlightCheck(rootPath, ctx.projectType);
+      preFlightCheck(rootPath, projectType);
 
-        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'ts');
+      if (!graph) {
+        // grab all the ts files since we don't have graph output
+        [ctx.orderedFiles] = validateSourcePath(rootPath, src, 'ts');
       }
 
       DEBUG_CALLBACK('ctx %O:', ctx);

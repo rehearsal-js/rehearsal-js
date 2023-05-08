@@ -18,7 +18,7 @@ describe('fix command', () => {
     const result = await rehearsalCLI(
       'fix',
       '.',
-      ['--rootPath', project.baseDir, '--graph', '--deps', '--ignore', 'vitest.config.ts,test/**'],
+      ['--rootPath', project.baseDir, '--ignore', 'vitest.config.ts,test/**'],
       {
         cwd: project.baseDir,
       }
@@ -37,18 +37,13 @@ describe('fix command', () => {
     const projectRoot = resolve(project.baseDir);
 
     // move to .ts
-    await rehearsalCLI('move', 'app', ['--rootPath', project.baseDir], {
+    await rehearsalCLI('move', './app', ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
     // infer types and TODOs
-    const result = await rehearsalCLI(
-      'fix',
-      '.',
-      ['--rootPath', project.baseDir, '--graph', '--deps', '--ignore', '*.d.ts'],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await rehearsalCLI('fix', './app', ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/components/map.ts')).toMatchSnapshot();

@@ -280,20 +280,16 @@ describe('Fix: Init-Task', () => {
     const options: FixCommandOptions = {
       rootPath: project.baseDir,
       format: ['sarif'],
-      graph: false,
-      devDeps: false,
-      deps: false,
       ignore: [],
     };
     const tasks = [initTask(src, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);
-    const sanitizedAbsPaths = ctx.sourceFilesAbs?.map((path) => {
+    const sanitizedAbsPaths = ctx.orderedFiles?.map((path) => {
       return cleanOutput(path, project.baseDir);
     });
 
-    expect(ctx.projectType).toBe('base-ts');
     expect(sanitizedAbsPaths).toMatchSnapshot();
-    expect(ctx.sourceFilesRel).toMatchSnapshot();
+    expect(ctx.orderedFiles.map((file) => file.replace(project.baseDir, ''))).toMatchSnapshot();
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 });

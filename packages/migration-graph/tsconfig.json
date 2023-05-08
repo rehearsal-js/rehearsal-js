@@ -1,15 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "*": ["./types/*"]
+    }
   },
   "include": ["src"],
   "references": [
     {
-      "path": "../migration-graph-ember"
+      "path": "../test-support"
     },
     {
-      "path": "../migration-graph-shared"
+      "path": "../utils"
     }
   ]
 }

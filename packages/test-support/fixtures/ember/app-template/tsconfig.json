@@ -3,6 +3,7 @@
   "display": "Ember App",
   "extends": "../base.tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "./",
     "target": "es2020",
     "declaration": false,
     "isolatedModules": true,

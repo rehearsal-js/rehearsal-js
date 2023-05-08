@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
+import { getExcludePatterns } from '@rehearsal/migration-graph';
 import { migrate, MigrateInput, resolveIgnoredPaths } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);

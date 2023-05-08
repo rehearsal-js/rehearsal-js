@@ -44,7 +44,7 @@ describe('graph command', () => {
     project = prepareProject('ember_js_app');
     await project.write();
 
-    const result = await rehearsalCLI('graph', '.', ['--rootPath', project.baseDir, '--deps'], {
+    const result = await rehearsalCLI('graph', '.', ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();

@@ -2,22 +2,7 @@
 
 exports[`move command > base_js_app 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
 [STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] index.js
-[DATA] module-a/index.js
-[DATA] module-a/src/baz.js
-[DATA] module-a/src/foo.js
-[DATA] module-b/index.js
-[DATA] module-b/src/tires.js
-[DATA] module-b/src/car.js
-[DATA] src/bizz.ts
-[DATA] src/foo/baz.js
-[DATA] src/foo/biz.js
-[DATA] src/foo/buz/biz.js
-[DATA] src/index.js
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
@@ -31,25 +16,27 @@ exports[`move command > base_js_app 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
 [DATA] renamed: 
-[DATA] /index.js -> /index.ts
-[DATA] /module-a/index.js -> /module-a/index.ts
-[DATA] /module-a/src/baz.js -> /module-a/src/baz.ts
-[DATA] /module-a/src/foo.js -> /module-a/src/foo.ts
-[DATA] /module-b/index.js -> /module-b/index.ts
-[DATA] /module-b/src/tires.js -> /module-b/src/tires.ts
-[DATA] /module-b/src/car.js -> /module-b/src/car.ts
-[DATA] /src/foo/baz.js -> /src/foo/baz.ts
-[DATA] /src/foo/biz.js -> /src/foo/biz.ts
-[DATA] /src/foo/buz/biz.js -> /src/foo/buz/biz.ts
-[DATA] /src/index.js -> /src/index.ts
+[DATA] ./index.js -> ./index.ts
+[DATA] ./src/index.js -> ./src/index.ts
+[DATA] ./src/foo/baz.js -> ./src/foo/baz.ts
+[DATA] ./src/foo/biz.js -> ./src/foo/biz.ts
+[DATA] ./src/foo/e.gjs -> ./src/foo/e.gts
+[DATA] ./src/foo/buz/biz.js -> ./src/foo/buz/biz.ts
+[DATA] ./module-a/index.js -> ./module-a/index.ts
+[DATA] ./module-a/src/baz.js -> ./module-a/src/baz.ts
+[DATA] ./module-a/src/foo.js -> ./module-a/src/foo.ts
+[DATA] ./module-b/index.js -> ./module-b/index.ts
+[DATA] ./module-b/src/tires.js -> ./module-b/src/tires.ts
+[DATA] ./module-b/src/car.js -> ./module-b/src/car.ts
 [SUCCESS] Executing git mv"
 `;
 
 exports[`move command > ember_js_app_4.11 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
@@ -66,36 +53,36 @@ exports[`move command > ember_js_app_4.11 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] renamed: 
-[DATA] /app/app.js -> /app/app.ts
-[DATA] /app/router.js -> /app/router.ts
-[DATA] /app/adapters/application.js -> /app/adapters/application.ts
-[DATA] /app/components/hello-world.gjs -> /app/components/hello-world.gts
-[DATA] /app/components/map.js -> /app/components/map.ts
-[DATA] /app/components/rentals.js -> /app/components/rentals.ts
-[DATA] /app/components/share-button.js -> /app/components/share-button.ts
-[DATA] /app/models/rental.js -> /app/models/rental.ts
-[DATA] /app/routes/index.js -> /app/routes/index.ts
-[DATA] /app/routes/rental.js -> /app/routes/rental.ts
-[DATA] /app/serializers/application.js -> /app/serializers/application.ts
-[DATA] /app/services/locale.js -> /app/services/locale.ts
-[DATA] /app/components/rental/image.js -> /app/components/rental/image.ts
-[DATA] /app/components/rentals/filter.js -> /app/components/rentals/filter.ts
+[DATA] ./app/app.js -> ./app/app.ts
+[DATA] ./app/router.js -> ./app/router.ts
+[DATA] ./app/adapters/application.js -> ./app/adapters/application.ts
+[DATA] ./app/components/hello-world.gjs -> ./app/components/hello-world.gts
+[DATA] ./app/components/map.js -> ./app/components/map.ts
+[DATA] ./app/components/rentals.js -> ./app/components/rentals.ts
+[DATA] ./app/components/share-button.js -> ./app/components/share-button.ts
+[DATA] ./app/models/rental.js -> ./app/models/rental.ts
+[DATA] ./app/routes/index.js -> ./app/routes/index.ts
+[DATA] ./app/routes/rental.js -> ./app/routes/rental.ts
+[DATA] ./app/serializers/application.js -> ./app/serializers/application.ts
+[DATA] ./app/services/locale.js -> ./app/services/locale.ts
+[DATA] ./app/components/rental/image.js -> ./app/components/rental/image.ts
+[DATA] ./app/components/rentals/filter.js -> ./app/components/rentals/filter.ts
 [SUCCESS] Executing git mv"
 `;
 
 exports[`move command > glimmerx_js_app 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] renamed: 
-[DATA] /src/App.js -> /src/App.ts
-[DATA] /src/GreetingHeader.js -> /src/GreetingHeader.ts
-[DATA] /src/SimpleComponent.js -> /src/SimpleComponent.ts
-[DATA] /src/index.js -> /src/index.ts
+[DATA] ./src/GreetingHeader.js -> ./src/GreetingHeader.ts
+[DATA] ./src/App.js -> ./src/App.ts
+[DATA] ./src/SimpleComponent.js -> ./src/SimpleComponent.ts
+[DATA] ./src/index.js -> ./src/index.ts
 [SUCCESS] Executing git mv"
 `;

@@ -1,66 +1,100 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads';
-import { join, relative, extname } from 'node:path';
-// eslint-disable-next-line no-restricted-imports
-import { getMigrationOrder } from '@rehearsal/migration-graph';
-import type { PackageEntry } from '../../../types.js';
+import { lstat, writeFile } from 'node:fs/promises';
+import { extname, resolve } from 'node:path';
+import {
+  Resolver,
+  topSortFiles,
+  discoverServiceDependencies,
+  getExcludePatterns,
+  SUPPORTED_EXTENSION,
+  PackageGraph,
+  generateDotLanguage,
+} from '@rehearsal/migration-graph';
+import FastGlob from 'fast-glob';
+import { GraphWorkerOptions } from './types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const { srcDir, basePath, crawlDevDeps, crawlDeps, ignore, include } = JSON.parse(
+  const { srcPath, rootPath, output, ignore, serviceMap } = JSON.parse(
     workerData as string
-  ) as {
-    basePath: string;
-    srcDir: string;
-    crawlDevDeps: boolean;
-    crawlDeps: boolean;
-    ignore: string[];
-    include: string[];
-  };
+  ) as GraphWorkerOptions;
 
-  const ordered = getMigrationOrder(srcDir, {
-    basePath,
-    crawlDeps: crawlDeps,
-    crawlDevDeps,
-    ignore,
-    include,
-    eager: true,
-  });
+  const serviceResolver = discoverServiceDependencies(serviceMap);
+  const resolver = new Resolver({ customResolver: serviceResolver, ignore });
+  const absolutePath = resolve(rootPath, srcPath);
+  const files = await getFiles(absolutePath, srcPath, ignore);
 
-  parentPort?.postMessage(intoGraphOutput(ordered, basePath));
+  await resolver.load();
+
+  for (const file of files) {
+    resolver.walk(file);
+  }
+
+  const sortedFiles = topSortFiles(resolver.graph);
+
+  if (output) {
+    parentPort?.postMessage({ type: 'message', content: `Writing graph to ${output} ...` });
+    await writeOutput(rootPath, resolver.graph, sortedFiles, output);
+  }
+
+  parentPort?.postMessage({ type: 'files', content: sortedFiles });
 }
 
-export function intoGraphOutput(
-  sortedFiles: import('@rehearsal/migration-graph').SourceFile[],
-  basePath = process.cwd()
-): {
-  packages: PackageEntry[];
-} {
-  let currentPackage;
-  let packages: { name: string; files: string[] }[] = [];
-  const seenFiles: Set<string> = new Set();
+function buildGlobPath(extensions: ReadonlyArray<string>): string {
+  return extensions.map((ext) => ext.replace('.', '')).join(',');
+}
 
-  for (const file of sortedFiles) {
-    if (currentPackage !== file.packageName) {
-      currentPackage = file.packageName;
-      packages.push({
-        name: relative(basePath, file.packageName) || '.',
-        files: [],
-      });
-    }
-
-    const ext = extname(file.relativePath);
-
-    if (
-      (ext === '.js' || ext === '.gjs' || ext === '.ts' || ext === '.gts') &&
-      !seenFiles.has(file.relativePath)
-    ) {
-      seenFiles.add(file.relativePath);
-      packages[packages.length - 1].files.push(
-        relative(basePath, join(basePath, file.relativePath))
-      );
+export async function isDirectory(absolutePath: string, srcPath: string): Promise<boolean> {
+  try {
+    const stat = await lstat(absolutePath);
+    return stat.isDirectory();
+  } catch (e) {
+    if (e instanceof Error && 'code' in e) {
+      if (e.code === 'ENOENT') {
+        throw new Error(`'${srcPath}' does not exist.`);
+      }
     }
   }
 
-  packages = packages.filter((pkg) => pkg.files.length > 0);
+  return false;
+}
 
-  return { packages };
+export async function getFiles(
+  absolutePath: string,
+  srcPath: string,
+  ignore: string[]
+): Promise<string[]> {
+  let files: string[] = [];
+  const isDir = await isDirectory(absolutePath, srcPath);
+
+  if (isDir) {
+    files = FastGlob.sync(`${absolutePath}/**/*.{${buildGlobPath(SUPPORTED_EXTENSION)}}`, {
+      ignore: ['**/node_modules/**', ...getExcludePatterns(), '**/*.d.ts', ...ignore],
+    });
+  } else {
+    files.push(absolutePath);
+  }
+
+  return files;
+}
+
+export async function writeOutput(
+  rootPath: string,
+  graph: PackageGraph,
+  order: string[],
+  output: string
+): Promise<void> {
+  const ext = extname(output);
+  if (ext === '.dot') {
+    const dot = generateDotLanguage(graph);
+    await writeFile(output, dot);
+  } else {
+    await writeFile(
+      output,
+      JSON.stringify(
+        order.map((filePath) => filePath.replace(rootPath, '.')),
+        null,
+        2
+      )
+    );
+  }
 }

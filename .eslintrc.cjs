@@ -1,16 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-const glob = require('glob');
 
-const packages = glob
-  .sync('./packages/*/')
-  .map((p) => {
-    const moduleName = p.replace('packages', '@rehearsal');
-    return {
-      name: moduleName,
-      message: `Do not import from "${moduleName}" in the top-level of the cli package. It may pull in TypeScript eagerly and it may not be installed into the application being migrated. If you need to use "${moduleName}" please use dynamic import e.g. \`await import('${moduleName}')\` within an 'action' of a command. If you're 100% positive the module will not pull in TypeScript eagerly, please update the .eslint.cjs file to enable it's usage in the cli package.`,
-    };
-  })
-  .filter((p) => p.name !== '@rehearsal/utils');
 
 // eslint-disable-next-line no-undef
 module.exports = {
@@ -41,31 +29,6 @@ module.exports = {
       rules: {
         "import/no-extraneous-dependencies": ['off']
       }
-    },
-    {
-      files: ['./packages/cli/src/**/*.ts'],
-      rules: {
-        'no-restricted-imports': [
-          'error',
-          ...packages,
-          {
-            name: 'typescript',
-            message: `Do not import 'typescript' into this package. This will result in a 'module not found' error in app that is being migrated. If you are creating a typescript util, put it in 'ts-utils'.`,
-          },
-        ],
-      },
-    },
-    {
-      files: ['./packages/utils/**/*.ts'],
-      rules: {
-        'no-restricted-imports': [
-          'error',
-          {
-            name: 'typescript',
-            message: `Do not import 'typescript' into this package as it's used in the cli package which installs TypeScript into the app being migrated. This will result in a 'module not found' error in app that is being migrated. If you are creating a typescript util, put it in 'ts-utils'.`,
-          },
-        ],
-      },
     },
   ],
   rules: {

@@ -50,7 +50,7 @@ export function gitMove(sourceFiles: string[], basePath: string, dryRun = false)
         }
       }
 
-      listrOutput += `${sourceFile.replace(basePath, '')} -> ${destFile.replace(basePath, '')}\n`;
+      listrOutput += `${sourceFile.replace(basePath, '.')} -> ${destFile.replace(basePath, '.')}\n`;
     }
   });
 

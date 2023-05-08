@@ -5,9 +5,12 @@ import { Listr } from 'listr2';
 import debug from 'debug';
 import { parseCommaSeparatedList, readJSON } from '@rehearsal/utils';
 import { createLogger, format, transports } from 'winston';
-import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
-import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
+import { SUPPORTED_TS_EXTENSIONS } from '@rehearsal/migration-graph';
+import { graphOrderTask } from '../graph/tasks/graphOrderTask.js';
+import { moveTask } from './tasks/mv.js';
+import { initTask } from './tasks/init.js';
 import type { PackageJson } from 'type-fest';
+import type { MoveCommandOptions } from '../../types.js';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const { version } = readJSON(resolve(__dirname, '../../../package.json')) as PackageJson;
@@ -21,32 +24,15 @@ const winstonLogger = createLogger({
   transports: [new transports.Console({ format: format.cli(), level: 'info' })],
 });
 
-/*
-  @rehearsal/move workflow
-
-  rehearsal move <path to source file | directory>
-    the explicit source file OR explicit directory with implicit child directories moved.
-    migration strategy is ignored
-
-  rehearsal move <path to child package> --graph
-    specify the child-package relative to process.cwd(). migration strategy is leveraged moving all necessary files in the dependency graph for this package.
-    migration strategy is leveraged
-
-  rehearsal move <path to child package> --graph --devDeps
-    same as above but devDependencies are considered in the graph
-*/
-
 moveCommand
   .name('move')
   .alias('mv')
-  .description('git mv extension conversion of .js -> .ts')
-  .argument('[srcDir]', 'the path to a package/file/directory that will be moved', process.cwd())
-  .option('-g, --graph', 'enable graph resolution of files to move', false)
-  .option('--devDeps', `follow packages in 'devDependencies'`)
-  .option('--deps', `follow packages in 'dependencies'`)
+  .description('Graph aware git mv from .js -> .ts')
+  .argument('[srcPath]', 'path to a directory or file', '')
+  .option('--no-graph', 'opt out of moving the file(s) with the graph')
   .option(
-    '--ignore [packagesOrGlobs...]',
-    `space-delimited list of packages or globs to ignore`,
+    '--ignore [globs...]',
+    `comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
     parseCommaSeparatedList,
     []
   )
@@ -57,54 +43,33 @@ moveCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (srcDir: string, options: MoveCommandOptions) => {
-    await move(srcDir, options);
+  .action(async (srcPath: string, options: MoveCommandOptions) => {
+    await move(srcPath, options);
   });
 
-async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
+async function move(srcPath: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
-  if (options.graph && !options.deps && !options.devDeps) {
-    console.warn(
-      `Passing --graph without --deps, --devDeps, or both results in only analyzing the local files in the package.`
-    );
-  }
-
-  if (!options.graph && options.devDeps) {
-    throw new Error(`'--devDeps' can only be passed when you pass --graph`);
-  }
-
-  if (!options.graph && options.deps) {
-    throw new Error(`'--deps' can only be passed when you pass --graph`);
-  }
-
-  if (!srcDir) {
+  if (!srcPath) {
     throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
 
-  // We never want to move typescript files or getEmberExcludePatterns
-  const typescriptGlobs = ['**/*.ts', '**/*.tsx', '**/*.gts'].map((glob) => {
-    return join(`${options.rootPath}`, srcDir, glob);
+  const typescriptGlobs = SUPPORTED_TS_EXTENSIONS.map((ext) => {
+    return join(`${options.rootPath}`, srcPath, `**/*${ext}`);
   });
-  options.ignore.push(...typescriptGlobs, ...getEmberExcludePatterns());
-
-  // grab the child move tasks
-  const { initTask, moveTask } = await loadMoveTasks();
-  const { graphOrderTask } = await loadGraphTasks();
+  // We never want to move typescript files or the ember-cli-build.js files
+  options.ignore.push(...typescriptGlobs);
 
   const tasks = options.graph
     ? [
-        initTask(srcDir, options),
-        graphOrderTask(srcDir, {
+        graphOrderTask(srcPath, {
           rootPath: options.rootPath,
-          devDeps: options.devDeps,
-          deps: options.deps,
           ignore: options.ignore,
           skipPrompt: true,
         }),
         moveTask(options.rootPath, options),
       ]
-    : [initTask(srcDir, options), moveTask(options.rootPath, options)];
+    : [initTask(srcPath, options), moveTask(options.rootPath, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);
@@ -116,25 +81,4 @@ async function move(srcDir: string, options: MoveCommandOptions): Promise<void> 
   } catch (e) {
     // e we dont need to log this because Listr will have already logged it
   }
-}
-
-async function loadMoveTasks(): Promise<MoveTasks> {
-  return await import('./tasks/index.js').then((m) => {
-    const { initTask, moveTask } = m;
-
-    return {
-      initTask,
-      moveTask,
-    };
-  });
-}
-
-async function loadGraphTasks(): Promise<GraphTasks> {
-  return await import('../graph/tasks/graphOrderTask.js').then((m) => {
-    const { graphOrderTask } = m;
-
-    return {
-      graphOrderTask,
-    };
-  });
 }

@@ -1,14 +1,16 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 1`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
 [SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/app.ts
+[DATA] processing file: /src/get-live-neighbor-count.ts
 [DATA] processing file: /src/apply-rules.ts
 [DATA] processing file: /src/gen-random-grid.ts
-[DATA] processing file: /src/get-live-neighbor-count.ts
+[DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
 [TITLE]   16 errors caught by rehearsal
 [TITLE]   6 have been fixed by rehearsal
@@ -23,9 +25,9 @@ exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 1`] = `
 [SUCCESS]     -- 4 eslint errors, with details in the report"
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 2`] = `""`;
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 2`] = `""`;
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 3`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 3`] = `
 "/*
 RULES:
 1. Any live cell with fewer than two live neighbours dies, as if by underpopulation.
@@ -107,7 +109,7 @@ stdout.write('\\\\x1b[?25l');
 "
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 4`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 4`] = `
 "import {
   getLiveNeighborCount,
 } from './get-live-neighbor-count.js';
@@ -157,7 +159,7 @@ export function applyRules(grid, cellCharState) {
 "
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 5`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 5`] = `
 "// generate a random grid based on a set dimension and random alive/dead cells
 export function generateRandomGrid(
   dimensions: number[],
@@ -184,7 +186,7 @@ export function generateRandomGrid(
 "
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 6`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 6`] = `
 "// based on a given cell, return the number of live neighbors
 export function getLiveNeighborCount(
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
@@ -225,10 +227,12 @@ export function getLiveNeighborCount(
 "
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix file with src arg 1`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a file 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
 [SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /src/gen-random-grid.ts
 [TITLE] Types Inferred
@@ -245,7 +249,7 @@ exports[`Command: fix "base_ts_app" fixture > fix file with src arg 1`] = `
 [SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix file with src arg 2`] = `
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a file 2`] = `
 "// generate a random grid based on a set dimension and random alive/dead cells
 export function generateRandomGrid(
   dimensions: number[],
@@ -272,132 +276,31 @@ export function generateRandomGrid(
 "
 `;
 
-exports[`Command: fix "base_ts_app" fixture > fix file with src arg 3`] = `""`;
+exports[`Command: fix "base_ts_app" fixture > can fix starting with a file 3`] = `""`;
 
-exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph 1`] = `
+exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] app/app.js
-[DATA] app/components/bar/index.ts
-[DATA] app/components/ember-component.ts
-[DATA] app/components/foo.ts
-[DATA] app/components/js-component.js
-[DATA] app/components/qux.ts
-[DATA] app/components/template-only-module.ts
-[DATA] app/components/test-cases/subclassing/child.ts
-[DATA] app/components/test-cases/subclassing/parent.ts
-[DATA] app/components/wrapper-component.ts
-[DATA] app/controllers/classic-route.ts
-[DATA] app/helpers/affix.ts
-[DATA] app/helpers/repeat.ts
-[DATA] app/pods/components/baz/component.ts
-[DATA] app/router.js
-[DATA] app/routes/classic-route.ts
-[DATA] tests/helpers/index.ts
-[DATA] tests/integration/components/bar-test.ts
-[DATA] tests/integration/components/baz-test.ts
-[DATA] tests/integration/components/ember-component-test.ts
-[DATA] tests/integration/components/qux-test.ts
-[DATA] tests/integration/components/render-test.ts
-[DATA] tests/integration/components/template-only-module-test.ts
-[DATA] tests/integration/helpers/repeat-test.ts
-[DATA] tests/integration/types/empty-signature-test.ts
-[DATA] tests/test-helper.js
-[DATA] types/ember-data/types/registries/model.d.ts
-[DATA] types/global.d.ts
-[DATA] types/template-registry.d.ts
-[DATA] types/ts-ember-app/index.d.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
-[DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/router.js
 [DATA] processing file: /app/components/ember-component.ts
 [DATA] processing file: /app/components/foo.ts
 [DATA] processing file: /app/components/js-component.js
 [DATA] processing file: /app/components/qux.ts
 [DATA] processing file: /app/components/template-only-module.ts
-[DATA] processing file: /app/components/test-cases/subclassing/child.ts
-[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
 [DATA] processing file: /app/components/wrapper-component.ts
 [DATA] processing file: /app/controllers/classic-route.ts
 [DATA] processing file: /app/helpers/affix.ts
 [DATA] processing file: /app/helpers/repeat.ts
-[DATA] processing file: /app/pods/components/baz/component.ts
-[DATA] processing file: /app/router.js
 [DATA] processing file: /app/routes/classic-route.ts
-[DATA] processing file: /tests/helpers/index.ts
-[DATA] processing file: /tests/integration/components/bar-test.ts
-[DATA] processing file: /tests/integration/components/baz-test.ts
-[DATA] processing file: /tests/integration/components/ember-component-test.ts
-[DATA] processing file: /tests/integration/components/qux-test.ts
-[DATA] processing file: /tests/integration/components/render-test.ts
-[DATA] processing file: /tests/integration/components/template-only-module-test.ts
-[DATA] processing file: /tests/integration/helpers/repeat-test.ts
-[DATA] processing file: /tests/integration/types/empty-signature-test.ts
-[DATA] processing file: /tests/test-helper.js
-[DATA] processing file: /types/ember-data/types/registries/model.d.ts
-[DATA] processing file: /types/global.d.ts
-[DATA] processing file: /types/template-registry.d.ts
-[DATA] processing file: /types/ts-ember-app/index.d.ts
-[TITLE] Types Inferred
-[TITLE]   38 errors caught by rehearsal
-[TITLE]   9 have been fixed by rehearsal
-[TITLE]   29 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 2 eslint errors, with details in the report
-[SUCCESS] Types Inferred
-[SUCCESS]   38 errors caught by rehearsal
-[SUCCESS]   9 have been fixed by rehearsal
-[SUCCESS]   29 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 2 eslint errors, with details in the report"
-`;
-
-exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph 2`] = `""`;
-
-exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores tests 1`] = `
-"info:    @rehearsal/fix<test-version>
-[STARTED] Initialize
-[SUCCESS] Initialize
-[STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] app/app.js
-[DATA] app/components/bar/index.ts
-[DATA] app/components/ember-component.ts
-[DATA] app/components/foo.ts
-[DATA] app/components/js-component.js
-[DATA] app/components/qux.ts
-[DATA] app/components/template-only-module.ts
-[DATA] app/components/test-cases/subclassing/child.ts
-[DATA] app/components/test-cases/subclassing/parent.ts
-[DATA] app/components/wrapper-component.ts
-[DATA] app/controllers/classic-route.ts
-[DATA] app/helpers/affix.ts
-[DATA] app/helpers/repeat.ts
-[DATA] app/pods/components/baz/component.ts
-[DATA] app/router.js
-[DATA] app/routes/classic-route.ts
-[SUCCESS] Analyzing project dependency graph
-[STARTED] Infer Types
-[DATA] processing file: /app/app.js
 [DATA] processing file: /app/components/bar/index.ts
-[DATA] processing file: /app/components/ember-component.ts
-[DATA] processing file: /app/components/foo.ts
-[DATA] processing file: /app/components/js-component.js
-[DATA] processing file: /app/components/qux.ts
-[DATA] processing file: /app/components/template-only-module.ts
-[DATA] processing file: /app/components/test-cases/subclassing/child.ts
 [DATA] processing file: /app/components/test-cases/subclassing/parent.ts
-[DATA] processing file: /app/components/wrapper-component.ts
-[DATA] processing file: /app/controllers/classic-route.ts
-[DATA] processing file: /app/helpers/affix.ts
-[DATA] processing file: /app/helpers/repeat.ts
+[DATA] processing file: /app/components/test-cases/subclassing/child.ts
 [DATA] processing file: /app/pods/components/baz/component.ts
-[DATA] processing file: /app/router.js
-[DATA] processing file: /app/routes/classic-route.ts
 [TITLE] Types Inferred
 [TITLE]   22 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal
@@ -412,4 +315,41 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
-exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores tests 2`] = `""`;
+exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 2`] = `""`;
+
+exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores helpers 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /app/app.js
+[DATA] processing file: /app/router.js
+[DATA] processing file: /app/components/ember-component.ts
+[DATA] processing file: /app/components/foo.ts
+[DATA] processing file: /app/components/js-component.js
+[DATA] processing file: /app/components/qux.ts
+[DATA] processing file: /app/components/template-only-module.ts
+[DATA] processing file: /app/components/wrapper-component.ts
+[DATA] processing file: /app/controllers/classic-route.ts
+[DATA] processing file: /app/routes/classic-route.ts
+[DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
+[DATA] processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] processing file: /app/pods/components/baz/component.ts
+[TITLE] Types Inferred
+[TITLE]   17 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
+[TITLE]   16 errors need to be fixed manually
+[TITLE]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 2 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   17 errors caught by rehearsal
+[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   16 errors need to be fixed manually
+[SUCCESS]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 2 eslint errors, with details in the report"
+`;
+
+exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores helpers 2`] = `""`;

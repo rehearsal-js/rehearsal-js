@@ -24,4 +24,4 @@ program
   .addCommand(moveCommand)
   .addCommand(fixCommand);
 
-export { program as rehearsal, moveCommand, graphCommand, fixCommand };
+export { program as rehearsal, graphCommand };

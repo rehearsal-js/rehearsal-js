@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "rootDir": "../",
-    "outDir": "../dist/test/"
-  },
-  "include": [".", "../src", "../../migration-graph-ember/src/create-package-depdendency-graph.ts"]
-}

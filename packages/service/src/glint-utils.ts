@@ -13,6 +13,26 @@ export const GLINT_EXTENSIONS = ['.gts', '.hbs'];
 // of these, we use glint. Otherwise, we use the regular Rehearsal service
 export const GLINT_PROJECT_FILES = ['ember-source', '@glimmer/component', '@glimmerx/component'];
 
+export function isApp(packageJson: PackageJson): boolean {
+  return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
+}
+
+function hasDevDependency(packageJson: PackageJson, packageName: string): boolean {
+  return !!(packageJson?.devDependencies && packageName in packageJson.devDependencies) ?? false;
+}
+
+export function isAddon(packageJson: PackageJson): boolean {
+  return hasKeyword(packageJson, 'ember-addon');
+}
+
+function hasKeyword(packageJson: PackageJson, keyword: string): boolean {
+  return !!(
+    packageJson?.keywords &&
+    Array.isArray(packageJson.keywords) &&
+    packageJson.keywords.includes(keyword)
+  );
+}
+
 export async function isGlintProject(basePath: string): Promise<boolean> {
   const pkgPath = resolve(basePath, 'package.json');
   let pkgJson: string;

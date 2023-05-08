@@ -22,7 +22,7 @@ import {
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
-import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
+import { getExcludePatterns } from '@rehearsal/migration-graph';
 import {
   getGlintFixPlugin,
   getGlintReportPlugin,

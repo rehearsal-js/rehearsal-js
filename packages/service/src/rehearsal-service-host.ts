@@ -4,7 +4,8 @@ import ts, {
   InstallPackageOptions,
   LanguageServiceHost,
 } from 'typescript';
-import { addDep, findNearestPackageJson } from '@rehearsal/utils';
+import { addDep } from '@rehearsal/utils';
+import { findUpSync } from 'find-up';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 const { ScriptSnapshot, getDefaultLibFilePath, sys } = ts;
@@ -54,7 +55,9 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     // Save the install request information, so we don't continuously download
     this.seenTypingsRequest.set(options.fileName, options.packageName);
 
-    const nearestPackageJSON = findNearestPackageJson(dirname(options.fileName));
+    const nearestPackageJSON = findUpSync('package.json', {
+      cwd: dirname(options.fileName),
+    });
 
     if (nearestPackageJSON) {
       // Note: the TSServer is going to swallow the success and failures

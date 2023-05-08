@@ -1,7 +1,6 @@
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { parseCommaSeparatedList } from '@rehearsal/utils';
-import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 import { graphOrderTask } from './tasks/graphOrderTask.js';
 import type { CommandContext, GraphCommandOptions } from '../../types.js';
 
@@ -9,15 +8,11 @@ export const graphCommand = new Command();
 
 graphCommand
   .name('graph')
-  .description(
-    `produces the migration order of 'dependencies' and file order, default ignores 'devDependencies'.`
-  )
-  .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
-  .option('--devDeps', `follow packages in 'devDependencies'`)
-  .option('--deps', `follow packages in 'dependencies'`)
+  .description(`produces the migration order of files given a source path`)
+  .argument('[srcPath]', 'path to a directory or file', process.cwd())
   .option(
-    '--ignore [packagesOrGlobs...]',
-    `space-delimited list of packages or globs to ignore`,
+    '--ignore [globs...]',
+    `comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
     parseCommaSeparatedList,
     []
   )
@@ -28,15 +23,11 @@ graphCommand
       .hideHelp()
   )
   .option('-o, --output <filepath>', 'output path for a JSON format of the graph order')
-  .action(async (srcDir: string, options: GraphCommandOptions) => {
-    options.ignore.push(...getEmberExcludePatterns());
-
+  .action(async (srcPath: string, options: GraphCommandOptions) => {
     await new Listr<CommandContext>([
-      graphOrderTask(srcDir, {
+      graphOrderTask(srcPath, {
         output: options.output,
         rootPath: options.rootPath,
-        devDeps: options.devDeps,
-        deps: options.deps,
         ignore: options.ignore,
       }),
     ]).run();

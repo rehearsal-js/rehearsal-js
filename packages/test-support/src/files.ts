@@ -284,6 +284,14 @@ export function getEmberAddonWithInRepoAddonFiles(
         },
       };
       `,
+    'tsconfig.json': JSON.stringify({
+      extends: '../../tsconfig.json',
+      compilerOptions: {
+        paths: {
+          [`${addonName}/*`]: [`./lib/${addonName}/addon/*`],
+        },
+      },
+    }),
     'package.json': `
       {
         "name": "${varyNames ? `@company/${addonName}` : `${addonName}`}",

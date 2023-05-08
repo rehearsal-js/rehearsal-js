@@ -17,7 +17,7 @@ describe('move command', () => {
     const result = await rehearsalCLI(
       'move',
       '.',
-      ['--rootPath', project.baseDir, '--graph', '--deps', '--ignore', 'vitest.config.ts,docs/**'],
+      ['--rootPath', project.baseDir, '--ignore', 'vitest.config.ts,docs/**'],
       {
         cwd: project.baseDir,
       }

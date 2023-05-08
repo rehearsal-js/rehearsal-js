@@ -2,30 +2,26 @@
 
 exports[`Task: graphOrderTask > can print graph order to stdout 1`] = `
 "[STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] index.js
-[DATA] module-a/index.js
-[DATA] module-a/src/baz.js
-[DATA] module-a/src/foo.js
-[DATA] module-b/index.js
-[DATA] module-b/src/tires.js
-[DATA] module-b/src/car.js
-[DATA] src/bizz.ts
-[DATA] src/foo/baz.js
-[DATA] src/foo/biz.js
-[DATA] src/foo/buz/biz.js
-[DATA] src/index.js
+[DATA] Graph order for <tmp-path>:
+[DATA] ./src/bizz.ts
+[DATA] ./src/index.js
+[DATA] ./src/foo/baz.js
+[DATA] ./src/foo/biz.js
+[DATA] ./src/foo/e.gjs
+[DATA] ./src/foo/buz/biz.js
+[DATA] ./module-a/src/baz.js
+[DATA] ./module-a/src/foo.js
+[DATA] ./module-a/src/index.js
+[DATA] ./module-b/src/tires.js
+[DATA] ./module-b/src/car.js
+[DATA] ./module-b/src/index.js
 [SUCCESS] Analyzing project dependency graph"
 `;
 
 exports[`Task: graphOrderTask > can print graph order to stdout in an ember app with in-repo addons 1`] = `
 "[STARTED] Analyzing project dependency graph
-[DATA] ? We found the following packages. Select a packages to see the order of files:  
-[DATA]  lib/some-addon
-[DATA]   .
-[DATA]  We found the following packages. Select a packages to see the order of files:  lib/some-addon
-[DATA] Graph order for lib/some-addon:
-[DATA] lib/some-addon/addon/utils/thing.js
-[DATA] lib/some-addon/addon/components/greet.js
+[DATA] Graph order for <tmp-path>/lib/some-addon/addon:
+[DATA] ./lib/some-addon/addon/utils/thing.js
+[DATA] ./lib/some-addon/addon/components/greet.js
 [SUCCESS] Analyzing project dependency graph"
 `;

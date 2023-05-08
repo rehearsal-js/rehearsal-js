@@ -96,7 +96,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     project.dispose();
   });
 
-  test('fix file with src arg', async () => {
+  test('can fix starting with a file', async () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
     const src = resolve(project.baseDir, sourceFilepath);
 
@@ -109,7 +109,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('fix directory with src arg', async () => {
+  test('can fix starting with a directory', async () => {
     const sourceDir = 'src';
     const src = resolve(project.baseDir, sourceDir);
 
@@ -168,9 +168,9 @@ describe('Command: fix "ember-ts-app" fixture', () => {
     project.dispose();
   });
 
-  test('fix package with src arg and graph', async () => {
-    const src = resolve(project.baseDir);
-    const flags = ['--graph', '--deps', '--rootPath', project.baseDir];
+  test('can fix starting with a file', async () => {
+    const src = resolve(project.baseDir + '/app');
+    const flags = ['--rootPath', project.baseDir];
 
     const result = await runBin('fix', [src], flags, {
       cwd: project.baseDir,
@@ -180,16 +180,9 @@ describe('Command: fix "ember-ts-app" fixture', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('fix package with src arg and graph, ignores tests', async () => {
-    const src = resolve(project.baseDir);
-    const flags = [
-      '--graph',
-      '--deps',
-      '--rootPath',
-      project.baseDir,
-      '--ignore',
-      'tests/**/*,types/**/*',
-    ];
+  test('fix package with src arg and graph, ignores helpers', async () => {
+    const src = resolve(project.baseDir + '/app');
+    const flags = ['--rootPath', project.baseDir, '--ignore', 'app/helpers/*'];
 
     const result = await runBin('fix', [src], flags, {
       cwd: project.baseDir,

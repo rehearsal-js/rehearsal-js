@@ -1,22 +1,19 @@
 import { join } from 'node:path';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
-import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 
 import { getEmberProject } from '@rehearsal/test-support';
 import {
   listrTaskRunner,
-  KEYS,
   cleanOutput,
   createOutputStream,
   prepareProject,
-  sendKey,
 } from '../../test-helpers/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
-import type { PackageEntry, CommandContext } from '../../../src/types.js';
+import type { CommandContext } from '../../../src/types.js';
 import type { DirJSON } from 'fixturify';
 import type { Project } from 'fixturify-project';
 
@@ -72,31 +69,28 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(1);
-    expect(graph.packages[0].files).toMatchObject([
-      'index.js',
-      'module-a/index.js',
-      'module-a/src/baz.js',
-      'module-a/src/foo.js',
-      'module-b/index.js',
-      'module-b/src/tires.js',
-      'module-b/src/car.js',
-      'src/bizz.ts',
-      'src/foo/baz.js',
-      'src/foo/biz.js',
-      'src/foo/buz/biz.js',
-      'src/index.js',
+    expect(graph).toMatchObject([
+      './src/bizz.ts',
+      './src/index.js',
+      './src/foo/baz.js',
+      './src/foo/biz.js',
+      './src/foo/e.gjs',
+      './src/foo/buz/biz.js',
+      './module-a/src/baz.js',
+      './module-a/src/foo.js',
+      './module-a/src/index.js',
+      './module-b/src/tires.js',
+      './module-b/src/car.js',
+      './module-b/src/index.js',
     ]);
   });
 
@@ -106,22 +100,19 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(`${project.baseDir}/module-a`, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(1);
-    expect(graph.packages[0].files).toMatchObject([
-      'module-a/index.js',
-      'module-a/src/baz.js',
-      'module-a/src/foo.js',
+    expect(graph).toMatchObject([
+      './module-a/src/baz.js',
+      './module-a/src/foo.js',
+      './module-a/src/index.js',
     ]);
   });
 
@@ -130,7 +121,7 @@ describe('Task: graphOrderTask', () => {
       rootPath: project.baseDir,
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
@@ -147,16 +138,12 @@ describe('Task: graphOrderTask', () => {
       rootPath: project.baseDir,
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
 
-    outputStream.on('data', (line: string) => {
-      if (line.includes('We found the following packages.')) {
-        sendKey(KEYS.ENTER);
-      }
-    });
-
-    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-addon/addon', options),
+    ]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -173,101 +160,22 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
 
     await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+      graphOrderTask(project.baseDir + '/lib/some-other-addon/addon', options),
     ]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
-    ]);
-  });
-
-  test('only follows devDependecies when explicitly asked', async () => {
-    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
-
-    project.mergeFiles(someOtherAddons(project));
-
-    await project.write();
-
-    const options = {
-      rootPath: project.baseDir,
-      output: join(project.baseDir, 'graph.json'),
-      devDeps: false,
-      deps: true,
-      ignore: [...getEmberExcludePatterns()],
-    };
-
-    await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
-    ]);
-
-    expect(existsSync(options.output)).toBe(true);
-
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
-
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
-    ]);
-
-    const withDevDeps = {
-      rootPath: project.baseDir,
-      devDeps: true,
-      deps: true,
-      ignore: [...getEmberExcludePatterns()],
-      output: join(project.baseDir, 'graph.json'),
-    };
-
-    await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', withDevDeps),
-    ]);
-
-    expect(existsSync(withDevDeps.output)).toBe(true);
-
-    const graphWithDevDeps = JSON.parse(await readFile(withDevDeps.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
-
-    expect(graphWithDevDeps.packages.length).toBe(3);
-
-    expect(graphWithDevDeps.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graphWithDevDeps.packages[1].files).toMatchObject([
-      'lib/some-test-package/addon-test-support/index.js',
-    ]);
-
-    expect(graphWithDevDeps.packages[2].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
+    expect(graph).toMatchObject([
+      './lib/some-addon/addon/utils/thing.js',
+      './lib/some-addon/addon/components/greet.js',
+      './lib/some-other-addon/addon/index.js',
+      './lib/some-other-addon/addon/thing.ts',
     ]);
   });
 
@@ -283,29 +191,20 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['some-test-package', ...getEmberExcludePatterns()],
+      ignore: ['./lib/some-addon/*'],
     };
 
     await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+      graphOrderTask(project.baseDir + '/lib/some-other-addon/addon', options),
     ]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
+    expect(graph).toMatchObject([
+      './lib/some-other-addon/addon/index.js',
+      './lib/some-other-addon/addon/thing.ts',
     ]);
   });
 
@@ -321,29 +220,21 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['lib/some-test-package/addon-test-support/*.js', ...getEmberExcludePatterns()],
+      ignore: ['lib/some-addon/addon/utils/*.js'],
     };
 
     await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+      graphOrderTask(project.baseDir + '/lib/some-other-addon/addon', options),
     ]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
+    expect(graph).toMatchObject([
+      './lib/some-addon/addon/components/greet.js',
+      './lib/some-other-addon/addon/index.js',
+      './lib/some-other-addon/addon/thing.ts',
     ]);
   });
 
@@ -359,25 +250,21 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['**/*.js', ...getEmberExcludePatterns()],
+      ignore: ['**/*.js'],
     };
 
     await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+      graphOrderTask(project.baseDir + '/lib/some-other-addon/addon', options),
     ]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(1);
-
-    expect(graph.packages[0].files).toMatchObject(['lib/some-other-addon/addon/thing.ts']);
+    expect(graph).toMatchObject(['./lib/some-other-addon/addon/thing.ts']);
   });
 
-  test('can ignore everything in directories', async () => {
+  test('can ignore a single file from the from graph', async () => {
     project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
 
     project.mergeFiles(someOtherAddons(project));
@@ -389,67 +276,21 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['lib/some-test-package/*', ...getEmberExcludePatterns()],
+      ignore: ['lib/some-addon/addon/utils/thing.js'],
     };
 
     await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+      graphOrderTask(project.baseDir + '/lib/some-other-addon/addon', options),
     ]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
-    ]);
-  });
-
-  test('can ignore a file from the from graph', async () => {
-    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
-
-    project.mergeFiles(someOtherAddons(project));
-
-    await project.write();
-
-    const options = {
-      rootPath: project.baseDir,
-      output: join(project.baseDir, 'graph.json'),
-      devDeps: true,
-      deps: true,
-      ignore: ['lib/some-test-package/addon-test-support/index.js', ...getEmberExcludePatterns()],
-    };
-
-    await listrTaskRunner<CommandContext>([
-      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
-    ]);
-
-    expect(existsSync(options.output)).toBe(true);
-
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
-
-    expect(graph.packages.length).toBe(2);
-
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'lib/some-other-addon/addon/index.js',
-      'lib/some-other-addon/addon/thing.ts',
+    expect(graph).toMatchObject([
+      './lib/some-addon/addon/components/greet.js',
+      './lib/some-other-addon/addon/index.js',
+      './lib/some-other-addon/addon/thing.ts',
     ]);
   });
 
@@ -463,93 +304,29 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [...getEmberExcludePatterns()],
+      ignore: [],
     };
-
-    outputStream.on('data', (line: string) => {
-      if (line.includes('We found the following packages.')) {
-        sendKey(KEYS.ENTER);
-      }
-    });
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
 
-    expect(graph.packages.length).toBe(2);
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'app/app.js',
-      'app/services/locale.js',
-      'app/components/salutation.js',
-      'app/router.js',
-      'tests/acceptance/index-test.js',
-      'tests/test-helper.js',
-      'tests/unit/services/locale-test.js',
-    ]);
-  });
-
-  test('can print graph order to a file for an ember app with in-repo addons when the module name and package name differ', async () => {
-    project = getEmberProject('app-with-in-repo-addon', true);
-
-    await project.write();
-
-    expect(
-      readFileSync(join(project.baseDir, 'lib', 'some-addon', 'index.js'), 'utf-8').includes(
-        'name: "some-addon"'
-      )
-    ).toBe(true);
-
-    expect(
-      readFileSync(join(project.baseDir, 'lib', 'some-addon', 'package.json'), 'utf-8').includes(
-        '"name": "@company/some-addon"'
-      )
-    ).toBe(true);
-
-    const options = {
-      rootPath: project.baseDir,
-      output: join(project.baseDir, 'graph.json'),
-      devDeps: false,
-      deps: true,
-      ignore: [...getEmberExcludePatterns()],
-    };
-
-    outputStream.on('data', (line: string) => {
-      if (line.includes('We found the following packages.')) {
-        sendKey(KEYS.ENTER);
-      }
-    });
-
-    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
-
-    expect(existsSync(options.output)).toBe(true);
-
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
-      packages: PackageEntry[];
-    };
-
-    expect(graph.packages.length).toBe(2);
-    expect(graph.packages[0].files).toMatchObject([
-      'lib/some-addon/addon/utils/thing.js',
-      'lib/some-addon/addon/components/greet.js',
-    ]);
-
-    expect(graph.packages[1].files).toMatchObject([
-      'app/app.js',
-      'app/services/locale.js',
-      'app/components/salutation.js',
-      'app/router.js',
-      'tests/acceptance/index-test.js',
-      'tests/test-helper.js',
-      'tests/unit/services/locale-test.js',
+    expect(graph).toMatchObject([
+      './app/app.js',
+      './app/router.js',
+      './config/environment.js',
+      './config/targets.js',
+      './tests/test-helper.js',
+      './app/components/salutation.js',
+      './app/services/locale.js',
+      './tests/acceptance/index-test.js',
+      './tests/unit/services/locale-test.js',
+      './lib/some-addon/index.js',
+      './lib/some-addon/addon/utils/thing.js',
+      './lib/some-addon/addon/components/greet.js',
+      './lib/some-addon/app/components/greet.js',
     ]);
   });
 });
@@ -566,6 +343,15 @@ function someOtherAddons(project: Project): DirJSON {
           'index.js': 'export const thing = "thing"',
         },
         'index.js': 'module.exports = { name: "some-test-package" }',
+        'tsconfig.json': JSON.stringify({
+          extends: '../../tsconfig.json',
+          compilerOptions: {
+            paths: {
+              'some-test-package': ['./lib/some-test-package/addon-test-support'],
+              'some-test-package/*': ['./lib/some-test-package/addon-test-support/*'],
+            },
+          },
+        }),
         'package.json': JSON.stringify({ name: 'some-test-package', keywords: ['ember-addon'] }),
       },
       'some-other-addon': {
@@ -574,6 +360,14 @@ function someOtherAddons(project: Project): DirJSON {
           'index.js': 'import Greet from "some-addon/components/greet"',
         },
         'index.js': 'module.exports = { name: "some-other-addon" }',
+        'tsconfig.json': JSON.stringify({
+          extends: '../../tsconfig.json',
+          compilerOptions: {
+            paths: {
+              'some-addon/*': ['./lib/some-addon/addon/*'],
+            },
+          },
+        }),
         'package.json': JSON.stringify({
           name: '@company/some-other-addon',
           dependencies: { 'some-addon': '*' },
