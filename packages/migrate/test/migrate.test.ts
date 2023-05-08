@@ -167,8 +167,7 @@ describe('fix', () => {
       expect(report.summary[0].basePath).toMatch(project.baseDir);
     });
 
-    // ! skipping this test until PR #1022 lands
-    test.skip('with service map', async () => {
+    test('with service map', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.gts']);
 
       const input: MigrateInput = {
@@ -184,8 +183,7 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    // ! skipping this test until PR #1022 lands
-    test.skip('with qualified service', async () => {
+    test('with qualified service', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gts']);
 
       const input: MigrateInput = {
@@ -600,8 +598,7 @@ export default class SomeComponent extends Component {
       project.dispose();
     });
 
-    // ! skipping this test until PR #1022 lands
-    test.skip('.gts', async () => {
+    test('.gts', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.gts']);
 
       const input: MigrateInput = {

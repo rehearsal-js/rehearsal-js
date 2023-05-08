@@ -59,6 +59,44 @@ export default class SomeComponent extends Component {
 "
 `;
 
+exports[`fix > .gts > with qualified service 1`] = `
+"import type FooService from \\"foo/services/foo-service\\";
+import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"authentication@authenticated-user\\")
+  declare authenticatedUser: AuthenticatedUser;
+
+  @service(\\"foo@foo-service\\")
+  declare otherProp: FooService;
+}
+"
+`;
+
+exports[`fix > .gts > with service map 1`] = `
+"
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from \\"services/moo/moo\\";
+import type GooService from \\"services/goo\\";
+import type BooService from \\"boo/services/boo-service\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"boo-service\\")
+  declare booService: BooService;
+
+  @service
+  declare gooService: GooService;
+
+  @service
+  declare mooService: MooService;
+}
+"
+`;
+
 exports[`fix > .gts > with template assigned to variable 1`] = `
 "const Hello = <template>
   {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
@@ -261,6 +299,19 @@ export default class SomeComponent extends Component {
   <template>
     <span>Hello, I am human, and I am 10 years old!</span>
   </template>
+}
+"
+`;
+
+exports[`fix > with addon service > .gts 1`] = `
+"
+import type Foo from \\"my-addon/services/foo\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"my-addon@foo\\")
+  declare foo: Foo;
 }
 "
 `;
