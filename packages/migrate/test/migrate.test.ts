@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path, { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
-import { type Report, type Location, Reporter } from '@rehearsal/reporter';
+import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { migrate, MigrateInput } from '../src/migrate.js';
 
@@ -66,13 +66,6 @@ function prepareInputFiles(
   });
 
   return [inputs, outputs];
-}
-
-function getStringAtLocation(filePath: string, location: Location): string {
-  const contents = readFileSync(filePath, 'utf-8');
-  const lines = contents.split('\n');
-
-  return lines[location.startLine].substring(location.startColumn - 1, location.endColumn - 1);
 }
 
 describe('fix', () => {
@@ -556,7 +549,7 @@ export default class SomeComponent extends Component {
         // no ops
       }
 
-      expectFile(outputs[0]).toMatchSnapshot()
+      expectFile(outputs[0]).toMatchSnapshot();
     });
   });
 

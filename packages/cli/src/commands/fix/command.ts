@@ -39,12 +39,16 @@ export const fixCommand = new Command();
 fixCommand
   .alias('infer')
   .name('fix')
-  .description('fixes typescript compiler errors by infering types')
+  .description('fixes typescript compiler errors by infering types on .*ts files')
   .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
   .option('-g, --graph', 'enable graph resolution of files to move', false)
   .option('--devDeps', `follow packages in 'devDependencies'`, false)
   .option('--deps', `follow packages in 'dependencies'`, false)
-  .option('--ignore [packageNames...]', `comma deliminated list of packages to ignore`, [])
+  .option(
+    '--ignore [packagesOrGlobs...]',
+    `space deliminated list of packages or globs to ignore`,
+    []
+  )
   .option(
     '-f, --format <format>',
     'report format separated by comma, e.g. -f json,sarif,md,sonarqube',
@@ -56,6 +60,12 @@ fixCommand
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .argParser(() => process.cwd())
+      .hideHelp()
+  )
+  .addOption(
+    new Option('--skipChecks', '-- HIDDEN LOCAL DEV TESTING ONLY SKIPS PREFLIGHT CHECKS --')
+      .default(false)
+      .argParser(() => false)
       .hideHelp()
   )
   .action(async (src: string, options: FixCommandOptions) => {

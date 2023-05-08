@@ -445,9 +445,8 @@ describe('utils', () => {
     });
     await project.write();
 
-
     try {
-      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/dont/exist'), 'ts')
+      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/dont/exist'), 'ts');
     } catch (error) {
       if (error instanceof Error) {
         expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
@@ -455,7 +454,7 @@ describe('utils', () => {
     }
 
     try {
-      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/foo.fakeext'), 'js')
+      validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/foo.fakeext'), 'js');
     } catch (error) {
       if (error instanceof Error) {
         expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();

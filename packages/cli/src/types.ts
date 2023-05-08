@@ -109,6 +109,7 @@ export type FixCommandOptions = {
   devDeps: boolean;
   deps: boolean;
   ignore: string[];
+  skipChecks: boolean;
 };
 
 /*

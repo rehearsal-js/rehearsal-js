@@ -57,12 +57,12 @@ export function initTask(
 
         [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(ctx.packageAbs, ctx.projectType);
+        preFlightCheck(ctx.packageAbs, ctx.projectType, options.skipChecks);
       } else {
         // grab all the ts files in the project
         // expectation is rehearsal move has already been run on the source
         // expect a tsconfig.json file in rootPath
-        preFlightCheck(rootPath, ctx.projectType);
+        preFlightCheck(rootPath, ctx.projectType, options.skipChecks);
 
         [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'ts');
       }
@@ -78,7 +78,16 @@ export function initTask(
 }
 
 // each of these sub-tasks will throw on failure
-export function preFlightCheck(basePath: string, projectType: ProjectType): void {
+export function preFlightCheck(
+  basePath: string,
+  projectType: ProjectType,
+  isSkipped = false
+): void {
+  // FOR LOCAL DEVELOPMENT ONLY! SKIP ALL PRE-REQ CHECKS
+  if (isSkipped) {
+    return;
+  }
+
   const { deps, eslint, tsconfig, node } = getPreReqs(projectType);
 
   // is exists checks these will throw faster than the prereq checks

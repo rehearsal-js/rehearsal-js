@@ -3,9 +3,9 @@ import { resolve } from 'node:path';
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import { Command } from 'commander';
-import { moveCommand } from './commands/move/index.js';
+import { moveCommand } from './commands/move/command.js';
 import { graphCommand } from './commands/graph/command.js';
-import { fixCommand } from './commands/fix/index.js';
+import { fixCommand } from './commands/fix/command.js';
 import type { PackageJson } from 'type-fest';
 
 const __dirname = new URL('.', import.meta.url).pathname;

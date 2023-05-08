@@ -6,14 +6,7 @@ import { defineConfig } from 'vitest/config';
 
 // we dont want to run these slow tests in this config
 // these will all run by default in `test:slow` instead which is run in CI
-const exclude = [
-  './test/commands/fix/e2e.test.ts',
-  './test/commands/fix/config-lint.ember-addon.test.ts',
-  './test/commands/fix/config-lint.ember-app.test.ts',
-  './test/commands/fix/init-command.ember-addon.test.ts',
-  './test/commands/fix/init-command.ember-app.test.ts',
-  './test/commands/fix/validate.ember-app.test.ts',
-];
+const exclude = [];
 
 //eslint-disable-next-line import/no-default-export
 export default defineConfig({
