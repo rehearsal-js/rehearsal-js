@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config';
 
 // we dont want to run these slow tests in this config
 // these will all run by default in `test:slow` instead which is run in CI
-const exclude = [];
+const exclude = ['**/fixtures/**', '**/slow/**'];
 
 //eslint-disable-next-line import/no-default-export
 export default defineConfig({
