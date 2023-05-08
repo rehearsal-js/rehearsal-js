@@ -39,7 +39,7 @@ export function initTask(
       const { rootPath, graph } = options;
 
       ctx.packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
-      ctx.projectType = 'base';
+      ctx.projectType = 'base-ts';
       ctx.projectName = determineProjectName(rootPath) || '';
 
       // if ember app or addon

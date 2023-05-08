@@ -12,7 +12,7 @@ export type PackageSelection = {
   path: string;
 };
 
-export type ProjectType = 'base' | 'ember' | 'glimmer';
+export type ProjectType = 'base-ts' | 'ember' | 'glimmer';
 export type TSConfigBase = {
   compilerOptions: {
     strict: boolean;

@@ -83,7 +83,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     project = Project.fromDir(resolve(__dirname, '../../fixtures/base_ts_app'), options);
 
     // init project with tsconfig, eslint, and deps
-    projectInit(project, 'base');
+    projectInit(project, 'base-ts');
     project.linkDevDependency('typescript', { baseDir: process.cwd() });
     project.linkDevDependency('eslint', { baseDir: process.cwd() });
 

@@ -91,7 +91,6 @@ export class GlintService implements Service {
     return this.service;
   }
 
-  // with-mapped-service.gts has 11 diagnostic glint
   getDiagnostics(fileName: string): ts.DiagnosticWithLocation[] {
     const diagnostics = this.service.getDiagnostics(fileName);
 

@@ -82,8 +82,8 @@ describe('Fix: Init-Task', () => {
     project.dispose();
   });
 
-  test(`preFlightCheck "base" works`, async () => {
-    const projectType: ProjectType = 'base';
+  test(`preFlightCheck "base-ts" works`, async () => {
+    const projectType: ProjectType = 'base-ts';
 
     projectInit(project, projectType);
 
@@ -130,8 +130,8 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('preFlightCheck "base" - deps/devDeps compare', async () => {
-    const projectType: ProjectType = 'base';
+  test('preFlightCheck "base-ts" - deps/devDeps compare', async () => {
+    const projectType: ProjectType = 'base-ts';
 
     projectInit(project, projectType);
 
@@ -150,8 +150,8 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('preFlightCheck "base" - expect failure tsconfig strict as false', async () => {
-    const projectType: ProjectType = 'base';
+  test('preFlightCheck "base-ts" - expect failure tsconfig strict as false', async () => {
+    const projectType: ProjectType = 'base-ts';
     const prereqs = getPreReqs(projectType);
     project.files['tsconfig.json'] = JSON.stringify({
       compilerOptions: {
@@ -210,8 +210,8 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('preFlightCheck "base" - expect failure eslint parser invalid', async () => {
-    const projectType: ProjectType = 'base';
+  test('preFlightCheck "base-ts" - expect failure eslint parser invalid', async () => {
+    const projectType: ProjectType = 'base-ts';
 
     project.files['tsconfig.json'] = JSON.stringify({
       compilerOptions: {
@@ -240,8 +240,8 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('preFlightCheck "base" - expect failure deps missing', async () => {
-    const projectType: ProjectType = 'base';
+  test('preFlightCheck "base-ts" - expect failure deps missing', async () => {
+    const projectType: ProjectType = 'base-ts';
 
     projectInit(project, projectType);
 
@@ -263,8 +263,8 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test(`validate initTask "base" works with src arg`, async () => {
-    const projectType: ProjectType = 'base';
+  test(`validate initTask "base-ts" works with src arg`, async () => {
+    const projectType: ProjectType = 'base-ts';
 
     project = Project.fromDir(resolve(__dirname, '../../fixtures/base_ts_app'), {
       linkDeps: true,
@@ -291,7 +291,7 @@ describe('Fix: Init-Task', () => {
       return cleanOutput(path, project.baseDir);
     });
 
-    expect(ctx.projectType).toBe('base');
+    expect(ctx.projectType).toBe('base-ts');
     expect(sanitizedAbsPaths).toMatchSnapshot();
     expect(ctx.sourceFilesRel).toMatchSnapshot();
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
