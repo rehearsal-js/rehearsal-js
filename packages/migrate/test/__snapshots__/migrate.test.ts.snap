@@ -1,16 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
-"import Component from '@glimmer/component'; export default class Hello extends Component { name =
-'world';
+"import Component from '@glimmer/component';
 
-<template>
-  <span>Hello, I am {{this.name}}!</span>
-</template>
-}"
+export default class Hello extends Component {
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.name}}!</span>
+  </template>
+}
+"
 `;
 
-exports[`fix > .gts > when missing a local prop 1`] = `"import Component from \\"@glimmer/component\\"; export default class Foo extends Component {}"`;
+exports[`fix > .gts > when missing a local prop 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export default class Foo extends Component {}
+"
+`;
 
 exports[`fix > .gts > with bare template 1`] = `
 "<template>
@@ -21,33 +29,42 @@ exports[`fix > .gts > with bare template 1`] = `
   {{#if @someCondition}}
     <div>true!</div>
   {{/if}}
-</template>"
+</template>
+"
 `;
 
 exports[`fix > .gts > with class 1`] = `
-"import Component from '@glimmer/component'; export default class Hello extends Component { name =
-'world';
+"import Component from '@glimmer/component';
 
-<template>
-  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
-  <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-</template>
-}"
+export default class Hello extends Component {
+  name = 'world';
+
+  <template>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+"
 `;
 
 exports[`fix > .gts > with non-qualified service 1`] = `
-"import Component from \\"@glimmer/component\\"; import { inject as service } from \\"@ember/service\\";
-export default class SomeComponent extends Component { @service(\\"authenticated-user\\") //
-@ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
-authenticatedUser; }"
+"import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
+  @service(\\"authenticated-user\\") authenticatedUser;
+}
+"
 `;
 
 exports[`fix > .gts > with template assigned to variable 1`] = `
-"const Hello =
-<template>
+"const Hello = <template>
   {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
   <span>Hello, {{@name}}!</span>
-</template>"
+</template>
+"
 `;
 
 exports[`fix > .hbs > more involved class 1`] = `"<span>Hello {{this.name}}</span>"`;
@@ -208,6 +225,42 @@ export default class SomeComponent extends Component {
 
   @service
   declare mooService: MooService;
+}
+"
+`;
+
+exports[`fix > .ts, .gts > previously migrated .gts 1`] = `
+"import type FooService from \\"foo/services/foo-service\\";
+
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from \\"services/moo/moo\\";
+import type GooService from \\"services/goo\\";
+import type BooService from \\"boo/services/boo-service\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"foo@foo-service\\")
+  declare fooService: FooService;
+
+  @service(\\"boo-service\\")
+  declare booService: BooService;
+
+  @service
+  declare gooService: GooService;
+
+  @service
+  declare mooService: MooService;
+
+  // Has to be fixes, but no additional import statement added
+  @service(\\"boo-service\\") secondBooService;
+
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'nonQualified' implicitly has an 'any' type.
+  @service('non-qualified') nonQualified;
+
+  <template>
+    <span>Hello, I am human, and I am 10 years old!</span>
+  </template>
 }
 "
 `;

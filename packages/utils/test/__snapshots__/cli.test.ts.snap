@@ -25,3 +25,7 @@ exports[`utils > isTSConfigPreReq() 1`] = `
   }
 }"
 `;
+
+exports[`utils > validateSourcePath() 1`] = `"Rehearsal could not find source: <tmp-path>/src/dont/exist in project: <tmp-path>"`;
+
+exports[`utils > validateSourcePath() 2`] = `"Rehearsal will only move .js,.gjs files. Source: <tmp-path>/src/foo.fakeext is neither."`;

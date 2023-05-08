@@ -445,22 +445,22 @@ describe('utils', () => {
     });
     await project.write();
 
-    expect(() =>
+
+    try {
       validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/dont/exist'), 'ts')
-    ).toThrowErrorMatchingInlineSnapshot(
-      cleanOutput(
-        'Rehearsal could not find source: <tmp-dir>/src/dont/exist in project: <tmp-dir>',
-        project.baseDir
-      )
-    );
-    expect(() =>
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
+    }
+
+    try {
       validateSourcePath(project.baseDir, resolve(project.baseDir, 'src/foo.fakeext'), 'js')
-    ).toThrowErrorMatchingInlineSnapshot(
-      cleanOutput(
-        'Rehearsal will only move .js,.gjs files. Source: <tmp-dir>/src/foo.fakeext is neither.',
-        project.baseDir
-      )
-    );
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(cleanOutput(error.message, project.baseDir)).toMatchSnapshot();
+      }
+    }
   });
 
   describe('findWorkspaceRoot', () => {

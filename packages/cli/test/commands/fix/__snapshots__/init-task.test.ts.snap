@@ -30,7 +30,7 @@ exports[`Fix: Init-Task > preFlightCheck "base" - expect failure tsconfig strict
 exports[`Fix: Init-Task > preFlightCheck "base" works 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
-"\\"glint\\" key and options missing in <tmp-path>/tsconfig.json. please update the tsconfig.json to meet requirements:
+"\\"glint\\" key and options missing in tsconfig.json. please update the tsconfig.json to meet requirements:
 {
   \\"compilerOptions\\": {
     \\"strict\\": true,
