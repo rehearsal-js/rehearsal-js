@@ -32,7 +32,7 @@
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
     "test": "vitest --run --config ./vitest.config.ts --coverage",
-    "test:slow": "vitest --run --config ./vitest.config.slow.ts",
+    "test:slow": "vitest --run",
     "test:watch": "vitest --coverage --watch --config ./vitest.config.ts",
     "version": "pnpm version"
   },
