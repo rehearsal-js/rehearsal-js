@@ -1,3 +1,22 @@
+## <small>2.0.2-beta (2023-05-08)</small>
+
+* chore: add missing changelog records ([a036938](https://github.com/rehearsal-js/rehearsal-js/commit/a036938))
+* chore: add missing changelog-cli package ([0812b0d](https://github.com/rehearsal-js/rehearsal-js/commit/0812b0d))
+* chore: bumps @glint/core from 1.0.0-beta.4 to 1.0.2 (#1032) ([c58d262](https://github.com/rehearsal-js/rehearsal-js/commit/c58d262)), closes [#1032](https://github.com/rehearsal-js/rehearsal-js/issues/1032)
+* chore: clean stdout for move tests (#1020) ([f259f3b](https://github.com/rehearsal-js/rehearsal-js/commit/f259f3b)), closes [#1020](https://github.com/rehearsal-js/rehearsal-js/issues/1020)
+* chore: fix eslint failures (#1033) ([125f148](https://github.com/rehearsal-js/rehearsal-js/commit/125f148)), closes [#1033](https://github.com/rehearsal-js/rehearsal-js/issues/1033)
+* chore: return skipInit for test purpose until fix arrived ([f7f9af9](https://github.com/rehearsal-js/rehearsal-js/commit/f7f9af9))
+* chore(gh-action-bot): adding new diagnostics ([964f82d](https://github.com/rehearsal-js/rehearsal-js/commit/964f82d))
+* chore(gh-action-bot): adding new diagnostics ([205b415](https://github.com/rehearsal-js/rehearsal-js/commit/205b415))
+* feat: graph --ignore with globs (#1030) ([71887b5](https://github.com/rehearsal-js/rehearsal-js/commit/71887b5)), closes [#1030](https://github.com/rehearsal-js/rehearsal-js/issues/1030)
+* breaking: `graph` and `mv` graph integration (#1025) ([b906b75](https://github.com/rehearsal-js/rehearsal-js/commit/b906b75)), closes [#1025](https://github.com/rehearsal-js/rehearsal-js/issues/1025)
+* fix: aliases need to look at modulename (#1023) ([3cc8c49](https://github.com/rehearsal-js/rehearsal-js/commit/3cc8c49)), closes [#1023](https://github.com/rehearsal-js/rehearsal-js/issues/1023)
+* fix: don't fix correctly declared services (#1022) ([8c734fe](https://github.com/rehearsal-js/rehearsal-js/commit/8c734fe)), closes [#1022](https://github.com/rehearsal-js/rehearsal-js/issues/1022)
+* fix: get diagnostics workflow (#1021) ([cbae5c1](https://github.com/rehearsal-js/rehearsal-js/commit/cbae5c1)), closes [#1021](https://github.com/rehearsal-js/rehearsal-js/issues/1021)
+* fix: search for services map in current and parent directories ([e601f54](https://github.com/rehearsal-js/rehearsal-js/commit/e601f54))
+
+
+
 ## <small>2.0.1-beta (2023-05-01)</small>
 
 * breaking(reporter): refactor reporter api (#1002) ([ff07613](https://github.com/rehearsal-js/rehearsal-js/commit/ff07613)), closes [#1002](https://github.com/rehearsal-js/rehearsal-js/issues/1002)
