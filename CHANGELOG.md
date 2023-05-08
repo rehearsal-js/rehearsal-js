@@ -1,3 +1,32 @@
+## <small>2.0.1-beta (2023-05-01)</small>
+
+* breaking(reporter): refactor reporter api (#1002) ([ff07613](https://github.com/rehearsal-js/rehearsal-js/commit/ff07613)), closes [#1002](https://github.com/rehearsal-js/rehearsal-js/issues/1002)
+* breaking(upgrade): removes upgrade for replacement (#1001) ([89c6696](https://github.com/rehearsal-js/rehearsal-js/commit/89c6696)), closes [#1001](https://github.com/rehearsal-js/rehearsal-js/issues/1001)
+* feat: non-qualified service injection, based on provide map file (#1013) ([152753c](https://github.com/rehearsal-js/rehearsal-js/commit/152753c)), closes [#1013](https://github.com/rehearsal-js/rehearsal-js/issues/1013)
+* feat: add support for ember@4 service export name (#1006) ([8647aa8](https://github.com/rehearsal-js/rehearsal-js/commit/8647aa8)), closes [#1006](https://github.com/rehearsal-js/rehearsal-js/issues/1006)
+* feat(cli): move command (#995) ([0f3d814](https://github.com/rehearsal-js/rehearsal-js/commit/0f3d814)), closes [#995](https://github.com/rehearsal-js/rehearsal-js/issues/995)
+* feat: add graph command (#994) ([f86009a](https://github.com/rehearsal-js/rehearsal-js/commit/f86009a)), closes [#994](https://github.com/rehearsal-js/rehearsal-js/issues/994)
+* chore: move to fast-glob (#1017) ([ae4aa44](https://github.com/rehearsal-js/rehearsal-js/commit/ae4aa44)), closes [#1017](https://github.com/rehearsal-js/rehearsal-js/issues/1017)
+* chore: use fast-glob egorio ([2eee907](https://github.com/rehearsal-js/rehearsal-js/commit/2eee907)
+* fix(999): multi-line rehearsal TODO egorio ([12fb02b](https://github.com/rehearsal-js/rehearsal-js/commit/12fb02b))
+* fix(949): Cannot read properties of undefined (reading 'flags') in returnValueCorrect fix (#996) ([88090f2](https://github.com/rehearsal-js/rehearsal-js/commit/88090f2)), closes [#996](https://github.com/rehearsal-js/rehearsal-js/issues/996)
+* fix: cannot read properties of undefined (reading 'kind') (#990) ([64142be](https://github.com/rehearsal-js/rehearsal-js/commit/64142be)), closes [#990](https://github.com/rehearsal-js/rehearsal-js/issues/990)
+
+
+
+## <small>2.0.0-beta (2023-04-17)</small>
+
+* breaking: remove migrate init (#992) ([486fcea](https://github.com/rehearsal-js/rehearsal-js/commit/486fcea)), closes [#992](https://github.com/rehearsal-js/rehearsal-js/issues/992)
+* feat: use magic-string for fixing (#987) ([4b3bf0d](https://github.com/rehearsal-js/rehearsal-js/commit/4b3bf0d)), closes [#987](https://github.com/rehearsal-js/rehearsal-js/issues/987)
+* fix: dynamic import all glint things (#985) ([3db5f44](https://github.com/rehearsal-js/rehearsal-js/commit/3db5f44)), closes [#985](https://github.com/rehearsal-js/rehearsal-js/issues/985)
+* chore(all): bump deps and remove unused deps, coverage (#972) ([330b43f](https://github.com/rehearsal-js/rehearsal-js/commit/330b43f)), closes [#972](https://github.com/rehearsal-js/rehearsal-js/issues/972)
+* internal: use magicstring for ignore comments (#977) ([13fea04](https://github.com/rehearsal-js/rehearsal-js/commit/13fea04)), closes [#977](https://github.com/rehearsal-js/rehearsal-js/issues/977)
+* internal: restructure queue (#988) ([aa2c7a8](https://github.com/rehearsal-js/rehearsal-js/commit/aa2c7a8)), closes [#988](https://github.com/rehearsal-js/rehearsal-js/issues/988)
+* internal: restructure queue (#988) ([aa2c7a8](https://github.com/rehearsal-js/rehearsal-js/commit/aa2c7a8)), closes [#988](https://github.com/rehearsal-js/rehearsal-js/issues/988)
+* docs: add docs to queue overloads (#991) ([16381d9](https://github.com/rehearsal-js/rehearsal-js/commit/16381d9)), closes [#991](https://github.com/rehearsal-js/rehearsal-js/issues/991)
+
+
+
 ## <small>1.0.20-beta (2023-04-14)</small>
 
 * fix: correctly resolve addon paths (#971) ([405a03b](https://github.com/rehearsal-js/rehearsal-js/commit/405a03b)), closes [#971](https://github.com/rehearsal-js/rehearsal-js/issues/971)
