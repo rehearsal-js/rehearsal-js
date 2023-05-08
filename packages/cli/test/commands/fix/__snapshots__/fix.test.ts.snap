@@ -11,15 +11,13 @@ exports[`Command: fix "base_ts_app" fixture > fix directory with src arg 1`] = `
 [DATA] processing file: /src/gen-random-grid.ts
 [DATA] processing file: /src/get-live-neighbor-count.ts
 [DATA] processing file: /test/main.test.ts
-[TITLE] Migration Complete
-[TITLE]   6 JS files converted to TS
+[TITLE] Types Inferred
 [TITLE]   16 errors caught by rehearsal
 [TITLE]   6 have been fixed by rehearsal
 [TITLE]   10 errors need to be fixed manually
 [TITLE]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 6 eslint errors, with details in the report
-[SUCCESS] Migration Complete
-[SUCCESS]   6 JS files converted to TS
+[SUCCESS] Types Inferred
 [SUCCESS]   16 errors caught by rehearsal
 [SUCCESS]   6 have been fixed by rehearsal
 [SUCCESS]   10 errors need to be fixed manually
@@ -238,15 +236,13 @@ exports[`Command: fix "base_ts_app" fixture > fix file with src arg 1`] = `
 [DATA] processing file: /src/gen-random-grid.ts
 [DATA] processing file: /src/get-live-neighbor-count.ts
 [DATA] processing file: /test/main.test.ts
-[TITLE] Migration Complete
-[TITLE]   6 JS files converted to TS
+[TITLE] Types Inferred
 [TITLE]   16 errors caught by rehearsal
 [TITLE]   6 have been fixed by rehearsal
 [TITLE]   10 errors need to be fixed manually
 [TITLE]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 6 eslint errors, with details in the report
-[SUCCESS] Migration Complete
-[SUCCESS]   6 JS files converted to TS
+[SUCCESS] Types Inferred
 [SUCCESS]   16 errors caught by rehearsal
 [SUCCESS]   6 have been fixed by rehearsal
 [SUCCESS]   10 errors need to be fixed manually

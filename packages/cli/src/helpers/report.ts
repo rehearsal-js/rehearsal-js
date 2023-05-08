@@ -9,7 +9,7 @@ type ReportLike = {
 /**
  * Reads report and generate migration summary
  */
-export function getReportSummary(report: Report, migratedFileCount: number): string {
+export function getReportSummary(report: Report): string {
   const fileMap = new Set<string>();
   let tsErrorCount = 0;
   let lintErrorCount = 0;
@@ -25,8 +25,7 @@ export function getReportSummary(report: Report, migratedFileCount: number): str
   const totalUnfixedCount = report.items.length;
   const totalErrorCount = totalUnfixedCount + report.fixedItemCount;
 
-  return `Migration Complete\n\n
-  ${migratedFileCount} JS ${migratedFileCount === 1 ? 'file' : 'files'} converted to TS\n
+  return `Types Inferred\n\n
   ${totalErrorCount} errors caught by rehearsal\n
   ${report.fixedItemCount} have been fixed by rehearsal\n
   ${totalUnfixedCount} errors need to be fixed manually\n

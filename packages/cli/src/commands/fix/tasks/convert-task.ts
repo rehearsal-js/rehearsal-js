@@ -57,7 +57,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): 
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
 
         reporter.printReport(rootPath, options.format);
-        task.title = getReportSummary(reporter.report, migratedFiles.length);
+        task.title = getReportSummary(reporter.report);
       } else {
         task.skip(`TypeScript files not found in: ${rootPath}`);
       }
