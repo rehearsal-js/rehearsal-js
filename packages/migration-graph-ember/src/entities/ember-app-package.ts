@@ -9,7 +9,13 @@ export class EmberAppPackage extends Package {
   constructor(pathToPackage: string, options: EmberPackageOptions = {}) {
     super(pathToPackage, { ...options });
 
-    this.excludePatterns = new Set([...getEmberExcludePatterns(), ...this.addonPaths]);
+    const { ignoredPaths = [] } = options;
+
+    this.excludePatterns = new Set([
+      ...getEmberExcludePatterns(),
+      ...this.addonPaths,
+      ...ignoredPaths,
+    ]);
 
     this.includePatterns = new Set(['.', '**/*.gjs']); // No longer isolate this to the app directory, include all files in dir.
   }

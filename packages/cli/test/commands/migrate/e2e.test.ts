@@ -309,6 +309,7 @@ describe('migrate: e2e', () => {
         '[DATA] List of files will be attempted to migrate:',
         '[DATA]  lib/a.js',
         '[DATA] index.js',
+        '[DATA] some-dir/index.js',
         '[SUCCESS] Analyze project',
       ].join('\n');
 

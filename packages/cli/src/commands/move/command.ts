@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import debug from 'debug';
@@ -43,7 +43,11 @@ moveCommand
   .option('-g, --graph', 'Enable graph resolution of files to move', false)
   .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
   .option('--deps', `Follow packages in 'devDependencies' when moving`)
-  .option('--ignore [packageNames...]', `A comma deliminated list of packages to ignore`, [])
+  .option(
+    '--ignore [packagesOrGlobs...]',
+    `A space deliminated list of packages or globs to ignore`,
+    []
+  )
   .option('--dryRun', `Do nothing; only show what would happen`, false)
   .addOption(
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
@@ -79,6 +83,12 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
   if (!src) {
     throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
+
+  const typescriptGlobs = ['**/*.ts', '**/*.tsx', '**/*.gts'].map((glob) => {
+    return join(`${options.rootPath}`, src, glob);
+  });
+  // We never want to move typescript files
+  options.ignore.push(...typescriptGlobs);
 
   // grab the child move tasks
   const { initTask, moveTask } = await loadMoveTasks();

@@ -32,8 +32,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     expect.assertions(6);
@@ -65,8 +64,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
 
@@ -93,8 +91,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
@@ -122,8 +119,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const somePackage = projectGraph.graph.getSortedNodes()[0].content.pkg;
@@ -151,8 +147,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     expect(projectGraph.graph.hasNode('my-package-with-loose-files')).toBe(true);
@@ -196,8 +191,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should not exist by default').toBe(false);
@@ -210,8 +204,7 @@ describe('project-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     somePackage = projectGraph.graph.getNode('my-package').content.pkg;
     expect(somePackage?.hasModuleGraph(), 'should exist when options.eager=true').toBe(true);
@@ -234,8 +227,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const sorted = projectGraph.graph.getSortedNodes();
@@ -259,8 +251,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       sortedPackages = Array.from(projectGraph.graph.getSortedNodes())
@@ -292,8 +283,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const orderedPackages = Array.from(projectGraph.graph.getSortedNodes())
@@ -325,15 +315,14 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: ['Brocfile.js'],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
       ).toStrictEqual(['Brocfile.js', 'lib/a.js', 'index.js', 'test/sample.test.js']);
     });
 
-    test('options.exclude', async () => {
+    test('options.ignore', async () => {
       project = new Project('my-package', '0.0.0', {
         files: getFiles('simple'),
       });
@@ -347,8 +336,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: ['test'],
-        ignoredPackages: [],
+        ignore: ['test/**/*.js'],
       });
       expect(
         flatten(somePackage.getModuleGraph({ basePath: project.baseDir }).getSortedNodes())
@@ -370,8 +358,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       expect(projectGraph.graph.hasNode('some-library-with-workspace')).toBe(true);
@@ -423,8 +410,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const fooNode = projectGraph.graph.getNode('@something/foo');
@@ -450,8 +436,7 @@ describe('project-graph', () => {
         crawlDeps: true,
         crawlDevDeps: true,
         include: [],
-        exclude: [],
-        ignoredPackages: [],
+        ignore: [],
       });
 
       const rootNode = projectGraph.graph.getNode('root-package');

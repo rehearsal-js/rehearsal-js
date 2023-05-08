@@ -18,8 +18,7 @@ describe('migration-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.Library);
@@ -31,8 +30,7 @@ describe('migration-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberApp);
@@ -44,8 +42,7 @@ describe('migration-graph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
     expect(projectGraph.graph.getSortedNodes().length).toBe(1);
     expect(sourceType).toBe(SourceType.EmberAddon);

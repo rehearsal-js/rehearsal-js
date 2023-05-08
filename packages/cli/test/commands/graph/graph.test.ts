@@ -91,6 +91,7 @@ describe('Task: graphOrderTask', () => {
       'module-b/index.js',
       'module-b/src/tires.js',
       'module-b/src/car.js',
+      'src/bizz.ts',
       'src/foo/baz.js',
       'src/foo/biz.js',
       'src/foo/buz/biz.js',
@@ -193,7 +194,10 @@ describe('Task: graphOrderTask', () => {
       'lib/some-addon/addon/components/greet.js',
     ]);
 
-    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
   });
 
   test('only follows devDependecies when explicitly asked', async () => {
@@ -228,7 +232,10 @@ describe('Task: graphOrderTask', () => {
       'lib/some-addon/addon/components/greet.js',
     ]);
 
-    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
 
     const withDevDeps = {
       rootPath: project.baseDir,
@@ -261,6 +268,7 @@ describe('Task: graphOrderTask', () => {
 
     expect(graphWithDevDeps.packages[2].files).toMatchObject([
       'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
     ]);
   });
 
@@ -296,7 +304,154 @@ describe('Task: graphOrderTask', () => {
       'lib/some-addon/addon/components/greet.js',
     ]);
 
-    expect(graph.packages[1].files).toMatchObject(['lib/some-other-addon/addon/index.js']);
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
+  });
+
+  test('can ignore a glob from the from graph', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      rootPath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+      devDeps: true,
+      deps: true,
+      ignore: ['lib/some-test-package/addon-test-support/*.js'],
+    };
+
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
+  });
+
+  test('can ignore all js files', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      rootPath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+      devDeps: true,
+      deps: true,
+      ignore: ['**/*.js'],
+    };
+
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(1);
+
+    expect(graph.packages[0].files).toMatchObject(['lib/some-other-addon/addon/thing.ts']);
+  });
+
+  test('can ignore everything in directories', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      rootPath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+      devDeps: true,
+      deps: true,
+      ignore: ['lib/some-test-package/*'],
+    };
+
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
+  });
+
+  test('can ignore a file from the from graph', async () => {
+    project = addWorkspaces(getEmberProject('app-with-in-repo-addon'));
+
+    project.mergeFiles(someOtherAddons(project));
+
+    await project.write();
+
+    const options = {
+      rootPath: project.baseDir,
+      output: join(project.baseDir, 'graph.json'),
+      devDeps: true,
+      deps: true,
+      ignore: ['lib/some-test-package/addon-test-support/index.js'],
+    };
+
+    await listrTaskRunner<GraphCommandContext>([
+      graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
+    ]);
+
+    expect(existsSync(options.output)).toBe(true);
+
+    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as {
+      packages: PackageEntry[];
+    };
+
+    expect(graph.packages.length).toBe(2);
+
+    expect(graph.packages[0].files).toMatchObject([
+      'lib/some-addon/addon/utils/thing.js',
+      'lib/some-addon/addon/components/greet.js',
+    ]);
+
+    expect(graph.packages[1].files).toMatchObject([
+      'lib/some-other-addon/addon/index.js',
+      'lib/some-other-addon/addon/thing.ts',
+    ]);
   });
 
   test('can print graph order to a file for an ember app with in-repo addons', async () => {
@@ -416,6 +571,7 @@ function someOtherAddons(project: Project): DirJSON {
       },
       'some-other-addon': {
         addon: {
+          'thing.ts': 'export function a(num: number): void {}',
           'index.js': 'import Greet from "some-addon/components/greet"',
         },
         'index.js': 'module.exports = { name: "some-other-addon" }',

@@ -438,7 +438,6 @@ export default class Salutation extends Component {
       const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
       const reportedItems = report.items.filter((item) =>
         item.analysisTarget.includes('src/salutation.ts')
-
       );
       expect(report.summary[0].basePath).toMatch(project.baseDir);
       expect(getStringAtLocation(outputs[1], reportedItems[0].nodeLocation as Location)).toEqual(
@@ -813,7 +812,8 @@ export default class SomeComponent extends Component {
         // no ops
       }
 
-      const expected = `import type FooService from "foo/services/foo-service";
+      const expected =
+        `import type FooService from "foo/services/foo-service";
 
 
 // @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.

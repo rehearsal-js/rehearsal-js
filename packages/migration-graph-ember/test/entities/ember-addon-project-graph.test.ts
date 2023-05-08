@@ -29,8 +29,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -53,7 +52,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
     ]);
   });
 
-  test('options.exclude', async () => {
+  test('options.ignore', async () => {
     project = await getEmberProjectFixture('addon');
 
     const projectGraph = new EmberAddonProjectGraph(project.baseDir, {
@@ -63,8 +62,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: [],
-      exclude: ['tests/dummy'],
-      ignoredPackages: [],
+      ignore: ['tests/dummy/**/*.js'],
     });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();
@@ -95,8 +93,7 @@ describe('Unit | EmberAddonProjectGraph', () => {
       crawlDeps: true,
       crawlDevDeps: true,
       include: ['^app'],
-      exclude: [],
-      ignoredPackages: [],
+      ignore: [],
     });
 
     const orderedPackages = projectGraph.graph.getSortedNodes();

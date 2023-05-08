@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import { Command } from 'commander';
 import { migrateCommand } from './commands/migrate/index.js';
-import { moveCommand } from './commands/move/index.js';
+import { moveCommand } from './commands/move/command.js';
 import { graphCommand } from './commands/graph/command.js';
 import type { PackageJson } from 'type-fest';
 

@@ -1,5 +1,5 @@
 import { realpathSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { isAbsolute, join, normalize, relative, resolve } from 'node:path';
 import debug, { type Debugger } from 'debug';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -64,12 +64,20 @@ export class PackageGraph {
 
     const include = this.package.includePatterns ? Array.from(this.package.includePatterns) : ['.'];
 
-    let exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
+    const exclude = this.package.excludePatterns ? Array.from(this.package.excludePatterns) : [];
+
+    const nonAbsPaths = exclude.filter((entry) => !isAbsolute(entry));
+    const excludedPaths = exclude
+      .filter((filePath) => arePathsContained(this.baseDir, filePath))
+      .map((filePath) => {
+        const resolved = resolve(filePath);
+        return relative(this.baseDir, resolved);
+      });
 
     const cruiseOptions: ICruiseOptions = {
       baseDir,
       exclude: {
-        path: ['node_modules', ...EXCLUDE_FILE_EXTS, ...exclude],
+        path: ['node_modules', ...EXCLUDE_FILE_EXTS, ...nonAbsPaths, ...excludedPaths],
       },
     };
 
@@ -165,4 +173,11 @@ export class PackageGraph {
   addNode(m: ModuleNode): GraphNode<ModuleNode> {
     return this.#graph.addNode(m);
   }
+}
+
+function arePathsContained(rootPath: string, exclusionPath: string): boolean {
+  const normalizedRootPath = normalize(rootPath);
+  const normalizedPath2 = normalize(exclusionPath);
+
+  return normalizedPath2.startsWith(normalizedRootPath);
 }

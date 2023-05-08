@@ -11,9 +11,8 @@ export async function getSourceFiles(basePath: string, entrypoint: string): Prom
     entrypoint,
     crawlDeps: true,
     crawlDevDeps: true,
-    ignoredPackages: [],
+    ignore: [],
     include: [],
-    exclude: [],
   });
   const sourceFiles: SourceFile[] = strategy.getMigrationOrder();
   const files = sourceFiles.map((f) => f.path);

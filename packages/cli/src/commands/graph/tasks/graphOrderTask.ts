@@ -31,15 +31,14 @@ export function graphOrderTask(
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
+
         order = intoGraphOutput(
           getMigrationOrder(srcDir, {
             basePath: rootPath,
             crawlDevDeps: options.devDeps,
             crawlDeps: options.deps,
-            ignoredPackages: options.ignore,
+            ignore: options.ignore,
             include: [],
-            exclude: [],
           }),
           rootPath
         );
@@ -54,7 +53,7 @@ export function graphOrderTask(
               basePath: rootPath,
               crawlDevDeps: options.devDeps,
               crawlDeps: options.deps,
-              ignoredPackages: options.ignore,
+              ignore: options.ignore,
               include: [],
               exclude: [],
             }),
