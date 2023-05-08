@@ -615,9 +615,7 @@ export function validatePackagePath(basePath: string, childPackage: string): [st
 export function isExistsESLintConfig(basePath: string): boolean {
   const lintConfigPath = getEsLintConfigPath(basePath);
   if (!lintConfigPath) {
-    throw new Error(
-      `Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist. You need to run rehearsal migrate first before you can run rehearsal migrate --regen`
-    );
+    throw new Error(`Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist.`);
   }
   return true;
 }
