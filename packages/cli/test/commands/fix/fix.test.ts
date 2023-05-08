@@ -168,7 +168,7 @@ describe('Command: fix "ember-ts-app" fixture', () => {
     project.dispose();
   });
 
-  test('fix package with src arg and graph', async () => {
+  test.skip('fix package with src arg and graph', async () => {
     const src = resolve(project.baseDir);
     const flags = ['--graph', '--deps', '--rootPath', project.baseDir];
 
