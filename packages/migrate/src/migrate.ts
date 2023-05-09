@@ -22,13 +22,13 @@ import {
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
 import fastGlob from 'fast-glob';
+import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 import {
   getGlintFixPlugin,
   getGlintReportPlugin,
   getGlintCommentPlugin,
   createGlintService,
 } from './glint-utils.js';
-import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 import type { Reporter } from '@rehearsal/reporter';
 import type { CompilerOptions } from 'typescript';
 import type { TSConfig } from '@rehearsal/utils';

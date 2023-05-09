@@ -48,6 +48,7 @@
     "@rehearsal/utils": "workspace:*",
     "debug": "^4.3.2",
     "execa": "^7.0.0",
+    "fast-glob": "^3.2.12",
     "findup-sync": "^5.0.0",
     "fs-extra": "^11.1.1",
     "resolve-package-path": "^4.0.3",
