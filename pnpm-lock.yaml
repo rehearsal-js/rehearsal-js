@@ -136,12 +136,18 @@ importers:
       '@rehearsal/migration-graph':
         specifier: workspace:*
         version: link:../migration-graph
+      '@rehearsal/migration-graph-ember':
+        specifier: workspace:*
+        version: link:../migration-graph-ember
       '@rehearsal/regen':
         specifier: workspace:*
         version: link:../regen
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:../reporter
+      '@rehearsal/service':
+        specifier: workspace:*
+        version: link:../service
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
@@ -297,9 +303,18 @@ importers:
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
+      debug:
+        specifier: ^4.3.2
+        version: 4.3.4
       execa:
         specifier: ^7.0.0
         version: 7.1.1
+      fast-glob:
+        specifier: ^3.2.12
+        version: 3.2.12
+      findup-sync:
+        specifier: ^5.0.0
+        version: 5.0.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -316,9 +331,6 @@ importers:
       '@vitest/coverage-c8':
         specifier: ^0.30.1
         version: 0.30.1(vitest@0.30.0)
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
@@ -670,6 +682,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@rehearsal/ts-utils':
+        specifier: workspace:*
+        version: link:../ts-utils
       chalk:
         specifier: ^5.2.0
         version: 5.2.0
@@ -679,6 +694,9 @@ importers:
       compare-versions:
         specifier: 6.0.0-rc.1
         version: 6.0.0-rc.1
+      debug:
+        specifier: ^4.3.4
+        version: 4.3.4
       execa:
         specifier: ^7.1.1
         version: 7.1.1
@@ -3461,7 +3479,7 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
       '@typescript-eslint/types': 5.58.0
-      eslint-visitor-keys: 3.4.1
+      eslint-visitor-keys: 3.4.0
     dev: true
 
   /@vitest/coverage-c8@0.30.1(vitest@0.30.0):
@@ -5178,7 +5196,7 @@ packages:
     dev: true
 
   /concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concordance@5.0.4:
     resolution: {integrity: sha512-OAcsnTEYu1ARJqWVGwf4zh4JDfHZEaSNlNccFmt8YjB2l/n19/PF2viLINHc57vO4FKIAFl2FWASIGZZWZ2Kxw==}
@@ -6769,6 +6787,11 @@ packages:
       esrecurse: 4.3.0
       estraverse: 5.3.0
 
+  /eslint-visitor-keys@3.4.0:
+    resolution: {integrity: sha512-HPpKPUBQcAsZOsHAFwTtIKcYlCje62XB7SEAcxjtmW6TD1WVpkS6i6/hOVtTZIl4zGj/mBqpFVGvaDneik+VoQ==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
+
   /eslint-visitor-keys@3.4.1:
     resolution: {integrity: sha512-pZnmmLwYzf+kWaM/Qgrvpen51upAktaaiI01nsJD/Yr3lMOdNtq0cxkrrg16w64VtisN6okbs7Q8AfGqj4c9fA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -7299,6 +7322,7 @@ packages:
       is-glob: 4.0.3
       micromatch: 4.0.5
       resolve-dir: 1.0.1
+    dev: false
 
   /fireworm@0.7.2:
     resolution: {integrity: sha512-GjebTzq+NKKhfmDxjKq3RXwQcN9xRmZWhnnuC9L+/x5wBQtR0aaQM50HsjrzJ2wc28v1vSdfOpELok0TKR4ddg==}

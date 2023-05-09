@@ -3,8 +3,8 @@ import { join, resolve } from 'node:path';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import debug from 'debug';
+import { parseCommaSeparatedList, readJSON } from '@rehearsal/utils';
 import { createLogger, format, transports } from 'winston';
-import { readJSON } from '@rehearsal/utils';
 import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
 import type { PackageJson } from 'type-fest';
 
@@ -38,17 +38,18 @@ const winstonLogger = createLogger({
 moveCommand
   .name('move')
   .alias('mv')
-  .description('git mv conversion of JS files -> TS files')
-  .argument('[src]', 'the path to a package or file that will be moved', '')
-  .option('-g, --graph', 'Enable graph resolution of files to move', false)
-  .option('--devDeps', `Follow packages in 'devDependencies' when moving`)
-  .option('--deps', `Follow packages in 'devDependencies' when moving`)
+  .description('git mv extension conversion of .js -> .ts')
+  .argument('[srcDir]', 'the path to a package/file/directory that will be moved', '')
+  .option('-g, --graph', 'enable graph resolution of files to move', false)
+  .option('--devDeps', `follow packages in 'devDependencies'`)
+  .option('--deps', `follow packages in 'dependencies'`)
   .option(
     '--ignore [packagesOrGlobs...]',
-    `A space deliminated list of packages or globs to ignore`,
+    `space deliminated list of packages or globs to ignore`,
+    parseCommaSeparatedList,
     []
   )
-  .option('--dryRun', `Do nothing; only show what would happen`, false)
+  .option('-d, --dryRun', `do nothing; only show what would happen`, false)
   .addOption(
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

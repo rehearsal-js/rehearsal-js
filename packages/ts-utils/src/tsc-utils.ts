@@ -11,9 +11,20 @@ import type {
   TypeChecker,
   TypeElement,
   TypeLiteralNode,
+  CompilerOptions,
 } from 'typescript';
 
-const { isClassDeclaration, isInterfaceDeclaration, isTypeAliasDeclaration, SyntaxKind } = ts;
+const {
+  parseJsonConfigFileContent,
+  readConfigFile,
+  sys,
+  isClassDeclaration,
+  isInterfaceDeclaration,
+  isTypeAliasDeclaration,
+  SyntaxKind,
+} = ts;
+
+export type TSConfigCompilerOptions = CompilerOptions;
 
 export function getInterfaceByName(
   sourceFile: SourceFile,
@@ -156,4 +167,24 @@ export function isTypeMatched(typeString: string, type: Type): boolean {
     return true;
   }
   return false;
+}
+
+// returns the singular compilerOptions record from all tsconfig.json including extends
+export function getTSConfigCompilerOptionsCanonical(
+  basePath: string,
+  tsConfigPath: string
+): CompilerOptions {
+  const configFile = readConfigFile(tsConfigPath, (filePath: string, encoding?: string) =>
+    sys.readFile(filePath, encoding)
+  );
+
+  const { options: compilerOptions } = parseJsonConfigFileContent(
+    configFile.config,
+    ts.sys,
+    basePath,
+    {},
+    'tsconfig.json'
+  );
+
+  return compilerOptions;
 }

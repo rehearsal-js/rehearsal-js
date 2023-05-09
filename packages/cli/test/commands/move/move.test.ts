@@ -12,7 +12,7 @@ describe('Command: move', () => {
   let project: Project;
 
   beforeEach(async () => {
-    project = prepareProject('multi_packages');
+    project = prepareProject('base_js_app');
     await project.write();
   });
 
@@ -23,7 +23,7 @@ describe('Command: move', () => {
   test('move file', async () => {
     const sourceDir = 'src/foo';
 
-    const result = await runBin('move', [`${sourceDir}/baz.js`, '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`${sourceDir}/baz.js`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
     const projectSourceDir = resolve(project.baseDir, sourceDir);
@@ -51,7 +51,7 @@ describe('Command: move', () => {
 
     expect(tsSourceFilesBeforeMove).length(1);
 
-    const result = await runBin('move', [`${sourceDir}`, '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`${sourceDir}`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -76,33 +76,36 @@ describe('Command: move', () => {
     ]);
   });
 
-  test('move package with --graph and --deps flag', async () => {
-    const childPackage = 'module-a';
-
+  test('move packages with --graph and --deps flag', async () => {
     const result = await runBin(
       'move',
-      [`${childPackage}`, '--graph', '--deps', '--rootPath', project.baseDir],
+      [`.`],
+      ['--graph', '--deps', '--rootPath', project.baseDir],
       {
         cwd: project.baseDir,
       }
     );
 
-    const projectSourceDir = resolve(project.baseDir, childPackage);
-    // check for js and gjs files -> ts and gts files
-    const jsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{js,gjs}`, {
-      cwd: project.baseDir,
-    });
+    const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
-    expect(jsSourceFiles).length(0);
-    expect(tsSourceFiles).length(3);
+    expect(tsSourceFiles).length(12);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/index.ts',
       '/module-a/index.ts',
+      '/module-b/index.ts',
+      '/src/bizz.ts',
+      '/src/index.ts',
       '/module-a/src/baz.ts',
       '/module-a/src/foo.ts',
+      '/module-b/src/car.ts',
+      '/module-b/src/tires.ts',
+      '/src/foo/baz.ts',
+      '/src/foo/biz.ts',
+      '/src/foo/buz/biz.ts',
     ]);
   });
 
@@ -111,7 +114,7 @@ describe('Command: move', () => {
 
     await expect(
       async () =>
-        await runBin('move', [`${childPackage}`, '--deps', '--rootPath', project.baseDir], {
+        await runBin('move', [`${childPackage}`], ['--deps', '--rootPath', project.baseDir], {
           cwd: project.baseDir,
         })
     ).rejects.toThrowError(`'--deps' can only be passed when you pass --graph`);
@@ -121,7 +124,7 @@ describe('Command: move', () => {
     const childPackage = 'module-a';
     await expect(
       async () =>
-        await runBin('move', [`${childPackage}`, '--devDeps', '--rootPath', project.baseDir], {
+        await runBin('move', [`${childPackage}`], ['--devDeps', '--rootPath', project.baseDir], {
           cwd: project.baseDir,
         })
     ).rejects.toThrowError(`'--devDeps' can only be passed when you pass --graph`);
@@ -133,7 +136,8 @@ describe('Command: move', () => {
       async () =>
         await runBin(
           'move',
-          [`${childPackage}`, '--ignore', 'foo', '--rootPath', project.baseDir],
+          [`${childPackage}`],
+          ['--ignore', 'foo', '--rootPath', project.baseDir],
           {
             cwd: project.baseDir,
           }

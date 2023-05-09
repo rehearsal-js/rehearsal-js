@@ -8,8 +8,8 @@ import { Project } from 'fixturify-project';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const basePath = resolve(__dirname);
-const srcDir = resolve(basePath, 'fixtures', 'src');
+const rootPath = resolve(__dirname);
+const srcDir = resolve(rootPath, 'fixtures', 'src');
 
 let reporter: Reporter;
 let regenInput: RegenInput;
@@ -20,7 +20,7 @@ describe('regen', () => {
     reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
-      basePath,
+      rootPath,
       commandName: '@rehearsal/migrate',
     });
 
@@ -104,7 +104,7 @@ function createProject(): Project {
     null,
     2
   );
-  project.files['.eslintrc.json'] = readFileSync(join(basePath, '.eslintrc.json'), 'utf-8');
+  project.files['.eslintrc.json'] = readFileSync(join(rootPath, '.eslintrc.json'), 'utf-8');
 
   return project;
 }

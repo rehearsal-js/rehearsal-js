@@ -28,7 +28,7 @@ export function mockPluginRunnerContext(project: Project): PluginsRunnerContext 
   const reporter = new Reporter({
     tsVersion: '',
     projectName: '@rehearsal/test',
-    basePath: project.baseDir,
+    rootPath: project.baseDir,
     commandName: '@rehearsal/migrate',
   });
 

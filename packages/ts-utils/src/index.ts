@@ -10,6 +10,8 @@ export {
   isSubtypeOf,
   getTypeDeclarationFromTypeSymbol,
   isTypeMatched,
+  getTSConfigCompilerOptionsCanonical,
+  type TSConfigCompilerOptions,
 } from './tsc-utils.js';
 
 export * from './helpers/strings.js';

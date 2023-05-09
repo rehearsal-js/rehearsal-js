@@ -1,74 +1,33 @@
-import { dirname, join, normalize, relative, resolve } from 'node:path';
+import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
 import findupSync from 'findup-sync';
+import debug from 'debug';
 import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
 import which from 'which';
-import { InvalidArgumentError } from 'commander';
 import chalk from 'chalk';
-import glob from 'fast-glob';
+import fastGlob from 'fast-glob';
 import micromatch from 'micromatch';
 import yaml from 'js-yaml';
+import { getTSConfigCompilerOptionsCanonical } from '@rehearsal/ts-utils';
 import { execa, execaSync } from 'execa';
-import type { GitDescribe } from './types.js';
-import type { Options } from 'execa';
+
+import type { TSConfig, PreReqTSConfig } from './types.js';
 import type { PackageJson } from 'type-fest';
+import type { Options } from 'execa';
+import type { TSConfigCompilerOptions } from '@rehearsal/ts-utils';
+
+const DEBUG_CALLBACK = debug('rehearsal:utils:cli');
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
-
 export const git: SimpleGit = simpleGit({
   baseDir: process.cwd(),
   binary: 'git',
   maxConcurrentProcesses: 6,
 } as Partial<SimpleGitOptions>);
-
-// we might need to check if commitlint is being used and lint against it for msgTypes
-export async function gitCommit(msg: string, msgType = 'chore(deps-dev)'): Promise<void> {
-  await git.commit(`${msgType.trim()}: [REHEARSAL-BOT] ${msg.trim()}`, '--no-verify');
-}
-
-// we want a separate branch & PR for each diagnostic
-// eg. await gitCheckoutNewBranch('4.8.0-beta', 'typescript', 'diagnostic-4082')
-export async function gitCheckoutNewLocalBranch(
-  depSemVersion: string,
-  depName = 'typescript',
-  addPathID?: string
-): Promise<string> {
-  const branchName = `rehearsal-bot/${depName}-${depSemVersion}${addPathID ? `/${addPathID}` : ''}`;
-  await git.checkout(['-b', branchName]);
-
-  return branchName;
-}
-
-export async function gitIsRepoDirty(cwd?: string): Promise<boolean> {
-  // if cwd is provided, create a new git instance with the correct cwd
-  const gitClient = cwd
-    ? simpleGit({
-        baseDir: cwd,
-      } as Partial<SimpleGitOptions>)
-    : git;
-  if (await gitClient.checkIsRepo()) {
-    const status = await gitClient.status();
-    return status.isClean() === false;
-  }
-  return false; // false if it's not a git repo
-}
-
-// Stage files in a git repo
-export async function gitAddIfInRepo(fileList: string[] | string, cwd?: string): Promise<void> {
-  // if cwd is provided, create a new git instance with the correct cwd
-  const gitClient = cwd
-    ? simpleGit({
-        baseDir: cwd,
-      } as Partial<SimpleGitOptions>)
-    : git;
-  if (await gitClient.checkIsRepo()) {
-    await gitClient.add(fileList);
-  }
-}
 
 /**
  * Function to introduce a wait
@@ -124,29 +83,6 @@ export function readFile(file: string, encoding?: 'utf8'): string | Buffer | und
  */
 export function timestamp(inSeconds = false): number {
   return inSeconds ? Date.now() / 1000 : Date.now();
-}
-
-/**
- * Parse the string output from git
- *
- * @param desc - String output of "git describe --tags --long"
- * @returns GitDescribe object
- */
-export function parseLongDescribe(desc: string): GitDescribe {
-  const result = /^(.+)-(\d+)-g([a-f0-9]+)(?:-(dirty))?$/.exec(desc);
-
-  if (!result) {
-    throw Error(`Unable to parse ${desc} as a long description`);
-  }
-
-  const [, tag, count, sha, dirty] = result;
-
-  return {
-    tag,
-    count: parseInt(count, 10),
-    sha,
-    dirty: !!dirty,
-  };
 }
 
 /**
@@ -362,56 +298,6 @@ export async function setModuleResolution(
   }
 }
 
-// version specified in package.json NOT resolved version from lock file
-export async function getModuleVersion(
-  moduleName: string,
-  type: 'devDep' | 'dep',
-  cwd = process.cwd()
-): Promise<string> {
-  const depType = type === 'dep' ? 'dependencies' : 'devDependencies';
-
-  // using npm pkg api (preferred)
-  async function getVersionFromPkg(dir: string): Promise<string> {
-    try {
-      const npmPath = getManagerBinPath('npm');
-      const { stdout } = await execa(npmPath, ['pkg', 'get', `${depType}.${moduleName}`], {
-        cwd: dir,
-      });
-
-      if (stdout === '{}') {
-        return '';
-      } else {
-        // eg "^2.3.2"
-        return stdout.replace(/"/g, '');
-      }
-    } catch (err) {
-      return '';
-    }
-  }
-
-  // when thats not possible and for tests, use package.json
-  function getVersionFromPkgJson(dir: string): string {
-    try {
-      const pkgPath = findupSync('package.json', {
-        cwd: dir,
-      });
-      // wrapping in try catch so casting is safe
-      const pkg = readJSON(pkgPath as string) as PackageJson;
-
-      return pkg[depType]?.[moduleName] ?? '';
-    } catch (err) {
-      return '';
-    }
-  }
-
-  const version = {
-    pkg: await getVersionFromPkg(cwd),
-    packageJson: getVersionFromPkgJson(cwd),
-  };
-
-  return version.pkg || version.packageJson;
-}
-
 // devDep: dep@version eg. typescript@4.4.4 or typescript or etc
 export async function addDep(
   depList: string[],
@@ -428,17 +314,6 @@ export async function addDep(
   const binAndArgs = getModuleManagerInstaller(moduleManager, depList, isDev);
 
   await execa(binAndArgs.bin, [...binAndArgs.args], options);
-}
-
-// when executing a command with module manager prefix
-// eg. yarn tsc or pnpm tsc or npm tsc
-export async function runModuleCommand(args: string[], option: Options = {}): Promise<void> {
-  const moduleManager = getModuleManager();
-  const binAndArgs = {
-    bin: moduleManager,
-    args,
-  };
-  await execa(binAndArgs.bin, [...binAndArgs.args], option);
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
@@ -522,96 +397,12 @@ export function parseCommaSeparatedList(value: string): string[] {
 }
 
 /**
- * Ensure a path is absolute based on process.cwd()
- */
-export function ensureAbsolutePath(p: string): string {
-  return p === process.cwd() ? p : resolve(p);
-}
-
-/**
- * check if migration-config.json exists in process.cwd()
- */
-export function validateUserConfig(basePath: string, userConfigPath: string): boolean {
-  return existsSync(resolve(basePath, userConfigPath));
-}
-
-/**
  * Reads a tsConfig file
  * @param configPath
  * @returns
  */
 export function readTSConfig<T>(configPath: string): T {
   return json5.parse(readFileSync(configPath, 'utf-8'));
-}
-
-/**
- * Generate tsconfig
- */
-
-export const DEFAULT_TS_CONFIG = {
-  $schema: 'https://json.schemastore.org/tsconfig',
-  compilerOptions: {
-    strict: true,
-    esModuleInterop: true,
-    noUncheckedIndexedAccess: true,
-    module: 'es2020',
-    moduleResolution: 'node',
-    newLine: 'lf',
-    target: 'ES2021',
-    forceConsistentCasingInFileNames: true,
-    noFallthroughCasesInSwitch: true,
-    noEmit: true,
-  },
-};
-
-export function writeTSConfig(configPath: string, config: unknown): void {
-  configPath = configPath.endsWith('tsconfig.json')
-    ? configPath
-    : resolve(configPath, 'tsconfig.json');
-  writeJSON(configPath, config);
-}
-
-/**
- * Parse the TS Version passed in by the user
- */
-export function parseTsVersion(value: string): string {
-  if (isValidSemver(value)) {
-    return value;
-  } else {
-    throw new InvalidArgumentError(
-      'The tsVersion specified is an invalid string. Please specify a valid version as n.n.n'
-    );
-  }
-}
-
-/**
- * Check if typescript is already installed
- */
-export function isTypescriptInDevdep(basePath: string): boolean {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
-  return !!(
-    packageJSON?.devDependencies?.['typescript'] || packageJSON?.dependencies?.['typescript']
-  );
-}
-
-/**
- * Add/Update scripts in package.json
- */
-export function addPackageJsonScripts(basePath: string, scriptMap: Record<string, string>): void {
-  const packageJSONPath = resolve(basePath, 'package.json');
-  const packageJSON = readJSONSync(packageJSONPath) as PackageJson;
-  packageJSON.scripts = { ...packageJSON.scripts, ...scriptMap };
-  writeJSONSync(packageJSONPath, packageJSON, { spaces: 2 });
-}
-
-/**
- * Run git reset to get all file changes to the previous state
- */
-export async function resetFiles(): Promise<void> {
-  if (await git.checkIsRepo()) {
-    await git.reset(['--hard']);
-  }
 }
 
 /**
@@ -678,7 +469,7 @@ export function prettyGitDiff(text: string): string {
 
 export function getEsLintConfigPath(basePath: string): string {
   // glob against the following file extension patterns and return the first match
-  const configPath = glob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
+  const configPath = fastGlob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
   return configPath;
 }
 
@@ -737,4 +528,299 @@ export function findWorkspaceRoot(startDir: string = process.cwd()): string {
   // Or for npm/yarn, cannot find yarn/npm workspaces
   // startDir should be the root
   return startDir;
+}
+
+// be sure the source exists within the basePath project
+export function validateSourcePath(
+  basePath: string,
+  source: string,
+  fileType: 'ts' | 'js'
+): [string[], string[]] {
+  const relativePath = relative(basePath, resolve(basePath, source));
+  const groupedExt = fileType === 'js' ? ['.js', '.gjs'] : ['.ts', '.gts'];
+
+  if (
+    source &&
+    (!relativePath ||
+      relativePath.startsWith('..') ||
+      isAbsolute(relativePath) ||
+      !existsSync(resolve(basePath, relativePath)))
+  ) {
+    throw new Error(`Rehearsal could not find source: ${source} in project: ${basePath}`);
+  }
+
+  // if source is a directory, get all the files otherwise just return the source as abs and rel tuple
+  if (!isDirectory(source)) {
+    if (groupedExt.includes(extname(source))) {
+      return [[resolve(basePath, source)], [relativePath]];
+    }
+
+    throw new Error(`Rehearsal will only move ${groupedExt} files. Source: ${source} is neither.`);
+  }
+
+  // otherwise return all the js files in the directory and its subdirectories
+  return getFilesByType(basePath, source, fileType);
+}
+
+// check if the source is a directory
+export function isDirectory(source: string): boolean {
+  return extname(source) === '';
+}
+
+/**
+ * Get files by requested type returns tuple with [abs, rel] paths
+ * @typedef {(ts|js)} FileType
+ * @param {string} basePath - eg process.cwd()
+ * @param {string} source - eg basePath/src or basePath/src/child/file.ts|.js
+ * @param {FileType} fileType - either ts | js, which will glob for 'js,gjs'|'ts,gts'
+ */
+export function getFilesByType(
+  basePath: string,
+  source: string,
+  fileType: 'ts' | 'js'
+): [string[], string[]] {
+  const sourceAbs = resolve(basePath, source);
+  const sourceRel = relative(basePath, sourceAbs);
+  const globPaths = fileType === 'js' ? 'js,gjs' : 'ts,gts';
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+  const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{${globPaths}}`, { cwd: basePath });
+
+  // if no files are found, throw an error
+  if (!sourceFiles.length) {
+    throw new Error(
+      `Rehearsal could not find any ${fileType} files in the source directory: ${sourceAbs}`
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  return [sourceFiles.map((file) => resolve(basePath, file)), sourceFiles];
+}
+
+// be sure the package exists within the basePath project and returns rel and abs tuple
+export function validatePackagePath(basePath: string, childPackage: string): [string, string] {
+  if (
+    !existsSync(resolve(basePath, childPackage)) ||
+    !existsSync(resolve(basePath, childPackage, 'package.json'))
+  ) {
+    throw new Error(
+      `Rehearsal could not find the package: "${childPackage}" in project: "${basePath}" OR the package does not have a package.json file.`
+    );
+  }
+
+  const absPath = resolve(basePath, childPackage);
+  const relPath = relative(basePath, resolve(basePath, childPackage));
+
+  // return the abs path and rel path of the childPackage
+  return [absPath, relPath];
+}
+
+export function isExistsESLintConfig(basePath: string): boolean {
+  const lintConfigPath = getEsLintConfigPath(basePath);
+  if (!lintConfigPath) {
+    throw new Error(`Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist.`);
+  }
+  return true;
+}
+
+export function isExistsTSConfig(basePath: string): boolean {
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
+  if (!existsSync(tsConfigPath)) {
+    throw new Error(
+      `${tsConfigPath} does not exists. Please run rehearsal inside a project with a valid tsconfig.json.`
+    );
+  }
+  return true;
+}
+
+export function isExistsPackageJSON(basePath: string): boolean {
+  const packageJsonPath = resolve(basePath, 'package.json');
+  if (!existsSync(packageJsonPath)) {
+    throw new Error(
+      `${packageJsonPath} does not exists. Please run rehearsal inside a project with a valid package.json.`
+    );
+  }
+  return true;
+}
+
+export function isValidGitIgnore(basePath: string): boolean {
+  const gitignorePath = resolve(basePath, '.gitignore');
+  if (!existsSync(gitignorePath)) {
+    return true;
+  }
+
+  const gitignore = readFileSync(gitignorePath, 'utf-8');
+  const rehearsalReportRegex = /\rehearsal-report.*/g;
+  if (rehearsalReportRegex.test(gitignore)) {
+    throw new Error(
+      `rehearsal-report is ignored by .gitignore file. Please remove it from .gitignore file and try again.`
+    );
+  }
+
+  return true;
+}
+
+export function isDepsPreReq(basePath: string, requiredDeps: Record<string, string>): boolean {
+  // read the package.json
+  const packageJSON = readJSONSync(resolve(basePath, 'package.json')) as PackageJson;
+  const invalidVersion: string[] = [];
+  const message: string[] = [];
+  // grab ALL packageJson dependencies and devDependencies as a single array with versions
+  const packageJSONDeps = {
+    ...packageJSON.dependencies,
+    ...packageJSON.devDependencies,
+  } as Record<string, string>;
+
+  // all the deps which are missing
+  const missingDeps = Object.keys(requiredDeps).filter(
+    (dep) => !Object.keys(packageJSONDeps).includes(extractDepName(dep))
+  );
+
+  DEBUG_CALLBACK('basePath', basePath);
+  DEBUG_CALLBACK('packageJSONDeps', packageJSONDeps);
+  DEBUG_CALLBACK('missingDeps', missingDeps);
+
+  // loop over the packageJSONDeps and compare the versions against the requiredDeps
+  for (const dep in packageJSONDeps) {
+    // if the dep is in the requiredDeps, but the versions do not match, throw an error
+    if (Object.keys(requiredDeps).includes(dep)) {
+      const installedVersion = packageJSONDeps[dep].replace(/[\^~]/g, '');
+      const reqVersion = requiredDeps[dep].replace(/[\^~]/g, '');
+      // if the installed dep is < the required dep, throw an error
+      if (compare(installedVersion, reqVersion, '<')) {
+        invalidVersion.push(dep);
+      }
+    }
+  }
+
+  // combine all the errors and throw them together for both missing and version mismatch
+  if (invalidVersion.length > 0) {
+    message.push(
+      `Please update the following dependencies to the minimum required versions and try again:
+      ${invalidVersion.map((dep) => `\n"${dep}": "^${requiredDeps[dep]}"`).join(', ')}`
+    );
+
+    // change the message to this format `"ts-node": "^10.9.1"`,
+  }
+
+  if (missingDeps.length > 0) {
+    message.push(
+      `Please install the following missing devDependencies and try again:
+      ${missingDeps.map((dep) => `\n"${dep}": "^${requiredDeps[dep]}"`).join(', ')}`
+    );
+  }
+
+  // throw the message if there are any errors
+  if (message.length > 0) {
+    throw new Error(message.join('\n'));
+  }
+
+  return true;
+}
+
+// get the name of dependency from those two format:
+// - foo
+// - foo@{version}
+// Be aware that a package name would start with @, e.g @types/node
+export function extractDepName(dep: string): string {
+  const reg = /^(@?[^@]+)/g;
+  const matched = dep.match(reg);
+  return matched ? matched[0] : dep;
+}
+
+// should cover all eslint extensions
+export function isESLintPreReq(basePath: string, requiredParser: string): boolean {
+  const lintConfigPath = getEsLintConfigPath(basePath);
+  if (!lintConfigPath) {
+    throw new Error(
+      `Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist. Please add one and try again.`
+    );
+  }
+
+  // read the lintConfigPath as text and check if it has the requiredParser string in it
+  const lintConfigText = readFileSync(lintConfigPath, 'utf-8');
+
+  if (!lintConfigText.includes(requiredParser)) {
+    throw new Error(
+      `Please update the parser to "${requiredParser}" in the ESLint config and try again.`
+    );
+  }
+
+  return true;
+}
+
+export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSConfig): boolean {
+  if (!requiredTSConfig) {
+    return true;
+  }
+
+  const message = `please update the tsconfig.json to meet requirements:\n${JSON.stringify(
+    requiredTSConfig,
+    null,
+    2
+  )}`;
+
+  const { strict: strictRequired, skipLibCheck: skipLibCheckRequired } =
+    requiredTSConfig.compilerOptions as TSConfigCompilerOptions;
+  const tsConfigPath = resolve(basePath, 'tsconfig.json');
+
+  // only check for it if its required
+  if (requiredTSConfig.glint) {
+    isTSConfigGlintPreReq(tsConfigPath, requiredTSConfig, message);
+  }
+  // this will fetch all the compilerOptions from tsconfig extends as well
+  const { strict, skipLibCheck } = getTSConfigCompilerOptionsCanonical(basePath, tsConfigPath);
+
+  if (strict === strictRequired && skipLibCheck === skipLibCheckRequired) {
+    return true;
+  } else {
+    throw new Error(message);
+  }
+}
+
+export function isNodePreReq(requiredNode: string): boolean {
+  const nodeVersion = process.version;
+  // if the version of node is less than the requiredNode throw
+  if (compare(nodeVersion, requiredNode, '<')) {
+    throw new Error(
+      `Please update your current node version "${nodeVersion}" to "${requiredNode}" or above and try again.`
+    );
+  }
+
+  return true;
+}
+
+function isTSConfigGlintPreReq(
+  tsConfigPath: string,
+  requiredTSConfigGlint: Pick<PreReqTSConfig, 'glint'>,
+  message?: string
+): void {
+  // the glint key isn't supported by with ts API so we have to grab it manually
+  const { glint } = readTSConfig<TSConfig>(tsConfigPath);
+  const { glint: glintRequired } = requiredTSConfigGlint;
+
+  if (!glint && glintRequired) {
+    throw new Error(`"glint" key and options missing in tsconfig.json. ${message}`);
+  }
+
+  if (glint && glintRequired) {
+    // check if the glint key has all the required keys
+    const missingKeys = Object.keys(glintRequired).filter(
+      (key) => !Object.keys(glint).includes(key)
+    );
+    if (missingKeys.length > 0) {
+      throw new Error(
+        `"glint" key is missing the following options in tsconfig.json: ${missingKeys.join(
+          ', '
+        )}. ${message}`
+      );
+    }
+
+    // this is default true, so if its explicitly set to false throw
+    if (glint.checkStandaloneTemplates === false) {
+      throw new Error(
+        `"glint.checkStandaloneTemplates" value is incorrect in tsconfig.json. ${message}`
+      );
+    }
+  }
 }

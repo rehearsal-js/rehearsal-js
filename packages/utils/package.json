@@ -40,9 +40,11 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@rehearsal/ts-utils": "workspace:*",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "compare-versions": "6.0.0-rc.1",
+    "debug": "^4.3.4",
     "execa": "^7.1.1",
     "fast-glob": "^3.2.12",
     "findup-sync": "^5.0.0",

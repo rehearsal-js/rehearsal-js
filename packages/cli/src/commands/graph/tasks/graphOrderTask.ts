@@ -4,7 +4,7 @@ import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import debug from 'debug';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import type { PackageEntry, GraphCommandContext, GraphTaskOptions } from '../../../types.js';
+import type { PackageEntry, CommandContext, GraphTaskOptions } from '../../../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,12 +17,12 @@ export function graphOrderTask(
   srcDir: string,
   options: GraphTaskOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _ctx?: GraphCommandContext
-): ListrTask<GraphCommandContext, ListrDefaultRenderer> {
+  _ctx?: CommandContext
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Analyzing project dependency graph',
     options: { persistentOutput: true },
-    async task(ctx: GraphCommandContext, task) {
+    async task(ctx: CommandContext, task) {
       let order: { packages: PackageEntry[] };
       const { output, rootPath } = options;
       let selectedPackageName: string;
@@ -72,12 +72,16 @@ export function graphOrderTask(
         });
       }
 
+      // set the order on the context so we can use it in other tasks
+      ctx.migrationOrder = order;
+
       DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
       DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
 
       // if explicit package is passed in use that
       if (ctx?.package) {
-        ctx.jsSourcesAbs = order.packages.flatMap((pkg) => pkg.files);
+        ctx.sourceFilesRel = order.packages.flatMap((pkg) => pkg.files);
+        ctx.sourceFilesAbs = ctx.sourceFilesRel.map((file) => resolve(srcDir, file));
 
         return;
       }

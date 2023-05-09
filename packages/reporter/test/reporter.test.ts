@@ -22,7 +22,7 @@ describe('Reporter', () => {
     reporter = new Reporter({
       tsVersion: '',
       projectName: 'test',
-      basePath: project.baseDir,
+      rootPath: project.baseDir,
       commandName: '@rehearsal/reporter',
     });
 

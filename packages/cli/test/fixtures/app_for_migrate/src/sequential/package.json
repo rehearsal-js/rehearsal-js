@@ -1,7 +1,0 @@
-{
-  "name": "sequential",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "packageManager": "pnpm@7.12.1"
-}

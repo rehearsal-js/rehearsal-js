@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`utils > isDepsPreReq() 1`] = `
+"Please install the following missing devDependencies and try again:
+      
+\\"foo\\": \\"^1.0.0\\", 
+\\"bar\\": \\"^5.1.5\\""
+`;
+
+exports[`utils > isESLintPreReq() 1`] = `"Please update the parser to \\"@foo/parser\\" in the ESLint config and try again."`;
+
+exports[`utils > isTSConfigPreReq() 1`] = `
+"\\"glint\\" key and options missing in tsconfig.json. please update the tsconfig.json to meet requirements:
+{
+  \\"compilerOptions\\": {
+    \\"strict\\": false,
+    \\"skipLibCheck\\": false
+  },
+  \\"glint\\": {
+    \\"environment\\": \\"foo\\"
+  }
+}"
+`;
+
+exports[`utils > validateSourcePath() 1`] = `"Rehearsal could not find source: <tmp-path>/src/dont/exist in project: <tmp-path>"`;
+
+exports[`utils > validateSourcePath() 2`] = `"Rehearsal will only move .js,.gjs files. Source: <tmp-path>/src/foo.fakeext is neither."`;

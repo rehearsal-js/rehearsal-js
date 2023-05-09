@@ -15,7 +15,7 @@ import {
   sendKey,
 } from '../../test-helpers/index.js';
 import { graphOrderTask } from '../../../src/commands/graph/tasks/graphOrderTask.js';
-import type { PackageEntry, GraphCommandContext } from '../../../src/types.js';
+import type { PackageEntry, CommandContext } from '../../../src/types.js';
 import type { DirJSON } from 'fixturify';
 import type { Project } from 'fixturify-project';
 
@@ -52,7 +52,7 @@ describe('Task: graphOrderTask', () => {
 
   beforeEach(async () => {
     output = '';
-    project = prepareProject('multi_packages');
+    project = prepareProject('base_js_app');
     outputStream = createOutputStream();
     // tests below assume creation
     delete project.files['tsconfig.json'];
@@ -74,7 +74,7 @@ describe('Task: graphOrderTask', () => {
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -108,9 +108,7 @@ describe('Task: graphOrderTask', () => {
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
-      graphOrderTask(`${project.baseDir}/module-a`, options),
-    ]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(`${project.baseDir}/module-a`, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -134,7 +132,7 @@ describe('Task: graphOrderTask', () => {
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -157,7 +155,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
@@ -177,7 +175,7 @@ describe('Task: graphOrderTask', () => {
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -215,7 +213,7 @@ describe('Task: graphOrderTask', () => {
       ignore: [],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -245,7 +243,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', withDevDeps),
     ]);
 
@@ -287,7 +285,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['some-test-package'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -325,7 +323,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/addon-test-support/*.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -363,7 +361,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['**/*.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -393,7 +391,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/*'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -431,7 +429,7 @@ describe('Task: graphOrderTask', () => {
       ignore: ['lib/some-test-package/addon-test-support/index.js'],
     };
 
-    await listrTaskRunner<GraphCommandContext>([
+    await listrTaskRunner<CommandContext>([
       graphOrderTask(project.baseDir + '/lib/some-other-addon', options),
     ]);
 
@@ -473,7 +471,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 
@@ -529,7 +527,7 @@ describe('Task: graphOrderTask', () => {
       }
     });
 
-    await listrTaskRunner<GraphCommandContext>([graphOrderTask(project.baseDir, options)]);
+    await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
 
     expect(existsSync(options.output)).toBe(true);
 

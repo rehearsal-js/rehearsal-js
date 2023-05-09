@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`applyRules() > the new grid should have all cells alive 1`] = `
+[
+  [
+    "X",
+    "X",
+    "X",
+    "X",
+  ],
+  [
+    "X",
+    "X",
+    "X",
+    "X",
+  ],
+  [
+    "X",
+    "X",
+    "X",
+    "X",
+  ],
+  [
+    "X",
+    "X",
+    "X",
+    "X",
+  ],
+]
+`;
+
+exports[`generateRandomGrid() > grid cells should all be the same 1`] = `
+[
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+  [
+    "P",
+    "P",
+    "P",
+    "P",
+    "P",
+  ],
+]
+`;

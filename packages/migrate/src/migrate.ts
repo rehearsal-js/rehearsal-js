@@ -1,8 +1,6 @@
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, extname, resolve } from 'node:path';
+import { resolve, join } from 'node:path';
 import findup from 'findup-sync';
-import { readJSON } from '@rehearsal/utils';
+import { readTSConfig, readJSON } from '@rehearsal/utils';
 import {
   PluginsRunner,
   RehearsalService,
@@ -11,6 +9,9 @@ import {
   type GlintService,
   DummyPlugin,
 } from '@rehearsal/service';
+import debug from 'debug';
+import ts from 'typescript';
+import fastGlob from 'fast-glob';
 import {
   DiagnosticFixPlugin,
   DiagnosticCommentPlugin,
@@ -21,105 +22,85 @@ import {
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
-import ts from 'typescript';
+import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 import {
-  addFilePathsForAddonModules,
-  createEmberAddonModuleNameMap,
   getGlintFixPlugin,
   getGlintReportPlugin,
   getGlintCommentPlugin,
   createGlintService,
 } from './glint-utils.js';
-import type { Logger } from 'winston';
 import type { Reporter } from '@rehearsal/reporter';
-import type { TsConfigJson } from 'type-fest';
+import type { CompilerOptions } from 'typescript';
+import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
-  basePath: string;
-  sourceFiles: Array<string>;
-  entrypoint: string;
-  configName?: string;
+  rootPath: string;
+  sourceFilesAbs: string[];
   reporter: Reporter; // Reporter
-  logger?: Logger;
   task?: { output: string };
+  ignore?: string[];
 };
 
 export type MigrateOutput = {
-  basePath: string;
+  rootPath: string;
   configFile: string;
-  migratedFiles: Array<string>;
+  sourceFilesAbs: string[];
 };
 
-const { findConfigFile, parseJsonConfigFileContent, readConfigFile, sys } = ts;
+const DEBUG_CALLBACK = debug('rehearsal:migrate');
+const { parseJsonConfigFileContent } = ts;
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
-  const basePath = resolve(input.basePath);
-  const sourceFiles = input.sourceFiles || [resolve(basePath, 'index.js')];
-  const configName = input.configName || 'tsconfig.json';
+  const basePath = resolve(input.rootPath);
+  // these will always be typescript files
+  const sourceFilesAbs = input.sourceFilesAbs;
   const reporter = input.reporter;
-  const logger = input.logger;
-  let entrypoint = input.entrypoint;
+  const ignore = input.ignore || [];
+  const configName = 'tsconfig.json';
   // output is only for tests
   const listrTask = input.task || { output: '' };
+  const commentTag = '@rehearsal';
+  const useGlint = await isGlintProject(basePath);
 
-  logger?.debug('migration started');
-  logger?.debug(`Base path: ${basePath}`);
-  logger?.debug(`sourceFiles: ${JSON.stringify(sourceFiles)}`);
+  DEBUG_CALLBACK('migration started');
+  DEBUG_CALLBACK(`Base path: ${basePath}`);
+  DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFilesAbs)}`);
 
-  const targetFiles = gitMove(sourceFiles, listrTask, basePath, logger);
-
-  const entrypointFullPath = resolve(basePath, entrypoint);
-  if (sourceFiles.includes(entrypointFullPath)) {
-    entrypoint = entrypoint.replace(/js$/, 'ts');
-  }
-
-  const configFile = findConfigFile(
-    basePath,
-    (filePath: string) => sys.fileExists(filePath),
-    configName
-  );
+  // read the tsconfig.json
+  const configFile = readTSConfig<TSConfig>(resolve(basePath, configName));
 
   if (!configFile) {
     const message = `Config file '${configName}' not found in '${basePath}'`;
-    logger?.error(message);
     throw Error(message);
   }
 
-  logger?.debug(`config file: ${configFile}`);
+  const tsConfigOptions = configFile.compilerOptions as CompilerOptions;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { config } = readConfigFile(configFile, (filePath: string, encoding?: string) =>
-    sys.readFile(filePath, encoding)
-  );
+  DEBUG_CALLBACK(`tsconfig file: ${configFile}`);
 
-  const { options, fileNames: someFiles } = parseJsonConfigFileContent(
-    config,
+  const { fileNames: someFiles } = parseJsonConfigFileContent(
+    configFile,
     ts.sys,
-    dirname(configFile),
+    basePath,
     {},
-    configFile
+    configName
   );
 
-  const fileNames = [...new Set([...someFiles, ...targetFiles])];
+  // these should NOT all go into the report
+  const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
+  const ignoredPaths = resolveIgnoredPaths(ignore, basePath, getExcludePatterns);
 
-  logger?.debug(`fileNames: ${JSON.stringify(fileNames)}`);
+  DEBUG_CALLBACK(`ignoredPaths: ${JSON.stringify(ignoredPaths)}`);
 
-  const commentTag = '@rehearsal';
+  // remove ignored paths from the list of files to migrate
+  const filesToMigrate = fileNames.filter((filePath) => !ignoredPaths.includes(filePath));
   const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
-  const useGlint = await isGlintProject(basePath);
-
-  if (useGlint) {
-    const rawTsConfig = (await readJSON(configFile)) as TsConfigJson;
-    const moduleNameMap = createEmberAddonModuleNameMap(basePath);
-    // Update the tsconfig with any module name mapping so that any subsequent type checking will
-    // be actually work if we happen to encounter any ember addons that specify a `moduleName`
-    await addFilePathsForAddonModules(configFile, rawTsConfig, moduleNameMap);
-  }
+  DEBUG_CALLBACK(`fileNames: ${JSON.stringify(filesToMigrate)}`);
 
   const service = useGlint
     ? await createGlintService(basePath)
-    : new RehearsalService(options, fileNames);
+    : new RehearsalService(tsConfigOptions, filesToMigrate);
 
   function isGlintService(
     service: GlintService | RehearsalService,
@@ -128,7 +109,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     return service && useGlint;
   }
 
-  const runner = new PluginsRunner({ basePath, service, reporter, logger })
+  const runner = new PluginsRunner({ basePath, service, reporter })
     // Resetting
     .queue(ReRehearsePlugin, {
       commentTag,
@@ -205,58 +186,10 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       reportErrors: true,
     });
 
-  yield* runner.run(fileNames, { log: (message: string) => (listrTask.output = message) });
+  yield* runner.run(filesToMigrate, { log: (message: string) => (listrTask.output = message) });
+
   // save report after all yields
-  reporter.saveCurrentRunToReport(basePath, entrypoint);
-}
-
-/**
- * Renames files to TS extension and use git move to keep edit history
- */
-export function gitMove(
-  sourceFiles: string[],
-  listrTask: { output: string },
-  basePath: string,
-  logger?: Logger
-): string[] {
-  return sourceFiles.map((sourceFile) => {
-    const ext = extname(sourceFile);
-
-    if (ext === '.hbs') {
-      return sourceFile;
-    }
-
-    const pos = sourceFile.lastIndexOf(ext);
-    const destFile = `${sourceFile.substring(0, pos)}`;
-    const tsFile = ext === '.gjs' ? `${destFile}.gts` : `${destFile}.ts`;
-    const dtsFile = `${destFile}.d.ts`;
-
-    if (sourceFile === tsFile) {
-      logger?.debug(`no-op ${sourceFile} is a .ts file`);
-    } else if (existsSync(tsFile)) {
-      logger?.debug(`Found ${tsFile} ???`);
-    } else if (existsSync(dtsFile)) {
-      logger?.debug(`Found ${dtsFile} ???`);
-      // Should prepend d.ts file if it exists to the new ts file.
-    } else {
-      const destFile = tsFile;
-
-      try {
-        // use git mv to keep the commit history in each file
-        // would fail if the file has not been tracked
-        execSync(`git mv ${sourceFile} ${tsFile}`, { cwd: basePath });
-      } catch (e) {
-        // use simple mv if git mv fails
-        execSync(`mv ${sourceFile} ${tsFile}`);
-      }
-      listrTask.output = `git mv ${sourceFile.replace(basePath, '')} to ${destFile.replace(
-        basePath,
-        ''
-      )}`;
-    }
-
-    return tsFile;
-  });
+  reporter.saveCurrentRunToReport(basePath);
 }
 
 async function readServiceMap(
@@ -274,4 +207,19 @@ async function readServiceMap(
   }
 
   return undefined;
+}
+
+export function resolveIgnoredPaths(
+  ignore: string[],
+  basePath: string,
+  excludePattern: () => any
+): string[] {
+  const ignoredPaths = ignore
+    .flatMap((glob) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      return fastGlob.sync(glob, { cwd: basePath, ignore: excludePattern() });
+    })
+    .map((filePath) => join(basePath, filePath));
+
+  return ignoredPaths;
 }
