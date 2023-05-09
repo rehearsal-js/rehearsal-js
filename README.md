@@ -1,7 +1,3 @@
-### **!NOTE:** _REHEARSAL IS A BETA RELEASE TOOL AND AN ACTIVE WORK IN PROGRESS. THE TOOL IS CURRENTLY BEING AUDITED FOR EARLY ACCESS AND BREAKING OFTEN. GENERAL USE IS NOT YET RECOMMENDED._
-
-<br/>
-
 # Rehearsal
 
 [![Build Status](https://github.com/rehearsal-js/rehearsal-js/workflows/CI/badge.svg)](https://github.com/rehearsal-js/rehearsal-js/actions?workflow=CI)
@@ -19,11 +15,69 @@ Once your source code is moved to TypeScript, Rehearsal will fix as many errors 
 
 Rehearsal can be executed both manually and automated. Rehearsal creates a system which is capable of testing nightly and beta releases of TypeScript so that you can receive early signals on potential breaking changes in the TypeScript compiler. Additionally, Rehearsal can autofix type errors flagged by the compiler. It tests your TypeScript project against a newer version of TypeScript, transforms the code to align it with the new TypeScript version and provides Rehearsal tasks which enable a manual type tighten for strictness.
 
-# Setup
+# Setup / Pre-Reqs
 
-Ensure your project has the following dependencies:
+Ensure your project has the following [pre-reqs](https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli/src/prereqs.ts) for dependencies and configurations:
 
-TBD
+## Dependencies
+These deps are the bare minimum versions and config required for rehearsal to work with type inference. All deps listed are >= the version specified.
+
+### Base For All Projects
+```
+  typescript: '4.9.0',
+  prettier: '2.0.0',
+  eslint: '8.0.0',
+  'eslint-import-resolver-typescript': '2.5.0',
+  'eslint-plugin-import': '2.0.0',
+  'eslint-plugin-node': '11.0.0',
+  'eslint-plugin-unicorn': '40.0.0',
+  '@typescript-eslint/eslint-plugin': '5.0.0',
+  '@typescript-eslint/parser': '5.0.0'
+```
+### Base + Ember
+```
+  '@glint/core': '1.0.0',
+  '@glint/environment-ember-loose': '1.0.0',
+  '@glint/environment-ember-template-imports': '1.0.0',
+  '@glint/template': '1.0.0',
+  'eslint-plugin-ember': '11.0.0',
+  'prettier-plugin-ember-template-tag': '0.3.0'
+```
+### Base + Glimmer
+```
+  '@glint/core': '1.0.0',
+  '@glint/environment-glimmerx': '1.0.0',
+  '@glint/template': '1.0.0',
+  'eslint-plugin-ember': '11.0.0',
+  '@glimmerx/prettier-plugin-component-templates': '0.6.0'
+```
+
+## ESLint Config
+ESlint Config file must set the parser to `@typescript-eslint/parser`
+
+## TSConfig
+The root tsconfig.json must have the following keys set.
+
+### Base For All Projects
+```
+compilerOptions: {
+  strict: true,
+  skipLibCheck: true,
+}
+```
+### Base + Ember
+```
+glint: {
+  environment: 'ember-loose',
+}
+```
+### Base + Glimmer
+```
+glint: {
+  environment: 'glimmerx',
+}
+```
+
 
 # Installation
 
@@ -72,76 +126,12 @@ src
         └── bb-file.js
 ```
 
-```bash
-yarn rehearsal graph
-TBD
-```
-
-```bash
-yarn rehearsal graph -e src/lib/a-file.js
-TBD
-```
-
-
-**Arguments**
-| Argument | Description |
-| -------- | ----------- |
-| `--entrypoint` `-e` | Directory or file path |
-
-**Example**
-
 ## `rehearsal move`
 ```
 yarn rehearsal move
 ```
 
 This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`) and git move against the targeted files in your project.
-
-If no arguments are passed it will **move** the same targeted files like the **graph** command.
-
-**Arguments**
-| Argument | Description |
-| -------- | ----------- |
-| `--entrypoint` `-e` | Directory or file path |
-
-If an entrypoint is provided, it will crawl its dependents and move those files as well.
-
-**Example**
-
-```bash
-yarn rehearsal move
-TBD
-```
-
-```bash
-yarn rehearsal move --entrypoint src/lib/a-file.js
-TBD
-```
-
-## `rehearsal fix`
-
-```bash
-yarn rehearsal fix
-```
-
-**Arguments**
-| Argument | Description |
-| -------- | ----------- |
-| `--entrypoint` `-e` | Directory or file path |
-| `--ci` | TBD |
-
-**Example**
-
-```bash
-yarn rehearsal fix
-TBD
- 85 JS files converted to TS
- 322 errors caught by rehearsal
- 156 have been fixed by rehearsal
- 166 errors need to be fixed manually
- -- 67 ts errors, marked by @ts-expect-error @rehearsal TODO
- -- 99 eslint errors, with details in the report
-```
 
 # Workflow
 
@@ -185,15 +175,14 @@ TBD
 
 # Rehearsal Reports
 
-Rehearsal will generate a report file in the `./rehearsal/` directory.
+Rehearsal will generate a report file in the process.cwd() directory.
 
 ```
-.rehearsal
-├── migrate-report.json
-└── migrate-report.sarif
+rehearsal-report.json
+rehearsal-report.sarif
 ```
 
-- The `migrate-report.*` file contains all of the information that Rehearsal has gathered during the migration process. It also contains the list of errors that need to be fixed manually.
+- The `rehearsal-report.*` file contains all of the information that Rehearsal has gathered during the fix process. It also contains the list of errors that need to be fixed manually.
 
 - The report is available with multiple [formatters](https://github.com/rehearsal-js/rehearsal-js/tree/master/packages/reporter/src/formatters) in JSON, MD, SARIF and SONARQUBE.
 
@@ -240,25 +229,3 @@ You will find out which types packages to add after you run rehearsal migrate an
 ## Known Limitations
 
 Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
-U
-
-# Packages
-
-| Folder                                    | Version                                                                                                              | Package                                                                  |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [packages/cli](./packages/cli/)           | [![npm version](https://badge.fury.io/js/@rehearsal%2Fcli.svg)](https://badge.fury.io/js/@rehearsal%2Fcli)           | [@rehearsal/cli](https://www.npmjs.com/package/@rehearsal/cli)           |
-| [packages/migrate](packages/migrate/)     | [![npm version](https://badge.fury.io/js/@rehearsal%2Fmigrate.svg)](https://badge.fury.io/js/@rehearsal%2Fmigrate)   | [@rehearsal/migrate](https://www.npmjs.com/package/@rehearsal/migrate)   |
-| [packages/reporter](./packages/reporter/) | [![npm version](https://badge.fury.io/js/@rehearsal%2Freporter.svg)](https://badge.fury.io/js/@rehearsal%2Freporter) | [@rehearsal/reporter](https://www.npmjs.com/package/@rehearsal/reporter) |
-| [packages/service](./packages/service/)   | [![npm version](https://badge.fury.io/js/@rehearsal%2Fservice.svg)](https://badge.fury.io/js/@rehearsal%2Fservice)   | [@rehearsal/service](https://www.npmjs.com/package/@rehearsal/service)   |
-| [packages/utils](./packages/utils/)       | [![npm version](https://badge.fury.io/js/@rehearsal%2Futils.svg)](https://badge.fury.io/js/@rehearsal%2Futils)       | [@rehearsal/utils](https://www.npmjs.com/package/@rehearsal/utils)       |
-
-# License
-
-BSD 2-Clause, see [LICENSE.md](LICENSE.md) for details
-
-
-# TODO
-- [ ] Improve Typing. Update with corret regen / report command.
-- [ ] Capture `--help` output from commands to add under Available Commands > Arguments
-- [ ] Update Packages list.
-- [ ] Add Setup guidance.
