@@ -41,7 +41,7 @@ const depsBasePreReq = {
   'eslint-import-resolver-typescript': '2.5.0',
   'eslint-plugin-import': '2.0.0',
   'eslint-plugin-node': '11.0.0',
-  'eslint-plugin-unicorn': '6.0.0',
+  'eslint-plugin-unicorn': '40.0.0',
   '@typescript-eslint/eslint-plugin': '5.0.0',
   '@typescript-eslint/parser': '5.0.0',
 };

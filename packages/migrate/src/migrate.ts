@@ -216,6 +216,7 @@ export function resolveIgnoredPaths(
 ): string[] {
   const ignoredPaths = ignore
     .flatMap((glob) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       return fastGlob.sync(glob, { cwd: basePath, ignore: excludePattern() });
     })
     .map((filePath) => join(basePath, filePath));
