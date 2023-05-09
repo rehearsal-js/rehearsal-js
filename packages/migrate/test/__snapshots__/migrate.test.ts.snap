@@ -303,6 +303,15 @@ export default class SomeComponent extends Component {
 "
 `;
 
+exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
+[
+  "<tmp-path>/packages/foo/package.json",
+  "<tmp-path>/packages/foo/tsconfig.json",
+  "<tmp-path>/packages/foo/with-qualified-service.ts",
+  "<tmp-path>/src/with-class.gts",
+]
+`;
+
 exports[`fix > with addon service > .gts 1`] = `
 "
 import type Foo from \\"my-addon/services/foo\\";

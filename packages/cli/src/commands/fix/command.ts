@@ -46,7 +46,8 @@ fixCommand
   .option('--deps', `follow packages in 'dependencies'`, false)
   .option(
     '--ignore [packagesOrGlobs...]',
-    `space deliminated list of packages or globs to ignore`,
+    `space deliminated list of packages or globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
+    parseCommaSeparatedList,
     []
   )
   .option(

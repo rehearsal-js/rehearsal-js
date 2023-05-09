@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { migrate, MigrateInput } from '../src/migrate.js';
+import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
+import { migrate, MigrateInput, resolveIgnoredPaths } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,6 +23,29 @@ function changeExtension(file: string, ext: string): string {
     ext,
     base: undefined,
   });
+}
+
+function cleanOutput(output: string, basePath: string): string {
+  const pathRegex = new RegExp(basePath, 'g');
+  const versionRegex = /(@rehearsal\/(move|migrate|graph|fix))(.+)/g;
+  return removeSpecialChars(
+    output.replace(pathRegex, '<tmp-path>').replace(versionRegex, '$1<test-version>')
+  );
+}
+
+function removeSpecialChars(input: string): string {
+  const specialCharRegex = /[^A-Za-z 0-9 .,?""!@#$%^&*()-_=+;:<>/\\|}{[\]`~\n]*/g;
+  return input
+    .replace(specialCharRegex, '')
+    .split('\n')
+    .map((line) => {
+      if (!line.trim()) {
+        return '';
+      }
+      return line;
+    })
+    .filter((line) => line.trim())
+    .join('\n');
 }
 
 const extLookup = {
@@ -481,6 +505,22 @@ describe('fix', () => {
 
     afterEach(() => {
       project.dispose();
+    });
+
+    test('resolveIgnoredPaths()', async () => {
+      await project.write();
+
+      const ignoredPaths = resolveIgnoredPaths(
+        ['packages/**/*', 'src/with-class.gts'],
+        project.baseDir,
+        getExcludePatterns
+      );
+      const sanitizedPaths = ignoredPaths.map((path) => {
+        return cleanOutput(path, project.baseDir);
+      });
+
+      expect(ignoredPaths.length).toBe(4);
+      expect(sanitizedPaths).toMatchSnapshot();
     });
 
     test('previously migrated .ts', async () => {

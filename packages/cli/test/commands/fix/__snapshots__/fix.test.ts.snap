@@ -355,10 +355,6 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [DATA] processing file: /app/helpers/repeat.ts
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/routes/classic-route.ts
-[DATA] processing file: /types/global.d.ts
-[DATA] processing file: /types/template-registry.d.ts
-[DATA] processing file: /types/ember-data/types/registries/model.d.ts
-[DATA] processing file: /types/ts-ember-app/index.d.ts
 [TITLE] Types Inferred
 [TITLE]   22 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal

@@ -11,6 +11,7 @@ import {
 } from '@rehearsal/service';
 import debug from 'debug';
 import ts from 'typescript';
+import fastGlob from 'fast-glob';
 import {
   DiagnosticFixPlugin,
   DiagnosticCommentPlugin,
@@ -21,7 +22,6 @@ import {
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
-import fastGlob from 'fast-glob';
 import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 import {
   getGlintFixPlugin,
@@ -88,11 +88,9 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   // these should NOT all go into the report
   const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
-  const ignoredPaths = ignore
-    .flatMap((glob) => {
-      return fastGlob.sync(glob, { cwd: basePath, ignore: getExcludePatterns() });
-    })
-    .map((filePath) => join(basePath, filePath));
+  const ignoredPaths = resolveIgnoredPaths(ignore, basePath, getExcludePatterns);
+
+  DEBUG_CALLBACK(`ignoredPaths: ${JSON.stringify(ignoredPaths)}`);
 
   // remove ignored paths from the list of files to migrate
   const filesToMigrate = fileNames.filter((filePath) => !ignoredPaths.includes(filePath));
@@ -209,4 +207,18 @@ async function readServiceMap(
   }
 
   return undefined;
+}
+
+export function resolveIgnoredPaths(
+  ignore: string[],
+  basePath: string,
+  excludePattern: () => any
+): string[] {
+  const ignoredPaths = ignore
+    .flatMap((glob) => {
+      return fastGlob.sync(glob, { cwd: basePath, ignore: excludePattern() });
+    })
+    .map((filePath) => join(basePath, filePath));
+
+  return ignoredPaths;
 }

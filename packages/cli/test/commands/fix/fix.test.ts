@@ -182,7 +182,14 @@ describe('Command: fix "ember-ts-app" fixture', () => {
 
   test('fix package with src arg and graph, ignores tests', async () => {
     const src = resolve(project.baseDir);
-    const flags = ['--graph', '--deps', '--rootPath', project.baseDir, '--ignore', 'tests/**/*'];
+    const flags = [
+      '--graph',
+      '--deps',
+      '--rootPath',
+      project.baseDir,
+      '--ignore',
+      'tests/**/*,types/**/*',
+    ];
 
     const result = await runBin('fix', [src], flags, {
       cwd: project.baseDir,

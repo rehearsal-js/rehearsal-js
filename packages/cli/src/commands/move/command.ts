@@ -3,8 +3,8 @@ import { join, resolve } from 'node:path';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import debug from 'debug';
+import { parseCommaSeparatedList, readJSON } from '@rehearsal/utils';
 import { createLogger, format, transports } from 'winston';
-import { readJSON } from '@rehearsal/utils';
 import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
 import type { PackageJson } from 'type-fest';
 
@@ -46,6 +46,7 @@ moveCommand
   .option(
     '--ignore [packagesOrGlobs...]',
     `space deliminated list of packages or globs to ignore`,
+    parseCommaSeparatedList,
     []
   )
   .option('-d, --dryRun', `do nothing; only show what would happen`, false)

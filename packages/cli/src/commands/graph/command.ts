@@ -1,5 +1,6 @@
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
+import { parseCommaSeparatedList } from '@rehearsal/utils';
 import { graphOrderTask } from './tasks/graphOrderTask.js';
 import type { CommandContext, GraphCommandOptions } from '../../types.js';
 
@@ -16,6 +17,7 @@ graphCommand
   .option(
     '--ignore [packagesOrGlobs...]',
     `space deliminated list of packages or globs to ignore`,
+    parseCommaSeparatedList,
     []
   )
   .addOption(
