@@ -117,9 +117,7 @@ async function fix(src: string, options: FixCommandOptions): Promise<void> {
       concurrent: false,
     }).run();
   } catch (e) {
-    if (e instanceof Error) {
-      winstonLogger.error(`${e.message + '\n' + (e.stack || '')}`);
-    }
+    // listr will log the error we just need to exit
   }
 }
 
