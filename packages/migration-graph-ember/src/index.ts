@@ -9,6 +9,8 @@ export {
   requirePackageMain,
 } from './utils/ember.js';
 
+export { getEmberExcludePatterns } from './utils/excludes.js';
+
 export { discoverEmberPackages } from './utils/discover-ember-packages.js';
 
 export {

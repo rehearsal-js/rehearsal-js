@@ -16,6 +16,8 @@ export class ReRehearsePlugin extends Plugin<ReRehearsePluginOptions> {
   async run(): Promise<string[]> {
     const { fileName, context, options } = this;
 
+    DEBUG_CALLBACK(`this: %O`, this);
+
     let text = context.service.getFileText(fileName);
     const sourceFile = context.service.getSourceFile(fileName);
     const tagStarts = [...text.matchAll(new RegExp(options.commentTag, 'g'))].map((m) => m.index!);

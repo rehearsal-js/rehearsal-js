@@ -16,7 +16,6 @@ export function initTask(
       const { rootPath, graph } = options;
 
       if (graph) {
-        ctx.package = src;
         [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
       } else {
         [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'js');

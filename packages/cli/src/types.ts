@@ -56,7 +56,6 @@ export type CommandContext = {
   migrationOrder?: { packages: PackageEntry[] };
   source?: string;
   packageEntry?: string;
-  package?: string;
 };
 
 /*
@@ -111,6 +110,7 @@ export type GraphTaskOptions = {
   deps: boolean;
   ignore: string[];
   output?: string;
+  skipPrompt?: boolean;
 };
 
 export type GraphTasks = {
