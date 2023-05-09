@@ -9,19 +9,25 @@
 
 Rehearsal is a CLI tool which helps to improve the experience of both migrating to TypeScript and once migrated, upgrading your repo to future versions of TypeScript.
 
-## Migrate
+## How does Rehearsal help with migration?
 
-Rehearsal Migrate can be executed both manually and automated. It is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights. Once migrated to TypeScript, Rehearsal tasks enable a manual type tighten for strictness. After all tasks have been completed, Rehearsal Upgrade takes over. All in all, Rehearsal Migrate will increase your productivity when migrating a given JavaScript project to TypeScript.
+Rehearsal is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights.
 
-## Upgrade
+Once your source code is moved to TypeScript, Rehearsal will fix as many errors as possible. Unresolved errors will be annotated and surpressed with with a [Rehearsal TODO](#what-is-a-rehearsal-todo). This allows for safe iteration, to a strictly typed project.
 
-Rehearsal Upgrade can be executed both manually and automated. Rehearsal creates a system which is capable of testing nightly and beta releases of TypeScript so that you can receive early signals on potential breaking changes in the TypeScript compiler. Additionally, Rehearsal can autofix type errors flagged by the compiler. It tests your TypeScript project against a newer version of TypeScript, transforms the code to align it with the new TypeScript version and provides Rehearsal tasks which enable a manual type tighten for strictness.
+## How does Rehearsal help with upgrading versions of TypeScript?
 
-# CLI
+Rehearsal can be executed both manually and automated. Rehearsal creates a system which is capable of testing nightly and beta releases of TypeScript so that you can receive early signals on potential breaking changes in the TypeScript compiler. Additionally, Rehearsal can autofix type errors flagged by the compiler. It tests your TypeScript project against a newer version of TypeScript, transforms the code to align it with the new TypeScript version and provides Rehearsal tasks which enable a manual type tighten for strictness.
 
-## Installation
+# Setup
 
-Add `@rehearsal/cli` to your project as a **devDepndency**.
+Ensure your project has the following dependencies:
+
+TBD
+
+# Installation
+
+Add `@rehearsal/cli` to your project as a **devDependency**.
 
 ```bash
 yarn add -D @rehearsal/cli
@@ -29,6 +35,9 @@ yarn add -D @rehearsal/cli
 pnpm add -D @rehearsal/cli
 ```
 
+Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
+
+# Usage
 Once installed, invoke using your package manager:
 
 ```bash
@@ -37,90 +46,196 @@ yarn rehearsal
 pnpm rehearsal
 ```
 
-Currently there are two subcommands (`migrate`), and a lot of options/flag. Run any command with flag `-h` to check the detailed information.
+## Available Commands
 
-Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
+### `rehearal graph` (optional)
 
-## Quick Start - Migrate
+The graph command produces a package and file import graph for a project. This is useful for seeing what files will be migrated and moved.
+
+If your project is very large (a monorepo or workspace) you can use the rehearsal graph command to find what is the leaf-most package and migrate it first.
+
+Using the leaf-most file or package, will ensure any settled types, will propagate to dependents, improving the overall migration experience.
 
 ```bash
-# cd into your javascript project
-cd my-js-project
-
-# Add rehearsal cli as a devDependency
-pnpm add -D @rehearsal/cli
-
-# run rehearsal migrate with an entrypoint to your source file directory
-# entrypiont should be inside your project root directory (where you run rehearsal migrate)
-~/my-js-project pnpm rehearsal migrate --entrypoint ./src
-
-# ... rehearsal does some magic
-
-# @rehearsal/migrate 1.0.2-beta
-# ✔ Initialize
-# ✔ Install dependencies
-# ✔ Create tsconfig.json
-# ✔ Create eslint config
-# ✔ Add package scripts
-# ✔ Migration Complete
-#   85 JS files converted to TS
-#   322 errors caught by rehearsal
-#   156 have been fixed by rehearsal
-#   166 errors need to be fixed manually
-#   -- 67 ts errors, marked by @ts-expect-error @rehearsal TODO
-#   -- 99 eslint errors, with details in the report
+yarn rehearsal graph
 ```
 
-Rehearsal Migrate has performed the following tasks:
-
-- Initialize: Rehearsal will scan the project dependency graph and determine the proper migration order, from leaf to root. This is critical for proper type inference. Rehearsal will handle file extension changes from .js to .ts via a git mv command. For partial migrations, Rehearsal will manage the migration state in a generated file which you can checkin for migration handoff.
-- Install dev-dependencies: Rehearsal requires the following [dev-dependencies](https://github.com/rehearsal-js/rehearsal-js/blob/1f1b5f9499c9a2b93999dd0da274110c184a104b/packages/cli/src/commands/migrate/tasks/dependency-install.ts#L6-L15) to be installed for proper type inference and will handle this work for you.
-- Create tsconfig.json: Rehearsal will create a tsconfig.json file with the proper settings for your project with strictness enabled. If an tsconfig.json file already exists, Rehearsal will add the appropriate settings to it for strictness.
-- Create eslint config: Rehearsal will create an eslint config file with the proper settings for your project. If an eslint config file already exists, Rehearsal will extend it into a new file called ".rehearsal-eslintrc.js" in the root directory.
-- Add package scripts: Rehearsal will add package.json scripts for tsc build `'build:tsc': 'tsc -b'` and lint `'lint:tsc': 'tsc --noEmit'`.
-- Migration Complete: Rehearsal has completed the migration process. It will report the number of files converted to TypeScript, the number of errors caught by Rehearsal, the number of errors fixed by Rehearsal, and the number of errors that need to be fixed manually. All of this information is also available in the report file in the "./rehearsal/" directory.
-
-## Interactive Mode - Migrate
-
-Interactive mode will run by default. Rehearsal will prompt you to confirm each step of the migration process. This is useful if you want to review the changes before committing. If you want to skip interactive mode, you can use the flag `--ci`.
-
-## Migrate by Directory
-
-With the flag `--entrypoint` or `-e`, Rehearsal will migrate by directory. If you run `migrate -e directoryA` and `migrate -e directoryB` sequentially, Rehearsal will give you a report which merges both runs.
-
-## Rehearsal Reports
-
-Rehearsal will generate a report file in the "./rehearsal/" directory. This report file contains all of the information that Rehearsal has gathered during the migration process. It also contains the list of errors that need to be fixed manually. The report is available with multiple [formatters](https://github.com/rehearsal-js/rehearsal-js/tree/master/packages/reporter/src/formatters) in JSON, MD, SARIF and SONARQUBE.
-
-In combination with the VSCode SARIF Viewer extension, you can view the SARIF report in VSCode and easily navigate to the errors from the report directly into your code. Additionally Rehearsal will inline `@ts-expect-error @rehearsal TODO` comments in the code for each error.
-
-## Optional Config File
-
-Rehearsal also can read from a custom user config file. This is useful if you want to customize the migration process. For example, you can add additional dependencies to be installed during the migration process. You can also add custom setup tasks to be run during the migration process. The config file is a JSON file with the following structure:
-
-**rehearsal-config.json**
-
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/rehearsal-js/rehearsal-js/master/packages/cli/rehearsal-config-schema.json",
-  "migrate": {
-    "install": {
-      "devDependencies": ["foo", "bar"],
-      "dependencies": ["baz"]
-    },
-    "setup": {
-      "ts": {
-        "command": "echo",
-        "args": ["run custom ts setup"]
-      },
-      "lint": {
-        "command": "echo",
-        "args": ["run custom lint setup"]
-      }
-    }
-  }
-}
+Given a project:
 ```
+src
+├──index.js
+└── lib
+    ├── a-file.js
+    ├── b-file.js
+    └── nested
+        ├── aa-file.js
+        └── bb-file.js
+```
+
+```bash
+yarn rehearsal graph
+TBD
+```
+
+```bash
+yarn rehearsal graph -e src/lib/a-file.js
+TBD
+```
+
+
+**Arguments**
+| Argument | Description |
+| -------- | ----------- |
+| `--entrypoint` `-e` | Directory or file path |
+
+**Example**
+
+## `rehearsal move`
+```
+yarn rehearsal move
+```
+
+This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`) and git move against the targeted files in your project.
+
+If no arguments are passed it will **move** the same targeted files like the **graph** command.
+
+**Arguments**
+| Argument | Description |
+| -------- | ----------- |
+| `--entrypoint` `-e` | Directory or file path |
+
+If an entrypoint is provided, it will crawl its dependents and move those files as well.
+
+**Example**
+
+```bash
+yarn rehearsal move
+TBD
+```
+
+```bash
+yarn rehearsal move --entrypoint src/lib/a-file.js
+TBD
+```
+
+## `rehearsal fix`
+
+```bash
+yarn rehearsal fix
+```
+
+**Arguments**
+| Argument | Description |
+| -------- | ----------- |
+| `--entrypoint` `-e` | Directory or file path |
+| `--ci` | TBD |
+
+**Example**
+
+```bash
+yarn rehearsal fix
+TBD
+ 85 JS files converted to TS
+ 322 errors caught by rehearsal
+ 156 have been fixed by rehearsal
+ 166 errors need to be fixed manually
+ -- 67 ts errors, marked by @ts-expect-error @rehearsal TODO
+ -- 99 eslint errors, with details in the report
+```
+
+# Workflow
+
+For a given project like:
+
+```
+src
+├──index.js
+└── lib
+    ├── a-file.js
+    ├── b-file.js
+    └── nested
+        ├── aa-file.js
+        └── bb-file.js
+```
+
+Optioanl, look at the graph of files, and determine which files should be migrated.
+
+```
+yarn rehearsal graph
+TBD
+
+yarn rehearsal graph -e src/lib/a-file.js
+TBD
+```
+
+Use  `rehearsal move` to move files to TypeScript.
+```
+yarn rehearsal move -e src/lib/a-file.js
+files renamed to:
+TBD
+```
+
+Run **rehearsal fix** to fix and report any issues.
+```
+yarn rehearsal fix
+TBD
+```
+
+
+
+# Rehearsal Reports
+
+Rehearsal will generate a report file in the `./rehearsal/` directory.
+
+```
+.rehearsal
+├── migrate-report.json
+└── migrate-report.sarif
+```
+
+- The `migrate-report.*` file contains all of the information that Rehearsal has gathered during the migration process. It also contains the list of errors that need to be fixed manually.
+
+- The report is available with multiple [formatters](https://github.com/rehearsal-js/rehearsal-js/tree/master/packages/reporter/src/formatters) in JSON, MD, SARIF and SONARQUBE.
+
+- You can [view the SARIF report in VSCode](https://marketplace.visualstudio.com/items?itemName=MS-SarifVSCode.sarif-viewer) and easily navigate to the errors from the report directly into your code.
+
+- Additionally Rehearsal will inline `@ts-expect-error @rehearsal TODO` comments in the code for each error.
+
+## What is a `@rehearsal TODO`
+
+A Rehearsal TODO is a comment which provides insight to a developer on exactly what and where the TypeScript compiler has flagged an issue.
+
+An example of a @rehearsal TODO:
+```typescript
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'id' does not exist on type 'object'. */
+let id = entityInfo.id;
+```
+
+- `@ts-expect-error` is an assertion that the following line will have a type error and the TypeScript compiler should ignore it.
+The TypeScript error that we need to address is: TS2339: Property 'id' does not exist on type 'object'.
+
+[View the list of rehearsal's supported fixes](https://github.com/rehearsal-js/rehearsal-js/blob/master/Supported-Fixes.md)
+
+## How to fix a `@rehearsal TODO`
+```typescript
+/* @ts-expect-error @rehearsal TODO TS2339: Property 'id' does not exist on type 'object'. */
+let id = entityInfo.id;
+```
+- In this case the entityInfo object would need to declare that it has a property called id through a type or interface.
+- Once fixed, if you open your IDE (VSCode for example) you should notice a **red squiggly** underline to the `@ts-expect-error` annotation. The red squiggle underline, is TypeScript communicating that expected error will no longer occure if this were to compile.
+
+
+## Improve Typing
+You can improve typing by adding additional typed packages to the project. For example:
+
+```
+@types/node
+@types/jest
+@types/mocha
+```
+
+You will find out which types packages to add after you run rehearsal migrate and when you inspect the rehearsal TODOS. Once you add these packages, run `rehearsal fix --report`
+
 
 ## Known Limitations
 
@@ -140,3 +255,10 @@ U
 # License
 
 BSD 2-Clause, see [LICENSE.md](LICENSE.md) for details
+
+
+# TODO
+- [ ] Improve Typing. Update with corret regen / report command.
+- [ ] Capture `--help` output from commands to add under Available Commands > Arguments
+- [ ] Update Packages list.
+- [ ] Add Setup guidance.
