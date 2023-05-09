@@ -57,12 +57,12 @@ export function initTask(
 
         [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(ctx.packageAbs, ctx.projectType, options.skipChecks);
+        preFlightCheck(ctx.packageAbs, ctx.projectType);
       } else {
         // grab all the ts files in the project
         // expectation is rehearsal move has already been run on the source
         // expect a tsconfig.json file in rootPath
-        preFlightCheck(rootPath, ctx.projectType, options.skipChecks);
+        preFlightCheck(rootPath, ctx.projectType);
 
         [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'ts');
       }
@@ -83,7 +83,7 @@ export function preFlightCheck(
   projectType: ProjectType,
   isSkipped = false
 ): void {
-  // FOR LOCAL DEVELOPMENT ONLY! SKIP ALL PRE-REQ CHECKS
+  // FOR LOCAL DEVELOPMENT TESTING ONLY! SKIP ALL PRE-REQ CHECKS
   if (isSkipped) {
     return;
   }

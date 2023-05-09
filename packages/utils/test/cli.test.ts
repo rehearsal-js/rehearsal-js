@@ -313,11 +313,9 @@ describe('utils', () => {
         compilerOptions: {
           strict: false,
           skipLibCheck: false,
-          noEmit: true,
         },
         glint: {
-          environment: ['foo'],
-          checkStandaloneTemplates: true,
+          environment: 'foo',
         },
       })
     ).toThrowErrorMatchingSnapshot();

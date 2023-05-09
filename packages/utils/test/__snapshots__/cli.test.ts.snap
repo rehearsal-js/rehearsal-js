@@ -14,14 +14,10 @@ exports[`utils > isTSConfigPreReq() 1`] = `
 {
   \\"compilerOptions\\": {
     \\"strict\\": false,
-    \\"skipLibCheck\\": false,
-    \\"noEmit\\": true
+    \\"skipLibCheck\\": false
   },
   \\"glint\\": {
-    \\"environment\\": [
-      \\"foo\\"
-    ],
-    \\"checkStandaloneTemplates\\": true
+    \\"environment\\": \\"foo\\"
   }
 }"
 `;

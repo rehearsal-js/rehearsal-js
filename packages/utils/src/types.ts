@@ -9,28 +9,17 @@ export interface GitDescribe {
 
 export interface TSConfig extends TsConfigJson {
   glint?: {
-    environment?: string[];
+    environment: string | Array<string> | Record<string, unknown>;
     checkStandaloneTemplates?: boolean;
   };
 }
 
-export type TSConfigBase = {
+export type PreReqTSConfig = {
   compilerOptions: {
     strict: boolean;
     skipLibCheck: boolean;
   };
-};
-
-export type TSConfigEmber = TSConfigBase & {
-  glint: {
-    environment: string[];
-    checkStandaloneTemplates: boolean;
-  };
-};
-
-export type TSConfigGlimmer = TSConfigBase & {
-  glint: {
-    environment: string[];
-    checkStandaloneTemplates: boolean;
+  glint?: {
+    environment: string;
   };
 };

@@ -1,13 +1,7 @@
 // ! these should be the bare minimum versions and config required for rehearsal to work with type inference
 // ! deps are >= the version specified
 
-import type {
-  PreReqs,
-  ProjectType,
-  TSConfigBase,
-  TSConfigEmber,
-  TSConfigGlimmer,
-} from './types.js';
+import type { PreReqs, ProjectType, PreReqTSConfig } from './types.js';
 
 // node package.json config must be gte 14
 const nodeBasePrereq = '14';
@@ -16,7 +10,7 @@ const nodeBasePrereq = '14';
 const eslintBasePrereq = '@typescript-eslint/parser';
 
 // tsconfig
-const tsconfigBasePrereq: TSConfigBase = {
+const tsconfigBasePrereq: PreReqTSConfig = {
   compilerOptions: {
     strict: true,
     skipLibCheck: true,
@@ -24,29 +18,27 @@ const tsconfigBasePrereq: TSConfigBase = {
 };
 
 // tsconfig ember app/addon
-const tsconfigEmberPrereq: TSConfigEmber = {
+const tsconfigEmberPrereq: PreReqTSConfig = {
   ...tsconfigBasePrereq,
   glint: {
-    environment: ['ember-loose', 'ember-template-imports'],
-    checkStandaloneTemplates: true,
+    environment: 'ember-loose',
   },
 };
 
 // tsconfig glimmer
-const tsconfigGlimmerPrereq: TSConfigGlimmer = {
+const tsconfigGlimmerPrereq: PreReqTSConfig = {
   ...tsconfigBasePrereq,
   glint: {
-    environment: ['glimmerx'],
-    checkStandaloneTemplates: true,
+    environment: 'glimmerx',
   },
 };
 
 // pre-req dependencies for rehearsal. doesn't matter if they are deps or devDeps
 const depsBasePreReq = {
-  typescript: '5.0.0',
+  typescript: '4.9.0',
   prettier: '2.0.0',
   eslint: '8.0.0',
-  'eslint-import-resolver-typescript': '3.0.0',
+  'eslint-import-resolver-typescript': '2.5.0',
   'eslint-plugin-import': '2.0.0',
   'eslint-plugin-node': '11.0.0',
   'eslint-plugin-unicorn': '6.0.0',
@@ -61,7 +53,6 @@ const depsEmberPreReq = {
   '@glint/environment-ember-loose': '1.0.0',
   '@glint/environment-ember-template-imports': '1.0.0',
   '@glint/template': '1.0.0',
-  'ember-cli-typescript': '5.0.0',
   'eslint-plugin-ember': '11.0.0',
   'prettier-plugin-ember-template-tag': '0.3.0',
 };

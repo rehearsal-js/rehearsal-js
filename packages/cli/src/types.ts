@@ -1,4 +1,4 @@
-import type { PackageJson, TsConfigJson } from 'type-fest';
+import type { PackageJson } from 'type-fest';
 // eslint-disable-next-line no-restricted-imports -- type import
 import type { Formatters } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports -- type import
@@ -13,44 +13,27 @@ export type PackageSelection = {
 };
 
 export type ProjectType = 'base-ts' | 'ember' | 'glimmer';
-export type TSConfigBase = {
+
+export type PreReqTSConfig = {
   compilerOptions: {
     strict: boolean;
     skipLibCheck: boolean;
   };
-};
-
-export type TSConfigEmber = TSConfigBase & {
-  glint: {
-    environment: string[];
-    checkStandaloneTemplates: boolean;
-  };
-};
-
-export type TSConfigGlimmer = TSConfigBase & {
-  glint: {
-    environment: string[];
-    checkStandaloneTemplates: boolean;
+  glint?: {
+    environment: string;
   };
 };
 
 export type PreReqs = {
   node: string;
   eslint: string;
-  tsconfig: TSConfigBase | TSConfigEmber | TSConfigGlimmer;
+  tsconfig: PreReqTSConfig;
   deps: Record<string, string>;
 };
 
 export type MenuMap = {
   [key: string]: string;
 };
-
-export interface TSConfig extends TsConfigJson {
-  glint?: {
-    environment?: string[];
-    checkStandaloneTemplates?: boolean;
-  };
-}
 
 /*
   ALL COMMANDS
@@ -109,7 +92,6 @@ export type FixCommandOptions = {
   devDeps: boolean;
   deps: boolean;
   ignore: string[];
-  skipChecks: boolean;
 };
 
 /*

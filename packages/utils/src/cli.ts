@@ -13,8 +13,8 @@ import micromatch from 'micromatch';
 import yaml from 'js-yaml';
 import { getTSConfigCompilerOptionsCanonical } from '@rehearsal/ts-utils';
 import { execa, execaSync } from 'execa';
-import { TSConfig } from './types.js';
 
+import type { TSConfig, PreReqTSConfig } from './types.js';
 import type { PackageJson } from 'type-fest';
 import type { Options } from 'execa';
 import type { TSConfigCompilerOptions } from '@rehearsal/ts-utils';
@@ -742,7 +742,7 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
   return true;
 }
 
-export function isTSConfigPreReq(basePath: string, requiredTSConfig: TSConfig): boolean {
+export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSConfig): boolean {
   if (!requiredTSConfig) {
     return true;
   }
@@ -783,54 +783,37 @@ export function isNodePreReq(requiredNode: string): boolean {
   return true;
 }
 
-export function isTSConfigGlintPreReq(
+function isTSConfigGlintPreReq(
   tsConfigPath: string,
-  requiredTSConfigGlint: Pick<TSConfig, 'glint'>,
+  requiredTSConfigGlint: Pick<PreReqTSConfig, 'glint'>,
   message?: string
 ): void {
   // the glint key isn't supported by with ts API so we have to grab it manually
   const { glint } = readTSConfig<TSConfig>(tsConfigPath);
   const { glint: glintRequired } = requiredTSConfigGlint;
 
-  if (!glint) {
+  if (!glint && glintRequired) {
     throw new Error(`"glint" key and options missing in tsconfig.json. ${message}`);
-  } else {
-    if (glintRequired) {
-      // check if the glint key has all the required keys
-      const missingKeys = Object.keys(glintRequired).filter(
-        (key) => !Object.keys(glint).includes(key)
+  }
+
+  if (glint && glintRequired) {
+    // check if the glint key has all the required keys
+    const missingKeys = Object.keys(glintRequired).filter(
+      (key) => !Object.keys(glint).includes(key)
+    );
+    if (missingKeys.length > 0) {
+      throw new Error(
+        `"glint" key is missing the following options in tsconfig.json: ${missingKeys.join(
+          ', '
+        )}. ${message}`
       );
-      if (missingKeys.length > 0) {
-        throw new Error(
-          `"glint" key is missing the following options in tsconfig.json: ${missingKeys.join(
-            ', '
-          )}. ${message}`
-        );
-      }
+    }
 
-      // check if the glint values are the same
-      if (glint.checkStandaloneTemplates !== glintRequired.checkStandaloneTemplates) {
-        throw new Error(
-          `"glint.checkStandaloneTemplates" value is incorrect in tsconfig.json. ${message}`
-        );
-      }
-
-      if (glintRequired.environment && glint.environment) {
-        const glintEnv = glint.environment;
-
-        // check if the glint.environment array contains all of the requiredTSConfig.glint.environment in any order
-        const missingEnvironments = glintRequired.environment.filter(
-          (env: string) => !glintEnv.includes(env)
-        );
-
-        if (missingEnvironments.length > 0) {
-          throw new Error(
-            `"glint.environment" is missing the following environments in tsconfig.json: ${missingEnvironments.join(
-              ', '
-            )}. ${message}`
-          );
-        }
-      }
+    // this is default true, so if its explicitly set to false throw
+    if (glint.checkStandaloneTemplates === false) {
+      throw new Error(
+        `"glint.checkStandaloneTemplates" value is incorrect in tsconfig.json. ${message}`
+      );
     }
   }
 }

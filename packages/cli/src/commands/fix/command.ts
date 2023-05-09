@@ -62,12 +62,6 @@ fixCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .addOption(
-    new Option('--skipChecks', '-- HIDDEN LOCAL DEV TESTING ONLY SKIPS PREFLIGHT CHECKS --')
-      .default(false)
-      .argParser(() => false)
-      .hideHelp()
-  )
   .action(async (src: string, options: FixCommandOptions) => {
     await fix(src, options);
   });
