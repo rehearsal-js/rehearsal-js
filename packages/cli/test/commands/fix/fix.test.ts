@@ -179,4 +179,17 @@ describe('Command: fix "ember-ts-app" fixture', () => {
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
+
+  test('fix package with src arg and graph, ignores tests', async () => {
+    const src = resolve(project.baseDir);
+    const flags = ['--graph', '--deps', '--rootPath', project.baseDir, '--ignore', 'tests/**/*'];
+
+    const result = await runBin('fix', [src], flags, {
+      cwd: project.baseDir,
+    });
+
+    // tests dir should NOT be in the output
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
 });

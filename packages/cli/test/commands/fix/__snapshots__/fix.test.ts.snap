@@ -331,3 +331,46 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 `;
 
 exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph 2`] = `""`;
+
+exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores tests 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /app/app.js
+[DATA] processing file: /app/router.js
+[DATA] processing file: /app/components/ember-component.ts
+[DATA] processing file: /app/components/foo.ts
+[DATA] processing file: /app/components/js-component.js
+[DATA] processing file: /app/components/qux.ts
+[DATA] processing file: /app/components/template-only-module.ts
+[DATA] processing file: /app/components/wrapper-component.ts
+[DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
+[DATA] processing file: /app/controllers/classic-route.ts
+[DATA] processing file: /app/helpers/affix.ts
+[DATA] processing file: /app/helpers/repeat.ts
+[DATA] processing file: /app/pods/components/baz/component.ts
+[DATA] processing file: /app/routes/classic-route.ts
+[DATA] processing file: /types/global.d.ts
+[DATA] processing file: /types/template-registry.d.ts
+[DATA] processing file: /types/ember-data/types/registries/model.d.ts
+[DATA] processing file: /types/ts-ember-app/index.d.ts
+[TITLE] Types Inferred
+[TITLE]   22 errors caught by rehearsal
+[TITLE]   2 have been fixed by rehearsal
+[TITLE]   20 errors need to be fixed manually
+[TITLE]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 2 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   22 errors caught by rehearsal
+[SUCCESS]   2 have been fixed by rehearsal
+[SUCCESS]   20 errors need to be fixed manually
+[SUCCESS]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 2 eslint errors, with details in the report"
+`;
+
+exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and graph, ignores tests 2`] = `""`;

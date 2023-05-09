@@ -1,4 +1,4 @@
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
 import findup from 'findup-sync';
 import { readTSConfig, readJSON } from '@rehearsal/utils';
 import {
@@ -21,12 +21,14 @@ import {
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
 } from '@rehearsal/plugins';
+import fastGlob from 'fast-glob';
 import {
   getGlintFixPlugin,
   getGlintReportPlugin,
   getGlintCommentPlugin,
   createGlintService,
 } from './glint-utils.js';
+import { getExcludePatterns } from '@rehearsal/migration-graph-shared';
 import type { Reporter } from '@rehearsal/reporter';
 import type { CompilerOptions } from 'typescript';
 import type { TSConfig } from '@rehearsal/utils';
@@ -36,6 +38,7 @@ export type MigrateInput = {
   sourceFilesAbs: string[];
   reporter: Reporter; // Reporter
   task?: { output: string };
+  ignore?: string[];
 };
 
 export type MigrateOutput = {
@@ -52,6 +55,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   // these will always be typescript files
   const sourceFilesAbs = input.sourceFilesAbs;
   const reporter = input.reporter;
+  const ignore = input.ignore || [];
   const configName = 'tsconfig.json';
   // output is only for tests
   const listrTask = input.task || { output: '' };
@@ -84,13 +88,21 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   // these should NOT all go into the report
   const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
+  const ignoredPaths = ignore
+    .flatMap((glob) => {
+      return fastGlob.sync(glob, { cwd: basePath, ignore: getExcludePatterns() });
+    })
+    .map((filePath) => join(basePath, filePath));
+
+  // remove ignored paths from the list of files to migrate
+  const filesToMigrate = fileNames.filter((filePath) => !ignoredPaths.includes(filePath));
   const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
-  DEBUG_CALLBACK(`fileNames: ${JSON.stringify(fileNames)}`);
+  DEBUG_CALLBACK(`fileNames: ${JSON.stringify(filesToMigrate)}`);
 
   const service = useGlint
     ? await createGlintService(basePath)
-    : new RehearsalService(tsConfigOptions, fileNames);
+    : new RehearsalService(tsConfigOptions, filesToMigrate);
 
   function isGlintService(
     service: GlintService | RehearsalService,
@@ -176,7 +188,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       reportErrors: true,
     });
 
-  yield* runner.run(fileNames, { log: (message: string) => (listrTask.output = message) });
+  yield* runner.run(filesToMigrate, { log: (message: string) => (listrTask.output = message) });
 
   // save report after all yields
   reporter.saveCurrentRunToReport(basePath);

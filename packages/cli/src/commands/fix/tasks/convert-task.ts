@@ -19,7 +19,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): 
       const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
       const { getReportSummary } = await import('../../../helpers/report.js');
 
-      const { rootPath } = options;
+      const { rootPath, ignore } = options;
       const { projectName, sourceFilesAbs } = ctx;
 
       // If there is no access to tsc binary throw
@@ -46,6 +46,7 @@ export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): 
           sourceFilesAbs: ctx.sourceFilesAbs,
           reporter,
           task,
+          ignore,
         };
 
         const migratedFiles = [];
