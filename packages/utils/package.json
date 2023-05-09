@@ -54,7 +54,8 @@
     "semver": "^7.3.8",
     "simple-git": "^3.17.0",
     "type-fest": "^3.8.0",
-    "which": "^3.0.0"
+    "which": "^3.0.0",
+    "debug": "^4.3.4"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",

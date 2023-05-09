@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
 import findupSync from 'findup-sync';
+import debug from 'debug';
 import json5 from 'json5';
 import { valid } from 'semver';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
@@ -18,6 +19,8 @@ import type { TSConfig, PreReqTSConfig } from './types.js';
 import type { PackageJson } from 'type-fest';
 import type { Options } from 'execa';
 import type { TSConfigCompilerOptions } from '@rehearsal/ts-utils';
+
+const DEBUG_CALLBACK = debug('rehearsal:utils:cli');
 
 export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 export const git: SimpleGit = simpleGit({
@@ -672,6 +675,10 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
   const missingDeps = Object.keys(requiredDeps).filter(
     (dep) => !Object.keys(packageJSONDeps).includes(extractDepName(dep))
   );
+
+  DEBUG_CALLBACK('basePath', basePath);
+  DEBUG_CALLBACK('packageJSONDeps', packageJSONDeps);
+  DEBUG_CALLBACK('missingDeps', missingDeps);
 
   // loop over the packageJSONDeps and compare the versions against the requiredDeps
   for (const dep in packageJSONDeps) {

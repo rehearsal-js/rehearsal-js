@@ -57,7 +57,7 @@ export function initTask(
 
         [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(ctx.packageAbs, ctx.projectType);
+        preFlightCheck(rootPath, ctx.projectType);
       } else {
         // grab all the ts files in the project
         // expectation is rehearsal move has already been run on the source
