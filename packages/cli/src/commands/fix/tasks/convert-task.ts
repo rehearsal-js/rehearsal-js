@@ -11,7 +11,6 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:fix:convert-task');
 export function convertTask(options: FixCommandOptions, _ctx?: CommandContext): ListrTask {
   return {
     title: 'Infer Types',
-    enabled: (): boolean => !options.dryRun,
     task: async (ctx: CommandContext, task): Promise<void> => {
       // Because we have to eagerly import all the tasks we need to lazily load these
       // modules because they refer to typescript which may or may not be installed

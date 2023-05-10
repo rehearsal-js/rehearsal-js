@@ -68,9 +68,8 @@ export function initTask(
       DEBUG_CALLBACK('ctx %O:', ctx);
     },
     options: {
-      // options for dryRun, since we need to keep the output to see the list of files
-      bottomBar: options.dryRun ? true : false,
-      persistentOutput: options.dryRun ? true : false,
+      bottomBar: false,
+      persistentOutput: false,
     },
   };
 }

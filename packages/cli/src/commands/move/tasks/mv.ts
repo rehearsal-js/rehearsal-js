@@ -24,6 +24,10 @@ export function moveTask(
 
       DEBUG_CALLBACK(`sourceFilesAbs: ${sourceFilesAbs}`);
 
+      if (dryRun) {
+        task.title = 'Executing git mv (dry run)';
+      }
+
       if (sourceFilesAbs) {
         task.output = gitMove(sourceFilesAbs, task, src, dryRun);
       } else {
