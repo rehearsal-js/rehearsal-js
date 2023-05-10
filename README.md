@@ -11,6 +11,8 @@ Rehearsal is capable of maintaining proper migration order from leaf to trunk. I
 
 Once your source code is moved to TypeScript, Rehearsal will fix as many errors as possible. Unresolved errors will be annotated and surpressed with with a [Rehearsal TODO](#what-is-a-rehearsal-todo). This allows for safe iteration, to a strictly typed project.
 
+The following codefixes are supported by Rehearsal, which resolve over one hundred different TypeScript diagnostics errors. The detailed list is published [here](https://github.com/rehearsal-js/rehearsal-js/blob/master/Supported-Fixes.md)
+
 ## How does Rehearsal help with upgrading versions of TypeScript?
 
 Rehearsal can be executed both manually and automated eg. GH-Action. Rehearsal creates a system which is capable of testing nightly and beta releases of TypeScript so that you can receive early signals on potential breaking changes in the TypeScript compiler. Additionally, Rehearsal can autofix type errors flagged by the compiler. It tests your TypeScript project against a newer version of TypeScript, transforms the code to align it with the new TypeScript version and provides Rehearsal tasks which enable a manual type tighten for strictness.
