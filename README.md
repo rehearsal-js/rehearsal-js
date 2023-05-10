@@ -135,39 +135,87 @@ This command will run against a TypeScript project and infer types for you. Ther
 For a given project like:
 
 ```
+vitest.config.js
+docs
+test
+├──main.test.js
 src
-├──index.js
+├──app.js
 └── lib
-    ├── a-file.js
-    ├── b-file.js
+    ├── gen-random-grid.js
     └── nested
-        ├── aa-file.js
-        └── bb-file.js
+        ├── apply-rules.js
+        └── get-live-neighbor-count.js
 ```
 
-Optional, look at the graph of files, and determine which files should be migrated.
+Some of these files import into each other. We want to infer the types of the outer most leaf first. Have Rehearsal look at the graph of files, and determine the file migration order and ignore some files and directories and output the graph into a .json doc.
 
 ```
-yarn rehearsal graph
-TBD
-
-yarn rehearsal graph -e src/lib/a-file.js
-TBD
+yarn rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
+...
+✔ Analyzing project dependency graph ...
+  › Graph order for '.':
+    src/lib/gen-random-grid.js
+    src/lib/nested/get-live-neighbor-count.js
+    src/lib/nested/apply-rules.js
+    src/app.js
+    test/main.test.js
 ```
 
-Use  `rehearsal move` to move files to TypeScript.
+Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/gen-random-grid.js`. Lets start migrating files. Use  `rehearsal move` to move files to TypeScript.
+
 ```
-yarn rehearsal move -e src/lib/a-file.js
-files renamed to:
-TBD
+yarn rehearsal move . --ignore 'vitest.*,docs/*'  --graph --deps
+...
+✔ Validating source path
+✔ Analyzing project dependency graph ...
+  › Graph order for '.':
+    src/lib/gen-random-grid.js
+    src/lib/nested/get-live-neighbor-count.js
+    src/lib/nested/apply-rules.js
+    src/app.js
+    test/main.test.js
+✔ Executing git mv
+  › renamed:
+    /src/lib/gen-random-grid.js -> /src/lib/gen-random-grid.ts
+    /src/lib/nested/get-live-neighbor-count.js -> /src/lib/nested/get-live-neighbor-count.ts
+    /src/lib/nested/apply-rules.js -> /src/lib/nested/apply-rules.ts
+    /src/app.js -> /src/app.ts
+    /test/main.test.js -> /test/main.test.ts
 ```
 
-Run **rehearsal fix** to fix and report any issues.
+We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal move while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types we need to manually configure our project and install missing devDependencies. Lets run Rehearsal `fix` without doing this and see what happens.
+
 ```
-yarn rehearsal fix
-TBD
+yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
+...
+✖ /tsconfig.json does not exists. Please run rehearsal inside a project with a valid tsconfig.…
+◼ Analyzing project dependency graph
+◼ Infer Types
 ```
 
+Rehearsal has a series of pre-flight checks it will validate against [pre-reqs](https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli/src/prereqs.ts) before it can start inferring types. As you can see Rehearsal cannot find the `tsconfig.json` in the root of our project, because we've not added it yet. Follow the "Setup / Pre-Reqs" directions above adding any missing config files (tsconfig.json / .eslintrc.json) and missing devDependencies ... Now lets re-run `fix` against our project and see what we get:
+
+```
+yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
+...
+✔ Initialize
+✔ Analyzing project dependency graph ...
+  › Graph order for '.':
+    src/lib/gen-random-grid.ts
+    src/lib/nested/get-live-neighbor-count.ts
+    src/lib/nested/apply-rules.ts
+    src/app.ts
+    test/main.test.ts
+✔ Types Inferred
+  10 errors caught by rehearsal
+  6 have been fixed by rehearsal
+  4 errors need to be fixed manually
+  -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
+  -- 0 eslint errors, with details in the report
+```
+
+Our project is now on TypeScript with types! Rehearsal has caught 10 TypeScript compiler errors and auto-fixed 6 of them for us. Next step is commit our changes and review the generated Rehearsal report to manually type tighten wherever Rehearsal has flagged a TODO.
 
 
 # Rehearsal Reports
