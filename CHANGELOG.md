@@ -1,3 +1,17 @@
+## 3.0.0-beta (2023-05-10)
+
+* Update README.md ([2cc7b7f](https://github.com/rehearsal-js/rehearsal-js/commit/2cc7b7f))
+* Update README.md ([822a94e](https://github.com/rehearsal-js/rehearsal-js/commit/822a94e))
+* Update README.md ([c08b5eb](https://github.com/rehearsal-js/rehearsal-js/commit/c08b5eb))
+* Update README.md ([57519ee](https://github.com/rehearsal-js/rehearsal-js/commit/57519ee))
+* Update README.md ([d0b510a](https://github.com/rehearsal-js/rehearsal-js/commit/d0b510a))
+* Update README.md ([7469e75](https://github.com/rehearsal-js/rehearsal-js/commit/7469e75))
+* fix: removed remnant package from ctx and adds skipPrompt for graph (#1037) ([9bbc53b](https://github.com/rehearsal-js/rehearsal-js/commit/9bbc53b)), closes [#1037](https://github.com/rehearsal-js/rehearsal-js/issues/1037)
+* chore: update README.md with new CLI Command API (#1005) ([d8c69d4](https://github.com/rehearsal-js/rehearsal-js/commit/d8c69d4)), closes [#1005](https://github.com/rehearsal-js/rehearsal-js/issues/1005)
+* breaking(migrate): replaces migrate with fix (#1004) ([7b1fd9e](https://github.com/rehearsal-js/rehearsal-js/commit/7b1fd9e)), closes [#1004](https://github.com/rehearsal-js/rehearsal-js/issues/1004)
+
+
+
 ## <small>2.0.2-beta (2023-05-08)</small>
 
 * chore: add missing changelog records ([a036938](https://github.com/rehearsal-js/rehearsal-js/commit/a036938))
