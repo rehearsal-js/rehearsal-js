@@ -96,7 +96,7 @@ pnpm add -D @rehearsal/cli
 Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
 
 # Usage
-Once installed, invoke using your package manager:
+Once installed with pre-req's complete, invoke using your package manager:
 
 ```bash
 yarn rehearsal
