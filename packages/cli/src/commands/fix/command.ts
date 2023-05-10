@@ -104,6 +104,7 @@ async function fix(src: string, options: FixCommandOptions): Promise<void> {
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,
+          skipPrompt: true,
         }),
         convertTask(options),
       ]

@@ -35,6 +35,19 @@ exports[`Command: move > move packages with --graph and --deps flag 1`] = `
 [STARTED] Validating source path
 [SUCCESS] Validating source path
 [STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] index.js
+[DATA] module-a/index.js
+[DATA] module-a/src/baz.js
+[DATA] module-a/src/foo.js
+[DATA] module-b/index.js
+[DATA] module-b/src/tires.js
+[DATA] module-b/src/car.js
+[DATA] src/bizz.ts
+[DATA] src/foo/baz.js
+[DATA] src/foo/biz.js
+[DATA] src/foo/buz/biz.js
+[DATA] src/index.js
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv

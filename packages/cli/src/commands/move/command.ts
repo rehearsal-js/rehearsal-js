@@ -5,6 +5,7 @@ import { Listr } from 'listr2';
 import debug from 'debug';
 import { parseCommaSeparatedList, readJSON } from '@rehearsal/utils';
 import { createLogger, format, transports } from 'winston';
+import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 import type { MoveTasks, GraphTasks, MoveCommandOptions } from '../../types.js';
 import type { PackageJson } from 'type-fest';
 
@@ -88,8 +89,8 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
   const typescriptGlobs = ['**/*.ts', '**/*.tsx', '**/*.gts'].map((glob) => {
     return join(`${options.rootPath}`, src, glob);
   });
-  // We never want to move typescript files
-  options.ignore.push(...typescriptGlobs);
+  // We never want to move typescript files or the ember-cli-build.js files
+  options.ignore.push(...typescriptGlobs, ...getEmberExcludePatterns());
 
   // grab the child move tasks
   const { initTask, moveTask } = await loadMoveTasks();
@@ -103,6 +104,7 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,
+          skipPrompt: true,
         }),
         moveTask(options.rootPath, options),
       ]

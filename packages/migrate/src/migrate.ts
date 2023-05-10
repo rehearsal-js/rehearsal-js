@@ -53,7 +53,6 @@ const { parseJsonConfigFileContent } = ts;
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const basePath = resolve(input.rootPath);
   // these will always be typescript files
-  const sourceFilesAbs = input.sourceFilesAbs;
   const reporter = input.reporter;
   const ignore = input.ignore || [];
   const configName = 'tsconfig.json';
@@ -64,7 +63,6 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   DEBUG_CALLBACK('migration started');
   DEBUG_CALLBACK(`Base path: ${basePath}`);
-  DEBUG_CALLBACK(`sourceFiles: ${JSON.stringify(sourceFilesAbs)}`);
 
   // read the tsconfig.json
   const configFile = readTSConfig<TSConfig>(resolve(basePath, configName));
@@ -85,18 +83,21 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     {},
     configName
   );
+  DEBUG_CALLBACK(`someFiles: %O`, someFiles);
+  DEBUG_CALLBACK(`sourceFilesAbs: %O`, input.sourceFilesAbs);
 
   // these should NOT all go into the report
   const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
   const ignoredPaths = resolveIgnoredPaths(ignore, basePath, getExcludePatterns);
 
-  DEBUG_CALLBACK(`ignoredPaths: ${JSON.stringify(ignoredPaths)}`);
+  DEBUG_CALLBACK(`fileNames: %O`, fileNames);
+  DEBUG_CALLBACK(`ignoredPaths: %O`, ignoredPaths);
 
   // remove ignored paths from the list of files to migrate
   const filesToMigrate = fileNames.filter((filePath) => !ignoredPaths.includes(filePath));
   const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
 
-  DEBUG_CALLBACK(`fileNames: ${JSON.stringify(filesToMigrate)}`);
+  DEBUG_CALLBACK(`filesToMigrate: %O`, filesToMigrate);
 
   const service = useGlint
     ? await createGlintService(basePath)

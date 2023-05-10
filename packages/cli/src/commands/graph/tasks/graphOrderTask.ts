@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
 
 const workerPath = resolve(__dirname, 'graphWorker.js');
 
-const DEBUG_CALLBACK = debug('rehearsal:cli:graphOrderTask');
+const DEBUG_CALLBACK = debug('rehearsal:cli:graph');
 
 export function graphOrderTask(
   srcDir: string,
@@ -75,16 +75,15 @@ export function graphOrderTask(
       // set the order on the context so we can use it in other tasks
       ctx.migrationOrder = order;
 
-      DEBUG_CALLBACK(`order: ${JSON.stringify(order, null, 2)}`);
-      DEBUG_CALLBACK(`ctx: ${JSON.stringify(ctx, null, 2)}`);
-
-      // if explicit package is passed in use that
-      if (ctx?.package) {
+      // skip the output and prompt. for when we just want the order
+      if (options.skipPrompt) {
         ctx.sourceFilesRel = order.packages.flatMap((pkg) => pkg.files);
-        ctx.sourceFilesAbs = ctx.sourceFilesRel.map((file) => resolve(srcDir, file));
-
-        return;
+        ctx.sourceFilesAbs = ctx.sourceFilesRel.map((file) => resolve(rootPath, file));
       }
+
+      DEBUG_CALLBACK('ctx.sourceFilesRel %O:', ctx.sourceFilesRel);
+      DEBUG_CALLBACK('ctx.sourceFilesAbs %O:', ctx.sourceFilesAbs);
+      DEBUG_CALLBACK('order: %O', order);
 
       // dont prompt just write the file
       if (output) {
