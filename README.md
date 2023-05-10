@@ -9,7 +9,7 @@ Rehearsal is a CLI tool with 3 commands (Graph | Move | Fix), which aim to impro
 
 Rehearsal is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights.
 
-Once your source code is moved to TypeScript, Rehearsal will fix as many errors as possible. Unresolved errors will be annotated and surpressed with with a [Rehearsal TODO](#what-is-a-rehearsal-todo). This allows for safe iteration, to a strictly typed project.
+Once your source code is moved to TypeScript, Rehearsal will fix as many errors as possible. Unresolved errors will be annotated and suppressed with a [Rehearsal TODO](#what-is-a-rehearsal-todo). This allows for safe iteration, to a strictly typed project.
 
 The following codefixes are supported by Rehearsal, which resolve over one hundred different TypeScript diagnostics errors. The detailed list is published [here](https://github.com/rehearsal-js/rehearsal-js/blob/master/Supported-Fixes.md)
 
@@ -17,7 +17,7 @@ The following codefixes are supported by Rehearsal, which resolve over one hundr
 
 Rehearsal also supports the continuous testing of pre-released versions of TypeScript. Essentially this is running the `fix` command with an early-release TypeScript version in a GH Action. For example after you’ve migrated your app to TypeScript with strictness you would run this action daily against the beta version of TypeScript.
 
-Rehearsal `fix` will generate a report showing you exactly what will break, what was auto fixed by Rehearsal and what will need to be fixed manually. With flagged compiler diagnostic errors culled into a multi-format report which can be embedded within a PR. This provides plenty of headroom to mitigate any breaking changes in the TypeScript compiler against the app. 
+Rehearsal `fix` will generate a report showing you exactly what will break, what was auto fixed by Rehearsal and what will need to be fixed manually. With flagged compiler diagnostic errors culled into a multi-format report which can be embedded within a PR. This provides plenty of headroom to mitigate any breaking changes in the TypeScript compiler against the app.
 
 # Setup / Pre-Reqs
 
@@ -163,7 +163,7 @@ yarn rehearsal fix
 
 Usage: rehearsal fix|infer [options] [srcDir]
 
-fixes typescript compiler errors by infering types on .*ts files
+fixes typescript compiler errors by inferring types on .*ts files
 
 Arguments:
   srcDir                         path to directory containing a package.json (default: process.cwd())
@@ -179,7 +179,7 @@ Options:
   -h, --help                     display help for command
 ```
 
-This command will run against a TypeScript project and infer types for you. Theres a lot going on under the hood here! 
+This command will run against a TypeScript project and infer types for you. There's a lot going on under the hood here!
 
 TL;DR Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 
@@ -201,7 +201,7 @@ src
         └── get-live-neighbor-count.js
 ```
 
-Some of these files import into each other. We want to infer the types of the outer most leaf first. Have Rehearsal look at the graph of files, and determine the file migration order and ignore some files and directories and output the graph into a .json doc.
+Some of these files import into each other. We want to infer the types of the outermost leaf first. Have Rehearsal look at the graph of files, and determine the file migration order and ignore some files and directories and output the graph into a .json doc.
 
 ```
 yarn rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
@@ -237,7 +237,7 @@ yarn rehearsal move . --ignore 'vitest.*,docs/*'  --graph --deps
     /test/main.test.js -> /test/main.test.ts
 ```
 
-We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal move while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types we need to manually configure our project and install missing devDependencies. Lets run Rehearsal `fix` without doing this and see what happens.
+We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal move while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types we need to manually configure our project and install missing devDependencies. Let's run Rehearsal `fix` without doing this and see what happens.
 
 ```
 yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
@@ -280,13 +280,13 @@ rehearsal-report.json
 rehearsal-report.sarif
 ```
 
-- The `rehearsal-report.*` file contains all of the information that Rehearsal has gathered during the fix process. It also contains the list of errors that need to be fixed manually.
+- The `rehearsal-report.*` file contains all the information that Rehearsal has gathered during the fix process. It also contains the list of errors that need to be fixed manually.
 
 - The report is available with multiple [formatters](https://github.com/rehearsal-js/rehearsal-js/tree/master/packages/reporter/src/formatters) in JSON, MD, SARIF and SONARQUBE.
 
 - You can [view the SARIF report in VSCode](https://marketplace.visualstudio.com/items?itemName=MS-SarifVSCode.sarif-viewer) and easily navigate to the errors from the report directly into your code.
 
-- Additionally Rehearsal will inline `@ts-expect-error @rehearsal TODO` comments in the code for each error.
+- Additionally, Rehearsal will inline `@ts-expect-error @rehearsal TODO` comments in the code for each error.
 
 ## What is a `@rehearsal TODO`
 
@@ -309,7 +309,7 @@ The TypeScript error that we need to address is: TS2339: Property 'id' does not 
 let id = entityInfo.id;
 ```
 - In this case the entityInfo object would need to declare that it has a property called id through a type or interface.
-- Once fixed, if you open your IDE (VSCode for example) you should notice a **red squiggly** underline to the `@ts-expect-error` annotation. The red squiggle underline, is TypeScript communicating that expected error will no longer occure if this were to compile.
+- Once fixed, if you open your IDE (VSCode for example) you should notice a **red squiggly** underline to the `@ts-expect-error` annotation. The red squiggle underline, is TypeScript communicating that expected error will no longer occur if this were to compile.
 
 
 ## Improve Typing
