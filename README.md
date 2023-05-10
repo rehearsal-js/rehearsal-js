@@ -15,7 +15,9 @@ The following codefixes are supported by Rehearsal, which resolve over one hundr
 
 ## How does Rehearsal help with upgrading versions of TypeScript?
 
-Rehearsal can be executed both manually and automated eg. GH-Action. Rehearsal creates a system which is capable of testing nightly and beta releases of TypeScript so that you can receive early signals on potential breaking changes in the TypeScript compiler. Additionally, Rehearsal can autofix type errors flagged by the compiler. It tests your TypeScript project against a newer version of TypeScript, transforms the code to align it with the new TypeScript version and provides Rehearsal tasks which enable a manual type tighten for strictness.
+Rehearsal also supports the continuous testing of pre-released versions of TypeScript. Essentially this is running the `fix` command with an early-release TypeScript version in a GH Action. For example after you’ve migrated your app to TypeScript with strictness you would run this action daily against the beta version of TypeScript.
+
+Rehearsal `fix` will generate a report showing you exactly what will break, what was auto fixed by Rehearsal and what will need to be fixed manually. With flagged compiler diagnostic errors culled into a multi-format report which can be embedded within a PR. This provides plenty of headroom to mitigate any breaking changes in the TypeScript compiler against the app. 
 
 # Setup / Pre-Reqs
 
@@ -177,7 +179,9 @@ Options:
   -h, --help                     display help for command
 ```
 
-This command will run against a TypeScript project and infer types for you. Theres a lot going on under the hood here; TL;DR Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
+This command will run against a TypeScript project and infer types for you. Theres a lot going on under the hood here! 
+
+TL;DR Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 
 # Workflow
 
