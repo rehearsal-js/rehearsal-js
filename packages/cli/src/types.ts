@@ -86,7 +86,6 @@ export type FixTasks = {
 export type FixCommandOptions = {
   format: Formatters[];
   graph: boolean;
-  dryRun: boolean;
   rootPath: string;
   devDeps: boolean;
   deps: boolean;

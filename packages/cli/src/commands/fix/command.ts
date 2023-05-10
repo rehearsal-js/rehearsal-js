@@ -56,7 +56,6 @@ fixCommand
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('-d, --dryRun', `do nothing; only show what would happen`, false)
   .addOption(
     new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

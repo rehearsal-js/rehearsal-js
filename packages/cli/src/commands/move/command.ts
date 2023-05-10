@@ -118,9 +118,7 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
       concurrent: false,
     }).run();
   } catch (e) {
-    if (e instanceof Error) {
-      winstonLogger.error(`${e.message + '\n' + (e.stack || '')}`);
-    }
+    // e we dont need to log this because Listr will have already logged it
   }
 }
 
