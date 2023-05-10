@@ -284,6 +284,37 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] app/app.js
+[DATA] app/components/bar/index.ts
+[DATA] app/components/ember-component.ts
+[DATA] app/components/foo.ts
+[DATA] app/components/js-component.js
+[DATA] app/components/qux.ts
+[DATA] app/components/template-only-module.ts
+[DATA] app/components/test-cases/subclassing/child.ts
+[DATA] app/components/test-cases/subclassing/parent.ts
+[DATA] app/components/wrapper-component.ts
+[DATA] app/controllers/classic-route.ts
+[DATA] app/helpers/affix.ts
+[DATA] app/helpers/repeat.ts
+[DATA] app/pods/components/baz/component.ts
+[DATA] app/router.js
+[DATA] app/routes/classic-route.ts
+[DATA] tests/helpers/index.ts
+[DATA] tests/integration/components/bar-test.ts
+[DATA] tests/integration/components/baz-test.ts
+[DATA] tests/integration/components/ember-component-test.ts
+[DATA] tests/integration/components/qux-test.ts
+[DATA] tests/integration/components/render-test.ts
+[DATA] tests/integration/components/template-only-module-test.ts
+[DATA] tests/integration/helpers/repeat-test.ts
+[DATA] tests/integration/types/empty-signature-test.ts
+[DATA] tests/test-helper.js
+[DATA] types/ember-data/types/registries/model.d.ts
+[DATA] types/global.d.ts
+[DATA] types/template-registry.d.ts
+[DATA] types/ts-ember-app/index.d.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
@@ -337,6 +368,23 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] app/app.js
+[DATA] app/components/bar/index.ts
+[DATA] app/components/ember-component.ts
+[DATA] app/components/foo.ts
+[DATA] app/components/js-component.js
+[DATA] app/components/qux.ts
+[DATA] app/components/template-only-module.ts
+[DATA] app/components/test-cases/subclassing/child.ts
+[DATA] app/components/test-cases/subclassing/parent.ts
+[DATA] app/components/wrapper-component.ts
+[DATA] app/controllers/classic-route.ts
+[DATA] app/helpers/affix.ts
+[DATA] app/helpers/repeat.ts
+[DATA] app/pods/components/baz/component.ts
+[DATA] app/router.js
+[DATA] app/routes/classic-route.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
