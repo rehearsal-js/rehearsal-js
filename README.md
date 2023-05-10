@@ -107,7 +107,24 @@ pnpm rehearsal
 Rehearsal CLI exposes 3 commands `graph` | `move` | `fix`. These commands function in isolation and are expected to be run in sequence. This "pause" in execution allows the developer time to handle the output and mutations of each command.
 
 
-## `rehearsal graph` (optional)
+## `rehearsal graph`
+```
+yarn rehearsal graph
+
+Usage: rehearsal graph [options] [srcDir]
+
+produces the migration order of 'dependencies' and file order, default ignores 'devDependencies'.
+
+Arguments:
+  srcDir                         path to directory containing a package.json (default: process.cwd())
+
+Options:
+  --devDeps                      follow packages in 'devDependencies'
+  --deps                         follow packages in 'dependencies'
+  --ignore [packagesOrGlobs...]  space deliminated list of packages or globs to ignore (default: [])
+  -o, --output <filepath>        output path for a JSON format of the graph order
+  -h, --help                     display help for command
+```
 
 The graph command produces a package and file import graph for a project. This is useful for seeing what files will be migrated and moved.
 
@@ -119,6 +136,21 @@ Using the leaf-most file or package, will ensure any settled types, will propaga
 ## `rehearsal move`
 ```
 yarn rehearsal move
+
+Usage: rehearsal move|mv [options] [srcDir]
+
+git mv extension conversion of .js -> .ts
+
+Arguments:
+  srcDir                         the path to a package/file/directory that will be moved (default: "")
+
+Options:
+  -g, --graph                    enable graph resolution of files to move (default: false)
+  --devDeps                      follow packages in 'devDependencies'
+  --deps                         follow packages in 'dependencies'
+  --ignore [packagesOrGlobs...]  space deliminated list of packages or globs to ignore (default: [])
+  -d, --dryRun                   do nothing; only show what would happen (default: false)
+  -h, --help                     display help for command
 ```
 
 This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`) and git move against the targeted files in your project and will leverage the migration graph with `--graph` flag. Once this command has finished running, commit the changes and continue to the `fix` command.
@@ -126,6 +158,23 @@ This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`) and git move ag
 ## `rehearsal fix`
 ```
 yarn rehearsal fix
+
+Usage: rehearsal fix|infer [options] [srcDir]
+
+fixes typescript compiler errors by infering types on .*ts files
+
+Arguments:
+  srcDir                         path to directory containing a package.json (default: process.cwd())
+
+Options:
+  -g, --graph                    enable graph resolution of files to move (default: false)
+  --devDeps                      follow packages in 'devDependencies' (default: false)
+  --deps                         follow packages in 'dependencies' (default: false)
+  --ignore [packagesOrGlobs...]  space deliminated list of packages or globs to ignore eg. '--ignore tests/**/*,types/**/*'
+                                 (default: [])
+  -f, --format <format>          report format separated by comma, e.g. -f json,sarif,md,sonarqube (default: ["sarif"])
+  -d, --dryRun                   do nothing; only show what would happen (default: false)
+  -h, --help                     display help for command
 ```
 
 This command will run against a TypeScript project and infer types for you. Theres a lot going on under the hood here; TL;DR Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
