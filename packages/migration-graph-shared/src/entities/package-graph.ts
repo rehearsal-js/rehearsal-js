@@ -88,6 +88,7 @@ export class PackageGraph {
 
     const resolveOptions = this.resolveOptions;
     this.debug('Executing dependency-cruiser');
+    this.debug('Basedir: %O', this.baseDir);
     this.debug('Target: %O', target);
     // this.debug('cruiseOptions: %O', cruiseOptions);
     // this.debug('resolveOptions: %O', { ...resolveOptions, fileSystem: undefined });

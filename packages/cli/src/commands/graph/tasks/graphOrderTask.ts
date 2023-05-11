@@ -27,7 +27,7 @@ export function graphOrderTask(
       const { output, rootPath } = options;
       let selectedPackageName: string;
 
-      if (process.env['TEST'] === 'true') {
+      if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
         const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
