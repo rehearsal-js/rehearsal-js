@@ -39,14 +39,14 @@ export const fixCommand = new Command();
 fixCommand
   .alias('infer')
   .name('fix')
-  .description('fixes typescript compiler errors by infering types on .*ts files')
+  .description('fixes typescript compiler errors by inferring types on .*ts files')
   .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
   .option('-g, --graph', 'enable graph resolution of files to move', false)
   .option('--devDeps', `follow packages in 'devDependencies'`, false)
   .option('--deps', `follow packages in 'dependencies'`, false)
   .option(
     '--ignore [packagesOrGlobs...]',
-    `space deliminated list of packages or globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
+    `space-delimited list of packages or globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
     parseCommaSeparatedList,
     []
   )

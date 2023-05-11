@@ -16,7 +16,7 @@ graphCommand
   .option('--deps', `follow packages in 'dependencies'`)
   .option(
     '--ignore [packagesOrGlobs...]',
-    `space deliminated list of packages or globs to ignore`,
+    `space-delimited list of packages or globs to ignore`,
     parseCommaSeparatedList,
     []
   )
