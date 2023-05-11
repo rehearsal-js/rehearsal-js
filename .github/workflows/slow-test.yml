@@ -1,4 +1,4 @@
-name: Test Suite
+name: Slow Test Suite
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [master]
 
 jobs:
-  test-and-lint:
-    name: Runs Entire Test Suite with Linting
+  slow-test:
+    name: Runs Entire Slow Test Suite
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,5 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build
-      - name: Lint
-        run: pnpm lint
       - name: Test Slow
-        run: pnpm test
+        run: pnpm test:slow

@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-ts-nightly:
-    name: TypeScript Nightly - Runs Entire Test Suite with Linting
+    name: TypeScript Nightly - Runs Entire Slow Test Suite with Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
