@@ -1,0 +1,17 @@
+{
+  "name": "Super Rentals",
+  "description": "Super Rentals is the working repository of the Ember tutorial",
+  "repository": "https://github.com/ember-learn/super-rentals",
+  "keywords": ["ember", "ember.js"],
+  "buildpacks": [
+    {
+      "url": "https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/emberjs.tgz"
+    }
+  ],
+  "env": {
+    "MAPBOX_ACCESS_TOKEN": {
+      "description": "API KEY for Mapbox with \"styles:tiles\" scope, https://account.mapbox.com/access-tokens/",
+      "required": true
+    }
+  }
+}

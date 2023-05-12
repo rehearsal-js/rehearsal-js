@@ -1,0 +1,1 @@
+# @rehearsal/smoke-test
