@@ -1,0 +1,455 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fix command > base_ts_app 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] src/get-live-neighbor-count.ts
+[DATA] src/apply-rules.ts
+[DATA] src/gen-random-grid.ts
+[DATA] src/app.ts
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /src/app.ts
+[DATA] processing file: /src/apply-rules.ts
+[DATA] processing file: /src/gen-random-grid.ts
+[DATA] processing file: /src/get-live-neighbor-count.ts
+[TITLE] Types Inferred
+[TITLE]   12 errors caught by rehearsal
+[TITLE]   6 have been fixed by rehearsal
+[TITLE]   6 errors need to be fixed manually
+[TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   12 errors caught by rehearsal
+[SUCCESS]   6 have been fixed by rehearsal
+[SUCCESS]   6 errors need to be fixed manually
+[SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`fix command > base_ts_app 2`] = `
+"// generate a random grid based on a set dimension and random alive/dead cells
+export function generateRandomGrid(
+  dimensions: number[],
+  chars = ['▄', ' ']
+): string[][]  {
+  const grid = [];
+
+  // create the grid
+  for (let y = 0; y < dimensions[1]; y++) {
+    const row = [];
+    for (let x = 0; x < dimensions[0]; x++) {
+      if (Math.random() > 0.5) {
+        row.push(chars[0]);
+      } else {
+        row.push(chars[1]);
+      }
+    }
+
+    grid.push(row);
+  }
+
+  return grid;
+}
+"
+`;
+
+exports[`fix command > base_ts_app 3`] = `
+"import {
+  getLiveNeighborCount,
+} from './get-live-neighbor-count.js';
+
+// @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
+export function applyRules(grid, cellCharState) {
+  // clone the grid for the next generation
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'row' implicitly has an 'any' type.
+  const newGrid = grid.map((row) => [...row]);
+  // keep track if all of the cells are dead and exit if so
+  let totalLiveNeighbors = 0;
+
+  // iterate over each cell, apply the rules and update cell state
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      const cellState = grid[y][x];
+      const liveNeighborCount = getLiveNeighborCount(
+        grid,
+        [y, x],
+        [cellCharState[0], cellCharState[1]]
+      );
+
+      totalLiveNeighbors += liveNeighborCount;
+
+      // check the current cell state and apply the rules
+      if (cellState === cellCharState[0]) {
+        if (liveNeighborCount < 2 || liveNeighborCount > 3) {
+          // dead
+          newGrid[y][x] = cellCharState[1];
+        }
+
+        if (liveNeighborCount == 2 || liveNeighborCount == 3) {
+          // alive
+          newGrid[y][x] = cellCharState[0];
+        }
+      } else {
+        if (liveNeighborCount == 3) {
+          // alive
+          newGrid[y][x] = cellCharState[0];
+        }
+      }
+    }
+  }
+
+  return [newGrid, totalLiveNeighbors];
+}
+"
+`;
+
+exports[`fix command > base_ts_app 4`] = `
+"// based on a given cell, return the number of live neighbors
+export function getLiveNeighborCount(
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
+  grid,
+  coords: number[] | [any, any],
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'cellCharState' implicitly has an 'any' type.
+  cellCharState
+): number  {
+  const [x, y] = coords;
+
+  // 8 neighbors
+  const neighbors = [
+    [x - 1, y - 1],
+    [x - 1, y],
+    [x - 1, y + 1],
+    [x, y - 1],
+    [x, y + 1],
+    [x + 1, y - 1],
+    [x + 1, y],
+    [x + 1, y + 1],
+  ];
+
+  // iterate over neighbors
+  const liveNeighbors = neighbors.filter(([x, y]) => {
+    // handle out of bounds
+    if (x < 0 || y < 0 || x >= grid.length || y >= grid.length) {
+      return false;
+    }
+
+    // if alive add a tally mark
+    if (grid[x][y] === cellCharState[0]) {
+      return true;
+    }
+  });
+
+  return liveNeighbors.length;
+}
+"
+`;
+
+exports[`fix command > base_ts_app 5`] = `
+"/*
+RULES:
+1. Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+2. Any live cell with two or three live neighbours lives on to the next generation.
+3. Any live cell with more than three live neighbours dies, as if by overpopulation.
+4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+These rules, which compare the behavior of the automaton to real life, can be condensed into the following:
+
+  Any live cell with two or three live neighbours survives.
+  Any dead cell with three live neighbours becomes a live cell.
+  All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+*/
+
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'node:process' or its corresponding type declarations.
+import { stdout } from 'node:process';
+import { generateRandomGrid } from './gen-random-grid.js';
+import { applyRules } from './apply-rules.js';
+
+// basic just grab the args if they exist
+// assume the are valid and in the right order
+// gridWidth, gridHeight, cellAliveState, cellDeadState
+// @ts-expect-error @rehearsal TODO TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try \`npm i --save-dev @types/node\`.
+const [_bin, _file, ...args] = process.argv;
+
+if (!args.length || args.length < 4) {
+  throw new Error(
+    'You must provide 4 arguments: gridWidth, gridHeight, cellAliveState, cellDeadState'
+  );
+}
+
+const [gridWidth, gridHeight, cellAliveState, cellDeadState] = args;
+
+// the initial grid to kick things off
+const GRID_SEED = generateRandomGrid(
+  [parseInt(gridWidth), parseInt(gridHeight)],
+  [cellAliveState, cellDeadState]
+);
+
+// when to stop
+const RUN_LIMIT = 500;
+// remove the terminal cursor so the grid renders nicely
+stdout.write('\\\\x1b[?25l');
+
+// update the grid recursively on interval
+(function update(prevGrid, runTally = 0) {
+  // set the stdout cursor to the top left
+  stdout.cursorTo(0, 0);
+
+  // write the grid to console
+  console.log(\`\\\\n\\\\nGeneration: \${runTally}\`);
+  console.table(prevGrid);
+
+  // should we stop running
+  if (runTally >= RUN_LIMIT) {
+    // put the cursor back
+    stdout.write('\\\\x1b[?25h');
+    return;
+  }
+
+  const [newGrid, totalLiveNeighbors] = applyRules(prevGrid, [cellAliveState, cellDeadState]);
+
+  // if all of the cells are dead, stop running
+  if (totalLiveNeighbors === 0) {
+    console.log(\`Within \${runTally} generations. All cells are dead\`);
+    // put the cursor back
+    stdout.write('\\\\x1b[?25h');
+    return;
+  }
+
+  // add a tally mark
+  runTally++;
+
+  // recursively call update again within a fps interval so we can throttle the grid updates
+  setTimeout(() => {
+    update(newGrid, runTally);
+  }, 150);
+})(GRID_SEED);
+"
+`;
+
+exports[`fix command > ember_js_app_4.11 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[DATA] Graph order for .:
+[DATA] app/adapters/application.ts
+[DATA] app/app.ts
+[DATA] app/components/map.ts
+[DATA] app/components/rental/image.ts
+[DATA] app/components/rentals.ts
+[DATA] app/components/rentals/filter.ts
+[DATA] app/components/share-button.ts
+[DATA] app/models/rental.ts
+[DATA] app/router.ts
+[DATA] app/routes/index.ts
+[DATA] app/routes/rental.ts
+[DATA] app/serializers/application.ts
+[DATA] app/services/locale.ts
+[DATA] tests/acceptance/super-rentals-test.js
+[DATA] tests/helpers/index.js
+[DATA] tests/integration/components/jumbo-test.js
+[DATA] tests/integration/components/map-test.js
+[DATA] tests/integration/components/rental-test.js
+[DATA] tests/integration/components/rental/detailed-test.js
+[DATA] tests/integration/components/rental/image-test.js
+[DATA] tests/integration/components/rentals-test.js
+[DATA] tests/integration/components/share-button-test.js
+[DATA] tests/test-helper.js
+[DATA] tests/unit/models/rental-test.js
+[DATA] types/ember-data/types/registries/model.d.ts
+[DATA] types/global.d.ts
+[DATA] types/super-rentals/index.d.ts
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/components/map.ts
+[DATA] processing file: /app/components/rentals.ts
+[DATA] processing file: /app/components/share-button.ts
+[DATA] processing file: /app/components/rental/image.ts
+[DATA] processing file: /app/components/rentals/filter.ts
+[DATA] processing file: /app/config/environment.d.ts
+[DATA] processing file: /app/models/rental.ts
+[DATA] processing file: /app/routes/index.ts
+[DATA] processing file: /app/routes/rental.ts
+[DATA] processing file: /app/serializers/application.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /types/global.d.ts
+[DATA] processing file: /types/ember-data/types/registries/model.d.ts
+[DATA] processing file: /types/super-rentals/index.d.ts
+[DATA] processing file: /tests/acceptance/super-rentals-test.js
+[DATA] processing file: /tests/helpers/index.js
+[DATA] processing file: /tests/integration/components/jumbo-test.js
+[DATA] processing file: /tests/integration/components/map-test.js
+[DATA] processing file: /tests/integration/components/rental-test.js
+[DATA] processing file: /tests/integration/components/rental/detailed-test.js
+[DATA] processing file: /tests/integration/components/rental/image-test.js
+[DATA] processing file: /tests/integration/components/rentals-test.js
+[DATA] processing file: /tests/integration/components/share-button-test.js
+[DATA] processing file: /tests/test-helper.js
+[DATA] processing file: /tests/unit/models/rental-test.js
+[TITLE] Types Inferred
+[TITLE]   32 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
+[TITLE]   29 errors need to be fixed manually
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 2 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   32 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
+[SUCCESS]   29 errors need to be fixed manually
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 2 eslint errors, with details in the report"
+`;
+
+exports[`fix command > ember_js_app_4.11 2`] = `
+"import Component from '@glimmer/component';
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'super-rentals/config/environment' or its corresponding type declarations.
+import ENV from 'super-rentals/config/environment';
+
+const MAPBOX_API = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static';
+
+export default class MapComponent extends Component {
+  get src() {
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'lng' does not exist on type 'Readonly<EmptyObject>'.
+    let { lng, lat, width, height, zoom } = this.args;
+
+    let coordinates = \`\${lng},\${lat},\${zoom}\`;
+    let dimensions = \`\${width}x\${height}\`;
+    let accessToken = \`access_token=\${this.token}\`;
+
+    return \`\${MAPBOX_API}/\${coordinates}/\${dimensions}@2x?\${accessToken}\`;
+  }
+
+  get token() {
+    return encodeURIComponent(ENV.MAPBOX_ACCESS_TOKEN);
+  }
+}
+"
+`;
+
+exports[`fix command > ember_js_app_4.11 3`] = `
+"import { inject as service } from '@ember/service';
+import Component from '@glimmer/component';
+
+const TWEET_INTENT = 'https://twitter.com/intent/tweet';
+
+export default class ShareButtonComponent extends Component {
+  // @ts-expect-error @rehearsal TODO TS2564: Property 'router' has no initializer and is not definitely assigned in the constructor.
+  @service router: { currentURL: string | URL };
+  // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
+  @service locale: { current: () => string };
+
+  get currentURL() {
+    return new URL(this.router.currentURL, window.location.origin);
+  }
+
+  get shareURL() {
+    let url = new URL(TWEET_INTENT);
+
+    // @ts-expect-error @rehearsal TODO TS2345: Argument of type 'URL' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '( this.currentURL as string)', or using type guard: 'if ( this.currentURL instanceof string) { ... }'.
+    url.searchParams.set('url', this.currentURL);
+
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'text' does not exist on type 'Readonly<EmptyObject>'.
+    if (this.args.text) {
+      // @ts-expect-error @rehearsal TODO TS2339: Property 'text' does not exist on type 'Readonly<EmptyObject>'.
+      url.searchParams.set('text', this.args.text);
+    }
+
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'hashtags' does not exist on type 'Readonly<EmptyObject>'.
+    if (this.args.hashtags) {
+      // @ts-expect-error @rehearsal TODO TS2339: Property 'hashtags' does not exist on type 'Readonly<EmptyObject>'.
+      url.searchParams.set('hashtags', this.args.hashtags);
+    }
+
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'via' does not exist on type 'Readonly<EmptyObject>'.
+    if (this.args.via) {
+      // @ts-expect-error @rehearsal TODO TS2339: Property 'via' does not exist on type 'Readonly<EmptyObject>'.
+      url.searchParams.set('via', this.args.via);
+    }
+
+    url.searchParams.set('locale', this.locale.current());
+
+    return url;
+  }
+}
+"
+`;
+
+exports[`fix command > ember_js_app_4.11 4`] = `
+"import Model, { attr } from '@ember-data/model';
+
+const COMMUNITY_CATEGORIES = ['Condo', 'Townhouse', 'Apartment'];
+
+export default class RentalModel extends Model {
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'title' implicitly has an 'any' type.
+  @attr title;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'owner' implicitly has an 'any' type.
+  @attr owner;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'city' implicitly has an 'any' type.
+  @attr city;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'location' implicitly has an 'any' type.
+  @attr location;
+  // @ts-expect-error @rehearsal TODO TS2564: Property 'category' has no initializer and is not definitely assigned in the constructor.
+  @attr category: string;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'image' implicitly has an 'any' type.
+  @attr image;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'bedrooms' implicitly has an 'any' type.
+  @attr bedrooms;
+  // @ts-expect-error @rehearsal TODO TS7008: Member 'description' implicitly has an 'any' type.
+  @attr description;
+
+  get type() {
+    if (COMMUNITY_CATEGORIES.includes(this.category)) {
+      return 'Community';
+    } else {
+      return 'Standalone';
+    }
+  }
+}
+"
+`;
+
+exports[`fix command > ember_js_app_4.11 5`] = `
+"import Component from '@glimmer/component';
+
+export default class Hello extends Component {
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+"
+`;
+
+exports[`fix command > glimmerx_js_app 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Infer Types
+[DATA] processing file: /src/App.ts
+[DATA] processing file: /src/GreetingHeader.ts
+[DATA] processing file: /src/SimpleComponent.ts
+[DATA] processing file: /src/index.ts
+[DATA] processing file: /tests/util.js
+[DATA] processing file: /tests/rendering/App.test.js
+[DATA] processing file: /tests/rendering/component.test.js
+[TITLE] Types Inferred
+[TITLE]   13 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   13 errors need to be fixed manually
+[TITLE]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 1 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   13 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   13 errors need to be fixed manually
+[SUCCESS]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 1 eslint errors, with details in the report"
+`;

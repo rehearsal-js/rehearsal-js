@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig-ember.json",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "ember_js_app/tests/*": ["tests/*"],
+      "ember_js_app/*": ["app/*"],
+      "*": ["types/*"]
+    }
+  },
+  "include": ["app/**/*", "tests/**/*", "types/**/*"],
+  "glint": {
+    "environment": ["ember-loose", "ember-template-imports"],
+    "checkStandaloneTemplates": true
+  }
+}

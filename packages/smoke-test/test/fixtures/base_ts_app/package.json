@@ -1,0 +1,26 @@
+{
+  "name": "base_ts_app",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@7.18.0",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "engines": {
+    "node": "14.* || 16.* || >= 18"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "eslint": "^8.6.0",
+    "prettier": "^2.0.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.0.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-unicorn": "^40.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "rootDir": "../",
+    "outDir": "../dist/test/"
+  },
+  "exclude": ["fixtures"],
+  "include": [".", "../src", "../package.json"],
+  "references": [
+    {
+      "path": "../../utils"
+    }
+  ]
+}
