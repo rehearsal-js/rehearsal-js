@@ -33,10 +33,12 @@ exports[`graph command > ember_js_app_4.11 1`] = `
 [DATA] Graph order for .:
 [DATA] app/adapters/application.js
 [DATA] app/app.js
+[DATA] app/components/hello-world.gjs
 [DATA] app/components/map.js
 [DATA] app/components/rental/image.js
 [DATA] app/components/rentals.js
 [DATA] app/components/rentals/filter.js
+[DATA] app/services/locale.js
 [DATA] app/components/share-button.js
 [DATA] app/models/rental.js
 [DATA] app/router.js
@@ -54,6 +56,9 @@ exports[`graph command > ember_js_app_4.11 1`] = `
 [DATA] tests/integration/components/share-button-test.js
 [DATA] tests/test-helper.js
 [DATA] tests/unit/models/rental-test.js
+[DATA] types/ember-data/types/registries/model.d.ts
+[DATA] types/global.d.ts
+[DATA] types/super-rentals/index.d.ts
 [SUCCESS] Analyzing project dependency graph"
 `;
 
