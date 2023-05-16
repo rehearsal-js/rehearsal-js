@@ -64,7 +64,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(` package directory: ${packageDir}`);
 
   // Search for closest to the current package TypeScript config file
-  const configFile = findConfigFile(packageDir, ts.sys.fileExists, configName);
+  const configFile = findConfigFile(packageDir, (path) => ts.sys.fileExists(path), configName);
 
   if (!configFile) {
     throw Error(`Config file '${configName}' not found in '${packageDir}'`);
