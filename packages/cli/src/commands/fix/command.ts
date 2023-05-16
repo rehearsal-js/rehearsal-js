@@ -40,7 +40,7 @@ fixCommand
   .alias('infer')
   .name('fix')
   .description('fixes typescript compiler errors by inferring types on .*ts files')
-  .argument('[srcDir]', 'path to directory containing a package.json', process.cwd())
+  .argument('[targetPath]', 'path to file or directory to migrate', process.cwd())
   .option('-g, --graph', 'enable graph resolution of files to move', false)
   .option('--devDeps', `follow packages in 'devDependencies'`, false)
   .option('--deps', `follow packages in 'dependencies'`, false)
@@ -57,16 +57,15 @@ fixCommand
     ['sarif']
   )
   .addOption(
-    new Option('--rootPath <project base path>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+    new Option('--rootDir <project root directory>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
-      .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (src: string, options: FixCommandOptions) => {
-    await fix(src, options);
+  .action(async (targetPath: string, options: FixCommandOptions) => {
+    await fix(targetPath, options);
   });
 
-async function fix(src: string, options: FixCommandOptions): Promise<void> {
+async function fix(targetPath: string, options: FixCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/fix ${version?.trim()}`);
   if (options.graph && !options.deps && !options.devDeps) {
     console.warn(
@@ -86,7 +85,7 @@ async function fix(src: string, options: FixCommandOptions): Promise<void> {
     throw new Error(`'--ignore' can only be passed when you pass --graph`);
   }
 
-  if (!src) {
+  if (!targetPath) {
     throw new Error(`@rehearsal/fix: you must specify a package or path to move`);
   }
 
@@ -97,17 +96,17 @@ async function fix(src: string, options: FixCommandOptions): Promise<void> {
   // source with a direct filepath ignores the migration graph
   const tasks = options.graph
     ? [
-        initTask(src, options),
-        graphOrderTask(src, {
-          rootPath: options.rootPath,
+        initTask(targetPath, options),
+        graphOrderTask(targetPath, {
+          rootPath: options.rootDir,
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,
           skipPrompt: true,
         }),
-        convertTask(options),
+        convertTask(targetPath, options),
       ]
-    : [initTask(src, options), convertTask(options)];
+    : [initTask(targetPath, options), convertTask(targetPath, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

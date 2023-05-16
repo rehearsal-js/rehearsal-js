@@ -100,7 +100,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     const sourceFilepath = 'src/gen-random-grid.ts';
     const src = resolve(project.baseDir, sourceFilepath);
 
-    const result = await runBin('fix', [src], ['--rootPath', project.baseDir], {
+    const result = await runBin('fix', [src], ['--rootDir', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -113,7 +113,7 @@ describe('Command: fix "base_ts_app" fixture', () => {
     const sourceDir = 'src';
     const src = resolve(project.baseDir, sourceDir);
 
-    const result = await runBin('fix', [src], ['--rootPath', project.baseDir], {
+    const result = await runBin('fix', [src], ['--rootDir', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -170,7 +170,7 @@ describe('Command: fix "ember-ts-app" fixture', () => {
 
   test('fix package with src arg and graph', async () => {
     const src = resolve(project.baseDir);
-    const flags = ['--graph', '--deps', '--rootPath', project.baseDir];
+    const flags = ['--graph', '--deps', '--rootDir', project.baseDir];
 
     const result = await runBin('fix', [src], flags, {
       cwd: project.baseDir,
@@ -185,7 +185,7 @@ describe('Command: fix "ember-ts-app" fixture', () => {
     const flags = [
       '--graph',
       '--deps',
-      '--rootPath',
+      '--rootDir',
       project.baseDir,
       '--ignore',
       'tests/**/*,types/**/*',

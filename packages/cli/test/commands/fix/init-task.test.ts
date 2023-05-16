@@ -276,7 +276,7 @@ describe('Fix: Init-Task', () => {
 
     const src = resolve(project.baseDir, 'src');
     const options: FixCommandOptions = {
-      rootPath: project.baseDir,
+      rootDir: project.baseDir,
       format: ['sarif'],
       graph: false,
       devDeps: false,

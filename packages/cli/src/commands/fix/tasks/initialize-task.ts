@@ -36,16 +36,16 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { rootPath, graph } = options;
+      const { rootDir, graph } = options;
 
-      ctx.packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
+      ctx.packageJSON = readJsonSync(resolve(rootDir, 'package.json')) as PackageJson;
       ctx.projectType = 'base-ts';
-      ctx.projectName = determineProjectName(rootPath) || '';
+      ctx.projectName = determineProjectName(rootDir) || '';
 
       // if ember app or addon
       if (isEmberApp(ctx.packageJSON) || isEmberAddon(ctx.packageJSON)) {
         ctx.projectType = 'ember';
-      } else if (await isGlintProject(rootPath)) {
+      } else if (await isGlintProject(rootDir)) {
         ctx.projectType = 'glimmer';
       }
 
@@ -53,16 +53,16 @@ export function initTask(
       // expectation is rehearsal move has already been run on the package
       // expect a tsconfig.json file in rootPath
       if (graph) {
-        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
+        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootDir, src);
         // expect a tsconfig.json file in the root of the child package
-        preFlightCheck(rootPath, ctx.projectType);
+        preFlightCheck(rootDir, ctx.projectType);
       } else {
         // grab all the ts files in the project
         // expectation is rehearsal move has already been run on the source
         // expect a tsconfig.json file in rootPath
-        preFlightCheck(rootPath, ctx.projectType);
+        preFlightCheck(rootDir, ctx.projectType);
 
-        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'ts');
+        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootDir, src, 'ts');
       }
 
       DEBUG_CALLBACK('ctx %O:', ctx);

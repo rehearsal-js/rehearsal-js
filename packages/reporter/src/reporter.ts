@@ -22,7 +22,7 @@ const { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } = ts;
 
 type ReporterMeta = {
   projectName: string;
-  rootPath: string;
+  projectRootDir: string;
   commandName: string;
   tsVersion: string;
   stemName?: string;
@@ -40,19 +40,20 @@ export class Reporter {
   public lastRun: Run | undefined;
   private uniqueFiles: string[];
   private stemName: string;
+
   constructor(meta: ReporterMeta) {
-    const { projectName, rootPath, commandName, tsVersion, previousFixedCount } = meta;
+    const { projectName, projectRootDir, commandName, tsVersion, previousFixedCount } = meta;
 
     // do not include extension in the stemName
     this.stemName = meta.stemName || 'rehearsal-report';
-    this.basePath = rootPath;
+    this.basePath = projectRootDir;
     this.report = {
       summary: [],
       fixedItemCount: previousFixedCount || 0,
       items: [],
     };
     this.uniqueFiles = [];
-    // runSummary !== summary
+    // runSummary !== summary,
     // summary is a list of all runs
     // runSummary is a summary of the current run
     this.currentRun = {

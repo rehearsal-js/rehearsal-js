@@ -30,78 +30,79 @@ import {
   createGlintService,
 } from './glint-utils.js';
 import type { Reporter } from '@rehearsal/reporter';
-import type { CompilerOptions } from 'typescript';
+import { findConfigFile } from 'typescript';
 import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
-  rootPath: string;
-  sourceFilesAbs: string[];
-  reporter: Reporter; // Reporter
-  task?: { output: string };
+  projectRootDir: string;
+  packageDir: string;
+  filesToMigrate: string[];
+  reporter: Reporter;
   ignore?: string[];
-};
-
-export type MigrateOutput = {
-  rootPath: string;
-  configFile: string;
-  sourceFilesAbs: string[];
+  configName?: string;
+  task?: { output: string };
 };
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate');
 const { parseJsonConfigFileContent } = ts;
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
-  const basePath = resolve(input.rootPath);
-  // these will always be typescript files
+  const projectRootDir = input.projectRootDir;
+  const packageDir = input.packageDir;
+  const filesToMigrate = input.filesToMigrate;
   const reporter = input.reporter;
   const ignore = input.ignore || [];
-  const configName = 'tsconfig.json';
-  // output is only for tests
-  const listrTask = input.task || { output: '' };
+  const configName = input.configName || 'tsconfig.json';
   const commentTag = '@rehearsal';
-  const useGlint = await isGlintProject(basePath);
+  const workingDirName = '.rehearsal';
 
-  DEBUG_CALLBACK('migration started');
-  DEBUG_CALLBACK(`Base path: ${basePath}`);
+  // Output is only for tests
+  const listrTask = input.task || { output: '' };
 
-  // read the tsconfig.json
-  const configFile = readTSConfig<TSConfig>(resolve(basePath, configName));
+  const useGlint = await isGlintProject(packageDir);
+
+  DEBUG_CALLBACK('Migration started');
+  DEBUG_CALLBACK(` package directory: ${packageDir}`);
+
+  // Search for closest to the current package TypeScript config file
+  const configFile = findConfigFile(packageDir, ts.sys.fileExists, configName);
 
   if (!configFile) {
-    const message = `Config file '${configName}' not found in '${basePath}'`;
-    throw Error(message);
+    throw Error(`Config file '${configName}' not found in '${packageDir}'`);
   }
 
-  const tsConfigOptions = configFile.compilerOptions as CompilerOptions;
+  const tsConfig = readTSConfig<TSConfig>(resolve(packageDir, configName));
 
-  DEBUG_CALLBACK(`tsconfig file: ${configFile}`);
+  if (!tsConfig) {
+    throw Error(`Could not read '${configFile}'`);
+  }
 
-  const { fileNames: someFiles } = parseJsonConfigFileContent(
-    configFile,
+  const { options: tsCompilerOptions, fileNames: filesFromConfig } = parseJsonConfigFileContent(
+    tsConfig,
     ts.sys,
-    basePath,
+    packageDir,
     {},
     configName
   );
-  DEBUG_CALLBACK(`someFiles: %O`, someFiles);
-  DEBUG_CALLBACK(`sourceFilesAbs: %O`, input.sourceFilesAbs);
 
-  // these should NOT all go into the report
-  const fileNames = [...new Set([...someFiles, ...input.sourceFilesAbs])];
-  const ignoredPaths = resolveIgnoredPaths(ignore, basePath, getExcludePatterns);
+  const filesToCompile = [...new Set([...filesFromConfig, ...filesToMigrate])];
+  const ignoredPaths = resolveIgnoredPaths(ignore, projectRootDir, getExcludePatterns);
+  const filteredFilesToMigrate = input.filesToMigrate.filter(
+    (filePath) => !ignoredPaths.includes(filePath)
+  );
 
-  DEBUG_CALLBACK(`fileNames: %O`, fileNames);
-  DEBUG_CALLBACK(`ignoredPaths: %O`, ignoredPaths);
+  const servicesMap = await readServiceMap(packageDir, `${workingDirName}/services-map.json`);
 
-  // remove ignored paths from the list of files to migrate
-  const filesToMigrate = fileNames.filter((filePath) => !ignoredPaths.includes(filePath));
-  const servicesMap = await readServiceMap(basePath, '.rehearsal/services-map.json');
-
-  DEBUG_CALLBACK(`filesToMigrate: %O`, filesToMigrate);
+  DEBUG_CALLBACK(` configFile: %O'`, configFile);
+  DEBUG_CALLBACK(` filesFromConfig: %O`, filesFromConfig);
+  DEBUG_CALLBACK(` filesToCompile: %O`, filesToCompile);
+  DEBUG_CALLBACK(` filesToMigrate: %O`, filesToMigrate);
+  DEBUG_CALLBACK(` ignoredPaths: %O`, ignoredPaths);
+  DEBUG_CALLBACK(` filteredFilesToMigrate: %O`, filteredFilesToMigrate);
 
   const service = useGlint
-    ? await createGlintService(basePath)
-    : new RehearsalService(tsConfigOptions, filesToMigrate);
+    ? await createGlintService(projectRootDir)
+    : new RehearsalService(tsCompilerOptions, filesToMigrate);
 
   function isGlintService(
     service: GlintService | RehearsalService,
@@ -110,7 +111,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     return service && useGlint;
   }
 
-  const runner = new PluginsRunner({ basePath, service, reporter })
+  const runner = new PluginsRunner({ basePath: packageDir, service, reporter })
     // Resetting
     .queue(ReRehearsePlugin, {
       commentTag,
@@ -136,7 +137,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     .queue(
       LintPlugin,
       {
-        eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+        eslintOptions: { cwd: packageDir, useEslintrc: true, fix: true },
         reportErrors: false,
       },
       (fileName: string) => !isPrettierUsedForFormatting(fileName)
@@ -162,7 +163,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     .queue(
       LintPlugin,
       {
-        eslintOptions: { cwd: basePath, useEslintrc: true, fix: true },
+        eslintOptions: { cwd: packageDir, useEslintrc: true, fix: true },
         reportErrors: false,
       },
       (fileName: string) => !isPrettierUsedForFormatting(fileName)
@@ -183,14 +184,23 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     )
     // Report linter issues
     .queue(LintPlugin, {
-      eslintOptions: { cwd: basePath, useEslintrc: true, fix: false },
+      eslintOptions: { cwd: packageDir, useEslintrc: true, fix: false },
       reportErrors: true,
     });
 
-  yield* runner.run(filesToMigrate, { log: (message: string) => (listrTask.output = message) });
+  if (filteredFilesToMigrate) {
+    // Run on only files passed to the function
+    yield* runner.run(filteredFilesToMigrate, {
+      log: (message: string) => (listrTask.output = message),
+    });
+  } else {
+    yield* runner.run(filesToCompile, {
+      log: (message: string) => (listrTask.output = message),
+    });
+  }
 
-  // save report after all yields
-  reporter.saveCurrentRunToReport(basePath);
+  // Save report after all yields
+  reporter.saveCurrentRunToReport(resolve(projectRootDir, workingDirName));
 }
 
 async function readServiceMap(
