@@ -187,16 +187,10 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       reportErrors: true,
     });
 
-  if (filteredFilesToMigrate) {
-    // Run on only files passed to the function
-    yield* runner.run(filteredFilesToMigrate, {
-      log: (message: string) => (listrTask.output = message),
-    });
-  } else {
-    yield* runner.run(filesToCompile, {
-      log: (message: string) => (listrTask.output = message),
-    });
-  }
+  // Run on only files passed to the function
+  yield* runner.run(filteredFilesToMigrate, {
+    log: (message: string) => (listrTask.output = message),
+  });
 
   // Save report after all yields
   reporter.saveCurrentRunToReport(resolve(projectRootDir, workingDirName));
