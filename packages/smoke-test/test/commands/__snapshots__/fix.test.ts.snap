@@ -12,10 +12,10 @@ exports[`fix command > base_ts_app 1`] = `
 [DATA] src/app.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/app.ts
+[DATA] processing file: /src/get-live-neighbor-count.ts
 [DATA] processing file: /src/apply-rules.ts
 [DATA] processing file: /src/gen-random-grid.ts
-[DATA] processing file: /src/get-live-neighbor-count.ts
+[DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
 [TITLE]   12 errors caught by rehearsal
 [TITLE]   6 have been fixed by rehearsal
@@ -163,7 +163,7 @@ These rules, which compare the behavior of the automaton to real life, can be co
   All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 */
 
-// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'node:process' or its corresponding type declarations.
+// @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'node:process'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
 import { stdout } from 'node:process';
 import { generateRandomGrid } from './gen-random-grid.js';
 import { applyRules } from './apply-rules.js';
@@ -265,23 +265,19 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] types/super-rentals/index.d.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/app.ts
-[DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/app.ts
 [DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/components/rental/image.ts
+[DATA] processing file: /app/components/rentals.ts
 [DATA] processing file: /app/components/rentals/filter.ts
-[DATA] processing file: /app/config/environment.d.ts
+[DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
+[DATA] processing file: /app/router.ts
 [DATA] processing file: /app/routes/index.ts
 [DATA] processing file: /app/routes/rental.ts
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /types/global.d.ts
-[DATA] processing file: /types/ember-data/types/registries/model.d.ts
-[DATA] processing file: /types/super-rentals/index.d.ts
 [DATA] processing file: /tests/acceptance/super-rentals-test.js
 [DATA] processing file: /tests/helpers/index.js
 [DATA] processing file: /tests/integration/components/jumbo-test.js
@@ -293,6 +289,9 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /tests/integration/components/share-button-test.js
 [DATA] processing file: /tests/test-helper.js
 [DATA] processing file: /tests/unit/models/rental-test.js
+[DATA] processing file: /types/ember-data/types/registries/model.d.ts
+[DATA] processing file: /types/global.d.ts
+[DATA] processing file: /types/super-rentals/index.d.ts
 [TITLE] Types Inferred
 [TITLE]   32 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
@@ -437,9 +436,6 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/GreetingHeader.ts
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
-[DATA] processing file: /tests/util.js
-[DATA] processing file: /tests/rendering/App.test.js
-[DATA] processing file: /tests/rendering/component.test.js
 [TITLE] Types Inferred
 [TITLE]   13 errors caught by rehearsal
 [TITLE]   0 have been fixed by rehearsal
