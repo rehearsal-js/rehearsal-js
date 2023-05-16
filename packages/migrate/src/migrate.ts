@@ -30,7 +30,6 @@ import {
   createGlintService,
 } from './glint-utils.js';
 import type { Reporter } from '@rehearsal/reporter';
-import { findConfigFile } from 'typescript';
 import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
@@ -44,7 +43,7 @@ export type MigrateInput = {
 };
 
 const DEBUG_CALLBACK = debug('rehearsal:migrate');
-const { parseJsonConfigFileContent } = ts;
+const { parseJsonConfigFileContent, findConfigFile } = ts;
 
 export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const projectRootDir = input.projectRootDir;

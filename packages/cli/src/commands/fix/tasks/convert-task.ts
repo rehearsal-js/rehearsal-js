@@ -2,8 +2,10 @@
 import debug from 'debug';
 import { execa } from 'execa';
 import { findPackageRootDirectory, getPathToBinary } from '@rehearsal/utils';
-
-import type { ListrTask } from 'listr2';
+import { ListrDefaultRenderer, ListrTask } from 'listr2';
+import { migrate} from '@rehearsal/migrate';
+import { Reporter } from '@rehearsal/reporter';
+import { getReportSummary } from '../../../helpers/report.js';
 import type { CommandContext, FixCommandOptions } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:convert-task');
@@ -12,16 +14,10 @@ export function convertTask(
   targetPath: string,
   options: FixCommandOptions,
   _ctx?: CommandContext
-): ListrTask {
+): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Infer Types',
     task: async (ctx: CommandContext, task): Promise<void> => {
-      // Because we have to eagerly import all the tasks we need to lazily load these
-      // modules because they refer to typescript which may or may not be installed
-      const migrate = await import('@rehearsal/migrate').then((m) => m.migrate);
-      const Reporter = await import('@rehearsal/reporter').then((m) => m.Reporter);
-      const { getReportSummary } = await import('../../../helpers/report.js');
-
       const { rootDir, ignore } = options;
       const { projectName, sourceFilesAbs } = ctx;
 
@@ -43,8 +39,6 @@ export function convertTask(
       });
 
       const packageDir = findPackageRootDirectory(targetPath) || rootDir;
-
-      console.log(sourceFilesAbs);
 
       // this just cares about ts files which are already in the proper migration order
       if (sourceFilesAbs) {
