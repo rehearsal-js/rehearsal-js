@@ -1,15 +1,20 @@
-import { existsSync } from 'node:fs';
-import { extname } from 'node:path';
-import { execSync } from 'node:child_process';
 import debug from 'debug';
 import { ListrTask } from 'listr2';
+import { Worker } from 'node:worker_threads';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
 import type { CommandContext, MoveCommandOptions } from '../../../types.js';
 import type { ListrTaskWrapper, ListrDefaultRenderer } from 'listr2';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const workerPath = resolve(__dirname, 'mvWorker.js');
 const DEBUG_CALLBACK = debug('rehearsal:cli:moveTask');
 
 type MoveCommandTask = ListrTaskWrapper<CommandContext, ListrDefaultRenderer>;
 
+// rename files to TS extension via git mv only. will throw if the file has not been tracked
 export function moveTask(
   src: string,
   options: MoveCommandOptions,
@@ -18,7 +23,7 @@ export function moveTask(
 ): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Executing git mv',
-    task(ctx: CommandContext, task: MoveCommandTask) {
+    task: async (ctx: CommandContext, task: MoveCommandTask): Promise<void> => {
       const { dryRun } = options;
       const { sourceFilesAbs } = ctx;
 
@@ -29,60 +34,40 @@ export function moveTask(
       }
 
       if (sourceFilesAbs) {
-        task.output = gitMove(sourceFilesAbs, task, src, dryRun);
+        if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
+          // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
+          const { gitMove } = await import('./mvWorker.js').then((m) => m);
+          task.output = gitMove(sourceFilesAbs, src, dryRun);
+        } else {
+          await new Promise<string>((resolve, reject) => {
+            task.title = 'Executing git mv ...';
+
+            // Run git mv in a worker thread so the ui thread doesn't hang
+            const worker = new Worker(workerPath, {
+              workerData: JSON.stringify({
+                sourceFiles: sourceFilesAbs,
+                basePath: src,
+                dryRun,
+              }),
+            });
+
+            worker.on('message', (output: string) => {
+              task.output = output;
+              resolve(output);
+            });
+
+            worker.on('error', reject);
+            worker.on('exit', (code) => {
+              if (code !== 0) {
+                reject(new Error(`Worker stopped with exit code ${code}`));
+              }
+            });
+          });
+        }
       } else {
         task.skip('JS files not detected');
       }
     },
     options: { persistentOutput: true },
   };
-}
-
-// rename files to TS extension via git mv only. will throw if the file has not been tracked
-export function gitMove(
-  sourceFiles: string[],
-  listrTask: MoveCommandTask,
-  basePath: string,
-  dryRun = false
-): string {
-  let listrOutput = 'renamed: \n';
-
-  sourceFiles.map((sourceFile) => {
-    const ext = extname(sourceFile);
-
-    if (ext === '.hbs') {
-      return sourceFile;
-    }
-
-    const pos = sourceFile.lastIndexOf(ext);
-    const destFile = `${sourceFile.substring(0, pos)}`;
-    const tsFile = ext === '.gjs' ? `${destFile}.gts` : `${destFile}.ts`;
-    const dtsFile = `${destFile}.d.ts`;
-
-    if (sourceFile === tsFile) {
-      DEBUG_CALLBACK(`no-op ${sourceFile} is a .ts file`);
-    } else if (existsSync(tsFile)) {
-      DEBUG_CALLBACK(`Found ${tsFile} ???`);
-    } else if (existsSync(dtsFile)) {
-      DEBUG_CALLBACK(`Found ${dtsFile} ???`);
-      // Should prepend d.ts file if it exists to the new ts file.
-    } else {
-      const destFile = tsFile;
-      if (dryRun) {
-        execSync(`git mv ${sourceFile} ${tsFile} --dry-run`, { cwd: basePath });
-      } else {
-        try {
-          execSync(`git mv ${sourceFile} ${tsFile}`, { cwd: basePath });
-        } catch (error) {
-          // use simple mv if git mv fails
-          listrTask.output = `git mv failed, using mv`;
-          execSync(`mv ${sourceFile} ${tsFile}`);
-        }
-      }
-
-      listrOutput += `${sourceFile.replace(basePath, '')} -> ${destFile.replace(basePath, '')}\n`;
-    }
-  });
-
-  return listrOutput;
 }
