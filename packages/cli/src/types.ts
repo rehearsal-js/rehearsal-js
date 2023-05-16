@@ -79,8 +79,8 @@ export type MoveCommandOptions = {
   FIX
 */
 export type FixTasks = {
-  initTask: (src: string, options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
-  convertTask: (options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
+  initTask: (targetPath: string, options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
+  convertTask: (targetPath: string, options: FixCommandOptions, ctx?: CommandContext) => ListrTask;
 };
 
 export type FixCommandOptions = {

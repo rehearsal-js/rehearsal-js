@@ -20,7 +20,7 @@ describe('regen', () => {
     reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
-      rootPath,
+      projectRootDir: rootPath,
       commandName: '@rehearsal/migrate',
     });
 

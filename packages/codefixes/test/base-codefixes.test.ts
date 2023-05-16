@@ -36,13 +36,18 @@ describe('Test base codefixes', function () {
     const reporter = new Reporter({
       tsVersion: '',
       projectName: '@rehearsal/test',
-      rootPath,
+      projectRootDir: rootPath,
       commandName: '@rehearsal/migrate',
     });
 
     await project.write();
 
-    migrate({ rootPath, reporter, sourceFilesAbs: [resolve(basePath, 'index.ts')] });
+    migrate({
+      projectRootDir: rootPath,
+      packageDir: rootPath,
+      reporter,
+      filesToMigrate: [resolve(basePath, 'index.ts')],
+    });
   }
 
   test.each(transforms)('%s', async (transform) => {

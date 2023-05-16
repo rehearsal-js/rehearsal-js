@@ -14,7 +14,7 @@ export default class Hello extends Component {
 `;
 
 exports[`fix > .gts > when missing a local prop 1`] = `
-"import Component from \\"@glimmer/component\\";
+"import Component from '@glimmer/component';
 
 export default class Foo extends Component {}
 "
@@ -48,51 +48,49 @@ export default class Hello extends Component {
 `;
 
 exports[`fix > .gts > with non-qualified service 1`] = `
-"import Component from \\"@glimmer/component\\";
-import { inject as service } from \\"@ember/service\\";
+"import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
 
 export default class SomeComponent extends Component {
-  
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
-  @service(\\"authenticated-user\\") authenticatedUser;
+  @service('authenticated-user') authenticatedUser;
 }
 "
 `;
 
 exports[`fix > .gts > with qualified service 1`] = `
-"import type FooService from \\"foo/services/foo-service\\";
-import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
-import Component from \\"@glimmer/component\\";
-import { inject as service } from \\"@ember/service\\";
+"import type FooService from 'foo/services/foo-service';
+import type AuthenticatedUser from 'authentication/services/authenticated-user';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
 
 export default class SomeComponent extends Component {
   @service(\\"authentication@authenticated-user\\")
-  declare authenticatedUser: AuthenticatedUser;
+declare authenticatedUser: AuthenticatedUser;
 
   @service(\\"foo@foo-service\\")
-  declare otherProp: FooService;
+declare otherProp: FooService;
 }
 "
 `;
 
 exports[`fix > .gts > with service map 1`] = `
-"
-// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
-import type MooService from \\"services/moo/moo\\";
-import type GooService from \\"services/goo\\";
-import type BooService from \\"boo/services/boo-service\\";
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
+import type MooService from 'services/moo/moo';
+import type GooService from 'services/goo';
+import type BooService from 'boo/services/boo-service';
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
 export default class SomeComponent extends Component {
   @service(\\"boo-service\\")
-  declare booService: BooService;
+declare booService: BooService;
 
   @service
-  declare gooService: GooService;
+declare gooService: GooService;
 
   @service
-  declare mooService: MooService;
+declare mooService: MooService;
 }
 "
 `;
@@ -229,9 +227,7 @@ export default class SomeComponent extends Component {
 `;
 
 exports[`fix > .ts > with qualified service in subpackage 1`] = `
-"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'foo/services/foo-service' or its corresponding type declarations.
-import type FooService from \\"foo/services/foo-service\\";
-// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'authentication/services/authenticated-user' or its corresponding type declarations.
+"import type FooService from \\"foo/services/foo-service\\";
 import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -313,14 +309,13 @@ exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
 `;
 
 exports[`fix > with addon service > .gts 1`] = `
-"
-import type Foo from \\"my-addon/services/foo\\";
-import Component from \\"@glimmer/component\\";
-import { inject as service } from \\"@ember/service\\";
+"import type Foo from 'my-addon/services/foo';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
 
 export default class SomeComponent extends Component {
   @service(\\"my-addon@foo\\")
-  declare foo: Foo;
+declare foo: Foo;
 }
 "
 `;

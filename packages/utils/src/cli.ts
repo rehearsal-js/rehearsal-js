@@ -1,4 +1,4 @@
-import { dirname, join, normalize, isAbsolute, relative, resolve, extname } from 'node:path';
+import { dirname, join, normalize, isAbsolute, relative, resolve, extname, parse } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
@@ -403,6 +403,15 @@ export function parseCommaSeparatedList(value: string): string[] {
  */
 export function readTSConfig<T>(configPath: string): T {
   return json5.parse(readFileSync(configPath, 'utf-8'));
+}
+
+/**
+ * Finds the closest ancestor to `startPath` directory containing package.json file
+ */
+export function findPackageRootDirectory(startPath: string): string | undefined {
+  const packageJSONPath = findupSync('package.json', { cwd: startPath });
+
+  return packageJSONPath ? parse(packageJSONPath).dir : undefined;
 }
 
 /**
