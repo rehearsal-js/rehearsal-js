@@ -57,7 +57,7 @@ fixCommand
     ['sarif']
   )
   .addOption(
-    new Option('--rootDir <project root directory>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
+    new Option('--rootPath <project root directory>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .hideHelp()
   )
@@ -98,7 +98,7 @@ async function fix(targetPath: string, options: FixCommandOptions): Promise<void
     ? [
         initTask(targetPath, options),
         graphOrderTask(targetPath, {
-          rootPath: options.rootDir,
+          rootPath: options.rootPath,
           devDeps: options.devDeps,
           deps: options.deps,
           ignore: options.ignore,

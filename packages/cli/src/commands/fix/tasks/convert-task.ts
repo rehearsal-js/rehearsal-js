@@ -3,7 +3,7 @@ import debug from 'debug';
 import { execa } from 'execa';
 import { findPackageRootDirectory, getPathToBinary } from '@rehearsal/utils';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import { migrate} from '@rehearsal/migrate';
+import { migrate } from '@rehearsal/migrate';
 import { Reporter } from '@rehearsal/reporter';
 import { getReportSummary } from '../../../helpers/report.js';
 import type { CommandContext, FixCommandOptions } from '../../../types.js';
@@ -18,11 +18,11 @@ export function convertTask(
   return {
     title: 'Infer Types',
     task: async (ctx: CommandContext, task): Promise<void> => {
-      const { rootDir, ignore } = options;
+      const { rootPath, ignore } = options;
       const { projectName, sourceFilesAbs } = ctx;
 
       // If there is no access to tsc binary throw
-      const tscPath = await getPathToBinary('tsc', { cwd: rootDir });
+      const tscPath = await getPathToBinary('tsc', { cwd: rootPath });
       let tsVersion = '';
       try {
         const { stdout } = await execa(tscPath, ['--version']);
@@ -34,16 +34,16 @@ export function convertTask(
       const reporter = new Reporter({
         tsVersion,
         projectName,
-        projectRootDir: rootDir,
+        projectRootDir: rootPath,
         commandName: '@rehearsal/fix',
       });
 
-      const packageDir = findPackageRootDirectory(targetPath) || rootDir;
+      const packageDir = findPackageRootDirectory(targetPath) || rootPath;
 
       // this just cares about ts files which are already in the proper migration order
       if (sourceFilesAbs) {
         const input = {
-          projectRootDir: rootDir,
+          projectRootDir: rootPath,
           packageDir: packageDir,
           filesToMigrate: ctx.sourceFilesAbs,
           reporter,
@@ -59,10 +59,10 @@ export function convertTask(
 
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
 
-        reporter.printReport(rootDir, options.format);
+        reporter.printReport(rootPath, options.format);
         task.title = getReportSummary(reporter.report);
       } else {
-        task.skip(`TypeScript files not found in: ${rootDir}`);
+        task.skip(`TypeScript files not found in: ${rootPath}`);
       }
     },
   };
