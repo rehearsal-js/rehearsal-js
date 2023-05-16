@@ -1,3 +1,17 @@
+## <small>3.0.1-beta (2023-05-16)</small>
+
+* fix: migrate files from selected source path (#1046) ([906ae48](https://github.com/rehearsal-js/rehearsal-js/commit/906ae48)), closes [#1046](https://github.com/rehearsal-js/rehearsal-js/issues/1046)
+* refactor(cli): git task into worker (#1047) ([a8da66b](https://github.com/rehearsal-js/rehearsal-js/commit/a8da66b)), closes [#1047](https://github.com/rehearsal-js/rehearsal-js/issues/1047)
+* test: refactors smoke-test and test:slow (#1043) ([09fc927](https://github.com/rehearsal-js/rehearsal-js/commit/09fc927)), closes [#1043](https://github.com/rehearsal-js/rehearsal-js/issues/1043)
+* test(smoke-test): moves org smoke-test into a package (#1044) ([6b87f0a](https://github.com/rehearsal-js/rehearsal-js/commit/6b87f0a)), closes [#1044](https://github.com/rehearsal-js/rehearsal-js/issues/1044)
+* chore: better debugging in graph (#1042) ([21039a7](https://github.com/rehearsal-js/rehearsal-js/commit/21039a7)), closes [#1042](https://github.com/rehearsal-js/rehearsal-js/issues/1042)
+* chore: fix typos (#1041) ([8dac1e1](https://github.com/rehearsal-js/rehearsal-js/commit/8dac1e1)), closes [#1041](https://github.com/rehearsal-js/rehearsal-js/issues/1041)
+* chore(cli): remove unused dryRun ([89b8578](https://github.com/rehearsal-js/rehearsal-js/commit/89b8578))
+* chore(gh-action-bot): adding new diagnostics ([cbeb962](https://github.com/rehearsal-js/rehearsal-js/commit/cbeb962))
+* Update README.md ([98fae4a](https://github.com/rehearsal-js/rehearsal-js/commit/98fae4a))
+
+
+
 ## 3.0.0-beta (2023-05-10)
 
 * Update README.md ([2cc7b7f](https://github.com/rehearsal-js/rehearsal-js/commit/2cc7b7f))
