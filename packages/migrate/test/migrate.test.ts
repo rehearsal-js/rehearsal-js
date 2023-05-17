@@ -526,6 +526,29 @@ describe('fix', () => {
 
       expectFile(outputs[0]).toMatchSnapshot();
     });
+
+    test('subpackage without tsconfig.json', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(
+        project,
+        ['with-qualified-service.ts'],
+        'packages/moo'
+      );
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: resolve(project.baseDir, 'packages/moo'),
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
   });
 
   describe('.ts, .gts', () => {
@@ -559,7 +582,7 @@ describe('fix', () => {
         return cleanOutput(path, project.baseDir);
       });
 
-      expect(ignoredPaths.length).toBe(7);
+      expect(ignoredPaths.length).toBe(9);
       expect(sanitizedPaths).toMatchSnapshot();
     });
 

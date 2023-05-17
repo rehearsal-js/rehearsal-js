@@ -72,7 +72,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
     throw Error(`Config file '${configName}' not found in '${packageDir}'`);
   }
 
-  const tsConfig = readTSConfig<TSConfig>(resolve(packageDir, configName));
+  const tsConfig = readTSConfig<TSConfig>(configFile);
 
   if (!tsConfig) {
     throw Error(`Could not read '${configFile}'`);

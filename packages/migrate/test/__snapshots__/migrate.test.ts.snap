@@ -199,6 +199,22 @@ module(\\"Integration | Helper | grid-list\\", function (hooks) {
 "
 `;
 
+exports[`fix > .ts > subpackage without tsconfig.json 1`] = `
+"import type FooService from \\"foo/services/foo-service\\";
+import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"authentication@authenticated-user\\")
+  declare authenticatedUser: AuthenticatedUser;
+
+  @service(\\"foo@foo-service\\")
+  declare otherProp: FooService;
+}
+"
+`;
+
 exports[`fix > .ts > with non-qualified service 1`] = `
 "import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -327,6 +343,8 @@ exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
   "<tmp-path>/packages/foo/package.json",
   "<tmp-path>/packages/foo/tsconfig.json",
   "<tmp-path>/packages/foo/with-qualified-service.ts",
+  "<tmp-path>/packages/moo/package.json",
+  "<tmp-path>/packages/moo/with-qualified-service.ts",
   "<tmp-path>/src/with-class.gts",
 ]
 `;
