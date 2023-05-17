@@ -1,0 +1,41 @@
+{
+  "name": "foo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Chris Freeman",
+  "license": "ISC",
+  "dependencies": {
+    "@ember/test-helpers": "^2.9.3",
+    "@glimmer/component": "^1.1.2",
+    "@glimmerx/component": "^0.6.8",
+    "@glint/core": "^1.0.2",
+    "@glint/environment-ember-loose": "1.0.0-beta.4",
+    "@glint/environment-ember-template-imports": "1.0.0-beta.4",
+    "@glint/environment-glimmerx": "^1.0.0-beta.4",
+    "@glint/template": "1.0.0-beta.4",
+    "@types/ember__service": "^4.0.2",
+    "@types/node": "^18.13.0",
+    "@types/qunit": "^2.19.4",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "ember-cli-htmlbars": "^6.2.0",
+    "ember-qunit": "^6.2.0",
+    "ember-template-imports": "^3.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "ember-template-lint": "^5.7.2",
+    "ember-template-lint-plugin-prettier": "^4.1.0",
+    "eslint": "^8.40.0",
+    "eslint-plugin-ember": "^11.4.9",
+    "prettier": "^2.8.3",
+    "qunit": "^2.19.4",
+    "qunit-dom": "^2.0.0",
+    "typescript": "^5.0.0"
+  }
+}

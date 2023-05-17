@@ -598,9 +598,6 @@ importers:
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
-      find-up:
-        specifier: ^6.3.0
-        version: 6.3.0
       typescript:
         specifier: ^5.0
         version: 5.0.4
