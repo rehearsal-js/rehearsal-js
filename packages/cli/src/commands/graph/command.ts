@@ -1,6 +1,7 @@
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import { parseCommaSeparatedList } from '@rehearsal/utils';
+import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 import { graphOrderTask } from './tasks/graphOrderTask.js';
 import type { CommandContext, GraphCommandOptions } from '../../types.js';
 
@@ -28,6 +29,8 @@ graphCommand
   )
   .option('-o, --output <filepath>', 'output path for a JSON format of the graph order')
   .action(async (srcDir: string, options: GraphCommandOptions) => {
+    options.ignore.push(...getEmberExcludePatterns());
+
     await new Listr<CommandContext>([
       graphOrderTask(srcDir, {
         output: options.output,

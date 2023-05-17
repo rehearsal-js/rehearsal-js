@@ -88,7 +88,7 @@ describe('Move: Init-Task', () => {
       graph: false,
       devDeps: false,
       deps: false,
-      ignore: [''],
+      ignore: [],
     };
     const tasks = [initTask(source, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);
@@ -113,10 +113,8 @@ describe('Move: Init-Task', () => {
       ignore: [''],
     };
     const tasks = [initTask(childPackage, options)];
-    const ctx = await listrTaskRunner<CommandContext>(tasks);
+    await listrTaskRunner<CommandContext>(tasks);
 
-    expect(ctx.packageAbs).toStrictEqual(resolve(project.baseDir, './module-b'));
-    expect(ctx.packageRel).toStrictEqual(childPackage);
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 

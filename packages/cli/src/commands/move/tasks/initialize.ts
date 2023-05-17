@@ -13,12 +13,12 @@ export function initTask(
   return {
     title: `Validating source path`,
     task: (ctx: CommandContext): void => {
-      const { rootPath, graph } = options;
+      const { rootPath, graph, ignore } = options;
 
       if (graph) {
-        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
+        validatePackagePath(rootPath, src);
       } else {
-        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'js');
+        [ctx.sourceFilesAbs, ctx.sourceFilesRel] = validateSourcePath(rootPath, src, 'js', ignore);
       }
 
       DEBUG_CALLBACK('init ctx %O:', ctx);

@@ -129,19 +129,4 @@ describe('Command: move', () => {
         })
     ).rejects.toThrowError(`'--devDeps' can only be passed when you pass --graph`);
   });
-
-  test('expect failure when --ignore is passed without --graph', async () => {
-    const childPackage = 'module-a';
-    await expect(
-      async () =>
-        await runBin(
-          'move',
-          [`${childPackage}`],
-          ['--ignore', 'foo', '--rootPath', project.baseDir],
-          {
-            cwd: project.baseDir,
-          }
-        )
-    ).rejects.toThrowError(`'--ignore' can only be passed when you pass --graph`);
-  });
 });

@@ -24,6 +24,7 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     include,
     eager: true,
   });
+
   parentPort?.postMessage(intoGraphOutput(ordered, basePath));
 }
 

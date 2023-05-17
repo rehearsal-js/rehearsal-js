@@ -57,6 +57,7 @@
     "which": "^3.0.0"
   },
   "devDependencies": {
+    "@rehearsal/migration-graph-ember": "workspace:*",
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^3.0.0",
     "@vitest/coverage-c8": "^0.30.1",

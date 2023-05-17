@@ -55,7 +55,6 @@ export function graphOrderTask(
               crawlDeps: options.deps,
               ignore: options.ignore,
               include: [],
-              exclude: [],
             }),
           });
 

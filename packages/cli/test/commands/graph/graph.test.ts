@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLogger, format, transports } from 'winston';
+import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 
 import { getEmberProject } from '@rehearsal/test-support';
 import {
@@ -71,7 +72,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
@@ -105,7 +106,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(`${project.baseDir}/module-a`, options)]);
@@ -129,7 +130,7 @@ describe('Task: graphOrderTask', () => {
       rootPath: project.baseDir,
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
@@ -146,7 +147,7 @@ describe('Task: graphOrderTask', () => {
       rootPath: project.baseDir,
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     outputStream.on('data', (line: string) => {
@@ -172,7 +173,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -210,7 +211,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -239,7 +240,7 @@ describe('Task: graphOrderTask', () => {
       rootPath: project.baseDir,
       devDeps: true,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
       output: join(project.baseDir, 'graph.json'),
     };
 
@@ -282,7 +283,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['some-test-package'],
+      ignore: ['some-test-package', ...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -320,7 +321,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['lib/some-test-package/addon-test-support/*.js'],
+      ignore: ['lib/some-test-package/addon-test-support/*.js', ...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -358,7 +359,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['**/*.js'],
+      ignore: ['**/*.js', ...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -388,7 +389,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['lib/some-test-package/*'],
+      ignore: ['lib/some-test-package/*', ...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -426,7 +427,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: true,
       deps: true,
-      ignore: ['lib/some-test-package/addon-test-support/index.js'],
+      ignore: ['lib/some-test-package/addon-test-support/index.js', ...getEmberExcludePatterns()],
     };
 
     await listrTaskRunner<CommandContext>([
@@ -462,7 +463,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     outputStream.on('data', (line: string) => {
@@ -518,7 +519,7 @@ describe('Task: graphOrderTask', () => {
       output: join(project.baseDir, 'graph.json'),
       devDeps: false,
       deps: true,
-      ignore: [],
+      ignore: [...getEmberExcludePatterns()],
     };
 
     outputStream.on('data', (line: string) => {
