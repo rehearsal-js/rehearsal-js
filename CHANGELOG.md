@@ -1,3 +1,13 @@
+## <small>3.0.2-beta (2023-05-17)</small>
+
+* fix: adjust path used by glint service (#1051) ([78ea35c](https://github.com/rehearsal-js/rehearsal-js/commit/78ea35c)), closes [#1051](https://github.com/rehearsal-js/rehearsal-js/issues/1051)
+* fix: fix the path to load tsconfig.json (#1055) ([afe6f04](https://github.com/rehearsal-js/rehearsal-js/commit/afe6f04)), closes [#1055](https://github.com/rehearsal-js/rehearsal-js/issues/1055)
+* fix(cli): move command ignore list (#1050) ([e1128c1](https://github.com/rehearsal-js/rehearsal-js/commit/e1128c1)), closes [#1050](https://github.com/rehearsal-js/rehearsal-js/issues/1050)
+* Update README.md ([500e6c8](https://github.com/rehearsal-js/rehearsal-js/commit/500e6c8))
+* Update README.md ([0a29aca](https://github.com/rehearsal-js/rehearsal-js/commit/0a29aca))
+
+
+
 ## <small>3.0.1-beta (2023-05-16)</small>
 
 * fix: migrate files from selected source path (#1046) ([906ae48](https://github.com/rehearsal-js/rehearsal-js/commit/906ae48)), closes [#1046](https://github.com/rehearsal-js/rehearsal-js/issues/1046)

@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migration-graph-ember",
-  "version": "3.0.1-beta",
+  "version": "3.0.2-beta",
   "description": "Tool for generating a typescript migration graph for a ember.js",
   "license": "BSD-2-Clause",
   "type": "module",
