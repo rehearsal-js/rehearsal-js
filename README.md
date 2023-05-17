@@ -181,7 +181,9 @@ Options:
 
 This command will run against a TypeScript project and infer types for you. There's a lot going on under the hood here!
 
-TL;DR Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
+Rehearsal will do its best to infer types, via a series of plugins (rarely will Rehearsal infer a loose type). Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Rehearsal relies on the projects tsconfig.json being configured correctly, as it pertains to [include](https://www.typescriptlang.org/tsconfig#include), [references](https://www.typescriptlang.org/tsconfig#references) and [paths](https://www.typescriptlang.org/tsconfig#paths).  
+
+Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
 
 # Workflow
 
@@ -268,7 +270,9 @@ yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
   -- 0 eslint errors, with details in the report
 ```
 
-Our project is now on TypeScript with types! Rehearsal has caught 10 TypeScript compiler errors and auto-fixed 6 of them for us. Next step is commit our changes and review the generated Rehearsal report to manually type tighten wherever Rehearsal has flagged a TODO.
+Our project is now on TypeScript with types! Rehearsal has caught 10 TypeScript compiler errors and auto-fixed 6 of them for us. The next step is commit our changes and review the generated Rehearsal report to manually type tighten wherever Rehearsal has flagged a TODO.
+
+In this example Rehearsal has fixed 60% of the compiler errors. Sometimes however, the types Rehearsal can inference are minimal. Which is why the `fix` command can be run repeatedly ex. `fix` -> manual type tuning -> `fix` -> manual type tuning  -> `fix`. 
 
 
 # Rehearsal Reports
