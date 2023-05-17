@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import findup from 'findup-sync';
+import { findUpSync } from 'find-up';
 import { format, Options } from 'prettier';
 
 /**
@@ -11,7 +11,7 @@ import { format, Options } from 'prettier';
  */
 export function formatter(source: string, filePath: string): string {
   // Attempt to find prettier config
-  const maybePrettierConfig = findup('.prettierrc');
+  const maybePrettierConfig = findUpSync('.prettierrc');
 
   let prettierConfig = '{}';
 

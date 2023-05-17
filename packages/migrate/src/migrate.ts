@@ -1,5 +1,5 @@
 import { resolve, join } from 'node:path';
-import findup from 'findup-sync';
+import { findUpSync } from 'find-up';
 import { readTSConfig, readJSON } from '@rehearsal/utils';
 import {
   PluginsRunner,
@@ -203,7 +203,7 @@ async function readServiceMap(
   mapFilePattern: string
 ): Promise<Map<string, string> | undefined> {
   try {
-    const maybeMapFile = findup(mapFilePattern, { cwd: basePath });
+    const maybeMapFile = findUpSync(mapFilePattern, { cwd: basePath });
     if (maybeMapFile) {
       const map = await readJSON(maybeMapFile);
       return new Map<string, string>(Object.entries(map as { [key: string]: string }));
@@ -218,7 +218,7 @@ async function readServiceMap(
 export function resolveIgnoredPaths(
   ignore: string[],
   basePath: string,
-  excludePattern: () => any
+  excludePattern: () => string[]
 ): string[] {
   const ignoredPaths = ignore
     .flatMap((glob) => {

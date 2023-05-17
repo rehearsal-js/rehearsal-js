@@ -226,8 +226,28 @@ export default class SomeComponent extends Component {
 "
 `;
 
-exports[`fix > .ts > with qualified service in subpackage 1`] = `
-"import type FooService from \\"foo/services/foo-service\\";
+exports[`fix > .ts > with qualified service in subpackage with included types 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'foo/services/foo-service' or its corresponding type declarations.
+import type FooService from \\"foo/services/foo-service\\";
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'authentication/services/authenticated-user' or its corresponding type declarations.
+import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
+
+export default class SomeComponent extends Component {
+  @service(\\"authentication@authenticated-user\\")
+  declare authenticatedUser: AuthenticatedUser;
+
+  @service(\\"foo@foo-service\\")
+  declare otherProp: FooService;
+}
+"
+`;
+
+exports[`fix > .ts > with qualified service in subpackage without included types 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'foo/services/foo-service' or its corresponding type declarations.
+import type FooService from \\"foo/services/foo-service\\";
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'authentication/services/authenticated-user' or its corresponding type declarations.
 import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -301,6 +321,9 @@ export default class SomeComponent extends Component {
 
 exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
 [
+  "<tmp-path>/packages/boo/package.json",
+  "<tmp-path>/packages/boo/tsconfig.json",
+  "<tmp-path>/packages/boo/with-qualified-service.ts",
   "<tmp-path>/packages/foo/package.json",
   "<tmp-path>/packages/foo/tsconfig.json",
   "<tmp-path>/packages/foo/with-qualified-service.ts",

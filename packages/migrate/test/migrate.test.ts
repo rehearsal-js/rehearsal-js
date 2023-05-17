@@ -481,7 +481,7 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('with qualified service in subpackage', async () => {
+    test('with qualified service in subpackage with included types', async () => {
       await project.write();
 
       const [inputs, outputs] = prepareInputFiles(
@@ -493,6 +493,29 @@ describe('fix', () => {
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
         packageDir: resolve(project.baseDir, 'packages/foo'),
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('with qualified service in subpackage without included types', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(
+        project,
+        ['with-qualified-service.ts'],
+        'packages/boo'
+      );
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: resolve(project.baseDir, 'packages/boo'),
         filesToMigrate: inputs,
         reporter,
       };
@@ -536,7 +559,7 @@ describe('fix', () => {
         return cleanOutput(path, project.baseDir);
       });
 
-      expect(ignoredPaths.length).toBe(4);
+      expect(ignoredPaths.length).toBe(7);
       expect(sanitizedPaths).toMatchSnapshot();
     });
 

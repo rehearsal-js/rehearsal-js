@@ -5,7 +5,7 @@ import ts, {
   LanguageServiceHost,
 } from 'typescript';
 import { addDep } from '@rehearsal/utils';
-import findupSync from 'findup-sync';
+import { findUpSync } from 'find-up';
 import type { CompilerOptions, IScriptSnapshot, MapLike } from 'typescript';
 
 const { ScriptSnapshot, getDefaultLibFilePath, sys } = ts;
@@ -55,7 +55,7 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     // Save the install request information, so we don't continuously download
     this.seenTypingsRequest.set(options.fileName, options.packageName);
 
-    const nearestPackageJSON = findupSync('package.json', {
+    const nearestPackageJSON = findUpSync('package.json', {
       cwd: dirname(options.fileName),
     });
 

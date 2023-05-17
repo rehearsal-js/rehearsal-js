@@ -1,6 +1,5 @@
 import { dirname, join, relative, resolve } from 'node:path';
 import fastGlob from 'fast-glob';
-import { findUpSync } from 'find-up';
 import debug, { type Debugger } from 'debug';
 import {
   DiscoverOptions,
@@ -18,6 +17,7 @@ import { EmberAppPackage } from './ember-app-package.js';
 import { EmberAddonPackage } from './ember-addon-package.js';
 import type { EmberProjectPackage } from '../types.js';
 import type { PackageJson } from 'type-fest';
+import { findPackageRootDirectory } from '@rehearsal/utils';
 
 const EXCLUDED_PACKAGES = ['test-harness'];
 
@@ -150,17 +150,11 @@ export class EmberAppProjectGraph extends ProjectGraph {
 
     const lookUpDir = dirname(someEntrypoint);
 
-    // Findup till we find package.json relative to the dir of the entrypoint.
-    const foundPackageJson = findUpSync('package.json', {
-      cwd: lookUpDir,
-      stopAt: this.rootDir,
-    });
+    const packageDir = findPackageRootDirectory(lookUpDir, this.rootDir);
 
-    if (!foundPackageJson) {
+    if (!packageDir) {
       throw new Error(`Unable to find package.json for package that contains ${entrypoint}`);
     }
-
-    const packageDir = dirname(foundPackageJson);
 
     // Adjust entrypoint to be relative to the package directory
     const relativeEntrypoint = relative(packageDir, someEntrypoint);

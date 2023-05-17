@@ -52,7 +52,6 @@
     "@rehearsal/utils": "workspace:*",
     "@types/debug": "^4.1.7",
     "@types/eslint": "^8.33.0",
-    "@types/findup-sync": "^4.0.2",
     "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.1.0",
     "@types/lodash.get": "^4.4.7",
