@@ -2,7 +2,7 @@ import { dirname, join, normalize, isAbsolute, relative, resolve, extname, parse
 import { existsSync, readFileSync } from 'node:fs';
 import { readJSONSync, writeJSONSync } from 'fs-extra/esm';
 import { compare } from 'compare-versions';
-import findupSync from 'findup-sync';
+import { findUpSync } from 'find-up';
 import debug from 'debug';
 import json5 from 'json5';
 import { valid } from 'semver';
@@ -100,7 +100,7 @@ export function normalizeVersionString(versionString: string): string {
 }
 
 export function determineProjectName(directory = process.cwd()): string | null {
-  const packageJSONPath = findupSync('package.json', {
+  const packageJSONPath = findUpSync('package.json', {
     cwd: directory,
   });
 
@@ -112,7 +112,7 @@ export function determineProjectName(directory = process.cwd()): string | null {
 }
 
 export function isYarnManager(basePath: string = process.cwd()): boolean {
-  const yarnPath = findupSync('yarn.lock', {
+  const yarnPath = findUpSync('yarn.lock', {
     cwd: basePath,
   });
 
@@ -120,10 +120,10 @@ export function isYarnManager(basePath: string = process.cwd()): boolean {
 }
 
 export function isYarnBerryManager(basePath: string = process.cwd()): boolean {
-  const lockFilePath = findupSync('yarn.lock', {
+  const lockFilePath = findUpSync('yarn.lock', {
     cwd: basePath,
   });
-  const berryConfigPath = findupSync('.yarnrc.yml', {
+  const berryConfigPath = findUpSync('.yarnrc.yml', {
     cwd: basePath,
   });
 
@@ -131,7 +131,7 @@ export function isYarnBerryManager(basePath: string = process.cwd()): boolean {
 }
 
 export function isPnpmManager(basePath: string = process.cwd()): boolean {
-  const pnpmPath = findupSync('pnpm-lock.yaml', {
+  const pnpmPath = findUpSync('pnpm-lock.yaml', {
     cwd: basePath,
   });
 
@@ -161,7 +161,7 @@ export function getManagerBinPath(
 }
 
 export function getLockfilePath(): string | null {
-  const yarnPath = findupSync('yarn.lock', {
+  const yarnPath = findUpSync('yarn.lock', {
     cwd: process.cwd(),
   });
 
@@ -169,7 +169,7 @@ export function getLockfilePath(): string | null {
     return yarnPath;
   }
 
-  const pnpmPath = findupSync('pnpm-lock.yaml', {
+  const pnpmPath = findUpSync('pnpm-lock.yaml', {
     cwd: process.cwd(),
   });
 
@@ -177,7 +177,7 @@ export function getLockfilePath(): string | null {
     return pnpmPath;
   }
 
-  const npmPath = findupSync('package-lock.json', {
+  const npmPath = findUpSync('package-lock.json', {
     cwd: process.cwd(),
   });
 
@@ -272,7 +272,7 @@ export async function setModuleResolution(
   // when thats not possible and for tests, use package.json
   function setVersionFromPackageJSON(dir: string): void {
     try {
-      const pkgPath = findupSync('package.json', {
+      const pkgPath = findUpSync('package.json', {
         cwd: dir,
       }) as string;
       // wrapping in try catch so casting is safe
@@ -408,10 +408,13 @@ export function readTSConfig<T>(configPath: string): T {
 /**
  * Finds the closest ancestor to `startPath` directory containing package.json file
  */
-export function findPackageRootDirectory(startPath: string): string | undefined {
-  const packageJSONPath = findupSync('package.json', { cwd: startPath });
+export function findPackageRootDirectory(startPath: string, stopPath: string): string | undefined {
+  const foundPackageJson = findUpSync('package.json', {
+    cwd: startPath,
+    stopAt: stopPath,
+  });
 
-  return packageJSONPath ? parse(packageJSONPath).dir : undefined;
+  return foundPackageJson ? parse(foundPackageJson).dir : undefined;
 }
 
 /**

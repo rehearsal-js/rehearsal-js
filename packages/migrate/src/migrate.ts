@@ -58,7 +58,9 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   // Output is only for tests
   const listrTask = input.task || { output: '' };
 
-  const useGlint = await isGlintProject(packageDir);
+  // We, currently, expect glint deps and config to be in the root package.json...
+  // TODO: Find a better way to check if required dependency exists
+  const useGlint = await isGlintProject(projectRootDir);
 
   DEBUG_CALLBACK('Migration started');
   DEBUG_CALLBACK(` package directory: ${packageDir}`);
@@ -100,7 +102,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(` filteredFilesToMigrate: %O`, filteredFilesToMigrate);
 
   const service = useGlint
-    ? await createGlintService(projectRootDir)
+    ? await createGlintService(packageDir)
     : new RehearsalService(tsCompilerOptions, filesToMigrate);
 
   function isGlintService(
