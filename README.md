@@ -111,7 +111,7 @@ Rehearsal CLI exposes 3 commands `graph` | `move` | `fix`. These commands functi
 
 ## `rehearsal graph`
 ```
-yarn rehearsal graph
+rehearsal graph
 
 Usage: rehearsal graph [options] [srcDir]
 
@@ -137,7 +137,7 @@ Using the leaf-most file or package, will ensure any settled types, will propaga
 
 ## `rehearsal move`
 ```
-yarn rehearsal move
+rehearsal move
 
 Usage: rehearsal move|mv [options] [srcDir]
 
@@ -159,7 +159,7 @@ This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`) and git move ag
 
 ## `rehearsal fix`
 ```
-yarn rehearsal fix
+rehearsal fix
 
 Usage: rehearsal fix|infer [options] [srcDir]
 
@@ -206,7 +206,7 @@ src
 Some of these files import into each other. We want to infer the types of the outermost leaf first. Have Rehearsal look at the graph of files, and determine the file migration order and ignore some files and directories and output the graph into a .json doc.
 
 ```
-yarn rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
+rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
 ...
 ✔ Analyzing project dependency graph ...
   › Graph order for '.':
@@ -220,7 +220,7 @@ yarn rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
 Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/gen-random-grid.js`. Lets start migrating files. Use  `rehearsal move` to move files to TypeScript.
 
 ```
-yarn rehearsal move . --ignore 'vitest.*,docs/*'  --graph --deps
+rehearsal move . --ignore 'vitest.*,docs/*'  --graph --deps
 ...
 ✔ Validating source path
 ✔ Analyzing project dependency graph ...
@@ -239,10 +239,10 @@ yarn rehearsal move . --ignore 'vitest.*,docs/*'  --graph --deps
     /test/main.test.js -> /test/main.test.ts
 ```
 
-We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal move while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types we need to manually configure our project and install missing devDependencies. Let's run Rehearsal `fix` without doing this and see what happens.
+We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies. Let's run Rehearsal `fix` without doing this and see what happens.
 
 ```
-yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
+rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
 ...
 ✖ /tsconfig.json does not exists. Please run rehearsal inside a project with a valid tsconfig.…
 ◼ Analyzing project dependency graph
@@ -252,7 +252,7 @@ yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
 Rehearsal has a series of pre-flight checks it will validate against [pre-reqs](https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli/src/prereqs.ts) before it can start inferring types. As you can see Rehearsal cannot find the `tsconfig.json` in the root of our project, because we've not added it yet. Follow the "Setup / Pre-Reqs" directions above adding any missing config files (tsconfig.json / .eslintrc.json) and missing devDependencies ... Now lets re-run `fix` against our project and see what we get:
 
 ```
-yarn rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
+rehearsal fix . --ignore 'vitest.*,docs/*'  --graph --deps
 ...
 ✔ Initialize
 ✔ Analyzing project dependency graph ...
@@ -330,4 +330,4 @@ You will find out which types packages to add after you run rehearsal migrate an
 
 ## Known Limitations
 
-Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the report file in the "./rehearsal/" directory and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
+Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the "rehearsal-report" file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
