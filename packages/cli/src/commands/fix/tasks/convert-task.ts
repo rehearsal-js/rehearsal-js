@@ -38,7 +38,7 @@ export function convertTask(
         commandName: '@rehearsal/fix',
       });
 
-      const packageDir = findPackageRootDirectory(targetPath) || rootPath;
+      const packageDir = findPackageRootDirectory(targetPath, rootPath) || rootPath;
 
       // this just cares about ts files which are already in the proper migration order
       if (sourceFilesAbs) {

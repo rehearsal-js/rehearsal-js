@@ -25,9 +25,6 @@ importers:
       '@types/eslint':
         specifier: ^8.33.0
         version: 8.37.0
-      '@types/findup-sync':
-        specifier: ^4.0.2
-        version: 4.0.2
       '@types/fs-extra':
         specifier: ^11.0.1
         version: 11.0.1
@@ -312,9 +309,9 @@ importers:
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
+      find-up:
+        specifier: ^6.3.0
+        version: 6.3.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -377,6 +374,9 @@ importers:
       '@rehearsal/migration-graph-shared':
         specifier: workspace:*
         version: link:../migration-graph-shared
+      '@rehearsal/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@swc/core':
         specifier: ^1.3.46
         version: 1.3.46(@swc/helpers@0.5.0)
@@ -392,9 +392,6 @@ importers:
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
-      find-up:
-        specifier: ^6.3.0
-        version: 6.3.0
       type-fest:
         specifier: ^3.8.0
         version: 3.8.0
@@ -438,9 +435,9 @@ importers:
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
+      find-up:
+        specifier: ^6.3.0
+        version: 6.3.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -601,9 +598,9 @@ importers:
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
+      find-up:
+        specifier: ^6.3.0
+        version: 6.3.0
       typescript:
         specifier: ^5.0
         version: 5.0.4
@@ -977,9 +974,9 @@ importers:
 
   packages/test-support:
     dependencies:
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
+      find-up:
+        specifier: ^6.3.0
+        version: 6.3.0
       fixturify:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1051,9 +1048,9 @@ importers:
       fast-glob:
         specifier: ^3.2.12
         version: 3.2.12
-      findup-sync:
-        specifier: ^5.0.0
-        version: 5.0.0
+      find-up:
+        specifier: ^6.3.0
+        version: 6.3.0
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -4500,12 +4497,6 @@ packages:
       '@types/serve-static': 1.15.1
     dev: true
 
-  /@types/findup-sync@4.0.2:
-    resolution: {integrity: sha512-MY2Acwvq6O+/rOMRtbV31phQOj1A+sbVWRbp47PvcZ5+VoofiSZHhj8ByATusuzJE+q/u+PA1SlkfPu3thhsjw==}
-    dependencies:
-      '@types/micromatch': 4.0.2
-    dev: true
-
   /@types/fs-extra@11.0.1:
     resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
@@ -7917,6 +7908,7 @@ packages:
   /detect-file@1.0.0:
     resolution: {integrity: sha512-DtCOLG98P007x7wiiOmfI0fi3eIKyWiLTGJ2MDnVi/E04lWGbf+JzrRHMm0rgIIZJGtHpKpbVgLWHrv8xXpc3Q==}
     engines: {node: '>=0.10.0'}
+    dev: true
 
   /detect-indent@6.1.0:
     resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
@@ -9947,6 +9939,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       homedir-polyfill: 1.0.3
+    dev: true
 
   /express@4.18.2(supports-color@6.1.0):
     resolution: {integrity: sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==}
@@ -10297,16 +10290,6 @@ packages:
       micromatch: 4.0.5
       resolve-dir: 1.0.1
     dev: true
-
-  /findup-sync@5.0.0:
-    resolution: {integrity: sha512-MzwXju70AuyflbgeOhzvQWAvvQdo1XL0A9bVvlXsYcFEBM87WR4OakL4OfZq+QRmr+duJubio+UtNQCPsVESzQ==}
-    engines: {node: '>= 10.13.0'}
-    dependencies:
-      detect-file: 1.0.0
-      is-glob: 4.0.3
-      micromatch: 4.0.5
-      resolve-dir: 1.0.1
-    dev: false
 
   /fireworm@0.7.2:
     resolution: {integrity: sha512-GjebTzq+NKKhfmDxjKq3RXwQcN9xRmZWhnnuC9L+/x5wBQtR0aaQM50HsjrzJ2wc28v1vSdfOpELok0TKR4ddg==}
@@ -10866,6 +10849,7 @@ packages:
       global-prefix: 1.0.2
       is-windows: 1.0.2
       resolve-dir: 1.0.1
+    dev: true
 
   /global-modules@2.0.0:
     resolution: {integrity: sha512-NGbfmJBp9x8IxyJSd1P+otYK8vonoJactOogrVfFRIAEY1ukil8RSKDz2Yo7wh1oihl51l/r6W4epkeKJHqL8A==}
@@ -10883,6 +10867,7 @@ packages:
       ini: 1.3.8
       is-windows: 1.0.2
       which: 1.3.1
+    dev: true
 
   /global-prefix@3.0.0:
     resolution: {integrity: sha512-awConJSVCHVGND6x3tmMaKcQvwXLhjdkmomy2W+Goaui8YPgYgXJZewhg3fWC+DlfqqQuWg8AwqjGTD2nAPVWg==}
@@ -11157,6 +11142,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       parse-passwd: 1.0.0
+    dev: true
 
   /hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -11403,6 +11389,7 @@ packages:
 
   /ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
+    dev: true
 
   /ini@2.0.0:
     resolution: {integrity: sha512-7PnF4oN3CvZF23ADhA5wRaYEQpJ8qygSkbtTXWBeXWXmEVRXK+1ITciHWwHhsjv1TmW0MgacIv6hEi5pX5NQdA==}
@@ -11893,6 +11880,7 @@ packages:
   /is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
     engines: {node: '>=0.10.0'}
+    dev: true
 
   /is-wsl@1.1.0:
     resolution: {integrity: sha512-gfygJYZ2gLTDlmbWMI0CE2MwnFzSN/2SZfkMlItC4K/JBlsWVDB0bO6XhqcY13YXE7iMcAJnzTCJjPiTeJJ0Mw==}
@@ -13629,6 +13617,7 @@ packages:
   /parse-passwd@1.0.0:
     resolution: {integrity: sha512-1Y1A//QUXEZK7YKz+rD9WydcE1+EuPr6ZBgKecAB8tmoW6UFv0NREVJe1p+jRxtThkcbbKkfwIbWJe/IeE6m2Q==}
     engines: {node: '>=0.10.0'}
+    dev: true
 
   /parse-static-imports@1.1.0:
     resolution: {integrity: sha512-HlxrZcISCblEV0lzXmAHheH/8qEkKgmqkdxyHTPbSqsTUV8GzqmN1L+SSti+VbNPfbBO3bYLPHDiUs2avbAdbA==}
@@ -14473,6 +14462,7 @@ packages:
     dependencies:
       expand-tilde: 2.0.2
       global-modules: 1.0.0
+    dev: true
 
   /resolve-from@3.0.0:
     resolution: {integrity: sha512-GnlH6vxLymXJNMBo7XP1fJIzBFbdYt49CuTwmB/6N53t+kMPRMFKz783LlQ4tv28XoQfMWinAJX6WCGf2IlaIw==}
@@ -17009,6 +16999,7 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
+    dev: true
 
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
