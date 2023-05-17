@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve, join } from 'node:path';
 import { compare } from 'compare-versions';
 import { Project } from 'fixturify-project';
 import { writeSync } from 'fixturify';
@@ -6,6 +6,7 @@ import tmp from 'tmp';
 import { describe, expect, test, afterEach } from 'vitest';
 import yaml from 'js-yaml';
 import { execa, execaSync } from 'execa';
+import { getEmberExcludePatterns } from '@rehearsal/migration-graph-ember';
 
 import {
   determineProjectName,
@@ -387,6 +388,12 @@ describe('utils', () => {
     project = new Project('my-project', '0.0.0', {
       files: {
         'index.ts': '',
+        '.ember-cli.js': '',
+        '.template-lintrc.js': '',
+        'ember-cli-build.js': '',
+        'ember-config.js': '',
+        'testem.js': '',
+        '^index.js': '',
         src: {
           'index.ts': '',
           'foo.ts': '',
@@ -401,22 +408,31 @@ describe('utils', () => {
     });
     await project.write();
 
-    // TS & GTS
+    const ignoreTSGlobs = ['**/*.ts', '**/*.tsx', '**/*.gts'].map((glob) => {
+      return join(`${project.baseDir}`, 'src', glob);
+    });
+    const ignoreJSGlobs = ['**/*.js', '**/*.jsx', '**/*.jts'].map((glob) => {
+      return join(`${project.baseDir}`, 'src', glob);
+    });
+
+    // TS & GTS (ignore JS files)
     const [absPathsTS, relPathsTS] = getFilesByType(
       project.baseDir,
       resolve(project.baseDir, 'src'),
-      'ts'
+      'ts',
+      [...ignoreJSGlobs, ...getEmberExcludePatterns()]
     );
     expect(absPathsTS).toHaveLength(4);
     expect(relPathsTS).toHaveLength(4);
     absPathsTS.forEach((path) => expect(path).toContain('/src/'));
     relPathsTS.forEach((path) => expect(path.split('/')[0]).toBe('src'));
 
-    // JS & GJS
+    // JS & GJS (ignore TS files)
     const [absPathsJS, relPathsJS] = getFilesByType(
       project.baseDir,
       resolve(project.baseDir, 'src'),
-      'js'
+      'js',
+      [...ignoreTSGlobs, ...getEmberExcludePatterns()]
     );
     expect(absPathsJS).toHaveLength(2);
     expect(relPathsJS).toHaveLength(2);

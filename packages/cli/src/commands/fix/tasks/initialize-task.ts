@@ -53,7 +53,8 @@ export function initTask(
       // expectation is rehearsal move has already been run on the package
       // expect a tsconfig.json file in rootPath
       if (graph) {
-        [ctx.packageAbs, ctx.packageRel] = validatePackagePath(rootPath, src);
+        // for graph ctx.sourceFilesAbs, ctx.sourceFilesRel will be set in the graph task
+        validatePackagePath(rootPath, src);
         // expect a tsconfig.json file in the root of the child package
         preFlightCheck(rootPath, ctx.projectType);
       } else {

@@ -51,8 +51,6 @@ export type CommandContext = {
   targetPackageAbs?: string;
   workspaceRoot?: string;
   projectName: string;
-  packageAbs: string;
-  packageRel: string;
   migrationOrder?: { packages: PackageEntry[] };
   source?: string;
   packageEntry?: string;

@@ -1082,6 +1082,9 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
     devDependencies:
+      '@rehearsal/migration-graph-ember':
+        specifier: workspace:*
+        version: link:../migration-graph-ember
       '@types/js-yaml':
         specifier: ^4.0.5
         version: 4.0.5

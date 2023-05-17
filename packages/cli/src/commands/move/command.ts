@@ -40,7 +40,7 @@ moveCommand
   .name('move')
   .alias('mv')
   .description('git mv extension conversion of .js -> .ts')
-  .argument('[srcDir]', 'the path to a package/file/directory that will be moved', '')
+  .argument('[srcDir]', 'the path to a package/file/directory that will be moved', process.cwd())
   .option('-g, --graph', 'enable graph resolution of files to move', false)
   .option('--devDeps', `follow packages in 'devDependencies'`)
   .option('--deps', `follow packages in 'dependencies'`)
@@ -57,11 +57,11 @@ moveCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .action(async (src: string, options: MoveCommandOptions) => {
-    await move(src, options);
+  .action(async (srcDir: string, options: MoveCommandOptions) => {
+    await move(srcDir, options);
   });
 
-async function move(src: string, options: MoveCommandOptions): Promise<void> {
+async function move(srcDir: string, options: MoveCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/move ${version?.trim()}`);
 
   if (options.graph && !options.deps && !options.devDeps) {
@@ -78,18 +78,14 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
     throw new Error(`'--deps' can only be passed when you pass --graph`);
   }
 
-  if (!options.graph && options.ignore.length > 0) {
-    throw new Error(`'--ignore' can only be passed when you pass --graph`);
-  }
-
-  if (!src) {
+  if (!srcDir) {
     throw new Error(`@rehearsal/move: you must specify a package or path to move`);
   }
 
+  // We never want to move typescript files or getEmberExcludePatterns
   const typescriptGlobs = ['**/*.ts', '**/*.tsx', '**/*.gts'].map((glob) => {
-    return join(`${options.rootPath}`, src, glob);
+    return join(`${options.rootPath}`, srcDir, glob);
   });
-  // We never want to move typescript files or the ember-cli-build.js files
   options.ignore.push(...typescriptGlobs, ...getEmberExcludePatterns());
 
   // grab the child move tasks
@@ -98,8 +94,8 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
 
   const tasks = options.graph
     ? [
-        initTask(src, options),
-        graphOrderTask(src, {
+        initTask(srcDir, options),
+        graphOrderTask(srcDir, {
           rootPath: options.rootPath,
           devDeps: options.devDeps,
           deps: options.deps,
@@ -108,7 +104,7 @@ async function move(src: string, options: MoveCommandOptions): Promise<void> {
         }),
         moveTask(options.rootPath, options),
       ]
-    : [initTask(src, options), moveTask(options.rootPath, options)];
+    : [initTask(srcDir, options), moveTask(options.rootPath, options)];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

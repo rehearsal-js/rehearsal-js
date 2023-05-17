@@ -543,7 +543,8 @@ export function findWorkspaceRoot(startDir: string = process.cwd()): string {
 export function validateSourcePath(
   basePath: string,
   source: string,
-  fileType: 'ts' | 'js'
+  fileType: 'ts' | 'js',
+  ignorePatterns: string[] = []
 ): [string[], string[]] {
   const relativePath = relative(basePath, resolve(basePath, source));
   const groupedExt = fileType === 'js' ? ['.js', '.gjs'] : ['.ts', '.gts'];
@@ -568,7 +569,7 @@ export function validateSourcePath(
   }
 
   // otherwise return all the js files in the directory and its subdirectories
-  return getFilesByType(basePath, source, fileType);
+  return getFilesByType(basePath, source, fileType, ignorePatterns);
 }
 
 // check if the source is a directory
@@ -582,18 +583,21 @@ export function isDirectory(source: string): boolean {
  * @param {string} basePath - eg process.cwd()
  * @param {string} source - eg basePath/src or basePath/src/child/file.ts|.js
  * @param {FileType} fileType - either ts | js, which will glob for 'js,gjs'|'ts,gts'
+ * @param {string[]} ignorePatterns - ignore patterns
  */
 export function getFilesByType(
   basePath: string,
   source: string,
-  fileType: 'ts' | 'js'
+  fileType: 'ts' | 'js',
+  ignorePatterns: string[] = []
 ): [string[], string[]] {
   const sourceAbs = resolve(basePath, source);
   const sourceRel = relative(basePath, sourceAbs);
   const globPaths = fileType === 'js' ? 'js,gjs' : 'ts,gts';
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-  const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{${globPaths}}`, { cwd: basePath });
+  const sourceFiles = fastGlob.sync(`${sourceRel}/**/*.{${globPaths}}`, {
+    cwd: basePath,
+    ignore: ignorePatterns,
+  });
 
   // if no files are found, throw an error
   if (!sourceFiles.length) {

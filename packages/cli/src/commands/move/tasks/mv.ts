@@ -1,8 +1,8 @@
-import debug from 'debug';
-import { ListrTask } from 'listr2';
 import { Worker } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { ListrTask } from 'listr2';
+import debug from 'debug';
 
 import type { CommandContext, MoveCommandOptions } from '../../../types.js';
 import type { ListrTaskWrapper, ListrDefaultRenderer } from 'listr2';

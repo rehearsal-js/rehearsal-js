@@ -4,24 +4,16 @@ import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const { sourceFiles, basePath, dryRun } = JSON.parse(
-    workerData as string
-  ) as {
+  const { sourceFiles, basePath, dryRun } = JSON.parse(workerData as string) as {
     sourceFiles: string[];
     basePath: string;
     dryRun: boolean;
   };
 
-
   parentPort?.postMessage(gitMove(sourceFiles, basePath, dryRun));
 }
 
-
-export function gitMove(
-  sourceFiles: string[],
-  basePath: string,
-  dryRun = false
-): string {
+export function gitMove(sourceFiles: string[], basePath: string, dryRun = false): string {
   let listrOutput = 'renamed: \n';
 
   sourceFiles.map((sourceFile) => {
