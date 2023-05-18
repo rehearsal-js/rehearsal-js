@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/migrate",
-  "version": "3.0.2-beta",
+  "version": "3.0.3-beta",
   "description": "Rehearsal JavaScript to TypeScript Migration Tool",
   "keywords": [
     "rehearsal",

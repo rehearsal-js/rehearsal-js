@@ -1,3 +1,14 @@
+## <small>3.0.3-beta (2023-05-18)</small>
+
+* fix: catch and return false if getTypeFromTypeNode fails (#1061) ([12c0c52](https://github.com/rehearsal-js/rehearsal-js/commit/12c0c52)), closes [#1061](https://github.com/rehearsal-js/rehearsal-js/issues/1061)
+* fix: preflight support for latest dep (#1059) ([11e26ed](https://github.com/rehearsal-js/rehearsal-js/commit/11e26ed)), closes [#1059](https://github.com/rehearsal-js/rehearsal-js/issues/1059)
+* feat: module graph (#1053) ([f5d450d](https://github.com/rehearsal-js/rehearsal-js/commit/f5d450d)), closes [#1053](https://github.com/rehearsal-js/rehearsal-js/issues/1053)
+* chore: delete regen (#1057) ([b27674f](https://github.com/rehearsal-js/rehearsal-js/commit/b27674f)), closes [#1057](https://github.com/rehearsal-js/rehearsal-js/issues/1057)
+* chore: fix base-codefixes test (#1058) ([23a816b](https://github.com/rehearsal-js/rehearsal-js/commit/23a816b)), closes [#1058](https://github.com/rehearsal-js/rehearsal-js/issues/1058)
+* chore(gh-action-bot): adding new diagnostics ([fda8ac6](https://github.com/rehearsal-js/rehearsal-js/commit/fda8ac6))
+
+
+
 ## <small>3.0.2-beta (2023-05-17)</small>
 
 * fix: adjust path used by glint service (#1051) ([78ea35c](https://github.com/rehearsal-js/rehearsal-js/commit/78ea35c)), closes [#1051](https://github.com/rehearsal-js/rehearsal-js/issues/1051)
