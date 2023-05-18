@@ -1,3 +1,10 @@
+## <small>3.0.4-beta (2023-05-18)</small>
+
+* fix(util): move find-up to dependency (#1065) ([f4f3a31](https://github.com/rehearsal-js/rehearsal-js/commit/f4f3a31)), closes [#1065](https://github.com/rehearsal-js/rehearsal-js/issues/1065)
+* docs: update docs (#1064) ([07223d4](https://github.com/rehearsal-js/rehearsal-js/commit/07223d4)), closes [#1064](https://github.com/rehearsal-js/rehearsal-js/issues/1064)
+
+
+
 ## <small>3.0.3-beta (2023-05-18)</small>
 
 * fix: catch and return false if getTypeFromTypeNode fails (#1061) ([12c0c52](https://github.com/rehearsal-js/rehearsal-js/commit/12c0c52)), closes [#1061](https://github.com/rehearsal-js/rehearsal-js/issues/1061)
