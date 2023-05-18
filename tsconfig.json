@@ -36,9 +36,6 @@
       "path": "./packages/utils"
     },
     {
-      "path": "./packages/regen"
-    },
-    {
       "path": "./packages/ts-utils"
     }
   ]

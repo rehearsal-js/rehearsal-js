@@ -42,7 +42,6 @@
     "@rehearsal/migrate": "workspace:*",
     "@rehearsal/migration-graph": "workspace:*",
     "@rehearsal/migration-graph-ember": "workspace:*",
-    "@rehearsal/regen": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
     "@rehearsal/utils": "workspace:*",
