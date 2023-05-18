@@ -106,3 +106,14 @@ export function think(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
 export function thinkTwice(a) {
   return a;
 }
+
+/**
+ * The return type is throwing a error
+ * @param {[number, number]} ab
+ * @param {Array<string>} c
+ * @return {Array<{content: string}>}
+ */
+export function moreCases([a, b], c) {
+  a; b; c;
+  return c;
+}
