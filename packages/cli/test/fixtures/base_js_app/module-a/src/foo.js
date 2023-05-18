@@ -2,5 +2,4 @@ import {
   foo
 } from './baz.js';
 
-
-console.log(foo);
+export const foo2 = 'foo2';

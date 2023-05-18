@@ -15,12 +15,6 @@
       "path": "./packages/migration-graph"
     },
     {
-      "path": "./packages/migration-graph-ember"
-    },
-    {
-      "path": "./packages/migration-graph-shared"
-    },
-    {
       "path": "./packages/plugins"
     },
     {

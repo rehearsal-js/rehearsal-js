@@ -5,11 +5,6 @@ exports[`fix command > base_ts_app 1`] = `
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] src/get-live-neighbor-count.ts
-[DATA] src/apply-rules.ts
-[DATA] src/gen-random-grid.ts
-[DATA] src/app.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /src/get-live-neighbor-count.ts
@@ -235,75 +230,34 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [STARTED] Initialize
 [SUCCESS] Initialize
 [STARTED] Analyzing project dependency graph
-[DATA] Graph order for .:
-[DATA] app/adapters/application.ts
-[DATA] app/app.ts
-[DATA] app/components/map.ts
-[DATA] app/components/rental/image.ts
-[DATA] app/components/rentals.ts
-[DATA] app/components/rentals/filter.ts
-[DATA] app/components/share-button.ts
-[DATA] app/models/rental.ts
-[DATA] app/router.ts
-[DATA] app/routes/index.ts
-[DATA] app/routes/rental.ts
-[DATA] app/serializers/application.ts
-[DATA] app/services/locale.ts
-[DATA] tests/acceptance/super-rentals-test.js
-[DATA] tests/helpers/index.js
-[DATA] tests/integration/components/jumbo-test.js
-[DATA] tests/integration/components/map-test.js
-[DATA] tests/integration/components/rental-test.js
-[DATA] tests/integration/components/rental/detailed-test.js
-[DATA] tests/integration/components/rental/image-test.js
-[DATA] tests/integration/components/rentals-test.js
-[DATA] tests/integration/components/share-button-test.js
-[DATA] tests/test-helper.js
-[DATA] tests/unit/models/rental-test.js
-[DATA] types/ember-data/types/registries/model.d.ts
-[DATA] types/global.d.ts
-[DATA] types/super-rentals/index.d.ts
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/adapters/application.ts
 [DATA] processing file: /app/app.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/components/hello-world.gts
 [DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/rental/image.ts
 [DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/rentals/filter.ts
 [DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
-[DATA] processing file: /app/router.ts
 [DATA] processing file: /app/routes/index.ts
 [DATA] processing file: /app/routes/rental.ts
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /tests/acceptance/super-rentals-test.js
-[DATA] processing file: /tests/helpers/index.js
-[DATA] processing file: /tests/integration/components/jumbo-test.js
-[DATA] processing file: /tests/integration/components/map-test.js
-[DATA] processing file: /tests/integration/components/rental-test.js
-[DATA] processing file: /tests/integration/components/rental/detailed-test.js
-[DATA] processing file: /tests/integration/components/rental/image-test.js
-[DATA] processing file: /tests/integration/components/rentals-test.js
-[DATA] processing file: /tests/integration/components/share-button-test.js
-[DATA] processing file: /tests/test-helper.js
-[DATA] processing file: /tests/unit/models/rental-test.js
-[DATA] processing file: /types/ember-data/types/registries/model.d.ts
-[DATA] processing file: /types/global.d.ts
-[DATA] processing file: /types/super-rentals/index.d.ts
+[DATA] processing file: /app/components/rental/image.ts
+[DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   32 errors caught by rehearsal
+[TITLE]   31 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
-[TITLE]   29 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 2 eslint errors, with details in the report
+[TITLE]   28 errors need to be fixed manually
+[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   32 errors caught by rehearsal
+[SUCCESS]   31 errors caught by rehearsal
 [SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS]   29 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[SUCCESS]   28 errors need to be fixed manually
+[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 2`] = `
@@ -421,6 +375,7 @@ export default class Hello extends Component {
   name = 'world';
 
   <template>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
   </template>
 }
@@ -431,9 +386,11 @@ exports[`fix command > glimmerx_js_app 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
 [SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/App.ts
 [DATA] processing file: /src/GreetingHeader.ts
+[DATA] processing file: /src/App.ts
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred

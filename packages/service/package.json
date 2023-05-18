@@ -39,6 +39,7 @@
   "dependencies": {
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
+    "find-up": "^6.3.0",
     "vscode-languageserver": "^8.1.0",
     "vscode-uri": "^3.0.7",
     "winston": "^3.8.2"

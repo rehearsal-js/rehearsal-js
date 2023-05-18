@@ -3,74 +3,75 @@
 exports[`graph command > base_js_app 1`] = `
 "[STARTED] Analyzing project dependency graph
 [DATA] Graph order for .:
-[DATA] index.js
-[DATA] module-a/index.js
-[DATA] module-a/src/baz.js
-[DATA] module-a/src/foo.js
-[DATA] module-b/index.js
-[DATA] module-b/src/tires.js
-[DATA] module-b/src/car.js
-[DATA] src/bizz.ts
-[DATA] src/foo/baz.js
-[DATA] src/foo/biz.js
-[DATA] src/foo/buz/biz.js
-[DATA] src/index.js
+[DATA] ./index.js
+[DATA] ./src/bizz.ts
+[DATA] ./src/index.js
+[DATA] ./src/foo/baz.js
+[DATA] ./src/foo/biz.js
+[DATA] ./src/foo/e.gjs
+[DATA] ./src/foo/buz/biz.js
+[DATA] ./module-a/index.js
+[DATA] ./module-a/src/baz.js
+[DATA] ./module-a/src/foo.js
+[DATA] ./module-b/index.js
+[DATA] ./module-b/src/tires.js
+[DATA] ./module-b/src/car.js
 [SUCCESS] Analyzing project dependency graph"
 `;
 
 exports[`graph command > base_ts_app 1`] = `
 "[STARTED] Analyzing project dependency graph
 [DATA] Graph order for .:
-[DATA] src/get-live-neighbor-count.ts
-[DATA] src/apply-rules.ts
-[DATA] src/gen-random-grid.ts
-[DATA] src/app.ts
+[DATA] ./src/get-live-neighbor-count.ts
+[DATA] ./src/apply-rules.ts
+[DATA] ./src/gen-random-grid.ts
+[DATA] ./src/app.ts
 [SUCCESS] Analyzing project dependency graph"
 `;
 
 exports[`graph command > ember_js_app_4.11 1`] = `
 "[STARTED] Analyzing project dependency graph
 [DATA] Graph order for .:
-[DATA] app/adapters/application.js
-[DATA] app/app.js
-[DATA] app/components/hello-world.gjs
-[DATA] app/components/map.js
-[DATA] app/components/rental/image.js
-[DATA] app/components/rentals.js
-[DATA] app/components/rentals/filter.js
-[DATA] app/services/locale.js
-[DATA] app/components/share-button.js
-[DATA] app/models/rental.js
-[DATA] app/router.js
-[DATA] app/routes/index.js
-[DATA] app/routes/rental.js
-[DATA] app/serializers/application.js
-[DATA] tests/acceptance/super-rentals-test.js
-[DATA] tests/helpers/index.js
-[DATA] tests/integration/components/jumbo-test.js
-[DATA] tests/integration/components/map-test.js
-[DATA] tests/integration/components/rental-test.js
-[DATA] tests/integration/components/rental/detailed-test.js
-[DATA] tests/integration/components/rental/image-test.js
-[DATA] tests/integration/components/rentals-test.js
-[DATA] tests/integration/components/share-button-test.js
-[DATA] tests/test-helper.js
-[DATA] tests/unit/models/rental-test.js
-[DATA] types/ember-data/types/registries/model.d.ts
-[DATA] types/global.d.ts
-[DATA] types/super-rentals/index.d.ts
+[DATA] ./app/app.js
+[DATA] ./app/router.js
+[DATA] ./config/environment.js
+[DATA] ./config/targets.js
+[DATA] ./tests/test-helper.js
+[DATA] ./app/adapters/application.js
+[DATA] ./app/components/hello-world.gjs
+[DATA] ./app/components/map.js
+[DATA] ./app/components/rentals.js
+[DATA] ./app/components/share-button.js
+[DATA] ./app/models/rental.js
+[DATA] ./app/routes/index.js
+[DATA] ./app/routes/rental.js
+[DATA] ./app/serializers/application.js
+[DATA] ./app/services/locale.js
+[DATA] ./tests/acceptance/super-rentals-test.js
+[DATA] ./tests/helpers/index.js
+[DATA] ./app/components/rental/image.js
+[DATA] ./app/components/rentals/filter.js
+[DATA] ./tests/integration/components/jumbo-test.js
+[DATA] ./tests/integration/components/map-test.js
+[DATA] ./tests/integration/components/rental-test.js
+[DATA] ./tests/integration/components/rentals-test.js
+[DATA] ./tests/integration/components/share-button-test.js
+[DATA] ./tests/unit/models/rental-test.js
+[DATA] ./tests/integration/components/rental/detailed-test.js
+[DATA] ./tests/integration/components/rental/image-test.js
 [SUCCESS] Analyzing project dependency graph"
 `;
 
 exports[`graph command > glimmerx_js_app 1`] = `
 "[STARTED] Analyzing project dependency graph
 [DATA] Graph order for .:
-[DATA] src/GreetingHeader.js
-[DATA] src/App.js
-[DATA] src/SimpleComponent.js
-[DATA] src/index.js
-[DATA] tests/util.js
-[DATA] tests/rendering/App.test.js
-[DATA] tests/rendering/component.test.js
+[DATA] ./webpack.config.js
+[DATA] ./src/GreetingHeader.js
+[DATA] ./src/App.js
+[DATA] ./src/SimpleComponent.js
+[DATA] ./src/index.js
+[DATA] ./tests/util.js
+[DATA] ./tests/rendering/App.test.js
+[DATA] ./tests/rendering/component.test.js
 [SUCCESS] Analyzing project dependency graph"
 `;

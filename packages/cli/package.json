@@ -41,9 +41,9 @@
   "dependencies": {
     "@rehearsal/migrate": "workspace:*",
     "@rehearsal/migration-graph": "workspace:*",
-    "@rehearsal/migration-graph-ember": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
+    "@rehearsal/ts-utils": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
@@ -54,6 +54,7 @@
     "eslint": "^8.40.0",
     "execa": "^7.1.1",
     "fast-glob": "^3.2.12",
+    "find-up": "^6.3.0",
     "fs-extra": "^11.1.1",
     "get-tsconfig": "^4.5.0",
     "js-yaml": "^4.1.0",

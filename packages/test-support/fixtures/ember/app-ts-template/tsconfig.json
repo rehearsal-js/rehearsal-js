@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+
     "target": "es2020",
     "allowJs": true,
     "moduleResolution": "node",
@@ -21,7 +22,7 @@
     "declarationMap": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "module": "es6",
     "strict": true,
     "skipLibCheck": true,

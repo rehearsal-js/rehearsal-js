@@ -9,7 +9,7 @@ export default defineConfig({
   test: {
     testTimeout: 500_000,
     hookTimeout: 50_000,
-    watchExclude: ['package.json', '**/fixtures/**'],
+    watchExclude: ['package.json'],
     sequence: {
       shuffle: true,
     },

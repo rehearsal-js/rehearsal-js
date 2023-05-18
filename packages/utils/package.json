@@ -39,30 +39,19 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@rehearsal/ts-utils": "workspace:*",
-    "chalk": "^5.2.0",
-    "commander": "^10.0.0",
-    "compare-versions": "6.0.0-rc.1",
-    "debug": "^4.3.4",
     "execa": "^7.1.1",
-    "fast-glob": "^3.2.12",
-    "find-up": "^6.3.0",
     "fs-extra": "^11.1.1",
-    "js-yaml": "^4.1.0",
     "json5": "^2.2.3",
-    "micromatch": "^4.0.5",
-    "semver": "^7.3.8",
     "simple-git": "^3.17.0",
     "type-fest": "^3.8.0",
     "which": "^3.0.0"
   },
   "devDependencies": {
-    "@rehearsal/migration-graph-ember": "workspace:*",
-    "@types/js-yaml": "^4.0.5",
     "@types/which": "^3.0.0",
     "@vitest/coverage-c8": "^0.30.1",
+    "find-up": "^6.3.0",
     "fixturify": "^3.0.0",
-    "tmp": "^0.2.1",
+    "fixturify-project": "^5.2.0",
     "vitest": "^0.30.0"
   },
   "peerDependencies": {

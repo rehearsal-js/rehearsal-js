@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`path utils > validateSourcePath() 1`] = `"Rehearsal could not find source: <tmp-path>/src/dont/exist in project: <tmp-path>"`;
+
+exports[`path utils > validateSourcePath() 2`] = `"Rehearsal will only move .js,.gjs,.jsx,.mjs files. Source: <tmp-path>/src/foo.fakeext is neither."`;

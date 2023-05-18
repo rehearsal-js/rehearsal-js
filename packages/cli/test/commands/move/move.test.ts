@@ -37,7 +37,6 @@ describe('Command: move', () => {
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(3);
-    expect(tsSourceFiles).length(1);
     expect(sanitizeAbsPath(projectSourceDir, tsSourceFiles)).toMatchObject(['/baz.ts']);
   });
 
@@ -65,7 +64,6 @@ describe('Command: move', () => {
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(jsSourceFiles).length(0);
-    expect(tsSourceFiles).length(6);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
       '/src/bizz.ts',
       '/src/index.ts',
@@ -76,15 +74,10 @@ describe('Command: move', () => {
     ]);
   });
 
-  test('move packages with --graph and --deps flag', async () => {
-    const result = await runBin(
-      'move',
-      [`.`],
-      ['--graph', '--deps', '--rootPath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+  test('move packages based on the graph', async () => {
+    const result = await runBin('move', [`.`], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
@@ -92,41 +85,40 @@ describe('Command: move', () => {
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
-    expect(tsSourceFiles).length(12);
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
-      '/index.ts',
-      '/module-a/index.ts',
-      '/module-b/index.ts',
       '/src/bizz.ts',
       '/src/index.ts',
       '/module-a/src/baz.ts',
       '/module-a/src/foo.ts',
+      '/module-a/src/index.ts',
       '/module-b/src/car.ts',
+      '/module-b/src/index.ts',
       '/module-b/src/tires.ts',
       '/src/foo/baz.ts',
       '/src/foo/biz.ts',
+      '/src/foo/e.gts',
       '/src/foo/buz/biz.ts',
     ]);
   });
 
-  test('expect failure when --deps is passed without --graph', async () => {
-    const childPackage = 'module-a';
+  test('can opt-out of move with graph', async () => {
+    const result = await runBin('move', [`./src`], ['--no-graph', '--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
-    await expect(
-      async () =>
-        await runBin('move', [`${childPackage}`], ['--deps', '--rootPath', project.baseDir], {
-          cwd: project.baseDir,
-        })
-    ).rejects.toThrowError(`'--deps' can only be passed when you pass --graph`);
-  });
+    const projectSourceDir = resolve(project.baseDir);
+    const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
+      cwd: project.baseDir,
+    });
 
-  test('expect failure when --devDeps is passed without --graph', async () => {
-    const childPackage = 'module-a';
-    await expect(
-      async () =>
-        await runBin('move', [`${childPackage}`], ['--devDeps', '--rootPath', project.baseDir], {
-          cwd: project.baseDir,
-        })
-    ).rejects.toThrowError(`'--devDeps' can only be passed when you pass --graph`);
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/src/bizz.ts',
+      '/src/index.ts',
+      '/src/foo/baz.ts',
+      '/src/foo/biz.ts',
+      '/src/foo/e.gts',
+      '/src/foo/buz/biz.ts',
+    ]);
   });
 });

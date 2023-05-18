@@ -1,11 +1,14 @@
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
-import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import debug from 'debug';
+import { existsSync } from 'node:fs';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
-import type { PackageEntry, CommandContext, GraphTaskOptions } from '../../../types.js';
-
+import { discoverServiceDependencies, Resolver, topSortFiles } from '@rehearsal/migration-graph';
+import { readJSON } from '@rehearsal/utils';
+import debug from 'debug';
+import { getFiles, writeOutput } from './graphWorker.js';
+import { Response } from './types.js';
+import type { CommandContext, GraphTaskOptions } from '../../../types.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -14,7 +17,7 @@ const workerPath = resolve(__dirname, 'graphWorker.js');
 const DEBUG_CALLBACK = debug('rehearsal:cli:graph');
 
 export function graphOrderTask(
-  srcDir: string,
+  srcPath: string,
   options: GraphTaskOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: CommandContext
@@ -23,45 +26,60 @@ export function graphOrderTask(
     title: 'Analyzing project dependency graph',
     options: { persistentOutput: true },
     async task(ctx: CommandContext, task) {
-      let order: { packages: PackageEntry[] };
-      const { output, rootPath } = options;
-      let selectedPackageName: string;
+      let orderedFiles: string[] = [];
+      const { output, rootPath, ignore, skipPrompt } = options;
+
+      const serviceMapPath = join(rootPath, '.rehearsal', 'services-map.json');
+      let serviceMap: Record<string, string> = {};
+
+      if (existsSync(serviceMapPath)) {
+        serviceMap = (await readJSON(join(rootPath, '.rehearsal', 'services-map.json'))) || {};
+      }
 
       if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
-        const { intoGraphOutput } = await import('./graphWorker.js').then((m) => m);
-        const { getMigrationOrder } = await import('@rehearsal/migration-graph').then((m) => m);
+        const servicesResolver = discoverServiceDependencies(serviceMap);
+        const absolutePath = resolve(rootPath, srcPath);
+        const resolver = new Resolver({ customResolver: servicesResolver, ignore });
 
-        order = intoGraphOutput(
-          getMigrationOrder(srcDir, {
-            basePath: rootPath,
-            crawlDevDeps: options.devDeps,
-            crawlDeps: options.deps,
-            ignore: options.ignore,
-            include: [],
-          }),
-          rootPath
-        );
+        await resolver.load();
+
+        const files = await getFiles(absolutePath, srcPath, ignore);
+
+        for (const file of files) {
+          resolver.walk(file);
+        }
+
+        orderedFiles = topSortFiles(resolver.graph);
+
+        if (output) {
+          await writeOutput(rootPath, resolver.graph, orderedFiles, output);
+        }
       } else {
-        order = await new Promise<{ packages: PackageEntry[] }>((resolve, reject) => {
+        orderedFiles = await new Promise<string[]>((resolve, reject) => {
           task.title = 'Analyzing project dependency graph ...';
 
           // Run graph traversal in a worker thread so the ui thread doesn't hang
           const worker = new Worker(workerPath, {
             workerData: JSON.stringify({
-              srcDir,
-              basePath: rootPath,
-              crawlDevDeps: options.devDeps,
-              crawlDeps: options.deps,
+              srcPath,
+              rootPath,
+              output,
               ignore: options.ignore,
-              include: [],
+              serviceMap,
             }),
           });
 
-          worker.on('message', (packages: { packages: PackageEntry[] }) => {
-            resolve(packages);
+          worker.on('message', (response: Response) => {
+            switch (response.type) {
+              case 'message':
+                task.title = response.content;
+                break;
+              case 'files':
+                resolve(response.content);
+                break;
+            }
           });
-
           worker.on('error', reject);
           worker.on('exit', (code) => {
             if (code !== 0) {
@@ -71,51 +89,15 @@ export function graphOrderTask(
         });
       }
 
-      // set the order on the context so we can use it in other tasks
-      ctx.migrationOrder = order;
-
-      // skip the output and prompt. for when we just want the order
-      if (options.skipPrompt) {
-        ctx.sourceFilesRel = order.packages.flatMap((pkg) => pkg.files);
-        ctx.sourceFilesAbs = ctx.sourceFilesRel.map((file) => resolve(rootPath, file));
+      if (!output && !skipPrompt) {
+        task.output = `Graph order for '${srcPath}':\n\n${orderedFiles
+          .map((filePath) => filePath.replace(rootPath, '.'))
+          .join('\n')}`;
       }
 
-      DEBUG_CALLBACK('ctx.sourceFilesRel %O:', ctx.sourceFilesRel);
-      DEBUG_CALLBACK('ctx.sourceFilesAbs %O:', ctx.sourceFilesAbs);
-      DEBUG_CALLBACK('order: %O', order);
+      DEBUG_CALLBACK(`graph file order: ${JSON.stringify(orderedFiles, null, 2)}`);
 
-      // dont prompt just write the file
-      if (output) {
-        task.title = `Writing graph to ${output} ...`;
-
-        await writeFile(output, JSON.stringify(order, null, 2));
-      } else {
-        // if more than 1 package found prompt the user to select one
-        if (order.packages.length > 1) {
-          selectedPackageName = await task.prompt<string>([
-            {
-              type: 'Select',
-              name: 'packageSelection',
-              message:
-                'We found the following packages. Select a packages to see the order of files:',
-              choices: order.packages.map((p) => p.name),
-            },
-          ]);
-        } else {
-          selectedPackageName = order.packages[0].name;
-        }
-
-        const entry = getPackageEntry(order, selectedPackageName);
-
-        task.output = `Graph order for '${selectedPackageName}':\n\n${entry}`;
-      }
+      ctx.orderedFiles = orderedFiles;
     },
   };
-}
-
-function getPackageEntry(
-  order: { packages: PackageEntry[] },
-  selectedPackageName: string
-): string | undefined {
-  return order.packages.find((pkg) => pkg.name === selectedPackageName)?.files.join('\n');
 }
