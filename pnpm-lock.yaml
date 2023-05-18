@@ -331,9 +331,6 @@ importers:
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
-      type-fest:
-        specifier: ^3.8.0
-        version: 3.8.0
       vitest:
         specifier: ^0.30.0
         version: 0.30.0
