@@ -22,7 +22,10 @@ graphCommand
       .argParser(() => process.cwd())
       .hideHelp()
   )
-  .option('-o, --output <filepath>', 'output path for a JSON format of the graph order')
+  .option(
+    '-o, --output <filepath>',
+    `output path for a JSON or grapviz format of the graph order eg. '--output graph.json' or '--output graph.dot'`
+  )
   .action(async (srcPath: string, options: GraphCommandOptions) => {
     await new Listr<CommandContext>([
       graphOrderTask(srcPath, {
