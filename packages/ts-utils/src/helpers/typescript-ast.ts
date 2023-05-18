@@ -129,7 +129,14 @@ export function isVariableOfCatchClause(node: Node): boolean {
 
 export function canTypeBeResolved(checker: TypeChecker, typeNode: TypeNode): boolean {
   if (isTypeReferenceNode(typeNode)) {
-    const type = checker.getTypeFromTypeNode(typeNode);
+    let type;
+
+    try {
+      type = checker.getTypeFromTypeNode(typeNode);
+    } catch (e) {
+      return false;
+    }
+
     const typeArguments = typeNode.typeArguments || [];
 
     const isTypeError = (type: ts.Type): boolean => {
