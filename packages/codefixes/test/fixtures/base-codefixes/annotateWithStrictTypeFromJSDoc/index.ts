@@ -108,12 +108,23 @@ export function thinkTwice(a) {
 }
 
 /**
- * The return type is throwing a error
- * @param {[number, number]} ab
+ * The return type is throwing an error
+ * @param {[number, number]} a-and-b
  * @param {Array<string>} c
  * @return {Array<{content: string}>}
  */
-export function moreCases([a, b], c) {
+export function issueWithTheReturnType([a, b], c) {
   a; b; c;
   return c;
+}
+
+/**
+ * The example of type inference of destructured parameters
+ * @param {[number, number]} a-and-b
+ * @param {[string, string]} the next one
+ * @param {boolean} e
+ * @return void
+ */
+export function inferenceOfDestructuredParams([a, b], [c, d], e) {
+  a; b; c; d; e;
 }

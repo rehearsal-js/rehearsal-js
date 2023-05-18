@@ -131,27 +131,21 @@ export function canTypeBeResolved(checker: TypeChecker, typeNode: TypeNode): boo
   if (isTypeReferenceNode(typeNode)) {
     const typeArguments = typeNode.typeArguments || [];
 
-    if (isTypeReferenceNode(typeNode)) {
-      const typeArguments = typeNode.typeArguments || [];
+    // Checks if the type node can represent come meaningful type
+    const isTypeNodeStrict = (checker: TypeChecker, typeNode: TypeNode): boolean => {
+      try {
+        // Try to resolve TypeNode to Type... it possible to trigger and exception in some weired cases
+        const type = checker.getTypeFromTypeNode(typeNode);
 
-      // Checks if the type node can represent come meaningful type
-      const isTypeNodeStrict = (checker: TypeChecker, typeNode: TypeNode): boolean => {
-        try {
-          // Try to resolve TypeNode to Type... it possible to trigger and exception in some weired cases
-          const type = checker.getTypeFromTypeNode(typeNode);
+        // Check if TypeNode is resolved to a meaningful Type, not any
+        // Also can be validated with (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
+        return type.flags !== ts.TypeFlags.Any;
+      } catch (e) {
+        return false
+      }
+    };
 
-          // Check if TypeNode is resolved to a meaningful Type, not any
-          // Also can be validated with (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
-          return type.flags !== ts.TypeFlags.Any;
-        } catch (e) {
-          return false
-        }
-      };
-
-      return isTypeNodeStrict(checker, typeNode) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
-    }
-
-    return isTypeReferenceNode(typeNode) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
+    return isTypeNodeStrict(checker, typeNode) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
   }
 
   if (ts.isParenthesizedTypeNode(typeNode)) {
