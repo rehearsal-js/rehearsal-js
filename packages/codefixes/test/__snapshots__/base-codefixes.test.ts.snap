@@ -563,6 +563,39 @@ export function think(
 export function thinkTwice(a) {
   return a;
 }
+
+/**
+ * The return type is throwing an error
+ * @param {[number, number]} a-and-b
+ * @param {Array<string>} c
+ * @return {Array<{content: string}>}
+ */
+// @ts-expect-error @rehearsal TODO TS7031: Binding element 'a' implicitly has an 'any' type.
+export function issueWithTheReturnType([a, b], c: Array<string>) {
+  a;
+  b;
+  c;
+  return c;
+}
+
+/**
+ * The example of type inference of destructured parameters
+ * @param {[number, number]} a-and-b
+ * @param {[string, string]} the next one
+ * @param {boolean} e
+ * @return void
+ */
+export function inferenceOfDestructuredParams(
+  [a, b]: [number, number],
+  [c, d]: [string, string],
+  e: boolean
+): void {
+  a;
+  b;
+  c;
+  d;
+  e;
+}
 "
 `;
 

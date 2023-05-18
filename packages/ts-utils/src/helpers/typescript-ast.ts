@@ -129,16 +129,23 @@ export function isVariableOfCatchClause(node: Node): boolean {
 
 export function canTypeBeResolved(checker: TypeChecker, typeNode: TypeNode): boolean {
   if (isTypeReferenceNode(typeNode)) {
-    const type = checker.getTypeFromTypeNode(typeNode);
     const typeArguments = typeNode.typeArguments || [];
 
-    const isTypeError = (type: ts.Type): boolean => {
-      // Check if Type can't be resolved
-      //return (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
-      return type.flags === ts.TypeFlags.Any;
+    // Checks if the type node can represent come meaningful type
+    const isTypeNodeStrict = (checker: TypeChecker, typeNode: TypeNode): boolean => {
+      try {
+        // Try to resolve TypeNode to Type... it possible to trigger and exception in some weired cases
+        const type = checker.getTypeFromTypeNode(typeNode);
+
+        // Check if TypeNode is resolved to a meaningful Type, not any
+        // Also can be validated with (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
+        return type.flags !== ts.TypeFlags.Any;
+      } catch (e) {
+        return false
+      }
     };
 
-    return !isTypeError(type) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
+    return isTypeNodeStrict(checker, typeNode) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
   }
 
   if (ts.isParenthesizedTypeNode(typeNode)) {

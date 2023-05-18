@@ -106,3 +106,25 @@ export function think(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s) {
 export function thinkTwice(a) {
   return a;
 }
+
+/**
+ * The return type is throwing an error
+ * @param {[number, number]} a-and-b
+ * @param {Array<string>} c
+ * @return {Array<{content: string}>}
+ */
+export function issueWithTheReturnType([a, b], c) {
+  a; b; c;
+  return c;
+}
+
+/**
+ * The example of type inference of destructured parameters
+ * @param {[number, number]} a-and-b
+ * @param {[string, string]} the next one
+ * @param {boolean} e
+ * @return void
+ */
+export function inferenceOfDestructuredParams([a, b], [c, d], e) {
+  a; b; c; d; e;
+}
