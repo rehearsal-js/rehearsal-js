@@ -371,8 +371,8 @@ describe('utils', () => {
 
     project = new Project('my-project', '0.0.0');
 
-    project.addDependency('typescript', '^5.0.1');
-    project.addDevDependency('eslint', '^8.40.0');
+    project.addDependency('typescript', 'latest');
+    project.addDevDependency('eslint', 'latest');
     project.addDevDependency('eslint-plugin-glint', '^1.0.0');
     project.addDevDependency('@glint/core', '^1.0.0');
     project.addDevDependency('@typescript-eslint/parser', '^5.59.2');

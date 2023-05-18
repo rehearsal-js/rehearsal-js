@@ -714,6 +714,10 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
     if (Object.keys(requiredDeps).includes(dep)) {
       const installedVersion = packageJSONDeps[dep].replace(/[\^~]/g, '');
       const reqVersion = requiredDeps[dep].replace(/[\^~]/g, '');
+      // support for "latest" version in installedVersion
+      if (installedVersion === 'latest') {
+        continue;
+      }
       // if the installed dep is < the required dep, throw an error
       if (compare(installedVersion, reqVersion, '<')) {
         invalidVersion.push(dep);

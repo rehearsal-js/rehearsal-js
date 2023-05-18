@@ -86,6 +86,8 @@ describe('Fix: Init-Task', () => {
     const projectType: ProjectType = 'base-ts';
 
     projectInit(project, projectType);
+    // support "latest" as a version
+    project.addDevDependency('typescript', 'latest')
 
     await project.write();
 
