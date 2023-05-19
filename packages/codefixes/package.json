@@ -38,7 +38,8 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@rehearsal/ts-utils": "workspace:*"
+    "@rehearsal/ts-utils": "workspace:*",
+    "debug": "^4.3.4"
   },
   "devDependencies": {
     "@rehearsal/migrate": "workspace:*",

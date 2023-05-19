@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Module from 'node:module';
+import debug from 'debug';
 import ts, {
   type CodeActionCommand,
   type CodeFixAction,
@@ -13,6 +14,8 @@ import { isCodeFixSupported } from './safe-codefixes.js';
 import { Diagnostics } from './diagnosticInformationMap.generated.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
+
+const DEBUG_CALLBACK = debug('rehearsal:codefixes:TypeScriptCodeFixCollection');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,10 +60,12 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         userPreferences
       );
     } catch (e) {
-      const hideError =
-        diagnostic.code == Diagnostics.TS2345.code &&
-        e instanceof TypeError &&
-        e.message.includes(`Cannot read properties of undefined (reading 'flags')`);
+      DEBUG_CALLBACK(
+        'getCodeFixesAtPosition threw an exception: %s %s\n %s',
+        diagnostic.code,
+        diagnostic.file.fileName,
+        e
+      );
 
       if (!hideError) {
         throw e;
