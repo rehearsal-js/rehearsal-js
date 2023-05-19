@@ -3,7 +3,7 @@
  */
 
 import ts from 'typescript';
-import type { DiagnosticWithLocation, Node, SourceFile, TypeChecker, TypeNode } from 'typescript';
+import type { Node, SourceFile, TypeChecker, TypeNode } from 'typescript';
 
 const {
   findAncestor,
@@ -21,13 +21,6 @@ const {
  */
 export function isNodeAtPosition(node: Node, start: number, length: number): boolean {
   return node.getStart() === start && node.getEnd() === start + length;
-}
-
-/**
- * Checks if node is the node related to diagnostic.
- */
-export function isNodeDiagnosed(node: Node, diagnostic: DiagnosticWithLocation): boolean {
-  return isNodeAtPosition(node, diagnostic.start, diagnostic.length);
 }
 
 /**
@@ -86,17 +79,6 @@ export function findNodeEndsAtPosition(sourceFile: SourceFile, pos: number): Nod
   ts.forEachChild(sourceFile, visitor);
 
   return previousNode;
-}
-
-/**
- * Finds the first node in the line.
- * e.g. in `function revert(...)` the `revert` node has `function` node is the first in the line.
- */
-export function findTheFirstParentNodeInTheLine(node: Node): Node {
-  const visit = (node: Node): Node =>
-    isTheFirstParentNodeInTheLIne(node) ? node : visit(node.parent);
-
-  return visit(node);
 }
 
 /**
