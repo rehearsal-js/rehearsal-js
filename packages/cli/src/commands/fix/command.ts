@@ -1,4 +1,4 @@
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { promises as fs } from 'node:fs';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
@@ -6,6 +6,7 @@ import debug from 'debug';
 import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
+import { SUPPORTED_JS_EXTENSIONS } from '@rehearsal/migration-graph';
 import { FixCommandOptions } from '../../types.js';
 import { graphOrderTask } from '../graph/tasks/graphOrderTask.js';
 import { initTask } from './tasks/initialize-task.js';
@@ -72,6 +73,13 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
   if (!srcPath) {
     throw new Error(`@rehearsal/fix: you must specify a package or path to move`);
   }
+
+  const javascriptGlobs = SUPPORTED_JS_EXTENSIONS.map((ext) => {
+    return join(`${options.rootPath}`, srcPath, `**/*${ext}`);
+  });
+
+  // we don't want to try and fix JS files
+  options.ignore.push(...javascriptGlobs);
 
   // source with a direct filepath ignores the migration graph
   const tasks = options.graph
