@@ -394,14 +394,14 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
-[TITLE]   13 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   17 errors caught by rehearsal
+[TITLE]   4 have been fixed by rehearsal
 [TITLE]   13 errors need to be fixed manually
 [TITLE]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   13 errors caught by rehearsal
-[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   17 errors caught by rehearsal
+[SUCCESS]   4 have been fixed by rehearsal
 [SUCCESS]   13 errors need to be fixed manually
 [SUCCESS]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 1 eslint errors, with details in the report"
