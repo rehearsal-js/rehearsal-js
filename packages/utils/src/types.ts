@@ -6,13 +6,3 @@ export interface TSConfig extends TsConfigJson {
     checkStandaloneTemplates?: boolean;
   };
 }
-
-export type PreReqTSConfig = {
-  compilerOptions: {
-    strict: boolean;
-    skipLibCheck: boolean;
-  };
-  glint?: {
-    environment: string;
-  };
-};
