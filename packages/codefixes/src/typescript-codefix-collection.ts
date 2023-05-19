@@ -23,6 +23,19 @@ const require = Module.createRequire(import.meta.url);
 
 const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
+type SupressedError = { code: number; message: string };
+
+const SUPRESSED_ERRORS: Array<SupressedError> = [
+  {
+    code: Diagnostics.TS2339.code,
+    message: 'False expression: Token end is child end',
+  },
+  {
+    code: Diagnostics.TS2345.code,
+    message: `Cannot read properties of undefined (reading 'flags')`,
+  },
+];
+
 /**
  * Provides code fixes based on the Typescript's codefix collection.
  * @see https://github.com/microsoft/TypeScript/tree/main/src/services/codefixes
@@ -60,6 +73,12 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         userPreferences
       );
     } catch (e) {
+      const code = diagnostic.code;
+      const supressedFound = SUPRESSED_ERRORS.find((d) => d.code == code);
+
+      const supressError: boolean =
+        !!supressedFound && e instanceof Error && e.message.includes(supressedFound?.message);
+
       DEBUG_CALLBACK(
         'getCodeFixesAtPosition threw an exception: %s %s\n %s',
         diagnostic.code,
@@ -67,8 +86,10 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         e
       );
 
-      if (!hideError) {
-        throw e;
+      if (!supressError) {
+        throw new Error(
+          `An unknown error occured when attemping to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
+        );
       }
     }
 

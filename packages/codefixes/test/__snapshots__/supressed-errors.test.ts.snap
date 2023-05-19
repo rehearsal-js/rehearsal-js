@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Supressed Errors > TS2339: False expression: Token end is child end, supressed-errors/missingMethod.ts 1`] = `
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'Base' is never read or used. Remove the declaration or use it.
+import { Base } from \\"some-package\\";
+"
+`;
+
+exports[`Supressed Errors > TS2345: Cannot read properties of undefined (reading 'flags'), supressed-errors/flags.ts 1`] = `
+"(function() {
+  const config = {
+    values: [],
+    value: {},
+  };
+
+  // @ts-expect-error @rehearsal TODO TS2345: Argument of type '{0}' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(config.value as string)', or using type guard: 'if (config.value instanceof string) { ... }'.
+  config.values.push(config.value);
+}();
+"
+`;
