@@ -87,7 +87,7 @@ describe('Fix: Init-Task', () => {
 
     projectInit(project, projectType);
     // support "latest" as a version
-    project.addDevDependency('typescript', 'latest')
+    project.addDevDependency('typescript', 'latest');
 
     await project.write();
 
@@ -281,6 +281,7 @@ describe('Fix: Init-Task', () => {
       rootPath: project.baseDir,
       format: ['sarif'],
       ignore: [],
+      mode: 'single-pass',
     };
     const tasks = [initTask(src, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);

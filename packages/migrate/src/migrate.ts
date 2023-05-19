@@ -31,7 +31,7 @@ import type { Reporter } from '@rehearsal/reporter';
 import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
-  mode: 'single-pass' | 'drain';
+  mode?: 'single-pass' | 'drain';
   projectRootDir: string;
   packageDir: string;
   filesToMigrate: string[];
@@ -53,6 +53,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   const configName = input.configName || 'tsconfig.json';
   const commentTag = '@rehearsal';
   const workingDirName = '.rehearsal';
+  const mode = input.mode ?? 'single-pass';
 
   // Output is only for tests
   const listrTask = input.task || { output: '' };
@@ -125,14 +126,14 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       {
         safeFixes: true,
         strictTyping: true,
-        mode: input.mode,
+        mode,
       },
       (fileName: string) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName))
     )
     .queue(
       useGlint ? GlintFixPlugin : DummyPlugin,
       {
-        mode: input.mode,
+        mode,
       },
       (fileName: string) => isGlintService(service, useGlint) && isGlintFile(service, fileName)
     )

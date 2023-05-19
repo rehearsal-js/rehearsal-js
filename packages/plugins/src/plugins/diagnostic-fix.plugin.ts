@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import debug from 'debug';
 import hash from 'object-hash';
-import ts, { DiagnosticCategory } from 'typescript';
+import ts from 'typescript';
 import {
   codefixes,
   getDiagnosticOrder,
@@ -24,6 +24,8 @@ export interface DiagnosticFixPluginOptions extends PluginOptions {
   strictTyping?: boolean;
   mode: 'single-pass' | 'drain';
 }
+
+const { DiagnosticCategory } = ts;
 
 /**
  * Diagnose issues in the file and applied transforms to fix them

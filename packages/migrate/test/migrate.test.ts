@@ -737,4 +737,74 @@ export default class SomeComponent extends Component {
       expectFile(outputs[0]).toMatchSnapshot();
     });
   });
+
+  describe('EXPERIMENTAL_MODES = drain', () => {
+    let project: Project;
+    let reporter: Reporter;
+
+    beforeEach(() => {
+      project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
+
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        projectRootDir: project.baseDir,
+        commandName: '@rehearsal/fix',
+      });
+    });
+
+    afterEach(() => {
+      project.dispose();
+    });
+
+    test('class with missing prop', async () => {
+      project.mergeFiles({
+        src: {
+          'foo.ts': `class Foo {
+
+  constructor(name) {
+    this.name = name;
+  }
+
+  hello() {
+    return this.name + 1;
+  }
+}
+`,
+        },
+      });
+
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
+
+      const singlePass: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'single-pass',
+      };
+
+      for await (const _ of migrate(singlePass)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+
+      const drainInput: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(drainInput)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+  });
 });
