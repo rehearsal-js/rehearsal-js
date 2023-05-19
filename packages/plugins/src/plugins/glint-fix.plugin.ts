@@ -13,7 +13,11 @@ const MagicString = require('magic-string');
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 
-export class GlintFixPlugin extends Plugin {
+export interface GlintFixPluginOptions {
+  mode: 'single-pass' | 'drain';
+}
+
+export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   appliedAtOffset: { [file: string]: number[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();

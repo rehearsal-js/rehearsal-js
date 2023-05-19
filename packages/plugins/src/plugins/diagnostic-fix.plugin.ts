@@ -1,12 +1,13 @@
 import { createRequire } from 'node:module';
 import debug from 'debug';
 import hash from 'object-hash';
-import ts from 'typescript';
+import ts, { DiagnosticCategory } from 'typescript';
 import {
   codefixes,
   getDiagnosticOrder,
   isInstallPackageCommand,
   type DiagnosticWithContext,
+  applyCodeFix,
 } from '@rehearsal/codefixes';
 import { PluginOptions, PluginsRunnerContext, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
@@ -21,6 +22,7 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-fix');
 export interface DiagnosticFixPluginOptions extends PluginOptions {
   safeFixes?: boolean;
   strictTyping?: boolean;
+  mode: 'single-pass' | 'drain';
 }
 
 /**
@@ -33,8 +35,23 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
   allFixedFiles: Set<string> = new Set();
 
   async run(): Promise<string[]> {
-    const { fileName, context, options } = this;
+    const { options } = this;
+    const { mode } = options;
 
+    switch (mode) {
+      case 'drain':
+        await this.drainMode();
+        break;
+      case 'single-pass':
+      default:
+        await this.singlePassMode();
+    }
+
+    return Array.from(this.allFixedFiles);
+  }
+
+  private async singlePassMode(): Promise<void> {
+    const { fileName, context, options } = this;
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
     // First attempt to fix all the errors
@@ -46,8 +63,53 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     this.changeTrackers.forEach((tracker, file) => {
       context.service.setFileText(file, tracker.toString());
     });
+  }
 
-    return Array.from(this.allFixedFiles);
+  async drainMode(): Promise<void> {
+    const { fileName, context, options } = this;
+    let diagnostics = this.getDiagnostics(context.service, fileName, [
+      DiagnosticCategory.Error,
+      DiagnosticCategory.Suggestion,
+    ]);
+
+    while (diagnostics.length) {
+      const diagnostic = diagnostics[0];
+
+      if (!diagnostic.node) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
+        continue;
+      }
+
+      const fix = this.getCodeFix(diagnostic, options);
+
+      if (!fix) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
+        continue;
+      }
+
+      if (isInstallPackageCommand(fix)) {
+        await this.applyCommandAction(fix.commands, context);
+      }
+
+      applyCodeFix(fix, {
+        getText(filename: string) {
+          return context.service.getFileText(filename);
+        },
+        applyText(newText: string) {
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t ${newText}`);
+        },
+        setText: (filename: string, text: string) => {
+          context.service.setFileText(filename, text);
+          this.allFixedFiles.add(filename);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
+        },
+      });
+
+      diagnostics = this.getDiagnostics(context.service, fileName, [
+        DiagnosticCategory.Error,
+        DiagnosticCategory.Suggestion,
+      ]);
+    }
   }
 
   async applyFixes(
@@ -56,7 +118,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     diagnosticCategory: ts.DiagnosticCategory,
     options: DiagnosticFixPluginOptions
   ): Promise<void> {
-    const diagnostics = this.getDiagnostics(context.service, fileName, diagnosticCategory);
+    const diagnostics = this.getDiagnostics(context.service, fileName, [diagnosticCategory]);
 
     for (const diagnostic of diagnostics) {
       if (!diagnostic.node) {
@@ -117,7 +179,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
   getDiagnostics(
     service: Service,
     fileName: string,
-    diagnosticFilterCategory: ts.DiagnosticCategory
+    diagnosticFilterCategories: ts.DiagnosticCategory[]
   ): DiagnosticWithContext[] {
     const languageService = service.getLanguageService();
     const program = languageService.getProgram()!;
@@ -128,7 +190,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     return (
       diagnostics
         .filter((diagnostic) => {
-          return diagnostic.category === diagnosticFilterCategory;
+          return diagnosticFilterCategories.some((category) => category === diagnostic.category);
         })
         // Convert DiagnosticWithLocation to DiagnosticWithContext
         .map<DiagnosticWithContext>((diagnostic) => {

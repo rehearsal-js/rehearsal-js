@@ -6,7 +6,7 @@ import {
   RehearsalService,
   isGlintFile,
   isGlintProject,
-  type GlintService,
+  GlintService,
   DummyPlugin,
 } from '@rehearsal/service';
 import debug from 'debug';
@@ -21,18 +21,17 @@ import {
   ReRehearsePlugin,
   ServiceInjectionsTransformPlugin,
   DiagnosticReportPlugin,
+  GlintFixPlugin,
+  GlintCommentPlugin,
+  GlintReportPlugin,
 } from '@rehearsal/plugins';
 import { getExcludePatterns } from '@rehearsal/migration-graph';
-import {
-  getGlintFixPlugin,
-  getGlintReportPlugin,
-  getGlintCommentPlugin,
-  createGlintService,
-} from './glint-utils.js';
+import * as glintCore from '@glint/core';
 import type { Reporter } from '@rehearsal/reporter';
 import type { TSConfig } from '@rehearsal/utils';
 
 export type MigrateInput = {
+  mode: 'single-pass' | 'drain';
   projectRootDir: string;
   packageDir: string;
   filesToMigrate: string[];
@@ -102,7 +101,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(` filteredFilesToMigrate: %O`, filteredFilesToMigrate);
 
   const service = useGlint
-    ? await createGlintService(packageDir)
+    ? new GlintService(glintCore, packageDir)
     : new RehearsalService(tsCompilerOptions, filesToMigrate);
 
   function isGlintService(
@@ -126,11 +125,15 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       {
         safeFixes: true,
         strictTyping: true,
+        mode: input.mode,
       },
       (fileName: string) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName))
     )
     .queue(
-      useGlint ? await getGlintFixPlugin() : DummyPlugin,
+      useGlint ? GlintFixPlugin : DummyPlugin,
+      {
+        mode: input.mode,
+      },
       (fileName: string) => isGlintService(service, useGlint) && isGlintFile(service, fileName)
     )
     // Fix formatting
@@ -153,7 +156,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       (fileName: string) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName))
     )
     .queue(
-      useGlint ? await getGlintCommentPlugin() : DummyPlugin,
+      useGlint ? GlintCommentPlugin : DummyPlugin,
       {
         commentTag,
       },
@@ -177,7 +180,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       (fileName: string) => !(isGlintService(service, useGlint) && isGlintFile(service, fileName))
     )
     .queue(
-      useGlint ? await getGlintReportPlugin() : DummyPlugin,
+      useGlint ? GlintReportPlugin : DummyPlugin,
       {
         commentTag,
       },
