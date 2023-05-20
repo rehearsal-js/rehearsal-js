@@ -41,6 +41,7 @@ export function convertTask(
       // this just cares about ts files which are already in the proper migration order
       if (orderedFiles) {
         const input = {
+          mode: options.mode,
           projectRootDir: rootPath,
           packageDir: packageDir,
           filesToMigrate: ctx.orderedFiles,

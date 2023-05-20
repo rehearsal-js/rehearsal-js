@@ -58,6 +58,7 @@ export type FixCommandOptions = {
   rootPath: string;
   ignore: string[];
   graph?: boolean;
+  mode: 'single-pass' | 'drain';
 };
 
 /*

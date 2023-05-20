@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { makeCodeFixStrict } from '@rehearsal/codefixes';
+import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
 import debug from 'debug';
 
 import ts from 'typescript';
@@ -13,12 +13,80 @@ const MagicString = require('magic-string');
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 
-export class GlintFixPlugin extends Plugin {
+const { DiagnosticCategory } = ts;
+export interface GlintFixPluginOptions {
+  mode: 'single-pass' | 'drain';
+}
+
+export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   appliedAtOffset: { [file: string]: number[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();
 
   async run(): Promise<string[]> {
+    const { options } = this;
+    const { mode } = options;
+
+    switch (mode) {
+      case 'drain':
+        this.drainMode();
+        break;
+      case 'single-pass':
+      default:
+        this.singlePassMode();
+    }
+
+    return Promise.resolve(Array.from(this.allFixedFiles));
+  }
+
+  private drainMode(): void {
+    const { fileName, context } = this;
+    const service = context.service as GlintService;
+
+    let diagnostics = this.getDiagnostics(service, fileName, [
+      DiagnosticCategory.Error,
+      DiagnosticCategory.Warning,
+    ]);
+
+    while (diagnostics.length) {
+      const diagnostic = diagnostics[0];
+      const fix = this.getCodeFix(fileName, diagnostic, service);
+
+      if (fix === undefined) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.range.start}:\t node not found`);
+        continue;
+      }
+
+      const fileText = service.getFileText(fileName);
+
+      const start = service.pathUtils.positionToOffset(fileText, diagnostic.range.start);
+
+      applyCodeFix(fix, {
+        getText(filename: string) {
+          return context.service.getFileText(filename);
+        },
+
+        applyText(newText: string) {
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t ${newText}`);
+        },
+
+        setText: (filename: string, text: string) => {
+          context.service.setFileText(filename, text);
+          this.allFixedFiles.add(filename);
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t codefix applied`);
+        },
+      });
+
+      context.reporter.incrementRunFixedItemCount();
+
+      diagnostics = this.getDiagnostics(service, fileName, [
+        DiagnosticCategory.Error,
+        DiagnosticCategory.Warning,
+      ]);
+    }
+  }
+
+  private singlePassMode(): void {
     const { fileName, context } = this;
     this.applyFix(fileName, context, ts.DiagnosticCategory.Error);
     this.applyFix(fileName, context, ts.DiagnosticCategory.Suggestion);
@@ -26,8 +94,6 @@ export class GlintFixPlugin extends Plugin {
     this.changeTrackers.forEach((tracker, fileName) => {
       context.service.setFileText(fileName, tracker.toString());
     });
-
-    return Promise.resolve(Array.from(this.allFixedFiles));
   }
 
   applyFix(
@@ -36,7 +102,7 @@ export class GlintFixPlugin extends Plugin {
     diagnosticCategory: ts.DiagnosticCategory
   ): void {
     const service = context.service as GlintService;
-    const diagnostics = this.getDiagnostics(service, fileName, diagnosticCategory);
+    const diagnostics = this.getDiagnostics(service, fileName, [diagnosticCategory]);
 
     for (const diagnostic of diagnostics) {
       const fix = this.getCodeFix(fileName, diagnostic, service);
@@ -87,11 +153,11 @@ export class GlintFixPlugin extends Plugin {
   getDiagnostics(
     service: GlintService,
     fileName: string,
-    diagnosticCategory: ts.DiagnosticCategory
+    diagnosticCategories: ts.DiagnosticCategory[]
   ): Diagnostic[] {
     return service
       .getDiagnostics(fileName)
-      .filter((d) => d.category === diagnosticCategory)
+      .filter((d) => diagnosticCategories.some((category) => category === d.category))
       .map((d) => service.convertTsDiagnosticToLSP(d));
   }
 

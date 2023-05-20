@@ -81,6 +81,11 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
   // we don't want to try and fix JS files
   options.ignore.push(...javascriptGlobs);
 
+  options.mode =
+    process.env['EXPERIMENTAL_MODES'] === 'drain'
+      ? process.env['EXPERIMENTAL_MODES']
+      : 'single-pass';
+
   // source with a direct filepath ignores the migration graph
   const tasks = options.graph
     ? [
