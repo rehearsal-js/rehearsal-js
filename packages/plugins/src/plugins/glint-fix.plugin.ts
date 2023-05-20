@@ -144,6 +144,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
           );
 
           changeTracker.appendLeft(change.span.start, change.newText);
+          context.reporter.incrementRunFixedItemCount();
           this.allFixedFiles.add(fileTextChange.fileName);
         }
       }
