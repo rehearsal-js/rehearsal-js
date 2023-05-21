@@ -20,10 +20,10 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticReport' run on %O:`, fileName);
 
-    const originalConentWithErrorsSupressed = context.service.getFileText(fileName);
+    const originalConentWithErrorsSuppressed = context.service.getFileText(fileName);
 
     const lineHasSupression: { [line: number]: boolean } = {};
-    let contentWithErrors = originalConentWithErrorsSupressed;
+    let contentWithErrors = originalConentWithErrorsSuppressed;
     const sourceFile = context.service.getSourceFile(fileName);
     const tagStarts = [...contentWithErrors.matchAll(new RegExp(options.commentTag!, 'g'))].map(
       (m) => m.index!
@@ -50,7 +50,7 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
         contentWithErrors.substring(0, boundary.start) + contentWithErrors.substring(boundary.end);
     }
 
-    // Our document now has unsupressed errors in it. Set that content into the langauge server so we can type check it
+    // Our document now has unsuppressed errors in it. Set that content into the langauge server so we can type check it
     context.service.setFileText(fileName, contentWithErrors);
 
     const diagnostics = this.getDiagnostics(context.service, fileName);
@@ -75,7 +75,7 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
     }
 
     // We have now collected the correct line / cols of the errors. We can now set the document back to one without errors.
-    context.service.setFileText(fileName, originalConentWithErrorsSupressed);
+    context.service.setFileText(fileName, originalConentWithErrorsSuppressed);
 
     return Promise.resolve([]);
   }
