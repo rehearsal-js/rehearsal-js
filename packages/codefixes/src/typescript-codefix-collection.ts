@@ -23,9 +23,9 @@ const require = Module.createRequire(import.meta.url);
 
 const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
-type SupressedError = { code: number; message: string };
+type SuppressedError = { code: number; message: string };
 
-const SUPRESSED_ERRORS: Array<SupressedError> = [
+const SUPPRESSED_ERRORS: Array<SuppressedError> = [
   {
     code: Diagnostics.TS2339.code,
     message: 'False expression: Token end is child end',
@@ -74,7 +74,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       );
     } catch (e) {
       const code = diagnostic.code;
-      const supressedFound = SUPRESSED_ERRORS.find((d) => d.code == code);
+      const supressedFound = SUPPRESSED_ERRORS.find((d) => d.code == code);
 
       const supressError: boolean =
         !!supressedFound && e instanceof Error && e.message.includes(supressedFound?.message);
