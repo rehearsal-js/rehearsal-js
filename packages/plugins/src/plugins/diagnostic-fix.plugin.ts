@@ -154,6 +154,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
         for (const change of fileTextChange.textChanges) {
           if (change.span.length > 0) {
             changeTracker.remove(change.span.start, change.span.start + change.span.length);
+            this.allFixedFiles.add(fileTextChange.fileName);
           }
 
           if (!this.appliedAtOffset[fileTextChange.fileName]) {

@@ -1,5 +1,230 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`fix command > base_ts_app (file only) 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /src/get-live-neighbor-count.ts
+[DATA] processing file: /src/apply-rules.ts
+[DATA] processing file: /src/gen-random-grid.ts
+[DATA] processing file: /src/app.ts
+[TITLE] Types Inferred
+[TITLE]   12 errors caught by rehearsal
+[TITLE]   6 have been fixed by rehearsal
+[TITLE]   6 errors need to be fixed manually
+[TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   12 errors caught by rehearsal
+[SUCCESS]   6 have been fixed by rehearsal
+[SUCCESS]   6 errors need to be fixed manually
+[SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`fix command > base_ts_app (file only) 2`] = `
+"// generate a random grid based on a set dimension and random alive/dead cells
+export function generateRandomGrid(
+  dimensions: number[],
+  chars = ['▄', ' ']
+): string[][]  {
+  const grid = [];
+
+  // create the grid
+  for (let y = 0; y < dimensions[1]; y++) {
+    const row = [];
+    for (let x = 0; x < dimensions[0]; x++) {
+      if (Math.random() > 0.5) {
+        row.push(chars[0]);
+      } else {
+        row.push(chars[1]);
+      }
+    }
+
+    grid.push(row);
+  }
+
+  return grid;
+}
+"
+`;
+
+exports[`fix command > base_ts_app (file only) 3`] = `
+"import {
+  getLiveNeighborCount,
+} from './get-live-neighbor-count.js';
+
+// @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
+export function applyRules(grid, cellCharState) {
+  // clone the grid for the next generation
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'row' implicitly has an 'any' type.
+  const newGrid = grid.map((row) => [...row]);
+  // keep track if all of the cells are dead and exit if so
+  let totalLiveNeighbors = 0;
+
+  // iterate over each cell, apply the rules and update cell state
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      const cellState = grid[y][x];
+      const liveNeighborCount = getLiveNeighborCount(
+        grid,
+        [y, x],
+        [cellCharState[0], cellCharState[1]]
+      );
+
+      totalLiveNeighbors += liveNeighborCount;
+
+      // check the current cell state and apply the rules
+      if (cellState === cellCharState[0]) {
+        if (liveNeighborCount < 2 || liveNeighborCount > 3) {
+          // dead
+          newGrid[y][x] = cellCharState[1];
+        }
+
+        if (liveNeighborCount == 2 || liveNeighborCount == 3) {
+          // alive
+          newGrid[y][x] = cellCharState[0];
+        }
+      } else {
+        if (liveNeighborCount == 3) {
+          // alive
+          newGrid[y][x] = cellCharState[0];
+        }
+      }
+    }
+  }
+
+  return [newGrid, totalLiveNeighbors];
+}
+"
+`;
+
+exports[`fix command > base_ts_app (file only) 4`] = `
+"// based on a given cell, return the number of live neighbors
+export function getLiveNeighborCount(
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
+  grid,
+  coords: number[] | [any, any],
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'cellCharState' implicitly has an 'any' type.
+  cellCharState
+): number  {
+  const [x, y] = coords;
+
+  // 8 neighbors
+  const neighbors = [
+    [x - 1, y - 1],
+    [x - 1, y],
+    [x - 1, y + 1],
+    [x, y - 1],
+    [x, y + 1],
+    [x + 1, y - 1],
+    [x + 1, y],
+    [x + 1, y + 1],
+  ];
+
+  // iterate over neighbors
+  const liveNeighbors = neighbors.filter(([x, y]) => {
+    // handle out of bounds
+    if (x < 0 || y < 0 || x >= grid.length || y >= grid.length) {
+      return false;
+    }
+
+    // if alive add a tally mark
+    if (grid[x][y] === cellCharState[0]) {
+      return true;
+    }
+  });
+
+  return liveNeighbors.length;
+}
+"
+`;
+
+exports[`fix command > base_ts_app (file only) 5`] = `
+"/*
+RULES:
+1. Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+2. Any live cell with two or three live neighbours lives on to the next generation.
+3. Any live cell with more than three live neighbours dies, as if by overpopulation.
+4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+These rules, which compare the behavior of the automaton to real life, can be condensed into the following:
+
+  Any live cell with two or three live neighbours survives.
+  Any dead cell with three live neighbours becomes a live cell.
+  All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+*/
+
+// @ts-expect-error @rehearsal TODO TS2792: Cannot find module 'node:process'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+import { stdout } from 'node:process';
+import { generateRandomGrid } from './gen-random-grid.js';
+import { applyRules } from './apply-rules.js';
+
+// basic just grab the args if they exist
+// assume the are valid and in the right order
+// gridWidth, gridHeight, cellAliveState, cellDeadState
+// @ts-expect-error @rehearsal TODO TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try \`npm i --save-dev @types/node\`.
+const [_bin, _file, ...args] = process.argv;
+
+if (!args.length || args.length < 4) {
+  throw new Error(
+    'You must provide 4 arguments: gridWidth, gridHeight, cellAliveState, cellDeadState'
+  );
+}
+
+const [gridWidth, gridHeight, cellAliveState, cellDeadState] = args;
+
+// the initial grid to kick things off
+const GRID_SEED = generateRandomGrid(
+  [parseInt(gridWidth), parseInt(gridHeight)],
+  [cellAliveState, cellDeadState]
+);
+
+// when to stop
+const RUN_LIMIT = 500;
+// remove the terminal cursor so the grid renders nicely
+stdout.write('\\\\x1b[?25l');
+
+// update the grid recursively on interval
+(function update(prevGrid, runTally = 0) {
+  // set the stdout cursor to the top left
+  stdout.cursorTo(0, 0);
+
+  // write the grid to console
+  console.log(\`\\\\n\\\\nGeneration: \${runTally}\`);
+  console.table(prevGrid);
+
+  // should we stop running
+  if (runTally >= RUN_LIMIT) {
+    // put the cursor back
+    stdout.write('\\\\x1b[?25h');
+    return;
+  }
+
+  const [newGrid, totalLiveNeighbors] = applyRules(prevGrid, [cellAliveState, cellDeadState]);
+
+  // if all of the cells are dead, stop running
+  if (totalLiveNeighbors === 0) {
+    console.log(\`Within \${runTally} generations. All cells are dead\`);
+    // put the cursor back
+    stdout.write('\\\\x1b[?25h');
+    return;
+  }
+
+  // add a tally mark
+  runTally++;
+
+  // recursively call update again within a fps interval so we can throttle the grid updates
+  setTimeout(() => {
+    update(newGrid, runTally);
+  }, 150);
+})(GRID_SEED);
+"
+`;
+
 exports[`fix command > base_ts_app 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize

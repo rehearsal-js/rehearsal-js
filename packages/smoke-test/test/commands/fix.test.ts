@@ -31,6 +31,22 @@ describe('fix command', () => {
     expectFile(join(projectRoot, 'src/app.ts')).toMatchSnapshot();
   });
 
+  test('base_ts_app (file only)', async () => {
+    project = prepareProject('base_ts_app');
+    await project.write();
+    const projectRoot = resolve(project.baseDir);
+
+    const result = await rehearsalCLI('fix', './src/app.ts', ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    // validate type inference
+    expectFile(join(projectRoot, 'src/gen-random-grid.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/apply-rules.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/get-live-neighbor-count.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/app.ts')).toMatchSnapshot();
+  });
+
   test('ember_js_app_4.11', async () => {
     project = prepareProject('ember_js_app');
     await project.write();
