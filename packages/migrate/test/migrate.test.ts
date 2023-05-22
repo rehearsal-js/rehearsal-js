@@ -747,6 +747,27 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
+    test.todo('inline hbs in tests; with whitespace differences', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['ember-inline-hbs-whitespace.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).not.contains('import { type } from "os";');
+      // Once fixed enable snapshot.
+      // expectFile(outputs[0]).toMatchSnapshot();
+    });
+
     test('with non-qualified service', async () => {
       await project.write();
 
