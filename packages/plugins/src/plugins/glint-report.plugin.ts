@@ -51,7 +51,7 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
         contentWithErrors.substring(0, comment.start) + contentWithErrors.substring(comment.end);
     }
 
-    // Our document now has unsupressed errors in it. Set that content into the langauge server so we can type check it
+    // Our document now has unsuppressed errors in it. Set that content into the langauge server so we can type check it
     service.setFileText(fileName, contentWithErrors);
 
     const diagnostics = this.getDiagnostics(service, fileName);
@@ -68,7 +68,7 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
       }
     }
 
-    // Set the document back to the content with the errors supressed
+    // Set the document back to the content with the errors suppressed
     service.setFileText(fileName, originalContentWithErrorsSuppressed);
 
     return Promise.resolve([]);
