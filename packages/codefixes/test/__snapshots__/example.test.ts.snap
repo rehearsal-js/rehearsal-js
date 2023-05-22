@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Bug Reproduction > missingMethod 1`] = `
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'Base' is never read or used. Remove the declaration or use it.
+import { Base } from \\"some-package\\";
+"
+`;
+
+exports[`Supressed Errors > TS2339 False expression: Token end is child end 1`] = `
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'Base' is never read or used. Remove the declaration or use it.
+import { Base } from \\"some-package\\";
+"
+`;
+
+exports[`Supressed Errors > TS2339 False expression: Token end is child end 2`] = `
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'Base' is never read or used. Remove the declaration or use it.
+import { Base } from \\"some-package\\";
+"
+`;
+
+exports[`Supressed Errors > TS2345 False expression: Token end is child end 1`] = `
+"// @ts-expect-error @rehearsal TODO TS6133: The declaration 'Base' is never read or used. Remove the declaration or use it.
+import { Base } from \\"some-package\\";
+"
+`;

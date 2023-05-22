@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Module from 'node:module';
+import debug from 'debug';
 import ts, {
   type CodeActionCommand,
   type CodeFixAction,
@@ -14,11 +15,26 @@ import { Diagnostics } from './diagnosticInformationMap.generated.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 import type { Options as PrettierOptions } from 'prettier';
 
+const DEBUG_CALLBACK = debug('rehearsal:codefixes:TypeScriptCodeFixCollection');
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const require = Module.createRequire(import.meta.url);
 
 const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
+
+type SuppressedError = { code: number; message: string };
+
+const SUPPRESSED_ERRORS: Array<SuppressedError> = [
+  {
+    code: Diagnostics.TS2339.code,
+    message: 'False expression: Token end is child end',
+  },
+  {
+    code: Diagnostics.TS2345.code,
+    message: `Cannot read properties of undefined (reading 'flags')`,
+  },
+];
 
 /**
  * Provides code fixes based on the Typescript's codefix collection.
@@ -57,13 +73,23 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         userPreferences
       );
     } catch (e) {
-      const hideError =
-        diagnostic.code == Diagnostics.TS2345.code &&
-        e instanceof TypeError &&
-        e.message.includes(`Cannot read properties of undefined (reading 'flags')`);
+      const code = diagnostic.code;
+      const supressedFound = SUPPRESSED_ERRORS.find((d) => d.code == code);
 
-      if (!hideError) {
-        throw e;
+      const supressError: boolean =
+        !!supressedFound && e instanceof Error && e.message.includes(supressedFound?.message);
+
+      DEBUG_CALLBACK(
+        'getCodeFixesAtPosition threw an exception: %s %s\n %s',
+        diagnostic.code,
+        diagnostic.file.fileName,
+        e
+      );
+
+      if (!supressError) {
+        throw new Error(
+          `An unknown error occured when attemping to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
+        );
       }
     }
 

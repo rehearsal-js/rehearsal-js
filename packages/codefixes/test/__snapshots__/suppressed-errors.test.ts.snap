@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Suppressed Errors > TS2339: False expression: Token end is child end, suppressed-errors/missingMethod.ts 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'some-package' or its corresponding type declarations.
+import { Base } from \\"some-package\\";
+
+export class Something extends Base {
+  constructor() {
+    super();
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'setRoutes' does not exist on type 'Something'.
+    this.setRoutes({
+      \\"enterprise-cookies\\": \\"\\",
+      \\"feed.update\\": \\"\\",
+      \\"help.ads\\": \\"\\",
+      \\"help.binding-benefits\\": \\"\\",
+      \\"help.certificates\\": \\"\\",
+      \\"help.disability-answer-desk\\": \\"\\",
+      \\"help.instructor-analytics\\": \\"\\",
+      \\"help.learning\\": \\"\\",
+      \\"help.learning-privacy\\": \\"\\",
+      \\"help.learning-progress\\": \\"\\",
+      \\"help.learning-teams\\": \\"\\",
+      \\"help.china\\": \\"\\",
+      \\"help.likes\\": \\"\\",
+      \\"help.lms-completion\\": \\"\\",
+      \\"help.lynda-subscriber\\": \\"\\",
+      \\"help.questions-privacy\\": \\"\\",
+      \\"help.reviews\\": \\"\\",
+      \\"help.share-certificate\\": \\"\\",
+      \\"help.sync-learning-history\\": \\"\\",
+    });
+  }
+}
+"
+`;
+
+exports[`Suppressed Errors > TS2345: Cannot read properties of undefined (reading 'flags'), suppressed-errors/flags.ts 1`] = `
+"(function() {
+  const config = {
+    values: [],
+    value: {},
+  };
+
+  // @ts-expect-error @rehearsal TODO TS2345: Argument of type '{0}' is not assignable to parameter of type 'never'. Consider verifying both types, using type assertion: '(config.value as string)', or using type guard: 'if (config.value instanceof string) { ... }'.
+  config.values.push(config.value);
+}();
+"
+`;
