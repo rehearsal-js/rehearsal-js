@@ -1,3 +1,14 @@
+## <small>3.0.5-beta (2023-05-22)</small>
+
+* chore: delete unsused code (#1066) ([e06327d](https://github.com/rehearsal-js/rehearsal-js/commit/e06327d)), closes [#1066](https://github.com/rehearsal-js/rehearsal-js/issues/1066)
+* chore: prettier formatting (#1074) ([1e453b0](https://github.com/rehearsal-js/rehearsal-js/commit/1e453b0)), closes [#1074](https://github.com/rehearsal-js/rehearsal-js/issues/1074)
+* fix: getCodeFixesAtPosition fails for TS2339 for specific input with large pojo (#1071) ([fd20f00](https://github.com/rehearsal-js/rehearsal-js/commit/fd20f00)), closes [#1071](https://github.com/rehearsal-js/rehearsal-js/issues/1071)
+* fix: increment reporter for glint (#1069) ([e7b6d1f](https://github.com/rehearsal-js/rehearsal-js/commit/e7b6d1f)), closes [#1069](https://github.com/rehearsal-js/rehearsal-js/issues/1069)
+* fix: only have ts files in fix (#1067) ([2f4c740](https://github.com/rehearsal-js/rehearsal-js/commit/2f4c740)), closes [#1067](https://github.com/rehearsal-js/rehearsal-js/issues/1067)
+* experimental: add back 'draining' (#1068) ([1b192ac](https://github.com/rehearsal-js/rehearsal-js/commit/1b192ac)), closes [#1068](https://github.com/rehearsal-js/rehearsal-js/issues/1068)
+
+
+
 ## <small>3.0.4-beta (2023-05-18)</small>
 
 * fix(util): move find-up to dependency (#1065) ([f4f3a31](https://github.com/rehearsal-js/rehearsal-js/commit/f4f3a31)), closes [#1065](https://github.com/rehearsal-js/rehearsal-js/issues/1065)
