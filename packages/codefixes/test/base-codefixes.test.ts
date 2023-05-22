@@ -5,7 +5,7 @@ import { describe, expect, test } from 'vitest';
 import { Project } from 'fixturify-project';
 import { Reporter } from '@rehearsal/reporter';
 import { migrate } from '@rehearsal/migrate';
-import fixturify from "fixturify";
+import fixturify from 'fixturify';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,7 +27,9 @@ describe('Test base codefixes', function () {
 
     expect(files, `Test files are missing for ${transform}`).toBeTypeOf('object');
 
-    const filesToMigrate = Object.keys(files).map((file) => resolve(project.baseDir, dir, transform, file));
+    const filesToMigrate = Object.keys(files).map((file) =>
+      resolve(project.baseDir, dir, transform, file)
+    );
 
     const reporter = new Reporter({
       tsVersion: '',

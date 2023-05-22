@@ -123,11 +123,14 @@ export function canTypeBeResolved(checker: TypeChecker, typeNode: TypeNode): boo
         // Also can be validated with (type as unknown as { intrinsicName?: string }).intrinsicName === 'error';
         return type.flags !== ts.TypeFlags.Any;
       } catch (e) {
-        return false
+        return false;
       }
     };
 
-    return isTypeNodeStrict(checker, typeNode) && !typeArguments.find((node) => !canTypeBeResolved(checker, node));
+    return (
+      isTypeNodeStrict(checker, typeNode) &&
+      !typeArguments.find((node) => !canTypeBeResolved(checker, node))
+    );
   }
 
   if (ts.isParenthesizedTypeNode(typeNode)) {
