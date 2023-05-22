@@ -1,3 +1,6 @@
+import { dirname, resolve } from 'node:path';
+import { Worker } from 'node:worker_threads';
+import { fileURLToPath } from 'node:url';
 import debug from 'debug';
 import { execa } from 'execa';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
@@ -6,6 +9,10 @@ import { Reporter } from '@rehearsal/reporter';
 import { getReportSummary } from '../../../helpers/report.js';
 import { findPackageRootDirectory, getPathToBinary } from '../../../utils/paths.js';
 import type { CommandContext, FixCommandOptions } from '../../../types.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const workerPath = resolve(__dirname, 'convertWorker.js');
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:convert-task');
 
@@ -50,10 +57,31 @@ export function convertTask(
           ignore,
         };
 
-        const migratedFiles = [];
+        let migratedFiles: string[] = [];
 
-        for await (const tsFile of migrate(input)) {
-          migratedFiles.push(tsFile);
+        if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
+          for await (const tsFile of migrate(input)) {
+            migratedFiles.push(tsFile);
+          }
+        } else {
+          migratedFiles = await new Promise<string[]>((resolve, reject) => {
+            const worker = new Worker(workerPath, {
+              workerData: JSON.stringify({
+                input,
+              }),
+            });
+
+            worker.on('message', (output: string[]) => {
+              resolve(output);
+            });
+
+            worker.on('error', reject);
+            worker.on('exit', (code) => {
+              if (code !== 0) {
+                reject(new Error(`Worker stopped with exit code ${code}`));
+              }
+            });
+          });
         }
 
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
