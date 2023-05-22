@@ -1,5 +1,6 @@
 import { join, resolve } from 'node:path';
 import { promises as fs } from 'node:fs';
+import { stat } from 'node:fs/promises';
 import { Command, Option } from 'commander';
 import { Listr } from 'listr2';
 import debug from 'debug';
@@ -74,12 +75,16 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
     throw new Error(`@rehearsal/fix: you must specify a package or path to move`);
   }
 
-  const javascriptGlobs = SUPPORTED_JS_EXTENSIONS.map((ext) => {
-    return join(`${options.rootPath}`, srcPath, `**/*${ext}`);
-  });
+  const isDirectory = (await stat(srcPath)).isDirectory();
 
-  // we don't want to try and fix JS files
-  options.ignore.push(...javascriptGlobs);
+  if (isDirectory) {
+    const javascriptGlobs = SUPPORTED_JS_EXTENSIONS.map((ext) => {
+      return join(`${options.rootPath}`, srcPath, `**/*${ext}`);
+    });
+
+    // we don't want to try and fix JS files
+    options.ignore.push(...javascriptGlobs);
+  }
 
   options.mode =
     process.env['EXPERIMENTAL_MODES'] === 'drain'
