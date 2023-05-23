@@ -1,3 +1,12 @@
+## <small>3.0.6-beta (2023-05-23)</small>
+
+* fix: drain mode exit criteria  (#1081) ([c056414](https://github.com/rehearsal-js/rehearsal-js/commit/c056414)), closes [#1081](https://github.com/rehearsal-js/rehearsal-js/issues/1081)
+* fix: generate globs only for directories (#1076) ([b997c70](https://github.com/rehearsal-js/rehearsal-js/commit/b997c70)), closes [#1076](https://github.com/rehearsal-js/rehearsal-js/issues/1076)
+* fix: remove invariant in graph (#1082) ([654b393](https://github.com/rehearsal-js/rehearsal-js/commit/654b393)), closes [#1082](https://github.com/rehearsal-js/rehearsal-js/issues/1082)
+* chore(plugins): fix typos for word suppressed (#1072) ([f7bb05c](https://github.com/rehearsal-js/rehearsal-js/commit/f7bb05c)), closes [#1072](https://github.com/rehearsal-js/rehearsal-js/issues/1072)
+
+
+
 ## <small>3.0.5-beta (2023-05-22)</small>
 
 * chore: delete unsused code (#1066) ([e06327d](https://github.com/rehearsal-js/rehearsal-js/commit/e06327d)), closes [#1066](https://github.com/rehearsal-js/rehearsal-js/issues/1066)
