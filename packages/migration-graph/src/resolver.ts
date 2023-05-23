@@ -87,7 +87,6 @@ export class Resolver {
 
     allImports.forEach((imp) => {
       const resolved = this.resolveModule(filePath, imp);
-
       if (resolved) {
         this.walk(resolved);
 
@@ -150,13 +149,10 @@ export class Resolver {
         resolved = this.resolveRelative(importer, `${importee}/index`);
       }
 
-      assert(
-        resolved,
-        `Invariant: ${importee} is not resolvable. ${importee} was imported from ${importer} but cannot be resolved.`
-      );
-      debug(`resolve: ${importee} to ${resolved}`);
-      // relative path
-      return resolved;
+      if (resolved) {
+        debug(`resolve: ${importee} to ${resolved}`);
+        return resolved;
+      }
     }
 
     const config = this.findTSConfig(importer);
@@ -197,8 +193,6 @@ export class Resolver {
         return matchedPath;
       }
     }
-
-    debug(`resolve: FAILED ${importee}`);
   }
 
   private resolveRelative(importer: string, importee: string): string | undefined {
