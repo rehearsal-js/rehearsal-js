@@ -75,9 +75,9 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     ]);
 
     while (diagnostics.length) {
-      const diagnostic = diagnostics[0];
+      const diagnostic = diagnostics.shift()!;
 
-      if (!diagnostic.node) {
+      if (!diagnostic?.node) {
         DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
         continue;
       }

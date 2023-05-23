@@ -349,10 +349,23 @@ exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
 ]
 `;
 
-exports[`fix > EXPERIMENTAL_MODES = drain > class with missing prop 1`] = `
+exports[`fix > EXPERIMENTAL_MODES, GlintService > mode: drain 1`] = `
 "class Foo {
   name: number;
+  constructor(name: number) {
+    this.name = name;
+  }
 
+  hello() {
+    return this.name + 1;
+  }
+}
+"
+`;
+
+exports[`fix > EXPERIMENTAL_MODES, GlintService > mode: single-pass 1`] = `
+"class Foo {
+  name: number;
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 'name' implicitly has an 'any' type.
   constructor(name) {
     this.name = name;
@@ -365,11 +378,25 @@ exports[`fix > EXPERIMENTAL_MODES = drain > class with missing prop 1`] = `
 "
 `;
 
-exports[`fix > EXPERIMENTAL_MODES = drain > class with missing prop 2`] = `
+exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: drain 1`] = `
 "class Foo {
   name: number;
-
   constructor(name: number) {
+    this.name = name;
+  }
+
+  hello(): number {
+    return this.name + 1;
+  }
+}
+"
+`;
+
+exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: single-pass 1`] = `
+"class Foo {
+  name: number;
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'name' implicitly has an 'any' type.
+  constructor(name) {
     this.name = name;
   }
 
