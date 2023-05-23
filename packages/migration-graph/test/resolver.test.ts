@@ -208,6 +208,12 @@ describe('Resolver', () => {
         },
 
         'package-f': {
+          unresolvable: {
+            'index.js': `
+            import config '../literal/never/exists/on-disk';
+            import {index} from "package-e/foo"
+            `,
+          },
           src: {
             'index.mts': `import {index} from "package-e/foo"`,
           },
@@ -318,6 +324,15 @@ describe('Resolver', () => {
     expect(topSortFiles(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-e/src/foo/index.ts',
       project.baseDir + '/packages/package-f/src/index.mts',
+    ]);
+  });
+
+  test('can refer to things that dont really exists', () => {
+    resolver.walk(project.baseDir + '/packages/package-f/unresolvable/index.js');
+
+    expect(topSortFiles(resolver.graph)).toMatchObject([
+      project.baseDir + '/packages/package-e/src/foo/index.ts',
+      project.baseDir + '/packages/package-f/unresolvable/index.js',
     ]);
   });
 });
