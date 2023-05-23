@@ -10,6 +10,10 @@ import { getReportSummary } from '../../../helpers/report.js';
 import { findPackageRootDirectory, getPathToBinary } from '../../../utils/paths.js';
 import type { CommandContext, FixCommandOptions } from '../../../types.js';
 
+type MessageResponse = { type: 'message'; content: string };
+type FilesResponse = { type: 'files'; content: string[] };
+export type Response = MessageResponse | FilesResponse;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const workerPath = resolve(__dirname, 'convertWorker.js');
@@ -53,7 +57,6 @@ export function convertTask(
           packageDir: packageDir,
           filesToMigrate: ctx.orderedFiles,
           reporter,
-          task,
           ignore,
         };
 
@@ -67,12 +70,24 @@ export function convertTask(
           migratedFiles = await new Promise<string[]>((resolve, reject) => {
             const worker = new Worker(workerPath, {
               workerData: JSON.stringify({
-                input,
+                mode: options.mode,
+                projectRootDir: rootPath,
+                packageDir: packageDir,
+                filesToMigrate: ctx.orderedFiles,
+                reporter,
+                ignore,
               }),
             });
 
-            worker.on('message', (output: string[]) => {
-              resolve(output);
+            worker.on('message', (response: Response) => {
+              switch (response.type) {
+                case 'message':
+                  task.title = response.content;
+                  break;
+                case 'files':
+                  resolve(response.content);
+                  break;
+              }
             });
 
             worker.on('error', reject);
@@ -85,7 +100,6 @@ export function convertTask(
         }
 
         DEBUG_CALLBACK('migratedFiles', migratedFiles);
-
         reporter.printReport(rootPath, options.format);
         task.title = getReportSummary(reporter.report);
       } else {
