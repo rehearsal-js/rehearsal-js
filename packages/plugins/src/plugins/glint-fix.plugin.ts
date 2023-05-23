@@ -5,6 +5,7 @@ import debug from 'debug';
 import ts from 'typescript';
 import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
+import hash from 'object-hash';
 import type MS from 'magic-string';
 
 const require = createRequire(import.meta.url);
@@ -19,6 +20,7 @@ export interface GlintFixPluginOptions {
 }
 
 export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
+  attemptedToFix: string[] = [];
   appliedAtOffset: { [file: string]: number[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();
@@ -49,17 +51,16 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     ]);
 
     while (diagnostics.length) {
-      const diagnostic = diagnostics[0];
+      const diagnostic = diagnostics.shift()!;
+
       const fix = this.getCodeFix(fileName, diagnostic, service);
 
       if (fix === undefined) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.range.start}:\t node not found`);
+        DEBUG_CALLBACK(
+          ` - TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t fix not found`
+        );
         continue;
       }
-
-      const fileText = service.getFileText(fileName);
-
-      const start = service.pathUtils.positionToOffset(fileText, diagnostic.range.start);
 
       applyCodeFix(fix, {
         getText(filename: string) {
@@ -67,13 +68,17 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
         },
 
         applyText(newText: string) {
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t ${newText}`);
+          DEBUG_CALLBACK(
+            `- TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t ${newText}`
+          );
         },
 
         setText: (filename: string, text: string) => {
           context.service.setFileText(filename, text);
           this.allFixedFiles.add(filename);
-          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${start}:\t codefix applied`);
+          DEBUG_CALLBACK(
+            `- TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t codefix applied`
+          );
         },
       });
 
@@ -108,7 +113,9 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
       const fix = this.getCodeFix(fileName, diagnostic, service);
 
       if (fix === undefined) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.range.start}:\t node not found`);
+        DEBUG_CALLBACK(
+          ` - TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t fix not found`
+        );
         continue;
       }
 
@@ -187,6 +194,37 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
         return acc;
       }, []);
 
-    return transformedActions[0];
+    // Use the first available codefix in automatic mode
+    let fix = transformedActions.shift();
+
+    while (fix && this.wasAttemptedToFix(diagnostic, fix)) {
+      // Try the next fix if we already tried the first one
+      fix = transformedActions.shift();
+    }
+
+    if (fix === undefined) {
+      DEBUG_CALLBACK(
+        ` - TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t fixes didn't work`
+      );
+    }
+
+    return fix;
+  }
+
+  private wasAttemptedToFix(diagnostic: Diagnostic, fix: ts.CodeFixAction): boolean {
+    const diagnosticFixHash = hash([
+      diagnostic.code,
+      diagnostic.range.start.line,
+      diagnostic.range.start.character,
+      fix,
+    ]);
+
+    if (!this.attemptedToFix.includes(diagnosticFixHash)) {
+      this.attemptedToFix.push(diagnosticFixHash);
+
+      return false;
+    }
+
+    return true;
   }
 }

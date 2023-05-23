@@ -738,11 +738,13 @@ export default class SomeComponent extends Component {
     });
   });
 
-  describe('EXPERIMENTAL_MODES = drain', () => {
+  describe('EXPERIMENTAL_MODES, GlintService', () => {
     let project: Project;
     let reporter: Reporter;
 
-    beforeEach(() => {
+    const projectPath = resolve(__dirname, 'fixtures', 'project');
+
+    beforeEach(async () => {
       project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
 
       reporter = new Reporter({
@@ -751,31 +753,75 @@ export default class SomeComponent extends Component {
         projectRootDir: project.baseDir,
         commandName: '@rehearsal/fix',
       });
+
+      await project.write();
     });
 
     afterEach(() => {
       project.dispose();
     });
 
-    test('class with missing prop', async () => {
-      project.mergeFiles({
-        src: {
-          'foo.ts': `class Foo {
+    test('mode: single-pass', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
 
-  constructor(name) {
-    this.name = name;
-  }
+      const singlePass: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'single-pass',
+      };
 
-  hello() {
-    return this.name + 1;
-  }
-}
-`,
-        },
+      for await (const _ of migrate(singlePass)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();;
+    });
+
+    test('mode: drain', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
+
+      const drainInput: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(drainInput)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+  });
+
+  describe('EXPERIMENTAL_MODES, RehearsalService', () => {
+    let project: Project;
+    let reporter: Reporter;
+
+    const projectPath = resolve(__dirname, 'fixtures', 'project-basic');
+
+    beforeEach(async () => {
+      project = Project.fromDir(projectPath, { linkDeps: true, linkDevDeps: true });
+
+      reporter = new Reporter({
+        tsVersion: '',
+        projectName: '@rehearsal/test',
+        projectRootDir: project.baseDir,
+        commandName: '@rehearsal/fix',
       });
 
       await project.write();
+    });
 
+    afterEach(() => {
+      project.dispose();
+    });
+
+    test('mode: single-pass', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
 
       const singlePass: MigrateInput = {
@@ -791,6 +837,10 @@ export default class SomeComponent extends Component {
       }
 
       expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('mode: drain', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
 
       const drainInput: MigrateInput = {
         projectRootDir: project.baseDir,
