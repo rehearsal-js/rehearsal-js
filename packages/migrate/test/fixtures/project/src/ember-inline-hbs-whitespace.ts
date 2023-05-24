@@ -32,13 +32,9 @@ module("Integration | Component | asset-loader@deferred-asset-loader", function 
   test("it works in inline form", async function (assert) {
     assert.expect(3);
 
-    await render(
-      hbs`
-      <AssetLoader$DeferredAssetLoader
-      @bundle="custom-bundle" @fulfilledComponent={{component "artdeco-button" class="test-dummy-component"}}/>`
-    );
+    await render(hbs`
+      <AssetLoader$DeferredAssetLoader @bundle="custom-bundle" @fulfilledComponent={{component "artdeco-button" class="test-dummy-component"}}/>`);
 
-    // eslint-disable-next-line @linkedin/pemberly/disallow-classnames-in-assertions
     assert
       // @ts-expect-error @rehearsal TODO TS2339: Property 'dom' does not exist on type 'Assert'.
       .dom(".test-dummy-component")
@@ -53,7 +49,7 @@ module("Integration | Component | asset-loader@deferred-asset-loader", function 
       this.loadBundleStub.calledWithExactly("custom-bundle"),
       "asset-loader service was called with correct bundle name"
     );
-    // eslint-disable-next-line @linkedin/pemberly/disallow-classnames-in-assertions
+
     // @ts-expect-error @rehearsal TODO TS2339: Property 'dom' does not exist on type 'Assert'.
     assert.dom(".test-dummy-component").exists("dummy is rendered");
   });

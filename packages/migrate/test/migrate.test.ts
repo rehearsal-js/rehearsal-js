@@ -747,7 +747,7 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test.todo('inline hbs in tests; with whitespace differences', async () => {
+    test.only('inline hbs in tests; with whitespace differences', async () => {
       await project.write();
 
       const [inputs, outputs] = prepareInputFiles(project, ['ember-inline-hbs-whitespace.ts']);
@@ -763,6 +763,7 @@ describe('fix', () => {
         // no ops
       }
 
+      console.log(readFileSync(outputs[0], 'utf-8'));
       expectFile(outputs[0]).not.contains('import { type } from "os";');
       // Once fixed enable snapshot.
       // expectFile(outputs[0]).toMatchSnapshot();
