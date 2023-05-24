@@ -1,7 +1,7 @@
 import type { FileNode } from './file-node.js';
 import type { PackageGraph } from './project-graph.js';
 
-export function topSortFiles(graph: PackageGraph): string[] {
+export function topSortFiles(graph: PackageGraph): FileNode[] {
   const nodes: FileNode[] = [];
 
   // Mark all nodes as unvisited
@@ -13,7 +13,7 @@ export function topSortFiles(graph: PackageGraph): string[] {
     }
   }
 
-  const result: string[] = [];
+  const result: FileNode[] = [];
 
   // Helper function to visit a node and its children recursively
   function visit(node: FileNode): void {
@@ -22,7 +22,7 @@ export function topSortFiles(graph: PackageGraph): string[] {
       for (const child of node.edges) {
         visit(child);
       }
-      result.push(node.id);
+      result.push(node);
     }
   }
 

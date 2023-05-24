@@ -66,16 +66,16 @@ export type FixCommandOptions = {
 */
 export type GraphCommandOptions = {
   rootPath: string;
-  devDeps: boolean;
-  deps: boolean;
   ignore: string[];
   output?: string;
+  externals?: boolean;
 };
 
 export type GraphTaskOptions = {
   rootPath: string;
   ignore: string[];
   output?: string;
+  externals?: boolean;
   skipPrompt?: boolean;
 };
 

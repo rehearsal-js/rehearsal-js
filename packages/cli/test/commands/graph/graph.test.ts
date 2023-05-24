@@ -76,25 +76,116 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './src/bizz.ts',
-      './src/index.js',
-      './src/foo/baz.js',
-      './src/foo/biz.js',
-      './src/foo/e.gjs',
-      './src/foo/buz/biz.js',
-      './module-a/src/baz.js',
-      './module-a/src/foo.js',
-      './module-a/src/index.js',
-      './module-b/src/tires.js',
-      './module-b/src/car.js',
-      './module-b/src/index.js',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: 'base_js_app',
+        external: false,
+        files: [
+          {
+            name: './src/bizz.ts',
+            hasTypes: true,
+            edges: [],
+          },
+          {
+            name: './src/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'base_js_app',
+                hasTypes: true,
+                missing: false,
+                fileName: './src/bizz.ts',
+              },
+            ],
+          },
+          {
+            name: './src/foo/baz.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './src/foo/biz.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './src/foo/e.gjs',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './src/foo/buz/biz.js',
+            hasTypes: false,
+            edges: [],
+          },
+        ],
+      },
+      {
+        name: 'module-a',
+        external: false,
+        files: [
+          {
+            name: './module-a/src/baz.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './module-a/src/foo.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'module-a',
+                hasTypes: false,
+                fileName: './module-a/src/baz.js',
+              },
+            ],
+          },
+          {
+            name: './module-a/src/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'module-a',
+                hasTypes: false,
+                missing: false,
+                fileName: './module-a/src/foo.js',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        name: 'module-b',
+        external: false,
+        files: [
+          {
+            name: './module-b/src/tires.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './module-b/src/car.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'module-b',
+                hasTypes: false,
+                missing: false,
+                fileName: './module-b/src/tires.js',
+              },
+            ],
+          },
+          {
+            name: './module-b/src/index.js',
+            hasTypes: false,
+            edges: [],
+          },
+        ],
+      },
     ]);
   });
 
-  test('can output to stdout for sub-package', async () => {
+  test('can output for sub-package', async () => {
     const options = {
       rootPath: project.baseDir,
       output: join(project.baseDir, 'graph.json'),
@@ -107,12 +198,42 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './module-a/src/baz.js',
-      './module-a/src/foo.js',
-      './module-a/src/index.js',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: 'module-a',
+        external: false,
+        files: [
+          {
+            name: './module-a/src/baz.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './module-a/src/foo.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'module-a',
+                hasTypes: false,
+                missing: false,
+                fileName: './module-a/src/baz.js',
+              },
+            ],
+          },
+          {
+            name: './module-a/src/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'module-a',
+                hasTypes: false,
+                missing: false,
+                fileName: './module-a/src/foo.js',
+              },
+            ],
+          },
+        ],
+      },
     ]);
   });
 
@@ -169,13 +290,53 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './lib/some-addon/addon/utils/thing.js',
-      './lib/some-addon/addon/components/greet.js',
-      './lib/some-other-addon/addon/index.js',
-      './lib/some-other-addon/addon/thing.ts',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: '@company/some-other-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-other-addon/addon/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/components/greet.js',
+              },
+            ],
+          },
+          {
+            name: './lib/some-other-addon/addon/thing.ts',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
+      {
+        name: 'some-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-addon/addon/utils/thing.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './lib/some-addon/addon/components/greet.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/utils/thing.js',
+              },
+            ],
+          },
+        ],
+      },
     ]);
   });
 
@@ -200,11 +361,23 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './lib/some-other-addon/addon/index.js',
-      './lib/some-other-addon/addon/thing.ts',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: '@company/some-other-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-other-addon/addon/index.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './lib/some-other-addon/addon/thing.ts',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
     ]);
   });
 
@@ -229,12 +402,41 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './lib/some-addon/addon/components/greet.js',
-      './lib/some-other-addon/addon/index.js',
-      './lib/some-other-addon/addon/thing.ts',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: '@company/some-other-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-other-addon/addon/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/components/greet.js',
+              },
+            ],
+          },
+          {
+            name: './lib/some-other-addon/addon/thing.ts',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
+      {
+        name: 'some-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-addon/addon/components/greet.js',
+            hasTypes: false,
+            edges: [],
+          },
+        ],
+      },
     ]);
   });
 
@@ -259,9 +461,19 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject(['./lib/some-other-addon/addon/thing.ts']);
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: '@company/some-other-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-other-addon/addon/thing.ts',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
+    ]);
   });
 
   test('can ignore a single file from the from graph', async () => {
@@ -285,12 +497,41 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './lib/some-addon/addon/components/greet.js',
-      './lib/some-other-addon/addon/index.js',
-      './lib/some-other-addon/addon/thing.ts',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: '@company/some-other-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-other-addon/addon/index.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/components/greet.js',
+              },
+            ],
+          },
+          {
+            name: './lib/some-other-addon/addon/thing.ts',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
+      {
+        name: 'some-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-addon/addon/components/greet.js',
+            hasTypes: false,
+            edges: [],
+          },
+        ],
+      },
     ]);
   });
 
@@ -311,22 +552,98 @@ describe('Task: graphOrderTask', () => {
 
     expect(existsSync(options.output)).toBe(true);
 
-    const graph = JSON.parse(await readFile(options.output, 'utf-8')) as string[];
-
-    expect(graph).toMatchObject([
-      './app/app.js',
-      './app/router.js',
-      './config/environment.js',
-      './config/targets.js',
-      './tests/test-helper.js',
-      './app/components/salutation.js',
-      './app/services/locale.js',
-      './tests/acceptance/index-test.js',
-      './tests/unit/services/locale-test.js',
-      './lib/some-addon/index.js',
-      './lib/some-addon/addon/utils/thing.js',
-      './lib/some-addon/addon/components/greet.js',
-      './lib/some-addon/app/components/greet.js',
+    expect(JSON.parse(await readFile(options.output, 'utf-8'))).toMatchObject([
+      {
+        name: 'app-template',
+        external: false,
+        files: [
+          {
+            name: './app/app.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './app/router.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './config/environment.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './config/targets.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './tests/test-helper.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './app/components/salutation.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './app/services/locale.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './tests/acceptance/index-test.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './tests/unit/services/locale-test.js',
+            hasTypes: false,
+            edges: [],
+          },
+        ],
+      },
+      {
+        name: 'some-addon',
+        external: false,
+        files: [
+          {
+            name: './lib/some-addon/index.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './lib/some-addon/addon/utils/thing.js',
+            hasTypes: false,
+            edges: [],
+          },
+          {
+            name: './lib/some-addon/addon/components/greet.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/utils/thing.js',
+              },
+            ],
+          },
+          {
+            name: './lib/some-addon/app/components/greet.js',
+            hasTypes: false,
+            edges: [
+              {
+                packageName: 'some-addon',
+                hasTypes: false,
+                missing: false,
+                fileName: './lib/some-addon/addon/components/greet.js',
+              },
+            ],
+          },
+        ],
+      },
     ]);
   });
 });

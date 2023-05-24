@@ -7,19 +7,26 @@ import {
   discoverServiceDependencies,
   getExcludePatterns,
   SUPPORTED_EXTENSION,
-  PackageGraph,
+  type PackageGraph,
   generateDotLanguage,
+  type FileNode,
+  generateJson,
 } from '@rehearsal/migration-graph';
 import FastGlob from 'fast-glob';
 import { GraphWorkerOptions } from './types.js';
 
 if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
-  const { srcPath, rootPath, output, ignore, serviceMap } = JSON.parse(
+  const { srcPath, rootPath, output, ignore, externals, serviceMap } = JSON.parse(
     workerData as string
   ) as GraphWorkerOptions;
 
   const serviceResolver = discoverServiceDependencies(serviceMap);
-  const resolver = new Resolver({ customResolver: serviceResolver, ignore });
+  const resolver = new Resolver({
+    rootPath,
+    scanForImports: serviceResolver,
+    ignore,
+    includeExternals: !!(externals && output),
+  });
   const absolutePath = resolve(rootPath, srcPath);
   const files = await getFiles(absolutePath, srcPath, ignore);
 
@@ -29,11 +36,14 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     resolver.walk(file);
   }
 
-  const sortedFiles = topSortFiles(resolver.graph);
+  const sortedNodes = topSortFiles(resolver.graph);
+  const sortedFiles = sortedNodes.map((file) => {
+    return file.id;
+  });
 
   if (output) {
     parentPort?.postMessage({ type: 'message', content: `Writing graph to ${output} ...` });
-    await writeOutput(rootPath, resolver.graph, sortedFiles, output);
+    await writeOutput(rootPath, resolver.graph, sortedNodes, output);
   }
 
   parentPort?.postMessage({ type: 'files', content: sortedFiles });
@@ -80,7 +90,7 @@ export async function getFiles(
 export async function writeOutput(
   rootPath: string,
   graph: PackageGraph,
-  order: string[],
+  order: FileNode[],
   output: string
 ): Promise<void> {
   const ext = extname(output);
@@ -88,13 +98,7 @@ export async function writeOutput(
     const dot = generateDotLanguage(graph);
     await writeFile(output, dot);
   } else {
-    await writeFile(
-      output,
-      JSON.stringify(
-        order.map((filePath) => filePath.replace(rootPath, '.')),
-        null,
-        2
-      )
-    );
+    const json = generateJson(rootPath, graph, order);
+    await writeFile(output, json);
   }
 }

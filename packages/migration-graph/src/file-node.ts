@@ -1,5 +1,5 @@
 export class FileNode {
-  id: string;
+  readonly id: string;
   edges: FileNode[];
   private seenEdges: Set<string> = new Set();
 

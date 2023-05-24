@@ -3,14 +3,15 @@ import { Project } from 'fixturify-project';
 import { Resolver } from '../src/resolver.js';
 import { discoverServiceDependencies } from '../src/discover-services.js';
 import { topSortFiles } from '../src/sort-graph.js';
+import { PackageGraph } from '../src/project-graph.js';
+import { generateDotLanguage } from '../src/dot.js';
+import { generateJson } from '../src/json.js';
 
 describe('Resolver', () => {
   let resolver: Resolver;
   let project: Project;
 
   beforeEach(async () => {
-    resolver = new Resolver();
-    await resolver.load();
     project = new Project('package-a');
     project.files = {
       'tsconfig.json': JSON.stringify({
@@ -232,10 +233,113 @@ describe('Resolver', () => {
             },
           }),
         },
+
+        'with-externals-imports': {
+          src: {
+            'other.js': `
+            import { addonWithTypes } from "with-types";
+            import { get } from '@ember/object';
+            export const other = "other";
+            `,
+            'index.mts': `
+            import {index} from "package-e/foo"
+            import {foo} from "my-external";
+            import { addon } from "no-types";
+            import { other } from './other';
+            `,
+          },
+          'tsconfig.json': JSON.stringify({
+            extends: '../../tsconfig.json',
+            compilerOptions: {
+              paths: {
+                'package-e/*': ['./packages/package-e/dist-types/src/*'],
+              },
+            },
+          }),
+
+          'package.json': JSON.stringify({
+            name: '@company/package-with-externals',
+            dependencies: {
+              'package-e': '*',
+              'my-external': '*',
+              'my-external-addon-no-types': '*',
+              'my-external-with-types': '*',
+              'ember-source': '*',
+            },
+          }),
+          node_modules: {
+            'ember-source': {
+              lib: {
+                'index.js': 'module.exports = "ember"',
+              },
+              dist: {
+                packages: {
+                  ember: {
+                    'index.js': 'export const ember = "ember"',
+                  },
+                },
+              },
+              'package.json': JSON.stringify({
+                name: 'ember-source',
+                keywords: ['ember-addon'],
+              }),
+            },
+            'my-external-addon-no-types': {
+              addon: {
+                'not-followed.js': `export default class NotFollowed {}`,
+                'index.js': `
+                import notFollowed from "./not-followed";
+                export const addon = "addon";
+                `,
+              },
+              'index.js': `module.exports = { name: "no-types" }`,
+              'package.json': JSON.stringify({
+                keywords: ['ember-addon'],
+                name: 'my-external-addon-no-types',
+                main: './index.js',
+              }),
+            },
+            'my-external-with-types': {
+              addon: {
+                'index.ts': 'export const addonWithTypes = "addon";',
+              },
+              'index.js': `module.exports = { name: "with-types" }`,
+              'package.json': JSON.stringify({
+                keywords: ['ember-addon'],
+                name: 'my-external-with-types',
+                main: './index.js',
+              }),
+            },
+            'my-external': {
+              dist: {
+                'index.js': 'export const foo = "foo";',
+                'index.d.ts': 'export declare const foo: string;',
+              },
+              'package.json': JSON.stringify({
+                name: 'my-external',
+                types: './dist/index.d.ts',
+                main: './dist/index.js',
+              }),
+            },
+          },
+        },
+
+        'missing-imports': {
+          src: {
+            'index.mts': `import {index} from "package-e/foo"`,
+          },
+          'package.json': JSON.stringify({
+            name: '@company/package-4',
+            dependencies: {},
+          }),
+        },
       },
     };
 
     await project.write();
+
+    resolver = new Resolver({ rootPath: project.baseDir, includeExternals: false });
+    await resolver.load();
   });
 
   afterEach(() => {
@@ -245,7 +349,7 @@ describe('Resolver', () => {
   test('it works', () => {
     resolver.walk(project.baseDir + '/packages/package-b/src/d.js');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-b/src/e.ts',
       project.baseDir + '/packages/package-a/src/thing/index.ts',
       project.baseDir + '/packages/package-a/src/a.js',
@@ -258,7 +362,7 @@ describe('Resolver', () => {
   test('it works gts', () => {
     resolver.walk(project.baseDir + '/packages/package-c/src/g.gts');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-b/src/e.ts',
       project.baseDir + '/packages/package-b/src/f.js',
       project.baseDir + '/packages/package-c/src/h.ts',
@@ -269,7 +373,7 @@ describe('Resolver', () => {
   test('it works tsx', () => {
     resolver.walk(project.baseDir + '/packages/package-e/src/1.tsx');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-e/src/foo/index.ts',
       project.baseDir + '/packages/package-e/src/4.jsx',
       project.baseDir + '/packages/package-a/src/thing/index.ts',
@@ -285,10 +389,14 @@ describe('Resolver', () => {
   test('can find service when given a resolver', () => {
     const resolveServices = discoverServiceDependencies({});
 
-    resolver = new Resolver({ customResolver: resolveServices });
+    resolver = new Resolver({
+      rootPath: project.baseDir,
+      scanForImports: resolveServices,
+      includeExternals: false,
+    });
 
     resolver.walk(project.baseDir + '/packages/package-c/src/j.gjs');
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-d/addon/services/thing.js',
       project.baseDir + '/packages/package-c/src/k.gjs',
       project.baseDir + '/packages/package-b/src/e.ts',
@@ -303,11 +411,15 @@ describe('Resolver', () => {
       tracking: 'package-d/services/tracking.js',
     });
 
-    resolver = new Resolver({ customResolver: resolveServices });
+    resolver = new Resolver({
+      rootPath: project.baseDir,
+      scanForImports: resolveServices,
+      includeExternals: false,
+    });
 
     resolver.walk(project.baseDir + '/packages/package-c/src/j.gjs');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-d/addon/services/tracking.js',
       project.baseDir + '/packages/package-d/addon/services/thing.js',
       project.baseDir + '/packages/package-c/src/k.gjs',
@@ -321,7 +433,7 @@ describe('Resolver', () => {
   test('can resolve up from a declaration file if it has paths to itself', () => {
     resolver.walk(project.baseDir + '/packages/package-f/src/index.mts');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-e/src/foo/index.ts',
       project.baseDir + '/packages/package-f/src/index.mts',
     ]);
@@ -330,9 +442,58 @@ describe('Resolver', () => {
   test('can refer to things that dont really exists', () => {
     resolver.walk(project.baseDir + '/packages/package-f/unresolvable/index.js');
 
-    expect(topSortFiles(resolver.graph)).toMatchObject([
+    expect(intoFileIds(resolver.graph)).toMatchObject([
       project.baseDir + '/packages/package-e/src/foo/index.ts',
       project.baseDir + '/packages/package-f/unresolvable/index.js',
     ]);
   });
+
+  test('follows direct external dependencies', () => {
+    resolver = new Resolver({ rootPath: project.baseDir, includeExternals: true });
+
+    resolver.walk(project.baseDir + '/packages/with-externals-imports/src/index.mts');
+
+    const files = intoFileIds(resolver.graph);
+
+    expect(
+      files.includes(
+        project.baseDir +
+          '/packages/with-externals-imports/node_modules/my-external-with-types/addon/not-followed.js'
+      ),
+      'Does not walk externals'
+    ).toBe(false);
+
+    expect(files).toMatchObject([
+      '@ember/object', // we explicitly don't try to resolve @ember packages
+      project.baseDir +
+        '/packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts',
+      project.baseDir + '/packages/with-externals-imports/src/other.js',
+      project.baseDir +
+        '/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js',
+      project.baseDir + '/packages/with-externals-imports/node_modules/my-external/dist/index.js',
+      project.baseDir + '/packages/package-e/src/foo/index.ts',
+      project.baseDir + '/packages/with-externals-imports/src/index.mts',
+    ]);
+  });
+
+  test('resolver produces a graph that can be emitted as dotlang', () => {
+    resolver = new Resolver({ rootPath: project.baseDir, includeExternals: true });
+    resolver.walk(project.baseDir + '/packages/with-externals-imports/src/index.mts');
+    expect(
+      generateDotLanguage(resolver.graph).replace(new RegExp(project.baseDir, 'g'), '<tmp-path>')
+    ).toMatchSnapshot();
+  });
+
+  test('resolver produces a graph that can be emitted as json', () => {
+    resolver = new Resolver({ rootPath: project.baseDir, includeExternals: true });
+    resolver.walk(project.baseDir + '/packages/with-externals-imports/src/index.mts');
+
+    expect(
+      generateJson(project.baseDir, resolver.graph, topSortFiles(resolver.graph))
+    ).toMatchSnapshot();
+  });
 });
+
+function intoFileIds(graph: PackageGraph): string[] {
+  return topSortFiles(graph).map((file) => file.id);
+}

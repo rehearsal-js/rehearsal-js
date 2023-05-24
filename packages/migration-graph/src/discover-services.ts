@@ -16,13 +16,11 @@ import type {
   NamedImportSpecifier,
   StringLiteral,
 } from '@swc/core';
-import type { CustomImportResolver } from './types.js';
+import type { ImportScanner } from './types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:migration-graph:discover-ember-service-dependencies');
 
-export function discoverServiceDependencies(
-  serviceMap: Record<string, string>
-): CustomImportResolver {
+export function discoverServiceDependencies(serviceMap: Record<string, string>): ImportScanner {
   return (contentType: 'ecmascript' | 'typescript', content: string): string[] => {
     if (!(content.includes('@ember/service') || content.includes('@glimmerx/service'))) {
       return [];
@@ -150,6 +148,9 @@ export function discoverServiceDependencies(
 
             if (serviceMap[arg.value]) {
               return serviceMap[arg.value];
+            } else if (isFullyQualifiedService(arg.value)) {
+              const [packageName, serviceName] = parseFullyQualifiedService(arg.value);
+              return `${packageName}/services/${toKebabCase(serviceName)}`;
             }
 
             return parseServiceMetaFromString(arg.value);
@@ -160,6 +161,9 @@ export function discoverServiceDependencies(
 
         if (serviceMap[keyName]) {
           return serviceMap[keyName];
+        } else if (isFullyQualifiedService(keyName)) {
+          const [packageName, serviceName] = parseFullyQualifiedService(keyName);
+          return `${packageName}/services/${toKebabCase(serviceName)}`;
         }
 
         // Fallback if decorator.expression where decoratorName`  is not call expression
@@ -171,10 +175,26 @@ export function discoverServiceDependencies(
   };
 }
 
+function toKebabCase(str: string): string {
+  return str.replace(/[\W_]+|(?<=[a-z0-9])(?=[A-Z])/g, '-').toLowerCase();
+}
+
 function findClassDeclarations(items: ModuleItem[]): Array<ClassDeclaration> | undefined {
   return items
     .filter((i: ModuleItem) => i.type == 'ClassDeclaration')
     .map((i) => i as ClassDeclaration);
+}
+
+function isFullyQualifiedService(service: string): boolean {
+  return service.includes('@');
+}
+
+function parseFullyQualifiedService(service: string): string[] {
+  if (!isFullyQualifiedService(service)) {
+    return ['', service];
+  }
+  const idx = service.lastIndexOf('@');
+  return [service.substring(0, idx), service.substring(idx + 1)];
 }
 
 function parseServiceMetaFromString(str: string): string {

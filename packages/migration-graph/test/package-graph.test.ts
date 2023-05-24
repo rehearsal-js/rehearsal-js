@@ -1,14 +1,17 @@
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import assert from 'node:assert';
 import { describe, expect, test, beforeEach, afterEach } from 'vitest';
 import { Project } from 'fixturify-project';
 import { topSortFiles } from '../src/sort-graph.js';
+import { PackageNode, PackageOptions } from '../src/package-node.js';
 import { PackageGraph } from '../src/project-graph.js';
+import { readPackageJson } from '../src/utils/read-package-json.js';
 
 describe('PackageGraph', () => {
   let project: Project;
-
-  let a = '';
-  let b = '';
+  let a: PackageNode;
+  let b: PackageNode;
+  let graph: PackageGraph;
   beforeEach(async () => {
     // use fixturify-project to give us temp files we can pass in
     project = new Project();
@@ -23,14 +26,19 @@ describe('PackageGraph', () => {
 
     await project.write();
 
-    [a, b] = ['a', 'b'].map((dir) => join(project.baseDir, dir, 'package.json'));
+    graph = new PackageGraph();
+
+    [a, b] = ['a', 'b'].map((dir) => {
+      const packagePath = join(project.baseDir, dir, 'package.json');
+      assert(packagePath);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return graph.addPackage(createPackageOptions(packagePath));
+    });
   });
 
   afterEach(() => project.dispose());
 
   test('it works', () => {
-    const graph = new PackageGraph();
-
     graph.addFileToPackage(a, '1.js');
     graph.addFileToPackage(a, '2.js');
     graph.addFileToPackage(b, '3.js');
@@ -60,7 +68,6 @@ describe('PackageGraph', () => {
   });
 
   test('it works with cycles', () => {
-    const graph = new PackageGraph();
     graph.addFileToPackage(a, '1.js');
     graph.addFileToPackage(a, '2.js');
     graph.addFileToPackage(a, '3.js');
@@ -84,9 +91,10 @@ describe('PackageGraph', () => {
 describe('topSortFiles', () => {
   let project: Project;
 
-  let a = '';
-  let b = '';
-  let c = '';
+  let a: PackageNode;
+  let b: PackageNode;
+  let c: PackageNode;
+  let graph: PackageGraph;
   beforeEach(async () => {
     // use fixturify-project to give us temp files we can pass in
     project = new Project();
@@ -104,11 +112,16 @@ describe('topSortFiles', () => {
 
     await project.write();
 
-    [a, b, c] = ['a', 'b', 'c'].map((dir) => join(project.baseDir, dir, 'package.json'));
+    graph = new PackageGraph();
+
+    [a, b, c] = ['a', 'b', 'c'].map((dir) => {
+      const packagePath = join(project.baseDir, dir, 'package.json');
+      assert(packagePath);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return graph.addPackage(createPackageOptions(packagePath));
+    });
   });
   test('it works', () => {
-    const graph = new PackageGraph();
-
     graph.addFileToPackage(a, '1.js');
     graph.addFileToPackage(a, '2.js');
     graph.addFileToPackage(a, '3.js');
@@ -122,12 +135,17 @@ describe('topSortFiles', () => {
     graph.addDependency('package-a', '2.js', 'package-b', '4.js');
     graph.addDependency('package-b', '4.js', 'package-c', '6.js');
 
-    expect(topSortFiles(graph)).toMatchObject(['5.js', '3.js', '1.js', '6.js', '4.js', '2.js']);
+    expect(topSortFiles(graph).map((f) => f.id)).toMatchObject([
+      '5.js',
+      '3.js',
+      '1.js',
+      '6.js',
+      '4.js',
+      '2.js',
+    ]);
   });
 
   test('it works with cycles', () => {
-    const graph = new PackageGraph();
-
     graph.addFileToPackage(a, '1.js');
     graph.addFileToPackage(a, '2.js');
     graph.addFileToPackage(a, '3.js');
@@ -139,6 +157,26 @@ describe('topSortFiles', () => {
     graph.addDependency('package-a', '2.js', 'package-b', '3.js');
     graph.addDependency('package-b', '3.js', 'package-a', '2.js');
 
-    expect(topSortFiles(graph)).toMatchObject(['3.js', '2.js', '1.js', '4.js']);
+    expect(topSortFiles(graph).map((f) => f.id)).toMatchObject(['3.js', '2.js', '1.js', '4.js']);
   });
 });
+
+function createPackageOptions(packageJsonPath: string): PackageOptions {
+  const pkgJson = readPackageJson(packageJsonPath);
+  return {
+    type: 'resolved',
+    pkgJson,
+    root: dirname(packageJsonPath),
+    pathResolution: {
+      aliases() {
+        return [pkgJson.name!];
+      },
+      extensions: ['*.js'],
+      paths() {
+        return {
+          [`${pkgJson.name!}/*`]: ['./*'],
+        };
+      },
+    },
+  };
+}

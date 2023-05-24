@@ -1,0 +1,207 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Resolver > resolver produces a graph that can be emitted as dotlang 1`] = `
+"strict digraph {
+
+  rankdir=\\"LR\\" splines=\\"true\\" overlap=\\"false\\" nodesep=\\"0.16\\" ranksep=\\"0.18\\" fontname=\\"Helvetica-bold\\" fontsize=\\"9\\" style=\\"rounded,bold,filled\\" fillcolor=\\"#ffffff\\" compound=\\"true\\"
+  node [shape=\\"box\\" style=\\"rounded, filled\\" height=\\"0.2\\" color=\\"black\\" fillcolor=\\"#ffffcc\\" fontcolor=\\"black\\" fontname=\\"Helvetica\\" fontsize=\\"9\\"]
+  edge [arrowhead=\\"normal\\" arrowsize=\\"0.6\\" penwidth=\\"2.0\\" color=\\"#00000033\\" fontname=\\"Helvetica\\" fontsize=\\"9\\"]
+    subgraph cluster_companypackage_with_externals {
+    label=\\"@company/package-with-externals\\";
+    href=\\"file://<tmp-path>/packages/with-externals-imports/package.json\\";
+    labeljust=l;
+    color=black;
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/src/index.mts\\" [label=\\"src/index.mts\\", href=\\"file://<tmp-path>/packages/with-externals-imports/src/index.mts\\"];
+    \\"<tmp-path>/packages/with-externals-imports/src/other.js\\" [label=\\"src/other.js\\", href=\\"file://<tmp-path>/packages/with-externals-imports/src/other.js\\"];
+  }
+  subgraph cluster_companypackage_e {
+    label=\\"@company/package-e\\";
+    href=\\"file://<tmp-path>/packages/package-e/package.json\\";
+    labeljust=l;
+    color=black;
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/package-e/src/foo/index.ts\\" [label=\\"src/foo/index.ts\\", href=\\"file://<tmp-path>/packages/package-e/src/foo/index.ts\\"];
+  }
+  subgraph cluster_my_external {
+    label=\\"my-external\\";
+    labeljust=l;
+    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external/dist/index.js\\" [label=\\"dist/index.js\\"];
+  }
+  subgraph cluster_my_external_addon_no_types {
+    label=\\"my-external-addon-no-types\\";
+    labeljust=l;
+    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\" [label=\\"addon/index.js\\"];
+  }
+  subgraph cluster_my_external_addon_no_types {
+    label=\\"my-external-addon-no-types\\";
+    labeljust=l;
+    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\" [label=\\"addon/index.js\\"];
+  }
+  subgraph cluster_my_external_with_types {
+    label=\\"my-external-with-types\\";
+    labeljust=l;
+    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\" [label=\\"addon/index.ts\\"];
+  }
+  subgraph cluster_my_external_with_types {
+    label=\\"my-external-with-types\\";
+    labeljust=l;
+    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\" [label=\\"addon/index.ts\\"];
+  }
+  subgraph cluster_emberobject {
+    label=\\"@ember/object\\";
+    labeljust=l;
+    href=\\"file://node_modules/missing/package.json\\";
+    color=\\"grey\\"
+    style=\\"dashed\\"
+    fontcolor=\\"grey\\"
+    node [style=filled, fillcolor=white, shape=box];
+    \\"@ember/object\\" [label=\\"../../@ember/object\\"];
+  }
+  \\"<tmp-path>/packages/with-externals-imports/src/index.mts\\" -> \\"<tmp-path>/packages/with-externals-imports/src/other.js\\" [xlabel=\\"missing types\\" tooltip=\\"missing types\\" fontcolor=\\"red\\" color=\\"red\\"];
+  \\"<tmp-path>/packages/with-externals-imports/src/index.mts\\" -> \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\" [xlabel=\\"missing types\\" tooltip=\\"missing types\\" fontcolor=\\"red\\" color=\\"red\\"];
+  \\"<tmp-path>/packages/with-externals-imports/src/index.mts\\" -> \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external/dist/index.js\\" [color=\\"grey\\" style=\\"dashed\\"];
+  \\"<tmp-path>/packages/with-externals-imports/src/index.mts\\" -> \\"<tmp-path>/packages/package-e/src/foo/index.ts\\" [xlabel=\\"missing from package.json\\" tooltip=\\"missing from package.json\\" fontcolor=\\"orange\\" color=\\"orange\\"];
+  \\"<tmp-path>/packages/with-externals-imports/src/other.js\\" -> \\"@ember/object\\" [xlabel=\\"missing from package.json\\" tooltip=\\"missing from package.json\\" fontcolor=\\"orange\\" color=\\"orange\\"];
+  \\"<tmp-path>/packages/with-externals-imports/src/other.js\\" -> \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\" [color=\\"grey\\" style=\\"dashed\\"];
+}"
+`;
+
+exports[`Resolver > resolver produces a graph that can be emitted as json 1`] = `
+"[
+  {
+    \\"name\\": \\"@company/package-with-externals\\",
+    \\"external\\": false,
+    \\"files\\": [
+      {
+        \\"name\\": \\"./packages/with-externals-imports/src/other.js\\",
+        \\"hasTypes\\": false,
+        \\"edges\\": [
+          {
+            \\"packageName\\": \\"@ember/object\\",
+            \\"hasTypes\\": false,
+            \\"fileName\\": \\"@ember/object\\",
+            \\"missing\\": true
+          },
+          {
+            \\"packageName\\": \\"my-external-with-types\\",
+            \\"hasTypes\\": true,
+            \\"fileName\\": \\"./packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\",
+            \\"missing\\": false
+          }
+        ]
+      },
+      {
+        \\"name\\": \\"./packages/with-externals-imports/src/index.mts\\",
+        \\"hasTypes\\": true,
+        \\"edges\\": [
+          {
+            \\"packageName\\": \\"@company/package-with-externals\\",
+            \\"hasTypes\\": false,
+            \\"fileName\\": \\"./packages/with-externals-imports/src/other.js\\",
+            \\"missing\\": false
+          },
+          {
+            \\"packageName\\": \\"my-external-addon-no-types\\",
+            \\"hasTypes\\": false,
+            \\"fileName\\": \\"./packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\",
+            \\"missing\\": false
+          },
+          {
+            \\"packageName\\": \\"my-external\\",
+            \\"hasTypes\\": true,
+            \\"fileName\\": \\"./packages/with-externals-imports/node_modules/my-external/dist/index.js\\",
+            \\"missing\\": false
+          },
+          {
+            \\"packageName\\": \\"@company/package-e\\",
+            \\"hasTypes\\": true,
+            \\"fileName\\": \\"./packages/package-e/src/foo/index.ts\\",
+            \\"missing\\": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    \\"name\\": \\"@company/package-e\\",
+    \\"external\\": false,
+    \\"files\\": [
+      {
+        \\"name\\": \\"./packages/package-e/src/foo/index.ts\\",
+        \\"hasTypes\\": true,
+        \\"edges\\": []
+      }
+    ]
+  },
+  {
+    \\"name\\": \\"my-external\\",
+    \\"external\\": true,
+    \\"files\\": [
+      {
+        \\"name\\": \\"./packages/with-externals-imports/node_modules/my-external/dist/index.js\\",
+        \\"hasTypes\\": true,
+        \\"edges\\": []
+      }
+    ]
+  },
+  {
+    \\"name\\": \\"my-external-addon-no-types\\",
+    \\"external\\": true,
+    \\"files\\": [
+      {
+        \\"name\\": \\"./packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\",
+        \\"hasTypes\\": false,
+        \\"edges\\": []
+      }
+    ]
+  },
+  {
+    \\"name\\": \\"my-external-with-types\\",
+    \\"external\\": true,
+    \\"files\\": [
+      {
+        \\"name\\": \\"./packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\",
+        \\"hasTypes\\": true,
+        \\"edges\\": []
+      }
+    ]
+  },
+  {
+    \\"name\\": \\"@ember/object\\",
+    \\"external\\": true,
+    \\"files\\": [
+      {
+        \\"name\\": \\"@ember/object\\",
+        \\"hasTypes\\": false,
+        \\"edges\\": []
+      }
+    ]
+  }
+]"
+`;

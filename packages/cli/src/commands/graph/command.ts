@@ -26,12 +26,20 @@ graphCommand
     '-o, --output <filepath>',
     `output path for a JSON or grapviz format of the graph order eg. '--output graph.json' or '--output graph.dot'`
   )
+  .option(
+    '-x, --externals',
+    `Includes external dependencies in the output. Only valid with '--output'.`
+  )
   .action(async (srcPath: string, options: GraphCommandOptions) => {
+    if (options.externals && !options.output) {
+      throw new Error(`You must pass '--output' with the '--externals' flag`);
+    }
     await new Listr<CommandContext>([
       graphOrderTask(srcPath, {
         output: options.output,
         rootPath: options.rootPath,
         ignore: options.ignore,
+        externals: options.externals,
       }),
     ]).run();
   });
