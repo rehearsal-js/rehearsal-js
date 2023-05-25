@@ -430,7 +430,9 @@ declare foo: Foo;
 `;
 
 exports[`fix > with addon service > .ts 1`] = `
-"// @ts-expect-error @rehearsal TODO TS2306: File './node_modules/test-addon/services/foo.ts' is not a module.
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@my-org/some-ember-addon/services/locale-service' or its corresponding type declarations.
+import type LocaleService from \\"@my-org/some-ember-addon/services/locale-service\\";
+// @ts-expect-error @rehearsal TODO TS2306: File './node_modules/test-addon/services/foo.ts' is not a module.
 import type Foo from \\"my-addon/services/foo\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -438,6 +440,9 @@ import { inject as service } from \\"@ember/service\\";
 export default class SomeTsComponent extends Component {
   @service(\\"my-addon@foo\\")
   declare foo: Foo;
+
+  @service(\\"@my-org/some-ember-addon@LocaleService\\")
+  declare locale: LocaleService;
 }
 "
 `;

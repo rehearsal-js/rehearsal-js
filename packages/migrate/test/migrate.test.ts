@@ -699,6 +699,35 @@ export default class SomeComponent extends Component {
         },
       };
 
+      const somePackageFromOrg = project.addDependency('@my-org/some-ember-addon', '0.0.0');
+      somePackageFromOrg.pkg.keywords = ['ember-addon'];
+      somePackageFromOrg.pkg.main = 'index.ts';
+      somePackageFromOrg.pkg.types = 'index.d.ts';
+      somePackageFromOrg.files = {
+        'index.ts': `module.exports = {
+          moduleName() {
+          return 'some-ember-addon'
+          }
+        }`,
+        services: {
+          'locale.ts': `
+import Service from '@ember/service';
+
+export default class LocaleService extends Service {
+  current() {
+    return 'en-US';
+  }
+}
+          `,
+          'locale.d.ts': `interface LocaleService {
+            current(): string;
+          }
+
+          export default LocaleService;
+          `,
+        },
+      };
+
       await project.write();
     });
 
