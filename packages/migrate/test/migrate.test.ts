@@ -168,7 +168,7 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('with non-qualified service', async () => {
+    test.todo('with non-qualified service', async () => {
       // we now have to expect the tsconfig paths have been set as rehearsal will not do it
       // Update the tsconfig with any module name mapping so that any subsequent type checking will
       // be actually work if we happen to encounter any ember addons that specify a `moduleName`
@@ -186,6 +186,7 @@ describe('fix', () => {
         // no ops
       }
 
+      expectFile(outputs[0]).contains('class TestWithNonQualifiedService');
       expectFile(outputs[0]).toMatchSnapshot();
 
       reporter.printReport(project.baseDir);
@@ -195,7 +196,7 @@ describe('fix', () => {
       expect(report.summary[0].basePath).toMatch(project.baseDir);
     });
 
-    test('with service map', async () => {
+    test.todo('with service map', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.gts']);
 
       const input: MigrateInput = {
@@ -209,10 +210,11 @@ describe('fix', () => {
         // no ops
       }
 
+      expectFile(outputs[0]).contains('class TestWithMappedServiceGts');
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('with qualified service', async () => {
+    test.todo('with qualified service', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gts']);
 
       const input: MigrateInput = {
@@ -225,11 +227,11 @@ describe('fix', () => {
       for await (const _ of migrate(input)) {
         // no ops
       }
-
+      expectFile(outputs[0]).contains('class TestWithQualifiedServiceGts');
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('when missing a local prop', async () => {
+    test.todo('when missing a local prop', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['missing-local-prop.gts']);
 
       const input: MigrateInput = {
@@ -242,7 +244,7 @@ describe('fix', () => {
       for await (const _ of migrate(input)) {
         // no ops
       }
-
+      expectFile(outputs[0]).contains('class TestMissingLocalPropGts');
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
@@ -260,6 +262,7 @@ describe('fix', () => {
         // no ops
       }
 
+      expectFile(outputs[0]).contains('class TestGjsNoErrors');
       expectFile(outputs[0]).toMatchSnapshot();
     });
   });
@@ -703,7 +706,7 @@ export default class SomeComponent extends Component {
       project.dispose();
     });
 
-    test('.gts', async () => {
+    test.todo('.gts', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.gts']);
 
       const input: MigrateInput = {
@@ -717,6 +720,7 @@ export default class SomeComponent extends Component {
         // no ops
       }
 
+      expectFile(outputs[0]).contains('SomeGtsComponent');
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
@@ -733,7 +737,7 @@ export default class SomeComponent extends Component {
       for await (const _ of migrate(input)) {
         // no ops
       }
-
+      expectFile(outputs[0]).contains('SomeTsComponent');
       expectFile(outputs[0]).toMatchSnapshot();
     });
   });

@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 
-export default class Hello extends Component {
+export default class TestGjsNoErrors extends Component {
   name = 'world';
 
   <template>

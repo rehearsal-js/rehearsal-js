@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 
-export default class Hello extends Component {
+export default class TestWithQualifiedServiceGts extends Component {
   @service('authentication@authenticated-user') authenticatedUser;
 
   name = 'world';

@@ -3,7 +3,7 @@
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
 "import Component from '@glimmer/component';
 
-export default class Hello extends Component {
+export default class TestGjsNoErrors extends Component {
   name = 'world';
 
   <template>
@@ -286,7 +286,7 @@ import type BooService from \\"boo/services/boo-service\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
-export default class SomeComponent extends Component {
+export default class SomeTsComponent extends Component {
   @service(\\"boo-service\\")
   declare booService: BooService;
 
@@ -425,7 +425,7 @@ import type Foo from \\"my-addon/services/foo\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
-export default class SomeComponent extends Component {
+export default class SomeTsComponent extends Component {
   @service(\\"my-addon@foo\\")
   declare foo: Foo;
 }
