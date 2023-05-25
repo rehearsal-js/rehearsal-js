@@ -80,6 +80,7 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
           }
 
           const qualifiedService = this.getQualifiedServiceName(decorator, prop);
+
           if (!qualifiedService) {
             continue;
           }
@@ -87,17 +88,17 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
           let serviceClass: string | undefined;
           let serviceModule: string | undefined;
 
-          if (this.isFullyQualifiedService(qualifiedService)) {
-            // Strategy: Ember fully qualified service names: `addon@service`
-            const [addon, serviceName] = this.parseFullyQualifiedService(qualifiedService);
-            serviceClass = this.toClassName(serviceName);
-            serviceModule = `${addon}/services/${this.toKebabCase(serviceName)}`;
-          } else {
+          if (this.hasServiceInMap(qualifiedService)) {
             // Strategy: Use services map
+            DEBUG_CALLBACK(`Found service in map ${qualifiedService}`);
             serviceModule = this.findServiceInMap(qualifiedService);
-            if (serviceModule) {
-              serviceClass = this.toClassName(qualifiedService);
-            }
+            const [, serviceName] = this.parseFullyQualifiedService(qualifiedService);
+            serviceClass = this.toClassName(serviceName);
+          } else if (this.isFullyQualifiedService(qualifiedService)) {
+            // Strategy: Ember fully qualified service names: `addon@service`
+            const [packageName, serviceName] = this.parseFullyQualifiedService(qualifiedService);
+            serviceClass = this.toClassName(serviceName);
+            serviceModule = `${packageName}/services/${this.toKebabCase(serviceName)}`;
           }
 
           if (!serviceClass || !serviceModule) {
@@ -250,7 +251,11 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
   }
 
   parseFullyQualifiedService(service: string): string[] {
-    return service.split('@');
+    if (!this.isFullyQualifiedService(service)) {
+      return ['', service];
+    }
+    const idx = service.lastIndexOf('@');
+    return [service.substring(0, idx), service.substring(idx + 1)];
   }
 
   /**
@@ -275,12 +280,20 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
     return str.replace(/^./, str[0].toUpperCase());
   }
 
+  hasServiceInMap(serviceName: string): boolean {
+    return this.findServiceInMap(serviceName) !== undefined;
+  }
+
   /**
    * Search for service in the services map using camelCase and kebab-case as a key
    */
   findServiceInMap(serviceName: string): string | undefined {
     if (this.options.servicesMap === undefined) {
       return undefined;
+    }
+
+    if (this.options.servicesMap.has(serviceName)) {
+      return this.options.servicesMap.get(serviceName);
     }
 
     const serviceNameKebab = this.toKebabCase(serviceName);
