@@ -780,7 +780,7 @@ export default class SomeComponent extends Component {
         // no ops
       }
 
-      expectFile(outputs[0]).toMatchSnapshot();;
+      expectFile(outputs[0]).toMatchSnapshot();
     });
 
     test('mode: drain', async () => {

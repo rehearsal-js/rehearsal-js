@@ -1,5 +1,6 @@
 {
   "boo-service": "boo/services/boo-service",
   "goo-service": "services/goo",
-  "mooService": "services/moo/moo"
+  "mooService": "services/moo/moo",
+  "@some-org/some-package@mapped": "@some-org/some-package/services/from-service-map"
 }

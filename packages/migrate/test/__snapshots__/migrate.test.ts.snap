@@ -78,6 +78,8 @@ exports[`fix > .gts > with service map 1`] = `
 "// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
 import type MooService from 'services/moo/moo';
 import type GooService from 'services/goo';
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@some-org/some-package/services/from-service-map' or its corresponding type declarations.
+import type Mapped from '@some-org/some-package/services/from-service-map';
 import type BooService from 'boo/services/boo-service';
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -85,6 +87,9 @@ import { inject as service } from \\"@ember/service\\";
 export default class SomeComponent extends Component {
   @service(\\"boo-service\\")
 declare booService: BooService;
+
+  @service(\\"@some-org/some-package@mapped\\")
+declare something: Mapped;
 
   @service
 declare gooService: GooService;
@@ -282,6 +287,8 @@ exports[`fix > .ts > with service map 1`] = `
 "// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
 import type MooService from \\"services/moo/moo\\";
 import type GooService from \\"services/goo\\";
+// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@some-org/some-package/services/from-service-map' or its corresponding type declarations.
+import type Mapped from \\"@some-org/some-package/services/from-service-map\\";
 import type BooService from \\"boo/services/boo-service\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -289,6 +296,9 @@ import { inject as service } from \\"@ember/service\\";
 export default class SomeTsComponent extends Component {
   @service(\\"boo-service\\")
   declare booService: BooService;
+
+  @service(\\"@some-org/some-package@mapped\\")
+  declare something: Mapped;
 
   @service
   declare gooService: GooService;
