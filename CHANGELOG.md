@@ -1,3 +1,10 @@
+## <small>3.0.7-beta (2023-05-26)</small>
+
+* fix(plugins): service string resolution to support package with org in transform plugin  (#1091) ([c0b1ffc](https://github.com/rehearsal-js/rehearsal-js/commit/c0b1ffc)), closes [#1091](https://github.com/rehearsal-js/rehearsal-js/issues/1091)
+* chore(migrate): add test.todo on bad `.gts` tests (#1088) ([ad24025](https://github.com/rehearsal-js/rehearsal-js/commit/ad24025)), closes [#1088](https://github.com/rehearsal-js/rehearsal-js/issues/1088)
+
+
+
 ## <small>3.0.6-beta (2023-05-23)</small>
 
 * fix: drain mode exit criteria  (#1081) ([c056414](https://github.com/rehearsal-js/rehearsal-js/commit/c056414)), closes [#1081](https://github.com/rehearsal-js/rehearsal-js/issues/1081)

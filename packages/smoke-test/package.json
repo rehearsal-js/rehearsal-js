@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/smoke-test",
-  "version": "3.0.6-beta",
+  "version": "3.0.7-beta",
   "private": true,
   "description": "Rehearsal Smoke-Test",
   "repository": {
