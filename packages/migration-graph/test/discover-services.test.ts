@@ -88,7 +88,7 @@ describe('discoverServiceDependencies', () => {
   test('should find multiple services', () => {
     const content = `
       import Component from '@glimmer/component';
-      import { inject as service } from '@ember/service';
+      import { service } from '@ember/service';
 
       export default class Salutation extends Component {
         @service locale;
@@ -109,7 +109,7 @@ describe('discoverServiceDependencies', () => {
   test('should discover serviceName if renamed', () => {
     const content = `
       import Component from '@glimmer/component';
-      import { inject as service } from '@ember/service';
+      import { service } from '@ember/service';
 
       export default class Salutation extends Component {
         @service('shopping-cart') cart;
@@ -126,7 +126,7 @@ describe('discoverServiceDependencies', () => {
   test('should parse out packagName from service meta', () => {
     const content = `
       import Component from '@glimmer/component';
-      import { inject as service } from '@ember/service';
+      import { service } from '@ember/service';
 
       export default class Salutation extends Component {
         @service('authentication@authenticated-user') authenticatedUser;
