@@ -164,13 +164,13 @@ describe('discoverServiceDependencies', () => {
 
   test('should handle multiple imports of @ember/service', () => {
     const content = `
-        import Service from '@ember/service';
-        import { service } from '@ember/service';
+      import Service from '@ember/service';
+      import { service } from '@ember/service';
 
-        export default class Locale extends Service {
-          @service request;
-        }
-      `;
+      export default class Locale extends Service {
+        @service request;
+      }
+    `;
 
     const results = discoverServiceDependencies({})('ecmascript', content);
 
@@ -193,6 +193,28 @@ describe('discoverServiceDependencies', () => {
     expect(results).toBeTruthy();
     expect(results.length).toBe(1);
     expect(results[0]).toBe('request');
+  });
+
+  test('should resolve from service-map over parsing meta', () => {
+    const content = `
+      import Component from '@glimmer/component';
+      import { service } from '@ember/service';
+
+      export default class Salutation extends Component {
+        @service('authentication@authenticated-user') authenticatedUser;
+        @service('@some-org/some-package@locale') myLocale;
+
+      }
+    `;
+
+    const results = discoverServiceDependencies({
+      '@some-org/some-package@locale': 'foo/service/bar',
+    })('ecmascript', content);
+
+    expect(results).toBeTruthy();
+    expect(results.length).toBe(2);
+    expect(results[0]).toBe('authentication/services/authenticated-user');
+    expect(results[1]).toBe('foo/service/bar');
   });
 
   test('should ignore @classic decorator', () => {
