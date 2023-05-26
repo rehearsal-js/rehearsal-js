@@ -179,8 +179,10 @@ function findClassDeclarations(items: ModuleItem[]): Array<ClassDeclaration> | u
 
 function parseServiceMetaFromString(str: string): string {
   if (str.includes('@')) {
-    const [addonName, serviceName] = str.split('@');
-    return `${addonName}/services/${intoFileName(serviceName)}`;
+    const idx = str.lastIndexOf('@');
+    const packageNameOrModuleName = str.substring(0, idx);
+    const serviceName = str.substring(idx + 1);
+    return `${packageNameOrModuleName}/services/${intoFileName(serviceName)}`;
   }
   return intoFileName(str);
 }

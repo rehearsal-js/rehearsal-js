@@ -123,38 +123,24 @@ describe('discoverServiceDependencies', () => {
     expect(results[0]).toBe('shopping-cart');
   });
 
-  test('should find fully qualified serviceName from addon', () => {
+  test('should parse out packagName from service meta', () => {
     const content = `
       import Component from '@glimmer/component';
       import { inject as service } from '@ember/service';
 
       export default class Salutation extends Component {
         @service('authentication@authenticated-user') authenticatedUser;
+        @service('@some-org/some-package@locale') myLocale;
+
       }
     `;
 
     const results = discoverServiceDependencies({})('ecmascript', content);
 
     expect(results).toBeTruthy();
-    expect(results.length).toBe(1);
+    expect(results.length).toBe(2);
     expect(results[0]).toBe('authentication/services/authenticated-user');
-  });
-
-  test.todo('should find fully qualified serviceName package with org', () => {
-    const content = `
-      import Component from '@glimmer/component';
-      import { inject as service } from '@ember/service';
-
-      export default class Salutation extends Component {
-        @service('@some-org/authentication@authenticated-user') authenticatedUser;
-      }
-    `;
-
-    const results = discoverServiceDependencies({})('ecmascript', content);
-
-    expect(results).toBeTruthy();
-    expect(results.length).toBe(1);
-    expect(results[0]).toBe('@some-org/authentication/services/authenticated-user');
+    expect(results[1]).toBe('@some-org/some-package/services/locale');
   });
 
   test('should find without class on export', () => {
