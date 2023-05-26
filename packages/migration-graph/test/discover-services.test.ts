@@ -214,6 +214,43 @@ describe('discoverServiceDependencies', () => {
     expect(results[0]).toBe('locale');
   });
 
+  describe('typescript', () => {
+    test('noop', () => {
+      const content = `
+        import Component from '@glimmer/component';
+        import { service } from '@glmmerx/service';
+
+        export function foo(): string {
+          return "hello";
+        }
+      `;
+      const results = discoverServiceDependencies({})('typescript', content);
+
+      expect(results).toStrictEqual([]);
+    });
+
+    test('should find service', () => {
+      const content = `
+      import Component from '@glimmer/component';
+      import { service } from '@ember/service';
+
+      export default class Salutation extends Component {
+        @service locale;
+
+        get locale(): string {
+          return this.locale.current();
+        }
+      }
+    `;
+
+      const results = discoverServiceDependencies({})('typescript', content);
+
+      expect(results).toBeTruthy();
+      expect(results?.length).toBe(1);
+      expect(results[0]).toBe('locale');
+    });
+  });
+
   describe('ember@3.28', () => {
     test('should find service usage with inject export', () => {
       const content = `
