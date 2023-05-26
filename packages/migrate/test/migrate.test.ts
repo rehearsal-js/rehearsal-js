@@ -192,7 +192,7 @@ describe('fix', () => {
 
       const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
       const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
-      expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(report.summary[0].reportOutDir).toMatch(project.baseDir);
     });
 
     test('with service map', async () => {
@@ -334,7 +334,7 @@ describe('fix', () => {
       );
 
       expect(reportedItems.length).toBeGreaterThan(0);
-      expect(report.summary[0].basePath).toMatch(project.baseDir);
+      expect(report.summary[0].reportOutDir).toMatch(project.baseDir);
     });
   });
 
@@ -776,7 +776,7 @@ export default class SomeComponent extends Component {
         // no ops
       }
 
-      expectFile(outputs[0]).toMatchSnapshot();;
+      expectFile(outputs[0]).toMatchSnapshot();
     });
 
     test('mode: drain', async () => {

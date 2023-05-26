@@ -41,7 +41,7 @@ describe('Reporter', () => {
     const report = reporter.report;
 
     expect(report.summary.length).toBe(1);
-    expect(report.summary[0].basePath).toMatch(/base/);
+    expect(report.summary[0].reportOutDir).toMatch(/base/);
     expect(report.summary[0].timestamp).toMatch(/\d+/);
     expect(report).toMatchSnapshot();
   });
