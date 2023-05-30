@@ -79,4 +79,7 @@ export const hints = new HintsProvider({
     helpUrl:
       'https://stackoverflow.com/questions/43064221/typescript-ts7006-parameter-xxx-implicitly-has-an-any-type',
   },
+  7016: {
+    hint: `Could not find a declaration file for module '{0}'. Try installing the missing type or add a new declaration (.d.ts) file containing \`declare module '{0}';\`.`,
+  },
 });
