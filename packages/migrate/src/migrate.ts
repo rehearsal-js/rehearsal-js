@@ -1,4 +1,4 @@
-import { resolve, join } from 'node:path';
+import { join } from 'node:path';
 import { findUpSync } from 'find-up';
 import { readTSConfig, readJSON } from '@rehearsal/utils';
 import {
@@ -199,7 +199,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   });
 
   // Save report after all yields
-  reporter.saveCurrentRunToReport(resolve(projectRootDir, workingDirName));
+  reporter.saveCurrentRunToReport();
 }
 
 async function readServiceMap(

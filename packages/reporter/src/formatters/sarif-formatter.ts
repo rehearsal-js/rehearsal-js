@@ -171,7 +171,7 @@ export class SarifFormatter implements FormatterBase {
     return {
       tool: {
         driver: {
-          name: `${report.summary[0].commandName}`,
+          name: `rehearsal report`,
           informationUri: 'https://github.com/rehearsal-js/rehearsal-js',
           rules: [],
         },
@@ -182,7 +182,7 @@ export class SarifFormatter implements FormatterBase {
         description: {
           //For sequential runs, the time difference between each run is minimal, and ts version should be the same.
           //So printing out the first timestamp and first ts version.
-          text: `This is the result of ${report.summary[0].commandName} on your product against TypeScript ${report.summary[0].tsVersion} at ${report.summary[0].timestamp}`,
+          text: `This is the result of running Rehearsal on your product against TypeScript ${report.summary[0].tsVersion} at ${report.summary[0].timestamp}`,
         },
       },
     };

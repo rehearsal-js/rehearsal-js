@@ -12,7 +12,6 @@ export class MarkdownFormatter implements FormatterBase {
     for (const block of report.summary) {
       text += `Project Name: ${block.projectName}\n`;
       text += `Typescript Version: ${block.tsVersion}\n`;
-      text += `Report path: ${block.reportOutDir}\n`;
       text += `timestamp: ${block.timestamp}\n`;
       text += `\n`;
     }

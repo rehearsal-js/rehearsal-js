@@ -2,11 +2,8 @@ export type Formatters = 'json' | 'sonarqube' | 'md' | 'sarif';
 
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
-  reportOutDir: string;
-  entrypoint: string;
   tsVersion: string;
   timestamp: string;
-  commandName: string;
 };
 
 export interface Location {

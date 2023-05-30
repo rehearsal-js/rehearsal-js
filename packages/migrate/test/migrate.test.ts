@@ -108,7 +108,6 @@ describe('fix', () => {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
     });
 
@@ -190,10 +189,6 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
 
       reporter.printReport(project.baseDir);
-
-      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
-      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
-      expect(report.summary[0].reportOutDir).toMatch(project.baseDir);
     });
 
     test.todo('with service map', async () => {
@@ -282,7 +277,6 @@ describe('fix', () => {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
     });
 
@@ -337,7 +331,6 @@ describe('fix', () => {
       );
 
       expect(reportedItems.length).toBeGreaterThan(0);
-      expect(report.summary[0].reportOutDir).toMatch(project.baseDir);
     });
   });
 
@@ -352,7 +345,6 @@ describe('fix', () => {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
     });
 
@@ -565,7 +557,6 @@ describe('fix', () => {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/migrate',
       });
     });
 
@@ -670,7 +661,6 @@ export default class SomeComponent extends Component {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
 
       const testAddon = project.addDependency('test-addon', '0.0.0');
@@ -784,7 +774,6 @@ export default class LocaleService extends Service {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
 
       await project.write();
@@ -844,7 +833,6 @@ export default class LocaleService extends Service {
         tsVersion: '',
         projectName: '@rehearsal/test',
         projectRootDir: project.baseDir,
-        commandName: '@rehearsal/fix',
       });
 
       await project.write();

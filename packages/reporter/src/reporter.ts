@@ -23,7 +23,6 @@ const { DiagnosticCategory, flattenDiagnosticMessageText, SyntaxKind } = ts;
 type ReporterMeta = {
   projectName: string;
   projectRootDir: string;
-  commandName: string;
   tsVersion: string;
   stemName?: string;
   previousFixedCount?: number;
@@ -42,7 +41,7 @@ export class Reporter {
   private stemName: string;
 
   constructor(meta: ReporterMeta) {
-    const { projectName, projectRootDir, commandName, tsVersion, previousFixedCount } = meta;
+    const { projectName, projectRootDir, tsVersion, previousFixedCount } = meta;
 
     // do not include extension in the stemName
     this.stemName = meta.stemName || 'rehearsal-report';
@@ -61,9 +60,6 @@ export class Reporter {
         projectName,
         tsVersion,
         timestamp: '',
-        reportOutDir: '',
-        entrypoint: '',
-        commandName,
       },
       fixedItemCount: 0,
       items: [],
@@ -142,10 +138,8 @@ export class Reporter {
     this.currentRun.fixedItemCount++;
   }
 
-  saveCurrentRunToReport(reportOutDir: string, runEntrypoint?: string, timestamp?: string): void {
+  saveCurrentRunToReport(timestamp?: string): void {
     this.currentRun.runSummary.timestamp = timestamp || this.getTimestamp();
-    this.currentRun.runSummary.reportOutDir = reportOutDir;
-    this.currentRun.runSummary.entrypoint = runEntrypoint || '';
     this.report.summary = [...this.report.summary, { ...this.currentRun.runSummary }];
     this.report.fixedItemCount += this.currentRun.fixedItemCount;
 
@@ -234,8 +228,6 @@ export class Reporter {
 
   private resetCurrentRun(): void {
     this.currentRun.runSummary.timestamp = '';
-    this.currentRun.runSummary.reportOutDir = '';
-    this.currentRun.runSummary.entrypoint = '';
     this.currentRun.fixedItemCount = 0;
     this.currentRun.items = [];
   }

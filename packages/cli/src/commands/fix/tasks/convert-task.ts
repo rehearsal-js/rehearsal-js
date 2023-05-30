@@ -37,7 +37,6 @@ export function convertTask(
         tsVersion,
         projectName,
         projectRootDir: rootPath,
-        commandName: 'rehearsal fix',
       };
 
       const reporter = new Reporter(reporterOptions);

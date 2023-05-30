@@ -12,7 +12,6 @@ describe('Reporter', () => {
   let project: Project;
   let reportDirectory: string;
   const currentRunTimestamp = '9/16/2022, 13:24:57';
-  const currentRunBasePath = '/base/path';
 
   beforeEach(async () => {
     project = prepareProject('rehearsal-report.json');
@@ -23,7 +22,6 @@ describe('Reporter', () => {
       tsVersion: '',
       projectName: 'test',
       projectRootDir: project.baseDir,
-      commandName: '@rehearsal/reporter',
     });
 
     reporter.currentRun = getJSONReport('rehearsal-run.json');
@@ -36,18 +34,17 @@ describe('Reporter', () => {
 
   test('saveCurrentRunToReport', () => {
     // current run is being set in beforeEach
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
 
     const report = reporter.report;
 
     expect(report.summary.length).toBe(1);
-    expect(report.summary[0].reportOutDir).toMatch(/base/);
     expect(report.summary[0].timestamp).toMatch(/\d+/);
     expect(report).toMatchSnapshot();
   });
 
   test('printReport default formatter', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -57,7 +54,7 @@ describe('Reporter', () => {
   });
 
   test('printReport sarif formatter', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory, ['sarif']);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -67,7 +64,7 @@ describe('Reporter', () => {
   });
 
   test('printReport sonarqube formatter', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory, ['sonarqube']);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -77,7 +74,7 @@ describe('Reporter', () => {
   });
 
   test('printReport md formatter', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory, ['md']);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -110,7 +107,7 @@ describe('Reporter', () => {
     const hint = 'This is the hint.';
 
     reporter.addTSItemToRun(mockDiagnostic, mockNode, location, hint);
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -128,7 +125,7 @@ describe('Reporter', () => {
     };
 
     reporter.addLintItemToRun('testFile1.ts', lintError);
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     reporter.printReport(reportDirectory);
 
     expect(existsSync(reportDirectory)).toBe(true);
@@ -138,13 +135,13 @@ describe('Reporter', () => {
   });
 
   test('getFileNames', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
 
     expect(reporter.getFileNames()).toStrictEqual(['/base/path/file1.ts', '/base/path/file2.ts']);
   });
 
   test('getItemsByAnalysisTarget', () => {
-    reporter.saveCurrentRunToReport(currentRunBasePath, '', currentRunTimestamp);
+    reporter.saveCurrentRunToReport(currentRunTimestamp);
     const items = reporter.getItemsByAnalysisTarget('/base/path/file1.ts');
 
     expect(items).toMatchSnapshot();

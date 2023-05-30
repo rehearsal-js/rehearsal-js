@@ -35,7 +35,6 @@ describe('Suppressed Errors', function () {
       tsVersion: '',
       projectName: '@rehearsal/test',
       projectRootDir: project.baseDir,
-      commandName: '@rehearsal/migrate',
     });
 
     const input = {
