@@ -45,19 +45,18 @@ export function convertTask(
 
       // this just cares about ts files which are already in the proper migration order
       if (orderedFiles) {
-        const input = {
-          mode: options.mode,
-          projectRootDir: rootPath,
-          packageDir: packageDir,
-          filesToMigrate: ctx.orderedFiles,
-          reporter,
-          ignore,
-        };
-
         const migratedFiles: string[] = [];
 
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
-          for await (const tsFile of migrate(input)) {
+          for await (const tsFile of migrate({
+            mode: options.mode,
+            projectRootDir: rootPath,
+            packageDir: packageDir,
+            filesToMigrate: ctx.orderedFiles,
+            reporter,
+            ignore,
+            task,
+          })) {
             migratedFiles.push(tsFile);
           }
           reporter.printReport(rootPath, options.format);

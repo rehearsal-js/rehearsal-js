@@ -170,7 +170,6 @@ export class PluginsRunner {
       }
 
       const plugin = new layer.plugin(fileName, this.context, layer.options ? layer.options : {});
-
       const changedFiles = await plugin.run();
 
       allChangedFiles = new Set([...allChangedFiles, ...changedFiles]);
