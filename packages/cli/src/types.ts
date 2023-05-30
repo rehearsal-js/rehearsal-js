@@ -1,4 +1,4 @@
-import type { Formatters } from '@rehearsal/reporter';
+import type { Formatters, ReportItem } from '@rehearsal/reporter';
 
 export type CliCommand = 'move' | 'graph' | 'fix';
 export type PackageEntry = { name: string; files: string[] };
@@ -77,4 +77,31 @@ export type GraphTaskOptions = {
   ignore: string[];
   output?: string;
   skipPrompt?: boolean;
+};
+
+/*
+  FIX
+*/
+
+type MessageContent = {
+  reportItems: ReportItem[];
+  fixedItemCount: number;
+};
+type MessageResponse = { type: 'message'; content: MessageContent };
+type FilesResponse = { type: 'files'; content: string[] };
+type LoggerResponse = { type: 'logger'; content: string };
+export type FixWorkerResponse = MessageResponse | FilesResponse | LoggerResponse;
+
+export type FixWorkerInput = {
+  mode: 'single-pass' | 'drain';
+  projectRootDir: string;
+  packageDir: string;
+  filesToMigrate: string[];
+  reporterOptionsTSVersion: string;
+  reporterOptionsProjectName: string;
+  reporterOptionsProjectRootDir: string;
+  reporterOptionsCommandName: string;
+  ignore?: string[];
+  configName?: string;
+  format: Formatters[];
 };

@@ -61,7 +61,7 @@ export class Reporter {
         projectName,
         tsVersion,
         timestamp: '',
-        basePath: '',
+        reportOutDir: '',
         entrypoint: '',
         commandName,
       },
@@ -142,9 +142,9 @@ export class Reporter {
     this.currentRun.fixedItemCount++;
   }
 
-  saveCurrentRunToReport(runBasePath: string, runEntrypoint?: string, timestamp?: string): void {
+  saveCurrentRunToReport(reportOutDir: string, runEntrypoint?: string, timestamp?: string): void {
     this.currentRun.runSummary.timestamp = timestamp || this.getTimestamp();
-    this.currentRun.runSummary.basePath = runBasePath;
+    this.currentRun.runSummary.reportOutDir = reportOutDir;
     this.currentRun.runSummary.entrypoint = runEntrypoint || '';
     this.report.summary = [...this.report.summary, { ...this.currentRun.runSummary }];
     this.report.fixedItemCount += this.currentRun.fixedItemCount;
@@ -234,7 +234,7 @@ export class Reporter {
 
   private resetCurrentRun(): void {
     this.currentRun.runSummary.timestamp = '';
-    this.currentRun.runSummary.basePath = '';
+    this.currentRun.runSummary.reportOutDir = '';
     this.currentRun.runSummary.entrypoint = '';
     this.currentRun.fixedItemCount = 0;
     this.currentRun.items = [];

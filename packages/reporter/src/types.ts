@@ -2,7 +2,7 @@ export type Formatters = 'json' | 'sonarqube' | 'md' | 'sarif';
 
 export type ReportSummary = Record<string, unknown> & {
   projectName: string;
-  basePath: string;
+  reportOutDir: string;
   entrypoint: string;
   tsVersion: string;
   timestamp: string;

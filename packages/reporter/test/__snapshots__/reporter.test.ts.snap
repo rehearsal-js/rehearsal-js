@@ -9,7 +9,8 @@ exports[`Reporter > addLintItemToRun 1`] = `
       \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
       \\"basePath\\": \\"/base/path\\",
       \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\"
+      \\"commandName\\": \\"@rehearsal/reporter\\",
+      \\"reportOutDir\\": \\"/base/path\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -108,7 +109,8 @@ exports[`Reporter > addTSItemToRun 1`] = `
       \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
       \\"basePath\\": \\"/base/path\\",
       \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\"
+      \\"commandName\\": \\"@rehearsal/reporter\\",
+      \\"reportOutDir\\": \\"/base/path\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -261,7 +263,8 @@ exports[`Reporter > printReport default formatter 1`] = `
       \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
       \\"basePath\\": \\"/base/path\\",
       \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\"
+      \\"commandName\\": \\"@rehearsal/reporter\\",
+      \\"reportOutDir\\": \\"/base/path\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -338,7 +341,7 @@ exports[`Reporter > printReport md formatter 1`] = `
 "### Summary:
 Project Name: @rehearsal/test
 Typescript Version: 4.7.4
-Base path: /base/path
+Report path: /base/path
 timestamp: 9/16/2022, 13:24:57
 
 ### Results:
@@ -693,6 +696,7 @@ exports[`Reporter > saveCurrentRunToReport 1`] = `
       "commandName": "@rehearsal/reporter",
       "entrypoint": "",
       "projectName": "@rehearsal/test",
+      "reportOutDir": "/base/path",
       "timestamp": "9/16/2022, 13:24:57",
       "tsVersion": "4.7.4",
     },

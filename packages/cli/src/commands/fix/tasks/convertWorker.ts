@@ -1,0 +1,65 @@
+import { isMainThread, parentPort, workerData } from 'node:worker_threads';
+import { migrate, type MigrateInput } from '@rehearsal/migrate';
+import { Reporter } from '@rehearsal/reporter';
+import type { FixWorkerInput } from '../../../types.js';
+
+if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) {
+  // worker input
+  const {
+    mode,
+    projectRootDir,
+    packageDir,
+    filesToMigrate,
+    reporterOptionsCommandName,
+    reporterOptionsProjectName,
+    reporterOptionsProjectRootDir,
+    reporterOptionsTSVersion,
+    ignore,
+    configName,
+    format,
+  } = JSON.parse(workerData as string) as FixWorkerInput;
+
+  const reporter = new Reporter({
+    tsVersion: reporterOptionsTSVersion,
+    projectName: reporterOptionsProjectName,
+    projectRootDir: reporterOptionsProjectRootDir,
+    commandName: reporterOptionsCommandName,
+  });
+
+  const migrateOptions = {
+    mode,
+    projectRootDir,
+    packageDir,
+    filesToMigrate,
+    reporter,
+    ignore,
+    configName,
+  };
+
+  const migratedFiles = await drainMigrate(migrateOptions);
+
+  reporter.printReport(reporterOptionsProjectRootDir, format);
+
+  // worker output
+  parentPort?.postMessage({
+    type: 'message',
+    content: {
+      reportItems: reporter.report.items,
+      fixedItemCount: reporter.report.fixedItemCount,
+    },
+  });
+  // resolves the promise in the parent thread
+  parentPort?.postMessage({ type: 'files', content: migratedFiles });
+}
+
+async function drainMigrate(migrateOptions: MigrateInput): Promise<string[]> {
+  const migratedFiles: string[] = [];
+
+  for await (const tsFile of migrate(migrateOptions)) {
+    migratedFiles.push(tsFile);
+    // logs processing file: tsFile
+    parentPort?.postMessage({ type: 'logger', content: tsFile });
+  }
+
+  return migratedFiles;
+}

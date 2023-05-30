@@ -1,13 +1,17 @@
-import debug from 'debug';
+import { dirname, resolve } from 'node:path';
+import { Worker } from 'node:worker_threads';
+import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import { migrate } from '@rehearsal/migrate';
 import { Reporter } from '@rehearsal/reporter';
 import { getReportSummary } from '../../../helpers/report.js';
 import { findPackageRootDirectory, getPathToBinary } from '../../../utils/paths.js';
-import type { CommandContext, FixCommandOptions } from '../../../types.js';
+import type { CommandContext, FixCommandOptions, FixWorkerResponse } from '../../../types.js';
 
-const DEBUG_CALLBACK = debug('rehearsal:cli:fix:convert-task');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const workerPath = resolve(__dirname, 'convertWorker.js');
 
 export function convertTask(
   targetPath: string,
@@ -29,37 +33,76 @@ export function convertTask(
         throw new Error(`Cannot find or access tsc in ${tscPath}`);
       }
 
-      const reporter = new Reporter({
+      const reporterOptions = {
         tsVersion,
         projectName,
         projectRootDir: rootPath,
-        commandName: '@rehearsal/fix',
-      });
+        commandName: 'rehearsal fix',
+      };
 
+      const reporter = new Reporter(reporterOptions);
       const packageDir = findPackageRootDirectory(targetPath, rootPath) || rootPath;
 
       // this just cares about ts files which are already in the proper migration order
       if (orderedFiles) {
-        const input = {
-          mode: options.mode,
-          projectRootDir: rootPath,
-          packageDir: packageDir,
-          filesToMigrate: ctx.orderedFiles,
-          reporter,
-          task,
-          ignore,
-        };
+        const migratedFiles: string[] = [];
 
-        const migratedFiles = [];
+        if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
+          for await (const tsFile of migrate({
+            mode: options.mode,
+            projectRootDir: rootPath,
+            packageDir: packageDir,
+            filesToMigrate: ctx.orderedFiles,
+            reporter,
+            ignore,
+            task,
+          })) {
+            migratedFiles.push(tsFile);
+          }
+          reporter.printReport(rootPath, options.format);
+          task.title = getReportSummary(reporter.report.items, reporter.report.fixedItemCount);
+        } else {
+          await new Promise((resolve, reject) => {
+            const worker = new Worker(workerPath, {
+              workerData: JSON.stringify({
+                mode: options.mode,
+                projectRootDir: rootPath,
+                packageDir: packageDir,
+                filesToMigrate: ctx.orderedFiles,
+                reporterOptionsTSVersion: tsVersion,
+                reporterOptionsProjectName: projectName,
+                reporterOptionsProjectRootDir: rootPath,
+                reporterOptionsCommandName: 'rehearsal fix',
+                format: options.format,
+                ignore,
+              }),
+            });
 
-        for await (const tsFile of migrate(input)) {
-          migratedFiles.push(tsFile);
+            worker.on('message', (response: FixWorkerResponse) => {
+              switch (response.type) {
+                case 'logger':
+                  task.output = `processing file: ${response.content.replace(rootPath, '')}`;
+                  break;
+                case 'message':
+                  task.title = getReportSummary(
+                    response.content.reportItems,
+                    response.content.fixedItemCount
+                  );
+                  break;
+                case 'files':
+                  resolve(response.content);
+                  break;
+              }
+            });
+
+            worker.on('error', reject);
+            worker.on('exit', (code) => {
+              if (code !== 0) {
+                reject(new Error(`Fix worker stopped with exit code ${code}`));
+              }
+            });
+          });
         }
-
-        DEBUG_CALLBACK('migratedFiles', migratedFiles);
-
-        reporter.printReport(rootPath, options.format);
-        task.title = getReportSummary(reporter.report);
       } else {
         task.skip(`TypeScript files not found in: ${rootPath}`);
       }
