@@ -6,9 +6,6 @@ import { HintsProvider } from './hints-provider.js';
 const { isIdentifier, isFunctionDeclaration, isParameter, isReturnStatement } = ts;
 
 export const hints = new HintsProvider({
-  2307: {
-    hint: `Could not find a declaration file for module '{0}'. Try installing the missing type or add a new declaration (.d.ts) file containing \`declare module '{0}';\`.`,
-  },
   2322: {
     hint: `Type '{0}' is being returned or assigned, but type '{1}' is expected. Please convert type '{0}' to type '{1}', or return or assign a variable of type '{1}'`,
     helpUrl:
