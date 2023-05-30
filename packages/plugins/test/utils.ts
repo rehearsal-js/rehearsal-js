@@ -29,7 +29,6 @@ export function mockPluginRunnerContext(project: Project): PluginsRunnerContext 
     tsVersion: '',
     projectName: '@rehearsal/test',
     projectRootDir: project.baseDir,
-    commandName: '@rehearsal/migrate',
   });
 
   return { basePath: project.baseDir, service: rehearsal, reporter };

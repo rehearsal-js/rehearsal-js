@@ -4,10 +4,7 @@ export const initialData: Report = {
   summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
-    timestamp: "9/16/2022, 20:16:50",
-    reportOutDir: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter",
-    entrypoint: "",
+    timestamp: "9/16/2022, 20:16:50"
   }],
   items: [],
   fixedItemCount: 0
@@ -17,10 +14,7 @@ export const addRuleData: Report = {
   summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
-    timestamp: "9/16/2022, 13:24:52",
-    reportOutDir: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter",
-    entrypoint: "",
+    timestamp: "9/16/2022, 13:24:52"
   }],
   fixedItemCount: 5,
   items: [
@@ -96,10 +90,7 @@ export const addResultData: Report = {
   summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
-    timestamp: "9/16/2022, 13:24:57",
-    reportOutDir: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter",
-    entrypoint: "",
+    timestamp: "9/16/2022, 13:24:57"
   }],
   fixedItemCount: 3,
   items: [
@@ -175,10 +166,7 @@ export const addArtifactData: Report = {
   summary: [{
     projectName: "@rehearsal/test",
     tsVersion: "4.7.4",
-    timestamp: "9/16/2022, 13:24:55",
-    reportOutDir: "/reporter/test/sarif-formatter",
-    commandName: "@rehearsal/reporter",
-    entrypoint: '',
+    timestamp: "9/16/2022, 13:24:55"
   }],
   fixedItemCount: 5,
   items: [

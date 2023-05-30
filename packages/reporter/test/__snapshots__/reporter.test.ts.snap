@@ -6,11 +6,7 @@ exports[`Reporter > addLintItemToRun 1`] = `
     {
       \\"projectName\\": \\"@rehearsal/test\\",
       \\"tsVersion\\": \\"4.7.4\\",
-      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-      \\"basePath\\": \\"/base/path\\",
-      \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\",
-      \\"reportOutDir\\": \\"/base/path\\"
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -106,11 +102,7 @@ exports[`Reporter > addTSItemToRun 1`] = `
     {
       \\"projectName\\": \\"@rehearsal/test\\",
       \\"tsVersion\\": \\"4.7.4\\",
-      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-      \\"basePath\\": \\"/base/path\\",
-      \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\",
-      \\"reportOutDir\\": \\"/base/path\\"
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -260,11 +252,7 @@ exports[`Reporter > printReport default formatter 1`] = `
     {
       \\"projectName\\": \\"@rehearsal/test\\",
       \\"tsVersion\\": \\"4.7.4\\",
-      \\"timestamp\\": \\"9/16/2022, 13:24:57\\",
-      \\"basePath\\": \\"/base/path\\",
-      \\"entrypoint\\": \\"\\",
-      \\"commandName\\": \\"@rehearsal/reporter\\",
-      \\"reportOutDir\\": \\"/base/path\\"
+      \\"timestamp\\": \\"9/16/2022, 13:24:57\\"
     }
   ],
   \\"fixedItemCount\\": 4,
@@ -341,7 +329,6 @@ exports[`Reporter > printReport md formatter 1`] = `
 "### Summary:
 Project Name: @rehearsal/test
 Typescript Version: 4.7.4
-Report path: /base/path
 timestamp: 9/16/2022, 13:24:57
 
 ### Results:
@@ -376,7 +363,7 @@ exports[`Reporter > printReport sarif formatter 1`] = `
     {
       \\"tool\\": {
         \\"driver\\": {
-          \\"name\\": \\"@rehearsal/reporter\\",
+          \\"name\\": \\"rehearsal report\\",
           \\"informationUri\\": \\"https://github.com/rehearsal-js/rehearsal-js\\",
           \\"rules\\": [
             {
@@ -542,7 +529,7 @@ exports[`Reporter > printReport sarif formatter 1`] = `
       ],
       \\"automationDetails\\": {
         \\"description\\": {
-          \\"text\\": \\"This is the result of @rehearsal/reporter on your product against TypeScript 4.7.4 at 9/16/2022, 13:24:57\\"
+          \\"text\\": \\"This is the result of running Rehearsal on your product against TypeScript 4.7.4 at 9/16/2022, 13:24:57\\"
         }
       }
     }
@@ -692,11 +679,7 @@ exports[`Reporter > saveCurrentRunToReport 1`] = `
   ],
   "summary": [
     {
-      "basePath": "/base/path",
-      "commandName": "@rehearsal/reporter",
-      "entrypoint": "",
       "projectName": "@rehearsal/test",
-      "reportOutDir": "/base/path",
       "timestamp": "9/16/2022, 13:24:57",
       "tsVersion": "4.7.4",
     },

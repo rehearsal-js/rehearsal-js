@@ -10,7 +10,6 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     projectRootDir,
     packageDir,
     filesToMigrate,
-    reporterOptionsCommandName,
     reporterOptionsProjectName,
     reporterOptionsProjectRootDir,
     reporterOptionsTSVersion,
@@ -23,7 +22,6 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     tsVersion: reporterOptionsTSVersion,
     projectName: reporterOptionsProjectName,
     projectRootDir: reporterOptionsProjectRootDir,
-    commandName: reporterOptionsCommandName,
   });
 
   const migrateOptions = {

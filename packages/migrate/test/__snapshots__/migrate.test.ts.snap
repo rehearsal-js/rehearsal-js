@@ -417,18 +417,6 @@ exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: single-pass 1`] = `
 "
 `;
 
-exports[`fix > with addon service > .gts 1`] = `
-"import type Foo from 'my-addon/services/foo';
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
-
-export default class SomeComponent extends Component {
-  @service(\\"my-addon@foo\\")
-declare foo: Foo;
-}
-"
-`;
-
 exports[`fix > with addon service > .ts 1`] = `
 "// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@my-org/some-ember-addon/services/locale-service' or its corresponding type declarations.
 import type LocaleService from \\"@my-org/some-ember-addon/services/locale-service\\";

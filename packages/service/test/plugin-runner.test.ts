@@ -9,7 +9,6 @@ describe('PluginsRunner', () => {
       tsVersion: '',
       projectName: '@rehearsal/test',
       projectRootDir: '.',
-      commandName: '@rehearsal/migrate',
     });
 
     const service = new RehearsalService({}, []);
