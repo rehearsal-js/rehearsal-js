@@ -1,3 +1,18 @@
+## <small>3.0.8-beta (2023-05-31)</small>
+
+* fix: parseCommaSeparatedList remove whitespace ([c735a16](https://github.com/rehearsal-js/rehearsal-js/commit/c735a16))
+* fix(codefixes): handles hint for TS7016 removes absolute urls (#1096) ([f5480ea](https://github.com/rehearsal-js/rehearsal-js/commit/f5480ea)), closes [#1096](https://github.com/rehearsal-js/rehearsal-js/issues/1096)
+* fix(migration-graph): add support for resolving service from package within org (#1093) ([31f4180](https://github.com/rehearsal-js/rehearsal-js/commit/31f4180)), closes [#1093](https://github.com/rehearsal-js/rehearsal-js/issues/1093)
+* docs: graph command help ([12a3ab4](https://github.com/rehearsal-js/rehearsal-js/commit/12a3ab4))
+* Update command.ts ([65db215](https://github.com/rehearsal-js/rehearsal-js/commit/65db215))
+* Update README.md ([edd6c57](https://github.com/rehearsal-js/rehearsal-js/commit/edd6c57))
+* Update release.js ([c520f58](https://github.com/rehearsal-js/rehearsal-js/commit/c520f58))
+* feat: graph with externals (#1097) ([f7f009a](https://github.com/rehearsal-js/rehearsal-js/commit/f7f009a)), closes [#1097](https://github.com/rehearsal-js/rehearsal-js/issues/1097)
+* refactor: cleanup report summary (#1095) ([ff0c5df](https://github.com/rehearsal-js/rehearsal-js/commit/ff0c5df)), closes [#1095](https://github.com/rehearsal-js/rehearsal-js/issues/1095)
+* refactor: move fix into a worker (#1083) ([d564abe](https://github.com/rehearsal-js/rehearsal-js/commit/d564abe)), closes [#1083](https://github.com/rehearsal-js/rehearsal-js/issues/1083)
+
+
+
 ## <small>3.0.7-beta (2023-05-26)</small>
 
 * fix(plugins): service string resolution to support package with org in transform plugin  (#1091) ([c0b1ffc](https://github.com/rehearsal-js/rehearsal-js/commit/c0b1ffc)), closes [#1091](https://github.com/rehearsal-js/rehearsal-js/issues/1091)
