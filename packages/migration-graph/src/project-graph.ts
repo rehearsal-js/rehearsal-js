@@ -1,9 +1,6 @@
 import assert from 'node:assert';
-import { dirname } from 'node:path';
-import { PackageJson } from 'type-fest';
-import { PackageNode } from './package-node.js';
+import { PackageNode, PackageOptions } from './package-node.js';
 import { FileNode } from './file-node.js';
-import { readPackageJson } from './utils/read-package-json.js';
 
 export class PackageGraph {
   packages: Map<string, PackageNode>;
@@ -12,9 +9,7 @@ export class PackageGraph {
     this.packages = new Map();
   }
 
-  addFileToPackage(pkgJSONRoot: string, fileName: string): void {
-    const pkgJSON = readPackageJson(pkgJSONRoot);
-    const packageNode = this.addPackage(pkgJSON, dirname(pkgJSONRoot));
+  addFileToPackage(packageNode: PackageNode, fileName: string): void {
     const fileNode = new FileNode(fileName);
     packageNode.addFile(fileNode);
   }
@@ -32,6 +27,9 @@ export class PackageGraph {
   addDependency(fromPackage: string, fromFile: string, toPackage: string, toFile: string): void {
     const fromPackageNode = this.getPackageNode(fromPackage);
     const toPackageNode = this.getPackageNode(toPackage);
+
+    assert(fromPackageNode);
+    assert(toPackageNode);
 
     // Create edges between packages
     if (fromPackageNode !== toPackageNode) {
@@ -54,22 +52,27 @@ export class PackageGraph {
     }
   }
 
-  private addPackage(pkgJSON: PackageJson, packageRoot: string): PackageNode {
-    if (pkgJSON.name && !this.packages.has(pkgJSON.name)) {
-      const packageNode = new PackageNode(pkgJSON, packageRoot);
-      this.packages.set(pkgJSON.name, packageNode);
+  addPackage(options: PackageOptions): PackageNode {
+    const { pkgJson } = options;
+    if (pkgJson.name && !this.packages.has(pkgJson.name)) {
+      const packageNode = new PackageNode(options);
+      // set the packages both the name and aliases
+      for (const name of packageNode.aliases) {
+        this.packages.set(name, packageNode);
+      }
     }
 
-    assert(pkgJSON.name, `Missing a "name" field.`);
+    assert(pkgJson.name, `Missing a "name" field.`);
 
-    return this.getPackageNode(pkgJSON.name);
+    const packageNode = this.getPackageNode(pkgJson.name);
+
+    assert(packageNode, `Missing package node for ${pkgJson.name}`);
+
+    return packageNode;
   }
 
-  private getPackageNode(name: string): PackageNode {
+  getPackageNode(name: string): PackageNode | undefined {
     const packageNode = this.packages.get(name);
-    if (!packageNode) {
-      throw new Error(`Package '${name}' not found in the graph.`);
-    }
     return packageNode;
   }
 }

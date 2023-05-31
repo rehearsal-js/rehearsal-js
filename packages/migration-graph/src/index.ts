@@ -7,5 +7,7 @@ export {
 } from './resolver.js';
 export { discoverServiceDependencies } from './discover-services.js';
 export { generateDotLanguage } from './dot.js';
+export { generateJson } from './json.js';
 export * from './utils/excludes.js';
 export type { PackageGraph } from './project-graph.js';
+export type { FileNode } from './file-node.js';

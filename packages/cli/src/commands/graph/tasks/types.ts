@@ -4,6 +4,7 @@ export interface GraphWorkerOptions {
   ignore: string[];
   serviceMap: Record<string, string>;
   output?: string;
+  externals?: boolean;
 }
 
 type MessageResponse = { type: 'message'; content: string };

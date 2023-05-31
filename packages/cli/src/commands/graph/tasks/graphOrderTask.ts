@@ -27,7 +27,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: CommandContext, task) {
       let orderedFiles: string[] = [];
-      const { output, rootPath, ignore, skipPrompt } = options;
+      const { output, rootPath, ignore, externals, skipPrompt } = options;
 
       const serviceMapPath = join(rootPath, '.rehearsal', 'services-map.json');
       let serviceMap: Record<string, string> = {};
@@ -40,7 +40,12 @@ export function graphOrderTask(
         // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
         const servicesResolver = discoverServiceDependencies(serviceMap);
         const absolutePath = resolve(rootPath, srcPath);
-        const resolver = new Resolver({ customResolver: servicesResolver, ignore });
+        const resolver = new Resolver({
+          rootPath,
+          scanForImports: servicesResolver,
+          ignore,
+          includeExternals: !!(externals && output),
+        });
 
         await resolver.load();
 
@@ -49,11 +54,11 @@ export function graphOrderTask(
         for (const file of files) {
           resolver.walk(file);
         }
-
-        orderedFiles = topSortFiles(resolver.graph);
+        const sortedNodes = topSortFiles(resolver.graph);
+        orderedFiles = sortedNodes.map((file) => file.id);
 
         if (output) {
-          await writeOutput(rootPath, resolver.graph, orderedFiles, output);
+          await writeOutput(rootPath, resolver.graph, sortedNodes, output);
         }
       } else {
         orderedFiles = await new Promise<string[]>((resolve, reject) => {

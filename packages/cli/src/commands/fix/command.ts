@@ -78,7 +78,7 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
   const isDirectory = (await stat(srcPath)).isDirectory();
 
   if (isDirectory) {
-    const javascriptGlobs = SUPPORTED_JS_EXTENSIONS.map((ext) => {
+    const javascriptGlobs = [...SUPPORTED_JS_EXTENSIONS, '*.d.ts'].map((ext) => {
       return join(`${options.rootPath}`, srcPath, `**/*${ext}`);
     });
 

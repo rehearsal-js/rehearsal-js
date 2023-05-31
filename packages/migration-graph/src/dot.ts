@@ -1,4 +1,5 @@
 import { relative } from 'node:path';
+import assert from 'node:assert';
 import { PackageGraph } from './project-graph.js';
 
 export function generateDotLanguage(graph: PackageGraph): string {
@@ -12,18 +13,42 @@ export function generateDotLanguage(graph: PackageGraph): string {
   // Create subgraphs for each package
   for (const packageNode of graph.packages.values()) {
     const packageName = replaceAll(packageNode.name.replace(/[@/]/g, ''), '-', '_');
-    dot += `  subgraph cluster_${packageName} {\n`;
-    dot += `    label="${packageNode.name}";\n`;
-    dot += `    labeljust=l;\n`;
-    dot += `    color=black;\n`;
-    dot += `    node [style=filled, fillcolor=white, shape=box];\n`;
+
+    if (packageNode.files.length === 0) {
+      continue;
+    }
+
+    if (packageNode.external) {
+      dot += `  subgraph cluster_${packageName} {\n`;
+      dot += `    label="${packageNode.name}";\n`;
+      dot += `    labeljust=l;\n`;
+      dot += `    href="file://${packageNode.packageRoot}/package.json";\n`;
+      dot += `    color="grey"\n`;
+      dot += `    style="dashed"\n`;
+      dot += `    fontcolor="grey"\n`;
+      dot += `    node [style=filled, fillcolor=white, shape=box];\n`;
+    } else {
+      dot += `  subgraph cluster_${packageName} {\n`;
+      dot += `    label="${packageNode.name}";\n`;
+      dot += `    href="file://${packageNode.packageRoot}/package.json";\n`;
+      dot += `    labeljust=l;\n`;
+      dot += `    color=black;\n`;
+      dot += `    node [style=filled, fillcolor=white, shape=box];\n`;
+    }
 
     // Add nodes for files in the package
     for (const fileNode of packageNode.files) {
-      dot += `    "${fileNode.id}" [label="${relative(
-        packageNode.packageRoot,
-        fileNode.id
-      )}", href="file://${fileNode.id}"];\n`;
+      if (packageNode.external) {
+        dot += `    "${fileNode.id}" [label="${relative(
+          packageNode.packageRoot,
+          fileNode.id
+        )}"];\n`;
+      } else {
+        dot += `    "${fileNode.id}" [label="${relative(
+          packageNode.packageRoot,
+          fileNode.id
+        )}", href="file://${fileNode.id}"];\n`;
+      }
     }
 
     dot += '  }\n';
@@ -33,7 +58,36 @@ export function generateDotLanguage(graph: PackageGraph): string {
   for (const packageNode of graph.packages.values()) {
     for (const fileNode of packageNode.files) {
       for (const edgeNode of fileNode.edges) {
-        dot += `  "${fileNode.id}" -> "${edgeNode.id}";\n`;
+        const pkgName = graph.getPackageNameFromFileId(edgeNode.id);
+
+        if (pkgName) {
+          const edgePackageNode = graph.packages.get(pkgName);
+          assert(edgePackageNode);
+          if (edgePackageNode.external) {
+            if (!edgePackageNode.hasTypes(edgeNode.id)) {
+              dot += `  "${fileNode.id}" -> "${edgeNode.id}" ${
+                edgePackageNode.missing
+                  ? '[xlabel="missing from package.json" tooltip="missing from package.json" fontcolor="orange" color="orange"]'
+                  : '[xlabel="missing types" tooltip="missing types" fontcolor="red" color="red"]'
+              };\n`;
+            } else if (packageNode.isDependencyMissing(edgePackageNode.name)) {
+              dot += `  "${fileNode.id}" -> "${edgeNode.id}" [xlabel="missing from package.json" tooltip="missing from package.json" fontcolor="orange" color="orange"];\n`;
+            } else {
+              dot += `  "${fileNode.id}" -> "${edgeNode.id}" [color="grey" style="dashed"];\n`;
+            }
+          } else if (
+            packageNode.isDependencyMissing(edgePackageNode.name) &&
+            edgePackageNode.name !== packageNode.name
+          ) {
+            dot += `  "${fileNode.id}" -> "${edgeNode.id}" [xlabel="missing from package.json" tooltip="missing from package.json" fontcolor="orange" color="orange"];\n`;
+          } else {
+            dot += `  "${fileNode.id}" -> "${edgeNode.id}" ${
+              edgePackageNode && !edgePackageNode.hasTypes(edgeNode.id)
+                ? '[xlabel="missing types" tooltip="missing types" fontcolor="red" color="red"]'
+                : ''
+            };\n`;
+          }
+        }
       }
     }
   }
