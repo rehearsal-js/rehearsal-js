@@ -158,10 +158,10 @@ export async function addDep(
 }
 
 /**
- * Parses the comma separated string `a,b,c` to an array os strings [a, b, c]
+ * Parses the comma separated string `a,b,c` or `a, b, c` to an array os strings [a, b, c]
  */
 export function parseCommaSeparatedList(value: string): string[] {
-  return value.split(',');
+  return value.replace(/\s/g, '').split(',');
 }
 
 /**
