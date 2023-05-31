@@ -10,13 +10,21 @@ export function generateDotLanguage(graph: PackageGraph): string {
   edge [arrowhead="normal" arrowsize="0.6" penwidth="2.0" color="#00000033" fontname="Helvetica" fontsize="9"]
   `;
 
+  const seenPackages = new Set<string>();
+
   // Create subgraphs for each package
   for (const packageNode of graph.packages.values()) {
+    if (seenPackages.has(packageNode.name)) {
+      continue;
+    }
+
     const packageName = replaceAll(packageNode.name.replace(/[@/]/g, ''), '-', '_');
 
     if (packageNode.files.length === 0) {
       continue;
     }
+
+    seenPackages.add(packageNode.name);
 
     if (packageNode.external) {
       dot += `  subgraph cluster_${packageName} {\n`;

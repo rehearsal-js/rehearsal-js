@@ -43,26 +43,6 @@ exports[`Resolver > resolver produces a graph that can be emitted as dotlang 1`]
     node [style=filled, fillcolor=white, shape=box];
     \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\" [label=\\"addon/index.js\\"];
   }
-  subgraph cluster_my_external_addon_no_types {
-    label=\\"my-external-addon-no-types\\";
-    labeljust=l;
-    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/package.json\\";
-    color=\\"grey\\"
-    style=\\"dashed\\"
-    fontcolor=\\"grey\\"
-    node [style=filled, fillcolor=white, shape=box];
-    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-addon-no-types/addon/index.js\\" [label=\\"addon/index.js\\"];
-  }
-  subgraph cluster_my_external_with_types {
-    label=\\"my-external-with-types\\";
-    labeljust=l;
-    href=\\"file://<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/package.json\\";
-    color=\\"grey\\"
-    style=\\"dashed\\"
-    fontcolor=\\"grey\\"
-    node [style=filled, fillcolor=white, shape=box];
-    \\"<tmp-path>/packages/with-externals-imports/node_modules/my-external-with-types/addon/index.ts\\" [label=\\"addon/index.ts\\"];
-  }
   subgraph cluster_my_external_with_types {
     label=\\"my-external-with-types\\";
     labeljust=l;
