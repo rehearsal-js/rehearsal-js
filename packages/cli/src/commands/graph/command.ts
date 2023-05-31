@@ -28,7 +28,7 @@ graphCommand
   )
   .option(
     '-x, --externals',
-    `Includes external dependencies in the output. Only valid with '--output'.`
+    `includes external dependencies in the output. only valid with '--output'.`
   )
   .action(async (srcPath: string, options: GraphCommandOptions) => {
     if (options.externals && !options.output) {
