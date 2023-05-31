@@ -27,7 +27,7 @@ const winstonLogger = createLogger({
 moveCommand
   .name('move')
   .alias('mv')
-  .description('Graph aware git mv from .js -> .ts')
+  .description('graph aware git mv from .js -> .ts')
   .argument('[srcPath]', 'path to a directory or file', '')
   .option('--no-graph', 'opt out of moving the file(s) with the graph')
   .option(
