@@ -54,6 +54,7 @@ exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 1`] = `
   "<tmp-path>/src/apply-rules.ts",
   "<tmp-path>/src/gen-random-grid.ts",
   "<tmp-path>/src/get-live-neighbor-count.ts",
+  "<tmp-path>/src/sub/grid.ts",
 ]
 `;
 
@@ -63,6 +64,7 @@ exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 2`] = `
   "/src/apply-rules.ts",
   "/src/gen-random-grid.ts",
   "/src/get-live-neighbor-count.ts",
+  "/src/sub/grid.ts",
 ]
 `;
 

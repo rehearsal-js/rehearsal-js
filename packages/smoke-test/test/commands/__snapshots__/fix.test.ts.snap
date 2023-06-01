@@ -7,30 +7,27 @@ exports[`fix command > base_ts_app (file only) 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/get-live-neighbor-count.ts
-[DATA] processing file: /src/apply-rules.ts
-[DATA] processing file: /src/gen-random-grid.ts
 [DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
-[TITLE]   12 errors caught by rehearsal
-[TITLE]   6 have been fixed by rehearsal
-[TITLE]   6 errors need to be fixed manually
-[TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   2 errors caught by rehearsal
+[TITLE]   0 have been fixed by rehearsal
+[TITLE]   2 errors need to be fixed manually
+[TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   12 errors caught by rehearsal
-[SUCCESS]   6 have been fixed by rehearsal
-[SUCCESS]   6 errors need to be fixed manually
-[SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   2 errors caught by rehearsal
+[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   2 errors need to be fixed manually
+[SUCCESS]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
 exports[`fix command > base_ts_app (file only) 2`] = `
 "// generate a random grid based on a set dimension and random alive/dead cells
 export function generateRandomGrid(
-  dimensions: number[],
+  dimensions,
   chars = ['▄', ' ']
-): string[][]  {
+) {
   const grid = [];
 
   // create the grid
@@ -57,10 +54,8 @@ exports[`fix command > base_ts_app (file only) 3`] = `
   getLiveNeighborCount,
 } from './get-live-neighbor-count.js';
 
-// @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
 export function applyRules(grid, cellCharState) {
   // clone the grid for the next generation
-  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'row' implicitly has an 'any' type.
   const newGrid = grid.map((row) => [...row]);
   // keep track if all of the cells are dead and exit if so
   let totalLiveNeighbors = 0;
@@ -105,12 +100,10 @@ export function applyRules(grid, cellCharState) {
 exports[`fix command > base_ts_app (file only) 4`] = `
 "// based on a given cell, return the number of live neighbors
 export function getLiveNeighborCount(
-  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'grid' implicitly has an 'any' type.
   grid,
-  coords: number[] | [any, any],
-  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'cellCharState' implicitly has an 'any' type.
+  coords,
   cellCharState
-): number  {
+) {
   const [x, y] = coords;
 
   // 8 neighbors

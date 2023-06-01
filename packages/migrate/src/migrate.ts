@@ -103,7 +103,7 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
 
   const service = useGlint
     ? new GlintService(glintCore, packageDir)
-    : new RehearsalService(tsCompilerOptions, filesToMigrate);
+    : new RehearsalService(tsCompilerOptions, filesToCompile);
 
   function isGlintService(
     service: GlintService | RehearsalService,

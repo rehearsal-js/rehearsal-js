@@ -44,6 +44,10 @@ export function convertTask(
 
       // this just cares about ts files which are already in the proper migration order
       if (orderedFiles) {
+        // Filter out all files that outside of the target directory
+        const filesToMigrate = ctx.orderedFiles.filter((file) =>
+          file.startsWith(resolve(options.rootPath, targetPath))
+        );
         const migratedFiles: string[] = [];
 
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
@@ -51,7 +55,7 @@ export function convertTask(
             mode: options.mode,
             projectRootDir: rootPath,
             packageDir: packageDir,
-            filesToMigrate: ctx.orderedFiles,
+            filesToMigrate: filesToMigrate,
             reporter,
             ignore,
             task,

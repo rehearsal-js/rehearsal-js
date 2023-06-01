@@ -1,6 +1,6 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Project } from 'fixturify-project';
 import { createLogger, format, transports } from 'winston';
@@ -120,8 +120,32 @@ describe('Command: fix "base_ts_app" fixture', () => {
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
 
-    for (const filepath of Object.keys(project.files[sourceDir] as string)) {
-      expectFile(resolve(project.baseDir, sourceDir, filepath)).toMatchSnapshot();
+    const projectFiles = Object.keys(project.files[sourceDir] as string)
+      .map((file) => resolve(project.baseDir, sourceDir, file))
+      .filter((file) => statSync(file).isFile());
+
+    for (const filePath of projectFiles) {
+      expectFile(filePath).toMatchSnapshot();
+    }
+  });
+
+  test('can fix starting with a subdirectory', async () => {
+    const sourceDir = 'src';
+    const src = resolve(project.baseDir, sourceDir, 'sub');
+
+    const result = await runBin('fix', [src], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+
+    const projectFiles = Object.keys(project.files[sourceDir] as string)
+      .map((file) => resolve(project.baseDir, sourceDir, file))
+      .filter((file) => statSync(file).isFile());
+
+    for (const filePath of projectFiles) {
+      expectFile(filePath).toMatchSnapshot();
     }
   });
 });
