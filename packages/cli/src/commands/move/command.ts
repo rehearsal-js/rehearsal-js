@@ -29,7 +29,10 @@ moveCommand
   .alias('mv')
   .description('graph aware git mv from .js -> .ts')
   .argument('[srcPath]', 'path to a directory or file', '')
-  .option('--no-graph', 'opt out of moving the file(s) with the graph')
+  .option(
+    '--graph',
+    'fixing all file(s) within the graph, which might include files outside of the current directory'
+  )
   .option(
     '--ignore [globs...]',
     `comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
@@ -60,16 +63,19 @@ async function move(srcPath: string, options: MoveCommandOptions): Promise<void>
   // We never want to move typescript files or the ember-cli-build.js files
   options.ignore.push(...typescriptGlobs);
 
-  const tasks = options.graph
-    ? [
-        graphOrderTask(srcPath, {
-          rootPath: options.rootPath,
-          ignore: options.ignore,
-          skipPrompt: true,
-        }),
-        moveTask(srcPath, options),
-      ]
-    : [initTask(srcPath, options), moveTask(srcPath, options)];
+  // graph mode is default on in all instances. exception is for testing only with node process env variable "GRAPH_MODES=off"
+  // source with a direct filepath ignores the migration graph
+  const tasks =
+    process.env['GRAPH_MODES'] === 'off'
+      ? [initTask(srcPath, options), moveTask(options)]
+      : [
+          graphOrderTask(srcPath, {
+            rootPath: options.rootPath,
+            ignore: options.ignore,
+            graph: options.graph,
+          }),
+          moveTask(options),
+        ];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

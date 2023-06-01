@@ -149,7 +149,8 @@ describe('Command: move', () => {
       ['--no-graph', '--rootPath', project.baseDir],
       {
         cwd: project.baseDir,
-    });
+      }
+    );
 
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {

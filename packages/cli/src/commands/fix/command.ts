@@ -26,27 +26,15 @@ const winstonLogger = createLogger({
 
 export const fixCommand = new Command();
 
-/*
-  @rehearsal/fix workflow
-
-  rehearsal fix <path to source file | directory>
-    the explicit source file OR explicit directory with implicit child directories fixed.
-    migration strategy is ignored
-
-  rehearsal fix <path to child package> --graph
-    specify the child-package relative to process.cwd(). migration strategy is leveraged fixing all necessary files in the dependency graph for this package.
-    migration strategy is leveraged
-
-  rehearsal fix <path to child package> --graph --devDeps
-    same as above but devDependencies are considered in the graph
-*/
-
 fixCommand
   .alias('infer')
   .name('fix')
   .description('fixes typescript compiler errors by inferring types on .*ts files')
   .argument('[srcPath]', 'path to file or directory to migrate', process.cwd())
-  .option('--no-graph', 'opt out of fixing the file(s) with the graph')
+  .option(
+    '--graph',
+    'fixing all file(s) within the graph, which might include files outside of the current directory'
+  )
   .option(
     '--ignore [globs...]',
     `comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*'`,
@@ -72,7 +60,7 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
   winstonLogger.info(`@rehearsal/fix ${version?.trim()}`);
 
   if (!srcPath) {
-    throw new Error(`@rehearsal/fix: you must specify a package or path to move`);
+    throw new Error(`@rehearsal/fix: you must specify a package or path to fix`);
   }
 
   const isDirectory = (await stat(srcPath)).isDirectory();
@@ -91,18 +79,20 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
       ? process.env['EXPERIMENTAL_MODES']
       : 'single-pass';
 
+  // graph mode is default on in all instances. exception is for testing only with node process env variable "GRAPH_MODES=off"
   // source with a direct filepath ignores the migration graph
-  const tasks = options.graph
-    ? [
-        initTask(srcPath, options),
-        graphOrderTask(srcPath, {
-          rootPath: options.rootPath,
-          ignore: options.ignore,
-          skipPrompt: true,
-        }),
-        convertTask(srcPath, options),
-      ]
-    : [initTask(srcPath, options), convertTask(srcPath, options)];
+  const tasks =
+    process.env['GRAPH_MODES'] === 'off'
+      ? [initTask(srcPath, options), convertTask(srcPath, options)]
+      : [
+          initTask(srcPath, options),
+          graphOrderTask(srcPath, {
+            rootPath: options.rootPath,
+            ignore: options.ignore,
+            graph: options.graph,
+          }),
+          convertTask(srcPath, options),
+        ];
 
   DEBUG_CALLBACK(`tasks: ${JSON.stringify(tasks, null, 2)}`);
   DEBUG_CALLBACK(`options: ${JSON.stringify(options, null, 2)}`);

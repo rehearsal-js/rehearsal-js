@@ -24,7 +24,7 @@ const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 
 // everything is relative to the project root. options.basePath cannot be configured by the user
 export function initTask(
-  src: string,
+  srcPath: string,
   options: FixCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: CommandContext
@@ -32,7 +32,7 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { rootPath, graph } = options;
+      const { rootPath } = options;
 
       let projectType: ProjectType = 'base-ts';
       const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
@@ -47,9 +47,10 @@ export function initTask(
 
       preFlightCheck(rootPath, projectType);
 
-      if (!graph) {
+      // in this mode we skip the `graphOrderTask`
+      if (process.env['GRAPH_MODES'] === 'off') {
         // grab all the ts files since we don't have graph output
-        [ctx.orderedFiles] = validateSourcePath(rootPath, src, 'ts');
+        [ctx.orderedFiles] = validateSourcePath(rootPath, srcPath, 'ts');
       }
 
       DEBUG_CALLBACK('ctx %O:', ctx);

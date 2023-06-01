@@ -14,9 +14,10 @@ export function initTask(
   return {
     title: `Validating source path`,
     task: (ctx: CommandContext): void => {
-      const { rootPath, graph, ignore } = options;
+      const { rootPath, ignore } = options;
 
-      if (!graph) {
+      // in this mode we skip the `graphOrderTask`
+      if (process.env['GRAPH_MODES'] === 'off') {
         [ctx.orderedFiles] = validateSourcePath(rootPath, src, 'js', ignore);
       }
 

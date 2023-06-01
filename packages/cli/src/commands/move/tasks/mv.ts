@@ -17,7 +17,6 @@ type MoveCommandTask = ListrTaskWrapper<CommandContext, ListrDefaultRenderer>;
 
 // rename files to TS extension via git mv only. will throw if the file has not been tracked
 export function moveTask(
-  targetPath: string,
   options: MoveCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: CommandContext
@@ -26,23 +25,18 @@ export function moveTask(
     title: 'Executing git mv',
     task: async (ctx: CommandContext, task: MoveCommandTask): Promise<void> => {
       const { dryRun } = options;
+      const { orderedFiles } = ctx;
 
-      // Filter out all files that outside of the target directory
-      const filesToMove = ctx.orderedFiles.filter((file) =>
-        file.startsWith(resolve(options.rootPath, targetPath))
-      );
-
-      DEBUG_CALLBACK(`filesFound: ${ctx.orderedFiles}`);
-      DEBUG_CALLBACK(`filesToMove: ${filesToMove}`);
+      DEBUG_CALLBACK(`sourceFilesAbs: ${orderedFiles}`);
 
       if (dryRun) {
         task.title = 'Executing git mv (dry run)';
       }
 
-      if (filesToMove) {
+      if (orderedFiles) {
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
           // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
-          task.output = gitMove(filesToMove, options.rootPath, dryRun);
+          task.output = gitMove(orderedFiles, options.rootPath, dryRun);
         } else {
           await new Promise<string>((resolve, reject) => {
             task.title = 'Executing git mv ...';
@@ -50,7 +44,7 @@ export function moveTask(
             // Run git mv in a worker thread so the ui thread doesn't hang
             const worker = new Worker(workerPath, {
               workerData: JSON.stringify({
-                sourceFiles: filesToMove,
+                sourceFiles: orderedFiles,
                 basePath: options.rootPath,
                 dryRun,
               }),
