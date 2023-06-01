@@ -70,6 +70,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
@@ -192,6 +193,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(`${project.baseDir}/module-a`, options)]);
@@ -243,6 +245,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);
@@ -260,6 +263,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -282,6 +286,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -353,6 +358,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: true,
       deps: true,
       ignore: ['./lib/some-addon/*'],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -394,6 +400,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: true,
       deps: true,
       ignore: ['lib/some-addon/addon/utils/*.js'],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -453,6 +460,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: true,
       deps: true,
       ignore: ['**/*.js'],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -489,6 +497,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: true,
       deps: true,
       ignore: ['lib/some-addon/addon/utils/thing.js'],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([
@@ -546,6 +555,7 @@ describe('Task: graphOrderTask', () => {
       devDeps: false,
       deps: true,
       ignore: [],
+      logGraph: true,
     };
 
     await listrTaskRunner<CommandContext>([graphOrderTask(project.baseDir, options)]);

@@ -27,7 +27,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: CommandContext, task) {
       let orderedFiles: string[] = [];
-      const { output, rootPath, ignore, externals, graph } = options;
+      const { output, rootPath, ignore, externals, graph, logGraph } = options;
 
       const serviceMapPath = join(rootPath, '.rehearsal', 'services-map.json');
       let serviceMap: Record<string, string> = {};
@@ -94,7 +94,7 @@ export function graphOrderTask(
         });
       }
 
-      if (!output) {
+      if (logGraph) {
         task.output = `Graph order for '${srcPath}':\n\n${orderedFiles
           .map((filePath) => filePath.replace(rootPath, '.'))
           .join('\n')}`;

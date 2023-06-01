@@ -122,7 +122,7 @@ describe('Command: move', () => {
   });
 
   test('can opt-out of move with graph', async () => {
-    const result = await runBin('move', [`./src`], ['--no-graph', '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`./src`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -143,14 +143,9 @@ describe('Command: move', () => {
   });
 
   test('can opt-out of move sub directory with graph', async () => {
-    const result = await runBin(
-      'move',
-      [`./src/foo`],
-      ['--no-graph', '--rootPath', project.baseDir],
-      {
-        cwd: project.baseDir,
-      }
-    );
+    const result = await runBin('move', [`./src/foo`], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
 
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {

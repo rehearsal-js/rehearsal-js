@@ -90,6 +90,7 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
             rootPath: options.rootPath,
             ignore: options.ignore,
             graph: options.graph,
+            output: undefined,
           }),
           convertTask(srcPath, options),
         ];

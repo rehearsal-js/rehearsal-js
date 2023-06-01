@@ -2,8 +2,8 @@
 
 exports[`Command: move > can opt-out of move sub directory with graph 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
@@ -19,8 +19,8 @@ exports[`Command: move > can opt-out of move sub directory with graph 1`] = `
 
 exports[`Command: move > can opt-out of move with graph 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv

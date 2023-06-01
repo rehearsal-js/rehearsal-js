@@ -131,11 +131,16 @@ Usage: rehearsal graph [options] [srcPath]
 produces the migration order of files given a source path
 
 Arguments:
-  srcPath                  path to a directory or file (default: current working directory)
+  srcPath                  path to a directory or file (default:
+                           "/Users/malynch/D/rehearsal-js/packages/cli")
 
 Options:
-  --ignore [globs...]      comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*' (default: [])
-  -o, --output <filepath>  output path for a JSON or grapviz format of the graph order eg. '--output graph.json' or '--output graph.dot'
+  --ignore [globs...]      comma-delimited list of globs to ignore eg. '--ignore
+                           tests/**/*,types/**/*' (default: [])
+  -o, --output <filepath>  output path for a JSON or grapviz format of the graph order eg.
+                           '--output graph.json' or '--output graph.dot'
+  -x, --externals          includes external dependencies in the output. only valid with
+                           '--output'.
   -h, --help               display help for command
 ```
 
@@ -152,14 +157,16 @@ rehearsal move
 
 Usage: rehearsal move|mv [options] [srcPath]
 
-Graph aware git mv from .js -> .ts
+graph aware git mv from .js -> .ts
 
 Arguments:
   srcPath              path to a directory or file (default: "")
 
 Options:
-  --no-graph           opt out of moving the file(s) with the graph
-  --ignore [globs...]  comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*' (default: [])
+  --graph              fixing all file(s) within the graph, which might include files
+                       outside of the current directory
+  --ignore [globs...]  comma-delimited list of globs to ignore eg. '--ignore
+                       tests/**/*,types/**/*' (default: [])
   -d, --dryRun         do nothing; only show what would happen (default: false)
   -h, --help           display help for command
 ```
@@ -176,12 +183,16 @@ Usage: rehearsal fix|infer [options] [srcPath]
 fixes typescript compiler errors by inferring types on .*ts files
 
 Arguments:
-  srcPath                path to file or directory to migrate (default: current working directory)
+  srcPath                path to file or directory to migrate (default:
+                         "/Users/malynch/D/rehearsal-js/packages/cli")
 
 Options:
-  --no-graph             opt out of fixing the file(s) with the graph
-  --ignore [globs...]    comma-delimited list of globs to ignore eg. '--ignore tests/**/*,types/**/*' (default: [])
-  -f, --format <format>  report format separated by comma, e.g. -f json,sarif,md,sonarqube (default: ["sarif"])
+  --graph                fixing all file(s) within the graph, which might include files
+                         outside of the current directory
+  --ignore [globs...]    comma-delimited list of globs to ignore eg. '--ignore
+                         tests/**/*,types/**/*' (default: [])
+  -f, --format <format>  report format separated by comma, e.g. -f json,sarif,md,sonarqube
+                         (default: ["sarif"])
   -h, --help             display help for command
 ```
 

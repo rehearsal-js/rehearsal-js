@@ -283,6 +283,7 @@ describe('Fix: Init-Task', () => {
       ignore: [],
       mode: 'single-pass',
     };
+    process.env['GRAPH_MODES'] = 'off';
     const tasks = [initTask(src, options)];
     const ctx = await listrTaskRunner<CommandContext>(tasks);
     const sanitizedAbsPaths = ctx.orderedFiles?.map((path) => {
@@ -292,5 +293,6 @@ describe('Fix: Init-Task', () => {
     expect(sanitizedAbsPaths).toMatchSnapshot();
     expect(ctx.orderedFiles.map((file) => file.replace(project.baseDir, ''))).toMatchSnapshot();
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+    process.env['GRAPH_MODES'] = undefined;
   });
 });

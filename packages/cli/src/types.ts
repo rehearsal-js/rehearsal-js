@@ -77,6 +77,7 @@ export type GraphTaskOptions = {
   output?: string;
   externals?: boolean;
   graph?: boolean;
+  logGraph?: boolean;
 };
 
 /*
