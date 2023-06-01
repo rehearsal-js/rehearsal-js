@@ -131,8 +131,7 @@ Usage: rehearsal graph [options] [srcPath]
 produces the migration order of files given a source path
 
 Arguments:
-  srcPath                  path to a directory or file (default:
-                           "/Users/malynch/D/rehearsal-js/packages/cli")
+  srcPath                  path to a directory or file (default: process.cwd())
 
 Options:
   --ignore [globs...]      comma-delimited list of globs to ignore eg. '--ignore
@@ -183,8 +182,8 @@ Usage: rehearsal fix|infer [options] [srcPath]
 fixes typescript compiler errors by inferring types on .*ts files
 
 Arguments:
-  srcPath                path to file or directory to migrate (default:
-                         "/Users/malynch/D/rehearsal-js/packages/cli")
+  srcPath                  path to a directory or file (default: process.cwd())
+
 
 Options:
   --graph                fixing all file(s) within the graph, which might include files
