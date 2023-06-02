@@ -31,7 +31,7 @@ moveCommand
   .argument('[srcPath]', 'path to a directory or file', '')
   .option(
     '--graph',
-    'fixing all file(s) within the graph, which might include files outside of the current directory'
+    'fixing all file(s) within the graph, which might include files outside of the srcPath'
   )
   .option(
     '--ignore [globs...]',

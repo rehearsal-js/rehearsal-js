@@ -40,7 +40,7 @@ graphCommand
         rootPath: options.rootPath,
         ignore: options.ignore,
         externals: options.externals,
-        logGraph: true,
+        outputGraphToConsole: true,
       }),
     ]).run();
   });
