@@ -1,3 +1,11 @@
+## <small>3.0.9-beta (2023-06-02)</small>
+
+* chore(gh-action-bot): adding new diagnostics ([e6e0e21](https://github.com/rehearsal-js/rehearsal-js/commit/e6e0e21))
+* fix: move and fix to modify file under the targetPath (#1102) ([b132cb7](https://github.com/rehearsal-js/rehearsal-js/commit/b132cb7)), closes [#1102](https://github.com/rehearsal-js/rehearsal-js/issues/1102)
+* fix: remove duplication in dot output (#1100) ([733ca21](https://github.com/rehearsal-js/rehearsal-js/commit/733ca21)), closes [#1100](https://github.com/rehearsal-js/rehearsal-js/issues/1100)
+
+
+
 ## <small>3.0.8-beta (2023-05-31)</small>
 
 * fix: parseCommaSeparatedList remove whitespace ([c735a16](https://github.com/rehearsal-js/rehearsal-js/commit/c735a16))
