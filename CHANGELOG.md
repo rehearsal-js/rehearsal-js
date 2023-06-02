@@ -1,3 +1,8 @@
+## 1.0.0 (2023-06-02)
+
+
+
+
 ## <small>3.0.9-beta (2023-06-02)</small>
 
 * chore(gh-action-bot): adding new diagnostics ([e6e0e21](https://github.com/rehearsal-js/rehearsal-js/commit/e6e0e21))
