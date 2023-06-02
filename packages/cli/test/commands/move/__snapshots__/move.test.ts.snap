@@ -1,9 +1,26 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Command: move > can opt-out of move sub directory with graph 1`] = `
+"info:    @rehearsal/move<test-version>
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Executing git mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] renamed: 
+[DATA] ./src/foo/baz.js -> ./src/foo/baz.ts
+[DATA] ./src/foo/biz.js -> ./src/foo/biz.ts
+[DATA] ./src/foo/e.gjs -> ./src/foo/e.gts
+[DATA] ./src/foo/buz/biz.js -> ./src/foo/buz/biz.ts
+[SUCCESS] Executing git mv"
+`;
+
 exports[`Command: move > can opt-out of move with graph 1`] = `
 "info:    @rehearsal/move<test-version>
-[STARTED] Validating source path
-[SUCCESS] Validating source path
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
 [STARTED] Executing git mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
@@ -77,5 +94,22 @@ exports[`Command: move > move packages based on the graph 1`] = `
 [DATA] ./module-b/src/tires.js -> ./module-b/src/tires.ts
 [DATA] ./module-b/src/car.js -> ./module-b/src/car.ts
 [DATA] ./module-b/src/index.js -> ./module-b/src/index.ts
+[SUCCESS] Executing git mv"
+`;
+
+exports[`Command: move > move sub directory based on the graph 1`] = `
+"info:    @rehearsal/move<test-version>
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Executing git mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
+[DATA] renamed: 
+[DATA] ./src/foo/baz.js -> ./src/foo/baz.ts
+[DATA] ./src/foo/biz.js -> ./src/foo/biz.ts
+[DATA] ./src/foo/e.gjs -> ./src/foo/e.gts
+[DATA] ./src/foo/buz/biz.js -> ./src/foo/buz/biz.ts
 [SUCCESS] Executing git mv"
 `;

@@ -76,7 +76,8 @@ export type GraphTaskOptions = {
   ignore: string[];
   output?: string;
   externals?: boolean;
-  skipPrompt?: boolean;
+  graph?: boolean;
+  outputGraphToConsole?: boolean;
 };
 
 /*

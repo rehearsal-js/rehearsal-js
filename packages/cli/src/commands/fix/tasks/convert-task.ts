@@ -14,14 +14,14 @@ const __dirname = dirname(__filename);
 const workerPath = resolve(__dirname, 'convertWorker.js');
 
 export function convertTask(
-  targetPath: string,
+  srcPath: string,
   options: FixCommandOptions
 ): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: 'Infer Types',
     task: async (ctx: CommandContext, task): Promise<void> => {
       const { rootPath, ignore } = options;
-      const { projectName, orderedFiles } = ctx;
+      const { projectName } = ctx;
 
       // If there is no access to tsc binary throw
       const tscPath = await getPathToBinary('tsc', { cwd: rootPath });
@@ -40,10 +40,10 @@ export function convertTask(
       };
 
       const reporter = new Reporter(reporterOptions);
-      const packageDir = findPackageRootDirectory(targetPath, rootPath) || rootPath;
+      const packageDir = findPackageRootDirectory(srcPath, rootPath) || rootPath;
 
       // this just cares about ts files which are already in the proper migration order
-      if (orderedFiles) {
+      if (ctx.orderedFiles) {
         const migratedFiles: string[] = [];
 
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {

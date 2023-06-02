@@ -17,7 +17,6 @@ type MoveCommandTask = ListrTaskWrapper<CommandContext, ListrDefaultRenderer>;
 
 // rename files to TS extension via git mv only. will throw if the file has not been tracked
 export function moveTask(
-  src: string,
   options: MoveCommandOptions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx?: CommandContext
@@ -37,7 +36,7 @@ export function moveTask(
       if (orderedFiles) {
         if (process.env['TEST'] === 'true' || process.env['WORKER'] === 'false') {
           // Do this on the main thread because there are issues with resolving worker scripts for worker_threads in vitest
-          task.output = gitMove(orderedFiles, src, dryRun);
+          task.output = gitMove(orderedFiles, options.rootPath, dryRun);
         } else {
           await new Promise<string>((resolve, reject) => {
             task.title = 'Executing git mv ...';
@@ -46,7 +45,7 @@ export function moveTask(
             const worker = new Worker(workerPath, {
               workerData: JSON.stringify({
                 sourceFiles: orderedFiles,
-                basePath: src,
+                basePath: options.rootPath,
                 dryRun,
               }),
             });

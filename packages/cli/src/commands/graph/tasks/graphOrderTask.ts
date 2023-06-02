@@ -27,7 +27,7 @@ export function graphOrderTask(
     options: { persistentOutput: true },
     async task(ctx: CommandContext, task) {
       let orderedFiles: string[] = [];
-      const { output, rootPath, ignore, externals, skipPrompt } = options;
+      const { output, rootPath, ignore, externals, graph, outputGraphToConsole } = options;
 
       const serviceMapPath = join(rootPath, '.rehearsal', 'services-map.json');
       let serviceMap: Record<string, string> = {};
@@ -94,15 +94,22 @@ export function graphOrderTask(
         });
       }
 
-      if (!output && !skipPrompt) {
+      if (outputGraphToConsole) {
         task.output = `Graph order for '${srcPath}':\n\n${orderedFiles
           .map((filePath) => filePath.replace(rootPath, '.'))
           .join('\n')}`;
       }
 
-      DEBUG_CALLBACK(`graph file order: ${JSON.stringify(orderedFiles, null, 2)}`);
+      // graph false means we are running a delta from the graph command and we need to filter the files ie. "scoped-graph"
+      if (!graph) {
+        ctx.orderedFiles = orderedFiles.filter((file) =>
+          file.startsWith(resolve(options.rootPath, srcPath))
+        );
+      } else {
+        ctx.orderedFiles = orderedFiles;
+      }
 
-      ctx.orderedFiles = orderedFiles;
+      DEBUG_CALLBACK(`graph file order: ${JSON.stringify(orderedFiles, null, 2)}`);
     },
   };
 }

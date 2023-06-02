@@ -101,8 +101,28 @@ describe('Command: move', () => {
     ]);
   });
 
+  test('move sub directory based on the graph', async () => {
+    const result = await runBin('move', [`src/foo`], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
+
+    const projectSourceDir = resolve(project.baseDir);
+    const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
+      cwd: project.baseDir,
+    });
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/src/bizz.ts', // Was already renamed
+      '/src/foo/baz.ts',
+      '/src/foo/biz.ts',
+      '/src/foo/e.gts',
+      '/src/foo/buz/biz.ts',
+    ]);
+  });
+
   test('can opt-out of move with graph', async () => {
-    const result = await runBin('move', [`./src`], ['--no-graph', '--rootPath', project.baseDir], {
+    const result = await runBin('move', [`./src`], ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
 
@@ -115,6 +135,26 @@ describe('Command: move', () => {
     expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
       '/src/bizz.ts',
       '/src/index.ts',
+      '/src/foo/baz.ts',
+      '/src/foo/biz.ts',
+      '/src/foo/e.gts',
+      '/src/foo/buz/biz.ts',
+    ]);
+  });
+
+  test('can opt-out of move sub directory with graph', async () => {
+    const result = await runBin('move', [`./src/foo`], ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
+
+    const projectSourceDir = resolve(project.baseDir);
+    const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
+      cwd: project.baseDir,
+    });
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expect(sanitizeAbsPath(project.baseDir, tsSourceFiles)).toMatchObject([
+      '/src/bizz.ts',
       '/src/foo/baz.ts',
       '/src/foo/biz.ts',
       '/src/foo/e.gts',
