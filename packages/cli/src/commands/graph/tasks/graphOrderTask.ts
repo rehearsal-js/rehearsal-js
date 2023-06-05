@@ -72,6 +72,7 @@ export function graphOrderTask(
               output,
               ignore: options.ignore,
               serviceMap,
+              externals,
             }),
           });
 
