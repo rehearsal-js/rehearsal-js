@@ -49,7 +49,7 @@ export class Resolver {
   ];
 
   constructor(options: ResolverOptions) {
-    this.ignorePatterns = ['**/*.hbs', ...(options?.ignore ?? [])];
+    this.ignorePatterns = [...(options?.ignore ?? [])];
     this.scanForImports = options?.scanForImports;
     this.includeExternals = options.includeExternals;
     this.fileResolver = enhancedResolve.create.sync({
@@ -90,7 +90,13 @@ export class Resolver {
 
     this.graph.addFileToPackage(packageNode, importerAbsPath);
 
+    // We will not attemptt to parse an .hbs
+    if (extname(importerAbsPath) === '.hbs') {
+      return;
+    }
+
     const contentType = this.getContentType(importerAbsPath);
+
     const content = this.preprocessFileContents(importerAbsPath);
 
     const resolvedImports = this.scanForImports?.(contentType, content) ?? [];

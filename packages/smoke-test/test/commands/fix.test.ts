@@ -62,6 +62,7 @@ describe('fix command', () => {
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/map.hbs')).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/components/map.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/components/share-button.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/models/rental.ts')).toMatchSnapshot();
