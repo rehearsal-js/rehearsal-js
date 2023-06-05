@@ -21,6 +21,7 @@ exports[`Task: graphOrderTask > can print graph order to stdout 1`] = `
 exports[`Task: graphOrderTask > can print graph order to stdout in an ember app with in-repo addons 1`] = `
 "[STARTED] Analyzing project dependency graph
 [DATA] Graph order for <tmp-path>/lib/some-addon/addon:
+[DATA] ./lib/some-addon/addon/components/greet.hbs
 [DATA] ./lib/some-addon/addon/utils/thing.js
 [DATA] ./lib/some-addon/addon/components/greet.js
 [SUCCESS] Analyzing project dependency graph"
