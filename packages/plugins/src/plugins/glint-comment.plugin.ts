@@ -175,7 +175,21 @@ export class GlintCommentPlugin extends Plugin<GlintCommentPluginOptions> {
     const module = info && info.transformedModule;
 
     if (module) {
-      const template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
+      let template;
+
+      // We must wrap this with a try catch because the findTemplateAtOriginalOffset will throw
+      // on a template only conmponent with only a string and no logic or args.
+      try {
+        template = module.findTemplateAtOriginalOffset(filePath, diagnostic.start);
+      } catch (e) {
+        DEBUG_CALLBACK(
+          `Unable to findTemplateAtOriginalOffset for ${diagnostic.code} with ${filePath}`
+        );
+        if (extname(filePath) === '.hbs') {
+          return true;
+        }
+      }
+
       // If we're able to find a template associated with the diagnostic, then we know the error
       // is pointing to the body of a template, and we likely to use HBS comments
       if (template) {

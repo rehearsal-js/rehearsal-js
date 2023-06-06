@@ -139,6 +139,11 @@ export default class Foo extends Component {}
 "
 `;
 
+exports[`fix > .hbs > template only 1`] = `
+"{{! @glint-expect-error @rehearsal TODO TS7006: Parameter '{0}' implicitly has an 'any' type. }}
+Hello!"
+`;
+
 exports[`fix > .ts > class with missing prop 1`] = `
 "class Foo {
   hello() {
