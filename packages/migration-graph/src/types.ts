@@ -22,3 +22,7 @@ export interface HandleImportOptions {
   packageRoots: string[];
   packageJsons: EmberSpecificPackageJson[];
 }
+
+export type PrinterOptions = {
+  hideHbs: boolean;
+};

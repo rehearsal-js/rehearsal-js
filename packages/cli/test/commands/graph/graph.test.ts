@@ -593,11 +593,6 @@ describe('Task: graphOrderTask', () => {
             edges: [],
           },
           {
-            hasTypes: false,
-            name: './app/components/salutation.hbs',
-            edges: [],
-          },
-          {
             name: './app/components/salutation.js',
             hasTypes: false,
             edges: [],
@@ -605,16 +600,6 @@ describe('Task: graphOrderTask', () => {
           {
             name: './app/services/locale.js',
             hasTypes: false,
-            edges: [],
-          },
-          {
-            hasTypes: false,
-            name: './app/templates/application.hbs',
-            edges: [],
-          },
-          {
-            hasTypes: false,
-            name: './app/templates/index.hbs',
             edges: [],
           },
           {
@@ -636,11 +621,6 @@ describe('Task: graphOrderTask', () => {
           {
             name: './lib/some-addon/index.js',
             hasTypes: false,
-            edges: [],
-          },
-          {
-            hasTypes: false,
-            name: './lib/some-addon/addon/components/greet.hbs',
             edges: [],
           },
           {
