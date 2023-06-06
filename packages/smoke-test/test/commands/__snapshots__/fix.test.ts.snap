@@ -7,9 +7,6 @@ exports[`fix command > base_ts_app (file only) 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-CONVERT_TASK_FILES [
-  <tmp-path>/src/app.ts
-]
 [DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
 [TITLE]   2 errors caught by rehearsal
@@ -228,12 +225,6 @@ exports[`fix command > base_ts_app 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-CONVERT_TASK_FILES [
-  <tmp-path>/src/get-live-neighbor-count.ts,
-  <tmp-path>/src/apply-rules.ts,
-  <tmp-path>/src/gen-random-grid.ts,
-  <tmp-path>/src/app.ts
-]
 [DATA] processing file: /src/get-live-neighbor-count.ts
 [DATA] processing file: /src/apply-rules.ts
 [DATA] processing file: /src/gen-random-grid.ts
@@ -459,36 +450,6 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-CONVERT_TASK_FILES [
-  <tmp-path>/app/app.ts,
-  <tmp-path>/app/router.ts,
-  <tmp-path>/app/adapters/application.ts,
-  <tmp-path>/app/components/hello-world.gts,
-  <tmp-path>/app/components/jumbo.hbs,
-  <tmp-path>/app/components/map.hbs,
-  <tmp-path>/app/components/map.ts,
-  <tmp-path>/app/components/nav-bar.hbs,
-  <tmp-path>/app/components/rental.hbs,
-  <tmp-path>/app/components/rentals.hbs,
-  <tmp-path>/app/components/rentals.ts,
-  <tmp-path>/app/components/share-button.hbs,
-  <tmp-path>/app/components/share-button.ts,
-  <tmp-path>/app/models/rental.ts,
-  <tmp-path>/app/routes/index.ts,
-  <tmp-path>/app/routes/rental.ts,
-  <tmp-path>/app/serializers/application.ts,
-  <tmp-path>/app/services/locale.ts,
-  <tmp-path>/app/templates/about.hbs,
-  <tmp-path>/app/templates/application.hbs,
-  <tmp-path>/app/templates/contact.hbs,
-  <tmp-path>/app/templates/index.hbs,
-  <tmp-path>/app/templates/rental.hbs,
-  <tmp-path>/app/components/rental/detailed.hbs,
-  <tmp-path>/app/components/rental/image.hbs,
-  <tmp-path>/app/components/rental/image.ts,
-  <tmp-path>/app/components/rentals/filter.hbs,
-  <tmp-path>/app/components/rentals/filter.ts
-]
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
@@ -676,12 +637,6 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-CONVERT_TASK_FILES [
-  <tmp-path>/src/GreetingHeader.ts,
-  <tmp-path>/src/App.ts,
-  <tmp-path>/src/SimpleComponent.ts,
-  <tmp-path>/src/index.ts
-]
 [DATA] processing file: /src/GreetingHeader.ts
 [DATA] processing file: /src/App.ts
 [DATA] processing file: /src/SimpleComponent.ts
