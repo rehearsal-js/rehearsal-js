@@ -284,6 +284,23 @@ describe('fix', () => {
       project.dispose();
     });
 
+    test('template only', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['template-only.hbs']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).matchSnapshot();
+    });
+
     test('simple class', async () => {
       const [inputs, outputs] = prepareInputFiles(project, [
         'missing-local-prop.hbs',

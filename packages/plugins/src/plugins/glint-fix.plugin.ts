@@ -3,7 +3,7 @@ import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
 import debug from 'debug';
 
 import ts from 'typescript';
-import { CodeActionKind, Diagnostic } from 'vscode-languageserver';
+import { CodeAction, CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
 import type MS from 'magic-string';
@@ -175,12 +175,19 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     service: GlintService
   ): ts.CodeFixAction | undefined {
     const glintService = service.getGlintService();
-    const rawActions = glintService.getCodeActions(
-      fileName,
-      CodeActionKind.QuickFix,
-      diagnostic.range,
-      [diagnostic]
-    );
+
+    let rawActions: CodeAction[] = [];
+
+    try {
+      rawActions = glintService.getCodeActions(
+        fileName,
+        CodeActionKind.QuickFix,
+        diagnostic.range,
+        [diagnostic]
+      );
+    } catch (e) {
+      DEBUG_CALLBACK('Unable to getCodeActions for %s: %o', diagnostic.codeDescription, diagnostic);
+    }
 
     const transformedActions = service
       .transformCodeActionToCodeFixAction(rawActions)
