@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from 'node:path';
+import { dirname, extname, join, resolve } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
@@ -97,6 +97,7 @@ export function graphOrderTask(
 
       if (outputGraphToConsole) {
         task.output = `Graph order for '${srcPath}':\n\n${orderedFiles
+          .filter((filePath) => extname(filePath) !== '.hbs') // Hide .hbs from output
           .map((filePath) => filePath.replace(rootPath, '.'))
           .join('\n')}`;
       }

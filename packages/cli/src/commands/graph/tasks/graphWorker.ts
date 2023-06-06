@@ -95,10 +95,10 @@ export async function writeOutput(
 ): Promise<void> {
   const ext = extname(output);
   if (ext === '.dot') {
-    const dot = generateDotLanguage(graph);
+    const dot = generateDotLanguage(graph, { hideHbs: true });
     await writeFile(output, dot);
   } else {
-    const json = generateJson(rootPath, graph, order);
+    const json = generateJson(rootPath, graph, order, { hideHbs: true });
     await writeFile(output, json);
   }
 }
