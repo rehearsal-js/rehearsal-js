@@ -349,6 +349,25 @@ describe('fix', () => {
 
       expect(reportedItems.length).toBeGreaterThan(0);
     });
+
+    test.only('lengthy nested args in helper', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['nested-helper-line-length.hbs']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      const content = readFileSync(outputs[0], 'utf-8');
+      console.log(content);
+      // expectFile(outputs[0]).matchSnapshot();
+      expect(true).toBe(false);
+    });
   });
 
   describe('.ts', () => {
