@@ -243,6 +243,8 @@ rehearsal graph --output migration-graph.dot --ignore 'docs, vitest.*'
     ./test/main.test.js
 ```
 
+The VSCode extension [Graphviz Interactive Preview](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview) is great for rendering .dot files within VSCode:
+
 <img width="1236" alt="migration-graph-dot" src="https://github.com/rehearsal-js/rehearsal-js/assets/10506014/3928ad40-1060-4b3b-acfc-4a424c53d631">
 
 Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/nested/get-live-neighbor-count.js`.
