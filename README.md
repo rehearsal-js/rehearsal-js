@@ -151,11 +151,11 @@ Options:
   -h, --help               display help for command
 ```
 
-The graph command produces file import graph for a project. This is useful for seeing what files will be migrated and moved.
+The graph command produces a file import graph for a project. This is useful for seeing what files will be migrated and moved.
 
-If your project is very large (a monorepo or workspace) you can use the rehearsal graph command to find what is the leaf-most package and migrate it first.
+If your project is very large (a monorepo or workspace) you can use the rehearsal graph command to find what is the leaf-most package and migrate it first. Using the leaf-most file, will ensure any settled types, will propagate to dependents, improving the overall migration experience and quality of type inference.
 
-Using the leaf-most file, will ensure any settled types, will propagate to dependents, improving the overall migration experience and quality of type inference.
+The `--externals` flag is helpful for finding which external dependencies are either missing types or missing in package.json. This will be included in the generated `--output` file and annotated as either "missing types" or "missing from package.json".
 
 ## `rehearsal move`
 
