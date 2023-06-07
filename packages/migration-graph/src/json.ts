@@ -1,11 +1,14 @@
 import assert from 'node:assert';
+import { extname } from 'node:path';
 import { FileNode } from './file-node.js';
 import { PackageGraph } from './project-graph.js';
+import { PrinterOptions } from './types.js';
 
 export function generateJson(
   rootPath: string,
   packageGraph: PackageGraph,
-  fileNodes: FileNode[]
+  fileNodes: FileNode[],
+  options: PrinterOptions = { hideHbs: false }
 ): string {
   const result: {
     name: string;
@@ -15,6 +18,15 @@ export function generateJson(
       edges: { packageName: string; fileName: string }[];
     }[];
   }[] = [];
+
+  fileNodes = fileNodes.filter((file) => {
+    if (options.hideHbs) {
+      // If the hideHbs option is true, we omit all
+      // files with the.hbs ext
+      return extname(file.id) !== '.hbs';
+    }
+    return true;
+  });
 
   // Group files by package
   const filesByPackage: Map<string, FileNode[]> = new Map();

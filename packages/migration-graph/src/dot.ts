@@ -1,8 +1,13 @@
-import { relative } from 'node:path';
+import { extname, relative } from 'node:path';
 import assert from 'node:assert';
 import { PackageGraph } from './project-graph.js';
+import { PrinterOptions } from './types.js';
+import { FileNode } from './file-node.js';
 
-export function generateDotLanguage(graph: PackageGraph): string {
+export function generateDotLanguage(
+  graph: PackageGraph,
+  options: PrinterOptions = { hideHbs: false }
+): string {
   let dot = 'strict digraph {\n';
   dot += `
   rankdir="LR" splines="true" overlap="false" nodesep="0.16" ranksep="0.18" fontname="Helvetica-bold" fontsize="9" style="rounded,bold,filled" fillcolor="#ffffff" compound="true"
@@ -12,6 +17,8 @@ export function generateDotLanguage(graph: PackageGraph): string {
 
   const seenPackages = new Set<string>();
 
+  const fileFilter = generateFileFilter(options);
+
   // Create subgraphs for each package
   for (const packageNode of graph.packages.values()) {
     if (seenPackages.has(packageNode.name)) {
@@ -20,7 +27,7 @@ export function generateDotLanguage(graph: PackageGraph): string {
 
     const packageName = replaceAll(packageNode.name.replace(/[@/]/g, ''), '-', '_');
 
-    if (packageNode.files.length === 0) {
+    if (packageNode.files.filter(fileFilter).length === 0) {
       continue;
     }
 
@@ -45,7 +52,7 @@ export function generateDotLanguage(graph: PackageGraph): string {
     }
 
     // Add nodes for files in the package
-    for (const fileNode of packageNode.files) {
+    for (const fileNode of packageNode.files.filter(fileFilter)) {
       if (packageNode.external) {
         dot += `    "${fileNode.id}" [label="${relative(
           packageNode.packageRoot,
@@ -64,7 +71,7 @@ export function generateDotLanguage(graph: PackageGraph): string {
 
   // Add edges between files
   for (const packageNode of graph.packages.values()) {
-    for (const fileNode of packageNode.files) {
+    for (const fileNode of packageNode.files.filter(fileFilter)) {
       for (const edgeNode of fileNode.edges) {
         const pkgName = graph.getPackageNameFromFileId(edgeNode.id);
 
@@ -106,4 +113,15 @@ export function generateDotLanguage(graph: PackageGraph): string {
 
 function replaceAll(str: string, oldStr: string, newStr: string): string {
   return str.replace(new RegExp(oldStr, 'g'), newStr);
+}
+
+function generateFileFilter({ hideHbs }: PrinterOptions) {
+  return (file: FileNode) => {
+    if (hideHbs) {
+      // If the hideHbs option is true, we omit all
+      // files with the.hbs ext
+      return extname(file.id) !== '.hbs';
+    }
+    return true;
+  };
 }
