@@ -1,3 +1,12 @@
+## <small>1.0.1 (2023-06-07)</small>
+
+* chore(gh-action-bot): adding new diagnostics ([2605666](https://github.com/rehearsal-js/rehearsal-js/commit/2605666))
+* fix: thread external option (#1106) ([46edcc0](https://github.com/rehearsal-js/rehearsal-js/commit/46edcc0)), closes [#1106](https://github.com/rehearsal-js/rehearsal-js/issues/1106)
+* fix(graph): include hbs files in orderedFiles (#1108) ([a0ec256](https://github.com/rehearsal-js/rehearsal-js/commit/a0ec256)), closes [#1108](https://github.com/rehearsal-js/rehearsal-js/issues/1108)
+* fix(plugins): try/catch around throwing glint methods (#1107) ([bf9a12d](https://github.com/rehearsal-js/rehearsal-js/commit/bf9a12d)), closes [#1107](https://github.com/rehearsal-js/rehearsal-js/issues/1107)
+
+
+
 ## 1.0.0 (2023-06-02)
 
 
