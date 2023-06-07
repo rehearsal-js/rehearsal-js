@@ -1,3 +1,15 @@
+## <small>1.0.2 (2023-06-07)</small>
+
+* fix: migrate @glint/core dep (#1115) ([dc6c7df](https://github.com/rehearsal-js/rehearsal-js/commit/dc6c7df)), closes [#1115](https://github.com/rehearsal-js/rehearsal-js/issues/1115)
+* Update README.md ([845e0ff](https://github.com/rehearsal-js/rehearsal-js/commit/845e0ff))
+* Update README.md ([8853432](https://github.com/rehearsal-js/rehearsal-js/commit/8853432))
+* Update README.md ([bfc25bf](https://github.com/rehearsal-js/rehearsal-js/commit/bfc25bf))
+* Update README.md ([ff2a559](https://github.com/rehearsal-js/rehearsal-js/commit/ff2a559))
+* Update README.md ([5379752](https://github.com/rehearsal-js/rehearsal-js/commit/5379752))
+* Update README.md ([c4feb18](https://github.com/rehearsal-js/rehearsal-js/commit/c4feb18))
+
+
+
 ## <small>1.0.1 (2023-06-07)</small>
 
 * chore(gh-action-bot): adding new diagnostics ([2605666](https://github.com/rehearsal-js/rehearsal-js/commit/2605666))
