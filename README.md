@@ -227,48 +227,46 @@ src
         └── get-live-neighbor-count.js
 ```
 
-Some of these files import into each other. We want to infer the types of the outermost leaf first. Have Rehearsal look at the graph of files, and determine the file migration order and ignore some files and directories and output the graph into a .json doc.
+Some of these files import into each other. We want to infer the types of the outermost leaf first. Have Rehearsal look at the graph of files, and determine the file migration order, ignore some files and directories and output the graph into a .dot file.
 
 ```
-rehearsal graph --ignore 'vitest.*,docs/*' --output migration-graph.json
+rehearsal graph --output migration-graph.dot --ignore 'docs, vitest.*'
 ...
 ✔ Analyzing project dependency graph ...
-  › Graph order for '.':
-    src/lib/gen-random-grid.js
-    src/lib/nested/get-live-neighbor-count.js
-    src/lib/nested/apply-rules.js
-    src/app.js
-    test/main.test.js
+  › Graph order for 'cgol-js-app':
+    ./src/lib/nested/get-live-neighbor-count.js
+    ./src/lib/nested/apply-rules.js
+    ./src/lib/gen-random-grid.js
+    ./src/app.js
+    ./test/main.test.js
 ```
 
-Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/gen-random-grid.js`. Lets start migrating files. Use `rehearsal move` to move files to TypeScript.
+<img width="1236" alt="migration-graph-dot" src="https://github.com/rehearsal-js/rehearsal-js/assets/10506014/3928ad40-1060-4b3b-acfc-4a424c53d631">
+
+
+Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/nested/get-live-neighbor-count.js`. Lets start migrating files. Use `rehearsal move` to move files to TypeScript.
 
 ```
-rehearsal move . --ignore 'vitest.*,docs/*'
+rehearsal move . --ignore 'docs, vitest.*'
 ...
-✔ Validating source path
 ✔ Analyzing project dependency graph ...
-  › Graph order for '.':
-    src/lib/gen-random-grid.js
-    src/lib/nested/get-live-neighbor-count.js
-    src/lib/nested/apply-rules.js
-    src/app.js
-    test/main.test.js
-✔ Executing git mv
+✔ Executing git mv ...
   › renamed:
-    /src/lib/gen-random-grid.js -> /src/lib/gen-random-grid.ts
-    /src/lib/nested/get-live-neighbor-count.js -> /src/lib/nested/get-live-neighbor-count.ts
-    /src/lib/nested/apply-rules.js -> /src/lib/nested/apply-rules.ts
-    /src/app.js -> /src/app.ts
-    /test/main.test.js -> /test/main.test.ts
+    ./src/lib/nested/get-live-neighbor-count.js -> ./src/lib/nested/get-live-neighbor-count.ts
+    ./src/lib/nested/apply-rules.js -> ./src/lib/nested/apply-rules.ts
+    ./src/lib/gen-random-grid.js -> ./src/lib/gen-random-grid.ts
+    ./src/app.js -> ./src/app.ts
+    ./test/main.test.js -> ./test/main.test.ts
 ```
 
 We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies. Let's run Rehearsal `fix` without doing this and see what happens.
 
 ```
-rehearsal fix . --ignore 'vitest.*,docs/*'
+rehearsal fix . --ignore 'docs, vitest.*'
 ...
-✖ /tsconfig.json does not exists. Please run rehearsal inside a project with a valid tsconfig.…
+✖ Please install the following missing devDependencies and try again:
+  "prettier": "^2.0.0",
+  "eslint": "^8.0.0"
 ◼ Analyzing project dependency graph
 ◼ Infer Types
 ```
@@ -276,16 +274,10 @@ rehearsal fix . --ignore 'vitest.*,docs/*'
 Rehearsal has a series of pre-flight checks it will validate against [pre-reqs](https://github.com/rehearsal-js/rehearsal-js/blob/master/packages/cli/src/prereqs.ts) before it can start inferring types. As you can see Rehearsal cannot find the `tsconfig.json` in the root of our project, because we've not added it yet. Follow the "Setup / Pre-Reqs" directions above adding any missing config files (tsconfig.json / .eslintrc.json) and missing devDependencies ... Now lets re-run `fix` against our project and see what we get:
 
 ```
-rehearsal fix . --ignore 'vitest.*,docs/*'
+rehearsal fix . --ignore 'docs, vitest.*'
 ...
 ✔ Initialize
 ✔ Analyzing project dependency graph ...
-  › Graph order for '.':
-    src/lib/gen-random-grid.ts
-    src/lib/nested/get-live-neighbor-count.ts
-    src/lib/nested/apply-rules.ts
-    src/app.ts
-    test/main.test.ts
 ✔ Types Inferred
   10 errors caught by rehearsal
   6 have been fixed by rehearsal
