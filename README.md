@@ -227,6 +227,8 @@ src
         └── get-live-neighbor-count.js
 ```
 
+## Graph
+
 Some of these files import into each other. We want to infer the types of the outermost leaf first. Have Rehearsal look at the graph of files, and determine the file migration order, ignore some files and directories and output the graph into a .dot file.
 
 ```
@@ -243,8 +245,10 @@ rehearsal graph --output migration-graph.dot --ignore 'docs, vitest.*'
 
 <img width="1236" alt="migration-graph-dot" src="https://github.com/rehearsal-js/rehearsal-js/assets/10506014/3928ad40-1060-4b3b-acfc-4a424c53d631">
 
+Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/nested/get-live-neighbor-count.js`.
 
-Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/nested/get-live-neighbor-count.js`. Lets start migrating files. Use `rehearsal move` to move files to TypeScript.
+## Move
+Lets start migrating files. Use `rehearsal move` to move files to TypeScript.
 
 ```
 rehearsal move . --ignore 'docs, vitest.*'
@@ -259,7 +263,10 @@ rehearsal move . --ignore 'docs, vitest.*'
     ./test/main.test.js -> ./test/main.test.ts
 ```
 
-We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies. Let's run Rehearsal `fix` without doing this and see what happens.
+We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies. 
+
+## Fix
+Let's run Rehearsal `fix` without doing this and see what happens.
 
 ```
 rehearsal fix . --ignore 'docs, vitest.*'
