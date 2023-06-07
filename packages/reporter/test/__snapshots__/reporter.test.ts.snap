@@ -179,7 +179,7 @@ exports[`Reporter > addTSItemToRun 1`] = `
       \\"message\\": \\"unused variable\\",
       \\"hint\\": \\"This is the hint.\\",
       \\"hintAdded\\": true,
-      \\"nodeKind\\": 79,
+      \\"nodeKind\\": 80,
       \\"nodeText\\": \\"var1\\",
       \\"helpUrl\\": \\"\\",
       \\"nodeLocation\\": {

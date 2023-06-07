@@ -71,6 +71,7 @@ describe('fix command', () => {
 
   test('glimmerx_js_app', async () => {
     project = prepareProject('glimmerx_js_app');
+    const projectRoot = resolve(project.baseDir);
     await project.write();
 
     await rehearsalCLI('move', 'src', ['--rootPath', project.baseDir], {
@@ -80,6 +81,11 @@ describe('fix command', () => {
     const result = await rehearsalCLI('fix', 'src', ['--rootPath', project.baseDir], {
       cwd: project.baseDir,
     });
+
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/index.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/App.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/GreetingHeader.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/SimpleComponent.ts')).toMatchSnapshot();
   });
 });

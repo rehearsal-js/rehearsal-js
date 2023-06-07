@@ -642,15 +642,149 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
-[TITLE]   17 errors caught by rehearsal
-[TITLE]   4 have been fixed by rehearsal
-[TITLE]   13 errors need to be fixed manually
-[TITLE]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE]   16 errors caught by rehearsal
+[TITLE]   8 have been fixed by rehearsal
+[TITLE]   8 errors need to be fixed manually
+[TITLE]     -- 8 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   17 errors caught by rehearsal
-[SUCCESS]   4 have been fixed by rehearsal
-[SUCCESS]   13 errors need to be fixed manually
-[SUCCESS]     -- 12 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 1 eslint errors, with details in the report"
+[SUCCESS]   16 errors caught by rehearsal
+[SUCCESS]   8 have been fixed by rehearsal
+[SUCCESS]   8 errors need to be fixed manually
+[SUCCESS]     -- 8 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
+
+exports[`fix command > glimmerx_js_app 2`] = `
+"import { renderComponent } from \\"@glimmerx/core\\";
+import App from \\"./App\\";
+
+const containerElement = document.getElementById(\\"app\\");
+
+// @ts-expect-error @rehearsal TODO TS2769: No overload matches this call..   Overload 1 of 2, '(ComponentClass: object, options: RenderComponentOptions): Promise<void>', gave the following error..     Argument of type 'HTMLElement | null' is not assignable to parameter of type 'RenderComponentOptions'..       Type 'null' is not assignable to type 'RenderComponentOptions'..   Overload 2 of 2, '(ComponentClass: object, element: HTMLElement): Promise<void>', gave the following error..     Argument of type 'HTMLElement | null' is not assignable to parameter of type 'HTMLElement'..       Type 'null' is not assignable to type 'HTMLElement'.
+renderComponent(App, containerElement);
+"
+`;
+
+exports[`fix command > glimmerx_js_app 3`] = `
+"import Component, { hbs, tracked } from \\"@glimmerx/component\\";
+import { on, action } from \\"@glimmerx/modifier\\";
+
+import \\"./App.css\\";
+import GreetingHeader from \\"./GreetingHeader\\";
+
+/**
+ * Formats a name to include \\"the Great and Powerful\\" afterwards. This is
+ * a ridiculous helper!
+ *
+ * @param {string} name the name to format
+ * @returns {string} the formatted name
+ */
+function formatName(name: string): string {
+  return \`\${name} the Great and Powerful\`;
+}
+
+interface FormattedNameSignature {
+  Args: {
+    name: string;
+  };
+}
+/** @extends {Component<FormattedNameSignature>} */
+class FormattedName extends Component {
+  static template = hbs\`
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Readonly<EmptyObject>'. }}
+    {{formatName this.args.name}}!
+  \`;
+}
+
+const I_AM_CONSTANT = \\"and I am a constant\\";
+
+interface ComponentAsArgSignature {
+  Args: {
+    title: import(\\"@glint/template\\").WithBoundArgs<
+      typeof Component<FormattedNameSignature>,
+      \\"name\\"
+    >;
+  };
+}
+/**
+ * @type {import('@glimmerx/component').TemplateComponent<ComponentAsArgSignature>}
+ */
+const ComponentAsArg: import(\\"@glimmerx/component\\").TemplateComponent<ComponentAsArgSignature> = hbs\`
+  <h1>I am {{@title}}</h1>
+  {{I_AM_CONSTANT}}
+\`;
+
+export default class HelloWorld extends Component {
+  static template = hbs\`
+    <ComponentAsArg @title={{component FormattedName name=\\"Oz\\"}}/>
+    <GreetingHeader @greeting=\\"hello\\"/>
+    <IncrementableButton @startCount={{100}}/>
+  \`;
+}
+
+// @ts-expect-error @rehearsal TODO TS6196: 'IncrementableButtonSignature' is declared but never used.
+interface IncrementableButtonSignature {
+  Args: {
+    startCount: number;
+  };
+}
+
+/** @extends {Component<IncrementableButtonSignature>} */
+class IncrementableButton extends Component {
+  /** @type {number} the incrementable count */
+  // @ts-expect-error @rehearsal TODO TS2339: Property 'startCount' does not exist on type 'Readonly<EmptyObject>'.
+  @tracked count: number = this.args.startCount;
+
+  @action increment() {
+    this.count++;
+  }
+
+  static template = hbs\`
+    <p>You have clicked the button {{this.count}} times.</p>
+    <button {{on \\"click\\" this.increment}}>Click</button>
+  \`;
+}
+"
+`;
+
+exports[`fix command > glimmerx_js_app 4`] = `
+"import Component, { hbs } from \\"@glimmerx/component\\";
+import { helper } from \\"@glimmerx/helper\\";
+
+const or = helper(
+  /** @param {[a: *, b: *]} param */
+  // @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+  ([a, b]) => a || b
+);
+
+// @ts-expect-error @rehearsal TODO TS6196: 'GreetingHeaderSignature' is declared but never used.
+interface GreetingHeaderSignature {
+  Args: {
+    greeting: string;
+    src?: string;
+    target?: string;
+  };
+}
+
+/** @extends {Component<GreetingHeaderSignature>} */
+export default class GreetingHeader extends Component {
+  static template = hbs\`
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'greeting' does not exist on type '{}'. }}
+    <h1>{{@greeting}}, {{or @target 'glimmerx'}}</h1>
+    <img src={{this.src}}/>
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    {{@age}}
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'onion' does not exist on type '{}'. }}
+    {{@onion}}
+  \`;
+
+  get src() {
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'src' does not exist on type 'Readonly<EmptyObject>'.
+    return this.args.src || \\"https://picsum.photos/250\\";
+  }
+}
+"
+`;
+
+exports[`fix command > glimmerx_js_app 5`] = `""`;
