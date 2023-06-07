@@ -50,7 +50,7 @@
     "qunit-dom": "^2.0.0",
     "tracked-built-ins": "^3.1.1",
     "webpack": "^5.75.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.0.3",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-node": "^11.0.0",

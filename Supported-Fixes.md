@@ -1,6 +1,6 @@
 # Supported CodeFixes
 
-The following 39 codefixes are supported by Rehearsal, which resolve 109 different TypeScript diagnostics errors.
+The following 40 codefixes are supported by Rehearsal, which resolve 110 different TypeScript diagnostics errors.
 
 ## Add Missing `async` Keyword
 
@@ -317,6 +317,52 @@ export { A, B } from '../sample-1.js';
 
 ```ts
 export type { A, B } from '../sample-1.js';
+
+```
+
+
+## Convert @typedef to Type
+
+id: _convertTypedefToType_
+
+Converts JSDoc typedef to TypeScript type(s).
+**Input:**
+
+```ts
+/**
+ * @typedef {(number|string|undefined)} Foo
+ */
+
+```
+```ts
+/**
+ * @typedef {object} Person
+ * @property {object} data
+ * @property {string} data.name
+ * @property {number} data.age
+ * @property {object} data.contact
+ * @property {string} data.contact.address
+ * @property {string} [data.contact.phone]
+ */
+
+```
+**Output:**
+
+```ts
+  type Foo = (number | string | undefined);
+
+```
+```ts
+interface Person {
+  data: {
+    name: string;
+    age: number;
+    contact: {
+      address: string;
+      phone?: string;
+    };
+  };
+}
 
 ```
 

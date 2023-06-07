@@ -36,6 +36,6 @@
     "prettier": "^2.8.3",
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.3"
   }
 }
