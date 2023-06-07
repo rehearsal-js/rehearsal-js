@@ -1,6 +1,5 @@
 import { extname } from 'node:path';
 import { createRequire } from 'node:module';
-import { type TransformManager } from '@glint/core';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import { GlintService, PluginOptions, Service, PathUtils, Plugin } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
@@ -8,6 +7,7 @@ import ts from 'typescript';
 import debug from 'debug';
 import { getLocation } from '../helpers.js';
 import { getConditionalCommentPos, onMultilineConditionalTokenLine } from './utils.js';
+import type { TransformManager } from '@glint/core';
 import type MS from 'magic-string';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-comment');
