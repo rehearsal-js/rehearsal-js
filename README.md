@@ -100,21 +100,29 @@ glint: {
 Add `@rehearsal/cli` to your project as a **devDependency**.
 
 ```bash
-yarn add -D @rehearsal/cli
+yarn add -D @rehearsal/cli@latest typescript@latest
 # or
-pnpm add -D @rehearsal/cli
+pnpm add -D @rehearsal/cli@latest typescript@latest
+```
+
+Create a tsconfig.json in your project root, if it doesn't already exist.
+
+```bash
+tsc --init
 ```
 
 Note: `@rehearsal/cli` must be installed as a devDependency as it requires your project's version of TypeScript to run.
 
 # Usage
 
-Once installed with pre-req's complete, invoke using your package manager:
+Once installed with pre-req's complete, invoke using your package manager or directly:
 
 ```bash
 yarn rehearsal
 # or
 pnpm rehearsal
+# or
+rehearsal
 ```
 
 ## Available Commands
