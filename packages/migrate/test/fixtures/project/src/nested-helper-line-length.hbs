@@ -1,8 +1,5 @@
 <div
-  {{on
-    "click"
-    (fn
-      @someFunc
+  class="{{concat
       @someArg1
       @someArg2
       @someArg3
@@ -13,6 +10,59 @@
       @someArg8
       @someArg9
       @someArg10
-    )
-  }}
-/>
+    }}"
+>
+  Hello World!
+</div>
+
+{{@arg1}}
+
+{{concat @arg1}}
+
+{{concat @arg1 @arg2}}
+
+<div class="{{concat @arg1}}">
+  <div class="{{concat @arg1}}">
+    <div class="{{concat @arg1}}">
+      <div class="{{concat @arg1}}">
+        Hello World!
+      </div>
+    </div>
+  </div>
+</div>
+
+{{@arg1}}
+
+{{concat
+  @someArg1
+  @someArg2
+  @someArg3
+  @someArg4
+  @someArg5
+  @someArg6
+  @someArg7
+  @someArg8
+  @someArg9
+  @someArg10
+}}
+
+<div>
+  <div>
+    <div>
+      <div>
+        {{concat
+          @someArg1
+          @someArg2
+          @someArg3
+          @someArg4
+          @someArg5
+          @someArg6
+          @someArg7
+          @someArg8
+          @someArg9
+          @someArg10
+        }}
+      </div>
+    </div>
+  </div>
+</div>

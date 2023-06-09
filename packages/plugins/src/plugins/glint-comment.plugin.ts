@@ -2,6 +2,7 @@ import { extname } from 'node:path';
 import { createRequire } from 'node:module';
 import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
 import { GlintService, PluginOptions, Service, PathUtils, Plugin } from '@rehearsal/service';
+// import { findNodeStartsAtPosition } from '@rehearsal/ts-utils';
 import { type Location } from '@rehearsal/reporter';
 import ts from 'typescript';
 import debug from 'debug';
@@ -26,6 +27,38 @@ type TransformedInfo = NonNullable<
 
 export interface DiagnosticWithLocation extends DiagnosticWithContext {
   location: Location;
+}
+
+function inMustacheStatement(sourceFile: ts.SourceFile, pos: number): boolean {
+  // An .hbs file for a ts.SourceFile has statements.
+  // The statements map to for the nearest identifier is a mustache statement
+  const node = getStartOfMustacheStatementAtPos(sourceFile, pos);
+  return !!node;
+}
+
+function getStartOfMustacheStatementAtPos(
+  sourceFile: ts.SourceFile,
+  pos: number
+): number | undefined {
+  const start = sourceFile.text.substring(0, pos).lastIndexOf('{{');
+  return start >= 0 ? start : undefined;
+}
+
+function calaculateLeadingWhitespaceForComment(
+  sourceFile: ts.SourceFile,
+  start: number
+): { startOfLine: number; leadingWhiteSpace: string } {
+  const lineAndChar = ts.getLineAndCharacterOfPosition(sourceFile, start);
+  const startOfLine = ts.getPositionOfLineAndCharacter(sourceFile, lineAndChar.line, 0);
+
+  let ws = '';
+  let i = startOfLine;
+  while (sourceFile.text[i] === ' ') {
+    i += 1;
+    ws += ' ';
+  }
+
+  return { startOfLine, leadingWhiteSpace: ws };
 }
 
 export class GlintCommentPlugin extends Plugin<GlintCommentPluginOptions> {
@@ -131,36 +164,47 @@ export class GlintCommentPlugin extends Plugin<GlintCommentPluginOptions> {
       ? `@glint-expect-error ${message}`
       : `@ts-expect-error ${message}`;
 
-    const lineAndChar = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
-
+    // let lineAndChar = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
+    let { startOfLine, leadingWhiteSpace } = calaculateLeadingWhitespaceForComment(
+      diagnostic.file,
+      diagnostic.start
+    );
     /**
      * The following logic has been ported from  https://github.com/airbnb/ts-migrate/blob/master/packages/ts-migrate-plugins/src/plugins/ts-ignore.ts#L199
      *
      * It correctly finds the valid place to stick the inline comment
      */
-    if (!this.ignoreLines[lineAndChar.line]) {
-      const commentLine = lineAndChar.line;
-      const pos = ts.getPositionOfLineAndCharacter(diagnostic.file, commentLine, 0);
 
-      let ws = '';
-      let i = pos;
-      while (diagnostic.file.text[i] === ' ') {
-        i += 1;
-        ws += ' ';
+    let commentMessage: string = `${leadingWhiteSpace}// ${tsIgnoreCommentText}${ts.sys.newLine}`;
+
+    if (isInHbsContext) {
+      // Setup default hbs message
+      commentMessage = `${leadingWhiteSpace}{{! ${tsIgnoreCommentText} }}${ts.sys.newLine}`;
+
+      // If we are in the middle of a mustache statement
+      if (inMustacheStatement(diagnostic.file, diagnostic.start)) {
+        const startOfBlockPos = getStartOfMustacheStatementAtPos(diagnostic.file, diagnostic.start);
+
+        if (!startOfBlockPos) {
+          throw new Error('An unhandled error has occured.');
+        }
+
+        const updated = calaculateLeadingWhitespaceForComment(diagnostic.file, startOfBlockPos);
+
+        startOfLine = updated.startOfLine;
+        leadingWhiteSpace = updated.leadingWhiteSpace;
+
+        commentMessage = `${leadingWhiteSpace}{{! ${tsIgnoreCommentText} }}${ts.sys.newLine}`;
       }
+    } else if (onMultilineConditionalTokenLine(diagnostic.file, diagnostic.start)) {
+      startOfLine = getConditionalCommentPos(diagnostic.file, diagnostic.start);
+      commentMessage = ` // ${tsIgnoreCommentText}${ts.sys.newLine}${leadingWhiteSpace} `;
+    }
 
-      if (isInHbsContext) {
-        changeTracker.appendRight(pos, `${ws}{{! ${tsIgnoreCommentText} }}${ts.sys.newLine}`);
-      } else if (onMultilineConditionalTokenLine(diagnostic.file, diagnostic.start)) {
-        changeTracker.appendRight(
-          getConditionalCommentPos(diagnostic.file, diagnostic.start),
-          ` // ${tsIgnoreCommentText}${ts.sys.newLine}${ws} `
-        );
-      } else {
-        changeTracker.appendRight(pos, `${ws}// ${tsIgnoreCommentText}${ts.sys.newLine}`);
-      }
+    if (!this.ignoreLines[startOfLine]) {
+      changeTracker.appendRight(startOfLine, commentMessage);
 
-      this.ignoreLines[lineAndChar.line] = true;
+      this.ignoreLines[startOfLine] = true;
     }
   }
 

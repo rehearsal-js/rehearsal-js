@@ -139,6 +139,88 @@ export default class Foo extends Component {}
 "
 `;
 
+exports[`fix > .hbs > support adding comments before curlies 1`] = `
+"<div
+  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'someArg1' does not exist on type '{}'. }}
+  class=\\"{{concat
+      @someArg1
+      @someArg2
+      @someArg3
+      @someArg4
+      @someArg5
+      @someArg6
+      @someArg7
+      @someArg8
+      @someArg9
+      @someArg10
+    }}\\"
+>
+  Hello World!
+</div>
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+{{@arg1}}
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+{{concat @arg1}}
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+{{concat @arg1 @arg2}}
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+<div class=\\"{{concat @arg1}}\\">
+  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+  <div class=\\"{{concat @arg1}}\\">
+    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+    <div class=\\"{{concat @arg1}}\\">
+      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+      <div class=\\"{{concat @arg1}}\\">
+        Hello World!
+      </div>
+    </div>
+  </div>
+</div>
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'arg1' does not exist on type '{}'. }}
+{{@arg1}}
+
+{{! @glint-expect-error @rehearsal TODO TS2339: Property 'someArg1' does not exist on type '{}'. }}
+{{concat
+  @someArg1
+  @someArg2
+  @someArg3
+  @someArg4
+  @someArg5
+  @someArg6
+  @someArg7
+  @someArg8
+  @someArg9
+  @someArg10
+}}
+
+<div>
+  <div>
+    <div>
+      <div>
+        {{! @glint-expect-error @rehearsal TODO TS2339: Property 'someArg1' does not exist on type '{}'. }}
+        {{concat
+          @someArg1
+          @someArg2
+          @someArg3
+          @someArg4
+          @someArg5
+          @someArg6
+          @someArg7
+          @someArg8
+          @someArg9
+          @someArg10
+        }}
+      </div>
+    </div>
+  </div>
+</div>"
+`;
+
 exports[`fix > .hbs > template only 1`] = `
 "{{! @glint-expect-error @rehearsal TODO TS7006: Parameter '{0}' implicitly has an 'any' type. }}
 Hello!"

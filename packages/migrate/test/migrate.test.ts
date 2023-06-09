@@ -350,7 +350,7 @@ describe('fix', () => {
       expect(reportedItems.length).toBeGreaterThan(0);
     });
 
-    test.only('lengthy nested args in helper', async () => {
+    test('support adding comments before curlies', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['nested-helper-line-length.hbs']);
 
       const input: MigrateInput = {
@@ -363,10 +363,8 @@ describe('fix', () => {
       for await (const _ of migrate(input)) {
         // no ops
       }
-      const content = readFileSync(outputs[0], 'utf-8');
-      console.log(content);
-      // expectFile(outputs[0]).matchSnapshot();
-      expect(true).toBe(false);
+
+      expectFile(outputs[0]).matchSnapshot();
     });
   });
 
