@@ -454,58 +454,40 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
 [DATA] processing file: /app/components/hello-world.gts
-[DATA] processing file: /app/components/jumbo.hbs
-[DATA] processing file: /app/components/map.hbs
 [DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/nav-bar.hbs
-[DATA] processing file: /app/components/rental.hbs
-[DATA] processing file: /app/components/rentals.hbs
 [DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.hbs
 [DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
 [DATA] processing file: /app/routes/index.ts
 [DATA] processing file: /app/routes/rental.ts
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /app/templates/about.hbs
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/contact.hbs
-[DATA] processing file: /app/templates/index.hbs
-[DATA] processing file: /app/templates/rental.hbs
-[DATA] processing file: /app/components/rental/detailed.hbs
-[DATA] processing file: /app/components/rental/image.hbs
 [DATA] processing file: /app/components/rental/image.ts
-[DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   66 errors caught by rehearsal
+[TITLE]   31 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
-[TITLE]   63 errors need to be fixed manually
-[TITLE]     -- 63 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   28 errors need to be fixed manually
+[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   66 errors caught by rehearsal
+[SUCCESS]   31 errors caught by rehearsal
 [SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS]   63 errors need to be fixed manually
-[SUCCESS]     -- 63 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   28 errors need to be fixed manually
+[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 2`] = `
 "<div class=\\"map\\">
   <img
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'lat' does not exist on type '{}'. }}
     alt=\\"Map image at coordinates {{@lat}},{{@lng}}\\"
-    {{! @glint-expect-error @rehearsal TODO TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Element'. }}
     ...attributes
     src={{this.src}}
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'width' does not exist on type '{}'. }}
-    width={{@width}}
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'height' does not exist on type '{}'. }}
-    height={{@height}}
-  />
-</div>"
+    width={{@width}} height={{@height}}
+  >
+</div>
+"
 `;
 
 exports[`fix command > ember_js_app_4.11 3`] = `
