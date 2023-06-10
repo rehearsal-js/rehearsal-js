@@ -50,7 +50,7 @@ export class Resolver {
 
   constructor(options: ResolverOptions) {
     this.ignorePatterns = [
-      '**/*.hbs', // +  // Ignoring HBS until .hbs file until https://github.com/rehearsal-js/rehearsal-js/issues/1119 is resolved
+      '**/*.hbs', // +  // Ignoring .hbs until https://github.com/rehearsal-js/rehearsal-js/issues/1119 is resolved
       ...(options?.ignore ?? []),
     ];
     this.scanForImports = options?.scanForImports;
