@@ -46,7 +46,9 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
       return undefined;
     }
 
-    const closeParen = node.getChildren().find((node) => node.kind == 21);
+    const closeParen = node
+      .getChildren()
+      .find((node) => node.kind == ts.SyntaxKind.CloseParenToken);
 
     // Only named methods are supported
     if (!closeParen) {

@@ -19,7 +19,9 @@ export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
       return undefined;
     }
 
-    const closeParen = diagnostic.node.getChildren().find((node) => node.kind == 21);
+    const closeParen = diagnostic.node
+      .getChildren()
+      .find((node) => node.kind == ts.SyntaxKind.CloseParenToken);
     if (!closeParen) {
       return undefined;
     }
