@@ -1,3 +1,16 @@
+## <small>1.0.3 (2023-06-13)</small>
+
+* feat: enable convertTypedefToType codefix (#1116) ([2a0ab77](https://github.com/rehearsal-js/rehearsal-js/commit/2a0ab77)), closes [#1116](https://github.com/rehearsal-js/rehearsal-js/issues/1116)
+* chore: bump typescript@5.1.3 (#1117) ([63e859c](https://github.com/rehearsal-js/rehearsal-js/commit/63e859c)), closes [#1117](https://github.com/rehearsal-js/rehearsal-js/issues/1117)
+* chore(deps-dev): bump css-loader from 3.4.2 to 6.8.1 (#1124) ([d101abe](https://github.com/rehearsal-js/rehearsal-js/commit/d101abe)), closes [#1124](https://github.com/rehearsal-js/rehearsal-js/issues/1124)
+* chore(deps-dev): bump ember-qunit from 6.2.0 to 7.0.0 (#1125) ([1138871](https://github.com/rehearsal-js/rehearsal-js/commit/1138871)), closes [#1125](https://github.com/rehearsal-js/rehearsal-js/issues/1125)
+* chore(deps-dev): bump eslint-plugin-n from 15.6.1 to 16.0.0 (#1127) ([52a7216](https://github.com/rehearsal-js/rehearsal-js/commit/52a7216)), closes [#1127](https://github.com/rehearsal-js/rehearsal-js/issues/1127)
+* chore(deps): bump simple-git from 3.17.0 to 3.19.0 (#1126) ([fa66e79](https://github.com/rehearsal-js/rehearsal-js/commit/fa66e79)), closes [#1126](https://github.com/rehearsal-js/rehearsal-js/issues/1126)
+* chore(gh-action-bot): adding new diagnostics ([84b4eb0](https://github.com/rehearsal-js/rehearsal-js/commit/84b4eb0))
+* fix: ignore hbs files (#1122) ([06cbf50](https://github.com/rehearsal-js/rehearsal-js/commit/06cbf50)), closes [#1122](https://github.com/rehearsal-js/rehearsal-js/issues/1122)
+
+
+
 ## <small>1.0.2 (2023-06-07)</small>
 
 * fix: migrate @glint/core dep (#1115) ([dc6c7df](https://github.com/rehearsal-js/rehearsal-js/commit/dc6c7df)), closes [#1115](https://github.com/rehearsal-js/rehearsal-js/issues/1115)
