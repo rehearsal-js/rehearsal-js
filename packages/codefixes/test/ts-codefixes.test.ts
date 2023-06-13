@@ -165,6 +165,18 @@ describe('ts-codefixes', () => {
     );
   });
 
+  test('convertTypedefToType', async () => {
+    await runTest(
+      'convertTypedefToType/failing/fail-1.ts',
+      'convertTypedefToType/passing/pass-1.ts'
+    );
+
+    await runTest(
+      'convertTypedefToType/failing/fail-2.ts',
+      'convertTypedefToType/passing/pass-2.ts'
+    );
+  });
+
   test('deleteUnmatchedParameter', async () => {
     await runTest(
       'deleteUnmatchedParameter/failing/fail-1.ts',

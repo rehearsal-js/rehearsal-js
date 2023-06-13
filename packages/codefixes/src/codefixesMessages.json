@@ -62,6 +62,11 @@
     "description": "Adds `type` to exports where the entity(s) that is exported is a type(s).",
     "diagnostics": [1205]
   },
+  "convertTypedefToType": {
+    "title": "Convert @typedef to Type",
+    "description": "Converts JSDoc typedef to TypeScript type(s).",
+    "diagnostics": [80009]
+  },
   "convertToTypeOnlyImport": {
     "title": "Convert to Type Only Import",
     "description": "Adds `type` to imports where the entity(s) being imported are type(s).",
