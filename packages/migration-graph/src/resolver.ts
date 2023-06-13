@@ -49,7 +49,10 @@ export class Resolver {
   ];
 
   constructor(options: ResolverOptions) {
-    this.ignorePatterns = [...(options?.ignore ?? [])];
+    this.ignorePatterns = [
+      '**/*.hbs', // +  // Ignoring .hbs until https://github.com/rehearsal-js/rehearsal-js/issues/1119 is resolved
+      ...(options?.ignore ?? []),
+    ];
     this.scanForImports = options?.scanForImports;
     this.includeExternals = options.includeExternals;
     this.fileResolver = enhancedResolve.create.sync({
