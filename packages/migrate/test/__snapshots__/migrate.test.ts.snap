@@ -225,6 +225,20 @@ export default class SomeComponent extends Component {
 "
 `;
 
+exports[`fix > .ts > typedef 1`] = `
+"interface Person {
+  data: {
+    name: string;
+    age: number;
+    contact: {
+      address: string;
+      phone?: string;
+    };
+  };
+}
+"
+`;
+
 exports[`fix > .ts > with non-qualified service 1`] = `
 "import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -393,7 +407,7 @@ exports[`fix > EXPERIMENTAL_MODES, GlintService > mode: single-pass 1`] = `
 "
 `;
 
-exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: drain 1`] = `
+exports[`fix > RehearsalService > EXPERIMENTAL_MODES mode: drain 1`] = `
 "class Foo {
   name: number;
   constructor(name: number) {
@@ -407,7 +421,7 @@ exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: drain 1`] = `
 "
 `;
 
-exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: single-pass 1`] = `
+exports[`fix > RehearsalService > EXPERIMENTAL_MODES mode: single-pass 1`] = `
 "class Foo {
   name: number;
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 'name' implicitly has an 'any' type.
@@ -418,6 +432,20 @@ exports[`fix > EXPERIMENTAL_MODES, RehearsalService > mode: single-pass 1`] = `
   hello() {
     return this.name + 1;
   }
+}
+"
+`;
+
+exports[`fix > RehearsalService > typedef 1`] = `
+"interface Person {
+  data: {
+    name: string;
+    age: number;
+    contact: {
+      address: string;
+      phone?: string;
+    };
+  };
 }
 "
 `;

@@ -77,11 +77,6 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     while (diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
-      if (!diagnostic?.node) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
-        continue;
-      }
-
       const fix = this.getCodeFix(diagnostic, options);
 
       if (!fix) {
@@ -123,11 +118,6 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     const diagnostics = this.getDiagnostics(context.service, fileName, [diagnosticCategory]);
 
     for (const diagnostic of diagnostics) {
-      if (!diagnostic.node) {
-        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t node not found`);
-        continue;
-      }
-
       const fix = this.getCodeFix(diagnostic, options);
 
       if (!fix) {
