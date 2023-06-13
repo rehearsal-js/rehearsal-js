@@ -561,6 +561,25 @@ describe('fix', () => {
 
       expectFile(outputs[0]).toMatchSnapshot();
     });
+
+    test('typedef', async () => {
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['typedef.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
   });
 
   describe('.ts, .gts', () => {
@@ -837,7 +856,7 @@ export default class LocaleService extends Service {
     });
   });
 
-  describe('EXPERIMENTAL_MODES, RehearsalService', () => {
+  describe('RehearsalService', () => {
     let project: Project;
     let reporter: Reporter;
 
@@ -859,7 +878,7 @@ export default class LocaleService extends Service {
       project.dispose();
     });
 
-    test('mode: single-pass', async () => {
+    test('EXPERIMENTAL_MODES mode: single-pass', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
 
       const singlePass: MigrateInput = {
@@ -877,8 +896,26 @@ export default class LocaleService extends Service {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('mode: drain', async () => {
+    test('EXPERIMENTAL_MODES mode: drain', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
+
+      const drainInput: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(drainInput)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('typedef', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['typedef.ts']);
 
       const drainInput: MigrateInput = {
         projectRootDir: project.baseDir,

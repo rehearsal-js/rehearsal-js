@@ -22,9 +22,13 @@ export class HintCodeFixCollection implements CodeFixCollection {
     const hint = this.getHint(diagnostic);
     const comment = `@ts-expect-error @rehearsal TODO TS${diagnostic.code}: ${hint}`;
 
+    if (diagnostic.node === undefined) {
+      return [];
+    }
+
     const changes = ChangesFactory.insertCommentAtLineBeforeNode(
       diagnostic.file,
-      diagnostic.node!,
+      diagnostic.node,
       comment
     );
 
