@@ -1,12 +1,12 @@
-name: TypeScript Nightly Test
+name: TypeScript Beta Test
 
 on:
   schedule: # Run every monday at midnight
     - cron: '0 0 * * 1'
 
 jobs:
-  test-ts-nightly:
-    name: TypeScript Nightly - Runs Entire Slow Test Suite with Linting
+  test-ts-beta:
+    name: TypeScript Beta - Runs Entire Test Suite with Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,12 +43,14 @@ jobs:
             ${{ runner.os }}-npm-store-
       - name: Install dependencies
         run: pnpm install
-      - name: Install TypeScript Nightly
-        run: pnpm add -d -w typescript@next
+      - name: Install TypeScript Beta
+        run: pnpm add -d -w typescript@beta
       - name: Build
         run: pnpm build
       - name: Lint
         run: pnpm lint
+      - name: Test
+        run: pnpm test
       - name: Test Slow
         run: pnpm test:slow
       - uses: JasonEtco/create-an-issue@v2

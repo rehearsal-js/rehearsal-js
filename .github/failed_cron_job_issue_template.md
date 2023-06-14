@@ -1,6 +1,6 @@
 ---
 title: Scheduled GitHub Action Failed
-labels: bug, ts-nightly
+labels: bug, ts-beta
 ---
 
 Oh no, something went wrong in the rehearsal scheduled workflow for {{ env.WORKFLOW }}/{{ env.JOB }}.
