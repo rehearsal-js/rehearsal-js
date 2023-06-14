@@ -16,6 +16,7 @@ export interface Location {
 export enum ReportItemType {
   ts = 0,
   lint = 1,
+  glint = 2,
 }
 
 export type ReportItem = {

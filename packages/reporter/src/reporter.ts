@@ -82,7 +82,7 @@ export class Reporter {
   }
 
   /**
-   * Appends am information about provided diagnostic and related node to the report
+   * Appends a information about provided TS diagnostic and related node to the report
    */
   addTSItemToRun(
     diagnostic: DiagnosticWithLocation,
@@ -96,6 +96,35 @@ export class Reporter {
       analysisTarget: this.normalizeFilePath(this.basePath, diagnostic.file.fileName),
       type: 0,
       ruleId: `TS${diagnostic.code}`,
+      category: DiagnosticCategory[diagnostic.category],
+      message: flattenDiagnosticMessageText(diagnostic.messageText, '. ').replace(
+        this.basePath,
+        '.'
+      ),
+      hint: hint,
+      hintAdded,
+      nodeKind: node ? SyntaxKind[node.kind] : undefined,
+      nodeText: node?.getText(),
+      helpUrl,
+      nodeLocation: triggeringLocation || undefined,
+    });
+  }
+
+  /**
+   * Appends a information about provided Glint diagnostic and related node to the report
+   */
+  addGlintItemToRun(
+    diagnostic: DiagnosticWithLocation,
+    node?: Node,
+    triggeringLocation?: Location,
+    hint = '',
+    helpUrl = '',
+    hintAdded = true
+  ): void {
+    this.currentRun.items.push({
+      analysisTarget: this.normalizeFilePath(this.basePath, diagnostic.file.fileName),
+      type: 2,
+      ruleId: `Glint${diagnostic.code}`,
       category: DiagnosticCategory[diagnostic.category],
       message: flattenDiagnosticMessageText(diagnostic.messageText, '. ').replace(
         this.basePath,

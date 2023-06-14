@@ -5,6 +5,7 @@ import { Project } from 'fixturify-project';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getExcludePatterns } from '@rehearsal/migration-graph';
+import { ReportItemType } from '@rehearsal/reporter';
 import { migrate, MigrateInput, resolveIgnoredPaths } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -64,8 +65,8 @@ function isValidExtension(ext: string): ext is ValidExtension {
   return validExtensions.includes(ext);
 }
 
-function expectFile(filePath: string): Vi.Assertion<string> {
-  return expect(readFileSync(filePath, 'utf-8'));
+function expectFile(filePath: string, message?: string): Vi.Assertion<string> {
+  return expect(readFileSync(filePath, 'utf-8'), message);
 }
 
 function prepareInputFiles(
@@ -346,6 +347,43 @@ describe('fix', () => {
       const reportedItems = report.items.filter((item) =>
         item.analysisTarget.includes('src/salutation.ts')
       );
+
+      expect(reportedItems.length).toBeGreaterThan(0);
+    });
+
+    test('do not add {{! @glint-expect-error }} directives into hbs', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-errors.hbs', 'with-errors.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(
+        outputs[0],
+        'hbs should not have any added @glint-expect-error directives'
+      ).not.contains('{{! @glint-expect-error');
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[1]).toMatchSnapshot();
+
+      reporter.printReport(project.baseDir);
+
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      const reportedItems = report.items.filter(
+        (item) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          item.analysisTarget.includes('src/with-errors.hbs') && item.type == ReportItemType.glint
+      );
+
+      // Should expect a specific list of glint errors
 
       expect(reportedItems.length).toBeGreaterThan(0);
     });

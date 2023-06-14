@@ -504,31 +504,47 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
 [DATA] processing file: /app/router.js
+[DATA] processing file: /app/components/ember-component.hbs
 [DATA] processing file: /app/components/ember-component.ts
+[DATA] processing file: /app/components/foo.hbs
 [DATA] processing file: /app/components/foo.ts
+[DATA] processing file: /app/components/js-component.hbs
 [DATA] processing file: /app/components/js-component.js
+[DATA] processing file: /app/components/no-backing-module.hbs
+[DATA] processing file: /app/components/nocheck-me.hbs
 [DATA] processing file: /app/components/qux.ts
+[DATA] processing file: /app/components/template-only-module.hbs
 [DATA] processing file: /app/components/template-only-module.ts
+[DATA] processing file: /app/components/wrapper-component.hbs
 [DATA] processing file: /app/components/wrapper-component.ts
 [DATA] processing file: /app/controllers/classic-route.ts
 [DATA] processing file: /app/helpers/affix.ts
 [DATA] processing file: /app/helpers/repeat.ts
 [DATA] processing file: /app/routes/classic-route.ts
+[DATA] processing file: /app/templates/application.hbs
+[DATA] processing file: /app/templates/classic-route.hbs
+[DATA] processing file: /app/components/bar/index.hbs
 [DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/templates/components/qux.hbs
+[DATA] processing file: /app/components/test-cases/subclassing/child.hbs
 [DATA] processing file: /app/components/test-cases/subclassing/parent.ts
 [DATA] processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] processing file: /app/components/test-cases/subclassing/parent.hbs
 [DATA] processing file: /app/pods/components/baz/component.ts
+[DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   22 errors caught by rehearsal
+[TITLE]   13 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal
-[TITLE]   20 errors need to be fixed manually
-[TITLE]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   11 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 9 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   22 errors caught by rehearsal
+[SUCCESS]   13 errors caught by rehearsal
 [SUCCESS]   2 have been fixed by rehearsal
-[SUCCESS]   20 errors need to be fixed manually
-[SUCCESS]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   11 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 9 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
@@ -543,29 +559,45 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [STARTED] Infer Types
 [DATA] processing file: /app/app.js
 [DATA] processing file: /app/router.js
+[DATA] processing file: /app/components/ember-component.hbs
 [DATA] processing file: /app/components/ember-component.ts
+[DATA] processing file: /app/components/foo.hbs
 [DATA] processing file: /app/components/foo.ts
+[DATA] processing file: /app/components/js-component.hbs
 [DATA] processing file: /app/components/js-component.js
+[DATA] processing file: /app/components/no-backing-module.hbs
+[DATA] processing file: /app/components/nocheck-me.hbs
 [DATA] processing file: /app/components/qux.ts
+[DATA] processing file: /app/components/template-only-module.hbs
 [DATA] processing file: /app/components/template-only-module.ts
+[DATA] processing file: /app/components/wrapper-component.hbs
 [DATA] processing file: /app/components/wrapper-component.ts
 [DATA] processing file: /app/controllers/classic-route.ts
 [DATA] processing file: /app/routes/classic-route.ts
+[DATA] processing file: /app/templates/application.hbs
+[DATA] processing file: /app/templates/classic-route.hbs
+[DATA] processing file: /app/components/bar/index.hbs
 [DATA] processing file: /app/components/bar/index.ts
+[DATA] processing file: /app/templates/components/qux.hbs
+[DATA] processing file: /app/components/test-cases/subclassing/child.hbs
 [DATA] processing file: /app/components/test-cases/subclassing/parent.ts
 [DATA] processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] processing file: /app/components/test-cases/subclassing/parent.hbs
 [DATA] processing file: /app/pods/components/baz/component.ts
+[DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   17 errors caught by rehearsal
+[TITLE]   12 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   16 errors need to be fixed manually
-[TITLE]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   11 errors need to be fixed manually
+[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 9 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   17 errors caught by rehearsal
+[SUCCESS]   12 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   16 errors need to be fixed manually
-[SUCCESS]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   11 errors need to be fixed manually
+[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 9 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
