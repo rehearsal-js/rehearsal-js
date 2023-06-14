@@ -533,17 +533,17 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   13 errors caught by rehearsal
+[TITLE]   31 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal
-[TITLE]   11 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   29 errors need to be fixed manually
+[TITLE]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 9 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   13 errors caught by rehearsal
+[SUCCESS]   31 errors caught by rehearsal
 [SUCCESS]   2 have been fixed by rehearsal
-[SUCCESS]   11 errors need to be fixed manually
-[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   29 errors need to be fixed manually
+[SUCCESS]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 9 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
@@ -586,17 +586,17 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   12 errors caught by rehearsal
+[TITLE]   26 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   11 errors need to be fixed manually
-[TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   25 errors need to be fixed manually
+[TITLE]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 9 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   12 errors caught by rehearsal
+[SUCCESS]   26 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   11 errors need to be fixed manually
-[SUCCESS]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   25 errors need to be fixed manually
+[SUCCESS]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 9 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
