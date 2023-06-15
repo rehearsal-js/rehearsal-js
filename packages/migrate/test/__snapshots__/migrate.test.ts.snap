@@ -44,6 +44,19 @@ export default class Hello extends Component {
 "
 `;
 
+exports[`fix > .gts > with errors 1`] = `
+"import Component from '@glimmer/component';
+
+export default class Hello extends Component {
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+"
+`;
+
 exports[`fix > .gts > with non-qualified service 1`] = `
 "import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
@@ -51,22 +64,6 @@ import { inject as service } from '@ember/service';
 export default class SomeComponent extends Component {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service('authenticated-user') authenticatedUser;
-}
-"
-`;
-
-exports[`fix > .gts > with qualified service 1`] = `
-"import type FooService from 'foo/services/foo-service';
-import type AuthenticatedUser from 'authentication/services/authenticated-user';
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
-
-export default class SomeComponent extends Component {
-  @service(\\"authentication@authenticated-user\\")
-declare authenticatedUser: AuthenticatedUser;
-
-  @service(\\"foo@foo-service\\")
-declare otherProp: FooService;
 }
 "
 `;
@@ -104,20 +101,6 @@ exports[`fix > .gts > with template assigned to variable 1`] = `
 "
 `;
 
-exports[`fix > .hbs > do not add {{! @glint-expect-error }} directives into hbs 1`] = `"<span>Hello {{@name}}, your nickname is: {{this.nickname}}</span>"`;
-
-exports[`fix > .hbs > do not add {{! @glint-expect-error }} directives into hbs 2`] = `
-"import Component from \\"@glimmer/component\\";
-
-export default class Salutation extends Component {
-  get nickname() {
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'nickname' does not exist on type 'Readonly<EmptyObject>'.
-    return this.args.nickname ?? \\"Unknown\\";
-  }
-}
-"
-`;
-
 exports[`fix > .hbs > more involved class 1`] = `"<span>Hello {{this.name}}</span>"`;
 
 exports[`fix > .hbs > more involved class 2`] = `
@@ -147,6 +130,20 @@ export default class Foo extends Component {}
 `;
 
 exports[`fix > .hbs > template only 1`] = `"Hello!"`;
+
+exports[`fix > .hbs > with errors 1`] = `"<span>Hello {{@name}}, your nickname is: {{this.nickname}}</span>"`;
+
+exports[`fix > .hbs > with errors 2`] = `
+"import Component from \\"@glimmer/component\\";
+
+export default class Salutation extends Component {
+  get nickname() {
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'nickname' does not exist on type 'Readonly<EmptyObject>'.
+    return this.args.nickname ?? \\"Unknown\\";
+  }
+}
+"
+`;
 
 exports[`fix > .ts > class with missing prop 1`] = `
 "class Foo {
