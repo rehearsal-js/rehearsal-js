@@ -125,6 +125,12 @@ export class GlintCommentPlugin extends Plugin<GlintCommentPluginOptions> {
       index
     );
 
+    if (isInHbsContext) {
+      // Abort trying to comment an hbs context until https://github.com/rehearsal-js/rehearsal-js/issues/1119 is resolved
+      // For now, we DO NOT WANT add any {{! @glint-expect-errors }} directives in hbs contexts.
+      return;
+    }
+
     const message = `${commentTag} TODO TS${diagnostic.code}: ${hint}`;
 
     const tsIgnoreCommentText = isInHbsContext

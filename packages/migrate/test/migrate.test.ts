@@ -5,6 +5,7 @@ import { Project } from 'fixturify-project';
 import { type Report, Reporter } from '@rehearsal/reporter';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getExcludePatterns } from '@rehearsal/migration-graph';
+import { ReportItemType } from '@rehearsal/reporter';
 import { migrate, MigrateInput, resolveIgnoredPaths } from '../src/migrate.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,6 +13,37 @@ const __dirname = dirname(__filename);
 
 // ember project
 const projectPath = resolve(__dirname, 'fixtures', 'project');
+
+/**
+ * Utility method for finding a targted piece of content using a sarif location.
+ * Sarif location values start at 1
+ *
+ * @param content string
+ * @param loc nodeLocation within the content we want to target
+ * @returns the target content at loc
+ */
+function getContentAtLocation(
+  content: string,
+  loc?: { startLine: number; startColumn: number; endLine: number; endColumn: number }
+): string {
+  if (!loc) {
+    return '';
+  }
+
+  // The start/end values start at 1
+  const { startColumn, startLine, endColumn, endLine } = loc;
+
+  const lines = content.split('\n');
+  const affected = lines.slice(startLine - 1, endLine);
+
+  // Trim off after endColumn first
+  const lastIndex = affected.length - 1;
+  affected[lastIndex] = affected[lastIndex].substring(0, endColumn - 1);
+
+  // Trim of before startColumn
+  affected[0] = affected[0].substring(startColumn - 1);
+  return affected.join('\n');
+}
 
 function changeExtension(file: string, ext: string): string {
   const parts = path.parse(file);
@@ -64,8 +96,8 @@ function isValidExtension(ext: string): ext is ValidExtension {
   return validExtensions.includes(ext);
 }
 
-function expectFile(filePath: string): Vi.Assertion<string> {
-  return expect(readFileSync(filePath, 'utf-8'));
+function expectFile(filePath: string, message?: string): Vi.Assertion<string> {
+  return expect(readFileSync(filePath, 'utf-8'), message);
 }
 
 function prepareInputFiles(
@@ -243,6 +275,46 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
+    test('with errors', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts-with-errors.gts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+
+      reporter.printReport(project.baseDir);
+
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      const reportedItems = report.items.filter(
+        (item) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          item.analysisTarget.includes('src/gts-with-errors.gts') &&
+          item.type == ReportItemType.glint
+      );
+
+      // Should expect a specific list of glint errors
+      expect(reportedItems.length).toBeGreaterThan(0);
+
+      // Ensure reported item points to correct line in report
+      const affected = getContentAtLocation(
+        readFileSync(outputs[0], 'utf-8'),
+        reportedItems[0]?.nodeLocation
+      );
+
+      expect(affected, 'the reportItem.nodeLocation should match the arg').toEqual('age');
+    });
+
     test('still fixes the file if there are no errors', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['gjs-no-errors.gts']);
 
@@ -348,6 +420,50 @@ describe('fix', () => {
       );
 
       expect(reportedItems.length).toBeGreaterThan(0);
+    });
+
+    test('with errors', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-errors.hbs', 'with-errors.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(
+        outputs[0],
+        'hbs should not have any added @glint-expect-error directives'
+      ).not.contains('{{! @glint-expect-error');
+
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[1]).toMatchSnapshot();
+
+      reporter.printReport(project.baseDir);
+
+      const jsonReport = resolve(project.baseDir, 'rehearsal-report.json');
+      const report = JSON.parse(readFileSync(jsonReport).toString()) as Report;
+
+      const reportedItems = report.items.filter(
+        (item) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          item.analysisTarget.includes('src/with-errors.hbs') && item.type == ReportItemType.glint
+      );
+
+      // Should expect a specific list of glint errors
+      expect(reportedItems.length).toBeGreaterThan(0);
+
+      // Ensure reported item points to correct line in report
+      const affected = getContentAtLocation(
+        readFileSync(outputs[0], 'utf-8'),
+        reportedItems[0]?.nodeLocation
+      );
+      expect(affected, 'the reportItem.nodeLocation should match the arg').toEqual('name');
     });
   });
 

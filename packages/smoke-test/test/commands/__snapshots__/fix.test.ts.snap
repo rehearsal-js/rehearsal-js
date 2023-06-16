@@ -454,27 +454,43 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
 [DATA] processing file: /app/components/hello-world.gts
+[DATA] processing file: /app/components/jumbo.hbs
+[DATA] processing file: /app/components/map.hbs
 [DATA] processing file: /app/components/map.ts
+[DATA] processing file: /app/components/nav-bar.hbs
+[DATA] processing file: /app/components/rental.hbs
+[DATA] processing file: /app/components/rentals.hbs
 [DATA] processing file: /app/components/rentals.ts
+[DATA] processing file: /app/components/share-button.hbs
 [DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
 [DATA] processing file: /app/routes/index.ts
 [DATA] processing file: /app/routes/rental.ts
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/templates/about.hbs
+[DATA] processing file: /app/templates/application.hbs
+[DATA] processing file: /app/templates/contact.hbs
+[DATA] processing file: /app/templates/index.hbs
+[DATA] processing file: /app/templates/rental.hbs
+[DATA] processing file: /app/components/rental/detailed.hbs
+[DATA] processing file: /app/components/rental/image.hbs
 [DATA] processing file: /app/components/rental/image.ts
+[DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   31 errors caught by rehearsal
+[TITLE]   66 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
-[TITLE]   28 errors need to be fixed manually
-[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   63 errors need to be fixed manually
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 36 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   31 errors caught by rehearsal
+[SUCCESS]   66 errors caught by rehearsal
 [SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS]   28 errors need to be fixed manually
-[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   63 errors need to be fixed manually
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 36 glint errors, with details in the report
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
@@ -484,10 +500,10 @@ exports[`fix command > ember_js_app_4.11 2`] = `
     alt=\\"Map image at coordinates {{@lat}},{{@lng}}\\"
     ...attributes
     src={{this.src}}
-    width={{@width}} height={{@height}}
-  >
-</div>
-"
+    width={{@width}}
+    height={{@height}}
+  />
+</div>"
 `;
 
 exports[`fix command > ember_js_app_4.11 3`] = `
@@ -605,7 +621,6 @@ export default class Hello extends Component {
   name = 'world';
 
   <template>
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
   </template>
 }
@@ -624,16 +639,18 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
-[TITLE]   16 errors caught by rehearsal
+[TITLE]   17 errors caught by rehearsal
 [TITLE]   8 have been fixed by rehearsal
-[TITLE]   8 errors need to be fixed manually
-[TITLE]     -- 8 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   9 errors need to be fixed manually
+[TITLE]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 8 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   16 errors caught by rehearsal
+[SUCCESS]   17 errors caught by rehearsal
 [SUCCESS]   8 have been fixed by rehearsal
-[SUCCESS]   8 errors need to be fixed manually
-[SUCCESS]     -- 8 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   9 errors need to be fixed manually
+[SUCCESS]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 8 glint errors, with details in the report
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
@@ -674,7 +691,6 @@ interface FormattedNameSignature {
 /** @extends {Component<FormattedNameSignature>} */
 class FormattedName extends Component {
   static template = hbs\`
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Readonly<EmptyObject>'. }}
     {{formatName this.args.name}}!
   \`;
 }
@@ -752,12 +768,9 @@ interface GreetingHeaderSignature {
 /** @extends {Component<GreetingHeaderSignature>} */
 export default class GreetingHeader extends Component {
   static template = hbs\`
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'greeting' does not exist on type '{}'. }}
     <h1>{{@greeting}}, {{or @target 'glimmerx'}}</h1>
     <img src={{this.src}}/>
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
     {{@age}}
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'onion' does not exist on type '{}'. }}
     {{@onion}}
   \`;
 

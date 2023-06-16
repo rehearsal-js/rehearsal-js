@@ -1,5 +1,9 @@
+import { ReportItemType } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports
 import type { ReportItem } from '@rehearsal/reporter';
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const GlintReportItemType = ReportItemType.glint;
 
 /**
  * Reads report and generate migration summary
@@ -7,12 +11,21 @@ import type { ReportItem } from '@rehearsal/reporter';
 export function getReportSummary(reportItems: ReportItem[], fixedItemCount: number): string {
   const fileMap = new Set<string>();
   let tsErrorCount = 0;
+  let glintErrorCount = 0;
   let lintErrorCount = 0;
+
+  const hasGlintErrors = reportItems.find((item) => item.type === GlintReportItemType)
+    ? true
+    : false;
 
   reportItems.forEach((item) => {
     fileMap.add(item.analysisTarget);
     if (item.hintAdded) {
-      tsErrorCount++;
+      if (item.type == GlintReportItemType) {
+        glintErrorCount++;
+      } else {
+        tsErrorCount++;
+      }
     } else {
       lintErrorCount++;
     }
@@ -20,10 +33,17 @@ export function getReportSummary(reportItems: ReportItem[], fixedItemCount: numb
   const totalUnfixedCount = reportItems.length;
   const totalErrorCount = totalUnfixedCount + fixedItemCount;
 
-  return `Types Inferred\n\n
+  let summary = `Types Inferred\n\n
   ${totalErrorCount} errors caught by rehearsal\n
   ${fixedItemCount} have been fixed by rehearsal\n
   ${totalUnfixedCount} errors need to be fixed manually\n
-    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n
-    -- ${lintErrorCount} eslint errors, with details in the report\n`;
+    -- ${tsErrorCount} ts errors, marked by @ts-expect-error @rehearsal TODO\n`;
+
+  if (hasGlintErrors) {
+    summary += `    -- ${glintErrorCount} glint errors, with details in the report\n`;
+  }
+
+  summary += `    -- ${lintErrorCount} eslint errors, with details in the report\n`;
+
+  return summary;
 }

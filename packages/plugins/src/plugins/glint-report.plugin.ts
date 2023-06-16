@@ -63,7 +63,11 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
 
       // We only allow for a single entry per line
       if (!lineHasSupression[location.startLine]) {
-        context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
+        if (diagnostic.source === 'glint') {
+          context.reporter.addGlintItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
+        } else {
+          context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
+        }
         lineHasSupression[location.startLine] = true;
       }
     }

@@ -22,10 +22,8 @@ export default class Foo extends Component {}
 
 exports[`fix > .gts > with bare template 1`] = `
 "<template>
-  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
   <span>Hello, {{@name}}!</span>
 
-  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'someCondition' does not exist on type '{}'. }}
   {{#if @someCondition}}
     <div>true!</div>
   {{/if}}
@@ -40,7 +38,19 @@ export default class Hello extends Component {
   name = 'world';
 
   <template>
-    {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > with errors 1`] = `
+"import Component from '@glimmer/component';
+
+export default class Hello extends Component {
+  name = 'world';
+
+  <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
   </template>
 }
@@ -54,22 +64,6 @@ import { inject as service } from '@ember/service';
 export default class SomeComponent extends Component {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service('authenticated-user') authenticatedUser;
-}
-"
-`;
-
-exports[`fix > .gts > with qualified service 1`] = `
-"import type FooService from 'foo/services/foo-service';
-import type AuthenticatedUser from 'authentication/services/authenticated-user';
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
-
-export default class SomeComponent extends Component {
-  @service(\\"authentication@authenticated-user\\")
-declare authenticatedUser: AuthenticatedUser;
-
-  @service(\\"foo@foo-service\\")
-declare otherProp: FooService;
 }
 "
 `;
@@ -102,7 +96,6 @@ declare mooService: MooService;
 
 exports[`fix > .gts > with template assigned to variable 1`] = `
 "const Hello = <template>
-  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'. }}
   <span>Hello, {{@name}}!</span>
 </template>
 "
@@ -127,10 +120,7 @@ export default class Salutation extends Component {
 "
 `;
 
-exports[`fix > .hbs > simple class 1`] = `
-"{{! @glint-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'. }}
-<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>"
-`;
+exports[`fix > .hbs > simple class 1`] = `"<span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>"`;
 
 exports[`fix > .hbs > simple class 2`] = `
 "import Component from \\"@glimmer/component\\";
@@ -139,9 +129,20 @@ export default class Foo extends Component {}
 "
 `;
 
-exports[`fix > .hbs > template only 1`] = `
-"{{! @glint-expect-error @rehearsal TODO TS7006: Parameter '{0}' implicitly has an 'any' type. }}
-Hello!"
+exports[`fix > .hbs > template only 1`] = `"Hello!"`;
+
+exports[`fix > .hbs > with errors 1`] = `"<span>Hello {{@name}}, your nickname is: {{this.nickname}}</span>"`;
+
+exports[`fix > .hbs > with errors 2`] = `
+"import Component from \\"@glimmer/component\\";
+
+export default class Salutation extends Component {
+  get nickname() {
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'nickname' does not exist on type 'Readonly<EmptyObject>'.
+    return this.args.nickname ?? \\"Unknown\\";
+  }
+}
+"
 `;
 
 exports[`fix > .ts > class with missing prop 1`] = `
@@ -161,7 +162,6 @@ export default class HelloWorld extends Component {
   name = \\"world\\";
 
   static template = hbs\`
-  {{! @glint-expect-error @rehearsal TODO TS2339: Property 'age' does not exist on type '{}'. }}
   <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
 \`;
 }
@@ -187,15 +187,10 @@ module(\\"Integration | Helper | grid-list\\", function (hooks) {
     assert.dom(\\"[data-test-el]\\").hasClass(\\"some-class\\", \\"has the border class\\");
 
     await render(hbs\`<Map
-      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'lat' does not exist on type 'void'. }}
       @lat={{this.lat}}
-      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'lng' does not exist on type 'void'. }}
       @lng={{this.lng}}
-      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'zoom' does not exist on type 'void'. }}
       @zoom={{this.zoom}}
-      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'width' does not exist on type 'void'. }}
       @width={{this.width}}
-      {{! @glint-expect-error @rehearsal TODO TS2339: Property 'height' does not exist on type 'void'. }}
       @height={{this.height}}
     />\`);
 
