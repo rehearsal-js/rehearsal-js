@@ -49,7 +49,7 @@ export class Resolver {
   ];
 
   constructor(options: ResolverOptions) {
-    this.ignorePatterns = [...(options?.ignore ?? [])];
+    this.ignorePatterns = [...(options?.ignore ?? []), '*/**.d.ts'];
     this.scanForImports = options?.scanForImports;
     this.includeExternals = options.includeExternals;
     this.fileResolver = enhancedResolve.create.sync({
