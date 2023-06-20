@@ -298,8 +298,8 @@ describe('fix', () => {
 
       const reportedItems = report.items.filter(
         (item) =>
+          item.analysisTarget.includes('src/gts-with-errors.gts') &&
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          item.analysisTarget.includes('src/gts/with-errors.gts') &&
           item.type == ReportItemType.glint
       );
 

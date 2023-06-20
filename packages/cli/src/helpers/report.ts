@@ -2,7 +2,7 @@ import { ReportItemType } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports
 import type { ReportItem } from '@rehearsal/reporter';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 const GlintReportItemType = ReportItemType.glint;
 
 /**

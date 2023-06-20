@@ -64,6 +64,7 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
       // We only allow for a single entry per line
       if (!lineHasSupression[location.startLine]) {
         if (diagnostic.source === 'glint') {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           context.reporter.addGlintItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
         } else {
           context.reporter.addTSItemToRun(diagnostic, diagnostic.node, location, hint, helpUrl);
