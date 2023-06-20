@@ -149,7 +149,7 @@ describe('fix', () => {
 
     test('with bare template', async () => {
       // since we are no longer doing a file conversion input and output are the same
-      const [inputs, outputs] = prepareInputFiles(project, ['template-only.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/template-only.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -166,7 +166,7 @@ describe('fix', () => {
     });
 
     test('with template assigned to variable', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['template-only-variable.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/template-only-variable.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -183,7 +183,7 @@ describe('fix', () => {
     });
 
     test('with class', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['with-class.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-class.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -199,11 +199,11 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test.todo('with non-qualified service', async () => {
+    test('with non-qualified service', async () => {
       // we now have to expect the tsconfig paths have been set as rehearsal will not do it
       // Update the tsconfig with any module name mapping so that any subsequent type checking will
       // be actually work if we happen to encounter any ember addons that specify a `moduleName`
-      const [inputs, outputs] = prepareInputFiles(project, ['with-non-qualified-service.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-non-qualified-service.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -223,8 +223,8 @@ describe('fix', () => {
       reporter.printReport(project.baseDir);
     });
 
-    test.todo('with service map', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['with-mapped-service.gts']);
+    test('with service map', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-mapped-service.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -241,8 +241,8 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test.todo('with qualified service', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['with-qualified-service.gts']);
+    test('with qualified service', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-qualified-service.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -258,8 +258,8 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test.todo('when missing a local prop', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['missing-local-prop.gts']);
+    test('when missing a local prop', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/missing-local-prop.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -276,7 +276,7 @@ describe('fix', () => {
     });
 
     test('with errors', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['gts-with-errors.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-errors.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -299,7 +299,7 @@ describe('fix', () => {
       const reportedItems = report.items.filter(
         (item) =>
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          item.analysisTarget.includes('src/gts-with-errors.gts') &&
+          item.analysisTarget.includes('src/gts/with-errors.gts') &&
           item.type == ReportItemType.glint
       );
 
@@ -316,7 +316,7 @@ describe('fix', () => {
     });
 
     test('still fixes the file if there are no errors', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['gjs-no-errors.gts']);
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-no-errors.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
@@ -720,7 +720,7 @@ describe('fix', () => {
       await project.write();
 
       const ignoredPaths = resolveIgnoredPaths(
-        ['packages/**/*', 'src/with-class.gts'],
+        ['packages/**/*', 'src/gts/with-class.gts'],
         project.baseDir,
         getExcludePatterns
       );
@@ -877,8 +877,8 @@ export default class LocaleService extends Service {
       project.dispose();
     });
 
-    test.todo('.gts', async () => {
-      const [inputs, outputs] = prepareInputFiles(project, ['with-addon-service.gts']);
+    test('.gts', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-addon-service.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
