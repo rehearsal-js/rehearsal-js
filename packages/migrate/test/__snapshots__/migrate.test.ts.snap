@@ -16,7 +16,11 @@ export default class TestGjsNoErrors extends Component {
 exports[`fix > .gts > when missing a local prop 1`] = `
 "import Component from '@glimmer/component';
 
-export default class Foo extends Component {}
+export default class TestMissingLocalPropGts extends Component {
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
 "
 `;
 
@@ -61,9 +65,33 @@ exports[`fix > .gts > with non-qualified service 1`] = `
 "import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 
-export default class SomeComponent extends Component {
+export default class TestWithNonQualifiedService extends Component {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service('authenticated-user') authenticatedUser;
+
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.authenticatedUser}} and I am {{@age}} years old.</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > with qualified service 1`] = `
+"import type AuthenticatedUser from 'authentication/services/authenticated-user';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class TestWithQualifiedServiceGts extends Component {
+  @service(\\"authentication@authenticated-user\\")
+declare authenticatedUser: AuthenticatedUser;
+
+  name = 'world';
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
 }
 "
 `;
@@ -78,7 +106,7 @@ import type BooService from 'boo/services/boo-service';
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
-export default class SomeComponent extends Component {
+export default class TestWithMappedServiceGts extends Component {
   @service(\\"boo-service\\")
 declare booService: BooService;
 
@@ -90,6 +118,11 @@ declare gooService: GooService;
 
   @service
 declare mooService: MooService;
+
+
+  <template>
+    <span>Hello, I am human, and I am 10 years old!</span>
+  </template>
 }
 "
 `;
@@ -369,7 +402,7 @@ exports[`fix > .ts, .gts > resolveIgnoredPaths() 1`] = `
   "<tmp-path>/packages/foo/with-qualified-service.ts",
   "<tmp-path>/packages/moo/package.json",
   "<tmp-path>/packages/moo/with-qualified-service.ts",
-  "<tmp-path>/src/with-class.gts",
+  "<tmp-path>/src/gts/with-class.gts",
 ]
 `;
 
@@ -441,6 +474,25 @@ exports[`fix > RehearsalService > typedef 1`] = `
       phone?: string;
     };
   };
+}
+"
+`;
+
+exports[`fix > with addon service > .gts 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@my-org/some-ember-addon/services/locale-service' or its corresponding type declarations.
+import type LocaleService from '@my-org/some-ember-addon/services/locale-service';
+import type Foo from 'my-addon/services/foo';
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class SomeGtsComponent extends Component {
+  @service(\\"my-addon@foo\\")
+declare foo: Foo;
+
+  @service(\\"@my-org/some-ember-addon@LocaleService\\")
+declare locale: LocaleService;
+
+  <template>Hello</template>
 }
 "
 `;
