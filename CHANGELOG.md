@@ -1,3 +1,14 @@
+## <small>1.0.4 (2023-06-21)</small>
+
+* fix: allow fixes without related AST node to be applied (#1130) ([1cb4d8d](https://github.com/rehearsal-js/rehearsal-js/commit/1cb4d8d)), closes [#1130](https://github.com/rehearsal-js/rehearsal-js/issues/1130)
+* fix: graph is trying to scan .d.ts files (#1135) ([e768f82](https://github.com/rehearsal-js/rehearsal-js/commit/e768f82)), closes [#1135](https://github.com/rehearsal-js/rehearsal-js/issues/1135)
+* fix: graph is trying to scan .d.ts files (#1136) ([9bcf58a](https://github.com/rehearsal-js/rehearsal-js/commit/9bcf58a)), closes [#1136](https://github.com/rehearsal-js/rehearsal-js/issues/1136)
+* fix(migrate): move test files; remove .todo (#1138) ([4e384fe](https://github.com/rehearsal-js/rehearsal-js/commit/4e384fe)), closes [#1138](https://github.com/rehearsal-js/rehearsal-js/issues/1138)
+* feat: add glint errors in output; drop comment insertion in hbs (#1133) ([2bb3924](https://github.com/rehearsal-js/rehearsal-js/commit/2bb3924)), closes [#1133](https://github.com/rehearsal-js/rehearsal-js/issues/1133)
+* chore: workflow beta (#1132) ([8047dba](https://github.com/rehearsal-js/rehearsal-js/commit/8047dba)), closes [#1132](https://github.com/rehearsal-js/rehearsal-js/issues/1132)
+
+
+
 ## <small>1.0.3 (2023-06-13)</small>
 
 * feat: enable convertTypedefToType codefix (#1116) ([2a0ab77](https://github.com/rehearsal-js/rehearsal-js/commit/2a0ab77)), closes [#1116](https://github.com/rehearsal-js/rehearsal-js/issues/1116)
