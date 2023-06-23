@@ -1,10 +1,10 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
-"import Component from '@glimmer/component';
+"import Component from \\"@glimmer/component\\";
 
 export default class TestGjsNoErrors extends Component {
-  name = 'world';
+  name = \\"world\\";
 
   <template>
     <span>Hello, I am {{this.name}}!</span>
@@ -14,7 +14,7 @@ export default class TestGjsNoErrors extends Component {
 `;
 
 exports[`fix > .gts > when missing a local prop 1`] = `
-"import Component from '@glimmer/component';
+"import Component from \\"@glimmer/component\\";
 
 export default class TestMissingLocalPropGts extends Component {
   <template>
@@ -36,10 +36,10 @@ exports[`fix > .gts > with bare template 1`] = `
 `;
 
 exports[`fix > .gts > with class 1`] = `
-"import Component from '@glimmer/component';
+"import Component from \\"@glimmer/component\\";
 
 export default class Hello extends Component {
-  name = 'world';
+  name = \\"world\\";
 
   <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
@@ -49,10 +49,10 @@ export default class Hello extends Component {
 `;
 
 exports[`fix > .gts > with errors 1`] = `
-"import Component from '@glimmer/component';
+"import Component from \\"@glimmer/component\\";
 
 export default class Hello extends Component {
-  name = 'world';
+  name = \\"world\\";
 
   <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
@@ -62,14 +62,14 @@ export default class Hello extends Component {
 `;
 
 exports[`fix > .gts > with non-qualified service 1`] = `
-"import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
+"import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
 
 export default class TestWithNonQualifiedService extends Component {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
-  @service('authenticated-user') authenticatedUser;
+  @service(\\"authenticated-user\\") authenticatedUser;
 
-  name = 'world';
+  name = \\"world\\";
 
   <template>
     <span>Hello, I am {{this.authenticatedUser}} and I am {{@age}} years old.</span>
@@ -79,15 +79,15 @@ export default class TestWithNonQualifiedService extends Component {
 `;
 
 exports[`fix > .gts > with qualified service 1`] = `
-"import type AuthenticatedUser from 'authentication/services/authenticated-user';
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
+"import type AuthenticatedUser from \\"authentication/services/authenticated-user\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
 
 export default class TestWithQualifiedServiceGts extends Component {
   @service(\\"authentication@authenticated-user\\")
-declare authenticatedUser: AuthenticatedUser;
+  declare authenticatedUser: AuthenticatedUser;
 
-  name = 'world';
+  name = \\"world\\";
 
   <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
@@ -98,27 +98,26 @@ declare authenticatedUser: AuthenticatedUser;
 
 exports[`fix > .gts > with service map 1`] = `
 "// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'services/moo/moo' or its corresponding type declarations.
-import type MooService from 'services/moo/moo';
-import type GooService from 'services/goo';
+import type MooService from \\"services/moo/moo\\";
+import type GooService from \\"services/goo\\";
 // @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@some-org/some-package/services/from-service-map' or its corresponding type declarations.
-import type Mapped from '@some-org/some-package/services/from-service-map';
-import type BooService from 'boo/services/boo-service';
+import type Mapped from \\"@some-org/some-package/services/from-service-map\\";
+import type BooService from \\"boo/services/boo-service\\";
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
 export default class TestWithMappedServiceGts extends Component {
   @service(\\"boo-service\\")
-declare booService: BooService;
+  declare booService: BooService;
 
   @service(\\"@some-org/some-package@mapped\\")
-declare something: Mapped;
-
-  @service()
-declare gooService: GooService;
+  declare something: Mapped;
 
   @service
-declare mooService: MooService;
+  declare gooService: GooService;
 
+  @service
+  declare mooService: MooService;
 
   <template>
     <span>Hello, I am human, and I am 10 years old!</span>
@@ -128,9 +127,8 @@ declare mooService: MooService;
 `;
 
 exports[`fix > .gts > with template assigned to variable 1`] = `
-"const Hello = <template>
-  <span>Hello, {{@name}}!</span>
-</template>
+"// @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type '{}'.
+const Hello = <template><span>Hello, {{@name}}!</span></template>;
 "
 `;
 
@@ -480,19 +478,21 @@ exports[`fix > RehearsalService > typedef 1`] = `
 
 exports[`fix > with addon service > .gts 1`] = `
 "// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@my-org/some-ember-addon/services/locale-service' or its corresponding type declarations.
-import type LocaleService from '@my-org/some-ember-addon/services/locale-service';
-import type Foo from 'my-addon/services/foo';
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
+import type LocaleService from \\"@my-org/some-ember-addon/services/locale-service\\";
+import type Foo from \\"my-addon/services/foo\\";
+import Component from \\"@glimmer/component\\";
+import { inject as service } from \\"@ember/service\\";
 
 export default class SomeGtsComponent extends Component {
   @service(\\"my-addon@foo\\")
-declare foo: Foo;
+  declare foo: Foo;
 
   @service(\\"@my-org/some-ember-addon@LocaleService\\")
-declare locale: LocaleService;
+  declare locale: LocaleService;
 
-  <template>Hello</template>
+  <template>
+    Hello
+  </template>
 }
 "
 `;
