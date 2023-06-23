@@ -11,7 +11,11 @@ export const GLINT_EXTENSIONS = ['.gts', '.hbs'];
 
 // The list of dependencies we look for to determine if we're in a glint project. If we find one
 // of these, we use glint. Otherwise, we use the regular Rehearsal service
-export const GLINT_PROJECT_FILES = ['ember-source', '@glimmer/component', '@glimmerx/component'];
+export const GLINT_PROJECT_DEPENDENCIES = [
+  'ember-source',
+  '@glimmer/component',
+  '@glimmerx/component',
+];
 
 export function isApp(packageJson: PackageJson): boolean {
   return hasDevDependency(packageJson, 'ember-source') && !isAddon(packageJson);
@@ -47,7 +51,7 @@ export async function isGlintProject(basePath: string): Promise<boolean> {
   const deps = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
 
   return deps.some((pkgName) => {
-    return GLINT_PROJECT_FILES.includes(pkgName);
+    return GLINT_PROJECT_DEPENDENCIES.includes(pkgName);
   });
 }
 
