@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -236,6 +240,9 @@ importers:
 
   packages/codefixes:
     dependencies:
+      '@babel/parser':
+        specifier: ^7.22.5
+        version: 7.22.5
       '@rehearsal/ts-utils':
         specifier: workspace:*
         version: link:../ts-utils
@@ -270,6 +277,9 @@ importers:
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       prettier:
         specifier: ^2.8.7
         version: 2.8.7
@@ -331,6 +341,9 @@ importers:
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       vitest:
         specifier: ^0.30.0
         version: 0.30.0
@@ -1003,7 +1016,7 @@ packages:
       '@babel/helper-compilation-targets': 7.22.6(@babel/core@7.21.4)
       '@babel/helper-module-transforms': 7.22.5
       '@babel/helpers': 7.21.0
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
@@ -1258,7 +1271,6 @@ packages:
   /@babel/helper-string-parser@7.22.5:
     resolution: {integrity: sha512-mM4COjgZox8U+JcXQwPijIZLElkgEpO5rsERVDJTc2qfCDfERyob6k5WegS14SX18IIjv+XD+GrqNumY5JRCDw==}
     engines: {node: '>=6.9.0'}
-    dev: true
 
   /@babel/helper-validator-identifier@7.19.1:
     resolution: {integrity: sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==}
@@ -1310,13 +1322,12 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
 
-  /@babel/parser@7.21.4:
-    resolution: {integrity: sha512-alVJj7k7zIxqBZ7BTRhz0IqJFxW1VJbm6N8JbcYhQ186df9ZBPbZBmWSqAMXwHGsCJdYks7z/voa3ibiS5bCIw==}
+  /@babel/parser@7.22.5:
+    resolution: {integrity: sha512-DFZMC9LJUG9PLOclRC32G63UXwzqS2koQC8dkx+PLdmt1xSePYpbT/NbsrJy8Q/muXz7o/h/d4A7Fuyixm559Q==}
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
       '@babel/types': 7.22.5
-    dev: true
 
   /@babel/parser@7.22.7:
     resolution: {integrity: sha512-7NF8pOkHP5o2vpmGgNGcfAeCvOYhGLyA3Z4eBQkT1RJlWu47n63bCs93QfJ2hIAFCil7L5P2IWhs1oToVgrL0Q==}
@@ -2970,7 +2981,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.22.5
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/types': 7.22.5
     dev: true
 
@@ -2984,7 +2995,7 @@ packages:
       '@babel/helper-function-name': 7.22.5
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/types': 7.22.5
       debug: 4.3.4(supports-color@6.1.0)
       globals: 11.12.0
@@ -3026,7 +3037,6 @@ packages:
       '@babel/helper-string-parser': 7.22.5
       '@babel/helper-validator-identifier': 7.22.5
       to-fast-properties: 2.0.0
-    dev: true
 
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
@@ -6387,7 +6397,7 @@ packages:
       eslint: '>= 4.12.1'
     dependencies:
       '@babel/code-frame': 7.21.4
-      '@babel/parser': 7.21.4
+      '@babel/parser': 7.22.5
       '@babel/traverse': 7.21.4
       '@babel/types': 7.21.4
       eslint: 8.40.0
@@ -9926,7 +9936,7 @@ packages:
     resolution: {integrity: sha512-89oVHVJwmLDvGvAUWgS87KpBoRhy3aZ6U0Ql6HOmU4TrPkyaa8pM0W81wj9cIwjYprcQtN9EwzZMHnq46+oUyw==}
     engines: {node: 8.* || 10.* || >= 12}
     dependencies:
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/traverse': 7.22.8
       recast: 0.18.10
     transitivePeerDependencies:
@@ -16949,7 +16959,6 @@ packages:
   /to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
-    dev: true
 
   /to-object-path@0.3.0:
     resolution: {integrity: sha512-9mWHdnGRuh3onocaHzukyvCZhzvr6tiflAy/JRFXcJX0TjgfWA9pk9t8CMbzmBE4Jfw58pXbkngtBtqYxzNEyg==}

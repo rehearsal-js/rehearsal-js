@@ -617,7 +617,11 @@ export default class RentalModel extends Model {
 exports[`fix command > ember_js_app_4.11 6`] = `
 "import Component from '@glimmer/component';
 
-export default class Hello extends Component {
+export interface HelloSignature { Args: {} }
+
+
+
+export default class Hello extends Component<HelloSignature> {
   name = 'world';
 
   <template>
@@ -679,7 +683,8 @@ import GreetingHeader from \\"./GreetingHeader\\";
  * @param {string} name the name to format
  * @returns {string} the formatted name
  */
-function formatName(name: string): string {
+// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+function formatName(name: string) {
   return \`\${name} the Great and Powerful\`;
 }
 

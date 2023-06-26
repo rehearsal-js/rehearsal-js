@@ -1,5 +1,138 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`fix > .gts > component signature codefix > add component signature interface 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingInterfaceSignature {
+  Args: {};
+}
+
+export default class WithMissingInterface extends Component<WithMissingInterfaceSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > component signature codefix > adds \`Args\` property to component signature interface 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingPropertySignature {
+  Args: {};
+}
+
+export default class WithMissingProperty extends Component<WithMissingPropertySignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > component signature codefix > adds missing args to Args to component signature interface 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingArgsSignature {
+  Args: { age: any; snack: any };
+}
+
+export default class WithMissingArgs extends Component<WithMissingArgsSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > component signature codefix > mode: drain should apply all code fixes 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingInterfaceSignature {
+  Args: { snack: any; age: any };
+}
+
+export default class WithMissingInterface extends Component<WithMissingInterfaceSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`fix > .gts > component signature codefix > with-typedef for component signature interface 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface RepeatSignature {
+  Args: { phrase: any };
+}
+
+//
+// UseCase: Should generate a component signature interface
+//
+
+export class Repeat extends Component<RepeatSignature> {
+  <template>
+    <span>{{@phrase}}</span>
+  </template>
+}
+
+//
+// UseCase: Should infer relationship from comment, update heritage clause with signature
+//
+
+interface MyComponentSignature {
+  Args: { snack: any; age: any };
+}
+
+/**
+ * @extends {Component<MyComponentSignature>}
+ */
+export class MyComponent extends Component<MyComponentSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <Repeat @phrase={{@age}} />
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+
+//
+// UseCase: Should generate an interface from all comments
+//
+
+interface InterfaceFromCommentSignature {
+  Args: InterfaceFromCommentArgs;
+}
+
+interface InterfaceFromCommentArgs {
+  someArg: number;
+}
+
+/**
+ * @extends {Component<InterfaceFromCommentSignature>}
+ */
+export class Something extends Component<InterfaceFromCommentSignature> {
+  <template>
+    <span>{{@someArg}}</span>
+  </template>
+}
+"
+`;
+
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
 "import Component from \\"@glimmer/component\\";
 
@@ -16,7 +149,11 @@ export default class TestGjsNoErrors extends Component {
 exports[`fix > .gts > when missing a local prop 1`] = `
 "import Component from \\"@glimmer/component\\";
 
-export default class TestMissingLocalPropGts extends Component {
+export interface TestMissingLocalPropGtsSignature {
+  Args: {};
+}
+
+export default class TestMissingLocalPropGts extends Component<TestMissingLocalPropGtsSignature> {
   <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
   </template>
@@ -38,7 +175,11 @@ exports[`fix > .gts > with bare template 1`] = `
 exports[`fix > .gts > with class 1`] = `
 "import Component from \\"@glimmer/component\\";
 
-export default class Hello extends Component {
+export interface HelloSignature {
+  Args: {};
+}
+
+export default class Hello extends Component<HelloSignature> {
   name = \\"world\\";
 
   <template>
@@ -51,7 +192,11 @@ export default class Hello extends Component {
 exports[`fix > .gts > with errors 1`] = `
 "import Component from \\"@glimmer/component\\";
 
-export default class Hello extends Component {
+export interface HelloSignature {
+  Args: {};
+}
+
+export default class Hello extends Component<HelloSignature> {
   name = \\"world\\";
 
   <template>
@@ -65,7 +210,11 @@ exports[`fix > .gts > with non-qualified service 1`] = `
 "import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
-export default class TestWithNonQualifiedService extends Component {
+export interface TestWithNonQualifiedServiceSignature {
+  Args: {};
+}
+
+export default class TestWithNonQualifiedService extends Component<TestWithNonQualifiedServiceSignature> {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'authenticatedUser' implicitly has an 'any' type.
   @service(\\"authenticated-user\\") authenticatedUser;
 
@@ -83,7 +232,11 @@ exports[`fix > .gts > with qualified service 1`] = `
 import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
 
-export default class TestWithQualifiedServiceGts extends Component {
+export interface TestWithQualifiedServiceGtsSignature {
+  Args: {};
+}
+
+export default class TestWithQualifiedServiceGts extends Component<TestWithQualifiedServiceGtsSignature> {
   @service(\\"authentication@authenticated-user\\")
   declare authenticatedUser: AuthenticatedUser;
 
@@ -113,7 +266,7 @@ export default class TestWithMappedServiceGts extends Component {
   @service(\\"@some-org/some-package@mapped\\")
   declare something: Mapped;
 
-  @service
+  @service()
   declare gooService: GooService;
 
   @service
@@ -162,20 +315,6 @@ export default class Foo extends Component {}
 
 exports[`fix > .hbs > template only 1`] = `"Hello!"`;
 
-exports[`fix > .hbs > with errors 1`] = `"<span>Hello {{@name}}, your nickname is: {{this.nickname}}</span>"`;
-
-exports[`fix > .hbs > with errors 2`] = `
-"import Component from \\"@glimmer/component\\";
-
-export default class Salutation extends Component {
-  get nickname() {
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'nickname' does not exist on type 'Readonly<EmptyObject>'.
-    return this.args.nickname ?? \\"Unknown\\";
-  }
-}
-"
-`;
-
 exports[`fix > .ts > class with missing prop 1`] = `
 "class Foo {
   hello() {
@@ -211,7 +350,6 @@ module(\\"Integration | Helper | grid-list\\", function (hooks) {
 
   test(\\"it sets and changes the columns classes\\", async function (assert) {
     this.set(\\"styles\\", \\"foo\\");
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'.
     await render(hbs\`<ul data-test-el class=\\"{{this.styles}}\\">foo</ul>\`);
 
     this.set(\\"styles\\", \\"foo\\");

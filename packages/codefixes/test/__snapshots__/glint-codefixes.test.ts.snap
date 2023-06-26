@@ -1,0 +1,55 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Test glint codefixes > addMissingArgToComponentSignature 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingArgsSignature {
+  Args: { age: any; snack: any };
+}
+
+export default class WithMissingArgs extends Component<WithMissingArgsSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`Test glint codefixes > addMissingArgToComponentSignature 2`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingPropertySignature {
+  Args: {};
+}
+
+export default class WithMissingProperty extends Component<WithMissingPropertySignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;
+
+exports[`Test glint codefixes > addMissingArgToComponentSignature 3`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingInterfaceSignature {
+  Args: {};
+}
+
+export default class WithMissingInterface extends Component<WithMissingInterfaceSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+"
+`;

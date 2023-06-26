@@ -24,15 +24,18 @@ export function applyTextChanges(text: string, textChanges: TextChange[]): strin
   return text;
 }
 
+export function isSameChange(a: TextChange, b: TextChange): boolean {
+  return (
+    a.span.start === a.span.start && a.span.length === b.span.length && a.newText === b.newText
+  );
+}
+
 /**
  * Prepares text changes to be applying to file
  * by removing duplicates and sort them backwards to apply from the bottom of the file,
  * so we don't need to worry about changes to be applied in a wrong place
  */
 export function normalizeTextChanges(textChanges: TextChange[]): TextChange[] {
-  const isSameChange = (a: TextChange, b: TextChange): boolean =>
-    a.span.start === a.span.start && a.span.length === b.span.length && a.newText === b.newText;
-
   // TODO: Probably need to remove overlapping entries, see `normalizeEdits` from `parserharness.ts` of TS source code
   return textChanges
     .sort((a, b) => b.span.start - a.span.start)
