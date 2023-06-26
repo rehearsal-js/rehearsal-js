@@ -49,10 +49,6 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    // const original = parentSourceNode.original ?? '';
-    // isPathExpressionAnArgument = (original as string).startsWith('@');
-
     if (!isPathExpressionAnArgument) {
       return;
     }
