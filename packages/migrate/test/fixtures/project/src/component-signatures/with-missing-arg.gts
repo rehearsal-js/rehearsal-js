@@ -9,5 +9,6 @@ export default class WithMissingArg extends Component<WithMissingArgComponentSig
 
   <template>
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
   </template>
 }
