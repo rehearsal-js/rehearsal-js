@@ -1,8 +1,13 @@
 import { createRequire } from 'node:module';
-import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
+import {
+  glintCodeFixes,
+  applyCodeFix,
+  makeCodeFixStrict,
+  getDiagnosticOrder,
+  DiagnosticWithContext,
+} from '@rehearsal/codefixes';
 import debug from 'debug';
-
-import ts from 'typescript';
+import ts, { DiagnosticWithLocation, SourceFile } from 'typescript';
 import { CodeAction, CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
@@ -17,6 +22,31 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 const { DiagnosticCategory } = ts;
 export interface GlintFixPluginOptions {
   mode: 'single-pass' | 'drain';
+}
+
+// Helper methods for finding a node, for glint AST nodes ts-util methods do not work here.
+function findNodeAtPosition(
+  sourceFile: SourceFile,
+  start: number,
+  length: number
+): ts.Node | undefined {
+  const visitor = (node: ts.Node): ts.Node | undefined => {
+    if (isNodeAtPosition(node, start, length)) {
+      return node;
+    }
+
+    if (node.pos <= start && node.end >= start + length) {
+      return ts.forEachChild(node, visitor);
+    }
+
+    return undefined;
+  };
+
+  return visitor(sourceFile);
+}
+
+function isNodeAtPosition(node: ts.Node, start: number, length: number): boolean {
+  return node.pos === start && node.end === start + length;
 }
 
 export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
@@ -45,7 +75,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     const { fileName, context } = this;
     const service = context.service as GlintService;
 
-    let diagnostics = this.getDiagnostics(service, fileName, [
+    let diagnostics: Diagnostic[] = this.getDiagnostics(service, fileName, [
       DiagnosticCategory.Error,
       DiagnosticCategory.Warning,
     ]);
@@ -163,8 +193,8 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     fileName: string,
     diagnosticCategories: ts.DiagnosticCategory[]
   ): Diagnostic[] {
-    return service
-      .getDiagnostics(fileName)
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
+    return diagnostics
       .filter((d) => diagnosticCategories.some((category) => category === d.category))
       .map((d) => service.convertTsDiagnosticToLSP(d));
   }
@@ -189,7 +219,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
       DEBUG_CALLBACK('Unable to getCodeActions for %s: %o', diagnostic.codeDescription, diagnostic);
     }
 
-    const transformedActions = service
+    let transformedActions = service
       .transformCodeActionToCodeFixAction(rawActions)
       .reduce<ts.CodeFixAction[]>((acc, fix) => {
         const strictFix = makeCodeFixStrict(fix);
@@ -200,6 +230,38 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
         return acc;
       }, []);
+
+    DEBUG_CALLBACK(transformedActions);
+
+    const program = service.getLanguageService().getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnosticWithLocation: DiagnosticWithLocation = service.convertLSPDiagnosticToTs(
+      fileName,
+      diagnostic
+    );
+
+    const diagnosticWithContext: DiagnosticWithContext = {
+      ...diagnosticWithLocation,
+      ...{
+        glintService: service,
+        service: service.getLanguageService(),
+        program,
+        checker,
+        node: findNodeAtPosition(
+          diagnosticWithLocation.file,
+          diagnosticWithLocation.start,
+          diagnosticWithLocation.start + diagnosticWithLocation.length
+        ),
+      },
+    };
+
+    const additionalFixes = glintCodeFixes.getCodeFixes(diagnosticWithContext, {
+      safeFixes: true,
+      strictTyping: true,
+    });
+
+    transformedActions = transformedActions.concat(additionalFixes);
 
     // Use the first available codefix in automatic mode
     let fix = transformedActions.shift();

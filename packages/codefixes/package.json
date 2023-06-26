@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@rehearsal/ts-utils": "workspace:*",
+    "@swc/core": "^1.3.46",
     "debug": "^4.3.4"
   },
   "devDependencies": {
@@ -50,8 +51,10 @@
     "fixturify": "^3.0.0",
     "fixturify-project": "^5.2.0",
     "fs-extra": "^11.1.1",
+    "json5": "^2.2.3",
     "prettier": "^2.8.7",
     "tmp": "^0.2.1",
+    "type-fest": "^3.12.0",
     "vitest": "^0.30.0"
   },
   "peerDependencies": {

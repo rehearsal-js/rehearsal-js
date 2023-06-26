@@ -9,6 +9,7 @@ import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
 import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
 import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints.js';
 import { AnnotateWithStrictTypeFromJSDoc } from './fixes/annotateWithStrictTypeFromJSDoc.js';
+import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
 import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
@@ -21,6 +22,10 @@ export const codefixes = new CodeFixesProvider([
     new MakeMemberOptionalCodeFix(),
   ]),
   new TypescriptCodeFixCollection(),
+]);
+
+export const glintCodeFixes = new CodeFixesProvider([
+  new BaseCodeFixCollection([new AddMissingArgToComponentSignature()]),
 ]);
 
 export interface ContentDelegate {

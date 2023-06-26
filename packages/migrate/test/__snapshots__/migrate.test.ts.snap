@@ -1,5 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`fix > .gts > adds missing arg to component signature 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface WithMissingArgComponentSignature {
+  Args: {
+    age: any;
+  };
+}
+
+export default class WithMissingArg extends Component<WithMissingArgComponentSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+"
+`;
+
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
 "import Component from \\"@glimmer/component\\";
 

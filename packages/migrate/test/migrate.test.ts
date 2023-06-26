@@ -332,6 +332,26 @@ describe('fix', () => {
       expectFile(outputs[0]).contains('class TestGjsNoErrors');
       expectFile(outputs[0]).toMatchSnapshot();
     });
+
+    test('adds missing arg to component signature', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, [
+        'component-signatures/with-missing-arg.gts',
+      ]);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).contains('class WithMissingArg');
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
   });
 
   describe('.hbs', () => {
