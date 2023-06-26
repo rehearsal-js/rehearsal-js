@@ -82,7 +82,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     const changes = ChangesFactory.insertText(
       d.file,
       originalSignatureRange.originalStart,
-      `\n${argName}: any;\n `
+      `${argName}: any;`
     );
 
     return createCodeFixAction(
