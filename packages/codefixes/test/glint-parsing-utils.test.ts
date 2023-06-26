@@ -45,14 +45,19 @@ describe('glint-parsing-utils', () => {
       }
     }
     `;
+
+    expect.assertions(3);
+
     const parsed = parse(fixture);
     const someInterface = findTsInterfaceDeclarationByName(parsed.body, 'SomeInterface');
-    expect(someInterface).toBeTruthy();
-    const someProperty = findPropertySignatureByName(someInterface, 'Args');
-    const typeLiteral = someProperty?.typeAnnotation?.typeAnnotation as TsTypeLiteral;
-    expect(typeLiteral.members[0].type).toBe('TsPropertySignature');
-    const tsPropSig = typeLiteral.members[0] as TsPropertySignature;
-    expect((tsPropSig.key as Identifier).value).toBe('foo');
+    expect(someInterface).not.toBeUndefined();
+    if (someInterface) {
+      const someProperty = findPropertySignatureByName(someInterface, 'Args');
+      const typeLiteral = someProperty?.typeAnnotation?.typeAnnotation as TsTypeLiteral;
+      expect(typeLiteral.members[0].type).toBe('TsPropertySignature');
+      const tsPropSig = typeLiteral.members[0] as TsPropertySignature;
+      expect((tsPropSig.key as Identifier).value).toBe('foo');
+    }
   });
 
   test('findComponentSignatureBodyRange', () => {
