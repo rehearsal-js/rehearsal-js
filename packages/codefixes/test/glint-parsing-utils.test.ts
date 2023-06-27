@@ -74,7 +74,7 @@ export default class WithMissingArg extends Component<WithMissingArgComponentSig
     `;
     const range = findComponentSignatureBodyRange(fixture);
 
-    expect(range?.start).toBe(0);
-    expect(range?.end).toBe(100);
+    expect(range?.start).toBe(107);
+    expect(range?.end).toBe(109);
   });
 });
