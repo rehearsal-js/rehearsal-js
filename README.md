@@ -95,6 +95,18 @@ glint: {
 }
 ```
 
+## Services Mapping
+For Ember.js apps only: A required [services](https://guides.emberjs.com/release/services/#toc_accessing-services) mapping file at the project root as `.rehearsal/services-map.json`. This is for Rehearsal to improve type inference and migration-graph as to properly map services against the fully-qualified path as key/value path. Note the value path here must match the tsconfig.json paths for a given service. eg.
+
+```
+# .rehearsal/services-map.json
+{
+  "boo-service": "boo/services/boo-service",
+  "goo-service": "services/goo",
+  "mooService": "services/moo/moo",
+  "@some-org/some-package@mapped": "@some-org/some-package/services/from-service-map"
+}
+```
 # Installation
 
 Add `@rehearsal/cli` to your project as a **devDependency**.
