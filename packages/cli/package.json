@@ -59,7 +59,7 @@
     "get-tsconfig": "^4.5.0",
     "js-yaml": "^4.1.0",
     "listr2": "^5.0.8",
-    "minimatch": "^8.0.3",
+    "minimatch": "^9.0.2",
     "simple-git": "^3.17.0",
     "tmp": "^0.2.1",
     "type-fest": "^3.8.0",
