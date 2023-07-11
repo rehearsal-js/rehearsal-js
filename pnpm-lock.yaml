@@ -693,8 +693,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       clean-webpack-plugin:
-        specifier: ^3.0.0
-        version: 3.0.0(webpack@5.79.0)
+        specifier: ^4.0.0
+        version: 4.0.0(webpack@5.79.0)
       concurrently:
         specifier: ^7.6.0
         version: 7.6.0
@@ -6722,13 +6722,12 @@ packages:
   /clean-up-path@1.0.0:
     resolution: {integrity: sha512-PHGlEF0Z6976qQyN6gM7kKH6EH0RdfZcc8V+QhFe36eRxV0SMH5OUBZG7Bxa9YcreNzyNbK63cGiZxdSZgosRw==}
 
-  /clean-webpack-plugin@3.0.0(webpack@5.79.0):
-    resolution: {integrity: sha512-MciirUH5r+cYLGCOL5JX/ZLzOZbVr1ot3Fw+KcvbhUb6PM+yycqd9ZhIlcigQ5gl+XhppNmw3bEFuaaMNyLj3A==}
-    engines: {node: '>=8.9.0'}
+  /clean-webpack-plugin@4.0.0(webpack@5.79.0):
+    resolution: {integrity: sha512-WuWE1nyTNAyW5T7oNyys2EN0cfP2fdRxhxnIQWiAp0bMabPdHhoGxM8A6YL2GhqwgrPnnaemVE7nv5XJ2Fhh2w==}
+    engines: {node: '>=10.0.0'}
     peerDependencies:
-      webpack: '*'
+      webpack: '>=4.0.0 <6.0.0'
     dependencies:
-      '@types/webpack': 4.41.33
       del: 4.1.1
       webpack: 5.79.0(webpack-cli@3.3.11)
     dev: true
