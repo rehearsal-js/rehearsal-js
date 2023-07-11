@@ -4124,7 +4124,7 @@ packages:
     resolution: {integrity: sha512-lEuC2QD8K6rRAbELMejrALFBgelRPt6OQtapny4Oke07ZtK/Lbf9zn5KIDl7PNkirxMD0AStsQTdUqFu6eVbVw==}
     deprecated: This is a stub types definition. ember-resolver provides its own type definitions, so you do not need this installed.
     dependencies:
-      ember-resolver: 10.0.0(@ember/string@3.0.1)(ember-source@4.11.0)
+      ember-resolver: 10.1.1(@ember/string@3.0.1)(ember-source@4.11.0)
     transitivePeerDependencies:
       - '@ember/string'
       - ember-source
@@ -8962,6 +8962,23 @@ packages:
     peerDependencies:
       '@ember/string': ^3.0.1
       ember-source: ^4.8.3
+    peerDependenciesMeta:
+      ember-source:
+        optional: true
+    dependencies:
+      '@ember/string': 3.0.1
+      ember-cli-babel: 7.26.11
+      ember-source: 4.11.0(@babel/core@7.21.4)(@glimmer/component@1.1.2)(webpack@5.79.0)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /ember-resolver@10.1.1(@ember/string@3.0.1)(ember-source@4.11.0):
+    resolution: {integrity: sha512-y1zzn6C4YGJui+tJzcCKlsf1oSOSVAkRrvmg8OwqVIKnALKKb9ihx2qLCslHg8x0wJvJgMtDMXgrczvQrZW0Lw==}
+    engines: {node: 14.* || 16.* || >= 18}
+    peerDependencies:
+      '@ember/string': ^3.0.1
+      ember-source: ^4.8.3 || >= 5.0.0
     peerDependenciesMeta:
       ember-source:
         optional: true
