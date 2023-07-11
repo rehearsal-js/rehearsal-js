@@ -74,7 +74,7 @@
     "babel-loader": "^8.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "clean-webpack-plugin": "^4.0.0",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.2.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^6.8.1",
     "ember-auto-import": "^2.6.1",
