@@ -188,8 +188,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(enquirer@2.3.6)
       minimatch:
-        specifier: ^8.0.3
-        version: 8.0.4
+        specifier: ^9.0.3
+        version: 9.0.3
       simple-git:
         specifier: ^3.17.0
         version: 3.17.0
