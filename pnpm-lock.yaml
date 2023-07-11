@@ -188,8 +188,8 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(enquirer@2.3.6)
       minimatch:
-        specifier: ^8.0.3
-        version: 8.0.4
+        specifier: ^9.0.3
+        version: 9.0.3
       simple-git:
         specifier: ^3.17.0
         version: 3.17.0
@@ -12816,6 +12816,13 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       brace-expansion: 2.0.1
+
+  /minimatch@9.0.3:
+    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
 
   /minimist-options@4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
