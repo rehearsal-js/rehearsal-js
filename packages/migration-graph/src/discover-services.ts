@@ -143,17 +143,22 @@ export function discoverServiceDependencies(serviceMap: Record<string, string>):
 
           if (!!maybeDecorator && isDecoratorWithExpressionTypeCallExpression(maybeDecorator)) {
             const callExpression = maybeDecorator.expression as CallExpression;
-            const arg = callExpression.arguments[0].expression as StringLiteral;
-            // someAddon@serviceName
 
-            if (serviceMap[arg.value]) {
-              return serviceMap[arg.value];
-            } else if (isFullyQualifiedService(arg.value)) {
-              const [packageName, serviceName] = parseFullyQualifiedService(arg.value);
-              return `${packageName}/services/${toKebabCase(serviceName)}`;
+            if (callExpression.arguments.length) {
+              const arg = callExpression.arguments[0].expression as StringLiteral;
+
+              if (serviceMap[arg.value]) {
+                return serviceMap[arg.value];
+              }
+
+              // someAddon@serviceName
+              if (isFullyQualifiedService(arg.value)) {
+                const [packageName, serviceName] = parseFullyQualifiedService(arg.value);
+                return `${packageName}/services/${toKebabCase(serviceName)}`;
+              }
+
+              return parseServiceMetaFromString(arg.value);
             }
-
-            return parseServiceMetaFromString(arg.value);
           }
         }
 
@@ -161,7 +166,9 @@ export function discoverServiceDependencies(serviceMap: Record<string, string>):
 
         if (serviceMap[keyName]) {
           return serviceMap[keyName];
-        } else if (isFullyQualifiedService(keyName)) {
+        }
+
+        if (isFullyQualifiedService(keyName)) {
           const [packageName, serviceName] = parseFullyQualifiedService(keyName);
           return `${packageName}/services/${toKebabCase(serviceName)}`;
         }

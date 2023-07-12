@@ -6,7 +6,7 @@ export default class TestWithMappedServiceGts extends Component {
 
   @service("@some-org/some-package@mapped") something;
 
-  @service gooService;
+  @service() gooService;
 
   @service mooService;
 
