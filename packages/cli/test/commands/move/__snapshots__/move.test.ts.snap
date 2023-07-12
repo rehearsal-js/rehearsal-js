@@ -82,6 +82,7 @@ exports[`Command: move > move packages based on the graph 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
 [DATA] renamed: 
 [DATA] ./src/index.js -> ./src/index.ts
 [DATA] ./src/foo/baz.js -> ./src/foo/baz.ts
@@ -94,6 +95,7 @@ exports[`Command: move > move packages based on the graph 1`] = `
 [DATA] ./module-b/src/tires.js -> ./module-b/src/tires.ts
 [DATA] ./module-b/src/car.js -> ./module-b/src/car.ts
 [DATA] ./module-b/src/index.js -> ./module-b/src/index.ts
+[DATA] ./module-c/src/index.js -> ./module-c/src/index.ts
 [SUCCESS] Executing git mv"
 `;
 

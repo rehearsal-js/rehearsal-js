@@ -129,7 +129,7 @@ export class PackageNode {
       return true;
     }
     // this should be expanded to support export maps but its a bit of a nightmare
-    return !!(this.pkg.types || this.pkg.typings);
+    return !!(this.pkg.types || this.pkg.typings || this.pkg.typesVersions);
   }
 
   addFile(file: FileNode): void {
