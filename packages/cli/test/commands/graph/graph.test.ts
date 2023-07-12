@@ -183,6 +183,17 @@ describe('Task: graphOrderTask', () => {
           },
         ],
       },
+      {
+        name: 'module-c',
+        external: false,
+        files: [
+          {
+            name: './module-c/src/index.js',
+            hasTypes: true,
+            edges: [],
+          },
+        ],
+      },
     ]);
   });
 

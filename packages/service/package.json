@@ -37,6 +37,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@glint/core": "^1.0.2",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "find-up": "^6.3.0",
@@ -50,7 +51,6 @@
     "vitest": "^0.30.0"
   },
   "peerDependencies": {
-    "@glint/core": "^1.0.2",
     "typescript": "^5.1"
   },
   "packageManager": "pnpm@8.2.0",

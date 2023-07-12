@@ -82,6 +82,7 @@ describe('Command: move', () => {
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
+      ignore: ['**/types/**'],
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
@@ -94,6 +95,7 @@ describe('Command: move', () => {
       '/module-b/src/car.ts',
       '/module-b/src/index.ts',
       '/module-b/src/tires.ts',
+      '/module-c/src/index.ts',
       '/src/foo/baz.ts',
       '/src/foo/biz.ts',
       '/src/foo/e.gts',
@@ -109,6 +111,7 @@ describe('Command: move', () => {
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
+      ignore: ['**/types/**'],
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
@@ -129,6 +132,7 @@ describe('Command: move', () => {
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
+      ignore: ['**/types/**'],
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
@@ -150,6 +154,7 @@ describe('Command: move', () => {
     const projectSourceDir = resolve(project.baseDir);
     const tsSourceFiles = fastGlob.sync(`${projectSourceDir}/**/*.{ts,gts}`, {
       cwd: project.baseDir,
+      ignore: ['**/types/**'],
     });
 
     expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
