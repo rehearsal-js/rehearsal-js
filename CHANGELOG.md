@@ -1,3 +1,33 @@
+## <small>1.0.5 (2023-07-12)</small>
+
+* fix: handle `@service() name` injection (#1170) ([08e05cb](https://github.com/rehearsal-js/rehearsal-js/commit/08e05cb)), closes [#1170](https://github.com/rehearsal-js/rehearsal-js/issues/1170)
+* fix(migration-graph): expand hasTypes to include typesVersions check (#1171) ([e808ec0](https://github.com/rehearsal-js/rehearsal-js/commit/e808ec0)), closes [#1171](https://github.com/rehearsal-js/rehearsal-js/issues/1171)
+* chore(deps-dev): bump @babel/preset-env from 7.21.4 to 7.22.7 (#1165) ([1172f93](https://github.com/rehearsal-js/rehearsal-js/commit/1172f93)), closes [#1165](https://github.com/rehearsal-js/rehearsal-js/issues/1165)
+* chore(deps-dev): bump @ember/string and @types/ember__string (#1148) ([de8bb22](https://github.com/rehearsal-js/rehearsal-js/commit/de8bb22)), closes [#1148](https://github.com/rehearsal-js/rehearsal-js/issues/1148)
+* chore(deps-dev): bump @ember/test-helpers from 2.9.3 to 3.2.0 (#1145) ([3daa829](https://github.com/rehearsal-js/rehearsal-js/commit/3daa829)), closes [#1145](https://github.com/rehearsal-js/rehearsal-js/issues/1145)
+* chore(deps-dev): bump @types/ember from 4.0.3 to 4.0.4 (#1143) ([0426725](https://github.com/rehearsal-js/rehearsal-js/commit/0426725)), closes [#1143](https://github.com/rehearsal-js/rehearsal-js/issues/1143)
+* chore(deps-dev): bump @types/ember__array from 4.0.3 to 4.0.4 (#1150) ([097e433](https://github.com/rehearsal-js/rehearsal-js/commit/097e433)), closes [#1150](https://github.com/rehearsal-js/rehearsal-js/issues/1150)
+* chore(deps-dev): bump @types/ember__component from 4.0.8 to 4.0.14 (#1146) ([f2e72b4](https://github.com/rehearsal-js/rehearsal-js/commit/f2e72b4)), closes [#1146](https://github.com/rehearsal-js/rehearsal-js/issues/1146)
+* chore(deps-dev): bump @types/ember__controller from 4.0.4 to 4.0.5 (#1142) ([0b3b67a](https://github.com/rehearsal-js/rehearsal-js/commit/0b3b67a)), closes [#1142](https://github.com/rehearsal-js/rehearsal-js/issues/1142)
+* chore(deps-dev): bump @types/ember__polyfills from 4.0.1 to 4.0.2 (#1153) ([8fdcaac](https://github.com/rehearsal-js/rehearsal-js/commit/8fdcaac)), closes [#1153](https://github.com/rehearsal-js/rehearsal-js/issues/1153)
+* chore(deps-dev): bump @types/ember__template from 4.0.1 to 4.0.2 (#1156) ([803492f](https://github.com/rehearsal-js/rehearsal-js/commit/803492f)), closes [#1156](https://github.com/rehearsal-js/rehearsal-js/issues/1156)
+* chore(deps-dev): bump @types/node from 18.15.11 to 20.3.3 (#1155) ([ea8ab0a](https://github.com/rehearsal-js/rehearsal-js/commit/ea8ab0a)), closes [#1155](https://github.com/rehearsal-js/rehearsal-js/issues/1155)
+* chore(deps-dev): bump clean-webpack-plugin from 3.0.0 to 4.0.0 (#1159) ([5b621c4](https://github.com/rehearsal-js/rehearsal-js/commit/5b621c4)), closes [#1159](https://github.com/rehearsal-js/rehearsal-js/issues/1159)
+* chore(deps-dev): bump concurrently from 7.6.0 to 8.2.0 (#1160) ([cc0a4c2](https://github.com/rehearsal-js/rehearsal-js/commit/cc0a4c2)), closes [#1160](https://github.com/rehearsal-js/rehearsal-js/issues/1160)
+* chore(deps-dev): bump ember-resolver from 10.0.0 to 10.1.1 (#1147) ([4fa45ff](https://github.com/rehearsal-js/rehearsal-js/commit/4fa45ff)), closes [#1147](https://github.com/rehearsal-js/rehearsal-js/issues/1147)
+* chore(deps-dev): bump glob from 7.1.6 to 10.3.3 (#1164) ([c66bec9](https://github.com/rehearsal-js/rehearsal-js/commit/c66bec9)), closes [#1164](https://github.com/rehearsal-js/rehearsal-js/issues/1164)
+* chore(deps-dev): bump vite from 4.2.1 to 4.4.3 (#1166) ([b2221f1](https://github.com/rehearsal-js/rehearsal-js/commit/b2221f1)), closes [#1166](https://github.com/rehearsal-js/rehearsal-js/issues/1166)
+* chore(deps-dev): bump webpack from 5.79.0 to 5.88.1 (#1161) ([d2d86d1](https://github.com/rehearsal-js/rehearsal-js/commit/d2d86d1)), closes [#1161](https://github.com/rehearsal-js/rehearsal-js/issues/1161)
+* chore(deps): bump fast-glob from 3.2.12 to 3.3.0 (#1149) ([6a65307](https://github.com/rehearsal-js/rehearsal-js/commit/6a65307)), closes [#1149](https://github.com/rehearsal-js/rehearsal-js/issues/1149)
+* chore(deps): bump minimatch from 8.0.4 to 9.0.3 (#1168) ([14ea7c8](https://github.com/rehearsal-js/rehearsal-js/commit/14ea7c8)), closes [#1168](https://github.com/rehearsal-js/rehearsal-js/issues/1168)
+* chore(deps): bump prettier and @types/prettier (#1154) ([850c350](https://github.com/rehearsal-js/rehearsal-js/commit/850c350)), closes [#1154](https://github.com/rehearsal-js/rehearsal-js/issues/1154)
+* chore(deps): bump rimraf from 4.4.1 to 5.0.1 (#1157) ([d2e90ed](https://github.com/rehearsal-js/rehearsal-js/commit/d2e90ed)), closes [#1157](https://github.com/rehearsal-js/rehearsal-js/issues/1157)
+* chore(gh-action-bot): adding new diagnostics ([ba613a9](https://github.com/rehearsal-js/rehearsal-js/commit/ba613a9))
+* chore(gh-action-bot): adding new diagnostics ([3c1f5c1](https://github.com/rehearsal-js/rehearsal-js/commit/3c1f5c1))
+* docs: update README.md (#1140) ([09a267b](https://github.com/rehearsal-js/rehearsal-js/commit/09a267b)), closes [#1140](https://github.com/rehearsal-js/rehearsal-js/issues/1140)
+
+
+
 ## <small>1.0.4 (2023-06-21)</small>
 
 * fix: allow fixes without related AST node to be applied (#1130) ([1cb4d8d](https://github.com/rehearsal-js/rehearsal-js/commit/1cb4d8d)), closes [#1130](https://github.com/rehearsal-js/rehearsal-js/issues/1130)
