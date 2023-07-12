@@ -203,18 +203,23 @@ describe('discoverServiceDependencies', () => {
       export default class Salutation extends Component {
         @service('authentication@authenticated-user') authenticatedUser;
         @service('@some-org/some-package@locale') myLocale;
-
+        @service() anotherService;
+        @service oneMoreService;
       }
     `;
 
     const results = discoverServiceDependencies({
       '@some-org/some-package@locale': 'foo/service/bar',
+      'anotherService': 'ano/service/ther',
+      'oneMoreService': 'one/service/more',
     })('ecmascript', content);
 
     expect(results).toBeTruthy();
-    expect(results.length).toBe(2);
+    expect(results.length).toBe(4);
     expect(results[0]).toBe('authentication/services/authenticated-user');
     expect(results[1]).toBe('foo/service/bar');
+    expect(results[2]).toBe('ano/service/ther');
+    expect(results[3]).toBe('one/service/more');
   });
 
   test('should ignore @classic decorator', () => {

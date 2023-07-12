@@ -113,7 +113,7 @@ declare booService: BooService;
   @service(\\"@some-org/some-package@mapped\\")
 declare something: Mapped;
 
-  @service
+  @service()
 declare gooService: GooService;
 
   @service
@@ -347,7 +347,7 @@ export default class SomeTsComponent extends Component {
   @service(\\"@some-org/some-package@mapped\\")
   declare something: Mapped;
 
-  @service
+  @service()
   declare gooService: GooService;
 
   @service
