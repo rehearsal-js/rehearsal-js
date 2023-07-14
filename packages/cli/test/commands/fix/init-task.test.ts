@@ -265,6 +265,42 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
+  test('preFlightCheck "base-ts" - no failure when deps missing and skipDepsCheck option is set', async () => {
+    const projectType: ProjectType = 'base-ts';
+    const skipDepsCheck = true;
+
+    projectInit(project, projectType);
+
+    project.removeDevDependency('typescript');
+    project.removeDevDependency('prettier');
+    project.removeDevDependency('eslint');
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType, skipDepsCheck);
+    } finally {
+      expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+    }
+  });
+
+  test('preFlightCheck "base-ts" - no failure when deps missing and skipEsLintCheck option is set', async () => {
+    const projectType: ProjectType = 'base-ts';
+    const skipEsLintCheck = true;
+
+    projectInit(project, projectType);
+
+    project.removeDevDependency('@typescript-eslint/parser');
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType, false, skipEsLintCheck);
+    } finally {
+      expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+    }
+  });
+
   test(`validate initTask "base-ts" works with src arg`, async () => {
     const projectType: ProjectType = 'base-ts';
 

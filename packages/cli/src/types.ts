@@ -59,6 +59,8 @@ export type FixCommandOptions = {
   ignore: string[];
   graph?: boolean;
   mode: 'single-pass' | 'drain';
+  skipDepsCheck?: boolean;
+  skipEsLintCheck?: boolean;
 };
 
 /*

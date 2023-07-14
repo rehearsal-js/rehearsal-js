@@ -45,7 +45,7 @@ export function initTask(
         projectType = 'glimmer';
       }
 
-      preFlightCheck(rootPath, projectType);
+      preFlightCheck(rootPath, projectType, options.skipDepsCheck, options.skipEsLintCheck);
 
       // in this mode we skip the `graphOrderTask`
       if (process.env['GRAPH_MODES'] === 'off') {
@@ -66,6 +66,8 @@ export function initTask(
 export function preFlightCheck(
   basePath: string,
   projectType: ProjectType,
+  skipDepsCheck = false,
+  skipEsLintCheck = false,
   isSkipped = false
 ): void {
   // FOR LOCAL DEVELOPMENT TESTING ONLY! SKIP ALL PRE-REQ CHECKS
@@ -81,8 +83,13 @@ export function preFlightCheck(
   isExistsESLintConfig(basePath);
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
-  isDepsPreReq(basePath, deps);
-  isESLintPreReq(basePath, eslint);
+  // if `--skip-checks` flag is true skip `isDepsPreReq`
+  if (!skipDepsCheck) {
+    isDepsPreReq(basePath, deps);
+  }
+  if (!skipEsLintCheck) {
+    isESLintPreReq(basePath, eslint);
+  }
   isTSConfigPreReq(basePath, tsconfig);
   isNodePreReq(node);
 }
