@@ -13,14 +13,14 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 
 [DATA] processing file: /src/app.ts
 [DATA] processing file: /src/sub/grid.ts
 [TITLE] Types Inferred
-[TITLE]   17 errors caught by rehearsal
-[TITLE]   8 have been fixed by rehearsal
+[TITLE]   15 errors caught by rehearsal
+[TITLE]   6 have been fixed by rehearsal
 [TITLE]   9 errors need to be fixed manually
 [TITLE]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 5 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   17 errors caught by rehearsal
-[SUCCESS]   8 have been fixed by rehearsal
+[SUCCESS]   15 errors caught by rehearsal
+[SUCCESS]   6 have been fixed by rehearsal
 [SUCCESS]   9 errors need to be fixed manually
 [SUCCESS]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 5 eslint errors, with details in the report"
@@ -533,18 +533,18 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   31 errors caught by rehearsal
+[TITLE]   66 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal
-[TITLE]   29 errors need to be fixed manually
+[TITLE]   64 errors need to be fixed manually
 [TITLE]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 9 glint errors, with details in the report
+[TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   31 errors caught by rehearsal
+[SUCCESS]   66 errors caught by rehearsal
 [SUCCESS]   2 have been fixed by rehearsal
-[SUCCESS]   29 errors need to be fixed manually
+[SUCCESS]   64 errors need to be fixed manually
 [SUCCESS]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 9 glint errors, with details in the report
+[SUCCESS]     -- 44 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
@@ -586,18 +586,18 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   26 errors caught by rehearsal
+[TITLE]   61 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
-[TITLE]   25 errors need to be fixed manually
+[TITLE]   60 errors need to be fixed manually
 [TITLE]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 9 glint errors, with details in the report
+[TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   26 errors caught by rehearsal
+[SUCCESS]   61 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
-[SUCCESS]   25 errors need to be fixed manually
+[SUCCESS]   60 errors need to be fixed manually
 [SUCCESS]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 9 glint errors, with details in the report
+[SUCCESS]     -- 44 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 

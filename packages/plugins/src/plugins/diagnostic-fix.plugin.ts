@@ -67,14 +67,20 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     });
   }
 
-  async drainMode(): Promise<void> {
+  private async drainMode(): Promise<void> {
     const { fileName, context, options } = this;
+
     let diagnostics = this.getDiagnostics(context.service, fileName, [
       DiagnosticCategory.Error,
       DiagnosticCategory.Suggestion,
     ]);
 
-    while (diagnostics.length) {
+    // In the drain mode diagnostics list is getting refreshed in every cycle which might have end up
+    // with more error need to be fixed then was originally. The limit based on original amount of diagnostics
+    // helps to avoid an infinitive loop in some edge cases when new errors keep coming when previous fixed.
+    let limit = diagnostics.length * 2;
+
+    while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
       const fix = this.getCodeFix(diagnostic, options);
@@ -97,6 +103,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
         },
         setText: (filename: string, text: string) => {
           context.service.setFileText(filename, text);
+          context.reporter.incrementRunFixedItemCount();
           this.allFixedFiles.add(filename);
           DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         },

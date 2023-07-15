@@ -39,10 +39,7 @@ dummy.key;
 `;
 
 exports[`Test base codefixes > addMissingExport 1`] = `
-"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations.
-import React from \\"react\\";
-
-export interface Props {
+"export interface Props {
   name: string;
   age: string;
 }
@@ -130,10 +127,7 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
 `;
 
 exports[`Test base codefixes > addMissingExport 4`] = `
-"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'react' or its corresponding type declarations.
-import React from \\"react\\";
-
-import makeToDo, { AllProps } from \\"./4082-2-import\\";
+"import makeToDo, { AllProps } from \\"./4082-2-import\\";
 
 const ToDo = (props: AllProps) => {
   return (

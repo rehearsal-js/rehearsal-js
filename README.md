@@ -212,6 +212,8 @@ Options:
                          tests/**/*,types/**/*' (default: [])
   -f, --format <format>  report format separated by comma, e.g. -f json,sarif,md,sonarqube
                          (default: ["sarif"])
+  -m, --mode <mode>      the application of codefixes (choices: "drain", "single-pass",
+                         default: "drain")
   -h, --help             display help for command
 ```
 
@@ -277,7 +279,7 @@ rehearsal move . --ignore 'docs, vitest.*'
     ./test/main.test.js -> ./test/main.test.ts
 ```
 
-We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies. 
+We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies.
 
 ## Fix
 Let's run Rehearsal `fix` without doing this and see what happens.

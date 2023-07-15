@@ -230,14 +230,14 @@ exports[`fix command > base_ts_app 1`] = `
 [DATA] processing file: /src/gen-random-grid.ts
 [DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
-[TITLE]   12 errors caught by rehearsal
-[TITLE]   6 have been fixed by rehearsal
+[TITLE]   10 errors caught by rehearsal
+[TITLE]   4 have been fixed by rehearsal
 [TITLE]   6 errors need to be fixed manually
 [TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   12 errors caught by rehearsal
-[SUCCESS]   6 have been fixed by rehearsal
+[SUCCESS]   10 errors caught by rehearsal
+[SUCCESS]   4 have been fixed by rehearsal
 [SUCCESS]   6 errors need to be fixed manually
 [SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
@@ -479,18 +479,18 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   66 errors caught by rehearsal
-[TITLE]   3 have been fixed by rehearsal
-[TITLE]   63 errors need to be fixed manually
+[TITLE]   80 errors caught by rehearsal
+[TITLE]   6 have been fixed by rehearsal
+[TITLE]   74 errors need to be fixed manually
 [TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 36 glint errors, with details in the report
+[TITLE]     -- 47 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   66 errors caught by rehearsal
-[SUCCESS]   3 have been fixed by rehearsal
-[SUCCESS]   63 errors need to be fixed manually
+[SUCCESS]   80 errors caught by rehearsal
+[SUCCESS]   6 have been fixed by rehearsal
+[SUCCESS]   74 errors need to be fixed manually
 [SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 36 glint errors, with details in the report
+[SUCCESS]     -- 47 glint errors, with details in the report
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
@@ -539,12 +539,11 @@ import Component from '@glimmer/component';
 const TWEET_INTENT = 'https://twitter.com/intent/tweet';
 
 export default class ShareButtonComponent extends Component {
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'router' has no initializer and is not definitely assigned in the constructor.
-  @service router: { currentURL: string | URL };
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
-  @service locale: { current: () => string };
+  @service router: { currentURL: string | URL } | undefined;
+  @service locale: { current: () => string } | undefined;
 
   get currentURL() {
+    // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
     return new URL(this.router.currentURL, window.location.origin);
   }
 
@@ -572,6 +571,7 @@ export default class ShareButtonComponent extends Component {
       url.searchParams.set('via', this.args.via);
     }
 
+    // @ts-expect-error @rehearsal TODO TS2532: Object is possibly 'undefined'.
     url.searchParams.set('locale', this.locale.current());
 
     return url;
@@ -594,8 +594,7 @@ export default class RentalModel extends Model {
   @attr city;
   // @ts-expect-error @rehearsal TODO TS7008: Member 'location' implicitly has an 'any' type.
   @attr location;
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'category' has no initializer and is not definitely assigned in the constructor.
-  @attr category: string;
+  @attr category: string | undefined;
   // @ts-expect-error @rehearsal TODO TS7008: Member 'image' implicitly has an 'any' type.
   @attr image;
   // @ts-expect-error @rehearsal TODO TS7008: Member 'bedrooms' implicitly has an 'any' type.
@@ -604,6 +603,7 @@ export default class RentalModel extends Model {
   @attr description;
 
   get type() {
+    // @ts-expect-error @rehearsal TODO TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '(this.category as string)', or using type guard: 'if (this.category instanceof string) { ... }'.
     if (COMMUNITY_CATEGORIES.includes(this.category)) {
       return 'Community';
     } else {
@@ -639,18 +639,18 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
-[TITLE]   17 errors caught by rehearsal
-[TITLE]   8 have been fixed by rehearsal
-[TITLE]   9 errors need to be fixed manually
+[TITLE]   27 errors caught by rehearsal
+[TITLE]   16 have been fixed by rehearsal
+[TITLE]   11 errors need to be fixed manually
 [TITLE]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 8 glint errors, with details in the report
+[TITLE]     -- 10 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   17 errors caught by rehearsal
-[SUCCESS]   8 have been fixed by rehearsal
-[SUCCESS]   9 errors need to be fixed manually
+[SUCCESS]   27 errors caught by rehearsal
+[SUCCESS]   16 have been fixed by rehearsal
+[SUCCESS]   11 errors need to be fixed manually
 [SUCCESS]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 8 glint errors, with details in the report
+[SUCCESS]     -- 10 glint errors, with details in the report
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
@@ -721,7 +721,6 @@ export default class HelloWorld extends Component {
   \`;
 }
 
-// @ts-expect-error @rehearsal TODO TS6196: 'IncrementableButtonSignature' is declared but never used.
 interface IncrementableButtonSignature {
   Args: {
     startCount: number;
@@ -756,7 +755,6 @@ const or = helper(
   ([a, b]) => a || b
 );
 
-// @ts-expect-error @rehearsal TODO TS6196: 'GreetingHeaderSignature' is declared but never used.
 interface GreetingHeaderSignature {
   Args: {
     greeting: string;

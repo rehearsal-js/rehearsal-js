@@ -1,4 +1,4 @@
-import { DiagnosticWithContext, hints, getDiagnosticOrder } from '@rehearsal/codefixes';
+import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
 import { GlintService, PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import debug from 'debug';
@@ -83,9 +83,7 @@ export class GlintReportPlugin extends Plugin<GlintReportPluginOptions> {
     const program = languageService.getProgram()!;
     const checker = program.getTypeChecker();
 
-    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName)).filter((d) =>
-      this.isErrorDiagnostic(d)
-    );
+    const diagnostics = service.getDiagnostics(fileName).filter((d) => this.isErrorDiagnostic(d));
 
     return diagnostics.reduce<DiagnosticWithLocation[]>((acc, diagnostic) => {
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);

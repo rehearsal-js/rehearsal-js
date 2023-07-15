@@ -238,15 +238,15 @@ describe('ts-codefixes', () => {
     );
   });
 
-  /*
-  test('requireInTs', async () => {
+  // Codefix disabled due to the issue, see https://github.com/rehearsal-js/rehearsal-js/issues/873
+  test.skip('requireInTs', async () => {
     await runTest('requireInTs/failing/fail-1.ts', 'requireInTs/passing/pass-1.ts', [
       'requireInTs/a.ts',
     ]);
   });
-   */
 
-  test('unusedIdentifier', async () => {
+  // Codefix disabled due to conflicts with others and confusion it makes in results
+  test.skip('unusedIdentifier', async () => {
     await runTest('unusedIdentifier/failing/fail-1.ts', 'unusedIdentifier/passing/pass-1.ts');
   });
 });

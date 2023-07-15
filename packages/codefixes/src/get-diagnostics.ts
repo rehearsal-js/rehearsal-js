@@ -5,6 +5,7 @@ import type { DiagnosticWithLocation } from 'typescript';
 const PRIORITIZED_CODES: number[] = [
   Diagnostics.TS80002.code,
   Diagnostics.TS80005.code,
+  Diagnostics.TS80009.code,
   Diagnostics.TS80004.code,
   Diagnostics.TS7005.code,
   Diagnostics.TS7006.code,

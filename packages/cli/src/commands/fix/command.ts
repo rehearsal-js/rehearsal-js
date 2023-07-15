@@ -48,6 +48,11 @@ fixCommand
     ['sarif']
   )
   .addOption(
+    new Option('-m, --mode <mode>', `the application of codefixes`)
+      .choices(['drain', 'single-pass'])
+      .default('drain')
+  )
+  .addOption(
     new Option('--rootPath <project root directory>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())
       .hideHelp()
@@ -73,11 +78,6 @@ async function fix(srcPath: string, options: FixCommandOptions): Promise<void> {
     // we don't want to try and fix JS files
     options.ignore.push(...javascriptGlobs);
   }
-
-  options.mode =
-    process.env['EXPERIMENTAL_MODES'] === 'drain'
-      ? process.env['EXPERIMENTAL_MODES']
-      : 'single-pass';
 
   // graph mode is default on in all instances. exception is for testing only with node process env variable "GRAPH_MODES=off"
   // source with a direct filepath ignores the migration graph
