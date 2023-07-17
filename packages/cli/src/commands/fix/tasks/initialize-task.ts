@@ -32,7 +32,7 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { rootPath } = options;
+      const { rootPath, skipDepsCheck, skipEsLintCheck } = options;
 
       let projectType: ProjectType = 'base-ts';
       const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
@@ -45,7 +45,7 @@ export function initTask(
         projectType = 'glimmer';
       }
 
-      preFlightCheck(rootPath, projectType, options.skipDepsCheck, options.skipEsLintCheck);
+      preFlightCheck(rootPath, projectType, skipDepsCheck, skipEsLintCheck);
 
       // in this mode we skip the `graphOrderTask`
       if (process.env['GRAPH_MODES'] === 'off') {
@@ -83,10 +83,11 @@ export function preFlightCheck(
   isExistsESLintConfig(basePath);
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
-  // if `--skip-checks` flag is true skip `isDepsPreReq`
+  // if `--skipDepsCheck` flag is true skip `isDepsPreReq`
   if (!skipDepsCheck) {
     isDepsPreReq(basePath, deps);
   }
+  // if `--skipEsLintCheck` flag is true skip `isEslintPreReq`
   if (!skipEsLintCheck) {
     isESLintPreReq(basePath, eslint);
   }
