@@ -63,6 +63,8 @@ export type FixCommandOptions = {
   skipEsLintCheck?: boolean;
 };
 
+export type SkipChecks = { skipDepsCheck?: boolean; skipEsLintCheck?: boolean };
+
 /*
   GRAPH
 */
