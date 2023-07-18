@@ -32,12 +32,7 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { rootPath, skipDepsCheck, skipEsLintCheck } = options;
-
-      const skipChecks = {
-        skipDepsCheck,
-        skipEsLintCheck,
-      };
+      const { rootPath, skipChecks } = options;
 
       let projectType: ProjectType = 'base-ts';
       const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
@@ -71,7 +66,7 @@ export function initTask(
 export function preFlightCheck(
   basePath: string,
   projectType: ProjectType,
-  skipChecks: SkipChecks,
+  skipChecks: SkipChecks = [],
   isSkipped = false
 ): void {
   // FOR LOCAL DEVELOPMENT TESTING ONLY! SKIP ALL PRE-REQ CHECKS
@@ -88,11 +83,11 @@ export function preFlightCheck(
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
   // if `--skipDepsCheck` flag is true skip `isDepsPreReq`
-  if (!skipChecks.skipDepsCheck) {
+  if (!skipChecks.includes('deps')) {
     isDepsPreReq(basePath, deps);
   }
   // if `--skipEsLintCheck` flag is true skip `isEslintPreReq`
-  if (!skipChecks.skipEsLintCheck) {
+  if (!skipChecks.includes('eslint')) {
     isESLintPreReq(basePath, eslint);
   }
   isTSConfigPreReq(basePath, tsconfig);

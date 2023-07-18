@@ -47,8 +47,12 @@ fixCommand
     parseCommaSeparatedList,
     ['sarif']
   )
-  .option('--skipDepsCheck', 'skips the isDepsPreReq check when initializing fix task')
-  .option('--skipEsLintCheck', 'skips the isESLintPreReq check when initializing fix task')
+  .option(
+    '--skipChecks [checks...]',
+    'skips the specified checks when initializing fix task eg. eslint, deps, tsconfig',
+    parseCommaSeparatedList,
+    []
+  )
   .addOption(
     new Option('--rootPath <project root directory>', '-- HIDDEN LOCAL DEV TESTING ONLY --')
       .default(process.cwd())

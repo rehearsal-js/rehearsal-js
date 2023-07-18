@@ -59,11 +59,10 @@ export type FixCommandOptions = {
   ignore: string[];
   graph?: boolean;
   mode: 'single-pass' | 'drain';
-  skipDepsCheck?: boolean;
-  skipEsLintCheck?: boolean;
+  skipChecks: SkipChecks;
 };
 
-export type SkipChecks = { skipDepsCheck?: boolean; skipEsLintCheck?: boolean };
+export type SkipChecks = ('eslint' | 'deps')[];
 
 /*
   GRAPH
