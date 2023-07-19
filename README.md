@@ -190,9 +190,8 @@ Options:
                             tests/**/*,types/**/*' (default: [])
   -d, --dryRun              do nothing; only show what would happen (default: false)
   -h, --help                display help for command'
-  --skipChecks [checks...]  skips check for packages, useful if a codebase has a novel
-                            setup in which the redquired eslint and dependency checks
-                            are unnecessary, eg. '--skipTests eslint,deps' (default: [])
+  --skipChecks [checks...]  skip specified pre-flights checks (not recommended), eg.
+                            --skipChecks eslint,deps
 ```
 
 This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`, `.mjs`) and git move against the targeted files in your project and will leverage the migration graph. Once this command has finished running, commit the changes and continue to the `fix` command.

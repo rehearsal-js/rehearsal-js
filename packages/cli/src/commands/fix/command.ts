@@ -8,7 +8,7 @@ import { createLogger, format, transports } from 'winston';
 import { parseCommaSeparatedList } from '@rehearsal/utils';
 import { PackageJson } from 'type-fest';
 import { SUPPORTED_JS_EXTENSIONS } from '@rehearsal/migration-graph';
-import { FixCommandOptions } from '../../types.js';
+import { FixCommandOptions, SKIP_CHECKS } from '../../types.js';
 import { graphOrderTask } from '../graph/tasks/graphOrderTask.js';
 import { initTask } from './tasks/initialize-task.js';
 import { convertTask } from './tasks/convert-task.js';
@@ -49,7 +49,9 @@ fixCommand
   )
   .option(
     '--skipChecks [checks...]',
-    'skips the specified checks when initializing fix task eg. eslint, deps, tsconfig',
+    `skip specified pre-flights checks (not recommended), eg. --skipChecks ${Object.keys(
+      SKIP_CHECKS
+    ).join(', ')}`,
     parseCommaSeparatedList,
     []
   )

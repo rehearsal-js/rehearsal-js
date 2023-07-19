@@ -62,7 +62,12 @@ export type FixCommandOptions = {
   skipChecks?: SkipChecks;
 };
 
-export type SkipChecks = ('eslint' | 'deps')[];
+export enum SKIP_CHECKS {
+  eslint = 'eslint',
+  deps = 'deps',
+}
+
+export type SkipChecks = (keyof typeof SKIP_CHECKS)[] | undefined;
 
 /*
   GRAPH

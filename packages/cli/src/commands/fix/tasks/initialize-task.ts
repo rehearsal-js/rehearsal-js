@@ -82,11 +82,9 @@ export function preFlightCheck(
   isExistsESLintConfig(basePath);
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
-  // if `--skipDepsCheck` flag is true skip `isDepsPreReq`
   if (!skipChecks.includes('deps')) {
     isDepsPreReq(basePath, deps);
   }
-  // if `--skipEsLintCheck` flag is true skip `isEslintPreReq`
   if (!skipChecks.includes('eslint')) {
     isESLintPreReq(basePath, eslint);
   }
