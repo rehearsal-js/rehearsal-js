@@ -13,7 +13,12 @@ import { preFlightCheck } from '../../../src/commands/fix/tasks/initialize-task.
 import { getPreReqs } from '../../../src/prereqs.js';
 import { initTask } from '../../../src/commands/fix/tasks/index.js';
 
-import type { ProjectType, CommandContext, FixCommandOptions } from '../../../src/types.js';
+import type {
+  ProjectType,
+  CommandContext,
+  FixCommandOptions,
+  SkipChecks,
+} from '../../../src/types.js';
 import type { Readable } from 'node:stream';
 
 const logger = createLogger({
@@ -265,9 +270,9 @@ describe('Fix: Init-Task', () => {
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
-  test('preFlightCheck "base-ts" - no failure when deps missing and skipDepsCheck option is set', async () => {
+  test('preFlightCheck "base-ts" - no failure when deps missing and `skipChecks deps` option is set', async () => {
     const projectType: ProjectType = 'base-ts';
-    const skipDepsCheck = true;
+    const skipChecks: SkipChecks = ['deps'];
 
     projectInit(project, projectType);
 
@@ -278,15 +283,15 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType, skipDepsCheck);
+      preFlightCheck(project.baseDir, projectType, skipChecks);
     } finally {
       expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
     }
   });
 
-  test('preFlightCheck "base-ts" - no failure when deps missing and skipEsLintCheck option is set', async () => {
+  test('preFlightCheck "base-ts" - no failure when deps missing and `skipChecks eslint` option is set', async () => {
     const projectType: ProjectType = 'base-ts';
-    const skipEsLintCheck = true;
+    const skipChecks: SkipChecks = ['eslint'];
 
     projectInit(project, projectType);
 
@@ -295,7 +300,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType, false, skipEsLintCheck);
+      preFlightCheck(project.baseDir, projectType, skipChecks);
     } finally {
       expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
     }

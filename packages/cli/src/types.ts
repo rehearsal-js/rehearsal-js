@@ -59,7 +59,7 @@ export type FixCommandOptions = {
   ignore: string[];
   graph?: boolean;
   mode: 'single-pass' | 'drain';
-  skipChecks: SkipChecks;
+  skipChecks?: SkipChecks;
 };
 
 export type SkipChecks = ('eslint' | 'deps')[];
