@@ -479,18 +479,18 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   80 errors caught by rehearsal
-[TITLE]   6 have been fixed by rehearsal
-[TITLE]   74 errors need to be fixed manually
+[TITLE]   84 errors caught by rehearsal
+[TITLE]   11 have been fixed by rehearsal
+[TITLE]   73 errors need to be fixed manually
 [TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 47 glint errors, with details in the report
+[TITLE]     -- 46 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   80 errors caught by rehearsal
-[SUCCESS]   6 have been fixed by rehearsal
-[SUCCESS]   74 errors need to be fixed manually
+[SUCCESS]   84 errors caught by rehearsal
+[SUCCESS]   11 have been fixed by rehearsal
+[SUCCESS]   73 errors need to be fixed manually
 [SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 47 glint errors, with details in the report
+[SUCCESS]     -- 46 glint errors, with details in the report
 [SUCCESS]     -- 0 eslint errors, with details in the report"
 `;
 
@@ -617,7 +617,7 @@ export default class RentalModel extends Model {
 exports[`fix command > ember_js_app_4.11 6`] = `
 "import Component from '@glimmer/component';
 
-export interface HelloSignature { Args: {} }
+export interface HelloSignature { Args: {age: any;} }
 
 
 
@@ -683,8 +683,7 @@ import GreetingHeader from \\"./GreetingHeader\\";
  * @param {string} name the name to format
  * @returns {string} the formatted name
  */
-// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
-function formatName(name: string) {
+function formatName(name: string): string {
   return \`\${name} the Great and Powerful\`;
 }
 
