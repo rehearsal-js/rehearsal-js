@@ -184,18 +184,15 @@ Arguments:
   srcPath              path to a directory or file (default: "")
 
 Options:
-  --graph              fixing all file(s) within the graph, which might include files
-                       outside of the current directory
-  --ignore [globs...]  comma-delimited list of globs to ignore eg. '--ignore
-                       tests/**/*,types/**/*' (default: [])
-  -d, --dryRun         do nothing; only show what would happen (default: false)
-  -h, --help           display help for command'
-  --skipDepsCheck      skips check for packages, useful if a codebase has a novel
-                       setup in which the required packages are not managed by a
-                       codebase's package.json
-  --skipEsLintCheck    skips check for eslint configs, useful if a codebase has have a
-                       novel setup in which the required packages are not managed by a
-                       codebase's package.json
+  --graph                   fixing all file(s) within the graph, which might include files
+                            outside of the current directory
+  --ignore [globs...]       comma-delimited list of globs to ignore eg. '--ignore
+                            tests/**/*,types/**/*' (default: [])
+  -d, --dryRun              do nothing; only show what would happen (default: false)
+  -h, --help                display help for command'
+  --skipChecks [checks...]  skips check for packages, useful if a codebase has a novel
+                            setup in which the redquired eslint and dependency checks
+                            are unnecessary, eg. '--skipTests eslint,deps' (default: [])
 ```
 
 This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`, `.mjs`) and git move against the targeted files in your project and will leverage the migration graph. Once this command has finished running, commit the changes and continue to the `fix` command.
