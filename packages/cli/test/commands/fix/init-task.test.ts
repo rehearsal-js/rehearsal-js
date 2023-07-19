@@ -295,7 +295,7 @@ describe('Fix: Init-Task', () => {
 
     projectInit(project, projectType);
 
-    project.removeDevDependency('@typescript-eslint/parser');
+    project.files['eslintrc.json'] = {};
 
     await project.write();
 
