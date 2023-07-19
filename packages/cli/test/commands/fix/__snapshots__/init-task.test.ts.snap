@@ -27,6 +27,10 @@ exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure tsconfig str
 
 exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure tsconfig strict as false 2`] = `""`;
 
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - no failure when deps missing and \`skipChecks deps\` option is set 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "base-ts" - no failure when deps missing and \`skipChecks eslint\` option is set 1`] = `""`;
+
 exports[`Fix: Init-Task > preFlightCheck "base-ts" works 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
