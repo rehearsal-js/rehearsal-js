@@ -294,7 +294,7 @@ describe('Fix: Init-Task', () => {
     const skipChecks: SkipChecks = ['eslint'];
 
     projectInit(project, projectType);
-
+    // removes the `@typescript-eslint/parser` from projects `eslintrc.json`
     project.files['eslintrc.json'] = {};
 
     await project.write();
