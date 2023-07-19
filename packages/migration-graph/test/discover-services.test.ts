@@ -210,8 +210,8 @@ describe('discoverServiceDependencies', () => {
 
     const results = discoverServiceDependencies({
       '@some-org/some-package@locale': 'foo/service/bar',
-      'anotherService': 'ano/service/ther',
-      'oneMoreService': 'one/service/more',
+      anotherService: 'ano/service/ther',
+      oneMoreService: 'one/service/more',
     })('ecmascript', content);
 
     expect(results).toBeTruthy();

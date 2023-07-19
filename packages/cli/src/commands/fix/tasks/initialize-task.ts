@@ -18,7 +18,7 @@ import {
   isTSConfigPreReq,
   isValidGitIgnore,
 } from '../../../utils/prereq-checks.js';
-import type { FixCommandOptions, CommandContext, ProjectType } from '../../../types.js';
+import type { FixCommandOptions, CommandContext, ProjectType, SkipChecks } from '../../../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:cli:fix:init-task');
 
@@ -32,7 +32,7 @@ export function initTask(
   return {
     title: `Initialize`,
     task: async (ctx: CommandContext): Promise<void> => {
-      const { rootPath } = options;
+      const { rootPath, skipChecks } = options;
 
       let projectType: ProjectType = 'base-ts';
       const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
@@ -45,7 +45,7 @@ export function initTask(
         projectType = 'glimmer';
       }
 
-      preFlightCheck(rootPath, projectType);
+      preFlightCheck(rootPath, projectType, skipChecks);
 
       // in this mode we skip the `graphOrderTask`
       if (process.env['GRAPH_MODES'] === 'off') {
@@ -66,6 +66,7 @@ export function initTask(
 export function preFlightCheck(
   basePath: string,
   projectType: ProjectType,
+  skipChecks: SkipChecks = [],
   isSkipped = false
 ): void {
   // FOR LOCAL DEVELOPMENT TESTING ONLY! SKIP ALL PRE-REQ CHECKS
@@ -81,8 +82,12 @@ export function preFlightCheck(
   isExistsESLintConfig(basePath);
   isValidGitIgnore(basePath);
   // prereq checks for both the version and the package
-  isDepsPreReq(basePath, deps);
-  isESLintPreReq(basePath, eslint);
+  if (!skipChecks.includes('deps')) {
+    isDepsPreReq(basePath, deps);
+  }
+  if (!skipChecks.includes('eslint')) {
+    isESLintPreReq(basePath, eslint);
+  }
   isTSConfigPreReq(basePath, tsconfig);
   isNodePreReq(node);
 }

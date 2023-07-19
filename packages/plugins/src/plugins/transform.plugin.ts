@@ -228,13 +228,13 @@ export class ServiceInjectionsTransformPlugin extends Plugin<ServiceInjectionsTr
   getQualifiedServiceName(decorator: ts.Decorator, prop: ts.Node): string | undefined {
     // Covers `@service('service-name')` and `@service('addon@service-name')`
     if (ts.isCallExpression(decorator.expression) && decorator.expression.arguments.length) {
-        const arg = decorator.expression.arguments[0];
-        return ts.isStringLiteral(arg) ? arg.text : undefined;
+      const arg = decorator.expression.arguments[0];
+      return ts.isStringLiteral(arg) ? arg.text : undefined;
     }
 
     // Covers `@service serviceName` and `@service() serviceName`
     if (ts.isPropertyDeclaration(prop) && ts.isIdentifier(prop.name)) {
-        return this.toKebabCase(prop.name.escapedText.toString());
+      return this.toKebabCase(prop.name.escapedText.toString());
     }
 
     return undefined;

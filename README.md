@@ -96,6 +96,7 @@ glint: {
 ```
 
 ## Services Mapping
+
 For Ember.js apps only: A required [services](https://guides.emberjs.com/release/services/#toc_accessing-services) mapping file at the project root as `.rehearsal/services-map.json`. This is for Rehearsal to improve type inference and migration-graph as to properly map services against the fully-qualified path as key/value path. Note the value path here must match the tsconfig.json paths for a given service. eg.
 
 ```
@@ -107,6 +108,7 @@ For Ember.js apps only: A required [services](https://guides.emberjs.com/release
   "@some-org/some-package@mapped": "@some-org/some-package/services/from-service-map"
 }
 ```
+
 # Installation
 
 Add `@rehearsal/cli` to your project as a **devDependency**.
@@ -182,12 +184,14 @@ Arguments:
   srcPath              path to a directory or file (default: "")
 
 Options:
-  --graph              fixing all file(s) within the graph, which might include files
-                       outside of the current directory
-  --ignore [globs...]  comma-delimited list of globs to ignore eg. '--ignore
-                       tests/**/*,types/**/*' (default: [])
-  -d, --dryRun         do nothing; only show what would happen (default: false)
-  -h, --help           display help for command
+  --graph                   fixing all file(s) within the graph, which might include files
+                            outside of the current directory
+  --ignore [globs...]       comma-delimited list of globs to ignore eg. '--ignore
+                            tests/**/*,types/**/*' (default: [])
+  -d, --dryRun              do nothing; only show what would happen (default: false)
+  -h, --help                display help for command'
+  --skipChecks [checks...]  skip specified pre-flights checks (not recommended), eg.
+                            --skipChecks eslint,deps
 ```
 
 This command performs a file rename (e.g. `.ts`, `.tsx`, `.gts`, `.mjs`) and git move against the targeted files in your project and will leverage the migration graph. Once this command has finished running, commit the changes and continue to the `fix` command.
@@ -264,6 +268,7 @@ The VSCode extension [Graphviz Interactive Preview](https://marketplace.visualst
 Rehearsal has traversed the import graph in this _trivial_ example and provided the exact order the migration should happen, starting with `src/lib/nested/get-live-neighbor-count.js`.
 
 ## Move
+
 Lets start migrating files. Use `rehearsal move` to move files to TypeScript.
 
 ```
@@ -282,6 +287,7 @@ rehearsal move . --ignore 'docs, vitest.*'
 We've pointed Rehearsal at the root of our project `.`, ignored some files and directories and had Rehearsal `move` while leveraging the import graph. Our project is now partially migrated to TypeScript. Before we can continue to the next step of implementing types, we need to manually configure our project and install missing devDependencies.
 
 ## Fix
+
 Let's run Rehearsal `fix` without doing this and see what happens.
 
 ```

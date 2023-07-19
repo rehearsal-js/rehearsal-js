@@ -13,7 +13,12 @@ import { preFlightCheck } from '../../../src/commands/fix/tasks/initialize-task.
 import { getPreReqs } from '../../../src/prereqs.js';
 import { initTask } from '../../../src/commands/fix/tasks/index.js';
 
-import type { ProjectType, CommandContext, FixCommandOptions } from '../../../src/types.js';
+import type {
+  ProjectType,
+  CommandContext,
+  FixCommandOptions,
+  SkipChecks,
+} from '../../../src/types.js';
 import type { Readable } from 'node:stream';
 
 const logger = createLogger({
@@ -263,6 +268,42 @@ describe('Fix: Init-Task', () => {
     }
 
     expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test('preFlightCheck "base-ts" - no failure when deps missing and `skipChecks deps` option is set', async () => {
+    const projectType: ProjectType = 'base-ts';
+    const skipChecks: SkipChecks = ['deps'];
+
+    projectInit(project, projectType);
+
+    project.removeDevDependency('typescript');
+    project.removeDevDependency('prettier');
+    project.removeDevDependency('eslint');
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType, skipChecks);
+    } finally {
+      expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+    }
+  });
+
+  test('preFlightCheck "base-ts" - no failure when deps missing and `skipChecks eslint` option is set', async () => {
+    const projectType: ProjectType = 'base-ts';
+    const skipChecks: SkipChecks = ['eslint'];
+
+    projectInit(project, projectType);
+    // removes the `@typescript-eslint/parser` from projects `eslintrc.json`
+    project.files['eslintrc.json'] = {};
+
+    await project.write();
+
+    try {
+      preFlightCheck(project.baseDir, projectType, skipChecks);
+    } finally {
+      expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+    }
   });
 
   test(`validate initTask "base-ts" works with src arg`, async () => {

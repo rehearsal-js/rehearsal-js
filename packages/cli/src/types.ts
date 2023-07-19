@@ -59,7 +59,15 @@ export type FixCommandOptions = {
   ignore: string[];
   graph?: boolean;
   mode: 'single-pass' | 'drain';
+  skipChecks?: SkipChecks;
 };
+
+export enum SKIP_CHECKS {
+  eslint = 'eslint',
+  deps = 'deps',
+}
+
+export type SkipChecks = (keyof typeof SKIP_CHECKS)[] | undefined;
 
 /*
   GRAPH
