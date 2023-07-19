@@ -160,11 +160,6 @@
     "description": "Fixes classes so they are initialized correctly.",
     "diagnostics": [2564]
   },
-  "unusedIdentifier": {
-    "title": "Remove Unused Identifier",
-    "description": "Removes any unused identifiers.",
-    "diagnostics": [6133, 6196, 6138, 6192, 6198, 6199, 6205]
-  },
   "useDefaultImport": {
     "title": "Use Default Import",
     "description": "Converts namespaced import default imports.",

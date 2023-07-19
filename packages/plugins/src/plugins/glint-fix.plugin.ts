@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { applyCodeFix, makeCodeFixStrict } from '@rehearsal/codefixes';
+import { applyCodeFix, getDiagnosticOrder, makeCodeFixStrict } from '@rehearsal/codefixes';
 import debug from 'debug';
 
 import ts from 'typescript';
@@ -47,10 +47,15 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
     let diagnostics = this.getDiagnostics(service, fileName, [
       DiagnosticCategory.Error,
-      DiagnosticCategory.Warning,
+      DiagnosticCategory.Suggestion,
     ]);
 
-    while (diagnostics.length) {
+    // In the drain mode diagnostics list is getting refreshed in every cycle which might have end up
+    // with more error need to be fixed then was originally. The limit based on original amount of diagnostics
+    // helps to avoid an infinitive loop in some edge cases when new errors keep coming when previous fixed.
+    let limit = diagnostics.length * 2;
+
+    while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
       const fix = this.getCodeFix(fileName, diagnostic, service);
@@ -75,6 +80,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
         setText: (filename: string, text: string) => {
           context.service.setFileText(filename, text);
+          context.reporter.incrementRunFixedItemCount();
           this.allFixedFiles.add(filename);
           DEBUG_CALLBACK(
             `- TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t codefix applied`
@@ -86,7 +92,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
       diagnostics = this.getDiagnostics(service, fileName, [
         DiagnosticCategory.Error,
-        DiagnosticCategory.Warning,
+        DiagnosticCategory.Suggestion,
       ]);
     }
   }
@@ -163,8 +169,9 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     fileName: string,
     diagnosticCategories: ts.DiagnosticCategory[]
   ): Diagnostic[] {
-    return service
-      .getDiagnostics(fileName)
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
+
+    return diagnostics
       .filter((d) => diagnosticCategories.some((category) => category === d.category))
       .map((d) => service.convertTsDiagnosticToLSP(d));
   }

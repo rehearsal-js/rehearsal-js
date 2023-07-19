@@ -1,6 +1,6 @@
 # Supported CodeFixes
 
-The following 40 codefixes are supported by Rehearsal, which resolve 110 different TypeScript diagnostics errors.
+The following 39 codefixes are supported by Rehearsal, which resolve 103 different TypeScript diagnostics errors.
 
 ## Add Missing `async` Keyword
 
@@ -727,33 +727,6 @@ id: _strictClassInitialization_
 
 Fixes classes so they are initialized correctly.
 
-
-
-## Remove Unused Identifier
-
-id: _unusedIdentifier_
-
-Removes any unused identifiers.
-**Input:**
-
-```ts
-{
-  const o = { x: 1, y: 2 };
-  const { x, y } = o;
-  x;
-}
-
-```
-**Output:**
-
-```ts
-{
-  const o = { x: 1, y: 2 };
-  const { x } = o;
-  x;
-}
-
-```
 
 
 ## Use Default Import
