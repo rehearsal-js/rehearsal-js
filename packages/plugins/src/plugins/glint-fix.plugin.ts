@@ -180,10 +180,9 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
           if (this.hasAppliedChange(targetFileName, change)) {
             continue; // Skip if a duplicate change
           } else {
-            // Init
-            if (!this.appliedTextChanges[targetFileName]) {
-              this.appliedTextChanges[targetFileName] = [];
-            }
+            // Init if undefined
+            this.appliedTextChanges[targetFileName] ??= [];
+
             // Append and normalize
             this.appliedTextChanges[targetFileName].push(change);
             this.appliedTextChanges[targetFileName] = normalizeTextChanges(
