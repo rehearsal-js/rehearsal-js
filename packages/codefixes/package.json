@@ -38,7 +38,6 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@babel/parser": "^7.22.5",
     "@rehearsal/ts-utils": "workspace:*",
     "debug": "^4.3.4"
   },
