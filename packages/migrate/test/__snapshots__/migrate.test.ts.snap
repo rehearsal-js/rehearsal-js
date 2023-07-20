@@ -48,8 +48,8 @@ interface FooSignature {
 }
 
 interface FooArgs {
-  age: any;
   snack: any;
+  age: any;
 }
 
 export class Foo extends Component<FooSignature> {
@@ -67,8 +67,8 @@ interface BarSignature {
 }
 
 interface BarArgs {
-  age: number;
   snack: any;
+  age: number;
 }
 
 export class SomeComponent extends Component<BarSignature> {
@@ -82,7 +82,7 @@ export class SomeComponent extends Component<BarSignature> {
 //
 
 export interface BazSignature {
-  Args: { age: any; snack: any };
+  Args: { snack: any; age: any };
 }
 
 export default class Baz extends Component<BazSignature> {
@@ -97,7 +97,7 @@ exports[`fix > .gts > component signature codefix > mode: drain should apply all
 "import Component from \\"@glimmer/component\\";
 
 export interface WithMissingInterfaceSignature {
-  Args: { age: any; snack: any };
+  Args: { snack: any; age: any };
 }
 
 export default class WithMissingInterface extends Component<WithMissingInterfaceSignature> {
@@ -133,7 +133,7 @@ export class Repeat extends Component<RepeatSignature> {
 //
 
 interface MyComponentSignature {
-  Args: { age: any; snack: any };
+  Args: { snack: any; age: any };
 }
 
 /**

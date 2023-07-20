@@ -426,14 +426,18 @@ describe('fix', () => {
           // no ops
         }
 
-        // Expecting any for both args as they were both not defined on the interface
-        expectFile(outputs[0]).contains(`interface FooArgs {\n  age: any;\n  snack: any;\n}`);
-        // Expecting any for snack arg because it was not defined
-        expectFile(outputs[0]).contains(`interface BarArgs {\n  age: number;\n  snack: any;\n}`);
-        // Expecting any for both args as they were both not defined on the interface
-        expectFile(outputs[0]).contains(
-          `export interface BazSignature {\n  Args: { age: any; snack: any };\n}`
+        expectFile(
+          outputs[0],
+          'Expecting any for both args as they were both not defined on the interface'
+        ).contains(`interface FooArgs {\n  snack: any;\n  age: any;\n}`);
+        expectFile(outputs[0], 'Expecting any for snack arg because it was not defined').contains(
+          `interface BarArgs {\n  snack: any;\n  age: number;\n}`
         );
+        expectFile(
+          outputs[0],
+          'Expecting any for both args as they were both not defined on the interface'
+        ).contains(`export interface BazSignature {\n  Args: { snack: any; age: any };\n}`);
+
         expectFile(outputs[0]).toMatchSnapshot();
       });
 

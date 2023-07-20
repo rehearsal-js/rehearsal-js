@@ -244,10 +244,19 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       return;
     }
 
-    const originalArgsSignatureRange = d.glintService.transformManager.getOriginalRange(
+    // If members, if length > 0 then we insert before the first member
+    let targetInsertNode;
+
+    if (argsInterfaceNode.members.length > 0) {
+      targetInsertNode = argsInterfaceNode.members[0];
+    } else {
+      targetInsertNode = argsInterfaceNode.members;
+    }
+
+    const originalInsertNodeRange = d.glintService.transformManager.getOriginalRange(
       sourceFile.fileName,
-      argsInterfaceNode.members.pos,
-      argsInterfaceNode.members.end
+      targetInsertNode.pos,
+      targetInsertNode.end
     );
 
     return createCodeFixAction(
@@ -255,7 +264,10 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       [
         ChangesFactory.insertText(
           d.file,
-          originalArgsSignatureRange.originalEnd,
+          // We append the arg property to the start of the
+          // interface to make processing mulitiple diagnostics with
+          // no syntax errors.
+          originalInsertNodeRange.originalStart,
           `${argName}: any;`
         ),
       ],
