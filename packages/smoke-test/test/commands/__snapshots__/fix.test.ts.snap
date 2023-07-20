@@ -443,6 +443,112 @@ stdout.write('\\\\x1b[?25l');
 "
 `;
 
+exports[`fix command > ember_js_app_4.11 --mode=drain 1`] = `
+"info:    @rehearsal/fix<test-version>
+[STARTED] Initialize
+[SUCCESS] Initialize
+[STARTED] Analyzing project dependency graph
+[SUCCESS] Analyzing project dependency graph
+[STARTED] Infer Types
+[DATA] processing file: /app/app.ts
+[DATA] processing file: /app/router.ts
+[DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/components/hello-world.gts
+[DATA] processing file: /app/components/jumbo.hbs
+[DATA] processing file: /app/components/map.hbs
+[DATA] processing file: /app/components/map.ts
+[DATA] processing file: /app/components/nav-bar.hbs
+[DATA] processing file: /app/components/rental.hbs
+[DATA] processing file: /app/components/rentals.hbs
+[DATA] processing file: /app/components/rentals.ts
+[DATA] processing file: /app/components/share-button.hbs
+[DATA] processing file: /app/components/share-button.ts
+[DATA] processing file: /app/models/rental.ts
+[DATA] processing file: /app/routes/index.ts
+[DATA] processing file: /app/routes/rental.ts
+[DATA] processing file: /app/serializers/application.ts
+[DATA] processing file: /app/services/locale.ts
+[DATA] processing file: /app/templates/about.hbs
+[DATA] processing file: /app/templates/application.hbs
+[DATA] processing file: /app/templates/contact.hbs
+[DATA] processing file: /app/templates/index.hbs
+[DATA] processing file: /app/templates/rental.hbs
+[DATA] processing file: /app/components/rental/detailed.hbs
+[DATA] processing file: /app/components/rental/image.hbs
+[DATA] processing file: /app/components/rental/image.ts
+[DATA] processing file: /app/components/rentals/filter.hbs
+[DATA] processing file: /app/components/rentals/filter.ts
+[TITLE] Types Inferred
+[TITLE]   104 errors caught by rehearsal
+[TITLE]   31 have been fixed by rehearsal
+[TITLE]   73 errors need to be fixed manually
+[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 46 glint errors, with details in the report
+[TITLE]     -- 0 eslint errors, with details in the report
+[SUCCESS] Types Inferred
+[SUCCESS]   104 errors caught by rehearsal
+[SUCCESS]   31 have been fixed by rehearsal
+[SUCCESS]   73 errors need to be fixed manually
+[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 46 glint errors, with details in the report
+[SUCCESS]     -- 0 eslint errors, with details in the report"
+`;
+
+exports[`fix command > ember_js_app_4.11 --mode=drain 2`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface PrintDateSignature {
+  Args: { year: any; day: any; month: any };
+}
+
+export class PrintDate extends Component<PrintDateSignature> {
+  <template>
+    <span>{{@month}} {{@day}}, {{@year}}</span>
+  </template>
+}
+
+interface ProfileSummarySignature {
+  Args: { snack: any; age: any };
+}
+
+/**
+ * @extends {Component<ProfileSummarySignature>}
+ */
+export class ProfileSummary extends Component<ProfileSummarySignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <PrintDate @year={{2023}} @month={{\\"January\\"}} @day={{1}} />
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+
+interface HelloWorldCommentSignature {
+  Args: HelloWorldCommentArgs;
+}
+
+interface HelloWorldCommentArgs {
+  age: number;
+  snack: string;
+  talent: string;
+}
+
+/**
+ * @extends {Component<HelloWorldCommentSignature>}
+ */
+export default class HelloWorld extends Component<HelloWorldCommentSignature> {
+  name = \\"world\\";
+
+  <template>
+    <ProfileSummary @age={{@age}} @snack={{@snack}} />
+    My talent is
+    {{@talent}}
+  </template>
+}
+"
+`;
+
 exports[`fix command > ember_js_app_4.11 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
@@ -479,15 +585,15 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   84 errors caught by rehearsal
-[TITLE]   11 have been fixed by rehearsal
+[TITLE]   104 errors caught by rehearsal
+[TITLE]   31 have been fixed by rehearsal
 [TITLE]   73 errors need to be fixed manually
 [TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 46 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   84 errors caught by rehearsal
-[SUCCESS]   11 have been fixed by rehearsal
+[SUCCESS]   104 errors caught by rehearsal
+[SUCCESS]   31 have been fixed by rehearsal
 [SUCCESS]   73 errors need to be fixed manually
 [SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 46 glint errors, with details in the report
@@ -615,17 +721,55 @@ export default class RentalModel extends Model {
 `;
 
 exports[`fix command > ember_js_app_4.11 6`] = `
-"import Component from '@glimmer/component';
+"import Component from \\"@glimmer/component\\";
 
-export interface HelloSignature { Args: {age: any;} }
+export interface PrintDateSignature {
+  Args: { year: any; day: any; month: any };
+}
 
+export class PrintDate extends Component<PrintDateSignature> {
+  <template>
+    <span>{{@month}} {{@day}}, {{@year}}</span>
+  </template>
+}
 
+interface ProfileSummarySignature {
+  Args: { snack: any; age: any };
+}
 
-export default class Hello extends Component<HelloSignature> {
-  name = 'world';
+/**
+ * @extends {Component<ProfileSummarySignature>}
+ */
+export class ProfileSummary extends Component<ProfileSummarySignature> {
+  name = \\"Bob\\";
 
   <template>
+    <PrintDate @year={{2023}} @month={{\\"January\\"}} @day={{1}} />
     <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+
+interface HelloWorldCommentSignature {
+  Args: HelloWorldCommentArgs;
+}
+
+interface HelloWorldCommentArgs {
+  age: number;
+  snack: string;
+  talent: string;
+}
+
+/**
+ * @extends {Component<HelloWorldCommentSignature>}
+ */
+export default class HelloWorld extends Component<HelloWorldCommentSignature> {
+  name = \\"world\\";
+
+  <template>
+    <ProfileSummary @age={{@age}} @snack={{@snack}} />
+    My talent is
+    {{@talent}}
   </template>
 }
 "
