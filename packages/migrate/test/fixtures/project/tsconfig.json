@@ -25,11 +25,7 @@
     }
   },
   "glint": {
-    "environment": [
-      // "ember-loose",// Removing ember-loose because it doesn't work with our GlintCodeFix due to bad transformed source files.
-      "ember-template-imports",
-      "glimmerx"
-    ],
+    "environment": ["ember-loose", "ember-template-imports", "glimmerx"],
     "checkStandaloneTemplates": true
   }
 }

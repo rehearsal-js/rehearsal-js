@@ -389,6 +389,7 @@ module(\\"Integration | Helper | grid-list\\", function (hooks) {
 
   test(\\"it sets and changes the columns classes\\", async function (assert) {
     this.set(\\"styles\\", \\"foo\\");
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'styles' does not exist on type 'void'.
     await render(hbs\`<ul data-test-el class=\\"{{this.styles}}\\">foo</ul>\`);
 
     this.set(\\"styles\\", \\"foo\\");
