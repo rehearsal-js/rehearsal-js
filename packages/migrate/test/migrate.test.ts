@@ -419,15 +419,21 @@ describe('fix', () => {
           packageDir: project.baseDir,
           filesToMigrate: inputs,
           reporter,
+          mode: 'drain',
         };
 
         for await (const _ of migrate(input)) {
           // no ops
         }
 
-        expectFile(outputs[0]).contains('class WithMissingArgs');
-        expectFile(outputs[0]).contains('age: any');
-        expectFile(outputs[0]).contains('snack: any');
+        // Expecting any for both args as they were both not defined on the interface
+        expectFile(outputs[0]).contains(`interface FooArgs {\n  age: any;\n  snack: any;\n}`);
+        // Expecting any for snack arg because it was not defined
+        expectFile(outputs[0]).contains(`interface BarArgs {\n  age: number;\n  snack: any;\n}`);
+        // Expecting any for both args as they were both not defined on the interface
+        expectFile(outputs[0]).contains(
+          `export interface BazSignature {\n  Args: { age: any; snack: any };\n}`
+        );
         expectFile(outputs[0]).toMatchSnapshot();
       });
 

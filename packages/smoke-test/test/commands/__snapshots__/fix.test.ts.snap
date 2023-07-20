@@ -498,7 +498,7 @@ exports[`fix command > ember_js_app_4.11 --mode=drain 2`] = `
 "import Component from \\"@glimmer/component\\";
 
 export interface PrintDateSignature {
-  Args: { year: any; day: any; month: any };
+  Args: { month: any; day: any; year: any };
 }
 
 export class PrintDate extends Component<PrintDateSignature> {
@@ -508,7 +508,7 @@ export class PrintDate extends Component<PrintDateSignature> {
 }
 
 interface ProfileSummarySignature {
-  Args: { snack: any; age: any };
+  Args: { age: any; snack: any };
 }
 
 /**
@@ -724,7 +724,7 @@ exports[`fix command > ember_js_app_4.11 6`] = `
 "import Component from \\"@glimmer/component\\";
 
 export interface PrintDateSignature {
-  Args: { year: any; day: any; month: any };
+  Args: { month: any; day: any; year: any };
 }
 
 export class PrintDate extends Component<PrintDateSignature> {
@@ -734,7 +734,7 @@ export class PrintDate extends Component<PrintDateSignature> {
 }
 
 interface ProfileSummarySignature {
-  Args: { snack: any; age: any };
+  Args: { age: any; snack: any };
 }
 
 /**

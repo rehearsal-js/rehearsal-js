@@ -214,18 +214,40 @@ export class AddMissingArgToComponentSignature implements CodeFix {
   ): ts.CodeFixAction | undefined {
     const propertySignatureNode = getPropertyOnComponentSignatureInterface(interfaceNode, 'Args');
 
-    if (
-      !propertySignatureNode ||
-      !propertySignatureNode.type ||
-      !ts.isTypeLiteralNode(propertySignatureNode.type)
-    ) {
+    if (!propertySignatureNode || !propertySignatureNode.type) {
+      return;
+    }
+
+    // In some cases we may have the Args object defined as a separate
+    // interface rather than a literal on the component signature.
+
+    let argsInterfaceNode: ts.InterfaceDeclaration | ts.TypeLiteralNode;
+
+    if (ts.isTypeLiteralNode(propertySignatureNode.type)) {
+      argsInterfaceNode = propertySignatureNode.type;
+    } else if (ts.isTypeReferenceNode(propertySignatureNode.type)) {
+      if (!ts.isIdentifier(propertySignatureNode.type.typeName)) {
+        return;
+      }
+
+      const foundInterface = getInterfaceByName(
+        sourceFile,
+        propertySignatureNode.type.typeName.escapedText.toString()
+      );
+
+      if (!foundInterface) {
+        return;
+      }
+
+      argsInterfaceNode = foundInterface;
+    } else {
       return;
     }
 
     const originalArgsSignatureRange = d.glintService.transformManager.getOriginalRange(
       sourceFile.fileName,
-      propertySignatureNode.type.members.pos,
-      propertySignatureNode.type.members.end
+      argsInterfaceNode.members.pos,
+      argsInterfaceNode.members.end
     );
 
     return createCodeFixAction(
@@ -233,7 +255,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       [
         ChangesFactory.insertText(
           d.file,
-          originalArgsSignatureRange.originalStart,
+          originalArgsSignatureRange.originalEnd,
           `${argName}: any;`
         ),
       ],

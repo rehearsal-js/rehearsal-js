@@ -1,14 +1,49 @@
 import Component from "@glimmer/component";
 
-export interface WithMissingArgsSignature {
+//
+// UseCase: Should update type reference with all args
+//
+
+interface FooSignature {
+  Args: FooArgs;
+}
+
+interface FooArgs {}
+
+export class Foo extends Component<FooSignature> {
+  <template>
+    {{@age}} {{@snack}}
+  </template>
+}
+
+//
+// UseCase: Should add a single arg to the args interface
+//
+
+interface BarSignature {
+  Args: BarArgs;
+}
+
+interface BarArgs {
+  age: number;
+}
+
+export class SomeComponent extends Component<BarSignature> {
+  <template>
+    {{@age}} {{@snack}}
+  </template>
+}
+
+//
+// UseCase: Should update object literal
+//
+
+export interface BazSignature {
   Args: {};
 }
 
-export default class WithMissingArgs extends Component<WithMissingArgsSignature> {
-  name = "Bob";
-
+export default class Baz extends Component<BazSignature> {
   <template>
-    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-    <span>My favorite snack is {{@snack}}.</span>
+    {{@age}} {{@snack}}
   </template>
 }
