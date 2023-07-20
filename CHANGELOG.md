@@ -1,3 +1,13 @@
+## 1.1.0 (2023-07-20)
+
+* feat: expose diagnostic fixing modes (#1173) ([8d89468](https://github.com/rehearsal-js/rehearsal-js/commit/8d89468)), closes [#1173](https://github.com/rehearsal-js/rehearsal-js/issues/1173)
+* feat(cli): --skipChecks flags to fix command (Issue 1175) (#1178) ([e519fdc](https://github.com/rehearsal-js/rehearsal-js/commit/e519fdc)), closes [#1178](https://github.com/rehearsal-js/rehearsal-js/issues/1178)
+* fix: engines pnpm from pin (#1181) ([666cfe0](https://github.com/rehearsal-js/rehearsal-js/commit/666cfe0)), closes [#1181](https://github.com/rehearsal-js/rehearsal-js/issues/1181)
+* chore: insure the right version of pnpm is used (#1174) ([cbb9f38](https://github.com/rehearsal-js/rehearsal-js/commit/cbb9f38)), closes [#1174](https://github.com/rehearsal-js/rehearsal-js/issues/1174)
+* chore: pin latest node@18 and pnpm@8 (#1172) ([3c07ab6](https://github.com/rehearsal-js/rehearsal-js/commit/3c07ab6)), closes [#1172](https://github.com/rehearsal-js/rehearsal-js/issues/1172)
+
+
+
 ## <small>1.0.5 (2023-07-12)</small>
 
 * fix: handle `@service() name` injection (#1170) ([08e05cb](https://github.com/rehearsal-js/rehearsal-js/commit/08e05cb)), closes [#1170](https://github.com/rehearsal-js/rehearsal-js/issues/1170)
