@@ -29,6 +29,7 @@ describe('fix command', () => {
     expectFile(join(projectRoot, 'src/apply-rules.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'src/get-live-neighbor-count.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'src/app.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'src/simple.ts')).toMatchSnapshot();
   });
 
   test('base_ts_app (file only)', async () => {

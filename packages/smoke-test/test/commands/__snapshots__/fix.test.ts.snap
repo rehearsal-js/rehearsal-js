@@ -229,15 +229,16 @@ exports[`fix command > base_ts_app 1`] = `
 [DATA] processing file: /src/apply-rules.ts
 [DATA] processing file: /src/gen-random-grid.ts
 [DATA] processing file: /src/app.ts
+[DATA] processing file: /src/simple.ts
 [TITLE] Types Inferred
-[TITLE]   10 errors caught by rehearsal
-[TITLE]   4 have been fixed by rehearsal
+[TITLE]   14 errors caught by rehearsal
+[TITLE]   8 have been fixed by rehearsal
 [TITLE]   6 errors need to be fixed manually
 [TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   10 errors caught by rehearsal
-[SUCCESS]   4 have been fixed by rehearsal
+[SUCCESS]   14 errors caught by rehearsal
+[SUCCESS]   8 have been fixed by rehearsal
 [SUCCESS]   6 errors need to be fixed manually
 [SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
@@ -440,6 +441,24 @@ stdout.write('\\\\x1b[?25l');
     update(newGrid, runTally);
   }, 150);
 })(GRID_SEED);
+"
+`;
+
+exports[`fix command > base_ts_app 6`] = `
+"// no jsdoc for this function
+export function plusOneStr(a: number): string  {
+  const plusOne = a + 1;
+  return \`\${a} + 1 = \${plusOne}\`;
+}
+
+/**
+ * jsdoc is wrong/outdated for this function
+ * @return {number}
+ */
+export function plusTwoStr(a: number): number {
+  const plusTwo = a + 2;
+  return \`\${a} + 2 = \${plusTwo}\`;
+}
 "
 `;
 
