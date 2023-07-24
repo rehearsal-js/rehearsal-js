@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -270,6 +274,9 @@ importers:
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       prettier:
         specifier: ^2.8.7
         version: 2.8.7
@@ -331,6 +338,9 @@ importers:
       fixturify-project:
         specifier: ^5.2.0
         version: 5.2.0
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       vitest:
         specifier: ^0.30.0
         version: 0.30.0
@@ -1003,7 +1013,7 @@ packages:
       '@babel/helper-compilation-targets': 7.22.6(@babel/core@7.21.4)
       '@babel/helper-module-transforms': 7.22.5
       '@babel/helpers': 7.21.0
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
@@ -1310,8 +1320,8 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
 
-  /@babel/parser@7.21.4:
-    resolution: {integrity: sha512-alVJj7k7zIxqBZ7BTRhz0IqJFxW1VJbm6N8JbcYhQ186df9ZBPbZBmWSqAMXwHGsCJdYks7z/voa3ibiS5bCIw==}
+  /@babel/parser@7.22.5:
+    resolution: {integrity: sha512-DFZMC9LJUG9PLOclRC32G63UXwzqS2koQC8dkx+PLdmt1xSePYpbT/NbsrJy8Q/muXz7o/h/d4A7Fuyixm559Q==}
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
@@ -2970,7 +2980,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.22.5
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/types': 7.22.5
     dev: true
 
@@ -2984,7 +2994,7 @@ packages:
       '@babel/helper-function-name': 7.22.5
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/types': 7.22.5
       debug: 4.3.4(supports-color@6.1.0)
       globals: 11.12.0
@@ -6387,7 +6397,7 @@ packages:
       eslint: '>= 4.12.1'
     dependencies:
       '@babel/code-frame': 7.21.4
-      '@babel/parser': 7.21.4
+      '@babel/parser': 7.22.5
       '@babel/traverse': 7.21.4
       '@babel/types': 7.21.4
       eslint: 8.40.0
@@ -9926,7 +9936,7 @@ packages:
     resolution: {integrity: sha512-89oVHVJwmLDvGvAUWgS87KpBoRhy3aZ6U0Ql6HOmU4TrPkyaa8pM0W81wj9cIwjYprcQtN9EwzZMHnq46+oUyw==}
     engines: {node: 8.* || 10.* || >= 12}
     dependencies:
-      '@babel/parser': 7.22.7
+      '@babel/parser': 7.22.5
       '@babel/traverse': 7.22.8
       recast: 0.18.10
     transitivePeerDependencies:

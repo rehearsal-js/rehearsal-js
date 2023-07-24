@@ -15,7 +15,9 @@ describe('Test base codefixes', function () {
   const codefixesDir = resolve(__dirname, '../src/fixes/');
 
   // eg. ["addErrorTypeGuard","addMissingExport","addMissingTypesBasedOnInheritance","makeMemberOptional"]
-  const transforms = readdirSync(codefixesDir).map((file) => parse(file).name);
+  const transforms = readdirSync(codefixesDir)
+    .map((file) => parse(file).name)
+    .filter((item) => !item.startsWith('glint')); // Exclude glint directory from test, this will be tested by glint-codefixes
 
   test.each(transforms)('%s', async (transform) => {
     const project = Project.fromDir(fixturesDir, { linkDeps: true, linkDevDeps: true });

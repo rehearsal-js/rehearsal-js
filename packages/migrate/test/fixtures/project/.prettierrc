@@ -15,5 +15,6 @@
         "parser": "glimmer"
       }
     }
-  ]
+  ],
+  "plugins": ["prettier-plugin-ember-template-tag"]
 }

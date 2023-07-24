@@ -1,12 +1,19 @@
 import { createRequire } from 'node:module';
-import { applyCodeFix, getDiagnosticOrder, makeCodeFixStrict } from '@rehearsal/codefixes';
+import {
+  glintCodeFixes,
+  applyCodeFix,
+  makeCodeFixStrict,
+  getDiagnosticOrder,
+  DiagnosticWithContext,
+} from '@rehearsal/codefixes';
 import debug from 'debug';
-
-import ts from 'typescript';
+import ts, { DiagnosticWithLocation } from 'typescript';
 import { CodeAction, CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
+import { isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
 import type MS from 'magic-string';
+import type { TextChange } from 'typescript';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -19,9 +26,34 @@ export interface GlintFixPluginOptions {
   mode: 'single-pass' | 'drain';
 }
 
+// Helper methods for finding a node, for glint AST nodes ts-util methods do not work here.
+function findNodeAtPosition(
+  sourceFile: ts.SourceFile,
+  start: number,
+  length: number
+): ts.Node | undefined {
+  const visitor = (node: ts.Node): ts.Node | undefined => {
+    if (isNodeAtPosition(node, start, length)) {
+      return node;
+    }
+
+    if (node.pos <= start && node.end >= start + length) {
+      return ts.forEachChild(node, visitor);
+    }
+
+    return undefined;
+  };
+
+  return visitor(sourceFile);
+}
+
+function isNodeAtPosition(node: ts.Node, start: number, length: number): boolean {
+  return node.pos === start && node.end === start + length;
+}
+
 export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   attemptedToFix: string[] = [];
-  appliedAtOffset: { [file: string]: number[] } = {};
+  appliedTextChanges: { [file: string]: TextChange[] } = {};
   changeTrackers: Map<string, MS.default> = new Map();
   allFixedFiles: Set<string> = new Set();
 
@@ -45,7 +77,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     const { fileName, context } = this;
     const service = context.service as GlintService;
 
-    let diagnostics = this.getDiagnostics(service, fileName, [
+    let diagnostics: Diagnostic[] = this.getDiagnostics(service, fileName, [
       DiagnosticCategory.Error,
       DiagnosticCategory.Suggestion,
     ]);
@@ -127,6 +159,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
       for (const fileTextChange of fix.changes) {
         let changeTracker: MS.default;
+
         if (!this.changeTrackers.has(fileTextChange.fileName)) {
           const originalText = context.service.getFileText(fileTextChange.fileName);
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -141,15 +174,20 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
           if (change.span.length > 0) {
             changeTracker.remove(change.span.start, change.span.start + change.span.length);
           }
+          const targetFileName = fileTextChange.fileName;
 
-          if (!this.appliedAtOffset[fileTextChange.fileName]) {
-            this.appliedAtOffset[fileTextChange.fileName] = [];
-          }
-
-          if (this.appliedAtOffset[fileTextChange.fileName].includes(change.span.start)) {
-            continue;
+          // Track the applied changes so we can dedupe as we go
+          if (this.hasAppliedChange(targetFileName, change)) {
+            continue; // Skip if a duplicate change
           } else {
-            // this.appliedAtOffset[fileTextChange.fileName].push(change.span.start);
+            // Init if undefined
+            this.appliedTextChanges[targetFileName] ??= [];
+
+            // Append and normalize
+            this.appliedTextChanges[targetFileName].push(change);
+            this.appliedTextChanges[targetFileName] = normalizeTextChanges(
+              this.appliedTextChanges[targetFileName]
+            );
           }
 
           DEBUG_CALLBACK(
@@ -164,12 +202,21 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     }
   }
 
+  hasAppliedChange(fileName: string, change: TextChange): boolean {
+    if (!this.appliedTextChanges[fileName]) {
+      return false;
+    }
+    return !!this.appliedTextChanges[fileName].find((existing) => isSameChange(existing, change));
+  }
+
   getDiagnostics(
     service: GlintService,
     fileName: string,
     diagnosticCategories: ts.DiagnosticCategory[]
   ): Diagnostic[] {
-    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
+    const unordered = service.getDiagnostics(fileName);
+
+    const diagnostics = getDiagnosticOrder(unordered);
 
     return diagnostics
       .filter((d) => diagnosticCategories.some((category) => category === d.category))
@@ -196,7 +243,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
       DEBUG_CALLBACK('Unable to getCodeActions for %s: %o', diagnostic.codeDescription, diagnostic);
     }
 
-    const transformedActions = service
+    let transformedActions = service
       .transformCodeActionToCodeFixAction(rawActions)
       .reduce<ts.CodeFixAction[]>((acc, fix) => {
         const strictFix = makeCodeFixStrict(fix);
@@ -207,6 +254,38 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
         return acc;
       }, []);
+
+    DEBUG_CALLBACK(transformedActions);
+
+    const program = service.getLanguageService().getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnosticWithLocation: DiagnosticWithLocation = service.convertLSPDiagnosticToTs(
+      fileName,
+      diagnostic
+    );
+
+    const diagnosticWithContext: DiagnosticWithContext = {
+      ...diagnosticWithLocation,
+      ...{
+        glintService: service,
+        service: service.getLanguageService(),
+        program,
+        checker,
+        node: findNodeAtPosition(
+          diagnosticWithLocation.file,
+          diagnosticWithLocation.start,
+          diagnosticWithLocation.start + diagnosticWithLocation.length
+        ),
+      },
+    };
+
+    const additionalFixes = glintCodeFixes.getCodeFixes(diagnosticWithContext, {
+      safeFixes: true,
+      strictTyping: true,
+    });
+
+    transformedActions = transformedActions.concat(additionalFixes);
 
     // Use the first available codefix in automatic mode
     let fix = transformedActions.shift();
