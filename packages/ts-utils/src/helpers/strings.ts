@@ -24,9 +24,12 @@ export function applyTextChanges(text: string, textChanges: TextChange[]): strin
   return text;
 }
 
+/**
+ * Compares two text changes
+ */
 export function isSameChange(a: TextChange, b: TextChange): boolean {
   return (
-    a.span.start === a.span.start && a.span.length === b.span.length && a.newText === b.newText
+    a.span.start === b.span.start && a.span.length === b.span.length && a.newText === b.newText
   );
 }
 

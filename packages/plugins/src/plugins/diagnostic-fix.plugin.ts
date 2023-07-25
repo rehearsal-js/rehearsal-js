@@ -78,7 +78,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     // In the drain mode diagnostics list is getting refreshed in every cycle which might have end up
     // with more error need to be fixed then was originally. The limit based on original amount of diagnostics
     // helps to avoid an infinitive loop in some edge cases when new errors keep coming when previous fixed.
-    let limit = diagnostics.length * 2;
+    let limit = diagnostics.length * 10;
 
     while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;

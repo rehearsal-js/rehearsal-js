@@ -4,12 +4,13 @@ import { CodeFixesProvider } from './codefixes-provider.js';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
 
 import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard.js';
+import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
 import { AddMissingExportCodeFix } from './fixes/addMissingExport.js';
-import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
 import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
 import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints.js';
 import { AnnotateWithStrictTypeFromJSDoc } from './fixes/annotateWithStrictTypeFromJSDoc.js';
-import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
+import { GlintCodeFixCollection } from './glint-codefix-collection.js';
+import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
 import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
@@ -25,7 +26,11 @@ export const codefixes = new CodeFixesProvider([
 ]);
 
 export const glintCodeFixes = new CodeFixesProvider([
-  new BaseCodeFixCollection([new AddMissingArgToComponentSignature()]),
+  new GlintCodeFixCollection(),
+  new BaseCodeFixCollection([
+    // Need to be run after standard "typedef to type" fix applied
+    new AddMissingArgToComponentSignature(),
+  ]),
 ]);
 
 export interface ContentDelegate {

@@ -213,12 +213,13 @@ function buildCodeFixFileOutput(messageTable, inputFilePathRel, diagnosticJson, 
     '  name: string;',
     '  title: string;',
     '  description: string;',
-    '  builtIn: boolean;',
     '  diagnostics: DiagnosticMessage[];',
+    '  messages: DiagnosticMessage[];',
+    '  builtIn: boolean;',
     '}',
     '',
-    'function fix(name: string, title: string, description: string, diagnostics:  DiagnosticMessage[], builtIn: boolean): CodefixMessage {',
-    '    return { name, title, description, diagnostics, builtIn };',
+    'function fix(name: string, title: string, description: string, diagnostics:  DiagnosticMessage[], messages: DiagnosticMessage[], builtIn: boolean): CodefixMessage {',
+    '    return { name, title, description, diagnostics, messages, builtIn };',
     '}',
     '',
     '/** @internal */',
@@ -226,11 +227,11 @@ function buildCodeFixFileOutput(messageTable, inputFilePathRel, diagnosticJson, 
   ];
   messageTable.forEach(
     (
-      { title, description, diagnostics, builtIn },
+      { title, description, diagnostics, messages, builtIn },
       name
     ) => {
       result.push(
-        `    ${name}: fix('${name}', "${title}", "${description}", [${createDiagnostics(diagnostics, diagnosticJson)}], ${builtIn ? builtIn : false}), `
+        `    ${name}: fix('${name}', "${title}", "${description}", [${createDiagnostics(diagnostics, diagnosticJson)}], [${createDiagnostics(messages, diagnosticJson)}], ${builtIn ? builtIn : false}), `
       );
     }
   );
@@ -256,8 +257,7 @@ function writeCases(name, fixes) {
 }
 
 function createDiagnostics(diagnostics, diagnosticJson) {
-  const diagnosticsByCode = byCode(diagnosticJson);
-  return diagnostics.map((code) => `Diagnostics.TS${code}`).join(',');
+  return diagnostics ? diagnostics.map((code) => `Diagnostics.TS${code}`).join(',') : '';
 }
 
 /**

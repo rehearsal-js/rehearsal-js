@@ -249,6 +249,9 @@ importers:
       typescript:
         specifier: ^5.1
         version: 5.1.3
+      vscode-languageserver:
+        specifier: ^8.1.0
+        version: 8.1.0
     devDependencies:
       '@rehearsal/migrate':
         specifier: workspace:*

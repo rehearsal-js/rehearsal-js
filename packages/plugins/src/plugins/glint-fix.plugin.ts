@@ -2,16 +2,15 @@ import { createRequire } from 'node:module';
 import {
   glintCodeFixes,
   applyCodeFix,
-  makeCodeFixStrict,
   getDiagnosticOrder,
   DiagnosticWithContext,
 } from '@rehearsal/codefixes';
 import debug from 'debug';
 import ts, { DiagnosticWithLocation } from 'typescript';
-import { CodeAction, CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
 import { isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
+import type { Diagnostic } from 'vscode-languageserver';
 import type MS from 'magic-string';
 import type { TextChange } from 'typescript';
 
@@ -85,7 +84,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     // In the drain mode diagnostics list is getting refreshed in every cycle which might have end up
     // with more error need to be fixed then was originally. The limit based on original amount of diagnostics
     // helps to avoid an infinitive loop in some edge cases when new errors keep coming when previous fixed.
-    let limit = diagnostics.length * 2;
+    let limit = diagnostics.length * 10;
 
     while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
@@ -228,76 +227,28 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     diagnostic: Diagnostic,
     service: GlintService
   ): ts.CodeFixAction | undefined {
-    const glintService = service.getGlintService();
+    const diagnosticWithContext = this.getDiagnosticsWithContext(fileName, diagnostic, service);
 
-    let rawActions: CodeAction[] = [];
-
-    try {
-      rawActions = glintService.getCodeActions(
-        fileName,
-        CodeActionKind.QuickFix,
-        diagnostic.range,
-        [diagnostic]
-      );
-    } catch (e) {
-      DEBUG_CALLBACK('Unable to getCodeActions for %s: %o', diagnostic.codeDescription, diagnostic);
-    }
-
-    let transformedActions = service
-      .transformCodeActionToCodeFixAction(rawActions)
-      .reduce<ts.CodeFixAction[]>((acc, fix) => {
-        const strictFix = makeCodeFixStrict(fix);
-
-        if (strictFix) {
-          acc.push(strictFix);
-        }
-
-        return acc;
-      }, []);
-
-    DEBUG_CALLBACK(transformedActions);
-
-    const program = service.getLanguageService().getProgram()!;
-    const checker = program.getTypeChecker();
-
-    const diagnosticWithLocation: DiagnosticWithLocation = service.convertLSPDiagnosticToTs(
-      fileName,
-      diagnostic
-    );
-
-    const diagnosticWithContext: DiagnosticWithContext = {
-      ...diagnosticWithLocation,
-      ...{
-        glintService: service,
-        service: service.getLanguageService(),
-        program,
-        checker,
-        node: findNodeAtPosition(
-          diagnosticWithLocation.file,
-          diagnosticWithLocation.start,
-          diagnosticWithLocation.start + diagnosticWithLocation.length
-        ),
-      },
-    };
-
-    const additionalFixes = glintCodeFixes.getCodeFixes(diagnosticWithContext, {
+    const fixes = glintCodeFixes.getCodeFixes(diagnosticWithContext, {
       safeFixes: true,
       strictTyping: true,
     });
 
-    transformedActions = transformedActions.concat(additionalFixes);
+    if (fixes.length === 0) {
+      return undefined;
+    }
 
     // Use the first available codefix in automatic mode
-    let fix = transformedActions.shift();
+    let fix = fixes.shift();
 
     while (fix && this.wasAttemptedToFix(diagnostic, fix)) {
       // Try the next fix if we already tried the first one
-      fix = transformedActions.shift();
+      fix = fixes.shift();
     }
 
     if (fix === undefined) {
       DEBUG_CALLBACK(
-        ` - TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t fixes didn't work`
+        ` - TS${diagnostic.code} at ${diagnosticWithContext.start}:\t fixes didn't work`
       );
     }
 
@@ -319,5 +270,35 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     }
 
     return true;
+  }
+
+  getDiagnosticsWithContext(
+    fileName: string,
+    diagnostic: Diagnostic,
+    service: GlintService
+  ): DiagnosticWithContext {
+    const program = service.getLanguageService().getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnosticWithLocation: DiagnosticWithLocation = service.convertLSPDiagnosticToTs(
+      fileName,
+      diagnostic
+    );
+
+    return {
+      ...diagnosticWithLocation,
+      ...{
+        glintService: service,
+        glintDiagnostic: diagnostic,
+        service: service.getLanguageService(),
+        program,
+        checker,
+        node: findNodeAtPosition(
+          diagnosticWithLocation.file,
+          diagnosticWithLocation.start,
+          diagnosticWithLocation.start + diagnosticWithLocation.length
+        ),
+      },
+    };
   }
 }
