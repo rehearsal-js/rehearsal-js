@@ -1,3 +1,9 @@
+## <small>1.1.1 (2023-07-25)</small>
+
+* feat: GlintCodeFix Add Component Signature Interface to `.gts` component class (#1141) ([91196a8](https://github.com/rehearsal-js/rehearsal-js/commit/91196a8)), closes [#1141](https://github.com/rehearsal-js/rehearsal-js/issues/1141)
+
+
+
 ## 1.1.0 (2023-07-20)
 
 * feat: expose diagnostic fixing modes (#1173) ([8d89468](https://github.com/rehearsal-js/rehearsal-js/commit/8d89468)), closes [#1173](https://github.com/rehearsal-js/rehearsal-js/issues/1173)
