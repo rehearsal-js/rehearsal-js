@@ -7,7 +7,7 @@ Rehearsal is a CLI tool with 3 commands (Graph | Move | Fix), which aim to impro
 
 ## How does Rehearsal help with TypeScript migrations?
 
-Rehearsal is capable of maintaining proper migration order from leaf to trunk. It is generic enough to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights.
+Rehearsal is capable of maintaining proper migration order from leaf to trunk. It is generic enough, to allow for the migration of JS to TS for all web applications. It allows for both multi-pass and single-pass migration processes. It provides industry standard, type inference wherever possible and provides the ability to monitor micro migration steps with macro insights.
 
 Once your source code is moved to TypeScript, Rehearsal will fix as many errors as possible. Unresolved errors will be annotated and suppressed with a [Rehearsal TODO](#what-is-a-rehearsal-todo). This allows for safe iteration, to a strictly typed project.
 
