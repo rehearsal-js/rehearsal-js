@@ -210,15 +210,17 @@ Arguments:
 
 
 Options:
-  --graph                fixing all file(s) within the graph, which might include files
-                         outside of the current directory
-  --ignore [globs...]    comma-delimited list of globs to ignore eg. '--ignore
-                         tests/**/*,types/**/*' (default: [])
-  -f, --format <format>  report format separated by comma, e.g. -f json,sarif,md,sonarqube
-                         (default: ["sarif"])
-  -m, --mode <mode>      the application of codefixes (choices: "drain", "single-pass",
-                         default: "drain")
-  -h, --help             display help for command
+  --graph                   fixing all file(s) within the graph, which might include files
+                            outside of the current directory
+  --ignore [globs...]       comma-delimited list of globs to ignore eg. '--ignore
+                            tests/**/*,types/**/*' (default: [])
+  -f, --format <format>     report format separated by comma, e.g. -f json,sarif,md,sonarqube
+                            (default: ["sarif"])
+  -m, --mode <mode>         the application of codefixes (choices: "drain", "single-pass",
+                            default: "drain")
+  -h, --help                display help for command
+  --skipChecks [checks...]  skip specified pre-flights checks (not recommended), eg.
+                            --skipChecks eslint,deps
 ```
 
 This command will run against a TypeScript project and infer types for you. There's a lot going on under the hood here!
