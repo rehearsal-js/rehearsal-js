@@ -39,7 +39,8 @@
   },
   "dependencies": {
     "@rehearsal/ts-utils": "workspace:*",
-    "debug": "^4.3.4"
+    "debug": "^4.3.4",
+    "vscode-languageserver": "^8.1.0"
   },
   "devDependencies": {
     "@rehearsal/migrate": "workspace:*",

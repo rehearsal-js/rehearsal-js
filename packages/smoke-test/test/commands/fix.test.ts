@@ -47,29 +47,7 @@ describe('fix command', () => {
     expectFile(join(projectRoot, 'src/app.ts')).toMatchSnapshot();
   });
 
-  test('ember_js_app_4.11', async () => {
-    project = prepareProject('ember_js_app');
-    await project.write();
-    const projectRoot = resolve(project.baseDir);
-
-    // move to .ts
-    await rehearsalCLI('move', './app', ['--rootPath', project.baseDir], {
-      cwd: project.baseDir,
-    });
-    // infer types and TODOs
-    const result = await rehearsalCLI('fix', './app', ['--rootPath', project.baseDir], {
-      cwd: project.baseDir,
-    });
-
-    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
-    expectFile(join(projectRoot, 'app/components/map.hbs')).toMatchSnapshot();
-    expectFile(join(projectRoot, 'app/components/map.ts')).toMatchSnapshot();
-    expectFile(join(projectRoot, 'app/components/share-button.ts')).toMatchSnapshot();
-    expectFile(join(projectRoot, 'app/models/rental.ts')).toMatchSnapshot();
-    expectFile(join(projectRoot, 'app/components/hello-world.gts')).toMatchSnapshot();
-  });
-
-  test('ember_js_app_4.11 --mode=drain', async () => {
+  test('ember_js_app_4.11 --mode=single-pass', async () => {
     project = prepareProject('ember_js_app');
     await project.write();
     const projectRoot = resolve(project.baseDir);
@@ -82,7 +60,34 @@ describe('fix command', () => {
     const result = await rehearsalCLI(
       'fix',
       './app',
-      ['--rootPath', project.baseDir, '--mode', 'drain'], // Invokes fix with drain.
+      ['--rootPath', project.baseDir, '--mode', 'single-pass'],
+      {
+        cwd: project.baseDir,
+      }
+    );
+
+    expect(cleanOutput(result.stdout, project.baseDir)).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/map.hbs')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/map.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/share-button.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/models/rental.ts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/hello-world.gts')).toMatchSnapshot();
+  });
+
+  test('ember_js_app_4.11', async () => {
+    project = prepareProject('ember_js_app');
+    await project.write();
+    const projectRoot = resolve(project.baseDir);
+
+    // move to .ts
+    await rehearsalCLI('move', './app', ['--rootPath', project.baseDir], {
+      cwd: project.baseDir,
+    });
+    // infer types and TODOs
+    const result = await rehearsalCLI(
+      'fix',
+      './app',
+      ['--rootPath', project.baseDir], // Invokes fix with drain.
       {
         cwd: project.baseDir,
       }

@@ -2,170 +2,209 @@
   "addMissingAsync": {
     "title": "Add Missing `async` Keyword",
     "description": "Adds the missing `async` keyword where a promise should be returned.",
-    "diagnostics": [2345, 2322, 2678]
+    "messages": [90029],
+    "diagnostics": [2322, 2345, 2678]
   },
   "addMissingAwait": {
     "title": "Add Missing `await` Keyword",
     "description": "Adds the missing `await` keyword where a promise should be returned but not being properly handled.",
+    "messages": [95083],
     "diagnostics": [
-      2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345,
-      2339, 2349, 2351
+      2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345, 2339, 2349, 2351
     ]
   },
   "addMissingAwaitToInitializer": {
-    "title": "Add `await` To Intializers",
+    "title": "Add `await` To Initializers",
     "description": "Adds missing `await` keyword to declarations and expressions.",
-    "diagnostics": [95084, 95089]
+    "messages": [95084, 95089],
+    "diagnostics": [
+      2339, 2349, 2351, 2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345
+    ]
   },
   "addMissingConst": {
     "title": "Add Missing Const",
     "description": "Adds `const` to all unresolved variables",
+    "messages": [95081],
     "diagnostics": [2304, 18004]
   },
   "addMissingConstraint": {
     "title": "Add Missing Type Constraint",
     "description": "Adds an `extends` keyword to constrain a generic type parameter.",
+    "messages": [2211],
     "diagnostics": [2678, 2719, 2375, 2322, 2379, 2530, 2603, 2344]
   },
   "addMissingDeclareProperty": {
     "title": "Add Missing Property Declaration",
     "description": "Adds a `declare` keyword to properties.",
+    "messages": [95094],
     "diagnostics": [2612]
   },
   "addMissingInvocationForDecorator": {
     "title": "Add Declaration For Decorator",
     "description": "Turns decorators into invocations where appropriate.",
+    "messages": [90028],
     "diagnostics": [1329]
   },
   "addMissingNewOperator": {
     "title": "Add `new` Operator",
     "description": "Adds `new` operator where it is needed.",
+    "messages": [95071],
     "diagnostics": [2348]
   },
   "addOptionalPropertyUndefined": {
     "title": "Add Optional Property",
     "description": "Adds `undefined` to the type of an optional field.",
+    "messages": [95169],
     "diagnostics": [2412, 2375, 2379]
   },
   "addVoidToPromise": {
     "title": "Add `void` To Promise",
     "description": "Adds the `void` as the type parameter of `Promise` where appropriate.",
+    "messages": [95143],
     "diagnostics": [2810, 2794]
   },
   "constructorForDerivedNeedSuperCall": {
     "title": "Add Super To Constructor",
     "description": "Adds a call the super class within the constructor.",
+    "messages": [90001],
     "diagnostics": [2377]
   },
   "convertToTypeOnlyExport": {
     "title": "Convert To Type Export",
     "description": "Adds `type` to exports where the entity(s) that is exported is a type(s).",
+    "messages": [1364],
     "diagnostics": [1205]
   },
   "convertTypedefToType": {
     "title": "Convert @typedef to Type",
     "description": "Converts JSDoc typedef to TypeScript type(s).",
+    "messages": [95176],
     "diagnostics": [80009]
   },
   "convertToTypeOnlyImport": {
     "title": "Convert to Type Only Import",
     "description": "Adds `type` to imports where the entity(s) being imported are type(s).",
+    "messages": [95180, 95181],
     "diagnostics": [1371, 1484]
   },
   "deleteUnmatchedParameter": {
     "title": "Delete Unused Parameter",
     "description": "Deletes parameters that are documented but not in the implementation.",
+    "messages": [95171, 95173],
     "diagnostics": [8024]
   },
   "extendsInterfaceBecomesImplements": {
     "title": "Convert `extends` To `implements` On Interfaces",
     "description": "Converts `extends` to `implements` when interfaces are extended but empty.",
+    "messages": [90003],
     "diagnostics": [2689]
   },
   "fixAwaitInSyncFunction": {
     "title": "Adds `await` To Sync Function",
     "description": "Add async modifier to containing function.",
+    "messages": [90029],
     "diagnostics": [1308, 1103, 2311]
   },
   "fixCannotFindModule": {
     "title": "Cannot Find Module",
     "description": "Attempts to download type modules for modules that can not be resolved.",
+    "messages": [95014],
     "diagnostics": [2307, 7016]
   },
   "fixEnableJsxFlag": {
     "title": "Enable JSX",
     "description": "When JSX is detected, enable the tsconfig configuration for JSX.",
+    "messages": [95088],
     "diagnostics": [17004]
   },
   "fixImportNonExportedMember": {
     "title": "Fix Import Of Non-Exported Member",
     "description": "Modifies the file that is being imported to expose the correct members.",
+    "messages": [90059],
     "diagnostics": [2459]
   },
   "fixMissingAttributes": {
     "title": "Add Missing Attribute",
     "description": "Adds an attribute to a JSX element if it missing.",
+    "messages": [95167],
     "diagnostics": [2339, 2551, 2741, 2739, 2740, 2345, 2304]
   },
   "fixMissingMember": {
     "title": "Fix Missing Member",
     "description": "Ensures that there is a type or implementation associated with a member.",
+    "messages": [90016, 90017, 90020, 90021, 90023, 90024, 90027, 90035, 90038, 90053, 95063],
     "diagnostics": [2339, 2551, 2741, 2739, 2740, 2345, 2304]
   },
   "fixMissingProperties": {
     "title": "Add Missing Property",
     "description": "Adds properties that are missing from objects.",
+    "messages": [95165],
     "diagnostics": [2339, 2551, 2741, 2739, 2740, 2345, 2304]
   },
   "fixOverrideModifier": {
     "title": "Fix Override Modifier",
     "description": "Adds the `override` modifier where the subclass is overriding the method.",
+    "messages": [95160, 95161],
     "diagnostics": [4113, 4112, 4116, 4114, 4115, 4119, 4121, 4120, 4122]
   },
   "fixReturnTypeInAsyncFunction": {
     "title": "Fix Return Type Of Async Functions",
     "description": "Adds `Promise<...>` to the return type.",
+    "messages": [90036],
     "diagnostics": [1064]
   },
   "import": {
     "title": "Fix Imports",
     "description": "Fixes missing imports.",
+    "messages": [90013, 90014, 90055, 90056, 90057, 90058],
     "diagnostics": [2304, 2552, 2663, 2662, 2503, 2686, 2693, 18004, 1361]
   },
   "inferFromUsage": {
     "title": "Infer From Usage",
     "description": "Infers the types based on how the value is being used.",
+    "messages": [95011, 95012, 95080],
     "diagnostics": [
-      7034, 7005, 7006, 7019, 7033, 7010, 7032, 7008, 7046, 7043, 7044, 7047, 7048, 7050, 7049,
-      7045, 2683
+      7034, 7005, 7006, 7019, 7033, 7010, 7032, 7008, 7046, 7043, 7044, 7047, 7048, 7050, 7049, 7045, 2683
     ]
   },
   "invalidImportSyntax": {
     "title": "Invalid Import Syntax",
     "description": "Fixes issues related to assignability of imports.",
+    "messages": [95015, 95016],
     "diagnostics": [2345, 2344, 2322, 2719, 1226, 2411, 2413, 2416, 2603, 2606, 2684, 2349, 2351]
   },
   "jdocTypes": {
     "title": "Add Types From JSDoc",
     "description": "Annotates code with the types from the declared JSDoc comments.",
-    "diagnostics": [90014]
+    "messages": [90014],
+    "diagnostics": [8020, 17019, 17020]
   },
   "removeUnnecessaryAwait": {
     "title": "Remove Unnecessary Await",
     "description": "Removes `await` where the function is not async.",
+    "messages": [95086],
     "diagnostics": [80007]
   },
   "strictClassInitialization": {
     "title": "Strict Class Initialization",
     "description": "Fixes classes so they are initialized correctly.",
+    "messages": [95018, 95019, 95020],
     "diagnostics": [2564]
   },
   "useDefaultImport": {
     "title": "Use Default Import",
     "description": "Converts namespaced import default imports.",
+    "messages": [95013],
     "diagnostics": [80003]
   },
 
+  "annotateWithStrictTypeFromJSDoc": {
+    "title": "Annotate Strict Types From JSDoc",
+    "description": "Annotates code with the only strict types from the declared JSDoc comments. Strict replacement for annotateWithTypeFromJSDoc",
+    "diagnostics": [80004],
+    "messages": [95009],
+    "builtIn": true
+  },
   "addErrorTypeGuard": {
     "title": "Add Error Cast",
     "description": "Adds a cast to Error objects in catch clauses",
@@ -194,12 +233,6 @@
     "title": "Add Missing Return Type",
     "description": "Adds the return type to methods and functions.",
     "diagnostics": [7050],
-    "builtIn": true
-  },
-  "annotateWithStrictTypeFromJSDoc": {
-    "title": "Annotate Strict Types From JSDoc",
-    "description": "Annotates code with the only strict types from the declared JSDoc comments.",
-    "diagnostics": [80004],
     "builtIn": true
   }
 }

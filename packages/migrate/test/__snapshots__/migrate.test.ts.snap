@@ -245,6 +245,24 @@ export default class Hello extends Component<HelloSignature> {
 "
 `;
 
+exports[`fix > .gts > with more errors 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2345: Argument of type 'typeof MyComponent' is not assignable to parameter of type 'abstract new () => HasContext<AnyContext'.
+export default class MyComponent {
+  missingParamTypes(a: number, b: number): void {
+    a = 1;
+    b = 2;
+  }
+
+  containsUnsupportedDiagnostic() {
+    return function () {
+      // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+      console.log(this);
+    }.bind(this);
+  }
+}
+"
+`;
+
 exports[`fix > .gts > with non-qualified service 1`] = `
 "import Component from \\"@glimmer/component\\";
 import { inject as service } from \\"@ember/service\\";
@@ -635,6 +653,24 @@ exports[`fix > RehearsalService > EXPERIMENTAL_MODES mode: single-pass 1`] = `
 
   hello() {
     return this.name + 1;
+  }
+}
+"
+`;
+
+exports[`fix > RehearsalService > more errors 1`] = `
+"export default class MyComponent {
+  // @ts-expect-error @rehearsal TODO TS6133: The parameter 'a' is never used. Remove the parameter from function definition or use it.
+  missingParamTypes(a: number, b: number): void {
+    a = 1;
+    b = 2;
+  }
+
+  containsUnsupportedDiagnostic(): () => void {
+    return function () {
+      // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+      console.log(this);
+    }.bind(this);
   }
 }
 "

@@ -25,7 +25,7 @@ const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
 
 type SuppressedError = { code: number; message: string };
 
-const SUPPRESSED_ERRORS: Array<SuppressedError> = [
+const SUPPRESSED_ERRORS: SuppressedError[] = [
   {
     code: Diagnostics.TS2339.code,
     message: 'False expression: Token end is child end',
@@ -50,17 +50,6 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
   ): CodeFixAction[] {
     const languageService = diagnostic.service;
 
-    const userPreferences: UserPreferences = {
-      disableSuggestions: false,
-      quotePreference: 'auto',
-      includeCompletionsForModuleExports: true,
-      includeCompletionsForImportStatements: true,
-      includeAutomaticOptionalChainCompletions: true,
-      importModuleSpecifierEnding: 'minimal',
-      includePackageJsonAutoImports: 'auto',
-      jsxAttributeCompletionStyle: 'auto',
-    };
-
     let fixes: readonly CodeFixAction[] = [];
 
     try {
@@ -70,57 +59,29 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         diagnostic.start + diagnostic.length,
         [diagnostic.code],
         this.getFormatCodeSettingsForFile(diagnostic.file.fileName),
-        userPreferences
+        this.getUserPreferences()
       );
     } catch (e) {
-      const code = diagnostic.code;
-      const supressedFound = SUPPRESSED_ERRORS.find((d) => d.code == code);
-
-      const supressError: boolean =
-        !!supressedFound && e instanceof Error && e.message.includes(supressedFound?.message);
-
-      DEBUG_CALLBACK(
-        'getCodeFixesAtPosition threw an exception: %s %s\n %s',
-        diagnostic.code,
-        diagnostic.file.fileName,
-        e
-      );
-
-      if (!supressError) {
-        throw new Error(
-          `An unknown error occured when attemping to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
-        );
-      }
+      this.suppressError(e, diagnostic);
     }
 
-    const filteredCodeFixes: CodeFixAction[] = [];
-
-    for (let fix of fixes) {
-      if (filter.safeFixes && !isCodeFixSupported(fix.fixName)) {
-        continue;
-      }
-
-      if (filter.strictTyping) {
-        let strictCodeFix = makeCodeFixStrict(fix);
-
-        if (strictCodeFix === undefined && isInstallPackageCommand(fix)) {
-          strictCodeFix = fix;
-        }
-
-        if (!strictCodeFix) {
-          continue;
-        }
-
-        fix = strictCodeFix;
-      }
-
-      filteredCodeFixes.push(fix);
-    }
-
-    return filteredCodeFixes;
+    return this.filterCodeFixes(fixes, filter);
   }
 
-  private getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
+  protected getUserPreferences(): UserPreferences {
+    return {
+      disableSuggestions: false,
+      quotePreference: 'auto',
+      includeCompletionsForModuleExports: true,
+      includeCompletionsForImportStatements: true,
+      includeAutomaticOptionalChainCompletions: true,
+      importModuleSpecifierEnding: 'minimal',
+      includePackageJsonAutoImports: 'auto',
+      jsxAttributeCompletionStyle: 'auto',
+    };
+  }
+
+  protected getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
     if (this.hasPrettier === undefined) {
       let prettierConfig: PrettierOptions | null = null;
 
@@ -158,6 +119,108 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       semicolons: useSemicolons ? SemicolonPreference.Insert : SemicolonPreference.Remove,
     };
   }
+
+  protected suppressError(e: unknown, diagnostic: DiagnosticWithContext): void {
+    if (e instanceof Error && this.isErrorSuppressed(diagnostic.code, e.message)) {
+      DEBUG_CALLBACK(
+        `getCodeFixesAtPosition threw an exception: ${diagnostic.code} ${diagnostic.file.fileName}\n ${e}`
+      );
+    } else {
+      throw new Error(
+        `An unknown error occurred when attempting to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
+      );
+    }
+  }
+
+  protected isErrorSuppressed(diagnosticCode: number, errorMessage: string): boolean {
+    const suppressedFound = SUPPRESSED_ERRORS.find((d) => d.code == diagnosticCode);
+
+    return !!suppressedFound && errorMessage.includes(suppressedFound?.message);
+  }
+
+  protected makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
+    // Filtering out all text changes contain `any`
+    const safeChanges: FileTextChanges[] = [];
+    for (const changes of fix.changes) {
+      const safeTextChanges: TextChange[] = [];
+      for (const textChanges of changes.textChanges) {
+        // Don't return dummy function declarations
+        if (textChanges.newText.includes('throw new Error')) {
+          continue;
+        }
+
+        const neverTypeUsageRegex = /(=>|[:<|])\s*never|never(\[])*\s*[|>]/i;
+        if (neverTypeUsageRegex.test(textChanges.newText)) {
+          continue;
+        }
+
+        // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, `=> any`, and same cases with `any[]`
+        const anyTypeUsageRegex = /(=>|[:<|])\s*any|any(\[])*\s*[|>]/i;
+        if (anyTypeUsageRegex.test(textChanges.newText)) {
+          continue;
+        }
+
+        // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, `=> object`, and same cases with `object[]`
+        const objectTypeUsageRegex = /(=>|[:<|])\s*object|object(\[])*\s*[|>]/i;
+        if (objectTypeUsageRegex.test(textChanges.newText)) {
+          continue;
+        }
+
+        // Covers cases with broken type signatures, like: `() =>`
+        const brokenTypeSignatures = /\(\) =>\s*$/i;
+        if (brokenTypeSignatures.test(textChanges.newText)) {
+          continue;
+        }
+
+        safeTextChanges.push(textChanges);
+      }
+
+      if (safeTextChanges.length) {
+        safeChanges.push({ ...changes, textChanges: safeTextChanges });
+      }
+    }
+
+    if (safeChanges.length) {
+      return { ...fix, changes: safeChanges };
+    }
+
+    return undefined;
+  }
+
+  protected filterCodeFixes(
+    fixes: readonly CodeFixAction[],
+    filter: CodeFixCollectionFilter
+  ): CodeFixAction[] {
+    const filteredFixes: CodeFixAction[] = [];
+
+    for (let fix of fixes) {
+      if (filter.safeFixes && !this.isCodeFixSupported(fix)) {
+        continue;
+      }
+
+      if (filter.strictTyping) {
+        let strictCodeFix = this.makeCodeFixStrict(fix);
+
+        if (!strictCodeFix && isInstallPackageCommand(fix)) {
+          strictCodeFix = fix;
+        }
+
+        if (!strictCodeFix) {
+          continue;
+        }
+
+        fix = strictCodeFix;
+      }
+
+      filteredFixes.push(fix);
+    }
+
+    return filteredFixes;
+  }
+
+  protected isCodeFixSupported(fix: CodeFixAction): boolean {
+    return isCodeFixSupported(fix.fixName);
+  }
 }
 
 function importPrettier(fromPath: string): typeof import('prettier') {
@@ -184,53 +247,4 @@ export function isInstallPackageCommand(
   fix: CodeFixAction
 ): fix is CodeFixAction & { commands: CodeActionCommand } {
   return fix.fixId === 'installTypesPackage' && !!fix.commands;
-}
-
-export function makeCodeFixStrict(fix: CodeFixAction): CodeFixAction | undefined {
-  // Filtering out all text changes contain `any`
-  const safeChanges: FileTextChanges[] = [];
-  for (const changes of fix.changes) {
-    const safeTextChanges: TextChange[] = [];
-    for (const textChanges of changes.textChanges) {
-      // Don't return dummy function declarations
-      if (textChanges.newText.includes('throw new Error')) {
-        continue;
-      }
-
-      const neverTypeUsageRegex = /(=>|[:<|])\s*never|never(\[])*\s*[|>]/i;
-      if (neverTypeUsageRegex.test(textChanges.newText)) {
-        continue;
-      }
-
-      // Covers: `: any`, `| any`, `<any`, `any>`, `any |`, `=> any`, and same cases with `any[]`
-      const anyTypeUsageRegex = /(=>|[:<|])\s*any|any(\[])*\s*[|>]/i;
-      if (anyTypeUsageRegex.test(textChanges.newText)) {
-        continue;
-      }
-
-      // Covers: `: object`, `| object`, `<object`, `object>`, `object |`, `=> object`, and same cases with `object[]`
-      const objectTypeUsageRegex = /(=>|[:<|])\s*object|object(\[])*\s*[|>]/i;
-      if (objectTypeUsageRegex.test(textChanges.newText)) {
-        continue;
-      }
-
-      // Covers cases with broken type signatures, like: `() =>`
-      const brokenTypeSignatures = /\(\) =>\s*$/i;
-      if (brokenTypeSignatures.test(textChanges.newText)) {
-        continue;
-      }
-
-      safeTextChanges.push(textChanges);
-    }
-
-    if (safeTextChanges.length) {
-      safeChanges.push({ ...changes, textChanges: safeTextChanges });
-    }
-  }
-
-  if (safeChanges.length) {
-    return { ...fix, changes: safeChanges };
-  }
-
-  return undefined;
 }

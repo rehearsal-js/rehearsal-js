@@ -46,15 +46,15 @@ describe('Test DiagnosticFixPlugin', () => {
   test('sort with priorities', () => {
     const diagnostics = mockDiagnosticWithLocations([
       { start: 9, code: 7044 },
-      { start: 8, code: 95084 },
+      { start: 8, code: 2322 },
       { start: 7, code: 7010 },
-      { start: 6, code: 95084 },
+      { start: 6, code: 2345 },
       { start: 5, code: 7050 },
       { start: 0, code: 80002 },
       { start: 1, code: 7044 },
-      { start: 2, code: 95084 },
+      { start: 2, code: 2678 },
       { start: 3, code: 4082 },
-      { start: 4, code: 95084 },
+      { start: 4, code: 99999 },
     ]);
 
     expect(getDiagnosticOrder(diagnostics).map((d) => ({ start: d.start, code: d.code }))).toEqual([
@@ -62,11 +62,10 @@ describe('Test DiagnosticFixPlugin', () => {
       { start: 1, code: 7044 },
       { start: 9, code: 7044 },
       { start: 5, code: 7050 },
-      { start: 2, code: 95084 },
+      { start: 2, code: 2678 },
       { start: 3, code: 4082 },
-      { start: 4, code: 95084 },
-      { start: 6, code: 95084 },
-      { start: 8, code: 95084 },
+      { start: 6, code: 2345 },
+      { start: 8, code: 2322 },
     ]);
   });
 });

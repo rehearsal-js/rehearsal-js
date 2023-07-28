@@ -315,6 +315,23 @@ describe('fix', () => {
       expect(affected, 'the reportItem.nodeLocation should match the arg').toEqual('age');
     });
 
+    test('with more errors', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-more-errors.gts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
     test('still fixes the file if there are no errors', async () => {
       const [inputs, outputs] = prepareInputFiles(project, ['gts/with-no-errors.gts']);
 
@@ -349,6 +366,8 @@ describe('fix', () => {
           // no ops
         }
 
+        expectFile(outputs[0]).toMatchSnapshot();
+
         expectFile(outputs[0]).contains('interface RepeatSignature');
         expectFile(outputs[0]).contains('export class Repeat extends Component<RepeatSignature>');
 
@@ -362,8 +381,6 @@ describe('fix', () => {
         expectFile(outputs[0]).contains(
           'class Something extends Component<InterfaceFromCommentSignature> '
         );
-
-        expectFile(outputs[0]).toMatchSnapshot();
       });
 
       test('add component signature interface', async () => {
@@ -1176,6 +1193,23 @@ export default class LocaleService extends Service {
       };
 
       for await (const _ of migrate(drainInput)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('more errors', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['with-more-errors.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
         // no ops
       }
 

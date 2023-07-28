@@ -103,7 +103,7 @@ async function fn(a: string, b: Promise<string>) {
 ```
 
 
-## Add `await` To Intializers
+## Add `await` To Initializers
 
 id: _addMissingAwaitToInitializer_
 
@@ -737,6 +737,14 @@ Converts namespaced import default imports.
 
 
 
+## Annotate Strict Types From JSDoc
+
+id: _annotateWithStrictTypeFromJSDoc_
+
+Annotates code with the only strict types from the declared JSDoc comments. Strict replacement for annotateWithTypeFromJSDoc
+
+
+
 ## Add Error Cast
 
 id: _addErrorTypeGuard_
@@ -774,14 +782,6 @@ Exports members that are required and used by other exports.
 id: _inferReturnType_
 
 Adds the return type to methods and functions.
-
-
-
-## Annotate Strict Types From JSDoc
-
-id: _annotateWithStrictTypeFromJSDoc_
-
-Annotates code with the only strict types from the declared JSDoc comments.
 
 
 
