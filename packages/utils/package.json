@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@types/which": "^3.0.0",
-    "@vitest/coverage-c8": "^0.30.1",
+    "@vitest/coverage-c8": "^0.33.0",
     "fixturify": "^3.0.0",
     "fixturify-project": "^5.2.0",
     "vitest": "^0.30.0"
