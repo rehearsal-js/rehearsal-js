@@ -36,7 +36,7 @@ export class StubMissingJSDocParamName implements CodeFix {
     return createCodeFixAction(
       'stubMissingNameJSDocParam',
       changes,
-      'adds a unique name to the unamed JSDoc @param'
+      'adds a unique name to the unnamed JSDoc @param'
     );
   }
 }
