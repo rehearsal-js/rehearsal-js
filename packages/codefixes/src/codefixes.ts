@@ -11,6 +11,7 @@ import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypes
 import { AnnotateWithStrictTypeFromJSDoc } from './fixes/annotateWithStrictTypeFromJSDoc.js';
 import { GlintCodeFixCollection } from './glint-codefix-collection.js';
 import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
+import { StubMissingJSDocParamName } from './fixes/stubMissingJSDocParamName.js';
 import type { CodeFixAction } from 'typescript';
 
 export const codefixes = new CodeFixesProvider([
@@ -21,6 +22,7 @@ export const codefixes = new CodeFixesProvider([
     new AddMissingTypesBasedOnInlayHintsCodeFix(),
     new AnnotateWithStrictTypeFromJSDoc(),
     new MakeMemberOptionalCodeFix(),
+    new StubMissingJSDocParamName(),
   ]),
   new TypescriptCodeFixCollection(),
 ]);
@@ -28,6 +30,7 @@ export const codefixes = new CodeFixesProvider([
 export const glintCodeFixes = new CodeFixesProvider([
   new GlintCodeFixCollection(),
   new BaseCodeFixCollection([
+    new StubMissingJSDocParamName(),
     // Need to be run after standard "typedef to type" fix applied
     new AddMissingArgToComponentSignature(),
   ]),

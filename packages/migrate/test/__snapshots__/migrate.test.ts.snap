@@ -111,6 +111,84 @@ export default class WithMissingInterface extends Component<WithMissingInterface
 "
 `;
 
+exports[`fix > .gts > component signature codefix > with misssing jsdoc param name 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export class Something extends Component {
+  /** */
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args) {
+    console.log(args);
+  }
+
+  shouldExist() {
+    console.log(\\"should exist in output\\");
+  }
+}
+"
+`;
+
+exports[`fix > .gts > component signature codefix > with typedef for component signature interface 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface RepeatSignature {
+  Args: { phrase: any };
+}
+
+//
+// UseCase: Should generate a component signature interface
+//
+
+export class Repeat extends Component<RepeatSignature> {
+  <template>
+    <span>{{@phrase}}</span>
+  </template>
+}
+
+//
+// UseCase: Should infer relationship from comment, update heritage clause with signature
+//
+
+interface MyComponentSignature {
+  Args: { snack: any; age: any };
+}
+
+/**
+ * @extends {Component<MyComponentSignature>}
+ */
+export class MyComponent extends Component<MyComponentSignature> {
+  name = \\"Bob\\";
+
+  <template>
+    <Repeat @phrase={{@age}} />
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+    <span>My favorite snack is {{@snack}}.</span>
+  </template>
+}
+
+//
+// UseCase: Should generate an interface from all comments
+//
+
+interface InterfaceFromCommentSignature {
+  Args: InterfaceFromCommentArgs;
+}
+
+interface InterfaceFromCommentArgs {
+  someArg: number;
+}
+
+/**
+ * @extends {Component<InterfaceFromCommentSignature>}
+ */
+export class Something extends Component<InterfaceFromCommentSignature> {
+  <template>
+    <span>{{@someArg}}</span>
+  </template>
+}
+"
+`;
+
 exports[`fix > .gts > component signature codefix > with-typedef for component signature interface 1`] = `
 "import Component from \\"@glimmer/component\\";
 
@@ -181,6 +259,41 @@ export default class TestGjsNoErrors extends Component {
   <template>
     <span>Hello, I am {{this.name}}!</span>
   </template>
+}
+"
+`;
+
+exports[`fix > .gts > strips jsdoc param with missing name 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export class Something extends Component {
+  /** */
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args) {
+    console.log(args);
+  }
+
+  shouldExist() {
+    console.log(\\"should exist in output\\");
+  }
+}
+"
+`;
+
+exports[`fix > .gts > strips jsdoc param with missing name 2`] = `
+"import Component from \\"@glimmer/component\\";
+
+export class Something extends Component {
+  /** */
+
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args) {
+    console.log(args);
+  }
+
+  shouldExist() {
+    console.log(\\"should exist in output\\");
+  }
 }
 "
 `;

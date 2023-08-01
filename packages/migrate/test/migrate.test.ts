@@ -350,8 +350,43 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
+    test('strips jsdoc param with missing name', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, [
+        'gts/with-missing-jsdoc-param-name.gts',
+      ]);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0], 'does not have rehearsal TODO for param').not.contains(
+        `// @ts-expect-error @rehearsal TODO TS8024: JSDoc '@param' tag has name '', but there is no parameter with that name.`
+      );
+      expectFile(outputs[0], 'strip @param with no name').not.contains(
+        `* @param {Event} -- Something`
+      );
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[0]).contains('shouldExist');
+
+      // Trigger a second-pass
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).contains('shouldExist');
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
     describe('component signature codefix', () => {
-      test('with-typedef for component signature interface', async () => {
+      test('with typedef for component signature interface', async () => {
         const [inputs, outputs] = prepareInputFiles(project, ['gts/signatures/with-typedef.gts']);
 
         const input: MigrateInput = {

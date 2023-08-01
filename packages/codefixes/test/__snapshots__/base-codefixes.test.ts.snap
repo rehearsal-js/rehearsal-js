@@ -728,3 +728,23 @@ const oak: Tree = {
 delete oak.height;
 "
 `;
+
+exports[`Test base codefixes > stubMissingJSDocParamName 1`] = `
+"export class Something {
+  /**
+   * @param {Event} unnamedParam_4a0b63 -- Something
+   * @param {string} unnamedParam_3544a2 -- Another
+   * @param {*} unnamedParam_f10fcb -- I don't know
+   */
+
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
+    console.log(args);
+  }
+
+  shouldExist(): void {
+    console.log(\\"should exist in output\\");
+  }
+}
+"
+`;
