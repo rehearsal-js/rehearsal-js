@@ -1016,7 +1016,7 @@ packages:
       '@babel/helper-compilation-targets': 7.22.6(@babel/core@7.21.4)
       '@babel/helper-module-transforms': 7.22.5
       '@babel/helpers': 7.21.0
-      '@babel/parser': 7.22.5
+      '@babel/parser': 7.22.7
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
