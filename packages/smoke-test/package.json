@@ -100,7 +100,7 @@
     "ember-welcome-page": "^7.0.1",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-ember": "^11.4.7",
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-n": "^16.0.0",
