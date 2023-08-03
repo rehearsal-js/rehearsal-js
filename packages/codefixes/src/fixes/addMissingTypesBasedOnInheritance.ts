@@ -138,7 +138,7 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
 
         // Skipping "non-strict types"
         if (!type || type === 'any' || type === 'object') {
-          // If the type was too loose but we have an accesortor of the current class
+          // If the type was too loose, but we have an ancestor of the current class
           // recurse with the parent
           const parentClassMethod = findAncestor(
             ancestorMethodSymbol.declarations?.[0],

@@ -658,6 +658,50 @@ exports[`fix > RehearsalService > EXPERIMENTAL_MODES mode: single-pass 1`] = `
 "
 `;
 
+exports[`fix > RehearsalService > import type after infer it from hierarchy 1`] = `
+"import { Food } from \\"./basic.food\\";
+
+export class Animal {
+  say(message: string): string {
+    return message;
+  }
+
+  feed(food: Food, quantity: number): boolean {
+    console.log(food, quantity);
+    return false;
+  }
+}
+"
+`;
+
+exports[`fix > RehearsalService > import type after infer it from hierarchy 2`] = `
+"export class Food {
+  title: string;
+
+  constructor(title: string) {
+    this.title = title;
+  }
+}
+"
+`;
+
+exports[`fix > RehearsalService > import type after infer it from hierarchy 3`] = `
+"import { Animal } from \\"./basic.animal\\";
+import { Food } from \\"./basic.food\\";
+
+export class Dog extends Animal {
+  say(message: string): string {
+    console.log(message);
+    return \\"bar\\";
+  }
+
+  feed(food: Food, quantity: number): boolean {
+    return super.feed(food, quantity);
+  }
+}
+"
+`;
+
 exports[`fix > RehearsalService > more errors 1`] = `
 "export default class MyComponent {
   // @ts-expect-error @rehearsal TODO TS6133: The parameter 'a' is never used. Remove the parameter from function definition or use it.

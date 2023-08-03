@@ -3,10 +3,25 @@ import { SUPPORTED_DIAGNOSTICS } from './safe-codefixes.js';
 import type { DiagnosticWithLocation } from 'typescript';
 
 const PRIORITIZED_CODES: number[] = [
-  Diagnostics.TS80002.code,
+  // Convert `require` to `import`
   Diagnostics.TS80005.code,
+
+  // Fix missing imports
+  Diagnostics.TS1361.code,
+  Diagnostics.TS18004.code,
+  Diagnostics.TS2304.code,
+  Diagnostics.TS2503.code,
+  Diagnostics.TS2552.code,
+  Diagnostics.TS2662.code,
+  Diagnostics.TS2663.code,
+  Diagnostics.TS2686.code,
+  Diagnostics.TS2693.code,
+
+  // Infer types from JSDoc
   Diagnostics.TS80009.code,
   Diagnostics.TS80004.code,
+
+  // Infer types from usage
   Diagnostics.TS7005.code,
   Diagnostics.TS7006.code,
   Diagnostics.TS7008.code,
@@ -16,7 +31,11 @@ const PRIORITIZED_CODES: number[] = [
   Diagnostics.TS7045.code,
   Diagnostics.TS7046.code,
   Diagnostics.TS7050.code,
+
+  Diagnostics.TS80002.code,
+
   Diagnostics.TS2612.code,
+
   Diagnostics.TS4073.code,
 ];
 

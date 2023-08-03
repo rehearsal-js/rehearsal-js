@@ -26,6 +26,9 @@ exports[`graph command > base_ts_app 1`] = `
 [DATA] ./src/apply-rules.ts
 [DATA] ./src/gen-random-grid.ts
 [DATA] ./src/app.ts
+[DATA] ./src/basic.animal.ts
+[DATA] ./src/basic.food.ts
+[DATA] ./src/basic.index.ts
 [SUCCESS] Analyzing project dependency graph"
 `;
 
