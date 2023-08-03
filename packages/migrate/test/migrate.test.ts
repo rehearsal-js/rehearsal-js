@@ -1242,6 +1242,7 @@ export default class LocaleService extends Service {
         packageDir: project.baseDir,
         filesToMigrate: inputs,
         reporter,
+        mode: 'drain',
       };
 
       for await (const _ of migrate(input)) {
@@ -1249,6 +1250,35 @@ export default class LocaleService extends Service {
       }
 
       expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('import type after infer it from hierarchy', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, [
+        'basic.animal.ts',
+        'basic.food.ts',
+        'basic.index.ts',
+      ]);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[2]).contains('import { Food }');
+      expectFile(outputs[2]).contains('./basic.food');
+      expectFile(outputs[2]).contains('say(message: string): string');
+      expectFile(outputs[2]).contains('feed(food: Food, quantity: number): boolean');
+
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[1]).toMatchSnapshot();
+      expectFile(outputs[2]).toMatchSnapshot();
     });
   });
 });

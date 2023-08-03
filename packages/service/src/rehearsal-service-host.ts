@@ -1,4 +1,5 @@
 import { dirname } from 'node:path';
+import { statSync } from 'fs';
 import ts, {
   ApplyCodeActionCommandResult,
   InstallPackageOptions,
@@ -32,9 +33,17 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     this.fileNames = fileNames;
   }
 
+  useCaseSensitiveFileNames = (): boolean => {
+    return !(
+      statSync(process.cwd().toLowerCase(), { throwIfNoEntry: false })?.isDirectory() &&
+      statSync(process.cwd().toUpperCase(), { throwIfNoEntry: false })?.isDirectory()
+    );
+  };
+
   getTypeRootsVersion(): number {
     return this.typeRootVersion;
   }
+
   /**
    * Updates a snapshot state in memory and increases its version.
    */
@@ -45,6 +54,26 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     };
 
     return this.files[fileName].snapshot;
+  }
+
+  /**
+   * Gets the latest snapshot
+   * If a snapshot doesn't exist yet - reads its content from file as the first version
+   */
+  getScriptSnapshot(fileName: string): IScriptSnapshot | undefined {
+    if (!(fileName in this.files) && this.fileExists(fileName)) {
+      const text = this.readFile(fileName);
+      if (text !== undefined) {
+        this.setScriptSnapshot(fileName, ScriptSnapshot.fromString(text));
+      }
+    }
+
+    return this.files[fileName].snapshot;
+  }
+
+  isKnownTypesPackageName(): boolean {
+    // Try all packages that come through here
+    return true;
   }
 
   async installPackage(options: InstallPackageOptions): Promise<ApplyCodeActionCommandResult> {
@@ -75,45 +104,19 @@ export class RehearsalServiceHost implements LanguageServiceHost {
     return Promise.reject({ error: `Could not install ${options.packageName}` });
   }
 
-  /**
-   * Gets the latest snapshot
-   * If a snapshot doesn't exist yet - reads its content from file as the first version
-   */
-  getScriptSnapshot(fileName: string): IScriptSnapshot | undefined {
-    if (!(fileName in this.files) && this.fileExists(fileName)) {
-      const text = this.readFile(fileName);
-      if (text !== undefined) {
-        this.setScriptSnapshot(fileName, ScriptSnapshot.fromString(text));
-      }
-    }
-
-    return this.files[fileName].snapshot;
-  }
-
-  isKnownTypesPackageName(): boolean {
-    // try all packages that come through here
-    return true;
-  }
-
   getCompilationSettings = (): CompilerOptions => this.compilerOptions;
   getCurrentDirectory = (): string => this.currentDirectory;
   getDefaultLibFileName = (o: CompilerOptions): string => getDefaultLibFilePath(o);
   getScriptFileNames = (): string[] => this.fileNames;
   getScriptVersion = (fileName: string): string => this.files[fileName]?.version.toString() || '0';
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  fileExists = sys.fileExists;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  readFile = sys.readFile;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  writeFile = sys.writeFile;
+  fileExists = sys.fileExists.bind(this);
+  readFile = sys.readFile.bind(this);
+  writeFile = sys.writeFile.bind(this);
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  directoryExists = sys.directoryExists;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  getDirectories = sys.getDirectories;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  readDirectory = sys.readDirectory;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  realpath = sys.realpath;
+  directoryExists = sys.directoryExists.bind(this);
+  getDirectories = sys.getDirectories.bind(this);
+  readDirectory = sys.readDirectory.bind(this);
+
+  realpath = sys.realpath?.bind(this);
 }
