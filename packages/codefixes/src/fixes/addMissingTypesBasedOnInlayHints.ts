@@ -28,8 +28,12 @@ export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
 
     const targetPosition = closeParen.getEnd();
 
+    // TODO: Remove this hack for Glint's .gts files to be processed as .ts
+    // The Glint's `program` doesn't know about .gts and represents them as .ts files under the hood
+    const fileName = diagnostic.file.fileName.replace(/.gts$/, '.ts');
+
     const hints = diagnostic.service.provideInlayHints(
-      diagnostic.file.fileName,
+      fileName,
       {
         start: targetPosition,
         length: targetPosition + 1,

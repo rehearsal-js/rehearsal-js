@@ -28,9 +28,12 @@ export const codefixes = new CodeFixesProvider([
 ]);
 
 export const glintCodeFixes = new CodeFixesProvider([
+  new BaseCodeFixCollection([
+    new AddMissingTypesBasedOnInlayHintsCodeFix(),
+    new StubMissingJSDocParamName(),
+  ]),
   new GlintCodeFixCollection(),
   new BaseCodeFixCollection([
-    new StubMissingJSDocParamName(),
     // Need to be run after standard "typedef to type" fix applied
     new AddMissingArgToComponentSignature(),
   ]),
