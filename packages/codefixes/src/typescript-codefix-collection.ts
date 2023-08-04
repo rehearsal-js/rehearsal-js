@@ -34,6 +34,10 @@ const SUPPRESSED_ERRORS: SuppressedError[] = [
     code: Diagnostics.TS2345.code,
     message: `Cannot read properties of undefined (reading 'flags')`,
   },
+  {
+    code: Diagnostics.TS7006.code,
+    message: `Debug Failure`,
+  },
 ];
 
 /**
