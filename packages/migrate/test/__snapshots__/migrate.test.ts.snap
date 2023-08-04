@@ -111,85 +111,7 @@ export default class WithMissingInterface extends Component<WithMissingInterface
 "
 `;
 
-exports[`fix > .gts > component signature codefix > with misssing jsdoc param name 1`] = `
-"import Component from \\"@glimmer/component\\";
-
-export class Something extends Component {
-  /** */
-  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
-  reset(...args) {
-    console.log(args);
-  }
-
-  shouldExist() {
-    console.log(\\"should exist in output\\");
-  }
-}
-"
-`;
-
 exports[`fix > .gts > component signature codefix > with typedef for component signature interface 1`] = `
-"import Component from \\"@glimmer/component\\";
-
-export interface RepeatSignature {
-  Args: { phrase: any };
-}
-
-//
-// UseCase: Should generate a component signature interface
-//
-
-export class Repeat extends Component<RepeatSignature> {
-  <template>
-    <span>{{@phrase}}</span>
-  </template>
-}
-
-//
-// UseCase: Should infer relationship from comment, update heritage clause with signature
-//
-
-interface MyComponentSignature {
-  Args: { snack: any; age: any };
-}
-
-/**
- * @extends {Component<MyComponentSignature>}
- */
-export class MyComponent extends Component<MyComponentSignature> {
-  name = \\"Bob\\";
-
-  <template>
-    <Repeat @phrase={{@age}} />
-    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
-    <span>My favorite snack is {{@snack}}.</span>
-  </template>
-}
-
-//
-// UseCase: Should generate an interface from all comments
-//
-
-interface InterfaceFromCommentSignature {
-  Args: InterfaceFromCommentArgs;
-}
-
-interface InterfaceFromCommentArgs {
-  someArg: number;
-}
-
-/**
- * @extends {Component<InterfaceFromCommentSignature>}
- */
-export class Something extends Component<InterfaceFromCommentSignature> {
-  <template>
-    <span>{{@someArg}}</span>
-  </template>
-}
-"
-`;
-
-exports[`fix > .gts > component signature codefix > with-typedef for component signature interface 1`] = `
 "import Component from \\"@glimmer/component\\";
 
 export interface RepeatSignature {
@@ -268,11 +190,12 @@ exports[`fix > .gts > strips jsdoc param with missing name 1`] = `
 
 export class Something extends Component {
   /** */
-  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'reset' lacks a return-type annotation.
   reset(...args) {
     console.log(args);
   }
 
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'shouldExist' lacks a return-type annotation.
   shouldExist() {
     console.log(\\"should exist in output\\");
   }
@@ -286,11 +209,12 @@ exports[`fix > .gts > strips jsdoc param with missing name 2`] = `
 export class Something extends Component {
   /** */
 
-  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'reset' lacks a return-type annotation.
   reset(...args) {
     console.log(args);
   }
 
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'shouldExist' lacks a return-type annotation.
   shouldExist() {
     console.log(\\"should exist in output\\");
   }
@@ -366,6 +290,7 @@ export default class MyComponent {
     b = 2;
   }
 
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'containsUnsupportedDiagnostic' lacks a return-type annotation.
   containsUnsupportedDiagnostic() {
     return function () {
       // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
@@ -687,10 +612,11 @@ export default class SomeComponent extends Component {
   declare mooService: MooService;
 
   // Has to be fixes, but no additional import statement added
-  @service(\\"boo-service\\") secondBooService;
+  @service(\\"boo-service\\")
+  declare secondBooService: BooService;
 
   // @ts-expect-error @rehearsal TODO TS7008: Member 'nonQualified' implicitly has an 'any' type.
-  @service('non-qualified') nonQualified;
+  @service(\\"non-qualified\\") nonQualified;
 
   <template>
     <span>Hello, I am human, and I am 10 years old!</span>
@@ -720,7 +646,7 @@ exports[`fix > EXPERIMENTAL_MODES, GlintService > mode: drain 1`] = `
     this.name = name;
   }
 
-  hello() {
+  hello(): number {
     return this.name + 1;
   }
 }

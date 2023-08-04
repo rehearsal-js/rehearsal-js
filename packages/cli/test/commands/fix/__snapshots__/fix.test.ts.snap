@@ -533,15 +533,15 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   66 errors caught by rehearsal
-[TITLE]   2 have been fixed by rehearsal
+[TITLE]   69 errors caught by rehearsal
+[TITLE]   5 have been fixed by rehearsal
 [TITLE]   64 errors need to be fixed manually
 [TITLE]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   66 errors caught by rehearsal
-[SUCCESS]   2 have been fixed by rehearsal
+[SUCCESS]   69 errors caught by rehearsal
+[SUCCESS]   5 have been fixed by rehearsal
 [SUCCESS]   64 errors need to be fixed manually
 [SUCCESS]     -- 18 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 44 glint errors, with details in the report
@@ -586,15 +586,15 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [DATA] processing file: /app/pods/components/baz/component.ts
 [DATA] processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
-[TITLE]   61 errors caught by rehearsal
-[TITLE]   1 have been fixed by rehearsal
+[TITLE]   63 errors caught by rehearsal
+[TITLE]   3 have been fixed by rehearsal
 [TITLE]   60 errors need to be fixed manually
 [TITLE]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   61 errors caught by rehearsal
-[SUCCESS]   1 have been fixed by rehearsal
+[SUCCESS]   63 errors caught by rehearsal
+[SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   60 errors need to be fixed manually
 [SUCCESS]     -- 14 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 44 glint errors, with details in the report
