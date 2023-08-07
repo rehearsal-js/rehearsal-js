@@ -188,17 +188,24 @@ export default class TestGjsNoErrors extends Component {
 exports[`fix > .gts > strips jsdoc param with missing name 1`] = `
 "import Component from \\"@glimmer/component\\";
 
-export class Something extends Component {
+export interface SomethingSignature {
+  Args: { age: any };
+}
+
+export class Something extends Component<SomethingSignature> {
   /** */
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'reset' lacks a return-type annotation.
-  reset(...args) {
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
     console.log(args);
   }
 
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'shouldExist' lacks a return-type annotation.
-  shouldExist() {
+  shouldExist(): void {
     console.log(\\"should exist in output\\");
   }
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
 }
 "
 `;
@@ -206,18 +213,25 @@ export class Something extends Component {
 exports[`fix > .gts > strips jsdoc param with missing name 2`] = `
 "import Component from \\"@glimmer/component\\";
 
-export class Something extends Component {
+export interface SomethingSignature {
+  Args: { age: any };
+}
+
+export class Something extends Component<SomethingSignature> {
   /** */
 
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'reset' lacks a return-type annotation.
-  reset(...args) {
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
     console.log(args);
   }
 
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'shouldExist' lacks a return-type annotation.
-  shouldExist() {
+  shouldExist(): void {
     console.log(\\"should exist in output\\");
   }
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
 }
 "
 `;
@@ -290,8 +304,7 @@ export default class MyComponent {
     b = 2;
   }
 
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'containsUnsupportedDiagnostic' lacks a return-type annotation.
-  containsUnsupportedDiagnostic() {
+  containsUnsupportedDiagnostic(): () => void {
     return function () {
       // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
       console.log(this);

@@ -14,4 +14,8 @@ export class Something extends Component {
   shouldExist() {
     console.log("should exist in output");
   }
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
 }
