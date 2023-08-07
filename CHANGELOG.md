@@ -1,3 +1,37 @@
+## 1.2.0 (2023-08-07)
+
+* fix: enable AddMissingTypesBasedOnInlayHintsCodeFix for .gts files (#1223) ([cc8c822](https://github.com/rehearsal-js/rehearsal-js/commit/cc8c822)), closes [#1223](https://github.com/rehearsal-js/rehearsal-js/issues/1223)
+* fix: filtering unsupported codefixes in glint-fix plugin (#1186) ([23c75a1](https://github.com/rehearsal-js/rehearsal-js/commit/23c75a1)), closes [#1186](https://github.com/rehearsal-js/rehearsal-js/issues/1186)
+* fix: Glint Service is not inferring return types from inlay hints (#1222) ([753b1f9](https://github.com/rehearsal-js/rehearsal-js/commit/753b1f9)), closes [#1222](https://github.com/rehearsal-js/rehearsal-js/issues/1222)
+* fix: import types when infer from inheritance (#1215) ([d99a688](https://github.com/rehearsal-js/rehearsal-js/commit/d99a688)), closes [#1215](https://github.com/rehearsal-js/rehearsal-js/issues/1215)
+* fix: suppress issue with a type detection in inferFromUsage codefix (#1219) ([3f4719b](https://github.com/rehearsal-js/rehearsal-js/commit/3f4719b)), closes [#1219](https://github.com/rehearsal-js/rehearsal-js/issues/1219)
+* [chore] updated README so that docs for --skipChecks flag exist under info about rehearsal fix and n ([38f402a](https://github.com/rehearsal-js/rehearsal-js/commit/38f402a)), closes [#1189](https://github.com/rehearsal-js/rehearsal-js/issues/1189)
+* Update README.md (#1225) ([41276de](https://github.com/rehearsal-js/rehearsal-js/commit/41276de)), closes [#1225](https://github.com/rehearsal-js/rehearsal-js/issues/1225)
+* chore(deps-dev): bump @babel/core from 7.21.4 to 7.22.9 (#1206) ([df20c5c](https://github.com/rehearsal-js/rehearsal-js/commit/df20c5c)), closes [#1206](https://github.com/rehearsal-js/rehearsal-js/issues/1206)
+* chore(deps-dev): bump @commitlint/cli from 17.5.1 to 17.6.7 (#1204) ([1e3081d](https://github.com/rehearsal-js/rehearsal-js/commit/1e3081d)), closes [#1204](https://github.com/rehearsal-js/rehearsal-js/issues/1204)
+* chore(deps-dev): bump @commitlint/config-conventional from 17.4.4 to 17.6.7 (#1196) ([daa3d3a](https://github.com/rehearsal-js/rehearsal-js/commit/daa3d3a)), closes [#1196](https://github.com/rehearsal-js/rehearsal-js/issues/1196)
+* chore(deps-dev): bump @glimmerx/babel-preset from 0.6.7 to 0.6.8 (#1195) ([7e05128](https://github.com/rehearsal-js/rehearsal-js/commit/7e05128)), closes [#1195](https://github.com/rehearsal-js/rehearsal-js/issues/1195)
+* chore(deps-dev): bump @glimmerx/component from 0.6.7 to 0.6.8 (#1207) ([f4fcb3f](https://github.com/rehearsal-js/rehearsal-js/commit/f4fcb3f)), closes [#1207](https://github.com/rehearsal-js/rehearsal-js/issues/1207)
+* chore(deps-dev): bump @glimmerx/modifier from 0.6.7 to 0.6.8 (#1214) ([86c92a6](https://github.com/rehearsal-js/rehearsal-js/commit/86c92a6)), closes [#1214](https://github.com/rehearsal-js/rehearsal-js/issues/1214)
+* chore(deps-dev): bump @types/debug from 4.1.7 to 4.1.8 (#1197) ([4ebfff9](https://github.com/rehearsal-js/rehearsal-js/commit/4ebfff9)), closes [#1197](https://github.com/rehearsal-js/rehearsal-js/issues/1197)
+* chore(deps-dev): bump @types/ember__application from 4.0.5 to 4.0.6 (#1201) ([5cdea02](https://github.com/rehearsal-js/rehearsal-js/commit/5cdea02)), closes [#1201](https://github.com/rehearsal-js/rehearsal-js/issues/1201)
+* chore(deps-dev): bump @types/ember__debug from 4.0.3 to 4.0.4 (#1199) ([8a0cf84](https://github.com/rehearsal-js/rehearsal-js/commit/8a0cf84)), closes [#1199](https://github.com/rehearsal-js/rehearsal-js/issues/1199)
+* chore(deps-dev): bump @types/ember__engine from 4.0.4 to 4.0.5 (#1213) ([838e67f](https://github.com/rehearsal-js/rehearsal-js/commit/838e67f)), closes [#1213](https://github.com/rehearsal-js/rehearsal-js/issues/1213)
+* chore(deps-dev): bump @types/ember-data__serializer from 4.0.1 to 4.0.2 (#1211) ([2a36d20](https://github.com/rehearsal-js/rehearsal-js/commit/2a36d20)), closes [#1211](https://github.com/rehearsal-js/rehearsal-js/issues/1211)
+* chore(deps-dev): bump @vitest/coverage-c8 from 0.30.1 to 0.33.0 (#1208) ([0a8617b](https://github.com/rehearsal-js/rehearsal-js/commit/0a8617b)), closes [#1208](https://github.com/rehearsal-js/rehearsal-js/issues/1208)
+* chore(deps-dev): bump ember-resolver from 10.0.0 to 11.0.0 (#1209) ([72d4839](https://github.com/rehearsal-js/rehearsal-js/commit/72d4839)), closes [#1209](https://github.com/rehearsal-js/rehearsal-js/issues/1209)
+* chore(deps-dev): bump ember-source from 4.11.0 to 5.1.2 (#1203) ([4a576ae](https://github.com/rehearsal-js/rehearsal-js/commit/4a576ae)), closes [#1203](https://github.com/rehearsal-js/rehearsal-js/issues/1203)
+* chore(deps-dev): bump eslint-import-resolver-typescript from 2.5.0 to 3.5.5 (#1210) ([73a3048](https://github.com/rehearsal-js/rehearsal-js/commit/73a3048)), closes [#1210](https://github.com/rehearsal-js/rehearsal-js/issues/1210)
+* chore(deps-dev): bump eslint-plugin-import from 2.27.5 to 2.28.0 (#1202) ([4357813](https://github.com/rehearsal-js/rehearsal-js/commit/4357813)), closes [#1202](https://github.com/rehearsal-js/rehearsal-js/issues/1202)
+* chore(deps-dev): bump eslint-plugin-n from 16.0.0 to 16.0.1 (#1212) ([6dd286a](https://github.com/rehearsal-js/rehearsal-js/commit/6dd286a)), closes [#1212](https://github.com/rehearsal-js/rehearsal-js/issues/1212)
+* chore(deps-dev): bump eslint-plugin-qunit from 7.3.4 to 8.0.0 (#1205) ([daec419](https://github.com/rehearsal-js/rehearsal-js/commit/daec419)), closes [#1205](https://github.com/rehearsal-js/rehearsal-js/issues/1205)
+* chore(deps-dev): bump semver and @types/semver (#1198) ([b7836a0](https://github.com/rehearsal-js/rehearsal-js/commit/b7836a0)), closes [#1198](https://github.com/rehearsal-js/rehearsal-js/issues/1198)
+* chore(deps-dev): bump typescript from 5.1.3 to 5.1.6 (#1200) ([0844eee](https://github.com/rehearsal-js/rehearsal-js/commit/0844eee)), closes [#1200](https://github.com/rehearsal-js/rehearsal-js/issues/1200)
+* chore(gh-action-bot): adding new diagnostics ([66f3b65](https://github.com/rehearsal-js/rehearsal-js/commit/66f3b65))
+* feat: stubMissingNameJSDocParam (#1193) ([136aa5d](https://github.com/rehearsal-js/rehearsal-js/commit/136aa5d)), closes [#1193](https://github.com/rehearsal-js/rehearsal-js/issues/1193)
+
+
+
 ## <small>1.1.1 (2023-07-25)</small>
 
 * feat: GlintCodeFix Add Component Signature Interface to `.gts` component class (#1141) ([91196a8](https://github.com/rehearsal-js/rehearsal-js/commit/91196a8)), closes [#1141](https://github.com/rehearsal-js/rehearsal-js/issues/1141)
