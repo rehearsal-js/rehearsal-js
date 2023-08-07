@@ -2,7 +2,7 @@
 // about how it should be imported (╯°□°)╯︵ ┻━┻
 // eslint-disable-next-line import/default
 import VSCodeURI from 'vscode-uri';
-import * as ts from 'typescript';
+import ts from 'typescript';
 import {
   DiagnosticSeverity,
   type TextDocumentEdit,
@@ -14,14 +14,13 @@ import { Service } from './rehearsal-service.js';
 import { isGlintFile } from './glint-utils.js';
 import type { GlintLanguageServer, TransformManager } from '@glint/core';
 
+import type { DiagnosticWithLocation, Node } from 'typescript';
+
+const { forEachChild, isFunctionDeclaration, isMethodDeclaration } = ts;
+
 type TS = typeof import('typescript');
 export type GlintCore = typeof import('@glint/core');
 export type PathUtils = GlintCore['pathUtils'];
-
-type GlintSourceFile = {
-  filename: string;
-  contents: string;
-};
 
 export { Range, Diagnostic };
 
@@ -71,10 +70,14 @@ export class GlintService implements Service {
    */
   getSourceFile(fileName: string): ts.SourceFile {
     if (isGlintFile(this, fileName)) {
-      return createSyntheticSourceFile(this.ts, {
-        filename: fileName,
-        contents: this.getFileText(fileName),
-      });
+      return ts.createSourceFile(
+        fileName,
+        this.getFileText(fileName),
+        ts.ScriptTarget.Latest,
+        // This parameter makes SourceFile object similar to one that TS program returns
+        // Helps each Node to have access to a source file content + working getStart(), getText(), etc. methods
+        true
+      );
     } else {
       return this.getLanguageService().getProgram()!.getSourceFile(fileName)!;
     }
@@ -92,11 +95,39 @@ export class GlintService implements Service {
   }
 
   getDiagnostics(fileName: string): ts.DiagnosticWithLocation[] {
-    const diagnostics = this.service.getDiagnostics(fileName);
+    const diagnostics = this.service
+      .getDiagnostics(fileName)
+      .map((diagnostic) => this.convertLSPDiagnosticToTs(fileName, diagnostic));
 
-    return diagnostics.map((diagnostic) => {
-      return this.convertLSPDiagnosticToTs(fileName, diagnostic);
-    });
+    return [...diagnostics, ...this.getAdditionalDiagnostics(fileName)];
+  }
+
+  getAdditionalDiagnostics(fileName: string): DiagnosticWithLocation[] {
+    const sourceFile = this.getSourceFile(fileName);
+    const diagnostics: DiagnosticWithLocation[] = [];
+
+    const visitEveryNode = (node: Node): Node | undefined => {
+      if ((isFunctionDeclaration(node) || isMethodDeclaration(node)) && node.name && !node.type) {
+        diagnostics.push({
+          file: sourceFile,
+          start: node.getStart(),
+          length: node.getEnd() - node.getStart(),
+          category: ts.DiagnosticCategory.Suggestion,
+          code: 7050,
+          messageText:
+            (isFunctionDeclaration(node) ? `Function` : `Method`) +
+            ` '${node.name.getText()}' lacks a return-type annotation.`,
+        });
+
+        return undefined;
+      }
+
+      return forEachChild(node, visitEveryNode);
+    };
+
+    visitEveryNode(sourceFile);
+
+    return diagnostics;
   }
 
   convertLSPDiagnosticToTs(fileName: string, diagnostic: Diagnostic): ts.DiagnosticWithLocation {
@@ -207,14 +238,4 @@ export function severityForDiagnostic(ts: TS, diagnostic: ts.Diagnostic): Diagno
     case ts.DiagnosticCategory.Warning:
       return DiagnosticSeverity.Warning;
   }
-}
-
-function createSyntheticSourceFile(ts: TS, source: GlintSourceFile): ts.SourceFile {
-  return Object.assign(
-    ts.createSourceFile(source.filename, source.contents, ts.ScriptTarget.Latest),
-    {
-      text: source.contents,
-      end: source.contents.length,
-    }
-  );
 }

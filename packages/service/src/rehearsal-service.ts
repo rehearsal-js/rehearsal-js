@@ -122,7 +122,9 @@ export class RehearsalService implements Service {
           length: node.getEnd() - node.getStart(),
           category: DiagnosticCategory.Suggestion,
           code: 7050,
-          messageText: `${node.name.getText()} don't have a return type, but the type may be inferred from usage.`,
+          messageText:
+            (isFunctionDeclaration(node) ? `Function` : `Method`) +
+            ` '${node.name.getText()}' lacks a return-type annotation.`,
         });
 
         return undefined;

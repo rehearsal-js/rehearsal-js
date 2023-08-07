@@ -9,7 +9,7 @@ import debug from 'debug';
 import ts, { DiagnosticWithLocation } from 'typescript';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
-import { isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
+import { findNodeAtPosition, isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
 import type { Diagnostic } from 'vscode-languageserver';
 import type MS from 'magic-string';
 import type { TextChange } from 'typescript';
@@ -23,31 +23,6 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 const { DiagnosticCategory } = ts;
 export interface GlintFixPluginOptions {
   mode: 'single-pass' | 'drain';
-}
-
-// Helper methods for finding a node, for glint AST nodes ts-util methods do not work here.
-function findNodeAtPosition(
-  sourceFile: ts.SourceFile,
-  start: number,
-  length: number
-): ts.Node | undefined {
-  const visitor = (node: ts.Node): ts.Node | undefined => {
-    if (isNodeAtPosition(node, start, length)) {
-      return node;
-    }
-
-    if (node.pos <= start && node.end >= start + length) {
-      return ts.forEachChild(node, visitor);
-    }
-
-    return undefined;
-  };
-
-  return visitor(sourceFile);
-}
-
-function isNodeAtPosition(node: ts.Node, start: number, length: number): boolean {
-  return node.pos === start && node.end === start + length;
 }
 
 export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
@@ -296,7 +271,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
         node: findNodeAtPosition(
           diagnosticWithLocation.file,
           diagnosticWithLocation.start,
-          diagnosticWithLocation.start + diagnosticWithLocation.length
+          diagnosticWithLocation.length
         ),
       },
     };

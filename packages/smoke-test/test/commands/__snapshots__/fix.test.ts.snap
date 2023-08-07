@@ -526,17 +526,17 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   92 errors caught by rehearsal
-[TITLE]   9 have been fixed by rehearsal
-[TITLE]   83 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]   98 errors caught by rehearsal
+[TITLE]   14 have been fixed by rehearsal
+[TITLE]   84 errors need to be fixed manually
+[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 54 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   92 errors caught by rehearsal
-[SUCCESS]   9 have been fixed by rehearsal
-[SUCCESS]   83 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]   98 errors caught by rehearsal
+[SUCCESS]   14 have been fixed by rehearsal
+[SUCCESS]   84 errors need to be fixed manually
+[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 54 glint errors, with details in the report
 [SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
@@ -759,19 +759,19 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   104 errors caught by rehearsal
-[TITLE]   31 have been fixed by rehearsal
-[TITLE]   73 errors need to be fixed manually
+[TITLE]   114 errors caught by rehearsal
+[TITLE]   40 have been fixed by rehearsal
+[TITLE]   74 errors need to be fixed manually
 [TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 46 glint errors, with details in the report
-[TITLE]     -- 0 eslint errors, with details in the report
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   104 errors caught by rehearsal
-[SUCCESS]   31 have been fixed by rehearsal
-[SUCCESS]   73 errors need to be fixed manually
+[SUCCESS]   114 errors caught by rehearsal
+[SUCCESS]   40 have been fixed by rehearsal
+[SUCCESS]   74 errors need to be fixed manually
 [SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 46 glint errors, with details in the report
-[SUCCESS]     -- 0 eslint errors, with details in the report"
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 2`] = `
@@ -935,6 +935,7 @@ class IncrementableButton extends Component {
   // @ts-expect-error @rehearsal TODO TS2339: Property 'startCount' does not exist on type 'Readonly<EmptyObject>'.
   @tracked count: number = this.args.startCount;
 
+  // @ts-expect-error @rehearsal TODO TS7050: Method 'increment' lacks a return-type annotation.
   @action increment() {
     this.count++;
   }

@@ -971,7 +971,7 @@ export default class SomeComponent extends Component {
     test('previously migrated .gts', async () => {
       await project.write();
 
-      const [inputs, outputs] = prepareInputFiles(project, ['already-migrated.gjs']);
+      const [inputs, outputs] = prepareInputFiles(project, ['already-migrated.gts']);
 
       const input: MigrateInput = {
         projectRootDir: project.baseDir,
