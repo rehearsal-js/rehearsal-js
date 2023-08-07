@@ -500,45 +500,8 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
-[DATA] processing file: /app/components/hello-world.gts
-[DATA] processing file: /app/components/jumbo.hbs
-[DATA] processing file: /app/components/map.hbs
-[DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/nav-bar.hbs
-[DATA] processing file: /app/components/rental.hbs
-[DATA] processing file: /app/components/rentals.hbs
-[DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.hbs
-[DATA] processing file: /app/components/share-button.ts
-[DATA] processing file: /app/models/rental.ts
-[DATA] processing file: /app/routes/index.ts
-[DATA] processing file: /app/routes/rental.ts
-[DATA] processing file: /app/serializers/application.ts
-[DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /app/templates/about.hbs
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/contact.hbs
-[DATA] processing file: /app/templates/index.hbs
-[DATA] processing file: /app/templates/rental.hbs
-[DATA] processing file: /app/components/rental/detailed.hbs
-[DATA] processing file: /app/components/rental/image.hbs
-[DATA] processing file: /app/components/rental/image.ts
-[DATA] processing file: /app/components/rentals/filter.hbs
-[DATA] processing file: /app/components/rentals/filter.ts
-[TITLE] Types Inferred
-[TITLE]   92 errors caught by rehearsal
-[TITLE]   9 have been fixed by rehearsal
-[TITLE]   83 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 54 glint errors, with details in the report
-[TITLE]     -- 2 eslint errors, with details in the report
-[SUCCESS] Types Inferred
-[SUCCESS]   92 errors caught by rehearsal
-[SUCCESS]   9 have been fixed by rehearsal
-[SUCCESS]   83 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 54 glint errors, with details in the report
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[DATA] processing file: /app/components/audience-demographics.hbs
+[DATA] processing file: /app/components/audience-demographics.ts"
 `;
 
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 2`] = `
@@ -547,22 +510,20 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 2`] = `
     alt=\\"Map image at coordinates {{@lat}},{{@lng}}\\"
     ...attributes
     src={{this.src}}
-    width={{@width}}
-    height={{@height}}
-  />
-</div>"
+    width={{@width}} height={{@height}}
+  >
+</div>
+"
 `;
 
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 3`] = `
 "import Component from '@glimmer/component';
-// @ts-expect-error @rehearsal TODO TS2307: Cannot find module 'super-rentals/config/environment' or its corresponding type declarations.
 import ENV from 'super-rentals/config/environment';
 
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static';
 
 export default class MapComponent extends Component {
   get src() {
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'lng' does not exist on type 'Readonly<EmptyObject>'.
     let { lng, lat, width, height, zoom } = this.args;
 
     let coordinates = \`\${lng},\${lat},\${zoom}\`;
@@ -586,10 +547,8 @@ import Component from '@glimmer/component';
 const TWEET_INTENT = 'https://twitter.com/intent/tweet';
 
 export default class ShareButtonComponent extends Component {
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'router' has no initializer and is not definitely assigned in the constructor.
-  @service router: { currentURL: string | URL };
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
-  @service locale: { current: () => string };
+  @service router;
+  @service locale;
 
   get currentURL() {
     return new URL(this.router.currentURL, window.location.origin);
@@ -598,24 +557,17 @@ export default class ShareButtonComponent extends Component {
   get shareURL() {
     let url = new URL(TWEET_INTENT);
 
-    // @ts-expect-error @rehearsal TODO TS2345: Argument of type 'URL' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '( this.currentURL as string)', or using type guard: 'if ( this.currentURL instanceof string) { ... }'.
     url.searchParams.set('url', this.currentURL);
 
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'text' does not exist on type 'Readonly<EmptyObject>'.
     if (this.args.text) {
-      // @ts-expect-error @rehearsal TODO TS2339: Property 'text' does not exist on type 'Readonly<EmptyObject>'.
       url.searchParams.set('text', this.args.text);
     }
 
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'hashtags' does not exist on type 'Readonly<EmptyObject>'.
     if (this.args.hashtags) {
-      // @ts-expect-error @rehearsal TODO TS2339: Property 'hashtags' does not exist on type 'Readonly<EmptyObject>'.
       url.searchParams.set('hashtags', this.args.hashtags);
     }
 
-    // @ts-expect-error @rehearsal TODO TS2339: Property 'via' does not exist on type 'Readonly<EmptyObject>'.
     if (this.args.via) {
-      // @ts-expect-error @rehearsal TODO TS2339: Property 'via' does not exist on type 'Readonly<EmptyObject>'.
       url.searchParams.set('via', this.args.via);
     }
 
@@ -633,21 +585,13 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 5`] = `
 const COMMUNITY_CATEGORIES = ['Condo', 'Townhouse', 'Apartment'];
 
 export default class RentalModel extends Model {
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'title' implicitly has an 'any' type.
   @attr title;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'owner' implicitly has an 'any' type.
   @attr owner;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'city' implicitly has an 'any' type.
   @attr city;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'location' implicitly has an 'any' type.
   @attr location;
-  // @ts-expect-error @rehearsal TODO TS2564: Property 'category' has no initializer and is not definitely assigned in the constructor.
-  @attr category: string;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'image' implicitly has an 'any' type.
+  @attr category;
   @attr image;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'bedrooms' implicitly has an 'any' type.
   @attr bedrooms;
-  // @ts-expect-error @rehearsal TODO TS7008: Member 'description' implicitly has an 'any' type.
   @attr description;
 
   get type() {
@@ -664,11 +608,7 @@ export default class RentalModel extends Model {
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 6`] = `
 "import Component from \\"@glimmer/component\\";
 
-export interface PrintDateSignature {
-  Args: {};
-}
-
-export class PrintDate extends Component<PrintDateSignature> {
+export class PrintDate extends Component {
   <template>
     <span>{{@month}} {{@day}}, {{@year}}</span>
   </template>
@@ -681,7 +621,7 @@ interface ProfileSummarySignature {
 /**
  * @extends {Component<ProfileSummarySignature>}
  */
-export class ProfileSummary extends Component<ProfileSummarySignature> {
+export class ProfileSummary extends Component {
   name = \\"Bob\\";
 
   <template>
@@ -691,17 +631,12 @@ export class ProfileSummary extends Component<ProfileSummarySignature> {
   </template>
 }
 
-export interface HelloWorldCommentSignature {
-  Args: {};
-}
-
-interface HelloWorldCommentSignature {
-  // @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'HelloWorldCommentArgs'.
-  Args: HelloWorldCommentArgs;
-}
+/**
+ * @typedef HelloWorldCommentSignature
+ * @property {HelloWorldCommentArgs} Args
+ */
 
 /**
- // @ts-expect-error @rehearsal TODO TS80009: JSDoc typedef may be converted to TypeScript type.
  * @typedef HelloWorldCommentArgs
  * @property {number} age - years since date of birth
  * @property {string} snack - a food to eat between meals
@@ -711,7 +646,7 @@ interface HelloWorldCommentSignature {
 /**
  * @extends {Component<HelloWorldCommentSignature>}
  */
-export default class HelloWorld extends Component<HelloWorldCommentSignature> {
+export default class HelloWorld extends Component {
   name = \\"world\\";
 
   <template>
@@ -719,6 +654,22 @@ export default class HelloWorld extends Component<HelloWorldCommentSignature> {
     My talent is
     {{@talent}}
   </template>
+}
+"
+`;
+
+exports[`fix command > ember_js_app_4.11 --mode=single-pass 7`] = `"{{yield (hash foo=\\"bar\\")}}"`;
+
+exports[`fix command > ember_js_app_4.11 --mode=single-pass 8`] = `
+"import Component from '@glimmer/component';
+
+export default class AudienceDemographics extends Component {
+  type HeadCount = { count: number; };
+  get something(): HeadCount {
+    return {
+      count: this.args.someNumber,
+    };
+  }
 }
 "
 `;
@@ -733,68 +684,27 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
-[DATA] processing file: /app/components/hello-world.gts
-[DATA] processing file: /app/components/jumbo.hbs
-[DATA] processing file: /app/components/map.hbs
-[DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/nav-bar.hbs
-[DATA] processing file: /app/components/rental.hbs
-[DATA] processing file: /app/components/rentals.hbs
-[DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.hbs
-[DATA] processing file: /app/components/share-button.ts
-[DATA] processing file: /app/models/rental.ts
-[DATA] processing file: /app/routes/index.ts
-[DATA] processing file: /app/routes/rental.ts
-[DATA] processing file: /app/serializers/application.ts
-[DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /app/templates/about.hbs
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/contact.hbs
-[DATA] processing file: /app/templates/index.hbs
-[DATA] processing file: /app/templates/rental.hbs
-[DATA] processing file: /app/components/rental/detailed.hbs
-[DATA] processing file: /app/components/rental/image.hbs
-[DATA] processing file: /app/components/rental/image.ts
-[DATA] processing file: /app/components/rentals/filter.hbs
-[DATA] processing file: /app/components/rentals/filter.ts
-[TITLE] Types Inferred
-[TITLE]   104 errors caught by rehearsal
-[TITLE]   31 have been fixed by rehearsal
-[TITLE]   73 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 46 glint errors, with details in the report
-[TITLE]     -- 0 eslint errors, with details in the report
-[SUCCESS] Types Inferred
-[SUCCESS]   104 errors caught by rehearsal
-[SUCCESS]   31 have been fixed by rehearsal
-[SUCCESS]   73 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 46 glint errors, with details in the report
-[SUCCESS]     -- 0 eslint errors, with details in the report"
+[DATA] processing file: /app/components/audience-demographics.hbs
+[DATA] processing file: /app/components/audience-demographics.ts"
 `;
 
 exports[`fix command > ember_js_app_4.11 2`] = `
 "import Component from \\"@glimmer/component\\";
 
-export interface PrintDateSignature {
-  Args: { year: any; day: any; month: any };
-}
-
-export class PrintDate extends Component<PrintDateSignature> {
+export class PrintDate extends Component {
   <template>
     <span>{{@month}} {{@day}}, {{@year}}</span>
   </template>
 }
 
 interface ProfileSummarySignature {
-  Args: { snack: any; age: any };
+  Args: {};
 }
 
 /**
  * @extends {Component<ProfileSummarySignature>}
  */
-export class ProfileSummary extends Component<ProfileSummarySignature> {
+export class ProfileSummary extends Component {
   name = \\"Bob\\";
 
   <template>
@@ -804,20 +714,22 @@ export class ProfileSummary extends Component<ProfileSummarySignature> {
   </template>
 }
 
-interface HelloWorldCommentSignature {
-  Args: HelloWorldCommentArgs;
-}
+/**
+ * @typedef HelloWorldCommentSignature
+ * @property {HelloWorldCommentArgs} Args
+ */
 
-interface HelloWorldCommentArgs {
-  age: number;
-  snack: string;
-  talent: string;
-}
+/**
+ * @typedef HelloWorldCommentArgs
+ * @property {number} age - years since date of birth
+ * @property {string} snack - a food to eat between meals
+ * @property {string} talent - some talent not on profile
+ */
 
 /**
  * @extends {Component<HelloWorldCommentSignature>}
  */
-export default class HelloWorld extends Component<HelloWorldCommentSignature> {
+export default class HelloWorld extends Component {
   name = \\"world\\";
 
   <template>

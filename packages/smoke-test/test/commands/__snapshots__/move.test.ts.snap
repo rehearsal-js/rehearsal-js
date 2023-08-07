@@ -52,10 +52,12 @@ exports[`move command > ember_js_app_4.11 1`] = `
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
 [DATA] git mv failed, using mv
+[DATA] git mv failed, using mv
 [DATA] renamed: 
 [DATA] ./app/app.js -> ./app/app.ts
 [DATA] ./app/router.js -> ./app/router.ts
 [DATA] ./app/adapters/application.js -> ./app/adapters/application.ts
+[DATA] ./app/components/audience-demographics.js -> ./app/components/audience-demographics.ts
 [DATA] ./app/components/hello-world.gjs -> ./app/components/hello-world.gts
 [DATA] ./app/components/map.js -> ./app/components/map.ts
 [DATA] ./app/components/rentals.js -> ./app/components/rentals.ts
