@@ -41,6 +41,7 @@ exports[`graph command > ember_js_app_4.11 1`] = `
 [DATA] ./config/targets.js
 [DATA] ./tests/test-helper.js
 [DATA] ./app/adapters/application.js
+[DATA] ./app/components/audience-demographics.ts
 [DATA] ./app/components/hello-world.gjs
 [DATA] ./app/components/map.js
 [DATA] ./app/components/rentals.js

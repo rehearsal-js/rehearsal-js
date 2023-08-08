@@ -500,6 +500,8 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/components/audience-demographics.hbs
+[DATA] processing file: /app/components/audience-demographics.ts
 [DATA] processing file: /app/components/hello-world.gts
 [DATA] processing file: /app/components/jumbo.hbs
 [DATA] processing file: /app/components/map.hbs
@@ -526,19 +528,19 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   98 errors caught by rehearsal
-[TITLE]   14 have been fixed by rehearsal
-[TITLE]   84 errors need to be fixed manually
-[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 54 glint errors, with details in the report
-[TITLE]     -- 2 eslint errors, with details in the report
+[TITLE]   102 errors caught by rehearsal
+[TITLE]   15 have been fixed by rehearsal
+[TITLE]   87 errors need to be fixed manually
+[TITLE]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 55 glint errors, with details in the report
+[TITLE]     -- 3 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   98 errors caught by rehearsal
-[SUCCESS]   14 have been fixed by rehearsal
-[SUCCESS]   84 errors need to be fixed manually
-[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 54 glint errors, with details in the report
-[SUCCESS]     -- 2 eslint errors, with details in the report"
+[SUCCESS]   102 errors caught by rehearsal
+[SUCCESS]   15 have been fixed by rehearsal
+[SUCCESS]   87 errors need to be fixed manually
+[SUCCESS]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 55 glint errors, with details in the report
+[SUCCESS]     -- 3 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 2`] = `
@@ -723,6 +725,27 @@ export default class HelloWorld extends Component<HelloWorldCommentSignature> {
 "
 `;
 
+exports[`fix command > ember_js_app_4.11 --mode=single-pass 7`] = `"{{yield (hash foo=\\"bar\\")}}"`;
+
+exports[`fix command > ember_js_app_4.11 --mode=single-pass 8`] = `
+"import Component from '@glimmer/component';
+
+export default class AudienceDemographics extends Component {
+  /**
+   * List of items to be rendered in the bar chart
+   * @typedef {{ count: number }} HeadCount
+   * @returns {HeadCount}
+   */
+  // @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'HeadCount'.
+  get something(): HeadCount {
+    return {
+      count: 0,
+    };
+  }
+}
+"
+`;
+
 exports[`fix command > ember_js_app_4.11 1`] = `
 "info:    @rehearsal/fix<test-version>
 [STARTED] Initialize
@@ -733,6 +756,8 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
+[DATA] processing file: /app/components/audience-demographics.hbs
+[DATA] processing file: /app/components/audience-demographics.ts
 [DATA] processing file: /app/components/hello-world.gts
 [DATA] processing file: /app/components/jumbo.hbs
 [DATA] processing file: /app/components/map.hbs
@@ -759,19 +784,19 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   114 errors caught by rehearsal
-[TITLE]   40 have been fixed by rehearsal
-[TITLE]   74 errors need to be fixed manually
-[TITLE]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 46 glint errors, with details in the report
-[TITLE]     -- 1 eslint errors, with details in the report
+[TITLE]   118 errors caught by rehearsal
+[TITLE]   41 have been fixed by rehearsal
+[TITLE]   77 errors need to be fixed manually
+[TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 47 glint errors, with details in the report
+[TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   114 errors caught by rehearsal
-[SUCCESS]   40 have been fixed by rehearsal
-[SUCCESS]   74 errors need to be fixed manually
-[SUCCESS]     -- 27 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 46 glint errors, with details in the report
-[SUCCESS]     -- 1 eslint errors, with details in the report"
+[SUCCESS]   118 errors caught by rehearsal
+[SUCCESS]   41 have been fixed by rehearsal
+[SUCCESS]   77 errors need to be fixed manually
+[SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 47 glint errors, with details in the report
+[SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 2`] = `

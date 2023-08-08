@@ -36,7 +36,7 @@ export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
       this.suppressError(e, diagnostic);
     }
 
-    return this.filterCodeFixes(fixes, filter);
+    return this.filterCodeFixes(fixes, filter, diagnostic);
   }
 
   override suppressError(e: unknown, diagnostic: DiagnosticWithContext): void {

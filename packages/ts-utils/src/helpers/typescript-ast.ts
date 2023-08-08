@@ -46,15 +46,23 @@ export function isTheFirstParentNodeInTheLIne(node: Node): boolean {
 export function findNodeAtPosition(
   sourceFile: SourceFile,
   start: number,
-  length: number
+  length: number,
+  includeJSDocNodes = false
 ): Node | undefined {
   const visitor = (node: Node): Node | undefined => {
     if (isNodeAtPosition(node, start, length)) {
       return node;
     }
 
-    if (node.getStart() <= start && node.getEnd() >= start + length) {
-      return ts.forEachChild(node, visitor);
+    if (includeJSDocNodes) {
+      if (node.getFullStart() <= start && node.getEnd() >= start + length) {
+        const tags = [...ts.getJSDocTags(node)] as Node[];
+        return tags.find((n) => visitor(n)) || ts.forEachChild(node, visitor);
+      }
+    } else {
+      if (node.getStart() <= start && node.getEnd() >= start + length) {
+        return ts.forEachChild(node, visitor);
+      }
     }
 
     return undefined;
