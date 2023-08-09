@@ -10,6 +10,7 @@ import ts, {
   TextChange,
   type UserPreferences,
 } from 'typescript';
+import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import { isCodeFixSupported } from './safe-codefixes.js';
 import { Diagnostics } from './diagnosticInformationMap.generated.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
@@ -69,7 +70,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       this.suppressError(e, diagnostic);
     }
 
-    return this.filterCodeFixes(fixes, filter);
+    return this.filterCodeFixes(fixes, filter, diagnostic);
   }
 
   protected getUserPreferences(): UserPreferences {
@@ -191,15 +192,36 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
     return undefined;
   }
 
+  protected makeCodeFixSafe(fix: CodeFixAction, diagnostic: DiagnosticWithContext): CodeFixAction {
+    // Filter type from @typedefs if they are generated outside the root of the source file
+    if (fix.description.startsWith('Convert typedef')) {
+      const node = findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length, true);
+
+      // Parents are: node.{jsdoc_containing_typedef}.{node_jsdoc_is_for}.{node_where_type_is_expected_to_be_generated}
+      const targetNode = node?.parent?.parent?.parent;
+
+      if (node && (!targetNode || !ts.isSourceFile(targetNode))) {
+        fix.changes = [];
+      }
+    }
+
+    return fix;
+  }
+
   protected filterCodeFixes(
     fixes: readonly CodeFixAction[],
-    filter: CodeFixCollectionFilter
+    filter: CodeFixCollectionFilter,
+    diagnostic: DiagnosticWithContext
   ): CodeFixAction[] {
     const filteredFixes: CodeFixAction[] = [];
 
     for (let fix of fixes) {
       if (filter.safeFixes && !this.isCodeFixSupported(fix)) {
         continue;
+      }
+
+      if (filter.safeFixes) {
+        fix = this.makeCodeFixSafe(fix, diagnostic);
       }
 
       if (filter.strictTyping) {
@@ -214,6 +236,10 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         }
 
         fix = strictCodeFix;
+      }
+
+      if (!fix.changes.length && !fix.commands) {
+        continue;
       }
 
       filteredFixes.push(fix);

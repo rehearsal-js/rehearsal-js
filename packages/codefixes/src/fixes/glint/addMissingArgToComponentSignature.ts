@@ -32,6 +32,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     if (extname(glintDiagnostic.file.fileName) !== '.gts') {
       return;
     }
+
     const fileName = glintDiagnostic.file.fileName;
     const originalStart = glintDiagnostic.start;
     const originalEnd = originalStart + glintDiagnostic.length;
@@ -265,7 +266,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
         ChangesFactory.insertText(
           d.file,
           // We append the arg property to the start of the
-          // interface to make processing mulitiple diagnostics with
+          // interface to make processing multiple diagnostics with
           // no syntax errors.
           originalInsertNodeRange.originalStart,
           `${argName}: any;`

@@ -75,6 +75,8 @@ describe('fix command', () => {
     expectFile(join(projectRoot, 'app/components/share-button.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/models/rental.ts')).toMatchSnapshot();
     expectFile(join(projectRoot, 'app/components/hello-world.gts')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/audience-demographics.hbs')).toMatchSnapshot();
+    expectFile(join(projectRoot, 'app/components/audience-demographics.ts')).toMatchSnapshot();
   });
 
   test('ember_js_app_4.11', async () => {
