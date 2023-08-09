@@ -1,3 +1,9 @@
+## <small>1.2.1 (2023-08-09)</small>
+
+* fix: @typedef converted to type in a wrong place (#1230) ([27269b9](https://github.com/rehearsal-js/rehearsal-js/commit/27269b9)), closes [#1230](https://github.com/rehearsal-js/rehearsal-js/issues/1230)
+
+
+
 ## 1.2.0 (2023-08-07)
 
 * fix: enable AddMissingTypesBasedOnInlayHintsCodeFix for .gts files (#1223) ([cc8c822](https://github.com/rehearsal-js/rehearsal-js/commit/cc8c822)), closes [#1223](https://github.com/rehearsal-js/rehearsal-js/issues/1223)
