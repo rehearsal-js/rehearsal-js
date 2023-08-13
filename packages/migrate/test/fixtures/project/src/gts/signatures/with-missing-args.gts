@@ -35,6 +35,21 @@ export class SomeComponent extends Component<BarSignature> {
 }
 
 //
+// UseCase: Should add usage of this.args to the args interface
+//
+
+export class InferMultipleArgs extends Component {
+  get drink() {
+    return this.args.beverage;
+  }
+
+  <template>
+    <span>My favorite snack is {{@snack}}.</span>
+    <span>My favorite drink is {{this.drink}}.</span>
+  </template>
+}
+
+//
 // UseCase: Should update object literal
 //
 
