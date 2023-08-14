@@ -482,13 +482,22 @@ describe('fix', () => {
           outputs[0],
           'Expecting any for both args as they were both not defined on the interface'
         ).contains(`interface FooArgs {\n  snack: any;\n  age: any;\n}`);
+
         expectFile(outputs[0], 'Expecting any for snack arg because it was not defined').contains(
           `interface BarArgs {\n  snack: any;\n  age: number;\n}`
         );
+
         expectFile(
           outputs[0],
           'Expecting any for both args as they were both not defined on the interface'
-        ).contains(`export interface BazSignature {\n  Args: { snack: any; age: any };\n}`);
+        ).contains(`interface BazSignature {\n  Args: { snack: any; age: any };\n}`);
+
+        expectFile(
+          outputs[0],
+          'Expecting this.args usage to be updated to use the Args property'
+        ).contains(
+          'export interface InferMultipleArgsSignature {\n  Args: { snack: any; beverage: any };\n}'
+        );
 
         expectFile(outputs[0]).toMatchSnapshot();
       });

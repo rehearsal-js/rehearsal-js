@@ -43,32 +43,54 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       originalEnd
     );
 
-    // Check the parent to see if this is an arg
-    const parentSourceNode = transformedRange?.mapping?.parent?.sourceNode;
+    let argName;
 
-    if (!parentSourceNode) {
-      return;
+    // If the transformedRange has a mapping it means it's from an hbs region
+    if (transformedRange?.mapping) {
+      // Check the parent to see if this is an arg
+      const parentSourceNode = transformedRange?.mapping?.parent?.sourceNode;
+
+      if (!parentSourceNode) {
+        return;
+      }
+
+      // Determine if this is an argument
+      let isPathExpressionAnArgument = false;
+
+      if (parentSourceNode.type === 'PathExpression') {
+        // Unable to easily cast to a type, this is a hack for now.
+        isPathExpressionAnArgument = (parentSourceNode as { original: string }).original.startsWith(
+          '@'
+        );
+      }
+
+      if (!isPathExpressionAnArgument) {
+        return;
+      }
+
+      // We may be able to get this from the diagnostic
+      argName =
+        transformedRange?.mapping?.sourceNode.type == 'Identifier'
+          ? transformedRange?.mapping?.sourceNode.name
+          : null;
+    } else {
+      // Check if it's a this.args statement
+      const targetNode = glintDiagnostic.node;
+      const parent = targetNode?.parent;
+
+      if (
+        targetNode &&
+        ts.isIdentifier(targetNode) &&
+        parent &&
+        ts.isPropertyAccessExpression(parent) &&
+        ts.isPropertyAccessExpression(parent.expression) &&
+        parent.expression.name.escapedText === 'args' &&
+        ts.isPropertyAccessExpression(parent.expression.parent) &&
+        parent.expression.expression.kind === ts.SyntaxKind.ThisKeyword
+      ) {
+        argName = targetNode.escapedText.toString();
+      }
     }
-
-    // Determine if this is an argument
-    let isPathExpressionAnArgument = false;
-
-    if (parentSourceNode.type === 'PathExpression') {
-      // Unable to easily cast to a type, this is a hack for now.
-      isPathExpressionAnArgument = (parentSourceNode as { original: string }).original.startsWith(
-        '@'
-      );
-    }
-
-    if (!isPathExpressionAnArgument) {
-      return;
-    }
-
-    // We may be able to get this from the diagnostic
-    const argName =
-      transformedRange?.mapping?.sourceNode.type == 'Identifier'
-        ? transformedRange?.mapping?.sourceNode.name
-        : null;
 
     if (!argName) {
       return;
