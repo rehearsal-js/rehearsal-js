@@ -37,6 +37,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
+    "@prettier/sync": "^0.3.0",
     "@rehearsal/codefixes": "workspace:*",
     "@rehearsal/reporter": "workspace:*",
     "@rehearsal/service": "workspace:*",
@@ -46,7 +47,7 @@
     "eslint": "^8.40.0",
     "magic-string": "^0.30.0",
     "object-hash": "^3.0.0",
-    "prettier": "^2.8.7",
+    "prettier": "^3.0.2",
     "vscode-languageserver": "^8.1.0"
   },
   "devDependencies": {

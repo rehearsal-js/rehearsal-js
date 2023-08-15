@@ -1,5 +1,5 @@
 import { Plugin } from '@rehearsal/service';
-import prettier from 'prettier';
+import synchronizedPrettier from '@prettier/sync';
 
 import debug from 'debug';
 
@@ -15,10 +15,10 @@ export class PrettierPlugin extends Plugin {
     const text = context.service.getFileText(fileName);
 
     try {
-      const prettierOptions = prettier.resolveConfig.sync(fileName) || {};
+      const prettierOptions = synchronizedPrettier.resolveConfig(fileName) || {};
       prettierOptions.filepath = fileName;
 
-      const result = prettier.format(text, prettierOptions);
+      const result = synchronizedPrettier.format(text, prettierOptions);
 
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.service.setFileText(fileName, result);
@@ -37,5 +37,5 @@ export class PrettierPlugin extends Plugin {
  */
 export function isPrettierUsedForFormatting(fileName: string): boolean {
   // TODO: Better validation can be implemented
-  return prettier.resolveConfigFile.sync(fileName) !== null;
+  return synchronizedPrettier.resolveConfigFile(fileName) !== null;
 }
