@@ -22,7 +22,7 @@ export class DummyPlugin extends Plugin {
 
 export type PluginFactory<
   PluginType extends Plugin = Plugin,
-  PluginOptionsType extends PluginOptions = PluginOptions
+  PluginOptionsType extends PluginOptions = PluginOptions,
 > = new (fileName: string, context: PluginsRunnerContext, options: PluginOptionsType) => PluginType;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -46,7 +46,7 @@ export class PluginsRunner {
   layers: {
     plugin: PluginFactory;
     options?: PluginOptions;
-    filter?: (fileName: string) => boolean;
+    filter?: (fileName: string) => Promise<boolean> | boolean;
   }[] = [];
   context: PluginsRunnerContext;
 
@@ -67,37 +67,37 @@ export class PluginsRunner {
    */
   queue<
     PluginType extends Plugin = Plugin,
-    PluginOptionsType extends PluginOptions = PluginOptions
+    PluginOptionsType extends PluginOptions = PluginOptions,
   >(plugin: PluginFactory<PluginType, PluginOptionsType>): this;
   queue<
     PluginType extends Plugin = Plugin,
-    PluginOptionsType extends PluginOptions = PluginOptions
+    PluginOptionsType extends PluginOptions = PluginOptions,
   >(
     plugin: PluginFactory<PluginType, PluginOptionsType>,
-    filter: (fileName: string) => boolean
+    filter: (fileName: string) => Promise<boolean> | boolean
   ): this;
   queue<
     PluginType extends Plugin = Plugin,
-    PluginOptionsType extends PluginOptions = PluginOptions
+    PluginOptionsType extends PluginOptions = PluginOptions,
   >(plugin: PluginFactory<PluginType, PluginOptionsType>, options: PluginOptionsType): this;
   queue<
     PluginType extends Plugin = Plugin,
-    PluginOptionsType extends PluginOptions = PluginOptions
+    PluginOptionsType extends PluginOptions = PluginOptions,
   >(
     plugin: PluginFactory<PluginType, PluginOptionsType>,
     options: PluginOptionsType,
-    filter: (fileName: string) => boolean
+    filter: (fileName: string) => Promise<boolean> | boolean
   ): this;
   queue<
     PluginType extends Plugin = Plugin,
-    PluginOptionsType extends PluginOptions = PluginOptions
+    PluginOptionsType extends PluginOptions = PluginOptions,
   >(
     plugin: PluginFactory<PluginType>,
     ...optionsOrFilter:
       | []
       | [PluginOptionsType]
-      | [(fileName: string) => boolean]
-      | [PluginOptionsType, (fileName: string) => boolean]
+      | [(fileName: string) => Promise<boolean> | boolean]
+      | [PluginOptionsType, (fileName: string) => Promise<boolean> | boolean]
   ): this {
     if (optionsOrFilter.length === 2) {
       const [options, filter] = optionsOrFilter;
@@ -163,7 +163,8 @@ export class PluginsRunner {
   ): AsyncGenerator<Set<string>> {
     for (const layer of this.layers) {
       if (layer.filter) {
-        if (!layer.filter(fileName)) {
+        const filtered = await layer.filter(fileName);
+        if (!filtered) {
           yield allChangedFiles;
           continue;
         }

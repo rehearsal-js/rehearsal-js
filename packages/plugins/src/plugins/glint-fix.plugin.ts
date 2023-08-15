@@ -6,13 +6,14 @@ import {
   DiagnosticWithContext,
 } from '@rehearsal/codefixes';
 import debug from 'debug';
-import ts, { DiagnosticWithLocation } from 'typescript';
+import ts, { DiagnosticWithLocation, FormatCodeSettings } from 'typescript';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
 import { findNodeAtPosition, isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
 import type { Diagnostic } from 'vscode-languageserver';
 import type MS from 'magic-string';
 import type { TextChange } from 'typescript';
+import { getFormatCodeSettingsForFile } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -37,19 +38,21 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
 
     switch (mode) {
       case 'drain':
-        this.drainMode();
+        await this.drainMode();
         break;
       case 'single-pass':
       default:
-        this.singlePassMode();
+        await this.singlePassMode();
     }
 
     return Promise.resolve(Array.from(this.allFixedFiles));
   }
 
-  private drainMode(): void {
+  private async drainMode(): Promise<void> {
     const { fileName, context } = this;
     const service = context.service as GlintService;
+
+    const formatCodeSettings = await getFormatCodeSettingsForFile(fileName);
 
     let diagnostics: Diagnostic[] = this.getDiagnostics(service, fileName, [
       DiagnosticCategory.Error,
@@ -64,7 +67,7 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
-      const fix = this.getCodeFix(fileName, diagnostic, service);
+      const fix = this.getCodeFix(fileName, diagnostic, service, formatCodeSettings);
 
       if (fix === undefined) {
         DEBUG_CALLBACK(
@@ -103,10 +106,13 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     }
   }
 
-  private singlePassMode(): void {
+  private async singlePassMode(): Promise<void> {
     const { fileName, context } = this;
-    this.applyFix(fileName, context, ts.DiagnosticCategory.Error);
-    this.applyFix(fileName, context, ts.DiagnosticCategory.Suggestion);
+
+    const formatCodeSettings = await getFormatCodeSettingsForFile(fileName);
+
+    this.applyFix(fileName, context, ts.DiagnosticCategory.Error, formatCodeSettings);
+    this.applyFix(fileName, context, ts.DiagnosticCategory.Suggestion, formatCodeSettings);
 
     this.changeTrackers.forEach((tracker, fileName) => {
       context.service.setFileText(fileName, tracker.toString());
@@ -116,13 +122,14 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   applyFix(
     fileName: string,
     context: PluginsRunnerContext,
-    diagnosticCategory: ts.DiagnosticCategory
+    diagnosticCategory: ts.DiagnosticCategory,
+    formatCodeSettings: FormatCodeSettings
   ): void {
     const service = context.service as GlintService;
     const diagnostics = this.getDiagnostics(service, fileName, [diagnosticCategory]);
 
     for (const diagnostic of diagnostics) {
-      const fix = this.getCodeFix(fileName, diagnostic, service);
+      const fix = this.getCodeFix(fileName, diagnostic, service, formatCodeSettings);
 
       if (fix === undefined) {
         DEBUG_CALLBACK(
@@ -200,14 +207,19 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   getCodeFix(
     fileName: string,
     diagnostic: Diagnostic,
-    service: GlintService
+    service: GlintService,
+    formatCodeSettings: FormatCodeSettings
   ): ts.CodeFixAction | undefined {
     const diagnosticWithContext = this.getDiagnosticsWithContext(fileName, diagnostic, service);
 
-    const fixes = glintCodeFixes.getCodeFixes(diagnosticWithContext, {
-      safeFixes: true,
-      strictTyping: true,
-    });
+    const fixes = glintCodeFixes.getCodeFixes(
+      diagnosticWithContext,
+      {
+        safeFixes: true,
+        strictTyping: true,
+      },
+      formatCodeSettings
+    );
 
     if (fixes.length === 0) {
       return undefined;

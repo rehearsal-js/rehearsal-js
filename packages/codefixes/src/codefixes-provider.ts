@@ -1,4 +1,4 @@
-import type { CodeFixAction } from 'typescript';
+import type { CodeFixAction, FormatCodeSettings } from 'typescript';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 
 /**
@@ -16,11 +16,15 @@ export class CodeFixesProvider {
    */
   getCodeFixes(
     diagnostic: DiagnosticWithContext,
-    filter: CodeFixCollectionFilter
+    filter: CodeFixCollectionFilter,
+    formatCodeSettings: FormatCodeSettings
   ): CodeFixAction[] {
     let fixActions: CodeFixAction[] = [];
     for (const collection of this.collections) {
-      fixActions = [...fixActions, ...collection.getFixesForDiagnostic(diagnostic, filter)];
+      fixActions = [
+        ...fixActions,
+        ...collection.getFixesForDiagnostic(diagnostic, filter, formatCodeSettings),
+      ];
     }
 
     return fixActions;

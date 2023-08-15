@@ -1,5 +1,10 @@
-import { CodeFixAction } from 'typescript';
-import { CodeFix, CodeFixCollection, DiagnosticWithContext } from './index.js';
+import { CodeFixAction, FormatCodeSettings } from 'typescript';
+import {
+  CodeFix,
+  CodeFixCollection,
+  CodeFixCollectionFilter,
+  DiagnosticWithContext,
+} from './index.js';
 
 /**
  * Provides
@@ -15,13 +20,17 @@ export class BaseCodeFixCollection implements CodeFixCollection {
     }
   }
 
-  getFixesForDiagnostic(diagnostic: DiagnosticWithContext): CodeFixAction[] {
+  getFixesForDiagnostic(
+    diagnostic: DiagnosticWithContext,
+    _filter: CodeFixCollectionFilter,
+    formatCodeSettings: FormatCodeSettings
+  ): CodeFixAction[] {
     if (!this.fixes[diagnostic.code]) {
       return [];
     }
 
     const codeFixActions = this.fixes[diagnostic.code]
-      .map((fix) => fix.getCodeAction(diagnostic))
+      .map((fix) => fix.getCodeAction(diagnostic, formatCodeSettings))
       .filter((codefix) => codefix) as CodeFixAction[];
 
     return codeFixActions;

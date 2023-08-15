@@ -1,6 +1,7 @@
 import type {
   CodeFixAction,
   DiagnosticWithLocation,
+  FormatCodeSettings,
   LanguageService,
   Node,
   Program,
@@ -37,11 +38,15 @@ export interface CodeFixCollectionFilter {
 export interface CodeFixCollection {
   getFixesForDiagnostic(
     diagnostic: DiagnosticWithContext,
-    filter: CodeFixCollectionFilter
+    filter: CodeFixCollectionFilter,
+    formatSettings: FormatCodeSettings
   ): CodeFixAction[];
 }
 
 export interface CodeFix {
   getErrorCodes: () => number[];
-  getCodeAction: (diagnostic: DiagnosticWithContext) => CodeFixAction | undefined;
+  getCodeAction: (
+    diagnostic: DiagnosticWithContext,
+    formatSettings: FormatCodeSettings
+  ) => CodeFixAction | undefined;
 }

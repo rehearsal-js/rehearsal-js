@@ -980,7 +980,7 @@ import { helper } from \\"@glimmerx/helper\\";
 const or = helper(
   /** @param {[a: *, b: *]} param */
   // @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
-  ([a, b]) => a || b
+  ([a, b]) => a || b,
 );
 
 interface GreetingHeaderSignature {

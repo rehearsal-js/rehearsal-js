@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import debug from 'debug';
 import hash from 'object-hash';
-import ts from 'typescript';
+import ts, { type FormatCodeSettings } from 'typescript';
 import {
   codefixes,
   getDiagnosticOrder,
@@ -12,6 +12,7 @@ import {
 import { PluginOptions, PluginsRunnerContext, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import type MS from 'magic-string';
+import { getFormatCodeSettingsForFile } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -56,11 +57,25 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     const { fileName, context, options } = this;
     DEBUG_CALLBACK(`Plugin 'DiagnosticFix' run on %O:`, fileName);
 
+    const formatCodeSettings = await getFormatCodeSettingsForFile(fileName);
+
     // First attempt to fix all the errors
-    await this.applyFixes(context, fileName, ts.DiagnosticCategory.Error, options);
+    await this.applyFixes(
+      context,
+      fileName,
+      ts.DiagnosticCategory.Error,
+      options,
+      formatCodeSettings
+    );
 
     // Then attempt to run the suggestions
-    await this.applyFixes(context, fileName, ts.DiagnosticCategory.Suggestion, options);
+    await this.applyFixes(
+      context,
+      fileName,
+      ts.DiagnosticCategory.Suggestion,
+      options,
+      formatCodeSettings
+    );
 
     this.changeTrackers.forEach((tracker, file) => {
       context.service.setFileText(file, tracker.toString());
@@ -69,6 +84,8 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
 
   private async drainMode(): Promise<void> {
     const { fileName, context, options } = this;
+
+    const formatCodeSettings = await getFormatCodeSettingsForFile(fileName);
 
     let diagnostics = this.getDiagnostics(context.service, fileName, [
       DiagnosticCategory.Error,
@@ -83,7 +100,7 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
-      const fix = this.getCodeFix(diagnostic, options);
+      const fix = this.getCodeFix(diagnostic, options, formatCodeSettings);
 
       if (!fix) {
         DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
@@ -120,12 +137,13 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
     context: PluginsRunnerContext,
     fileName: string,
     diagnosticCategory: ts.DiagnosticCategory,
-    options: DiagnosticFixPluginOptions
+    options: DiagnosticFixPluginOptions,
+    formatCodeSettings: FormatCodeSettings
   ): Promise<void> {
     const diagnostics = this.getDiagnostics(context.service, fileName, [diagnosticCategory]);
 
     for (const diagnostic of diagnostics) {
-      const fix = this.getCodeFix(diagnostic, options);
+      const fix = this.getCodeFix(diagnostic, options, formatCodeSettings);
 
       if (!fix) {
         DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
@@ -224,12 +242,17 @@ export class DiagnosticFixPlugin extends Plugin<DiagnosticFixPluginOptions> {
    */
   getCodeFix(
     diagnostic: DiagnosticWithContext,
-    options: DiagnosticFixPluginOptions
+    options: DiagnosticFixPluginOptions,
+    formatCodeSettings: FormatCodeSettings
   ): ts.CodeFixAction | undefined {
-    const fixes = codefixes.getCodeFixes(diagnostic, {
-      safeFixes: options.safeFixes,
-      strictTyping: options.strictTyping,
-    });
+    const fixes = codefixes.getCodeFixes(
+      diagnostic,
+      {
+        safeFixes: options.safeFixes,
+        strictTyping: options.strictTyping,
+      },
+      formatCodeSettings
+    );
 
     if (fixes.length === 0) {
       return undefined;

@@ -31,7 +31,7 @@ These deps are the bare minimum versions and config required for Rehearsal to in
 
 ```
   typescript: '4.9.0',
-  prettier: '2.0.0',
+  prettier: '3.0.0',
   eslint: '8.0.0',
   'eslint-import-resolver-typescript': '2.5.0',
   'eslint-plugin-import': '2.0.0',
@@ -49,7 +49,7 @@ These deps are the bare minimum versions and config required for Rehearsal to in
   '@glint/environment-ember-template-imports': '1.0.0',
   '@glint/template': '1.0.0',
   'eslint-plugin-ember': '11.0.0',
-  'prettier-plugin-ember-template-tag': '0.3.0'
+  'prettier-plugin-ember-template-tag': '1.0.0'
 ```
 
 ### Base + Glimmer
@@ -294,7 +294,7 @@ Let's run Rehearsal `fix` without doing this and see what happens.
 rehearsal fix . --ignore 'docs, vitest.*'
 ...
 ✖ Please install the following missing devDependencies and try again:
-  "prettier": "^2.0.0",
+  "prettier": "^3.0.0",
   "eslint": "^8.0.0"
 ◼ Analyzing project dependency graph
 ◼ Infer Types
@@ -376,11 +376,11 @@ You can improve typing by adding additional typed packages to the project. For e
 You will find out which types packages to add after you run rehearsal migrate and when you inspect the rehearsal TODOS. Once you add these packages, run `rehearsal fix`
 
 ## Remove Invalid JSDoc Comments
-By default Rehearsal will prioritize types coming from JSDoc directives as these are explictly stated from the user. However in instances where JSDoc directives are invalid / outdated, the type inference will also be invalid. To remedy this simply delete the invalid JSDoc comment in question and re-run `rehearsal fix`. 
+By default Rehearsal will prioritize types coming from JSDoc directives as these are explictly stated from the user. However in instances where JSDoc directives are invalid / outdated, the type inference will also be invalid. To remedy this simply delete the invalid JSDoc comment in question and re-run `rehearsal fix`.
 
 # Post Migration
 ## Package.json Directives
-After your project has been migrated to TypeScript, remember to update your export paths in package.json. eg `main`, `files`, and `types`. Rehearsal will handle your TypeScript migration, however it will not handle the build step in transpiling TS -> JS. For that take a look at [integrating-with-build-tools](https://www.typescriptlang.org/docs/handbook/integrating-with-build-tools.html). 
+After your project has been migrated to TypeScript, remember to update your export paths in package.json. eg `main`, `files`, and `types`. Rehearsal will handle your TypeScript migration, however it will not handle the build step in transpiling TS -> JS. For that take a look at [integrating-with-build-tools](https://www.typescriptlang.org/docs/handbook/integrating-with-build-tools.html).
 
 #### JS Dist Files
 `main`: point to the transpiled .js file in dist (produced either by babel or tsc)

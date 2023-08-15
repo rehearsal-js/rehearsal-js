@@ -30,10 +30,10 @@
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "ember-template-lint": "^5.7.2",
-    "ember-template-lint-plugin-prettier": "^4.1.0",
+    "ember-template-lint-plugin-prettier": "^5.0.0",
     "eslint": "^8.40.0",
     "eslint-plugin-ember": "^11.4.9",
-    "prettier": "^2.8.3",
+    "prettier": "^3.0.2",
     "qunit": "^2.19.4",
     "qunit-dom": "^2.0.0",
     "typescript": "^5.1.3"
