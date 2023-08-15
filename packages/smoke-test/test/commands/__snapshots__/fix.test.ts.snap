@@ -226,24 +226,61 @@ exports[`fix command > base_ts_app 1`] = `
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /src/get-live-neighbor-count.ts
+{
+  text: : number,
+  position: 158,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /src/apply-rules.ts
+{
+  text: : any[],
+  position: 120,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /src/gen-random-grid.ts
+{
+  text: : string[][],
+  position: 161,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /src/app.ts
 [DATA] processing file: /src/basic.animal.ts
 [DATA] processing file: /src/basic.food.ts
 [DATA] processing file: /src/basic.index.ts
+{
+  text: : string,
+  position: 139,
+  kind: Type,
+  whitespaceBefore: true
+}
+{
+  text: : boolean,
+  position: 236,
+  kind: Type,
+  whitespaceBefore: true
+}
+[DATA] processing file: /src/greeting.ts
+{
+  text: : string | Greeting<string> |...,
+  position: 169,
+  kind: Type,
+  whitespaceBefore: true
+}
 [TITLE] Types Inferred
-[TITLE]   18 errors caught by rehearsal
-[TITLE]   12 have been fixed by rehearsal
-[TITLE]   6 errors need to be fixed manually
-[TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 0 eslint errors, with details in the report
+[TITLE]   25 errors caught by rehearsal
+[TITLE]   14 have been fixed by rehearsal
+[TITLE]   11 errors need to be fixed manually
+[TITLE]     -- 10 ts errors, marked by @ts-expect-error @rehearsal TODO
+[TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   18 errors caught by rehearsal
-[SUCCESS]   12 have been fixed by rehearsal
-[SUCCESS]   6 errors need to be fixed manually
-[SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 0 eslint errors, with details in the report"
+[SUCCESS]   25 errors caught by rehearsal
+[SUCCESS]   14 have been fixed by rehearsal
+[SUCCESS]   11 errors need to be fixed manually
+[SUCCESS]     -- 10 ts errors, marked by @ts-expect-error @rehearsal TODO
+[SUCCESS]     -- 1 eslint errors, with details in the report"
 `;
 
 exports[`fix command > base_ts_app 2`] = `
@@ -500,6 +537,12 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
+{
+  text: : string,
+  position: 166,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/components/audience-demographics.hbs
 [DATA] processing file: /app/components/audience-demographics.ts
 [DATA] processing file: /app/components/hello-world.gts
@@ -514,9 +557,27 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
 [DATA] processing file: /app/routes/index.ts
+{
+  text: : Promise<any>,
+  position: 167,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/routes/rental.ts
+{
+  text: : Promise<any>,
+  position: 174,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
+{
+  text: : string,
+  position: 103,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/templates/about.hbs
 [DATA] processing file: /app/templates/application.hbs
 [DATA] processing file: /app/templates/contact.hbs
@@ -525,6 +586,7 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/rental/detailed.hbs
 [DATA] processing file: /app/components/rental/image.hbs
 [DATA] processing file: /app/components/rental/image.ts
+{ text: : void, position: 243, kind: Type, whitespaceBefore: true }
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
@@ -756,6 +818,12 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/app.ts
 [DATA] processing file: /app/router.ts
 [DATA] processing file: /app/adapters/application.ts
+{
+  text: : string,
+  position: 166,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/components/audience-demographics.hbs
 [DATA] processing file: /app/components/audience-demographics.ts
 [DATA] processing file: /app/components/hello-world.gts
@@ -770,9 +838,27 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/share-button.ts
 [DATA] processing file: /app/models/rental.ts
 [DATA] processing file: /app/routes/index.ts
+{
+  text: : Promise<any>,
+  position: 167,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/routes/rental.ts
+{
+  text: : Promise<any>,
+  position: 174,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/serializers/application.ts
 [DATA] processing file: /app/services/locale.ts
+{
+  text: : string,
+  position: 103,
+  kind: Type,
+  whitespaceBefore: true
+}
 [DATA] processing file: /app/templates/about.hbs
 [DATA] processing file: /app/templates/application.hbs
 [DATA] processing file: /app/templates/contact.hbs
@@ -781,6 +867,7 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rental/detailed.hbs
 [DATA] processing file: /app/components/rental/image.hbs
 [DATA] processing file: /app/components/rental/image.ts
+{ text: : void, position: 243, kind: Type, whitespaceBefore: true }
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
@@ -863,6 +950,7 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [STARTED] Infer Types
 [DATA] processing file: /src/GreetingHeader.ts
 [DATA] processing file: /src/App.ts
+undefined
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
