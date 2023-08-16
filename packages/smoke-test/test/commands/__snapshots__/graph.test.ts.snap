@@ -29,6 +29,7 @@ exports[`graph command > base_ts_app 1`] = `
 [DATA] ./src/basic.animal.ts
 [DATA] ./src/basic.food.ts
 [DATA] ./src/basic.index.ts
+[DATA] ./src/greeting.ts
 [SUCCESS] Analyzing project dependency graph"
 `;
 
