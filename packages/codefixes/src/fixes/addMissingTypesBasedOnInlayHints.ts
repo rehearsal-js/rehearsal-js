@@ -52,7 +52,14 @@ export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
       (hint) => hint.position >= targetPosition && hint.position <= targetPosition + 1
     );
 
-    if (!hint || hint.text.includes('any') || hint.text.includes('object')) {
+    if (
+      !hint ||
+      hint.text.includes('any') ||
+      hint.text.includes('object') ||
+      // Some hints will be truncated with three periods not ellipsis character.
+      // This can break syntax if injected.
+      hint.text.includes('...')
+    ) {
       return undefined;
     }
 

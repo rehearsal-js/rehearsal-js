@@ -232,15 +232,16 @@ exports[`fix command > base_ts_app 1`] = `
 [DATA] processing file: /src/basic.animal.ts
 [DATA] processing file: /src/basic.food.ts
 [DATA] processing file: /src/basic.index.ts
+[DATA] processing file: /src/greeting.ts
 [TITLE] Types Inferred
-[TITLE]   18 errors caught by rehearsal
-[TITLE]   12 have been fixed by rehearsal
+[TITLE]   19 errors caught by rehearsal
+[TITLE]   13 have been fixed by rehearsal
 [TITLE]   6 errors need to be fixed manually
 [TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   18 errors caught by rehearsal
-[SUCCESS]   12 have been fixed by rehearsal
+[SUCCESS]   19 errors caught by rehearsal
+[SUCCESS]   13 have been fixed by rehearsal
 [SUCCESS]   6 errors need to be fixed manually
 [SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
