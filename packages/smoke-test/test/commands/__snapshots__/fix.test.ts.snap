@@ -499,269 +499,35 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/router.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/adapters/application.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/audience-demographics.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/audience-demographics.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/hello-world.gts
-{ plugins: [ prettier-plugin-ember-template-tag ] }
-{ plugins: [ prettier-plugin-ember-template-tag ] }
 [DATA] processing file: /app/components/jumbo.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/map.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/map.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/nav-bar.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/share-button.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/share-button.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/models/rental.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/routes/index.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/routes/rental.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/serializers/application.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/services/locale.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/templates/about.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/application.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/contact.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/index.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/rental.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/detailed.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/image.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/image.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/rentals/filter.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals/filter.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [TITLE] Types Inferred
 [TITLE]   102 errors caught by rehearsal
 [TITLE]   15 have been fixed by rehearsal
@@ -989,269 +755,35 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
 [DATA] processing file: /app/app.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/router.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/adapters/application.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/audience-demographics.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/audience-demographics.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/hello-world.gts
-{ plugins: [ prettier-plugin-ember-template-tag ] }
-{ plugins: [ prettier-plugin-ember-template-tag ] }
 [DATA] processing file: /app/components/jumbo.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/map.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/map.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/nav-bar.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/share-button.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/share-button.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/models/rental.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/routes/index.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/routes/rental.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/serializers/application.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/services/locale.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/templates/about.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/application.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/contact.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/index.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/templates/rental.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/detailed.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/image.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rental/image.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [DATA] processing file: /app/components/rentals/filter.hbs
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  parser: glimmer
-}
 [DATA] processing file: /app/components/rentals/filter.ts
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
-{
-  plugins: [ prettier-plugin-ember-template-tag ],
-  singleQuote: true
-}
 [TITLE] Types Inferred
 [TITLE]   118 errors caught by rehearsal
 [TITLE]   41 have been fixed by rehearsal
