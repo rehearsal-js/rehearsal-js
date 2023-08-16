@@ -1,3 +1,11 @@
+## <small>1.2.2 (2023-08-16)</small>
+
+* fix(codefix): drop inlay hints that contain `...` (#1238) ([4554bd0](https://github.com/rehearsal-js/rehearsal-js/commit/4554bd0)), closes [#1238](https://github.com/rehearsal-js/rehearsal-js/issues/1238)
+* chore(gh-action-bot): adding new diagnostics ([2101a06](https://github.com/rehearsal-js/rehearsal-js/commit/2101a06))
+* feat(glint): add this.args usage to signature (#1232) ([60b978d](https://github.com/rehearsal-js/rehearsal-js/commit/60b978d)), closes [#1232](https://github.com/rehearsal-js/rehearsal-js/issues/1232)
+
+
+
 ## <small>1.2.1 (2023-08-09)</small>
 
 * fix: @typedef converted to type in a wrong place (#1230) ([27269b9](https://github.com/rehearsal-js/rehearsal-js/commit/27269b9)), closes [#1230](https://github.com/rehearsal-js/rehearsal-js/issues/1230)
