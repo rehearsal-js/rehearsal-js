@@ -5,7 +5,7 @@ exports[`Fix: Init-Task > preFlightCheck "base-ts" - deps/devDeps compare 1`] = 
 exports[`Fix: Init-Task > preFlightCheck "base-ts" - expect failure deps missing 1`] = `
 "Please install the following missing devDependencies and try again:
 \\"typescript\\": \\"^4.9.0\\", 
-\\"prettier\\": \\"^2.0.0\\", 
+\\"prettier\\": \\"^3.0.0\\", 
 \\"eslint\\": \\"^8.0.0\\""
 `;
 

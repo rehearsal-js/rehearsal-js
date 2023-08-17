@@ -2,8 +2,10 @@ import { type Diagnostic, CodeActionKind } from 'vscode-languageserver';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
 import { isCodeFixSupportedByDescription } from './safe-codefixes.js';
 import type { GlintService } from '@rehearsal/service';
-import type { CodeFixAction } from 'typescript';
+import ts, { type FormatCodeSettings, type CodeFixAction } from 'typescript';
 import type { CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
+
+const { getDefaultFormatCodeSettings } = ts;
 
 interface GlintDiagnosticWithContext extends DiagnosticWithContext {
   glintService: GlintService;
@@ -15,7 +17,8 @@ const glintSupportedFixDescriptions = [`Unused '@glint-expect-error' directive.`
 export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
   override getFixesForDiagnostic(
     diagnostic: GlintDiagnosticWithContext,
-    filter: CodeFixCollectionFilter
+    filter: CodeFixCollectionFilter,
+    formatCodeSettings: FormatCodeSettings
   ): CodeFixAction[] {
     let fixes: readonly CodeFixAction[] = [];
 
@@ -27,7 +30,7 @@ export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
           CodeActionKind.QuickFix,
           diagnostic.glintDiagnostic.range,
           [diagnostic.glintDiagnostic],
-          this.getFormatCodeSettingsForFile(diagnostic.file.fileName),
+          formatCodeSettings ?? getDefaultFormatCodeSettings(),
           this.getUserPreferences()
         );
 

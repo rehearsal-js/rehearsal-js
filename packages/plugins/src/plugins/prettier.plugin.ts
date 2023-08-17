@@ -15,10 +15,10 @@ export class PrettierPlugin extends Plugin {
     const text = context.service.getFileText(fileName);
 
     try {
-      const prettierOptions = prettier.resolveConfig.sync(fileName) || {};
+      const prettierOptions = (await prettier.resolveConfig(fileName)) || {};
       prettierOptions.filepath = fileName;
 
-      const result = prettier.format(text, prettierOptions);
+      const result = await prettier.format(text, prettierOptions);
 
       DEBUG_CALLBACK(`Plugin 'Prettier' run on %O:`, fileName);
       context.service.setFileText(fileName, result);
@@ -35,7 +35,7 @@ export class PrettierPlugin extends Plugin {
 /**
  * Checks if prettier is used for formatting of the current application independent of eslint
  */
-export function isPrettierUsedForFormatting(fileName: string): boolean {
+export async function isPrettierUsedForFormatting(fileName: string): Promise<boolean> {
   // TODO: Better validation can be implemented
-  return prettier.resolveConfigFile.sync(fileName) !== null;
+  return (await prettier.resolveConfigFile(fileName)) !== null;
 }

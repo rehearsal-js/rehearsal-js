@@ -91,7 +91,7 @@ export default <P extends InjectedProps>(Component: React.ComponentType<P>) =>
 
     onRemove = (id: string) => () => {
       const filteredToDos = (this.state.todos as ToDo[]).filter(
-        (todo) => (todo as ToDo).id !== id
+        (todo) => (todo as ToDo).id !== id,
       );
       // @ts-expect-error @rehearsal TODO TS2339: Property 'setState' does not exist on type '(Anonymous class)'.
       this.setState({ todos: filteredToDos });
@@ -503,7 +503,7 @@ export class ThinkClass {
     q,
     r: (this: { a: string }, arg1: string, arg2: number) => boolean,
     // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
-    s
+    s,
   ): void {
     return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
   }
@@ -578,7 +578,7 @@ export function think(
   q,
   r: (this: { a: string }, arg1: string, arg2: number) => boolean,
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
-  s
+  s,
 ): void {
   return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
 }
@@ -617,7 +617,7 @@ export function issueWithTheReturnType([a, b], c: Array<string>) {
 export function inferenceOfDestructuredParams(
   [a, b]: [number, number],
   [c, d]: [string, string],
-  e: boolean
+  e: boolean,
 ): void {
   a;
   b;

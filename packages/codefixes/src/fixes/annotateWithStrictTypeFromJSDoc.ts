@@ -1,5 +1,5 @@
 import { canTypeBeResolved, findNodeEndsAtPosition } from '@rehearsal/ts-utils';
-import ts from 'typescript';
+import ts, { FormatCodeSettings } from 'typescript';
 import { Diagnostics } from '../diagnosticInformationMap.generated.js';
 import { TypescriptCodeFixCollection } from '../typescript-codefix-collection.js';
 import type { FileTextChanges, TextChange, CodeFixAction } from 'typescript';
@@ -19,14 +19,21 @@ const {
 export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
   getErrorCodes = (): number[] => [Diagnostics.TS80004.code];
 
-  getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
+  getCodeAction(
+    diagnostic: DiagnosticWithContext,
+    formatSettings: FormatCodeSettings
+  ): CodeFixAction | undefined {
     const tsCollection = new TypescriptCodeFixCollection();
 
     const fix = tsCollection
-      .getFixesForDiagnostic(diagnostic, {
-        safeFixes: false,
-        strictTyping: true,
-      })
+      .getFixesForDiagnostic(
+        diagnostic,
+        {
+          safeFixes: false,
+          strictTyping: true,
+        },
+        formatSettings
+      )
       .find((fix) => fix.fixName === 'annotateWithTypeFromJSDoc');
 
     if (!fix || !diagnostic.node) {

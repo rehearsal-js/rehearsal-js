@@ -36,7 +36,7 @@ const tsconfigGlimmerPrereq: PreReqTSConfig = {
 // pre-req dependencies for rehearsal. doesn't matter if they are deps or devDeps
 const depsBasePreReq = {
   typescript: '4.9.0',
-  prettier: '2.0.0',
+  prettier: '3.0.0',
   eslint: '8.0.0',
   'eslint-import-resolver-typescript': '2.5.0',
   'eslint-plugin-import': '2.0.0',
@@ -54,7 +54,7 @@ const depsEmberPreReq = {
   '@glint/environment-ember-template-imports': '1.0.0',
   '@glint/template': '1.0.0',
   'eslint-plugin-ember': '11.0.0',
-  'prettier-plugin-ember-template-tag': '0.3.0',
+  'prettier-plugin-ember-template-tag': '1.0.0',
 };
 
 // pre-req dependencies for glimmer

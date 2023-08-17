@@ -1,13 +1,10 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import Module from 'node:module';
 import debug from 'debug';
 import ts, {
   type CodeActionCommand,
   type CodeFixAction,
-  FileTextChanges,
   type FormatCodeSettings,
-  TextChange,
+  type FileTextChanges,
+  type TextChange,
   type UserPreferences,
 } from 'typescript';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
@@ -18,11 +15,7 @@ import type { Options as PrettierOptions } from 'prettier';
 
 const DEBUG_CALLBACK = debug('rehearsal:codefixes:TypeScriptCodeFixCollection');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = Module.createRequire(import.meta.url);
-
-const { SemicolonPreference, getDefaultFormatCodeSettings } = ts;
+const { getDefaultFormatCodeSettings } = ts;
 
 type SuppressedError = { code: number; message: string };
 
@@ -51,7 +44,8 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
 
   getFixesForDiagnostic(
     diagnostic: DiagnosticWithContext,
-    filter: CodeFixCollectionFilter
+    filter: CodeFixCollectionFilter,
+    formatCodeSettings?: FormatCodeSettings
   ): CodeFixAction[] {
     const languageService = diagnostic.service;
 
@@ -63,7 +57,7 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         diagnostic.start,
         diagnostic.start + diagnostic.length,
         [diagnostic.code],
-        this.getFormatCodeSettingsForFile(diagnostic.file.fileName),
+        formatCodeSettings ?? getDefaultFormatCodeSettings(),
         this.getUserPreferences()
       );
     } catch (e) {
@@ -83,45 +77,6 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
       importModuleSpecifierEnding: 'minimal',
       includePackageJsonAutoImports: 'auto',
       jsxAttributeCompletionStyle: 'auto',
-    };
-  }
-
-  protected getFormatCodeSettingsForFile(filePath: string): FormatCodeSettings {
-    if (this.hasPrettier === undefined) {
-      let prettierConfig: PrettierOptions | null = null;
-
-      try {
-        prettierConfig = importPrettier(filePath).resolveConfig.sync(filePath, {
-          editorconfig: true,
-        });
-      } catch (e) {
-        // swallow the error. Prettier is not installed
-      }
-
-      if (prettierConfig) {
-        this.hasPrettier = true;
-        this.prettierConfigs = prettierConfig;
-      }
-    }
-
-    const tsFormatCodeOptions = getDefaultFormatCodeSettings();
-
-    let useSemicolons = true;
-    let indentSize = tsFormatCodeOptions.tabSize ?? 2;
-    let convertTabsToSpaces = true;
-
-    if (this.prettierConfigs) {
-      useSemicolons = this.prettierConfigs.semi !== false;
-      indentSize = this.prettierConfigs.tabWidth ?? indentSize;
-      convertTabsToSpaces = this.prettierConfigs.useTabs !== true;
-    }
-
-    return {
-      ...tsFormatCodeOptions,
-      baseIndentSize: indentSize,
-      convertTabsToSpaces,
-      indentSize,
-      semicolons: useSemicolons ? SemicolonPreference.Insert : SemicolonPreference.Remove,
     };
   }
 
@@ -251,26 +206,6 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
   protected isCodeFixSupported(fix: CodeFixAction): boolean {
     return isCodeFixSupported(fix.fixName);
   }
-}
-
-function importPrettier(fromPath: string): typeof import('prettier') {
-  const pkg = getPackageInfo('prettier', fromPath);
-  const main = resolve(pkg.path);
-  return require(main) as typeof import('prettier');
-}
-
-function getPackageInfo(packageName: string, fromPath: string): { path: string } {
-  const paths = [__dirname];
-
-  paths.unshift(fromPath);
-
-  const packageJSONPath = require.resolve(`${packageName}/package.json`, {
-    paths,
-  });
-
-  return {
-    path: dirname(packageJSONPath),
-  };
 }
 
 export function isInstallPackageCommand(

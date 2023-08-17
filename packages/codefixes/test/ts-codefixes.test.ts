@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { RehearsalService } from '@rehearsal/service';
 import {
+  getDefaultFormatCodeSettings,
   ImportsNotUsedAsValues,
   JsxEmit,
   ModuleKind,
@@ -63,6 +64,13 @@ describe('ts-codefixes', () => {
 
     expect(diagnostics.length).toBeGreaterThanOrEqual(1);
 
+    const formatCodeSettings = {
+      ...getDefaultFormatCodeSettings(),
+      baseIndentSize: 2,
+      convertTabsToSpaces: true,
+      indentSize: 2,
+    };
+
     for (const diagnostic of diagnostics) {
       const fixes = tsCollection.getFixesForDiagnostic(
         {
@@ -71,7 +79,8 @@ describe('ts-codefixes', () => {
           program,
           checker,
         },
-        { safeFixes: true, strictTyping: true }
+        { safeFixes: true, strictTyping: true },
+        formatCodeSettings
       );
 
       for (const fix of fixes) {

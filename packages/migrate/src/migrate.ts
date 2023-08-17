@@ -138,14 +138,14 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       (fileName: string) => isGlintService(service, useGlint) && isGlintFile(service, fileName)
     )
     // Fix formatting
-    .queue(PrettierPlugin, (fileName: string) => isPrettierUsedForFormatting(fileName))
+    .queue(PrettierPlugin, async (fileName: string) => await isPrettierUsedForFormatting(fileName))
     .queue(
       LintPlugin,
       {
         eslintOptions: { cwd: packageDir, useEslintrc: true, fix: true },
         reportErrors: false,
       },
-      (fileName: string) => !isPrettierUsedForFormatting(fileName)
+      async (fileName: string) => !(await isPrettierUsedForFormatting(fileName))
     )
     // Add ts-expect-error comments and report those errors
     .queue(
@@ -164,14 +164,14 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
       (fileName: string) => isGlintService(service, useGlint) && isGlintFile(service, fileName)
     )
     // Format previously added comments
-    .queue(PrettierPlugin, (fileName: string) => isPrettierUsedForFormatting(fileName))
+    .queue(PrettierPlugin, async (fileName: string) => await isPrettierUsedForFormatting(fileName))
     .queue(
       LintPlugin,
       {
         eslintOptions: { cwd: packageDir, useEslintrc: true, fix: true },
         reportErrors: false,
       },
-      (fileName: string) => !isPrettierUsedForFormatting(fileName)
+      async (fileName: string) => !(await isPrettierUsedForFormatting(fileName))
     )
     .queue(
       DiagnosticReportPlugin,

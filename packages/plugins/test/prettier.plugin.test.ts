@@ -53,7 +53,7 @@ describe('Test PrettierPlugin', () => {
     });
 
     const targetFile = resolve(project.baseDir, 'index.ts');
-    const isPrettierUsed = isPrettierUsedForFormatting(targetFile);
+    const isPrettierUsed = await isPrettierUsedForFormatting(targetFile);
 
     expect(isPrettierUsed).toBeTruthy();
 
@@ -66,7 +66,7 @@ describe('Test PrettierPlugin', () => {
     });
 
     const targetFile = resolve(project.baseDir, 'index.ts');
-    const isPrettierUsed = isPrettierUsedForFormatting(targetFile);
+    const isPrettierUsed = await isPrettierUsedForFormatting(targetFile);
 
     expect(isPrettierUsed).toBeFalsy();
 
