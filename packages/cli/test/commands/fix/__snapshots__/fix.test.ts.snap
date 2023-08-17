@@ -7,18 +7,27 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/get-live-neighbor-count.ts
-[DATA] processing file: /src/apply-rules.ts
-[DATA] processing file: /src/gen-random-grid.ts
-[DATA] processing file: /src/app.ts
-[DATA] processing file: /src/sub/grid.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/5 files | ETA: **:**:**
+[DATA]  processing file: /src/get-live-neighbor-count.ts
+[DATA] [====----------------] 1/5 files | ETA: **:**:**
+[DATA]  processing file: /src/apply-rules.ts
+[DATA] [========------------] 2/5 files | ETA: **:**:**
+[DATA]  processing file: /src/gen-random-grid.ts
+[DATA] [============--------] 3/5 files | ETA: **:**:**
+[DATA]  processing file: /src/app.ts
+[DATA] [================----] 4/5 files | ETA: **:**:**
+[DATA]  processing file: /src/sub/grid.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   16 errors caught by rehearsal
 [TITLE]   7 have been fixed by rehearsal
 [TITLE]   9 errors need to be fixed manually
 [TITLE]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 5 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   16 errors caught by rehearsal
 [SUCCESS]   7 have been fixed by rehearsal
 [SUCCESS]   9 errors need to be fixed manually
@@ -233,14 +242,19 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a file 1`] =
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/gen-random-grid.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/1 files | ETA: **:**:**
+[DATA]  processing file: /src/gen-random-grid.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   3 errors caught by rehearsal
 [TITLE]   2 have been fixed by rehearsal
 [TITLE]   1 errors need to be fixed manually
 [TITLE]     -- 0 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   3 errors caught by rehearsal
 [SUCCESS]   2 have been fixed by rehearsal
 [SUCCESS]   1 errors need to be fixed manually
@@ -284,14 +298,19 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a subdirecto
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/sub/grid.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/1 files | ETA: **:**:**
+[DATA]  processing file: /src/sub/grid.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   3 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
 [TITLE]   2 errors need to be fixed manually
 [TITLE]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 1 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   3 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
 [SUCCESS]   2 errors need to be fixed manually
@@ -502,37 +521,70 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/app.js
-[DATA] processing file: /app/router.js
-[DATA] processing file: /app/components/ember-component.hbs
-[DATA] processing file: /app/components/ember-component.ts
-[DATA] processing file: /app/components/foo.hbs
-[DATA] processing file: /app/components/foo.ts
-[DATA] processing file: /app/components/js-component.hbs
-[DATA] processing file: /app/components/js-component.js
-[DATA] processing file: /app/components/no-backing-module.hbs
-[DATA] processing file: /app/components/nocheck-me.hbs
-[DATA] processing file: /app/components/qux.ts
-[DATA] processing file: /app/components/template-only-module.hbs
-[DATA] processing file: /app/components/template-only-module.ts
-[DATA] processing file: /app/components/wrapper-component.hbs
-[DATA] processing file: /app/components/wrapper-component.ts
-[DATA] processing file: /app/controllers/classic-route.ts
-[DATA] processing file: /app/helpers/affix.ts
-[DATA] processing file: /app/helpers/repeat.ts
-[DATA] processing file: /app/routes/classic-route.ts
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/classic-route.hbs
-[DATA] processing file: /app/components/bar/index.hbs
-[DATA] processing file: /app/components/bar/index.ts
-[DATA] processing file: /app/templates/components/qux.hbs
-[DATA] processing file: /app/components/test-cases/subclassing/child.hbs
-[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
-[DATA] processing file: /app/components/test-cases/subclassing/child.ts
-[DATA] processing file: /app/components/test-cases/subclassing/parent.hbs
-[DATA] processing file: /app/pods/components/baz/component.ts
-[DATA] processing file: /app/pods/components/baz/template.hbs
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/30 files | ETA: **:**:**
+[DATA]  processing file: /app/app.js
+[DATA] [--------------------] 1/30 files | ETA: **:**:**
+[DATA]  processing file: /app/router.js
+[DATA] [=-------------------] 2/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/ember-component.hbs
+[DATA] [==------------------] 3/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/ember-component.ts
+[DATA] [==------------------] 4/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/foo.hbs
+[DATA] [===-----------------] 5/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/foo.ts
+[DATA] [====----------------] 6/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/js-component.hbs
+[DATA] [====----------------] 7/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/js-component.js
+[DATA] [=====---------------] 8/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/no-backing-module.hbs
+[DATA] [======--------------] 9/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/nocheck-me.hbs
+[DATA] [======--------------] 10/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/qux.ts
+[DATA] [=======-------------] 11/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/template-only-module.hbs
+[DATA] [========------------] 12/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/template-only-module.ts
+[DATA] [========------------] 13/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/wrapper-component.hbs
+[DATA] [=========-----------] 14/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/wrapper-component.ts
+[DATA] [==========----------] 15/30 files | ETA: **:**:**
+[DATA]  processing file: /app/controllers/classic-route.ts
+[DATA] [==========----------] 16/30 files | ETA: **:**:**
+[DATA]  processing file: /app/helpers/affix.ts
+[DATA] [===========---------] 17/30 files | ETA: **:**:**
+[DATA]  processing file: /app/helpers/repeat.ts
+[DATA] [============--------] 18/30 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/classic-route.ts
+[DATA] [============--------] 19/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/application.hbs
+[DATA] [=============-------] 20/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/classic-route.hbs
+[DATA] [==============------] 21/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/bar/index.hbs
+[DATA] [==============------] 22/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/bar/index.ts
+[DATA] [===============-----] 23/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/components/qux.hbs
+[DATA] [================----] 24/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/child.hbs
+[DATA] [================----] 25/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/parent.ts
+[DATA] [=================---] 26/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] [==================--] 27/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/parent.hbs
+[DATA] [==================--] 28/30 files | ETA: **:**:**
+[DATA]  processing file: /app/pods/components/baz/component.ts
+[DATA] [===================-] 29/30 files | ETA: **:**:**
+[DATA]  processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   69 errors caught by rehearsal
 [TITLE]   5 have been fixed by rehearsal
 [TITLE]   64 errors need to be fixed manually
@@ -540,6 +592,7 @@ exports[`Command: fix "ember-ts-app" fixture > can fix starting with a file 1`] 
 [TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   69 errors caught by rehearsal
 [SUCCESS]   5 have been fixed by rehearsal
 [SUCCESS]   64 errors need to be fixed manually
@@ -557,35 +610,66 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/app.js
-[DATA] processing file: /app/router.js
-[DATA] processing file: /app/components/ember-component.hbs
-[DATA] processing file: /app/components/ember-component.ts
-[DATA] processing file: /app/components/foo.hbs
-[DATA] processing file: /app/components/foo.ts
-[DATA] processing file: /app/components/js-component.hbs
-[DATA] processing file: /app/components/js-component.js
-[DATA] processing file: /app/components/no-backing-module.hbs
-[DATA] processing file: /app/components/nocheck-me.hbs
-[DATA] processing file: /app/components/qux.ts
-[DATA] processing file: /app/components/template-only-module.hbs
-[DATA] processing file: /app/components/template-only-module.ts
-[DATA] processing file: /app/components/wrapper-component.hbs
-[DATA] processing file: /app/components/wrapper-component.ts
-[DATA] processing file: /app/controllers/classic-route.ts
-[DATA] processing file: /app/routes/classic-route.ts
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/classic-route.hbs
-[DATA] processing file: /app/components/bar/index.hbs
-[DATA] processing file: /app/components/bar/index.ts
-[DATA] processing file: /app/templates/components/qux.hbs
-[DATA] processing file: /app/components/test-cases/subclassing/child.hbs
-[DATA] processing file: /app/components/test-cases/subclassing/parent.ts
-[DATA] processing file: /app/components/test-cases/subclassing/child.ts
-[DATA] processing file: /app/components/test-cases/subclassing/parent.hbs
-[DATA] processing file: /app/pods/components/baz/component.ts
-[DATA] processing file: /app/pods/components/baz/template.hbs
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/28 files | ETA: **:**:**
+[DATA]  processing file: /app/app.js
+[DATA] [--------------------] 1/28 files | ETA: **:**:**
+[DATA]  processing file: /app/router.js
+[DATA] [=-------------------] 2/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/ember-component.hbs
+[DATA] [==------------------] 3/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/ember-component.ts
+[DATA] [==------------------] 4/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/foo.hbs
+[DATA] [===-----------------] 5/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/foo.ts
+[DATA] [====----------------] 6/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/js-component.hbs
+[DATA] [=====---------------] 7/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/js-component.js
+[DATA] [=====---------------] 8/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/no-backing-module.hbs
+[DATA] [======--------------] 9/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/nocheck-me.hbs
+[DATA] [=======-------------] 10/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/qux.ts
+[DATA] [=======-------------] 11/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/template-only-module.hbs
+[DATA] [========------------] 12/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/template-only-module.ts
+[DATA] [=========-----------] 13/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/wrapper-component.hbs
+[DATA] [==========----------] 14/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/wrapper-component.ts
+[DATA] [==========----------] 15/28 files | ETA: **:**:**
+[DATA]  processing file: /app/controllers/classic-route.ts
+[DATA] [===========---------] 16/28 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/classic-route.ts
+[DATA] [============--------] 17/28 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/application.hbs
+[DATA] [============--------] 18/28 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/classic-route.hbs
+[DATA] [=============-------] 19/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/bar/index.hbs
+[DATA] [==============------] 20/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/bar/index.ts
+[DATA] [===============-----] 21/28 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/components/qux.hbs
+[DATA] [===============-----] 22/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/child.hbs
+[DATA] [================----] 23/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/parent.ts
+[DATA] [=================---] 24/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/child.ts
+[DATA] [=================---] 25/28 files | ETA: **:**:**
+[DATA]  processing file: /app/components/test-cases/subclassing/parent.hbs
+[DATA] [==================--] 26/28 files | ETA: **:**:**
+[DATA]  processing file: /app/pods/components/baz/component.ts
+[DATA] [===================-] 27/28 files | ETA: **:**:**
+[DATA]  processing file: /app/pods/components/baz/template.hbs
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   63 errors caught by rehearsal
 [TITLE]   3 have been fixed by rehearsal
 [TITLE]   60 errors need to be fixed manually
@@ -593,6 +677,7 @@ exports[`Command: fix "ember-ts-app" fixture > fix package with src arg and grap
 [TITLE]     -- 44 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   63 errors caught by rehearsal
 [SUCCESS]   3 have been fixed by rehearsal
 [SUCCESS]   60 errors need to be fixed manually

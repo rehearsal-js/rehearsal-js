@@ -95,6 +95,7 @@ export type GraphTaskOptions = {
 type MessageContent = {
   reportItems: ReportItem[];
   fixedItemCount: number;
+  duration: number;
 };
 type MessageResponse = { type: 'message'; content: MessageContent };
 type FilesResponse = { type: 'files'; content: string[] };
