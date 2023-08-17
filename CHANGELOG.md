@@ -1,3 +1,9 @@
+## 2.0.0 (2023-08-17)
+
+* fix: prettier.format() return empty string for some .gts files (#1237) ([d45b176](https://github.com/rehearsal-js/rehearsal-js/commit/d45b176)), closes [#1237](https://github.com/rehearsal-js/rehearsal-js/issues/1237)
+
+
+
 ## <small>1.2.2 (2023-08-16)</small>
 
 * fix(codefix): drop inlay hints that contain `...` (#1238) ([4554bd0](https://github.com/rehearsal-js/rehearsal-js/commit/4554bd0)), closes [#1238](https://github.com/rehearsal-js/rehearsal-js/issues/1238)
