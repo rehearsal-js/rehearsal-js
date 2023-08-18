@@ -102,6 +102,13 @@ export function getClassMemberByName(
   );
 }
 
+export function getPositionFromClosingParenPosition(
+  node: ts.FunctionLikeDeclaration
+): number | undefined {
+  const closeParen = node.getChildren().find((node) => node.kind == ts.SyntaxKind.CloseParenToken);
+  return closeParen?.getEnd();
+}
+
 export function getTypeNameFromType(type: Type, checker: TypeChecker): string | undefined {
   const symbol = type.getSymbol();
   if (!symbol) {

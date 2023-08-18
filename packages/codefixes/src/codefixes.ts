@@ -7,7 +7,7 @@ import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard.js';
 import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
 import { AddMissingExportCodeFix } from './fixes/addMissingExport.js';
 import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
-import { AddMissingTypesBasedOnInlayHintsCodeFix } from './fixes/addMissingTypesBasedOnInlayHints.js';
+import { AddMissingReturnTypesCodeFix } from './fixes/addMissingReturnTypes.js';
 import { AnnotateWithStrictTypeFromJSDoc } from './fixes/annotateWithStrictTypeFromJSDoc.js';
 import { GlintCodeFixCollection } from './glint-codefix-collection.js';
 import { MakeMemberOptionalCodeFix } from './fixes/makeMemberOptional.js';
@@ -19,7 +19,7 @@ export const codefixes = new CodeFixesProvider([
     new AddErrorTypeGuardCodeFix(),
     new AddMissingExportCodeFix(),
     new AddMissingTypesBasedOnInheritanceCodeFix(),
-    new AddMissingTypesBasedOnInlayHintsCodeFix(),
+    new AddMissingReturnTypesCodeFix(),
     new AnnotateWithStrictTypeFromJSDoc(),
     new MakeMemberOptionalCodeFix(),
     new StubMissingJSDocParamName(),
@@ -28,10 +28,7 @@ export const codefixes = new CodeFixesProvider([
 ]);
 
 export const glintCodeFixes = new CodeFixesProvider([
-  new BaseCodeFixCollection([
-    new AddMissingTypesBasedOnInlayHintsCodeFix(),
-    new StubMissingJSDocParamName(),
-  ]),
+  new BaseCodeFixCollection([new AddMissingReturnTypesCodeFix(), new StubMissingJSDocParamName()]),
   new GlintCodeFixCollection(),
   new BaseCodeFixCollection([
     // Need to be run after standard "typedef to type" fix applied
