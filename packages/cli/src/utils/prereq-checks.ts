@@ -1,6 +1,5 @@
 import { join, resolve } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
-import { TSConfig, readTSConfig } from '@rehearsal/utils';
 import fastGlob from 'fast-glob';
 import {
   getTSConfigCompilerOptionsCanonical,
@@ -12,6 +11,8 @@ import { PackageJson } from 'type-fest';
 import debug from 'debug';
 import { findUpSync } from 'find-up';
 import { PreReqTSConfig } from '../types.js';
+import { findNearestPackageJson, findNearestTSConfig } from './paths.js';
+import { tryLoadGlintConfig } from '@rehearsal/service';
 
 const DEBUG_CALLBACK = debug('rehearsal:utils:prereqs');
 
@@ -40,12 +41,14 @@ export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSCon
 
   const { strict: strictRequired, skipLibCheck: skipLibCheckRequired } =
     requiredTSConfig.compilerOptions as TSConfigCompilerOptions;
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
 
   // only check for it if its required
   if (requiredTSConfig.glint) {
-    isTSConfigGlintPreReq(tsConfigPath, requiredTSConfig, message);
+    isTSConfigGlintPreReq(basePath, requiredTSConfig, message);
   }
+
+  const tsConfigPath = findNearestTSConfig(basePath)!;
+
   // this will fetch all the compilerOptions from tsconfig extends as well
   const { strict, skipLibCheck } = getTSConfigCompilerOptionsCanonical(basePath, tsConfigPath);
 
@@ -84,12 +87,11 @@ export function getEsLintConfigPath(basePath: string): string {
 }
 
 function isTSConfigGlintPreReq(
-  tsConfigPath: string,
+  basePath: string,
   requiredTSConfigGlint: Pick<PreReqTSConfig, 'glint'>,
   message?: string
 ): void {
-  // the glint key isn't supported by with ts API so we have to grab it manually
-  const { glint } = readTSConfig<TSConfig>(tsConfigPath);
+  const glint = tryLoadGlintConfig(basePath);
   const { glint: glintRequired } = requiredTSConfigGlint;
 
   if (!glint && glintRequired) {
@@ -127,8 +129,8 @@ export function isExistsESLintConfig(basePath: string): boolean {
 }
 
 export function isExistsPackageJSON(basePath: string): boolean {
-  const packageJsonPath = resolve(basePath, 'package.json');
-  if (!existsSync(packageJsonPath)) {
+  const packageJsonPath = findNearestPackageJson(basePath);
+  if (!packageJsonPath) {
     throw new Error(
       `${packageJsonPath} does not exists. Please run rehearsal inside a project with a valid package.json.`
     );
@@ -137,8 +139,8 @@ export function isExistsPackageJSON(basePath: string): boolean {
 }
 
 export function isExistsTSConfig(basePath: string): boolean {
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
-  if (!existsSync(tsConfigPath)) {
+  const tsConfigPath = findNearestTSConfig(basePath);
+  if (!tsConfigPath) {
     throw new Error(
       `${tsConfigPath} does not exists. Please run rehearsal inside a project with a valid tsconfig.json.`
     );

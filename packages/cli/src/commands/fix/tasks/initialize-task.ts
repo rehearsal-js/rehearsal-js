@@ -1,11 +1,10 @@
-import { resolve } from 'node:path';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
-import { isGlintProject, isAddon, isApp } from '@rehearsal/service';
+import { isGlintProject, isEmberAddon, isEmberApp } from '@rehearsal/service';
 import { readJsonSync } from 'fs-extra/esm';
 import { PackageJson } from 'type-fest';
 import { getPreReqs } from '../../../prereqs.js';
-import { validateSourcePath } from '../../../utils/paths.js';
+import { findNearestPackageJson, validateSourcePath } from '../../../utils/paths.js';
 
 import {
   determineProjectName,
@@ -31,21 +30,25 @@ export function initTask(
 ): ListrTask<CommandContext, ListrDefaultRenderer> {
   return {
     title: `Initialize`,
-    task: async (ctx: CommandContext): Promise<void> => {
+    task: (ctx: CommandContext): void => {
       const { rootPath, skipChecks } = options;
 
       let projectType: ProjectType = 'base-ts';
-      const packageJSON = readJsonSync(resolve(rootPath, 'package.json')) as PackageJson;
-      ctx.projectName = determineProjectName(rootPath) || '';
 
-      // if ember app or addon
-      if (isApp(packageJSON) || isAddon(packageJSON)) {
+      isExistsPackageJSON(srcPath);
+
+      const foundPackageJson = findNearestPackageJson(srcPath)!;
+      const packageJSON = readJsonSync(foundPackageJson) as PackageJson;
+
+      if (isEmberApp(packageJSON) || isEmberAddon(packageJSON)) {
         projectType = 'ember';
-      } else if (await isGlintProject(rootPath)) {
+      } else if (isGlintProject(srcPath)) {
         projectType = 'glimmer';
       }
 
-      preFlightCheck(rootPath, projectType, skipChecks);
+      preFlightCheck(rootPath, srcPath, projectType, skipChecks);
+
+      ctx.projectName = determineProjectName(rootPath) || '';
 
       // in this mode we skip the `graphOrderTask`
       if (process.env['GRAPH_MODES'] === 'off') {
@@ -64,7 +67,8 @@ export function initTask(
 
 // each of these sub-tasks will throw on failure
 export function preFlightCheck(
-  basePath: string,
+  rootPath: string,
+  srcPath: string,
   projectType: ProjectType,
   skipChecks: SkipChecks = [],
   isSkipped = false
@@ -76,18 +80,17 @@ export function preFlightCheck(
 
   const { deps, eslint, tsconfig, node } = getPreReqs(projectType);
 
-  // is exists checks these will throw faster than the prereq checks
-  isExistsPackageJSON(basePath);
-  isExistsTSConfig(basePath);
-  isExistsESLintConfig(basePath);
-  isValidGitIgnore(basePath);
+  // "isExists" checks these will throw faster than the prereq checks
+  isExistsTSConfig(srcPath);
+  isExistsESLintConfig(rootPath);
+  isValidGitIgnore(rootPath);
   // prereq checks for both the version and the package
   if (!skipChecks.includes('deps')) {
-    isDepsPreReq(basePath, deps);
+    isDepsPreReq(rootPath, deps);
   }
   if (!skipChecks.includes('eslint')) {
-    isESLintPreReq(basePath, eslint);
+    isESLintPreReq(rootPath, eslint);
   }
-  isTSConfigPreReq(basePath, tsconfig);
+  isTSConfigPreReq(srcPath, tsconfig);
   isNodePreReq(node);
 }

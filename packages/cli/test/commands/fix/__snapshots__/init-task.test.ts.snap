@@ -31,6 +31,10 @@ exports[`Fix: Init-Task > preFlightCheck "base-ts" - no failure when deps missin
 
 exports[`Fix: Init-Task > preFlightCheck "base-ts" - no failure when deps missing and \`skipChecks eslint\` option is set 1`] = `""`;
 
+exports[`Fix: Init-Task > preFlightCheck "base-ts" submodule of a "glimmer" module 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "base-ts" submodule of a "glimmer" parent 1`] = `""`;
+
 exports[`Fix: Init-Task > preFlightCheck "base-ts" works 1`] = `""`;
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 1`] = `
@@ -48,9 +52,15 @@ exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint
 
 exports[`Fix: Init-Task > preFlightCheck "ember" - expect failure tsconfig glint missing 2`] = `""`;
 
+exports[`Fix: Init-Task > preFlightCheck "ember" submodule of a "base-ts" module 1`] = `""`;
+
 exports[`Fix: Init-Task > preFlightCheck "ember" works 1`] = `""`;
 
+exports[`Fix: Init-Task > preFlightCheck "glimmer" submodule of a "ember" module 1`] = `""`;
+
 exports[`Fix: Init-Task > preFlightCheck "glimmer" works 1`] = `""`;
+
+exports[`Fix: Init-Task > preFlightCheck "non-glimmer" submodule of a "glimmer" parent 1`] = `""`;
 
 exports[`Fix: Init-Task > validate initTask "base-ts" works with src arg 1`] = `
 [

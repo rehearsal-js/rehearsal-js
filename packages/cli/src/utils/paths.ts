@@ -96,12 +96,11 @@ export function findPackageRootDirectory(startPath: string, stopPath?: string): 
 }
 
 export function findNearestPackageJson(startPath: string, stopPath?: string): string | undefined {
-  const foundPackageJson = findUpSync('package.json', {
-    cwd: startPath,
-    stopAt: stopPath,
-  });
+  return findUpSync('package.json', { cwd: startPath, stopAt: stopPath });
+}
 
-  return foundPackageJson;
+export function findNearestTSConfig(startPath: string, stopPath?: string): string | undefined {
+  return findUpSync('tsconfig.json', { cwd: startPath, stopAt: stopPath });
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
