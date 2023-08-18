@@ -1,4 +1,4 @@
-import { ChangesFactory, getPositionFromClosingParenPosition } from '@rehearsal/ts-utils';
+import { ChangesFactory, getPositionFromClosingParen } from '@rehearsal/ts-utils';
 import ts from 'typescript';
 import { createCodeFixAction } from '../hints-codefix-collection.js';
 import { Diagnostics } from '../diagnosticInformationMap.generated.js';
@@ -20,7 +20,7 @@ export class AddMissingReturnTypesCodeFix implements CodeFix {
     }
 
     // Find closing parent of function arguments
-    const targetPosition = getPositionFromClosingParenPosition(diagnostic.node);
+    const targetPosition = getPositionFromClosingParen(diagnostic.node);
 
     if (!targetPosition) {
       return undefined;
