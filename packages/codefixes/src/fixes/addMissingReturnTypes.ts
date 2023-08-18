@@ -5,7 +5,7 @@ import { Diagnostics } from '../diagnosticInformationMap.generated.js';
 import type { CodeFix, DiagnosticWithContext } from '../types.js';
 import type { CodeFixAction } from 'typescript';
 
-const { isMethodDeclaration, isFunctionDeclaration } = ts;
+const { isFunctionLike } = ts;
 
 export class AddMissingReturnTypesCodeFix implements CodeFix {
   getErrorCodes = (): number[] => [Diagnostics.TS7050.code];
@@ -13,7 +13,7 @@ export class AddMissingReturnTypesCodeFix implements CodeFix {
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     if (
       diagnostic.node === undefined ||
-      !(isFunctionDeclaration(diagnostic.node) || isMethodDeclaration(diagnostic.node)) ||
+      !isFunctionLike(diagnostic.node) ||
       diagnostic.node.name === undefined
     ) {
       return undefined;

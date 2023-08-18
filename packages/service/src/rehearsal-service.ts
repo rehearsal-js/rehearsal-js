@@ -11,14 +11,8 @@ import type {
   SourceFile,
 } from 'typescript';
 
-const {
-  DiagnosticCategory,
-  ScriptSnapshot,
-  createLanguageService,
-  forEachChild,
-  isFunctionDeclaration,
-  isMethodDeclaration,
-} = ts;
+const { DiagnosticCategory, ScriptSnapshot, createLanguageService, forEachChild, isFunctionLike } =
+  ts;
 
 export interface Service {
   getFileText(fileName: string): string;
@@ -115,7 +109,7 @@ export class RehearsalService implements Service {
     const diagnostics: DiagnosticWithLocation[] = [];
 
     const visitEveryNode = (node: Node): Node | undefined => {
-      if ((isFunctionDeclaration(node) || isMethodDeclaration(node)) && node.name && !node.type) {
+      if (isFunctionLike(node) && node.name && !node.type) {
         diagnostics.push({
           file: sourceFile,
           start: node.getStart(),
@@ -123,7 +117,7 @@ export class RehearsalService implements Service {
           category: DiagnosticCategory.Suggestion,
           code: 7050,
           messageText:
-            (isFunctionDeclaration(node) ? `Function` : `Method`) +
+            (isFunctionLike(node) ? `Function` : `Method`) +
             ` '${node.name.getText()}' lacks a return-type annotation.`,
         });
 

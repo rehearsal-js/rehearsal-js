@@ -207,7 +207,7 @@ class SomeClass {
 
   someFunctionWithManyReturnTypes(
     arg1: boolean,
-    arg2: boolean
+    arg2: boolean,
   ): string | number | Greeting<string> | Promise<number> {
     let result;
 

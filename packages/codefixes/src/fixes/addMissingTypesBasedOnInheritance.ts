@@ -1,4 +1,4 @@
-import { ChangesFactory } from '@rehearsal/ts-utils';
+import { ChangesFactory, getPositionFromClosingParen } from '@rehearsal/ts-utils';
 import ts from 'typescript';
 import { createCodeFixAction } from '../hints-codefix-collection.js';
 import { Diagnostics } from '../diagnosticInformationMap.generated.js';
@@ -46,18 +46,16 @@ export class AddMissingTypesBasedOnInheritanceCodeFix implements CodeFix {
       return undefined;
     }
 
-    const closeParen = node
-      .getChildren()
-      .find((node) => node.kind == ts.SyntaxKind.CloseParenToken);
+    const closeParenPosition = getPositionFromClosingParen(node);
 
     // Only named methods are supported
-    if (!closeParen) {
+    if (!closeParenPosition) {
       return undefined;
     }
 
     return createCodeFixAction(
       'addMissingTypeBasedOnInheritance',
-      [ChangesFactory.insertText(diagnostic.file, closeParen.getEnd() + 1, `: ${returnType} `)],
+      [ChangesFactory.insertText(diagnostic.file, closeParenPosition + 1, `: ${returnType} `)],
       'Add the missing return type based on inheritance'
     );
   }
