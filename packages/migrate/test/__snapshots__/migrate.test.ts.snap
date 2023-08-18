@@ -86,6 +86,7 @@ export interface InferMultipleArgsSignature {
 //
 
 export class InferMultipleArgs extends Component<InferMultipleArgsSignature> {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'drink' lacks a return-type annotation.
   get drink() {
     return this.args.beverage;
   }
@@ -213,8 +214,8 @@ export interface SomethingSignature {
 
 export class Something extends Component<SomethingSignature> {
   /** */
-  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
-  reset(...args): void {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'reset' lacks a return-type annotation.
+  reset(...args) {
     console.log(args);
   }
 
@@ -239,8 +240,8 @@ export interface SomethingSignature {
 export class Something extends Component<SomethingSignature> {
   /** */
 
-  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
-  reset(...args): void {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'reset' lacks a return-type annotation.
+  reset(...args) {
     console.log(args);
   }
 
@@ -323,7 +324,8 @@ export default class MyComponent {
     b = 2;
   }
 
-  containsUnsupportedDiagnostic(): () => void {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'containsUnsupportedDiagnostic' lacks a return-type annotation.
+  containsUnsupportedDiagnostic() {
     return function () {
       // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
       console.log(this);
@@ -421,7 +423,7 @@ import { inject as service } from \\"@ember/service\\";
 export default class Salutation extends Component {
   // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
   @service locale: { current: () => string };
-  get name() {
+  get name(): \\"Bob\\" | \\"Unknown\\" {
     if (this.locale.current() == \\"en-US\\") {
       return \\"Bob\\";
     }

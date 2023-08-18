@@ -16,7 +16,7 @@ import type { GlintLanguageServer, TransformManager } from '@glint/core';
 
 import type { DiagnosticWithLocation, Node } from 'typescript';
 
-const { forEachChild, isFunctionDeclaration, isMethodDeclaration } = ts;
+const { forEachChild, isFunctionLike } = ts;
 
 type TS = typeof import('typescript');
 export type GlintCore = typeof import('@glint/core');
@@ -107,7 +107,7 @@ export class GlintService implements Service {
     const diagnostics: DiagnosticWithLocation[] = [];
 
     const visitEveryNode = (node: Node): Node | undefined => {
-      if ((isFunctionDeclaration(node) || isMethodDeclaration(node)) && node.name && !node.type) {
+      if (isFunctionLike(node) && node.name && !node.type) {
         diagnostics.push({
           file: sourceFile,
           start: node.getStart(),
@@ -115,7 +115,7 @@ export class GlintService implements Service {
           category: ts.DiagnosticCategory.Suggestion,
           code: 7050,
           messageText:
-            (isFunctionDeclaration(node) ? `Function` : `Method`) +
+            (isFunctionLike(node) ? `Function` : `Method`) +
             ` '${node.name.getText()}' lacks a return-type annotation.`,
         });
 

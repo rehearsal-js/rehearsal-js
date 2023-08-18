@@ -6,7 +6,6 @@ import type { CodeFix, DiagnosticWithContext } from '../types.js';
 import type { CodeFixAction } from 'typescript';
 
 const { isFunctionLike } = ts;
-
 export class AddMissingReturnTypesCodeFix implements CodeFix {
   getErrorCodes = (): number[] => [Diagnostics.TS7050.code];
 
@@ -26,14 +25,27 @@ export class AddMissingReturnTypesCodeFix implements CodeFix {
       return undefined;
     }
 
-    const signature = diagnostic.checker.getSignatureFromDeclaration(diagnostic.node);
+    let typeToString: string;
 
-    if (!signature) {
-      return;
+    // In some cases for .gts files with methods with `...args` it will fail
+    // due to a missing symbol on a parameter.
+    try {
+      const signature = diagnostic.checker.getSignatureFromDeclaration(diagnostic.node);
+
+      if (!signature) {
+        return;
+      }
+
+      const returnType = diagnostic.checker.getReturnTypeOfSignature(signature);
+
+      if (!returnType) {
+        return;
+      }
+
+      typeToString = diagnostic.checker.typeToString(returnType);
+    } catch (error) {
+      return undefined;
     }
-
-    const returnType = diagnostic.checker.getReturnTypeOfSignature(signature);
-    const typeToString = diagnostic.checker.typeToString(returnType);
 
     if (!typeToString || typeToString.includes('any') || typeToString.includes('object')) {
       return undefined;
