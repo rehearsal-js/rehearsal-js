@@ -214,8 +214,8 @@ export interface SomethingSignature {
 
 export class Something extends Component<SomethingSignature> {
   /** */
-  // @ts-expect-error @rehearsal TODO TS7050: Function 'reset' lacks a return-type annotation.
-  reset(...args) {
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
     console.log(args);
   }
 
@@ -240,8 +240,8 @@ export interface SomethingSignature {
 export class Something extends Component<SomethingSignature> {
   /** */
 
-  // @ts-expect-error @rehearsal TODO TS7050: Function 'reset' lacks a return-type annotation.
-  reset(...args) {
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
     console.log(args);
   }
 
@@ -324,8 +324,7 @@ export default class MyComponent {
     b = 2;
   }
 
-  // @ts-expect-error @rehearsal TODO TS7050: Function 'containsUnsupportedDiagnostic' lacks a return-type annotation.
-  containsUnsupportedDiagnostic() {
+  containsUnsupportedDiagnostic(): () => void {
     return function () {
       // @ts-expect-error @rehearsal TODO TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
       console.log(this);
