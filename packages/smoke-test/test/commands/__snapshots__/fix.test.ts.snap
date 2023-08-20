@@ -9,14 +9,14 @@ exports[`fix command > base_ts_app (file only) 1`] = `
 [STARTED] Infer Types
 [DATA] processing file: /src/app.ts
 [TITLE] Types Inferred
-[TITLE]   2 errors caught by rehearsal
-[TITLE]   0 have been fixed by rehearsal
+[TITLE]   3 errors caught by rehearsal
+[TITLE]   1 have been fixed by rehearsal
 [TITLE]   2 errors need to be fixed manually
 [TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   2 errors caught by rehearsal
-[SUCCESS]   0 have been fixed by rehearsal
+[SUCCESS]   3 errors caught by rehearsal
+[SUCCESS]   1 have been fixed by rehearsal
 [SUCCESS]   2 errors need to be fixed manually
 [SUCCESS]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
@@ -182,7 +182,7 @@ const RUN_LIMIT = 500;
 stdout.write('\\\\x1b[?25l');
 
 // update the grid recursively on interval
-(function update(prevGrid, runTally = 0) {
+(function update(prevGrid, runTally = 0): void {
   // set the stdout cursor to the top left
   stdout.cursorTo(0, 0);
 
@@ -234,14 +234,14 @@ exports[`fix command > base_ts_app 1`] = `
 [DATA] processing file: /src/basic.index.ts
 [DATA] processing file: /src/greeting.ts
 [TITLE] Types Inferred
-[TITLE]   19 errors caught by rehearsal
-[TITLE]   13 have been fixed by rehearsal
+[TITLE]   21 errors caught by rehearsal
+[TITLE]   15 have been fixed by rehearsal
 [TITLE]   6 errors need to be fixed manually
 [TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   19 errors caught by rehearsal
-[SUCCESS]   13 have been fixed by rehearsal
+[SUCCESS]   21 errors caught by rehearsal
+[SUCCESS]   15 have been fixed by rehearsal
 [SUCCESS]   6 errors need to be fixed manually
 [SUCCESS]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 0 eslint errors, with details in the report"
@@ -252,7 +252,7 @@ exports[`fix command > base_ts_app 2`] = `
 export function generateRandomGrid(
   dimensions: number[],
   chars = ['▄', ' ']
-): string[][]  {
+): string[][] {
   const grid = [];
 
   // create the grid
@@ -332,7 +332,7 @@ export function getLiveNeighborCount(
   coords: number[] | [any, any],
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 'cellCharState' implicitly has an 'any' type.
   cellCharState
-): number  {
+): number {
   const [x, y] = coords;
 
   // 8 neighbors
@@ -411,7 +411,7 @@ const RUN_LIMIT = 500;
 stdout.write('\\\\x1b[?25l');
 
 // update the grid recursively on interval
-(function update(prevGrid, runTally = 0) {
+(function update(prevGrid, runTally = 0): void {
   // set the stdout cursor to the top left
   stdout.cursorTo(0, 0);
 
@@ -529,15 +529,15 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   102 errors caught by rehearsal
-[TITLE]   15 have been fixed by rehearsal
+[TITLE]   108 errors caught by rehearsal
+[TITLE]   21 have been fixed by rehearsal
 [TITLE]   87 errors need to be fixed manually
 [TITLE]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 55 glint errors, with details in the report
 [TITLE]     -- 3 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   102 errors caught by rehearsal
-[SUCCESS]   15 have been fixed by rehearsal
+[SUCCESS]   108 errors caught by rehearsal
+[SUCCESS]   21 have been fixed by rehearsal
 [SUCCESS]   87 errors need to be fixed manually
 [SUCCESS]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 55 glint errors, with details in the report
@@ -564,7 +564,7 @@ import ENV from 'super-rentals/config/environment';
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static';
 
 export default class MapComponent extends Component {
-  get src() {
+  get src(): string {
     // @ts-expect-error @rehearsal TODO TS2339: Property 'lng' does not exist on type 'Readonly<EmptyObject>'.
     let { lng, lat, width, height, zoom } = this.args;
 
@@ -575,7 +575,7 @@ export default class MapComponent extends Component {
     return \`\${MAPBOX_API}/\${coordinates}/\${dimensions}@2x?\${accessToken}\`;
   }
 
-  get token() {
+  get token(): string {
     return encodeURIComponent(ENV.MAPBOX_ACCESS_TOKEN);
   }
 }
@@ -594,11 +594,11 @@ export default class ShareButtonComponent extends Component {
   // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
   @service locale: { current: () => string };
 
-  get currentURL() {
+  get currentURL(): URL {
     return new URL(this.router.currentURL, window.location.origin);
   }
 
-  get shareURL() {
+  get shareURL(): URL {
     let url = new URL(TWEET_INTENT);
 
     // @ts-expect-error @rehearsal TODO TS2345: Argument of type 'URL' is not assignable to parameter of type 'string'. Consider verifying both types, using type assertion: '( this.currentURL as string)', or using type guard: 'if ( this.currentURL instanceof string) { ... }'.
@@ -653,7 +653,7 @@ export default class RentalModel extends Model {
   // @ts-expect-error @rehearsal TODO TS7008: Member 'description' implicitly has an 'any' type.
   @attr description;
 
-  get type() {
+  get type(): 'Community' | 'Standalone' {
     if (COMMUNITY_CATEGORIES.includes(this.category)) {
       return 'Community';
     } else {
@@ -785,15 +785,15 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   118 errors caught by rehearsal
-[TITLE]   41 have been fixed by rehearsal
+[TITLE]   123 errors caught by rehearsal
+[TITLE]   46 have been fixed by rehearsal
 [TITLE]   77 errors need to be fixed manually
 [TITLE]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 47 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   118 errors caught by rehearsal
-[SUCCESS]   41 have been fixed by rehearsal
+[SUCCESS]   123 errors caught by rehearsal
+[SUCCESS]   46 have been fixed by rehearsal
 [SUCCESS]   77 errors need to be fixed manually
 [SUCCESS]     -- 28 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 47 glint errors, with details in the report
@@ -867,15 +867,15 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [DATA] processing file: /src/SimpleComponent.ts
 [DATA] processing file: /src/index.ts
 [TITLE] Types Inferred
-[TITLE]   25 errors caught by rehearsal
-[TITLE]   14 have been fixed by rehearsal
+[TITLE]   27 errors caught by rehearsal
+[TITLE]   16 have been fixed by rehearsal
 [TITLE]   11 errors need to be fixed manually
 [TITLE]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 10 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   25 errors caught by rehearsal
-[SUCCESS]   14 have been fixed by rehearsal
+[SUCCESS]   27 errors caught by rehearsal
+[SUCCESS]   16 have been fixed by rehearsal
 [SUCCESS]   11 errors need to be fixed manually
 [SUCCESS]     -- 1 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 10 glint errors, with details in the report
@@ -961,8 +961,7 @@ class IncrementableButton extends Component {
   // @ts-expect-error @rehearsal TODO TS2339: Property 'startCount' does not exist on type 'Readonly<EmptyObject>'.
   @tracked count: number = this.args.startCount;
 
-  // @ts-expect-error @rehearsal TODO TS7050: Method 'increment' lacks a return-type annotation.
-  @action increment() {
+  @action increment(): void {
     this.count++;
   }
 
@@ -1001,6 +1000,7 @@ export default class GreetingHeader extends Component {
     {{@onion}}
   \`;
 
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'src' lacks a return-type annotation.
   get src() {
     // @ts-expect-error @rehearsal TODO TS2339: Property 'src' does not exist on type 'Readonly<EmptyObject>'.
     return this.args.src || \\"https://picsum.photos/250\\";
