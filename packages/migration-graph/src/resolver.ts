@@ -100,24 +100,28 @@ export class Resolver {
     const content = this.preprocessFileContents(importerAbsPath);
 
     const resolvedImports = this.scanForImports?.(contentType, content) ?? [];
-    const [imports] = parse(content);
 
-    const allImports = [
-      ...imports.map((imp) => imp.n).filter(onlyImportSources),
-      ...resolvedImports,
-    ];
+    try {
+      const [imports] = parse(content);
+      const allImports = [
+        ...imports.map((imp) => imp.n).filter(onlyImportSources),
+        ...resolvedImports,
+      ];
 
-    allImports.forEach((importee) => {
-      const importeeAbsPath = this.resolveImportee(importerAbsPath, importee);
-      if (importeeAbsPath) {
-        this.attachDependency(pkgName, importerAbsPath, importeeAbsPath);
-      } else {
-        debug(`attempting resolve missing: from ${importerAbsPath} -> ${importee}`);
-        if (this.includeExternals) {
-          this.attachFromPackageJson(packageRootPath, pkgJson, importerAbsPath, importee);
+      allImports.forEach((importee) => {
+        const importeeAbsPath = this.resolveImportee(importerAbsPath, importee);
+        if (importeeAbsPath) {
+          this.attachDependency(pkgName, importerAbsPath, importeeAbsPath);
+        } else {
+          debug(`attempting resolve missing: from ${importerAbsPath} -> ${importee}`);
+          if (this.includeExternals) {
+            this.attachFromPackageJson(packageRootPath, pkgJson, importerAbsPath, importee);
+          }
         }
-      }
-    });
+      });
+    } catch (_e) {
+      throw new Error(`Failed to parse contents of file: ${importerAbsPath}`);
+    }
   }
 
   private attachDependency(
