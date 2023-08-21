@@ -86,6 +86,7 @@ export interface InferMultipleArgsSignature {
 //
 
 export class InferMultipleArgs extends Component<InferMultipleArgsSignature> {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'drink' lacks a return-type annotation.
   get drink() {
     return this.args.beverage;
   }
@@ -421,7 +422,7 @@ import { inject as service } from \\"@ember/service\\";
 export default class Salutation extends Component {
   // @ts-expect-error @rehearsal TODO TS2564: Property 'locale' has no initializer and is not definitely assigned in the constructor.
   @service locale: { current: () => string };
-  get name() {
+  get name(): \\"Bob\\" | \\"Unknown\\" {
     if (this.locale.current() == \\"en-US\\") {
       return \\"Bob\\";
     }

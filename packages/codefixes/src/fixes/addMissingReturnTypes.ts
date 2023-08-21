@@ -1,32 +1,75 @@
-import { ChangesFactory } from '@rehearsal/ts-utils';
+import { ChangesFactory, getPositionFromClosingParen } from '@rehearsal/ts-utils';
 import ts from 'typescript';
 import { createCodeFixAction } from '../hints-codefix-collection.js';
 import { Diagnostics } from '../diagnosticInformationMap.generated.js';
 import type { CodeFix, DiagnosticWithContext } from '../types.js';
 import type { CodeFixAction } from 'typescript';
 
-const { isMethodDeclaration, isFunctionDeclaration } = ts;
-
-export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
+const { isFunctionLike } = ts;
+export class AddMissingReturnTypesCodeFix implements CodeFix {
   getErrorCodes = (): number[] => [Diagnostics.TS7050.code];
 
   getCodeAction(diagnostic: DiagnosticWithContext): CodeFixAction | undefined {
     if (
       diagnostic.node === undefined ||
-      !(isFunctionDeclaration(diagnostic.node) || isMethodDeclaration(diagnostic.node)) ||
+      !isFunctionLike(diagnostic.node) ||
       diagnostic.node.name === undefined
     ) {
       return undefined;
     }
 
-    const closeParen = diagnostic.node
-      .getChildren()
-      .find((node) => node.kind == ts.SyntaxKind.CloseParenToken);
-    if (!closeParen) {
+    // Find closing parent of function arguments
+    const targetPosition = getPositionFromClosingParen(diagnostic.node);
+
+    if (!targetPosition) {
       return undefined;
     }
 
-    const targetPosition = closeParen.getEnd();
+    let typeToString: string;
+
+    // In some cases for .gts files with methods with `...args` it will fail
+    // due to a missing symbol on a parameter.
+    try {
+      const signature = diagnostic.checker.getSignatureFromDeclaration(diagnostic.node);
+
+      if (!signature) {
+        return;
+      }
+
+      const returnType = diagnostic.checker.getReturnTypeOfSignature(signature);
+
+      if (!returnType) {
+        return;
+      }
+
+      typeToString = diagnostic.checker.typeToString(returnType);
+    } catch (error) {
+      // Fallback to inlay hints if unable to determine return type of signature
+      return this.fixMissingReturnTypeWithInlayHints(diagnostic, targetPosition);
+    }
+
+    if (!typeToString || typeToString.includes('any') || typeToString.includes('object')) {
+      return undefined;
+    }
+
+    return createCodeFixAction(
+      'addMissingReturnType',
+      [ChangesFactory.insertText(diagnostic.file, targetPosition, `: ${typeToString}`)],
+      'Add the missing return type based on inlay hint'
+    );
+  }
+
+  fixMissingReturnTypeWithInlayHints(
+    diagnostic: DiagnosticWithContext,
+    targetPosition: number
+  ): CodeFixAction | undefined {
+    if (
+      !diagnostic.node ||
+      !isFunctionLike(diagnostic.node) ||
+      diagnostic.node.name === undefined
+    ) {
+      return undefined;
+    }
 
     // TODO: Remove this hack for Glint's .gts files to be processed as .ts
     // The Glint's `program` doesn't know about .gts and represents them as .ts files under the hood
@@ -64,7 +107,7 @@ export class AddMissingTypesBasedOnInlayHintsCodeFix implements CodeFix {
     }
 
     return createCodeFixAction(
-      'addMissingTypeBasedOnInlayHint',
+      'addMissingReturnType',
       [ChangesFactory.insertText(diagnostic.file, hint.position, `${hint.text} `)],
       'Add the missing type based on inlay hint'
     );

@@ -158,6 +158,84 @@ export default makeToDo(ToDo);
 "
 `;
 
+exports[`Test base codefixes > addMissingReturnTypes 1`] = `
+"export function test1(): string {
+  return \\"Test this\\";
+}
+
+export const test2 = () => console.log(\\"Test this\\");
+
+export const test3 = () => \\"Test this\\";
+
+export function test4<Type>(arg: Array<Type>): Type[] {
+  return arg;
+}
+
+export async function test5(): Promise<TestClass> {
+  return new TestClass();
+}
+
+interface TestInterface {
+  test1(): string | undefined;
+}
+
+class BaseTestClass {
+  test2(param: boolean): number | string {
+    return param ? 0 : \\"0\\";
+  }
+}
+
+export class TestClass extends BaseTestClass implements TestInterface {
+  test1(): string | undefined {
+    return undefined;
+  }
+
+  test2(): string | number {
+    return 0;
+  }
+}
+class Greeting<T> {
+  phrase;
+  constructor(phrase: string) {
+    this.phrase = phrase;
+  }
+}
+
+// @ts-expect-error @rehearsal TODO TS6196: 'SomeClass' is declared but never used.
+class SomeClass {
+  constructor() {}
+
+  someFunctionWithManyReturnTypes(
+    arg1: boolean,
+    arg2: boolean,
+  ): string | number | Greeting<string> | Promise<number> {
+    let result;
+
+    if (arg1) {
+      result = \\"Hello\\";
+    } else if (arg2) {
+      result = new Greeting<string>(\\"Hey\\");
+    } else {
+      return foo(Math.random());
+    }
+
+    return result;
+  }
+}
+
+function foo(number: number): number | \\"mod6\\" | Promise<number> {
+  if (number % 6) {
+    return \\"mod6\\";
+  }
+  if (number % 2) {
+    return number;
+  }
+
+  return Promise.resolve(number);
+}
+"
+`;
+
 exports[`Test base codefixes > addMissingTypesBasedOnInheritance 1`] = `
 "// Basics
 
@@ -338,80 +416,6 @@ export class MultipleImpl extends MultipleClass implements MultipleInterface {
 
   moo(b: string): string {
     return b;
-  }
-}
-"
-`;
-
-exports[`Test base codefixes > addMissingTypesBasedOnInlayHints 1`] = `
-"export function test1(): string {
-  return \\"Test this\\";
-}
-
-export const test2 = () => console.log(\\"Test this\\");
-
-export const test3 = () => \\"Test this\\";
-
-export function test4<Type>(arg: Array<Type>): Type[] {
-  return arg;
-}
-
-export async function test5(): Promise<TestClass> {
-  return new TestClass();
-}
-
-interface TestInterface {
-  test1(): string | undefined;
-}
-
-class BaseTestClass {
-  test2(param: boolean): number | string {
-    return param ? 0 : \\"0\\";
-  }
-}
-
-export class TestClass extends BaseTestClass implements TestInterface {
-  test1(): string | undefined {
-    return undefined;
-  }
-
-  test2(): string | number {
-    return 0;
-  }
-}
-"
-`;
-
-exports[`Test base codefixes > addMissingTypesBasedOnInlayHints 2`] = `
-"// Use Case
-//
-// In the folllowing code, an inlay hint will sugggest a return type
-// for \`someFunctionWithManyReturnTypes\` with the following:
-// \`: string | Greeting<string> |...\`
-// Any suggestions with three-periods should NOT be added.
-
-class Greeting<T> {
-  phrase;
-  constructor(phrase: string) {
-    this.phrase = phrase;
-  }
-}
-
-class SomeClass {
-  constructor() {}
-
-  someFunctionWithManyReturnTypes(arg1: boolean, arg2: boolean) {
-    let result;
-
-    if (arg1) {
-      result = \\"Hello\\";
-    } else if (arg2) {
-      result = new Greeting<string>(\\"Hey\\");
-    } else {
-      result = Promise.resolve(new Greeting<string>(\\"Hola\\"));
-    }
-
-    return result;
   }
 }
 "

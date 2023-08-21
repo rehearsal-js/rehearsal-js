@@ -13,14 +13,14 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 
 [DATA] processing file: /src/app.ts
 [DATA] processing file: /src/sub/grid.ts
 [TITLE] Types Inferred
-[TITLE]   15 errors caught by rehearsal
-[TITLE]   6 have been fixed by rehearsal
+[TITLE]   16 errors caught by rehearsal
+[TITLE]   7 have been fixed by rehearsal
 [TITLE]   9 errors need to be fixed manually
 [TITLE]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 5 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   15 errors caught by rehearsal
-[SUCCESS]   6 have been fixed by rehearsal
+[SUCCESS]   16 errors caught by rehearsal
+[SUCCESS]   7 have been fixed by rehearsal
 [SUCCESS]   9 errors need to be fixed manually
 [SUCCESS]     -- 4 ts errors, marked by @ts-expect-error @rehearsal TODO
 [SUCCESS]     -- 5 eslint errors, with details in the report"
@@ -72,7 +72,7 @@ const RUN_LIMIT = 500;
 stdout.write('\\\\x1b[?25l');
 
 // update the grid recursively on interval
-(function update(prevGrid, runTally = 0) {
+(function update(prevGrid, runTally = 0): void {
   // set the stdout cursor to the top left
   stdout.cursorTo(0, 0);
 
@@ -163,7 +163,7 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a directory 
 export function generateRandomGrid(
   dimensions: number[],
   chars = ['▄', ' ']
-): string[][]  {
+): string[][] {
   const grid = [];
 
   // create the grid
@@ -193,7 +193,7 @@ export function getLiveNeighborCount(
   coords: number[] | [any, any],
   // @ts-expect-error @rehearsal TODO TS7006: Parameter 'cellCharState' implicitly has an 'any' type.
   cellCharState
-): number  {
+): number {
   const [x, y] = coords;
 
   // 8 neighbors
@@ -253,7 +253,7 @@ exports[`Command: fix "base_ts_app" fixture > can fix starting with a file 2`] =
 export function generateRandomGrid(
   dimensions: number[],
   chars = ['▄', ' ']
-): string[][]  {
+): string[][] {
   const grid = [];
 
   // create the grid

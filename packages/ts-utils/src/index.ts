@@ -5,6 +5,7 @@ export {
   getInterfaceMemberByName,
   getTypeAliasMemberByName,
   getClassMemberByName,
+  getPositionFromClosingParen,
   getTypeNameFromType,
   getTypeNameFromVariable,
   isSubtypeOf,
