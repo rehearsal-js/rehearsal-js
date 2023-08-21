@@ -99,8 +99,15 @@ export function findNearestPackageJson(startPath: string, stopPath?: string): st
   return findUpSync('package.json', { cwd: startPath, stopAt: stopPath });
 }
 
+export function findNearestPackageJson(startPath: string, stopPath?: string): string | undefined {
+  return findNearestFileName('package.json', startPath, stopPath);
+}
 export function findNearestTSConfig(startPath: string, stopPath?: string): string | undefined {
-  return findUpSync('tsconfig.json', { cwd: startPath, stopAt: stopPath });
+  return findNearestFileName('tsconfig.json', startPath, stopPath);
+}
+export function findNearestFileName(fileName: string, startPath: string, stopPath?: string): string | undefined {
+   return findUpSync(fileName, { cwd: startPath, stopAt: stopPath });
+}
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
