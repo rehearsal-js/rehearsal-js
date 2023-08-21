@@ -161,7 +161,6 @@ describe('Resolver', () => {
             },
           }),
         },
-
         'package-e': {
           'dist-types': {
             src: {
@@ -207,7 +206,6 @@ describe('Resolver', () => {
             },
           }),
         },
-
         'package-f': {
           unresolvable: {
             'index.js': `
@@ -330,6 +328,26 @@ describe('Resolver', () => {
           },
           'package.json': JSON.stringify({
             name: '@company/package-4',
+            dependencies: {},
+          }),
+        },
+
+        'parse-failure': {
+          src: {
+            'index.js': `
+            import MDXComponents from '@theme/MDXComponents';
+            function TokensHeader() {
+              return (
+                <section>
+                  <H1>blah</H1>
+                  <p>foo</p>
+                </section>
+              );
+            }
+            `,
+          },
+          'package.json': JSON.stringify({
+            name: '@company/package-5',
             dependencies: {},
           }),
         },
@@ -491,6 +509,12 @@ describe('Resolver', () => {
     expect(
       generateJson(project.baseDir, resolver.graph, topSortFiles(resolver.graph))
     ).toMatchSnapshot();
+  });
+
+  test('it throws with path to file', () => {
+    expect(() => {
+      resolver.walk(project.baseDir + '/packages/parse-failure/src/index.js');
+    }).toThrowError(`Failed to parse contents of file:`);
   });
 });
 
