@@ -1,3 +1,10 @@
+## <small>2.0.1 (2023-08-21)</small>
+
+* chore(gh-action-bot): adding new diagnostics ([3b6329a](https://github.com/rehearsal-js/rehearsal-js/commit/3b6329a))
+* feat: add return types to functions (#1242) ([41ff529](https://github.com/rehearsal-js/rehearsal-js/commit/41ff529)), closes [#1242](https://github.com/rehearsal-js/rehearsal-js/issues/1242)
+
+
+
 ## 2.0.0 (2023-08-17)
 
 * fix: prettier.format() return empty string for some .gts files (#1237) ([d45b176](https://github.com/rehearsal-js/rehearsal-js/commit/d45b176)), closes [#1237](https://github.com/rehearsal-js/rehearsal-js/issues/1237)
