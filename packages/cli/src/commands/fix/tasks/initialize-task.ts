@@ -11,7 +11,6 @@ import {
   isDepsPreReq,
   isESLintPreReq,
   isExistsESLintConfig,
-  isExistsPackageJSON,
   isExistsTSConfig,
   isNodePreReq,
   isTSConfigPreReq,
@@ -35,9 +34,14 @@ export function initTask(
 
       let projectType: ProjectType = 'base-ts';
 
-      isExistsPackageJSON(srcPath);
+      const foundPackageJson = findNearestPackageJson(srcPath);
 
-      const foundPackageJson = findNearestPackageJson(srcPath)!;
+      if (!foundPackageJson) {
+        throw new Error(
+          `Can't find package.json for '${srcPath}'. Please run rehearsal inside a project with a valid package.json.`
+        );
+      }
+
       const packageJSON = readJsonSync(foundPackageJson) as PackageJson;
 
       if (isEmberApp(packageJSON) || isEmberAddon(packageJSON)) {
@@ -46,7 +50,8 @@ export function initTask(
         projectType = 'glimmer';
       }
 
-      preFlightCheck(rootPath, srcPath, projectType, skipChecks);
+      // Each of sub-tasks of the next function will throw on failure
+      preFlightCheck(srcPath, rootPath, projectType, skipChecks);
 
       ctx.projectName = determineProjectName(rootPath) || '';
 
@@ -65,10 +70,9 @@ export function initTask(
   };
 }
 
-// each of these sub-tasks will throw on failure
 export function preFlightCheck(
-  rootPath: string,
   srcPath: string,
+  rootPath: string,
   projectType: ProjectType,
   skipChecks: SkipChecks = [],
   isSkipped = false
@@ -81,15 +85,14 @@ export function preFlightCheck(
   const { deps, eslint, tsconfig, node } = getPreReqs(projectType);
 
   // "isExists" checks these will throw faster than the prereq checks
-  isExistsTSConfig(srcPath);
-  isExistsESLintConfig(rootPath);
+  isExistsTSConfig(srcPath, rootPath);
+  isExistsESLintConfig(srcPath, rootPath);
   isValidGitIgnore(rootPath);
-  // prereq checks for both the version and the package
   if (!skipChecks.includes('deps')) {
-    isDepsPreReq(rootPath, deps);
+    isDepsPreReq(srcPath, rootPath, deps);
   }
   if (!skipChecks.includes('eslint')) {
-    isESLintPreReq(rootPath, eslint);
+    isESLintPreReq(srcPath, rootPath, eslint);
   }
   isTSConfigPreReq(srcPath, tsconfig);
   isNodePreReq(node);

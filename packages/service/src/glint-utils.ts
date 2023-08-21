@@ -1,7 +1,7 @@
 import { extname } from 'node:path';
+import { GlintConfig, loadConfig } from '@glint/core';
 import type { GlintService } from './glint-service.js';
 import type { PackageJson } from 'type-fest';
-import { GlintConfig, loadConfig } from '@glint/core';
 
 // The list of extensions that we expect to be handled by Glint{Fix,Check} plugins. Note that
 // in any ember/glimmer project, we'll use the glint *service* for all files. This list is only
@@ -13,7 +13,7 @@ export function isEmberApp(packageJson: PackageJson): boolean {
 }
 
 function hasDevDependency(packageJson: PackageJson, packageName: string): boolean {
-  return !!(packageJson?.devDependencies && packageName in packageJson.devDependencies) ?? false;
+  return (packageJson?.devDependencies && packageName in packageJson.devDependencies) ?? false;
 }
 
 export function isEmberAddon(packageJson: PackageJson): boolean {

@@ -1,3 +1,4 @@
+import { dirname } from 'node:path';
 import ts from 'typescript';
 import type {
   ClassDeclaration,
@@ -175,10 +176,7 @@ export function isTypeMatched(typeString: string, type: Type): boolean {
 }
 
 // returns the singular compilerOptions record from all tsconfig.json including extends
-export function getTSConfigCompilerOptionsCanonical(
-  basePath: string,
-  tsConfigPath: string
-): CompilerOptions {
+export function getTSConfigCompilerOptionsCanonical(tsConfigPath: string): CompilerOptions {
   const configFile = readConfigFile(tsConfigPath, (filePath: string, encoding?: string) =>
     sys.readFile(filePath, encoding)
   );
@@ -186,7 +184,7 @@ export function getTSConfigCompilerOptionsCanonical(
   const { options: compilerOptions } = parseJsonConfigFileContent(
     configFile.config,
     ts.sys,
-    basePath,
+    dirname(tsConfigPath),
     {},
     'tsconfig.json'
   );

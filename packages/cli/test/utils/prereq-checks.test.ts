@@ -7,8 +7,6 @@ import {
   isTSConfigPreReq,
 } from '../../src/utils/prereq-checks.js';
 
-const __dirname = new URL('.', import.meta.url).pathname;
-
 describe('prereq checks', () => {
   let project: Project;
   afterEach(() => {
@@ -65,8 +63,12 @@ describe('prereq checks', () => {
       },
     });
     await project.write();
-    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
-    expect(() => isESLintPreReq(project.baseDir, '@foo/parser')).toThrowErrorMatchingSnapshot();
+    expect(
+      isESLintPreReq(project.baseDir, project.baseDir, '@typescript-eslint/parser')
+    ).toBeTruthy();
+    expect(() =>
+      isESLintPreReq(project.baseDir, project.baseDir, '@foo/parser')
+    ).toThrowErrorMatchingSnapshot();
     project.dispose();
 
     // YML
@@ -76,7 +78,9 @@ describe('prereq checks', () => {
       },
     });
     await project.write();
-    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
+    expect(
+      isESLintPreReq(project.baseDir, project.baseDir, '@typescript-eslint/parser')
+    ).toBeTruthy();
     project.dispose();
 
     // JS
@@ -86,7 +90,9 @@ describe('prereq checks', () => {
       },
     });
     await project.write();
-    expect(isESLintPreReq(project.baseDir, '@typescript-eslint/parser')).toBeTruthy();
+    expect(
+      isESLintPreReq(project.baseDir, project.baseDir, '@typescript-eslint/parser')
+    ).toBeTruthy();
     project.dispose();
   });
 
@@ -112,12 +118,18 @@ describe('prereq checks', () => {
 
     await project.write();
 
-    expect(isDepsPreReq(project.baseDir, reqDeps)).toBeTruthy();
-    expect(() => isDepsPreReq(project.baseDir, reqDepsFailure)).toThrowErrorMatchingSnapshot();
+    expect(isDepsPreReq(project.baseDir, project.baseDir, reqDeps)).toBeTruthy();
+    expect(() =>
+      isDepsPreReq(project.baseDir, project.baseDir, reqDepsFailure)
+    ).toThrowErrorMatchingSnapshot();
   });
 
-  test('determineProjectName()', () => {
-    const projectName = determineProjectName(__dirname);
-    expect(projectName).toEqual('@rehearsal/cli');
+  test('determineProjectName()', async () => {
+    project = new Project('my-project', '0.0.0');
+
+    await project.write();
+
+    const projectName = determineProjectName(project.baseDir);
+    expect(projectName).toEqual('my-project');
   });
 });
