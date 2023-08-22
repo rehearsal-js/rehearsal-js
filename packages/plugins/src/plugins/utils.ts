@@ -137,3 +137,21 @@ export function inJsxText(sourceFile: ts.SourceFile, pos: number): boolean {
 
   return !!ts.forEachChild(sourceFile, visitor);
 }
+
+export function getBoundaryOfCommentBlock(
+  start: number,
+  length: number,
+  text: string
+): { start: number; end: number } {
+  const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
+
+  let end = start + length - 1;
+
+  end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
+  end = ts.isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
+
+  return {
+    start: newStart,
+    end,
+  };
+}

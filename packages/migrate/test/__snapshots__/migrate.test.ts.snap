@@ -192,6 +192,30 @@ export class Something extends Component<InterfaceFromCommentSignature> {
 "
 `;
 
+exports[`fix > .gts > fix .gts file twice, no changes expected 1`] = `
+"export class Foo {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'hello' lacks a return-type annotation.
+  hello() {
+    // Existing comment
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
+    return this.name;
+  }
+}
+"
+`;
+
+exports[`fix > .gts > fix .gts file twice, no changes expected 2`] = `
+"export class Foo {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'hello' lacks a return-type annotation.
+  hello() {
+    // Existing comment
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
+    return this.name;
+  }
+}
+"
+`;
+
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
 "import Component from \\"@glimmer/component\\";
 
@@ -239,7 +263,6 @@ export interface SomethingSignature {
 
 export class Something extends Component<SomethingSignature> {
   /** */
-
   // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
   reset(...args): void {
     console.log(args);
@@ -446,6 +469,28 @@ exports[`fix > .hbs > template only 1`] = `"Hello!"`;
 exports[`fix > .ts > class with missing prop 1`] = `
 "class Foo {
   hello() {
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
+    return this.name;
+  }
+}
+"
+`;
+
+exports[`fix > .ts > fix .ts file twice, no changes expected 1`] = `
+"export class Foo {
+  hello() {
+    // Existing comment
+    // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
+    return this.name;
+  }
+}
+"
+`;
+
+exports[`fix > .ts > fix .ts file twice, no changes expected 2`] = `
+"export class Foo {
+  hello() {
+    // Existing comment
     // @ts-expect-error @rehearsal TODO TS2339: Property 'name' does not exist on type 'Foo'.
     return this.name;
   }

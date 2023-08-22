@@ -385,6 +385,32 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
+    test('fix .gts file twice, no changes expected', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/foo.gts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+
+      const theFirstPassOutput = readFileSync(outputs[0]).toString();
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[0]).toEqual(theFirstPassOutput);
+    });
+
     describe('component signature codefix', () => {
       test('with typedef for component signature interface', async () => {
         const [inputs, outputs] = prepareInputFiles(project, ['gts/signatures/with-typedef.gts']);
@@ -890,6 +916,47 @@ describe('fix', () => {
       }
 
       expectFile(outputs[0]).toMatchSnapshot();
+    });
+
+    test('fix .ts file twice, no changes expected', async () => {
+      project.mergeFiles({
+        src: {
+          'foo.ts': `
+export class Foo {
+  hello() {
+    // Existing comment
+    return this.name;
+  }
+}
+`,
+        },
+      });
+
+      await project.write();
+
+      const [inputs, outputs] = prepareInputFiles(project, ['foo.ts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+
+      const theFirstPassOutput = readFileSync(outputs[0]).toString();
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).toMatchSnapshot();
+      expectFile(outputs[0]).toEqual(theFirstPassOutput);
     });
   });
 

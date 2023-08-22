@@ -4,8 +4,7 @@ import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts from 'typescript';
 import { getLocation } from '../helpers.js';
-
-const { isLineBreak } = ts;
+import { getBoundaryOfCommentBlock } from './utils.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-report');
 
@@ -20,10 +19,10 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
 
     DEBUG_CALLBACK(`Plugin 'DiagnosticReport' run on %O:`, fileName);
 
-    const originalConentWithErrorsSuppressed = context.service.getFileText(fileName);
+    const originalContentWithErrorsSuppressed = context.service.getFileText(fileName);
 
-    const lineHasSupression: { [line: number]: boolean } = {};
-    let contentWithErrors = originalConentWithErrorsSuppressed;
+    const lineHasSuppression: { [line: number]: boolean } = {};
+    let contentWithErrors = originalContentWithErrorsSuppressed;
     const sourceFile = context.service.getSourceFile(fileName);
     const tagStarts = [...contentWithErrors.matchAll(new RegExp(options.commentTag!, 'g'))].map(
       (m) => m.index!
@@ -41,16 +40,17 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
       }
 
       // Remove comment, together with the {} that wraps around comments in React
-      const boundary = this.getBoundaryOfCommentBlock(
+      const boundary = getBoundaryOfCommentBlock(
         commentSpan.start,
         commentSpan.length,
         contentWithErrors
       );
       contentWithErrors =
-        contentWithErrors.substring(0, boundary.start) + contentWithErrors.substring(boundary.end);
+        contentWithErrors.substring(0, boundary.start) +
+        contentWithErrors.substring(boundary.end + 1);
     }
 
-    // Our document now has unsuppressed errors in it. Set that content into the langauge server so we can type check it
+    // Our document now has unsuppressed errors in it. Set that content into the language server, so we can type check it
     context.service.setFileText(fileName, contentWithErrors);
 
     const diagnostics = this.getDiagnostics(context.service, fileName);
@@ -61,7 +61,7 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
       const location = getLocation(diagnostic.file, diagnostic.start, diagnostic.length);
 
       // We only allow for a single entry per line
-      if (!lineHasSupression[location.startLine]) {
+      if (!lineHasSuppression[location.startLine]) {
         context.reporter.addTSItemToRun(
           diagnostic,
           diagnostic.node,
@@ -70,32 +70,14 @@ export class DiagnosticReportPlugin extends Plugin<DiagnosticReportPluginOptions
           helpUrl,
           options.addHints
         );
-        lineHasSupression[location.startLine] = true;
+        lineHasSuppression[location.startLine] = true;
       }
     }
 
     // We have now collected the correct line / cols of the errors. We can now set the document back to one without errors.
-    context.service.setFileText(fileName, originalConentWithErrorsSuppressed);
+    context.service.setFileText(fileName, originalContentWithErrorsSuppressed);
 
     return Promise.resolve([]);
-  }
-
-  getBoundaryOfCommentBlock(
-    start: number,
-    length: number,
-    text: string
-  ): { start: number; end: number } {
-    const newStart = start - 1 >= 0 && text[start - 1] === '{' ? start - 1 : start;
-
-    let end = start + length - 1;
-
-    end = end + 1 < text.length && text[end + 1] === '}' ? end + 1 : end;
-    end = isLineBreak(text.charCodeAt(end + 1)) ? end + 1 : end;
-
-    return {
-      start: newStart,
-      end,
-    };
   }
 
   getDiagnostics(service: Service, fileName: string): DiagnosticWithContext[] {
