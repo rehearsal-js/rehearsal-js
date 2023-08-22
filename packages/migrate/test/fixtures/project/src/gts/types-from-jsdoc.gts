@@ -1,5 +1,21 @@
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
 /** @type { FakeType } */
 export const x = 0;
+
+export default class Hello extends Component {
+  name = 'world';
+
+  test(...args) {
+
+  }
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+
 
 export class Foo {
   value = 0;
@@ -117,9 +133,7 @@ export function thinkTwice(a) {
  * @return {Array<{content: string}>}
  */
 export function issueWithTheReturnType([a, b], c) {
-  a;
-  b;
-  c;
+  a; b; c;
   return c;
 }
 
@@ -131,9 +145,5 @@ export function issueWithTheReturnType([a, b], c) {
  * @return void
  */
 export function inferenceOfDestructuredParams([a, b], [c, d], e) {
-  a;
-  b;
-  c;
-  d;
-  e;
+  a; b; c; d; e;
 }

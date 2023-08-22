@@ -28,7 +28,11 @@ export const codefixes = new CodeFixesProvider([
 ]);
 
 export const glintCodeFixes = new CodeFixesProvider([
-  new BaseCodeFixCollection([new AddMissingReturnTypesCodeFix(), new StubMissingJSDocParamName()]),
+  new BaseCodeFixCollection([
+    new AddMissingReturnTypesCodeFix(),
+    new AnnotateWithStrictTypeFromJSDoc(),
+    new StubMissingJSDocParamName(),
+  ]),
   new GlintCodeFixCollection(),
   new BaseCodeFixCollection([
     // Need to be run after standard "typedef to type" fix applied
