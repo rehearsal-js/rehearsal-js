@@ -411,6 +411,23 @@ describe('fix', () => {
       expectFile(outputs[0]).toEqual(theFirstPassOutput);
     });
 
+    test('infer .gts with strict types from JSDocs', async () => {
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/types-from-jsdoc.gts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+      expectFile(outputs[0]).toMatchSnapshot();
+      //expectFile(outputs[0]).contains('class TestMissingLocalPropGts');
+    });
+
     describe('component signature codefix', () => {
       test('with typedef for component signature interface', async () => {
         const [inputs, outputs] = prepareInputFiles(project, ['gts/signatures/with-typedef.gts']);

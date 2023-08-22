@@ -70,7 +70,7 @@ export class GlintService implements Service {
    */
   getSourceFile(fileName: string): ts.SourceFile {
     if (isGlintFile(this, fileName)) {
-      return ts.createSourceFile(
+      return this.ts.createSourceFile(
         fileName,
         this.getFileText(fileName),
         ts.ScriptTarget.Latest,
