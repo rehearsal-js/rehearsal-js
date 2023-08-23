@@ -147,6 +147,29 @@ describe('fix', () => {
       project.dispose();
     });
 
+    test('annotate with strict types', async () => {
+      // since we are no longer doing a file conversion input and output are the same
+      const [inputs, outputs] = prepareInputFiles(project, ['gts/with-strict-types.gts']);
+
+      const input: MigrateInput = {
+        projectRootDir: project.baseDir,
+        packageDir: project.baseDir,
+        filesToMigrate: inputs,
+        reporter,
+        mode: 'drain',
+      };
+
+      for await (const _ of migrate(input)) {
+        // no ops
+      }
+
+      expectFile(outputs[0]).contains('export const a: number | string = 0;');
+      expectFile(outputs[0]).contains(
+        `// @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type.`
+      );
+      expectFile(outputs[0]).toMatchSnapshot();
+    });
+
     test('with bare template', async () => {
       // since we are no longer doing a file conversion input and output are the same
       const [inputs, outputs] = prepareInputFiles(project, ['gts/template-only.gts']);

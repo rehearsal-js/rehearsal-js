@@ -1,13 +1,13 @@
 import { type Diagnostic, CodeActionKind } from 'vscode-languageserver';
+import ts, { type FormatCodeSettings, type CodeFixAction } from 'typescript';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
 import { isCodeFixSupportedByDescription } from './safe-codefixes.js';
 import type { GlintService } from '@rehearsal/service';
-import ts, { type FormatCodeSettings, type CodeFixAction } from 'typescript';
 import type { CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 
 const { getDefaultFormatCodeSettings } = ts;
 
-interface GlintDiagnosticWithContext extends DiagnosticWithContext {
+export interface GlintDiagnosticWithContext extends DiagnosticWithContext {
   glintService: GlintService;
   glintDiagnostic: Diagnostic;
 }

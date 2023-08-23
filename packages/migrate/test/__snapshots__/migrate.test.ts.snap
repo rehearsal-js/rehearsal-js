@@ -1,5 +1,251 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`fix > .gts > annotate with strict types 1`] = `
+"import Component from \\"@glimmer/component\\";
+
+export interface SomethingSignature {
+  Args: { age: any };
+}
+
+export class Something extends Component<SomethingSignature> {
+  /** */
+  // @ts-expect-error @rehearsal TODO TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
+  reset(...args): void {
+    console.log(args);
+  }
+
+  shouldExist(): void {
+    console.log(\\"should exist in output\\");
+  }
+
+  <template>
+    <span>Hello, I am {{this.name}} and I am {{@age}} years old!</span>
+  </template>
+}
+
+export class Foo {
+  value = 0;
+}
+
+export class GenericClass<something = number, somethingElse = number> {
+  // @ts-expect-error @rehearsal TODO TS7050: Function 'thing' lacks a return-type annotation.
+  thing(a: something, b: somethingElse) {
+    console.log(a, b);
+  }
+}
+
+/** @type {number | string} */
+export const a: number | string = 0;
+
+/** @type {number | string | UnavailableType} */
+// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+export const b = 0;
+
+/** @type {GenericClass<string, string, string>} */
+// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+export const c = 0;
+
+export class ThinkClass {
+  /** @type {number | null} */
+  a: number | null = 0;
+
+  /** @type {number | UnavailableType} */
+  // @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+  b = 0;
+
+  /**
+   * JSDoc
+   *
+   * @param {number} a                                //
+   * @param {(string|number)} b                       // ParenthesizedType.type => UnionType
+   * @param {Foo} c                                   // TypeReference
+   * @param {number|UnavailableType} d                // UnionType
+   * @param {() => boolean} e                         // FunctionType
+   * @param {GenericClass<string, string>} f          // TypeReference
+
+   * @param {<callbackFunction>} g                    // FunctionType
+
+   * @param {UnavailableType} h                       // TypeReference
+   * @param {Foo|UnavailableType} i                   // UnionType
+   * @param {() => UnavailableType} j                 // FunctionType
+   * @param {GenericClass<string, UnavailableType>} k // TypeReference
+   * @param {number|() => UnavailableType} l          // UnionType
+   * @param {(a: UnavailableType) => void} m          // FunctionType
+   * @param {(a, b: string) => void} n                // FunctionType
+
+   * @param {GenericClass<string, string, string>} o  // TypeReference... 3 args instead of 2
+
+   * @param {{ a: string, b: Date }} p
+   * @param {{ a: string, b: UnavailableType }} q
+   * @param {function(this:{ a: string}, string, number): boolean} r
+
+   * @return {void}
+   */
+  // @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+  more(
+    a: number,
+    b: string | number,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'c' implicitly has an 'any' type.
+    c,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type.
+    d,
+    e: () => boolean,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'f' implicitly has an 'any' type.
+    f,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type.
+    g,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type.
+    h,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type.
+    i,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type.
+    j,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type.
+    k,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type.
+    l,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type.
+    m,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
+    n: (a, b: string) => void,
+    o: GenericClass<string, string, string>,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'p' implicitly has an 'any' type.
+    p,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type.
+    q,
+    r: (this: { a: string }, arg1: string, arg2: number) => boolean,
+    // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
+    s
+  ): void {
+    return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
+  }
+
+  /**
+   * Some function
+   * @param {UnavailableType} a
+   * @return {UnavailableType}
+   */
+  // @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+  twice(a) {
+    return a;
+  }
+}
+
+/**
+ * JSDoc
+ *
+ * @param {number} a                                //
+ * @param {(string|number)} b                       // ParenthesizedType.type => UnionType
+ * @param {Foo} c                                   // TypeReference
+ * @param {number|UnavailableType} d                // UnionType
+ * @param {() => boolean} e                         // FunctionType
+ * @param {GenericClass<string, string>} f          // TypeReference
+
+ * @param {<callbackFunction>} g                    // FunctionType
+
+ * @param {UnavailableType} h                       // TypeReference
+ * @param {Foo|UnavailableType} i                   // UnionType
+ * @param {() => UnavailableType} j                 // FunctionType
+ * @param {GenericClass<string, UnavailableType>} k // TypeReference
+ * @param {number|() => UnavailableType} l          // UnionType
+ * @param {(a: UnavailableType) => void} m          // FunctionType
+ * @param {(a, b: string) => void} n                // FunctionType
+
+ * @param {GenericClass<string, string, string>} o  // TypeReference... 3 args instead of 2
+
+ * @param {{ a: string, b: Date }} p                //
+ * @param {{ a: string, b: UnavailableType }} q     //
+ * @param {function(this:{ a: string}, string, number): boolean} r
+
+ * @return {void}
+ */
+// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+export function think(
+  a: number,
+  b: string | number,
+  c: Foo,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'd' implicitly has an 'any' type.
+  d,
+  e: () => boolean,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'f' implicitly has an 'any' type.
+  f,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'g' implicitly has an 'any' type.
+  g,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'h' implicitly has an 'any' type.
+  h,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'i' implicitly has an 'any' type.
+  i,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'j' implicitly has an 'any' type.
+  j,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'k' implicitly has an 'any' type.
+  k,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'l' implicitly has an 'any' type.
+  l,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'm' implicitly has an 'any' type.
+  m,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'a' implicitly has an 'any' type.
+  n: (a, b: string) => void,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'o' implicitly has an 'any' type.
+  o,
+  p: { a: string; b: Date },
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 'q' implicitly has an 'any' type.
+  q,
+  r: (this: { a: string }, arg1: string, arg2: number) => boolean,
+  // @ts-expect-error @rehearsal TODO TS7006: Parameter 's' implicitly has an 'any' type.
+  s
+): void {
+  return console.log(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s);
+}
+
+/**
+ * Some function
+ * @param {UnavailableType} a
+ * @return {UnavailableType}
+ */
+// @ts-expect-error @rehearsal TODO TS80004: JSDoc types may be moved to TypeScript types.
+export function thinkTwice(a) {
+  return a;
+}
+
+/**
+ * The return type is throwing an error
+ * @param {[number, number]} a-and-b
+ * @param {Array<string>} c
+ * @return {Array<{content: string}>}
+ */
+export function issueWithTheReturnType(
+  [a, b]: [number, number],
+  c: Array<string>
+): Array<{ content: string }> {
+  a;
+  b;
+  c;
+  // @ts-expect-error @rehearsal TODO TS2322: Type 'string' is being returned or assigned, but type 'content: string' is expected. Please convert type 'string' to type 'content: string', or return or assign a variable of type 'content: string'
+  return c;
+}
+
+/**
+ * The example of type inference of destructured parameters
+ * @param {[number, number]} a-and-b
+ * @param {[string, string]} the next one
+ * @param {boolean} e
+ * @return void
+ */
+// @ts-expect-error @rehearsal TODO TS7050: Function 'inferenceOfDestructuredParams' lacks a return-type annotation.
+export function inferenceOfDestructuredParams(
+  [a, b]: [number, number],
+  [c, d]: [string, string],
+  e: boolean
+) {
+  a;
+  b;
+  c;
+  d;
+  e;
+}
+"
+`;
+
 exports[`fix > .gts > component signature codefix > add component signature interface 1`] = `
 "import Component from \\"@glimmer/component\\";
 
