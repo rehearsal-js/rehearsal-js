@@ -26,7 +26,7 @@ export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
       const rawActions = diagnostic.glintService
         .getGlintService()
         .getCodeActions(
-          diagnostic.file.fileName,
+          diagnostic.file.fileName.replace('.ts', '.gts'),
           CodeActionKind.QuickFix,
           diagnostic.glintDiagnostic.range,
           [diagnostic.glintDiagnostic],

@@ -11,7 +11,6 @@ import {
   type CodeAction,
 } from 'vscode-languageserver';
 import { Service } from './rehearsal-service.js';
-import { isGlintFile } from './glint-utils.js';
 import type { GlintLanguageServer, TransformManager } from '@glint/core';
 
 import type { DiagnosticWithLocation, Node } from 'typescript';
@@ -54,7 +53,7 @@ export class GlintService implements Service {
    * Updates the current state of the file with the new content
    */
   setFileText(fileName: string, text: string): void {
-    this.service.updateFile(fileName, text);
+    this.service.updateFile(fileName.replace('.ts', '.gts'), text);
   }
 
   /**
@@ -69,18 +68,8 @@ export class GlintService implements Service {
    * Gets a SourceFile object from the compiled program
    */
   getSourceFile(fileName: string): ts.SourceFile {
-    if (isGlintFile(this, fileName)) {
-      return this.ts.createSourceFile(
-        fileName,
-        this.getFileText(fileName),
-        ts.ScriptTarget.Latest,
-        // This parameter makes SourceFile object similar to one that TS program returns
-        // Helps each Node to have access to a source file content + working getStart(), getText(), etc. methods
-        true
-      );
-    } else {
-      return this.getLanguageService().getProgram()!.getSourceFile(fileName)!;
-    }
+    // Returning AST for file with "greek" symbols (transformed)
+    return this.getLanguageService().getProgram()!.getSourceFile(fileName.replace('.gts', '.ts'))!;
   }
 
   /**
@@ -154,17 +143,22 @@ export class GlintService implements Service {
   }
 
   convertTsDiagnosticToLSP(diagnostic: ts.DiagnosticWithLocation): Diagnostic {
+    const originalRange = this.transformManager.getOriginalRange(
+      diagnostic.file.fileName.replace('.ts', '.gts'),
+      diagnostic.start,
+      diagnostic.start + diagnostic.length
+    );
+
+    const text = this.getFileText(diagnostic.file.fileName.replace('.ts', '.gts'));
+
     return {
       source: diagnostic.source,
       severity: severityForDiagnostic(this.ts, diagnostic),
       code: diagnostic.code,
       message: diagnostic.messageText as string,
       range: {
-        start: this.pathUtils.offsetToPosition(diagnostic.file.text, diagnostic.start),
-        end: this.pathUtils.offsetToPosition(
-          diagnostic.file.text,
-          diagnostic.start + diagnostic.length
-        ),
+        start: this.pathUtils.offsetToPosition(text, originalRange.originalStart),
+        end: this.pathUtils.offsetToPosition(text, originalRange.originalEnd),
       },
     };
   }

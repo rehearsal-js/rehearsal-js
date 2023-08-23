@@ -4,7 +4,7 @@ import { CodeFixesProvider } from './codefixes-provider.js';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
 
 import { AddErrorTypeGuardCodeFix } from './fixes/addErrorTypeGuard.js';
-import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
+//import { AddMissingArgToComponentSignature } from './fixes/glint/addMissingArgToComponentSignature.js';
 import { AddMissingExportCodeFix } from './fixes/addMissingExport.js';
 import { AddMissingTypesBasedOnInheritanceCodeFix } from './fixes/addMissingTypesBasedOnInheritance.js';
 import { AddMissingReturnTypesCodeFix } from './fixes/addMissingReturnTypes.js';
@@ -36,7 +36,7 @@ export const glintCodeFixes = new CodeFixesProvider([
   new GlintCodeFixCollection(),
   new BaseCodeFixCollection([
     // Need to be run after standard "typedef to type" fix applied
-    new AddMissingArgToComponentSignature(),
+    //new AddMissingArgToComponentSignature(),
   ]),
 ]);
 

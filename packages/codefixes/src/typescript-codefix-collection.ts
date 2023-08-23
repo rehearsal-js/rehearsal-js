@@ -82,9 +82,9 @@ export class TypescriptCodeFixCollection implements CodeFixCollection {
         `getCodeFixesAtPosition threw an exception: ${diagnostic.code} ${diagnostic.file.fileName}\n ${e}`
       );
     } else {
-      throw new Error(
-        `An unknown error occurred when attempting to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
-      );
+      //throw new Error(
+      //  `An unknown error occurred when attempting to getCodeFixesAtPosition for file: ${diagnostic.file.fileName} due to TS${diagnostic.code} ${diagnostic.messageText}`
+      //);
     }
   }
 

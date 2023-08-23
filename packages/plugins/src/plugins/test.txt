@@ -1,0 +1,26 @@
+mport Component from "@glimmer/component";
+
+export class Something extends Component {
+  /**
+   * @param {Event} -- Something
+   * @param {string} -- Another
+   * @param {*} -- I don't know
+   */
+  reset(...args) {
+    console.log(args);
+  }
+
+  shouldExist() {
+    console.log("should exist in output");
+  }
+
+  static { ({} as typeof import("@glint/environment-ember-template-imports/-private/dsl")).templateForBackingValue(this, function(𝚪, χ: typeof import("@glint/environment-ember-template-imports/-private/dsl")) {
+  {
+    const 𝛄 = χ.emitElement("span");
+    𝛄;
+    χ.emitContent(χ.resolveOrReturn(𝚪.this.name)());
+    χ.emitContent(χ.resolveOrReturn(𝚪.args.age)());
+  }
+  𝚪; χ;
+}) }
+}

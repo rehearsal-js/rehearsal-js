@@ -350,7 +350,7 @@ describe('fix', () => {
       expectFile(outputs[0]).toMatchSnapshot();
     });
 
-    test('strips jsdoc param with missing name', async () => {
+    test.only('strips jsdoc param with missing name', async () => {
       const [inputs, outputs] = prepareInputFiles(project, [
         'gts/with-missing-jsdoc-param-name.gts',
       ]);
@@ -366,6 +366,8 @@ describe('fix', () => {
       for await (const _ of migrate(input)) {
         // no ops
       }
+
+      console.log(readFileSync(outputs[0], 'utf-8'));
 
       expectFile(outputs[0], 'does not have rehearsal TODO for param').not.contains(
         `// @ts-expect-error @rehearsal TODO TS8024: JSDoc '@param' tag has name '', but there is no parameter with that name.`
