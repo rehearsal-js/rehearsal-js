@@ -216,6 +216,23 @@ exports[`fix > .gts > fix .gts file twice, no changes expected 2`] = `
 "
 `;
 
+exports[`fix > .gts > infer .gts with strict types from JSDocs 1`] = `
+"export class Component {
+  // @ts-expect-error @rehearsal TODO TS2345: Argument of type 'typeof Component' is not assignable to parameter of type 'abstract new () => HasContext<AnyContext'.
+  <template>
+    <span>@name</span>
+  </template>
+}
+
+/** @type { FakeClass } */
+// @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'FakeClass'.
+export const a: FakeClass = 0;
+
+/** @type { number | string } */
+export const b: number | string = 0;
+"
+`;
+
 exports[`fix > .gts > still fixes the file if there are no errors 1`] = `
 "import Component from \\"@glimmer/component\\";
 

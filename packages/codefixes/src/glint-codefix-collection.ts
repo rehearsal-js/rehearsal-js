@@ -1,15 +1,14 @@
-import { type Diagnostic, CodeActionKind } from 'vscode-languageserver';
+import { DiagnosticSeverity } from 'vscode-languageserver';
+import ts, { type FormatCodeSettings, type CodeFixAction } from 'typescript';
 import { TypescriptCodeFixCollection } from './typescript-codefix-collection.js';
 import { isCodeFixSupportedByDescription } from './safe-codefixes.js';
 import type { GlintService } from '@rehearsal/service';
-import ts, { type FormatCodeSettings, type CodeFixAction } from 'typescript';
 import type { CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
 
 const { getDefaultFormatCodeSettings } = ts;
 
 interface GlintDiagnosticWithContext extends DiagnosticWithContext {
   glintService: GlintService;
-  glintDiagnostic: Diagnostic;
 }
 
 const glintSupportedFixDescriptions = [`Unused '@glint-expect-error' directive.`];
@@ -23,18 +22,59 @@ export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
     let fixes: readonly CodeFixAction[] = [];
 
     try {
+      const gs = diagnostic.glintService;
+
+      fixes = gs
+        .getLanguageService()
+        .getCodeFixesAtPosition(
+          diagnostic.file.fileName,
+          diagnostic.start,
+          diagnostic.start + diagnostic.length,
+          [diagnostic.code],
+          formatCodeSettings ?? getDefaultFormatCodeSettings(),
+          this.getUserPreferences()
+        );
+
+      /*
+      const gs = diagnostic.glintService;
+      const or = gs.transformManager.getOriginalRange(
+        diagnostic.file.fileName,
+        diagnostic.start,
+        diagnostic.start + diagnostic.length
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
+      const text: string = gs.getOriginalFileText(or.originalFileName);
+
+      const a = ts.getLineAndCharacterOfPosition(
+        gs.getOriginalSourceFile(diagnostic.file.fileName),
+        or.originalStart
+      );
+      a;
+      const d = {
+        source: diagnostic.source,
+        severity: severityForDiagnostic(gs.ts, diagnostic.category),
+        code: diagnostic.code,
+        message: diagnostic.messageText as string,
+        range: {
+          start: gs.pathUtils.offsetToPosition(text, or.originalStart),
+          end: gs.pathUtils.offsetToPosition(text, or.originalEnd),
+        },
+      };
+
       const rawActions = diagnostic.glintService
         .getGlintService()
         .getCodeActions(
-          diagnostic.file.fileName,
+          or.originalFileName,
           CodeActionKind.QuickFix,
-          diagnostic.glintDiagnostic.range,
-          [diagnostic.glintDiagnostic],
+          d.range,
+          [d],
           formatCodeSettings ?? getDefaultFormatCodeSettings(),
           this.getUserPreferences()
         );
 
       fixes = diagnostic.glintService.transformCodeActionToCodeFixAction(rawActions);
+       */
     } catch (e) {
       this.suppressError(e, diagnostic);
     }
@@ -60,5 +100,20 @@ export class GlintCodeFixCollection extends TypescriptCodeFixCollection {
 
   isGlintCodeFix(fix: CodeFixAction): boolean {
     return fix.description in glintSupportedFixDescriptions;
+  }
+}
+
+type TS = typeof import('typescript');
+
+export function severityForDiagnostic(ts: TS, categoty: ts.DiagnosticCategory): DiagnosticSeverity {
+  switch (categoty) {
+    case ts.DiagnosticCategory.Error:
+      return DiagnosticSeverity.Error;
+    case ts.DiagnosticCategory.Message:
+      return DiagnosticSeverity.Information;
+    case ts.DiagnosticCategory.Suggestion:
+      return DiagnosticSeverity.Hint;
+    case ts.DiagnosticCategory.Warning:
+      return DiagnosticSeverity.Warning;
   }
 }

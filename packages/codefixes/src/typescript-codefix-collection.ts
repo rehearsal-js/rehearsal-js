@@ -11,7 +11,6 @@ import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import { isCodeFixSupported } from './safe-codefixes.js';
 import { Diagnostics } from './diagnosticInformationMap.generated.js';
 import type { CodeFixCollection, CodeFixCollectionFilter, DiagnosticWithContext } from './types.js';
-import type { Options as PrettierOptions } from 'prettier';
 
 const DEBUG_CALLBACK = debug('rehearsal:codefixes:TypeScriptCodeFixCollection');
 
@@ -39,9 +38,6 @@ const SUPPRESSED_ERRORS: SuppressedError[] = [
  * @see https://github.com/microsoft/TypeScript/tree/main/src/services/codefixes
  */
 export class TypescriptCodeFixCollection implements CodeFixCollection {
-  hasPrettier: boolean | undefined;
-  prettierConfigs: PrettierOptions | undefined;
-
   getFixesForDiagnostic(
     diagnostic: DiagnosticWithContext,
     filter: CodeFixCollectionFilter,

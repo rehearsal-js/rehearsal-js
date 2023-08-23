@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { ListrDefaultRenderer, ListrTask } from 'listr2';
 import debug from 'debug';
-import { isGlintProject, isAddon, isApp } from '@rehearsal/service';
+import { isGlintProject, isEmberAddon, isEmberApp } from '@rehearsal/service';
 import { readJsonSync } from 'fs-extra/esm';
 import { PackageJson } from 'type-fest';
 import { getPreReqs } from '../../../prereqs.js';
@@ -39,7 +39,8 @@ export function initTask(
       ctx.projectName = determineProjectName(rootPath) || '';
 
       // if ember app or addon
-      if (isApp(packageJSON) || isAddon(packageJSON)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (isEmberApp(packageJSON) || isEmberAddon(packageJSON)) {
         projectType = 'ember';
       } else if (await isGlintProject(rootPath)) {
         projectType = 'glimmer';

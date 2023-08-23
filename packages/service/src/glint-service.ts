@@ -11,7 +11,6 @@ import {
   type CodeAction,
 } from 'vscode-languageserver';
 import { Service } from './rehearsal-service.js';
-import { isGlintFile } from './glint-utils.js';
 import type { GlintLanguageServer, TransformManager } from '@glint/core';
 
 import type { DiagnosticWithLocation, Node } from 'typescript';
@@ -50,6 +49,21 @@ export class GlintService implements Service {
     return this.service.getOriginalContents(fileName) ?? '';
   }
 
+  getOriginalFileText(fileName: string): string {
+    return this.service.getOriginalContents(fileName) ?? '';
+  }
+
+  getOriginalSourceFile(fileName: string): ts.SourceFile {
+    return this.ts.createSourceFile(
+      fileName,
+      this.getFileText(fileName),
+      ts.ScriptTarget.Latest,
+      // This parameter makes SourceFile object similar to one that TS program returns
+      // Helps each Node to have access to a source file content + working getStart(), getText(), etc. methods
+      true
+    );
+  }
+
   /**
    * Updates the current state of the file with the new content
    */
@@ -69,18 +83,9 @@ export class GlintService implements Service {
    * Gets a SourceFile object from the compiled program
    */
   getSourceFile(fileName: string): ts.SourceFile {
-    if (isGlintFile(this, fileName)) {
-      return ts.createSourceFile(
-        fileName,
-        this.getFileText(fileName),
-        ts.ScriptTarget.Latest,
-        // This parameter makes SourceFile object similar to one that TS program returns
-        // Helps each Node to have access to a source file content + working getStart(), getText(), etc. methods
-        true
-      );
-    } else {
-      return this.getLanguageService().getProgram()!.getSourceFile(fileName)!;
-    }
+    const scriptPath = this.transformManager.getScriptPathForTS(fileName);
+
+    return this.getLanguageService().getProgram()!.getSourceFile(scriptPath)!;
   }
 
   /**
@@ -100,6 +105,24 @@ export class GlintService implements Service {
       .map((diagnostic) => this.convertLSPDiagnosticToTs(fileName, diagnostic));
 
     return [...diagnostics, ...this.getAdditionalDiagnostics(fileName)];
+  }
+
+  getDiagnosticsNew(fileName: string): ts.DiagnosticWithLocation[] {
+    const scriptPath = this.transformManager.getScriptPathForTS(fileName);
+
+    return [
+      ...this.filterWithLocation(this.transformManager.getTransformDiagnostics(scriptPath)),
+      ...this.filterWithLocation(this.tsService.getSemanticDiagnostics(scriptPath)),
+      ...this.tsService.getSuggestionDiagnostics(scriptPath),
+      ...this.getAdditionalDiagnostics(scriptPath),
+    ];
+  }
+
+  filterWithLocation(diagnostics: ts.Diagnostic[]): ts.DiagnosticWithLocation[] {
+    const withLocation = (diagnostic: ts.Diagnostic): diagnostic is DiagnosticWithLocation =>
+      diagnostic.start !== undefined && diagnostic.length !== undefined;
+
+    return diagnostics.filter(withLocation);
   }
 
   getAdditionalDiagnostics(fileName: string): DiagnosticWithLocation[] {

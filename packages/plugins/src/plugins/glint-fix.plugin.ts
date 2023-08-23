@@ -10,10 +10,10 @@ import ts, { DiagnosticWithLocation, FormatCodeSettings } from 'typescript';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
 import { findNodeAtPosition, isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
+import { getFormatCodeSettingsForFile } from '../helpers.js';
 import type { Diagnostic } from 'vscode-languageserver';
 import type MS from 'magic-string';
 import type { TextChange } from 'typescript';
-import { getFormatCodeSettingsForFile } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -23,6 +23,8 @@ const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-fix');
 
 const { DiagnosticCategory } = ts;
 export interface GlintFixPluginOptions {
+  safeFixes?: boolean;
+  strictTyping?: boolean;
   mode: 'single-pass' | 'drain';
 }
 
@@ -49,12 +51,12 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
   }
 
   private async drainMode(): Promise<void> {
-    const { fileName, context } = this;
+    const { fileName, context, options } = this;
     const service = context.service as GlintService;
 
     const formatCodeSettings = await getFormatCodeSettingsForFile(fileName);
 
-    let diagnostics: Diagnostic[] = this.getDiagnostics(service, fileName, [
+    let diagnostics = this.getDiagnosticsNew(service, fileName, [
       DiagnosticCategory.Error,
       DiagnosticCategory.Suggestion,
     ]);
@@ -67,39 +69,33 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
     while (limit-- && diagnostics.length) {
       const diagnostic = diagnostics.shift()!;
 
-      const fix = this.getCodeFix(fileName, diagnostic, service, formatCodeSettings);
+      const fix = this.getCodeFixNew(diagnostic, options, formatCodeSettings);
 
-      if (fix === undefined) {
-        DEBUG_CALLBACK(
-          ` - TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t fix not found`
-        );
+      if (!fix) {
+        DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t didn't fix`);
         continue;
       }
+
+      //if (isInstallPackageCommand(fix)) {
+      //await this.applyCommandAction(fix.commands, context);
+      //}
 
       applyCodeFix(fix, {
         getText(filename: string) {
           return context.service.getFileText(filename);
         },
-
         applyText(newText: string) {
-          DEBUG_CALLBACK(
-            `- TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t ${newText}`
-          );
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t ${newText}`);
         },
-
         setText: (filename: string, text: string) => {
           context.service.setFileText(filename, text);
           context.reporter.incrementRunFixedItemCount();
           this.allFixedFiles.add(filename);
-          DEBUG_CALLBACK(
-            `- TS${diagnostic.code} at ${diagnostic.range.start.line}:${diagnostic.range.start.character}:\t codefix applied`
-          );
+          DEBUG_CALLBACK(`- TS${diagnostic.code} at ${diagnostic.start}:\t codefix applied`);
         },
       });
 
-      context.reporter.incrementRunFixedItemCount();
-
-      diagnostics = this.getDiagnostics(service, fileName, [
+      diagnostics = this.getDiagnosticsNew(service, fileName, [
         DiagnosticCategory.Error,
         DiagnosticCategory.Suggestion,
       ]);
@@ -188,6 +184,87 @@ export class GlintFixPlugin extends Plugin<GlintFixPluginOptions> {
       return false;
     }
     return !!this.appliedTextChanges[fileName].find((existing) => isSameChange(existing, change));
+  }
+
+  // Same function as in Rehearsal Service!!!
+  getDiagnosticsNew(
+    service: GlintService,
+    fileName: string,
+    diagnosticFilterCategories: ts.DiagnosticCategory[]
+  ): DiagnosticWithContext[] {
+    const languageService = service.getLanguageService();
+    const program = languageService.getProgram()!;
+    const checker = program.getTypeChecker();
+
+    const diagnostics = getDiagnosticOrder(service.getDiagnostics(fileName));
+
+    return (
+      diagnostics
+        .filter((diagnostic) => {
+          return diagnosticFilterCategories.some((category) => category === diagnostic.category);
+        })
+        // Convert DiagnosticWithLocation to DiagnosticWithContext
+        .map<DiagnosticWithContext>((diagnostic) => {
+          return {
+            ...diagnostic,
+            ...{
+              service: languageService,
+              program,
+              checker,
+              glintService: service,
+              node: findNodeAtPosition(diagnostic.file, diagnostic.start, diagnostic.length),
+            },
+          };
+        })
+    );
+  }
+
+  /**
+   * Returns a code fix that expected to fix provided diagnostic
+   */
+  getCodeFixNew(
+    diagnostic: DiagnosticWithContext,
+    options: GlintFixPluginOptions,
+    formatCodeSettings: FormatCodeSettings
+  ): ts.CodeFixAction | undefined {
+    const fixes = glintCodeFixes.getCodeFixes(
+      diagnostic,
+      {
+        safeFixes: options.safeFixes,
+        strictTyping: options.strictTyping,
+      },
+      formatCodeSettings
+    );
+
+    if (fixes.length === 0) {
+      return undefined;
+    }
+
+    // Use the first available codefix in automatic mode
+    let fix = fixes.shift();
+
+    while (fix && this.wasAttemptedToFixNew(diagnostic, fix)) {
+      // Try the next fix if we already tried the first one
+      fix = fixes.shift();
+    }
+
+    if (fix === undefined) {
+      DEBUG_CALLBACK(` - TS${diagnostic.code} at ${diagnostic.start}:\t fixes didn't work`);
+    }
+
+    return fix;
+  }
+
+  private wasAttemptedToFixNew(diagnostic: DiagnosticWithContext, fix: ts.CodeFixAction): boolean {
+    const diagnosticFixHash = hash([diagnostic.code, diagnostic.start, fix]);
+
+    if (!this.attemptedToFix.includes(diagnosticFixHash)) {
+      this.attemptedToFix.push(diagnosticFixHash);
+
+      return false;
+    }
+
+    return true;
   }
 
   getDiagnostics(
