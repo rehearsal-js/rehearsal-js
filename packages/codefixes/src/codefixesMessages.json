@@ -10,7 +10,8 @@
     "description": "Adds the missing `await` keyword where a promise should be returned but not being properly handled.",
     "messages": [95083],
     "diagnostics": [
-      2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345, 2339, 2349, 2351
+      2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345,
+      2339, 2349, 2351
     ]
   },
   "addMissingAwaitToInitializer": {
@@ -18,7 +19,8 @@
     "description": "Adds missing `await` keyword to declarations and expressions.",
     "messages": [95084, 95089],
     "diagnostics": [
-      2339, 2349, 2351, 2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548, 2488, 2504, 2345
+      2339, 2349, 2351, 2356, 2362, 2363, 2736, 2365, 2367, 2801, 2461, 2495, 2802, 2549, 2548,
+      2488, 2504, 2345
     ]
   },
   "addMissingConst": {
@@ -164,7 +166,8 @@
     "description": "Infers the types based on how the value is being used.",
     "messages": [95011, 95012, 95080],
     "diagnostics": [
-      7034, 7005, 7006, 7019, 7033, 7010, 7032, 7008, 7046, 7043, 7044, 7047, 7048, 7050, 7049, 7045, 2683
+      7034, 7005, 7006, 7019, 7033, 7010, 7032, 7008, 7046, 7043, 7044, 7047, 7048, 7050, 7049,
+      7045, 2683
     ]
   },
   "invalidImportSyntax": {
@@ -197,12 +200,11 @@
     "messages": [95013],
     "diagnostics": [80003]
   },
-
   "annotateWithStrictTypeFromJSDoc": {
     "title": "Annotate Strict Types From JSDoc",
     "description": "Annotates code with the only strict types from the declared JSDoc comments. Strict replacement for annotateWithTypeFromJSDoc",
     "diagnostics": [80004],
-    "messages": [95009],
+    "messages": [],
     "builtIn": true
   },
   "addErrorTypeGuard": {

@@ -1,9 +1,11 @@
 import { canTypeBeResolved, findNodeEndsAtPosition } from '@rehearsal/ts-utils';
 import ts, { FormatCodeSettings } from 'typescript';
 import { Diagnostics } from '../diagnosticInformationMap.generated.js';
+// import { TypescriptCodeFixCollection } from '../typescript-codefix-collection.js';
 import { TypescriptCodeFixCollection } from '../typescript-codefix-collection.js';
+import { GlintCodeFixCollection, GlintDiagnosticWithContext } from '../glint-codefix-collection.js';
 import type { FileTextChanges, TextChange, CodeFixAction } from 'typescript';
-import type { CodeFix, DiagnosticWithContext } from '../types.js';
+import type { CodeFix, CodeFixCollection, DiagnosticWithContext } from '../types.js';
 
 const {
   isFunctionDeclaration,
@@ -16,16 +18,31 @@ const {
   getJSDocType,
 } = ts;
 
+function isGlintDiagnosticWithContext(
+  diagnostic: unknown
+): diagnostic is GlintDiagnosticWithContext {
+  return !!diagnostic && Object.hasOwnProperty.call(diagnostic, 'glintService');
+}
+
 export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
   getErrorCodes = (): number[] => [Diagnostics.TS80004.code];
+
+  getCodeFixCollection(diagnostic: DiagnosticWithContext): CodeFixCollection {
+    return isGlintDiagnosticWithContext(diagnostic)
+      ? new GlintCodeFixCollection()
+      : new TypescriptCodeFixCollection();
+  }
 
   getCodeAction(
     diagnostic: DiagnosticWithContext,
     formatSettings: FormatCodeSettings
   ): CodeFixAction | undefined {
-    const tsCollection = new TypescriptCodeFixCollection();
+    const codeFixCollection = this.getCodeFixCollection(diagnostic);
 
-    const fix = tsCollection
+    // If this fails we may need to wrap this with a try/catch
+    // Currently we don't know of a test case that would cause
+    // this to fail.
+    const fix = codeFixCollection
       .getFixesForDiagnostic(
         diagnostic,
         {
@@ -34,7 +51,11 @@ export class AnnotateWithStrictTypeFromJSDoc implements CodeFix {
         },
         formatSettings
       )
-      .find((fix) => fix.fixName === 'annotateWithTypeFromJSDoc');
+      .find(
+        (fix) =>
+          fix.fixName === 'annotateWithTypeFromJSDoc' ||
+          fix.description === 'Annotate with type from JSDoc' // Glint does not use the fixName, it uses description
+      );
 
     if (!fix || !diagnostic.node) {
       return undefined;
