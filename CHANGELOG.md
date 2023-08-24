@@ -1,3 +1,11 @@
+## 2.1.0 (2023-08-24)
+
+* feat: add strict type from jsdocs to .gts files (#1249) ([3d7c213](https://github.com/rehearsal-js/rehearsal-js/commit/3d7c213)), closes [#1249](https://github.com/rehearsal-js/rehearsal-js/issues/1249)
+* fix: do not add empty lines before @ts-expect-error on sequential runs (#1247) ([054acfd](https://github.com/rehearsal-js/rehearsal-js/commit/054acfd)), closes [#1247](https://github.com/rehearsal-js/rehearsal-js/issues/1247)
+* fix: wrap es-module-lexer parse in a try/catch better error handling (#1245) ([a78e7d6](https://github.com/rehearsal-js/rehearsal-js/commit/a78e7d6)), closes [#1245](https://github.com/rehearsal-js/rehearsal-js/issues/1245)
+
+
+
 ## <small>2.0.1 (2023-08-21)</small>
 
 * chore(gh-action-bot): adding new diagnostics ([3b6329a](https://github.com/rehearsal-js/rehearsal-js/commit/3b6329a))
