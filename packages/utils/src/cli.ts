@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import { writeJSONSync } from 'fs-extra/esm';
 import { findUpSync } from 'find-up';
 import json5 from 'json5';
 import { type SimpleGit, simpleGit, type SimpleGitOptions } from 'simple-git';
@@ -8,7 +7,6 @@ import { execa, execaSync } from 'execa';
 
 import type { Options } from 'execa';
 
-export const VERSION_PATTERN = /_(\d+\.\d+\.\d+)/;
 export const git: SimpleGit = simpleGit({
   baseDir: process.cwd(),
   binary: 'git',
@@ -20,10 +18,6 @@ export function readJSON<T>(file: string): T | undefined {
   if (text !== undefined) {
     return json5.parse(text);
   }
-}
-
-export function writeJSON<T>(file: string, contents: T | unknown): void {
-  writeJSONSync(file, contents, { spaces: 2 });
 }
 
 export function isYarnManager(basePath: string = process.cwd()): boolean {
