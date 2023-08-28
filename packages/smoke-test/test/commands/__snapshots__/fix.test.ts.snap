@@ -529,19 +529,19 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [DATA] processing file: /app/components/rentals/filter.hbs
 [DATA] processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   108 errors caught by rehearsal
-[TITLE]   21 have been fixed by rehearsal
-[TITLE]   87 errors need to be fixed manually
+[TITLE]   107 errors caught by rehearsal
+[TITLE]   22 have been fixed by rehearsal
+[TITLE]   85 errors need to be fixed manually
 [TITLE]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 55 glint errors, with details in the report
-[TITLE]     -- 3 eslint errors, with details in the report
+[TITLE]     -- 54 glint errors, with details in the report
+[TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   108 errors caught by rehearsal
-[SUCCESS]   21 have been fixed by rehearsal
-[SUCCESS]   87 errors need to be fixed manually
+[SUCCESS]   107 errors caught by rehearsal
+[SUCCESS]   22 have been fixed by rehearsal
+[SUCCESS]   85 errors need to be fixed manually
 [SUCCESS]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 55 glint errors, with details in the report
-[SUCCESS]     -- 3 eslint errors, with details in the report"
+[SUCCESS]     -- 54 glint errors, with details in the report
+[SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 2`] = `
@@ -699,17 +699,14 @@ export interface HelloWorldCommentSignature {
 }
 
 interface HelloWorldCommentSignature {
-  // @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'HelloWorldCommentArgs'.
   Args: HelloWorldCommentArgs;
 }
 
-/**
- // @ts-expect-error @rehearsal TODO TS80009: JSDoc typedef may be converted to TypeScript type.
- * @typedef HelloWorldCommentArgs
- * @property {number} age - years since date of birth
- * @property {string} snack - a food to eat between meals
- * @property {string} talent - some talent not on profile
- */
+interface HelloWorldCommentArgs {
+  age: number;
+  snack: string;
+  talent: string;
+}
 
 /**
  * @extends {Component<HelloWorldCommentSignature>}

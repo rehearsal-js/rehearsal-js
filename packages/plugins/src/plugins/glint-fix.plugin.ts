@@ -10,10 +10,10 @@ import ts, { DiagnosticWithLocation, FormatCodeSettings } from 'typescript';
 import { Plugin, GlintService, PluginsRunnerContext } from '@rehearsal/service';
 import hash from 'object-hash';
 import { findNodeAtPosition, isSameChange, normalizeTextChanges } from '@rehearsal/ts-utils';
+import { getFormatCodeSettingsForFile } from '../helpers.js';
 import type { Diagnostic } from 'vscode-languageserver';
 import type MS from 'magic-string';
 import type { TextChange } from 'typescript';
-import { getFormatCodeSettingsForFile } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
