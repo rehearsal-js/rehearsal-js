@@ -1,3 +1,9 @@
+## 2.2.0 (2023-08-31)
+
+* feat: progress & duration in the CLI (#1240) ([593bc11](https://github.com/rehearsal-js/rehearsal-js/commit/593bc11)), closes [#1240](https://github.com/rehearsal-js/rehearsal-js/issues/1240)
+
+
+
 ## <small>2.1.1 (2023-08-28)</small>
 
 * chore: upgrade to TypeScript 5.2 (#1250) ([64a17b8](https://github.com/rehearsal-js/rehearsal-js/commit/64a17b8)), closes [#1250](https://github.com/rehearsal-js/rehearsal-js/issues/1250)
