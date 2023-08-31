@@ -160,9 +160,19 @@ export function parseCommaSeparatedList(value: string): string[] {
 
 /**
  * Reads a tsConfig file
- * @param configPath
- * @returns
  */
 export function readTSConfig<T>(configPath: string): T {
   return json5.parse(readFileSync(configPath, 'utf-8'));
+}
+
+/**
+ * Converts seconds to 00:00 or 00:00:00 format
+ */
+
+export function secondsToTime(seconds: number): string {
+  const time = new Date(0);
+  time.setSeconds(seconds);
+  const iso = time.toISOString();
+
+  return iso.substring(11, 13) === '00' ? iso.substring(14, 19) : iso.substring(11, 19);
 }

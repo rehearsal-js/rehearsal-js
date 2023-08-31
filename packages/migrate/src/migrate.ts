@@ -101,6 +101,8 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(` ignoredPaths: %O`, ignoredPaths);
   DEBUG_CALLBACK(` filteredFilesToMigrate: %O`, filteredFilesToMigrate);
 
+  listrTask.output = `preparing files ...`;
+
   const service = useGlint
     ? new GlintService(glintCore, packageDir)
     : new RehearsalService(tsCompilerOptions, filesToCompile);
