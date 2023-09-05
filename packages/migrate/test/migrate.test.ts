@@ -3,7 +3,7 @@ import path, { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Project } from 'fixturify-project';
 import { type Report, Reporter } from '@rehearsal/reporter';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, type Assertion } from 'vitest';
 import { getExcludePatterns } from '@rehearsal/migration-graph';
 import { ReportItemType } from '@rehearsal/reporter';
 import { migrate, MigrateInput, resolveIgnoredPaths } from '../src/migrate.js';
@@ -96,7 +96,7 @@ function isValidExtension(ext: string): ext is ValidExtension {
   return validExtensions.includes(ext);
 }
 
-function expectFile(filePath: string, message?: string): Vi.Assertion<string> {
+function expectFile(filePath: string, message?: string): Assertion<string> {
   return expect(readFileSync(filePath, 'utf-8'), message);
 }
 

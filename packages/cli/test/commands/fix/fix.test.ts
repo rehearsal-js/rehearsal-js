@@ -1,7 +1,7 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync, statSync } from 'node:fs';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi, type Assertion } from 'vitest';
 import { Project } from 'fixturify-project';
 import { createLogger, format, transports } from 'winston';
 import { getEmberProject } from '@rehearsal/test-support';
@@ -39,7 +39,7 @@ function projectInit(project: Project, type: ProjectType): void {
   });
 }
 
-function expectFile(filePath: string): Vi.Assertion<string> {
+function expectFile(filePath: string): Assertion<string> {
   return expect(readFileSync(filePath, 'utf-8'));
 }
 
