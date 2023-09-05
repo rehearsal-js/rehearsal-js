@@ -45,7 +45,7 @@
     "json5": "^2.2.3",
     "simple-git": "^3.17.0",
     "type-fest": "^3.8.0",
-    "which": "^3.0.0"
+    "which": "^4.0.0"
   },
   "devDependencies": {
     "@types/which": "^3.0.0",
