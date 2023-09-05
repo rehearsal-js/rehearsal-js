@@ -5654,7 +5654,7 @@ packages:
       '@types/ember__object': 4.0.5(@babel/core@7.21.4)
       '@types/ember__polyfills': 4.0.2
       '@types/ember__routing': 4.0.12(@babel/core@7.21.4)
-      '@types/ember__runloop': 4.0.2(@babel/core@7.21.4)
+      '@types/ember__runloop': 4.0.4(@babel/core@7.21.4)
       '@types/ember__service': 4.0.2(@babel/core@7.21.4)
       '@types/ember__string': 3.0.11
       '@types/ember__template': 4.0.2
@@ -5842,6 +5842,16 @@ packages:
 
   /@types/ember__runloop@4.0.2(@babel/core@7.21.4):
     resolution: {integrity: sha512-E0/n/O/JnPQpMrabsDKtVOXX4tbCrOA116HjmD+eorgsPFLm8tAUwl3wQGroeJt8BSE7uHjsQdDA7JUkbsT3IQ==}
+    dependencies:
+      '@types/ember': 4.0.4(@babel/core@7.21.4)
+      '@types/ember__runloop': 4.0.4(@babel/core@7.21.4)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
+    dev: true
+
+  /@types/ember__runloop@4.0.4(@babel/core@7.21.4):
+    resolution: {integrity: sha512-a8raelFWkQmkuWk4K6DmvwFYwC67SzV9yzurdfcKn3uTVj4EAX4KyuB+JUNRS6sHJYEUFlVsd8AHgYyU976Deg==}
     dependencies:
       '@types/ember': 4.0.4(@babel/core@7.21.4)
     transitivePeerDependencies:
