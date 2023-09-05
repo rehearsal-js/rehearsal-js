@@ -38,17 +38,17 @@
   },
   "dependencies": {
     "@glint/core": "^1.0.2",
-    "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "find-up": "^6.3.0",
     "vscode-languageserver": "^8.1.0",
-    "vscode-uri": "^3.0.7",
-    "winston": "^3.8.2"
+    "vscode-uri": "^3.0.7"
   },
   "devDependencies": {
+    "@rehearsal/reporter": "workspace:*",
     "@vitest/coverage-c8": "^0.33.0",
     "type-fest": "^3.8.0",
-    "vitest": "^0.30.0"
+    "vitest": "^0.30.0",
+    "winston": "^3.8.2"
   },
   "peerDependencies": {
     "typescript": "^5"

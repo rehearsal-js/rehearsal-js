@@ -1,8 +1,9 @@
 import { extname } from 'node:path';
-import { GlintService, Plugin, PluginOptions } from '@rehearsal/service';
 import { applyTextChanges } from '@rehearsal/ts-utils';
 import ts, { TextChange } from 'typescript';
 import debug from 'debug';
+import { Plugin, PluginOptions } from '../../src/plugin.js';
+import type { GlintService } from '@rehearsal/service';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:transform');
 

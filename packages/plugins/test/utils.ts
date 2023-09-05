@@ -1,8 +1,9 @@
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
-import { PluginsRunnerContext, RehearsalService } from '@rehearsal/service';
+import { RehearsalService } from '@rehearsal/service';
 import { Reporter } from '@rehearsal/reporter';
 import { Project } from 'fixturify-project';
+import { PluginsRunnerContext } from '../src/plugin.js';
 
 export async function initProject(
   name: string,

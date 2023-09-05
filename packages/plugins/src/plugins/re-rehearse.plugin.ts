@@ -1,5 +1,5 @@
-import { PluginOptions, Plugin } from '@rehearsal/service';
 import debug from 'debug';
+import { PluginOptions, Plugin } from '../plugin.js';
 import { getBoundaryOfCommentBlock } from './utils.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:rerehearse');
