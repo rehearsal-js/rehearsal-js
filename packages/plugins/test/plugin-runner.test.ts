@@ -1,7 +1,7 @@
 import { Reporter } from '@rehearsal/reporter';
 import { describe, expect, test, vi, afterEach, beforeEach, Mock } from 'vitest';
+import { RehearsalService } from '@rehearsal/service';
 import { Plugin, PluginOptions, PluginsRunner } from '../src/plugin.js';
-import { RehearsalService } from '../src/rehearsal-service.js';
 
 describe('PluginsRunner', () => {
   describe('filter', () => {

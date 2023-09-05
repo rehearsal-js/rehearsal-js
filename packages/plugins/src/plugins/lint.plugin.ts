@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { PluginOptions, type PluginResult, Plugin, PluginsRunnerContext } from '@rehearsal/service';
 import { ESLint } from 'eslint';
 import debug from 'debug';
+import { PluginOptions, type PluginResult, Plugin, PluginsRunnerContext } from '../plugin.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:formatting');
 

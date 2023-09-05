@@ -9,9 +9,11 @@ import {
   type DiagnosticWithContext,
   applyCodeFix,
 } from '@rehearsal/codefixes';
-import { PluginOptions, PluginsRunnerContext, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
+import { PluginOptions, PluginsRunnerContext, Plugin } from '../plugin.js';
 import { getFormatCodeSettingsForFile } from '../helpers.js';
+
+import type { Service } from '@rehearsal/service';
 import type MS from 'magic-string';
 
 const require = createRequire(import.meta.url);

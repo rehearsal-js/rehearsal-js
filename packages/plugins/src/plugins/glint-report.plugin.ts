@@ -1,9 +1,11 @@
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import { GlintService, PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { type Location } from '@rehearsal/reporter';
 import debug from 'debug';
 import ts from 'typescript';
+import { PluginOptions, Plugin } from '../plugin.js';
 import { getLocation } from '../helpers.js';
+
+import type { GlintService, Service } from '@rehearsal/service';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:glint-report');
 

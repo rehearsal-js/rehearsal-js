@@ -2,8 +2,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Module from 'node:module';
 import ts, { type FormatCodeSettings, type SourceFile } from 'typescript';
-import { Location } from '@rehearsal/reporter';
 import { Options as PrettierOptions } from 'prettier';
+import type { Location } from '@rehearsal/reporter';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

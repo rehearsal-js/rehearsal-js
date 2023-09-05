@@ -6,7 +6,7 @@ import { execa } from 'execa';
 import { Project } from 'fixturify-project';
 import { createLogger, format, transports } from 'winston';
 import JSON5 from 'json5';
-import { expect } from 'vitest';
+import { expect, type Assertion } from 'vitest';
 
 import type { ExecaChildProcess, Options } from 'execa';
 import type { TsConfigJson } from 'type-fest';
@@ -32,7 +32,7 @@ export function addWorkspaces(project: Project): Project {
   return project;
 }
 
-export function expectFile(filePath: string): Vi.Assertion<string> {
+export function expectFile(filePath: string): Assertion<string> {
   return expect(readFileSync(filePath, 'utf-8'));
 }
 

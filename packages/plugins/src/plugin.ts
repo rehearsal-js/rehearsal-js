@@ -1,7 +1,7 @@
 import { ProgressBar } from '@rehearsal/utils';
-import { Reporter } from '@rehearsal/reporter';
-import { Logger } from 'winston';
-import { Service } from './rehearsal-service.js';
+import type { Service } from '@rehearsal/service';
+import type { Logger } from 'winston';
+import type { Reporter } from '@rehearsal/reporter';
 
 export abstract class Plugin<Options extends PluginOptions = PluginOptions> {
   fileName: string;

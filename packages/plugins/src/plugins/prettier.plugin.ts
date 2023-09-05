@@ -1,7 +1,7 @@
-import { Plugin } from '@rehearsal/service';
 import prettier from 'prettier';
 
 import debug from 'debug';
+import { Plugin } from '../plugin.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:prettier');
 
