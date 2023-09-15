@@ -11,8 +11,8 @@ import {
 } from '@rehearsal/codefixes';
 import { PluginOptions, PluginsRunnerContext, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
-import type MS from 'magic-string';
 import { getFormatCodeSettingsForFile } from '../helpers.js';
+import type MS from 'magic-string';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
