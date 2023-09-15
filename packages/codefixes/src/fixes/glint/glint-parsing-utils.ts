@@ -248,7 +248,7 @@ type LikeTemplateOnlyComponentVariableDeclaration = ts.VariableDeclaration & {
   type: ts.TypeReferenceNode & { typeName: ts.Identifier };
 };
 
-export function isTemplateOnlyComponent(
+function isTemplateOnlyComponent(
   targetNode: ts.Node,
   identifierName = 'TemplateOnlyComponent'
 ): targetNode is LikeTemplateOnlyComponentVariableDeclaration {
