@@ -290,10 +290,6 @@ export function getComponentSignatureNameFromTemplateOnlyComponent(
     const typeArguments = target.type.typeArguments ?? [];
     const maybeSignature = typeArguments[0];
 
-    if (!maybeSignature || !ts.isTypeReferenceNode(maybeSignature)) {
-      return;
-    }
-
     if (ts.isTypeReferenceNode(maybeSignature) && ts.isIdentifier(maybeSignature.typeName)) {
       return maybeSignature.typeName;
     }
