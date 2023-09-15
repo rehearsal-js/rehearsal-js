@@ -27,7 +27,7 @@ export function getNearestComponentClassDeclaration(
   return;
 }
 
-export function getInterfaceByIdentifier(
+function getInterfaceByIdentifier(
   sourceFile: ts.SourceFile,
   targetIdentifier: ts.Identifier
 ): ts.InterfaceDeclaration | undefined {
