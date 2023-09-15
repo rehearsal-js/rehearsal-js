@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import ts, { isClassDeclaration, isIdentifier, isInterfaceDeclaration } from 'typescript';
-import { getClassByName } from '@rehearsal/ts-utils';
+import ts, {
+  isClassDeclaration,
+  isIdentifier,
+  isInterfaceDeclaration,
+  isVariableDeclaration,
+} from 'typescript';
+import { findNodeAtPosition, getClassByName } from '@rehearsal/ts-utils';
 import {
   getClassNameFromClassDeclaration,
   getComponentSignatureInterfaceNode,
@@ -12,11 +17,19 @@ import {
   hasComponentSignature,
   hasPropertyOnComponentSignatureInterface,
   parse,
+  getNearestTemplateOnlyComponentVariableDeclaration,
+  getComponentSignatureNameFromTemplateOnlyComponent,
 } from '../src/fixes/glint/glint-parsing-utils.js';
 
 describe('glint-parsing-utils', () => {
   let sourceFile: ts.SourceFile;
   let classDeclaration: ts.ClassDeclaration;
+
+  function findNodeByString(source: ts.SourceFile, search: string): ts.Node | undefined {
+    const start = source.text.indexOf(search);
+    const length = search.length;
+    return findNodeAtPosition(source, start, length);
+  }
 
   const fixture = `
     import Component from "@glimmer/component";
@@ -170,5 +183,48 @@ describe('glint-parsing-utils', () => {
       expect(hasPropertyOnComponentSignatureInterface(interfaceNode, 'Args')).toBe(true);
       expect(hasPropertyOnComponentSignatureInterface(interfaceNode, 'Blocks')).toBe(false);
     }
+  });
+
+  describe('template only compeonents', () => {
+    let fixture: string;
+    let sourceFile: ts.SourceFile;
+
+    beforeEach(() => {
+      fixture = `
+      import { type TemplateOnlyComponent } from "@ember/component/template-only";
+
+      interface HelloSignature {
+        Args: {};
+      }
+
+      const Hello: TemplateOnlyComponent<HelloSignature> = function() { return 'foobarbaz'; };
+
+      export default Hello;
+    `;
+      sourceFile = parse('template-only.ts', fixture);
+    });
+
+    test('getNearestTemplateOnlyComponentVariableDeclaration', () => {
+      const targetNode = findNodeByString(sourceFile, "'foobarbaz'");
+      expect.assertions(2);
+      if (targetNode) {
+        const found = getNearestTemplateOnlyComponentVariableDeclaration(targetNode);
+        expect(found && isVariableDeclaration(found)).toBeTruthy();
+        expect(found && isIdentifier(found?.name) && found?.name.escapedText).toBe('Hello');
+      }
+    });
+
+    test('getComponentSignatureNameFromTemplateOnlyComponent', () => {
+      const targetNode = findNodeByString(
+        sourceFile,
+        `Hello: TemplateOnlyComponent<HelloSignature> = function() { return 'foobarbaz'; }`
+      );
+      expect.assertions(1);
+      if (targetNode) {
+        expect(getComponentSignatureNameFromTemplateOnlyComponent(targetNode)?.escapedText).toBe(
+          'HelloSignature'
+        );
+      }
+    });
   });
 });

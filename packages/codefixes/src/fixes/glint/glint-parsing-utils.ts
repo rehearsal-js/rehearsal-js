@@ -27,7 +27,7 @@ export function getNearestComponentClassDeclaration(
   return;
 }
 
-function getInterfaceByIdentifier(
+export function getInterfaceByIdentifier(
   sourceFile: ts.SourceFile,
   targetIdentifier: ts.Identifier
 ): ts.InterfaceDeclaration | undefined {
@@ -241,5 +241,63 @@ export function getJSDocExtendsTagWithSignature(
     }
   }
 
+  return;
+}
+
+type LikeTemplateOnlyComponentVariableDeclaration = ts.VariableDeclaration & {
+  type: ts.TypeReferenceNode & { typeName: ts.Identifier };
+};
+
+export function isTemplateOnlyComponent(
+  targetNode: ts.Node,
+  identifierName = 'TemplateOnlyComponent'
+): targetNode is LikeTemplateOnlyComponentVariableDeclaration {
+  if (
+    ts.isVariableDeclaration(targetNode) &&
+    targetNode.type &&
+    ts.isTypeReferenceNode(targetNode.type) &&
+    ts.isIdentifier(targetNode.type.typeName) &&
+    targetNode.type.typeName.escapedText === identifierName
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function getNearestTemplateOnlyComponentVariableDeclaration(
+  targetNode: ts.Node,
+  identifierName = 'TemplateOnlyComponent'
+): ts.Node | undefined {
+  let target = targetNode;
+  do {
+    if (!target.parent) {
+      return;
+    }
+
+    if (isTemplateOnlyComponent(target, identifierName)) {
+      return target;
+    }
+  } while ((target = target.parent));
+
+  return;
+}
+
+export function getComponentSignatureNameFromTemplateOnlyComponent(
+  target: ts.Node
+): ts.Identifier | undefined {
+  if (isTemplateOnlyComponent(target)) {
+    const typeArguments = target.type.typeArguments ?? [];
+    const maybeSignature = typeArguments[0];
+
+    if (!maybeSignature || !ts.isTypeReferenceNode(maybeSignature)) {
+      return;
+    }
+
+    if (ts.isTypeReferenceNode(maybeSignature) && ts.isIdentifier(maybeSignature.typeName)) {
+      return maybeSignature.typeName;
+    }
+    return;
+  }
   return;
 }
