@@ -8,6 +8,7 @@ import {
   isYarnManager,
   isBinExisted,
   getManagerBinPath,
+  secondsToTime,
 } from '../src/index.js';
 
 export function removeSpecialChars(input: string): string {
@@ -122,5 +123,13 @@ describe('utils', () => {
       '--save-dev',
       '--ignore-scripts',
     ]);
+  });
+
+  test('secondsToTime()', () => {
+    expect(secondsToTime(0)).equal(`00:00`);
+    expect(secondsToTime(30)).equal(`00:30`);
+    expect(secondsToTime(60)).equal(`01:00`);
+    expect(secondsToTime(3723)).equal(`01:02:03`);
+    expect(secondsToTime(-50)).equal(`23:59:10`);
   });
 });

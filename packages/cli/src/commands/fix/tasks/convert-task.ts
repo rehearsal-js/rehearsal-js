@@ -42,6 +42,8 @@ export function convertTask(
       const reporter = new Reporter(reporterOptions);
       const packageDir = findPackageRootDirectory(srcPath, rootPath) || rootPath;
 
+      task.output = 'starting...';
+
       // this just cares about ts files which are already in the proper migration order
       if (ctx.orderedFiles) {
         const migratedFiles: string[] = [];
@@ -59,7 +61,11 @@ export function convertTask(
             migratedFiles.push(tsFile);
           }
           reporter.printReport(rootPath, options.format);
-          task.title = getReportSummary(reporter.report.items, reporter.report.fixedItemCount);
+          task.title = getReportSummary(
+            reporter.report.items,
+            reporter.report.fixedItemCount,
+            reporter.duration
+          );
         } else {
           await new Promise((resolve, reject) => {
             const worker = new Worker(workerPath, {
@@ -80,12 +86,13 @@ export function convertTask(
             worker.on('message', (response: FixWorkerResponse) => {
               switch (response.type) {
                 case 'logger':
-                  task.output = `processing file: ${response.content.replace(rootPath, '')}`;
+                  task.output = response.content;
                   break;
                 case 'message':
                   task.title = getReportSummary(
                     response.content.reportItems,
-                    response.content.fixedItemCount
+                    response.content.fixedItemCount,
+                    response.content.duration
                   );
                   break;
                 case 'files':

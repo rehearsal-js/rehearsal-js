@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/cli",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Rehearsal CLI",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run --config ./vitest.config.ts --coverage",
+    "test": "vitest --run --config ./vitest.config.ts",
     "test:watch": "vitest --coverage --watch --config ./vitest.config.ts",
     "version": "pnpm version"
   },
@@ -68,11 +68,11 @@
     "@rehearsal/test-support": "workspace:*",
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^3.0.0",
-    "@vitest/coverage-c8": "^0.33.0",
+    "@vitest/coverage-v8": "^0.34.3",
     "fixturify-project": "^5.2.0",
     "scenario-tester": "^2.1.2",
-    "typescript-json-schema": "^0.56.0",
-    "vitest": "^0.30.0"
+    "typescript-json-schema": "^0.60.0",
+    "vitest": "^0.34.3"
   },
   "packageManager": "pnpm@8.6.7",
   "engines": {

@@ -7,14 +7,19 @@ exports[`fix command > base_ts_app (file only) 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/app.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/1 files | ETA: **:**:**
+[DATA]  processing file: /src/app.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   3 errors caught by rehearsal
 [TITLE]   1 have been fixed by rehearsal
 [TITLE]   2 errors need to be fixed manually
 [TITLE]     -- 2 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   3 errors caught by rehearsal
 [SUCCESS]   1 have been fixed by rehearsal
 [SUCCESS]   2 errors need to be fixed manually
@@ -225,21 +230,33 @@ exports[`fix command > base_ts_app 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/get-live-neighbor-count.ts
-[DATA] processing file: /src/apply-rules.ts
-[DATA] processing file: /src/gen-random-grid.ts
-[DATA] processing file: /src/app.ts
-[DATA] processing file: /src/basic.animal.ts
-[DATA] processing file: /src/basic.food.ts
-[DATA] processing file: /src/basic.index.ts
-[DATA] processing file: /src/greeting.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/8 files | ETA: **:**:**
+[DATA]  processing file: /src/get-live-neighbor-count.ts
+[DATA] [==------------------] 1/8 files | ETA: **:**:**
+[DATA]  processing file: /src/apply-rules.ts
+[DATA] [=====---------------] 2/8 files | ETA: **:**:**
+[DATA]  processing file: /src/gen-random-grid.ts
+[DATA] [=======-------------] 3/8 files | ETA: **:**:**
+[DATA]  processing file: /src/app.ts
+[DATA] [==========----------] 4/8 files | ETA: **:**:**
+[DATA]  processing file: /src/basic.animal.ts
+[DATA] [============--------] 5/8 files | ETA: **:**:**
+[DATA]  processing file: /src/basic.food.ts
+[DATA] [===============-----] 6/8 files | ETA: **:**:**
+[DATA]  processing file: /src/basic.index.ts
+[DATA] [=================---] 7/8 files | ETA: **:**:**
+[DATA]  processing file: /src/greeting.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   21 errors caught by rehearsal
 [TITLE]   15 have been fixed by rehearsal
 [TITLE]   6 errors need to be fixed manually
 [TITLE]     -- 6 ts errors, marked by @ts-expect-error @rehearsal TODO
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   21 errors caught by rehearsal
 [SUCCESS]   15 have been fixed by rehearsal
 [SUCCESS]   6 errors need to be fixed manually
@@ -498,50 +515,84 @@ exports[`fix command > ember_js_app_4.11 --mode=single-pass 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/app.ts
-[DATA] processing file: /app/router.ts
-[DATA] processing file: /app/adapters/application.ts
-[DATA] processing file: /app/components/audience-demographics.hbs
-[DATA] processing file: /app/components/audience-demographics.ts
-[DATA] processing file: /app/components/hello-world.gts
-[DATA] processing file: /app/components/jumbo.hbs
-[DATA] processing file: /app/components/map.hbs
-[DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/nav-bar.hbs
-[DATA] processing file: /app/components/rental.hbs
-[DATA] processing file: /app/components/rentals.hbs
-[DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.hbs
-[DATA] processing file: /app/components/share-button.ts
-[DATA] processing file: /app/models/rental.ts
-[DATA] processing file: /app/routes/index.ts
-[DATA] processing file: /app/routes/rental.ts
-[DATA] processing file: /app/serializers/application.ts
-[DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /app/templates/about.hbs
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/contact.hbs
-[DATA] processing file: /app/templates/index.hbs
-[DATA] processing file: /app/templates/rental.hbs
-[DATA] processing file: /app/components/rental/detailed.hbs
-[DATA] processing file: /app/components/rental/image.hbs
-[DATA] processing file: /app/components/rental/image.ts
-[DATA] processing file: /app/components/rentals/filter.hbs
-[DATA] processing file: /app/components/rentals/filter.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/30 files | ETA: **:**:**
+[DATA]  processing file: /app/app.ts
+[DATA] [--------------------] 1/30 files | ETA: **:**:**
+[DATA]  processing file: /app/router.ts
+[DATA] [=-------------------] 2/30 files | ETA: **:**:**
+[DATA]  processing file: /app/adapters/application.ts
+[DATA] [==------------------] 3/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/audience-demographics.hbs
+[DATA] [==------------------] 4/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/audience-demographics.ts
+[DATA] [===-----------------] 5/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/hello-world.gts
+[DATA] [====----------------] 6/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/jumbo.hbs
+[DATA] [====----------------] 7/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/map.hbs
+[DATA] [=====---------------] 8/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/map.ts
+[DATA] [======--------------] 9/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/nav-bar.hbs
+[DATA] [======--------------] 10/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental.hbs
+[DATA] [=======-------------] 11/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals.hbs
+[DATA] [========------------] 12/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals.ts
+[DATA] [========------------] 13/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/share-button.hbs
+[DATA] [=========-----------] 14/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/share-button.ts
+[DATA] [==========----------] 15/30 files | ETA: **:**:**
+[DATA]  processing file: /app/models/rental.ts
+[DATA] [==========----------] 16/30 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/index.ts
+[DATA] [===========---------] 17/30 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/rental.ts
+[DATA] [============--------] 18/30 files | ETA: **:**:**
+[DATA]  processing file: /app/serializers/application.ts
+[DATA] [============--------] 19/30 files | ETA: **:**:**
+[DATA]  processing file: /app/services/locale.ts
+[DATA] [=============-------] 20/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/about.hbs
+[DATA] [==============------] 21/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/application.hbs
+[DATA] [==============------] 22/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/contact.hbs
+[DATA] [===============-----] 23/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/index.hbs
+[DATA] [================----] 24/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/rental.hbs
+[DATA] [================----] 25/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/detailed.hbs
+[DATA] [=================---] 26/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/image.hbs
+[DATA] [==================--] 27/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/image.ts
+[DATA] [==================--] 28/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals/filter.hbs
+[DATA] [===================-] 29/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
-[TITLE]   108 errors caught by rehearsal
-[TITLE]   21 have been fixed by rehearsal
-[TITLE]   87 errors need to be fixed manually
+[TITLE]   Duration: 00:00
+[TITLE]   107 errors caught by rehearsal
+[TITLE]   22 have been fixed by rehearsal
+[TITLE]   85 errors need to be fixed manually
 [TITLE]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
-[TITLE]     -- 55 glint errors, with details in the report
-[TITLE]     -- 3 eslint errors, with details in the report
+[TITLE]     -- 54 glint errors, with details in the report
+[TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
-[SUCCESS]   108 errors caught by rehearsal
-[SUCCESS]   21 have been fixed by rehearsal
-[SUCCESS]   87 errors need to be fixed manually
+[SUCCESS]   Duration: 00:00
+[SUCCESS]   107 errors caught by rehearsal
+[SUCCESS]   22 have been fixed by rehearsal
+[SUCCESS]   85 errors need to be fixed manually
 [SUCCESS]     -- 29 ts errors, marked by @ts-expect-error @rehearsal TODO
-[SUCCESS]     -- 55 glint errors, with details in the report
-[SUCCESS]     -- 3 eslint errors, with details in the report"
+[SUCCESS]     -- 54 glint errors, with details in the report
+[SUCCESS]     -- 2 eslint errors, with details in the report"
 `;
 
 exports[`fix command > ember_js_app_4.11 --mode=single-pass 2`] = `
@@ -699,17 +750,14 @@ export interface HelloWorldCommentSignature {
 }
 
 interface HelloWorldCommentSignature {
-  // @ts-expect-error @rehearsal TODO TS2304: Cannot find name 'HelloWorldCommentArgs'.
   Args: HelloWorldCommentArgs;
 }
 
-/**
- // @ts-expect-error @rehearsal TODO TS80009: JSDoc typedef may be converted to TypeScript type.
- * @typedef HelloWorldCommentArgs
- * @property {number} age - years since date of birth
- * @property {string} snack - a food to eat between meals
- * @property {string} talent - some talent not on profile
- */
+interface HelloWorldCommentArgs {
+  age: number;
+  snack: string;
+  talent: string;
+}
 
 /**
  * @extends {Component<HelloWorldCommentSignature>}
@@ -754,37 +802,70 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /app/app.ts
-[DATA] processing file: /app/router.ts
-[DATA] processing file: /app/adapters/application.ts
-[DATA] processing file: /app/components/audience-demographics.hbs
-[DATA] processing file: /app/components/audience-demographics.ts
-[DATA] processing file: /app/components/hello-world.gts
-[DATA] processing file: /app/components/jumbo.hbs
-[DATA] processing file: /app/components/map.hbs
-[DATA] processing file: /app/components/map.ts
-[DATA] processing file: /app/components/nav-bar.hbs
-[DATA] processing file: /app/components/rental.hbs
-[DATA] processing file: /app/components/rentals.hbs
-[DATA] processing file: /app/components/rentals.ts
-[DATA] processing file: /app/components/share-button.hbs
-[DATA] processing file: /app/components/share-button.ts
-[DATA] processing file: /app/models/rental.ts
-[DATA] processing file: /app/routes/index.ts
-[DATA] processing file: /app/routes/rental.ts
-[DATA] processing file: /app/serializers/application.ts
-[DATA] processing file: /app/services/locale.ts
-[DATA] processing file: /app/templates/about.hbs
-[DATA] processing file: /app/templates/application.hbs
-[DATA] processing file: /app/templates/contact.hbs
-[DATA] processing file: /app/templates/index.hbs
-[DATA] processing file: /app/templates/rental.hbs
-[DATA] processing file: /app/components/rental/detailed.hbs
-[DATA] processing file: /app/components/rental/image.hbs
-[DATA] processing file: /app/components/rental/image.ts
-[DATA] processing file: /app/components/rentals/filter.hbs
-[DATA] processing file: /app/components/rentals/filter.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/30 files | ETA: **:**:**
+[DATA]  processing file: /app/app.ts
+[DATA] [--------------------] 1/30 files | ETA: **:**:**
+[DATA]  processing file: /app/router.ts
+[DATA] [=-------------------] 2/30 files | ETA: **:**:**
+[DATA]  processing file: /app/adapters/application.ts
+[DATA] [==------------------] 3/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/audience-demographics.hbs
+[DATA] [==------------------] 4/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/audience-demographics.ts
+[DATA] [===-----------------] 5/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/hello-world.gts
+[DATA] [====----------------] 6/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/jumbo.hbs
+[DATA] [====----------------] 7/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/map.hbs
+[DATA] [=====---------------] 8/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/map.ts
+[DATA] [======--------------] 9/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/nav-bar.hbs
+[DATA] [======--------------] 10/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental.hbs
+[DATA] [=======-------------] 11/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals.hbs
+[DATA] [========------------] 12/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals.ts
+[DATA] [========------------] 13/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/share-button.hbs
+[DATA] [=========-----------] 14/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/share-button.ts
+[DATA] [==========----------] 15/30 files | ETA: **:**:**
+[DATA]  processing file: /app/models/rental.ts
+[DATA] [==========----------] 16/30 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/index.ts
+[DATA] [===========---------] 17/30 files | ETA: **:**:**
+[DATA]  processing file: /app/routes/rental.ts
+[DATA] [============--------] 18/30 files | ETA: **:**:**
+[DATA]  processing file: /app/serializers/application.ts
+[DATA] [============--------] 19/30 files | ETA: **:**:**
+[DATA]  processing file: /app/services/locale.ts
+[DATA] [=============-------] 20/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/about.hbs
+[DATA] [==============------] 21/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/application.hbs
+[DATA] [==============------] 22/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/contact.hbs
+[DATA] [===============-----] 23/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/index.hbs
+[DATA] [================----] 24/30 files | ETA: **:**:**
+[DATA]  processing file: /app/templates/rental.hbs
+[DATA] [================----] 25/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/detailed.hbs
+[DATA] [=================---] 26/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/image.hbs
+[DATA] [==================--] 27/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rental/image.ts
+[DATA] [==================--] 28/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals/filter.hbs
+[DATA] [===================-] 29/30 files | ETA: **:**:**
+[DATA]  processing file: /app/components/rentals/filter.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   123 errors caught by rehearsal
 [TITLE]   46 have been fixed by rehearsal
 [TITLE]   77 errors need to be fixed manually
@@ -792,6 +873,7 @@ exports[`fix command > ember_js_app_4.11 1`] = `
 [TITLE]     -- 47 glint errors, with details in the report
 [TITLE]     -- 2 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   123 errors caught by rehearsal
 [SUCCESS]   46 have been fixed by rehearsal
 [SUCCESS]   77 errors need to be fixed manually
@@ -862,11 +944,18 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [STARTED] Analyzing project dependency graph
 [SUCCESS] Analyzing project dependency graph
 [STARTED] Infer Types
-[DATA] processing file: /src/GreetingHeader.ts
-[DATA] processing file: /src/App.ts
-[DATA] processing file: /src/SimpleComponent.ts
-[DATA] processing file: /src/index.ts
+[DATA] starting...
+[DATA] preparing files ...
+[DATA] [--------------------] 0/4 files | ETA: **:**:**
+[DATA]  processing file: /src/GreetingHeader.ts
+[DATA] [=====---------------] 1/4 files | ETA: **:**:**
+[DATA]  processing file: /src/App.ts
+[DATA] [==========----------] 2/4 files | ETA: **:**:**
+[DATA]  processing file: /src/SimpleComponent.ts
+[DATA] [===============-----] 3/4 files | ETA: **:**:**
+[DATA]  processing file: /src/index.ts
 [TITLE] Types Inferred
+[TITLE]   Duration: 00:00
 [TITLE]   27 errors caught by rehearsal
 [TITLE]   16 have been fixed by rehearsal
 [TITLE]   11 errors need to be fixed manually
@@ -874,6 +963,7 @@ exports[`fix command > glimmerx_js_app 1`] = `
 [TITLE]     -- 10 glint errors, with details in the report
 [TITLE]     -- 0 eslint errors, with details in the report
 [SUCCESS] Types Inferred
+[SUCCESS]   Duration: 00:00
 [SUCCESS]   27 errors caught by rehearsal
 [SUCCESS]   16 have been fixed by rehearsal
 [SUCCESS]   11 errors need to be fixed manually

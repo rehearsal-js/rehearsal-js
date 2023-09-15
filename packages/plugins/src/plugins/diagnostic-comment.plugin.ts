@@ -1,9 +1,9 @@
 import { createRequire } from 'node:module';
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import { PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts from 'typescript';
+import { PluginOptions, Plugin } from '../plugin.js';
 import {
   findDiagnosticNode,
   getConditionalCommentPos,
@@ -11,7 +11,9 @@ import {
   inTemplateExpressionText,
   onMultilineConditionalTokenLine,
 } from './utils.js';
+
 import type MS from 'magic-string';
+import type { Service } from '@rehearsal/service';
 
 const require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -1,5 +1,6 @@
 import { ReportItemType } from '@rehearsal/reporter';
 // eslint-disable-next-line no-restricted-imports
+import { secondsToTime } from '@rehearsal/utils';
 import type { ReportItem } from '@rehearsal/reporter';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -8,7 +9,11 @@ const GlintReportItemType = ReportItemType.glint;
 /**
  * Reads report and generate migration summary
  */
-export function getReportSummary(reportItems: ReportItem[], fixedItemCount: number): string {
+export function getReportSummary(
+  reportItems: ReportItem[],
+  fixedItemCount: number,
+  duration: number
+): string {
   const fileMap = new Set<string>();
   let tsErrorCount = 0;
   let glintErrorCount = 0;
@@ -34,6 +39,7 @@ export function getReportSummary(reportItems: ReportItem[], fixedItemCount: numb
   const totalErrorCount = totalUnfixedCount + fixedItemCount;
 
   let summary = `Types Inferred\n\n
+  Duration: ${secondsToTime(duration)}\n\n
   ${totalErrorCount} errors caught by rehearsal\n
   ${fixedItemCount} have been fixed by rehearsal\n
   ${totalUnfixedCount} errors need to be fixed manually\n

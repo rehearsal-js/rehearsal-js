@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/test-support",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Test support utilities for rehearsal",
   "license": "BSD-2-Clause",
   "type": "module",
@@ -24,7 +24,7 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run --config ./vitest.config.ts --coverage",
+    "test": "vitest --run --config ./vitest.config.ts",
     "test:slow": "vitest --run --config ./vitest.config.slow.ts",
     "version": "pnpm version"
   },
@@ -37,14 +37,14 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.33.0",
+    "@vitest/coverage-v8": "^0.34.3",
     "ember-cli": "^4.11.0",
     "ember-data": "^4.11.3",
     "ember-source": "^5.1.2",
-    "vitest": "^0.30.0"
+    "vitest": "^0.34.3"
   },
   "peerDependencies": {
-    "typescript": "^5.1"
+    "typescript": "^5"
   },
   "packageManager": "pnpm@8.6.7",
   "volta": {

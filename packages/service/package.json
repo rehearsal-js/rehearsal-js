@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/service",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Rehearsal Service",
   "keywords": [
     "rehearsal",
@@ -32,26 +32,26 @@
     "lint": "npm-run-all lint:*",
     "lint:tsc-src": "tsc --noEmit",
     "lint:tsc-test": "tsc --noEmit --project test/tsconfig.json",
-    "test": "vitest --run --config ./vitest.config.ts --coverage",
+    "test": "vitest --run --config ./vitest.config.ts",
     "test:watch": "vitest --coverage --watch",
     "version": "pnpm version"
   },
   "dependencies": {
     "@glint/core": "^1.0.2",
-    "@rehearsal/reporter": "workspace:*",
     "@rehearsal/utils": "workspace:*",
     "find-up": "^6.3.0",
     "vscode-languageserver": "^8.1.0",
-    "vscode-uri": "^3.0.7",
-    "winston": "^3.8.2"
+    "vscode-uri": "^3.0.7"
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.33.0",
+    "@rehearsal/reporter": "workspace:*",
+    "@vitest/coverage-v8": "^0.34.3",
     "type-fest": "^3.8.0",
-    "vitest": "^0.30.0"
+    "vitest": "^0.34.3",
+    "winston": "^3.8.2"
   },
   "peerDependencies": {
-    "typescript": "^5.1"
+    "typescript": "^5"
   },
   "packageManager": "pnpm@8.6.7",
   "engines": {

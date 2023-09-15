@@ -1,10 +1,12 @@
 import { DiagnosticWithContext, hints } from '@rehearsal/codefixes';
-import { PluginOptions, Service, Plugin } from '@rehearsal/service';
 import { findNodeAtPosition } from '@rehearsal/ts-utils';
 import debug from 'debug';
 import ts from 'typescript';
+import { PluginOptions, Plugin } from '../plugin.js';
 import { getLocation } from '../helpers.js';
 import { getBoundaryOfCommentBlock } from './utils.js';
+
+import type { Service } from '@rehearsal/service';
 
 const DEBUG_CALLBACK = debug('rehearsal:plugins:diagnostic-report');
 

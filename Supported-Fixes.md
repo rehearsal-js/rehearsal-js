@@ -462,7 +462,7 @@ export function foo(a: number) {
 **Output:**
 
 ```ts
-/**
+  /**
    * @param {number} a
    */
 export function foo(a: number) {

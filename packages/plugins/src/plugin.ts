@@ -1,6 +1,7 @@
-import { Reporter } from '@rehearsal/reporter';
-import { Logger } from 'winston';
-import { Service } from './rehearsal-service.js';
+import { ProgressBar } from '@rehearsal/utils';
+import type { Service } from '@rehearsal/service';
+import type { Logger } from 'winston';
+import type { Reporter } from '@rehearsal/reporter';
 
 export abstract class Plugin<Options extends PluginOptions = PluginOptions> {
   fileName: string;
@@ -122,18 +123,30 @@ export class PluginsRunner {
 
   // generator to yield at every file in processFilesGenerator
   async *run(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
-    const fileIteratorProcessor = this.processFilesGenerator(fileNames, logger);
+    const progress = new ProgressBar(fileNames.length, !!process.env['TEST']);
+
+    const fileIteratorProcessor = this.processFilesGenerator(fileNames, progress, logger);
     for await (const fileName of fileIteratorProcessor) {
       yield fileName;
     }
+
+    this.context.reporter.duration = progress.secondsPassed;
   }
 
   // Async generator to process files
   // Since this is a long-running process, we need to yield to the event loop
   // So we don't block the main thread
-  async *processFilesGenerator(fileNames: string[], logger?: PluginLogger): AsyncGenerator<string> {
+  async *processFilesGenerator(
+    fileNames: string[],
+    progress: ProgressBar,
+    logger?: PluginLogger
+  ): AsyncGenerator<string> {
     for (const fileName of fileNames) {
-      logger?.log(`processing file: ${fileName.replace(this.context.basePath, '')}`);
+      logger?.log(
+        `[${progress.printBar(20)}] ${progress.done}/${progress.total} files` +
+          ` | ETA: ${progress.secondsLeft ? progress.timeLeft : '**:**:**'}` +
+          `\n processing file: ${fileName.replace(this.context.basePath, '')}`
+      );
 
       const allChangedFiles: Set<string> = new Set();
       const pluginIteratorProcessor = this.processPlugins(fileName, allChangedFiles);
@@ -152,6 +165,8 @@ export class PluginsRunner {
 
         await next();
       }
+
+      progress.increment();
 
       yield fileName;
     }

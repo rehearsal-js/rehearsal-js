@@ -37,6 +37,7 @@ export class Reporter {
   public report: Report;
   public currentRun: Run;
   public lastRun: Run | undefined;
+  public duration: number;
   private uniqueFiles: string[];
   private stemName: string;
 
@@ -64,6 +65,7 @@ export class Reporter {
       fixedItemCount: 0,
       items: [],
     };
+    this.duration = 0;
   }
 
   public getFileNames(): string[] {

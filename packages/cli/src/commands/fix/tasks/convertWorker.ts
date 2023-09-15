@@ -24,6 +24,12 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     projectRootDir: reporterOptionsProjectRootDir,
   });
 
+  const task = {
+    set output(text: string) {
+      parentPort?.postMessage({ type: 'logger', content: text });
+    },
+  };
+
   const migrateOptions = {
     mode,
     projectRootDir,
@@ -32,6 +38,7 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     reporter,
     ignore,
     configName,
+    task,
   };
 
   const migratedFiles = await drainMigrate(migrateOptions);
@@ -44,6 +51,7 @@ if (!isMainThread && (!process.env['TEST'] || process.env['TEST'] === 'false')) 
     content: {
       reportItems: reporter.report.items,
       fixedItemCount: reporter.report.fixedItemCount,
+      duration: reporter.duration,
     },
   });
   // resolves the promise in the parent thread
@@ -55,8 +63,6 @@ async function drainMigrate(migrateOptions: MigrateInput): Promise<string[]> {
 
   for await (const tsFile of migrate(migrateOptions)) {
     migratedFiles.push(tsFile);
-    // logs processing file: tsFile
-    parentPort?.postMessage({ type: 'logger', content: tsFile });
   }
 
   return migratedFiles;

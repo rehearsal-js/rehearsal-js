@@ -1,18 +1,10 @@
 import { join } from 'node:path';
 import { findUpSync } from 'find-up';
 import { readTSConfig, readJSON } from '@rehearsal/utils';
+import { RehearsalService, isGlintFile, isGlintProject, GlintService } from '@rehearsal/service';
 import {
   PluginsRunner,
-  RehearsalService,
-  isGlintFile,
-  isGlintProject,
-  GlintService,
   DummyPlugin,
-} from '@rehearsal/service';
-import debug from 'debug';
-import ts from 'typescript';
-import fastGlob from 'fast-glob';
-import {
   DiagnosticFixPlugin,
   DiagnosticCommentPlugin,
   isPrettierUsedForFormatting,
@@ -25,6 +17,9 @@ import {
   GlintCommentPlugin,
   GlintReportPlugin,
 } from '@rehearsal/plugins';
+import debug from 'debug';
+import ts from 'typescript';
+import fastGlob from 'fast-glob';
 import { getExcludePatterns } from '@rehearsal/migration-graph';
 import * as glintCore from '@glint/core';
 import type { Reporter } from '@rehearsal/reporter';
@@ -100,6 +95,8 @@ export async function* migrate(input: MigrateInput): AsyncGenerator<string> {
   DEBUG_CALLBACK(` filesToMigrate: %O`, filesToMigrate);
   DEBUG_CALLBACK(` ignoredPaths: %O`, ignoredPaths);
   DEBUG_CALLBACK(` filteredFilesToMigrate: %O`, filteredFilesToMigrate);
+
+  listrTask.output = `preparing files ...`;
 
   const service = useGlint
     ? new GlintService(glintCore, packageDir)
