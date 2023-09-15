@@ -209,8 +209,10 @@ describe('glint-parsing-utils', () => {
       expect.assertions(2);
       if (targetNode) {
         const found = getNearestTemplateOnlyComponentVariableDeclaration(targetNode);
-        expect(found && isVariableDeclaration(found)).toBeTruthy();
-        expect(found && isIdentifier(found?.name) && found?.name.escapedText).toBe('Hello');
+        if (found) {
+          expect(isVariableDeclaration(found)).toBeTruthy();
+          expect(isIdentifier(found.name) && found.name.escapedText).toBe('Hello');
+        }
       }
     });
 

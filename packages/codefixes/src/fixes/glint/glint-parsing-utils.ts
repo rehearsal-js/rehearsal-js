@@ -268,7 +268,7 @@ function isTemplateOnlyComponent(
 export function getNearestTemplateOnlyComponentVariableDeclaration(
   targetNode: ts.Node,
   identifierName = 'TemplateOnlyComponent'
-): ts.Node | undefined {
+): LikeTemplateOnlyComponentVariableDeclaration | undefined {
   let target = targetNode;
   do {
     if (!target.parent) {
