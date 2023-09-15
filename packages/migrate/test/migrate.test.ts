@@ -435,6 +435,26 @@ describe('fix', () => {
     });
 
     describe('component signature codefix', () => {
+      test('template only', async () => {
+        const [inputs, outputs] = prepareInputFiles(project, [
+          'gts/signatures/template-only/with-missing-args.gts',
+        ]);
+
+        const input: MigrateInput = {
+          projectRootDir: project.baseDir,
+          packageDir: project.baseDir,
+          filesToMigrate: inputs,
+          reporter,
+          mode: 'drain',
+        };
+
+        for await (const _ of migrate(input)) {
+          // no ops
+        }
+
+        expectFile(outputs[0]).toMatchSnapshot();
+      });
+
       test('with typedef for component signature interface', async () => {
         const [inputs, outputs] = prepareInputFiles(project, ['gts/signatures/with-typedef.gts']);
 

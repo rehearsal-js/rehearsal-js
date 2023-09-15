@@ -377,6 +377,31 @@ export default class WithMissingInterface extends Component<WithMissingInterface
 "
 `;
 
+exports[`fix > .gts > component signature codefix > template only 1`] = `
+"// @ts-expect-error @rehearsal TODO TS2307: Cannot find module '@ember/component/template-only' or its corresponding type declarations.
+import { type TemplateOnlyComponent } from \\"@ember/component/template-only\\";
+
+// Missing arugment in Args
+interface HelloSignature {
+  Args: { name: any };
+}
+
+export const Hello: TemplateOnlyComponent<HelloSignature> = <template>
+  <span>Hello, {{@name}}!</span>
+</template>;
+
+// Missing Args property
+
+interface GoodbyeSignature {
+  Args: { name: any };
+}
+
+export const Goodbye: TemplateOnlyComponent<GoodbyeSignature> = <template>
+  <span>Goodbye, {{@name}}!</span>
+</template>;
+"
+`;
+
 exports[`fix > .gts > component signature codefix > with typedef for component signature interface 1`] = `
 "import Component from \\"@glimmer/component\\";
 
