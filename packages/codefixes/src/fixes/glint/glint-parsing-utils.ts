@@ -244,8 +244,8 @@ export function getJSDocExtendsTagWithSignature(
   return;
 }
 
-type LikeTemplateOnlyComponentVariableDeclaration = ts.VariableDeclaration & {
-  type: ts.TypeReferenceNode & { typeName: ts.Identifier };
+export type LikeTemplateOnlyComponentVariableDeclaration = ts.VariableLikeDeclaration & {
+  type?: ts.TypeReferenceNode & { typeName: ts.Identifier };
 };
 
 function isTemplateOnlyComponent(
@@ -287,7 +287,12 @@ export function getComponentSignatureNameFromTemplateOnlyComponent(
   target: ts.Node
 ): ts.Identifier | undefined {
   if (isTemplateOnlyComponent(target)) {
-    const typeArguments = target.type.typeArguments ?? [];
+    const typeArguments = target?.type?.typeArguments ?? [];
+
+    if (typeArguments.length < 1) {
+      return;
+    }
+
     const maybeSignature = typeArguments[0];
 
     if (ts.isTypeReferenceNode(maybeSignature) && ts.isIdentifier(maybeSignature.typeName)) {
