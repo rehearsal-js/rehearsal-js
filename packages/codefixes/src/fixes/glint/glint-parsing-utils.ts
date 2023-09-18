@@ -268,9 +268,10 @@ export function getNearestTemplateOnlyComponentVariableDeclaration(
 }
 
 export function getComponentSignatureNameFromTemplateOnlyComponent(
-  target: ts.Node
+  target: ts.Node,
+  identifierName = 'TemplateOnlyComponent'
 ): ts.Identifier | undefined {
-  if (isTemplateOnlyComponent(target)) {
+  if (isTemplateOnlyComponent(target, identifierName)) {
     const typeArguments = target?.type?.typeArguments ?? [];
 
     if (typeArguments.length < 1) {

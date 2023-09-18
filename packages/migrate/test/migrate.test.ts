@@ -438,6 +438,7 @@ describe('fix', () => {
       test('template only', async () => {
         const [inputs, outputs] = prepareInputFiles(project, [
           'gts/signatures/template-only/with-missing-args.gts',
+          'gts/signatures/template-only/with-toc.gts',
         ]);
 
         const input: MigrateInput = {
@@ -453,6 +454,7 @@ describe('fix', () => {
         }
 
         expectFile(outputs[0]).toMatchSnapshot();
+        expectFile(outputs[1]).toMatchSnapshot();
       });
 
       test('with typedef for component signature interface', async () => {

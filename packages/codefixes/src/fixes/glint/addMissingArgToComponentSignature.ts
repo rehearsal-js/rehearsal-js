@@ -310,13 +310,28 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     targetNode: ts.Node,
     argName: string
   ): ts.CodeFixAction | undefined {
-    const toc = getNearestTemplateOnlyComponentVariableDeclaration(targetNode);
+    let toc: LikeTemplateOnlyComponentVariableDeclaration | undefined;
+
+    const TOC_TYPE_IDENTIFIERS = ['TemplateOnlyComponent', 'TOC'];
+
+    let tocIdentifierName: string | undefined;
+
+    for (const maybeIdentifier of TOC_TYPE_IDENTIFIERS) {
+      toc = getNearestTemplateOnlyComponentVariableDeclaration(targetNode, maybeIdentifier);
+      if (toc) {
+        tocIdentifierName = maybeIdentifier;
+        break;
+      }
+    }
 
     if (!toc) {
       return;
     }
 
-    const signatureIdentifier = getComponentSignatureNameFromTemplateOnlyComponent(toc);
+    const signatureIdentifier = getComponentSignatureNameFromTemplateOnlyComponent(
+      toc,
+      tocIdentifierName
+    );
 
     if (!signatureIdentifier) {
       return this.fixMissingComponentSignatureInterfaceForTemplate(d, sourceFile, toc);
@@ -345,7 +360,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     toc: LikeTemplateOnlyComponentVariableDeclaration
   ): ts.CodeFixAction | undefined {
     if (!toc.type) {
-      // Case where the TOC does not have the TemplateOnlyComponent type applied.
+      // Case where the TOC does not have a TemplateOnlyComponent/TOC type applied.
       return;
     }
 
