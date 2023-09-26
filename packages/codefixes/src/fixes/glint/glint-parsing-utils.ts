@@ -12,19 +12,9 @@ export function parse(fileName: string, content: string): ts.SourceFile {
 export function getNearestComponentClassDeclaration(
   targetNode: ts.Node
 ): ts.ClassDeclaration | undefined {
-  let parent = targetNode.parent;
-
-  do {
-    if (!parent) {
-      return;
-    }
-
-    if (ts.isClassDeclaration(parent) && hasGlimmerComponentHeritageClause(parent)) {
-      return parent;
-    }
-  } while ((parent = parent.parent));
-
-  return;
+  return ts.findAncestor(targetNode, (node): node is ts.ClassDeclaration => {
+    return ts.isClassDeclaration(node) && hasGlimmerComponentHeritageClause(node);
+  });
 }
 
 function getInterfaceByIdentifier(
@@ -241,5 +231,53 @@ export function getJSDocExtendsTagWithSignature(
     }
   }
 
+  return;
+}
+
+type LikeTemplateOnlyComponentVariableDeclaration = ts.VariableDeclaration & {
+  type: ts.TypeReferenceNode & { typeName: ts.Identifier };
+};
+
+function isTemplateOnlyComponent(
+  targetNode: ts.Node,
+  identifierName = 'TemplateOnlyComponent'
+): targetNode is LikeTemplateOnlyComponentVariableDeclaration {
+  if (
+    ts.isVariableDeclaration(targetNode) &&
+    targetNode.type &&
+    ts.isTypeReferenceNode(targetNode.type) &&
+    ts.isIdentifier(targetNode.type.typeName) &&
+    targetNode.type.typeName.escapedText === identifierName
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+export function getNearestTemplateOnlyComponentVariableDeclaration(
+  targetNode: ts.Node,
+  identifierName = 'TemplateOnlyComponent'
+): LikeTemplateOnlyComponentVariableDeclaration | undefined {
+  return ts.findAncestor(
+    targetNode,
+    (node): node is LikeTemplateOnlyComponentVariableDeclaration => {
+      return isTemplateOnlyComponent(node, identifierName);
+    }
+  );
+}
+
+export function getComponentSignatureNameFromTemplateOnlyComponent(
+  target: ts.Node
+): ts.Identifier | undefined {
+  if (isTemplateOnlyComponent(target)) {
+    const typeArguments = target.type.typeArguments ?? [];
+    const maybeSignature = typeArguments[0];
+
+    if (ts.isTypeReferenceNode(maybeSignature) && ts.isIdentifier(maybeSignature.typeName)) {
+      return maybeSignature.typeName;
+    }
+    return;
+  }
   return;
 }
