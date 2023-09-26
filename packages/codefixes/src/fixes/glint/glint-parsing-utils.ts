@@ -12,19 +12,9 @@ export function parse(fileName: string, content: string): ts.SourceFile {
 export function getNearestComponentClassDeclaration(
   targetNode: ts.Node
 ): ts.ClassDeclaration | undefined {
-  let parent = targetNode.parent;
-
-  do {
-    if (!parent) {
-      return;
-    }
-
-    if (ts.isClassDeclaration(parent) && hasGlimmerComponentHeritageClause(parent)) {
-      return parent;
-    }
-  } while ((parent = parent.parent));
-
-  return;
+  return ts.findAncestor(targetNode, (node): node is ts.ClassDeclaration => {
+    return ts.isClassDeclaration(node) && hasGlimmerComponentHeritageClause(node);
+  });
 }
 
 export function getInterfaceByIdentifier(
@@ -269,18 +259,12 @@ export function getNearestTemplateOnlyComponentVariableDeclaration(
   targetNode: ts.Node,
   identifierName = 'TemplateOnlyComponent'
 ): LikeTemplateOnlyComponentVariableDeclaration | undefined {
-  let target = targetNode;
-  do {
-    if (!target.parent) {
-      return;
+  return ts.findAncestor(
+    targetNode,
+    (node): node is LikeTemplateOnlyComponentVariableDeclaration => {
+      return isTemplateOnlyComponent(node, identifierName);
     }
-
-    if (isTemplateOnlyComponent(target, identifierName)) {
-      return target;
-    }
-  } while ((target = target.parent));
-
-  return;
+  );
 }
 
 export function getComponentSignatureNameFromTemplateOnlyComponent(
