@@ -318,7 +318,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     const signatureIdentifier = getComponentSignatureNameFromTemplateOnlyComponent(toc);
 
     if (!signatureIdentifier) {
-      // TODO This is a ToC but there is no signature, we can't fix this.
+      // TODO This is a ToC but there is no signature, we can fix this.
       return;
     }
 
