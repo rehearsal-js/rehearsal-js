@@ -9,11 +9,14 @@ import {
   getIdentifierForComponent,
   parse as tsParse,
   hasPropertyOnComponentSignatureInterface,
+  getClassNameFromClassDeclaration,
   getComponentSignatureInterfaceNode,
-  getPropertyOnComponentSignatureInterface,
+  getComponentSignatureNameFromTemplateOnlyComponent,
+  getInterfaceByIdentifier,
   getJSDocExtendsTagWithSignature,
   getNearestComponentClassDeclaration,
-  getClassNameFromClassDeclaration,
+  getNearestTemplateOnlyComponentVariableDeclaration,
+  getPropertyOnComponentSignatureInterface,
 } from './glint-parsing-utils.js';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
@@ -116,10 +119,12 @@ export class AddMissingArgToComponentSignature implements CodeFix {
 
     const classDeclaration = getNearestComponentClassDeclaration(targetNode);
 
+    // If no class declaration handle template only component (TOC).
     if (!classDeclaration) {
-      return;
+      return this.handleTemplateOnlyComponent(glintDiagnostic, sourceFile, targetNode, argName);
     }
 
+    // Handle Component Class usecase
     if (!hasComponentSignature(classDeclaration)) {
       return this.fixMissingComponentSignatureInterface(
         glintDiagnostic,
@@ -296,5 +301,41 @@ export class AddMissingArgToComponentSignature implements CodeFix {
       ],
       'Adds the component argument to the Args property of the Component Signature'
     );
+  }
+
+  private handleTemplateOnlyComponent(
+    d: GlintDiagnosticWithContext,
+    sourceFile: ts.SourceFile,
+    targetNode: ts.Node,
+    argName: string
+  ): ts.CodeFixAction | undefined {
+    const toc = getNearestTemplateOnlyComponentVariableDeclaration(targetNode);
+
+    if (!toc) {
+      return;
+    }
+
+    const signatureIdentifier = getComponentSignatureNameFromTemplateOnlyComponent(toc);
+
+    if (!signatureIdentifier) {
+      // TODO This is a ToC but there is no signature, we can fix this.
+      return;
+    }
+
+    const signatureInterface = getInterfaceByIdentifier(sourceFile, signatureIdentifier);
+
+    if (!signatureInterface) {
+      return;
+    }
+
+    if (!hasPropertyOnComponentSignatureInterface(signatureInterface, 'Args')) {
+      return this.fixMissingPropertyArgsOnComponentSignatureInterface(
+        d,
+        sourceFile,
+        signatureInterface
+      );
+    }
+
+    return this.fixMissingArgumentOnArgsProperty(d, sourceFile, signatureInterface, argName);
   }
 }

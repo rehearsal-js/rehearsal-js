@@ -17,7 +17,7 @@ export function getNearestComponentClassDeclaration(
   });
 }
 
-function getInterfaceByIdentifier(
+export function getInterfaceByIdentifier(
   sourceFile: ts.SourceFile,
   targetIdentifier: ts.Identifier
 ): ts.InterfaceDeclaration | undefined {
