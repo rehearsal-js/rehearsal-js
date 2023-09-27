@@ -13,6 +13,6 @@ export default defineConfig({
       shuffle: true,
     },
     watchExclude: ['package.json', '**/fixtures/**'],
-    include: ['./test/commands/**/*.test.ts'],
+    include: ['./test/commands/**/*.test.ts', './test/utils/*.test.ts'],
   },
 });

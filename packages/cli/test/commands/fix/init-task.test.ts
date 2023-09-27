@@ -20,6 +20,7 @@ import type {
   SkipChecks,
 } from '../../../src/types.js';
 import type { Readable } from 'node:stream';
+import type { DirJSON } from 'fixturify';
 
 const logger = createLogger({
   transports: [new transports.Console({ format: format.cli() })],
@@ -31,6 +32,8 @@ function projectAddDevDeps(project: Project, type: ProjectType): void {
   for (const [dep, version] of Object.entries(deps)) {
     project.addDevDependency(dep, `^${version}`);
   }
+
+  project.linkDependency('typescript', { baseDir: __dirname });
 }
 
 function projectInit(project: Project, type: ProjectType): void {
@@ -43,6 +46,16 @@ function projectInit(project: Project, type: ProjectType): void {
   });
   project.files['.eslintrc.json'] = JSON.stringify({
     parser: prereqs.eslint,
+  });
+}
+
+function submoduleInit(project: Project, type: ProjectType, submoduleName: string): void {
+  projectAddDevDeps(project, type);
+
+  const prereqs = getPreReqs(type);
+
+  (project.files[submoduleName] as DirJSON)['tsconfig.json'] = JSON.stringify({
+    ...prereqs.tsconfig,
   });
 }
 
@@ -97,7 +110,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeUndefined();
     }
@@ -113,7 +126,25 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test(`preFlightCheck "ember" submodule of a "base-ts" module`, async () => {
+    projectInit(project, 'base-ts');
+
+    submoduleInit(project, 'ember', 'module-c');
+
+    await project.write();
+
+    const srcPath = resolve(project.baseDir, 'module-c');
+
+    try {
+      preFlightCheck(srcPath, project.baseDir, 'ember');
     } catch (error) {
       expect(error).toBeUndefined();
     }
@@ -129,7 +160,25 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test(`preFlightCheck "glimmer" submodule of a "ember" module`, async () => {
+    projectInit(project, 'ember');
+
+    submoduleInit(project, 'glimmer', 'module-c');
+
+    await project.write();
+
+    const srcPath = resolve(project.baseDir, 'module-c');
+
+    try {
+      preFlightCheck(srcPath, project.baseDir, 'glimmer');
     } catch (error) {
       expect(error).toBeUndefined();
     }
@@ -149,7 +198,29 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
+  });
+
+  test('preFlightCheck "base-ts" - deps/devDeps compare in submodule', async () => {
+    const projectType: ProjectType = 'base-ts';
+
+    projectInit(project, projectType);
+
+    // remove from devDeps and add them to deps
+    project.removeDevDependency('typescript');
+    project.addDependency('typescript', '^5.0.0');
+
+    await project.write();
+
+    const srcPath = resolve(project.baseDir, 'module-c');
+
+    try {
+      preFlightCheck(srcPath, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeUndefined();
     }
@@ -176,7 +247,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
       if (error instanceof Error) {
@@ -206,7 +277,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
       if (error instanceof Error) {
@@ -236,7 +307,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
       if (error instanceof Error) {
@@ -259,7 +330,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType);
+      preFlightCheck(project.baseDir, project.baseDir, projectType);
     } catch (error) {
       expect(error).toBeDefined();
       if (error instanceof Error) {
@@ -283,7 +354,7 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType, skipChecks);
+      preFlightCheck(project.baseDir, project.baseDir, projectType, skipChecks);
     } finally {
       expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
     }
@@ -300,10 +371,28 @@ describe('Fix: Init-Task', () => {
     await project.write();
 
     try {
-      preFlightCheck(project.baseDir, projectType, skipChecks);
+      preFlightCheck(project.baseDir, project.baseDir, projectType, skipChecks);
     } finally {
       expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
     }
+  });
+
+  test(`preFlightCheck "base-ts" submodule of a "glimmer" module`, async () => {
+    projectInit(project, 'glimmer');
+
+    submoduleInit(project, 'base-ts', 'module-c');
+
+    await project.write();
+
+    const srcPath = resolve(project.baseDir, 'module-c');
+
+    try {
+      preFlightCheck(srcPath, project.baseDir, 'base-ts');
+    } catch (error) {
+      expect(error).toBeUndefined();
+    }
+
+    expect(cleanOutput(output, project.baseDir)).toMatchSnapshot();
   });
 
   test(`validate initTask "base-ts" works with src arg`, async () => {

@@ -1,7 +1,5 @@
-import { join, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
-import { TSConfig, readTSConfig } from '@rehearsal/utils';
-import fastGlob from 'fast-glob';
 import {
   getTSConfigCompilerOptionsCanonical,
   type TSConfigCompilerOptions,
@@ -11,7 +9,9 @@ import { readJSONSync } from 'fs-extra/esm';
 import { PackageJson } from 'type-fest';
 import debug from 'debug';
 import { findUpSync } from 'find-up';
-import { PreReqTSConfig } from '../types.js';
+import { tryLoadGlintConfig } from '@rehearsal/service';
+import { findNearestESLintConfig, findNearestPackageJson, findNearestTSConfig } from './paths.js';
+import type { PreReqTSConfig } from '../types.js';
 
 const DEBUG_CALLBACK = debug('rehearsal:utils:prereqs');
 
@@ -27,7 +27,7 @@ export function isNodePreReq(requiredNode: string): boolean {
   return true;
 }
 
-export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSConfig): boolean {
+export function isTSConfigPreReq(srcPath: string, requiredTSConfig: PreReqTSConfig): boolean {
   if (!requiredTSConfig) {
     return true;
   }
@@ -40,14 +40,16 @@ export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSCon
 
   const { strict: strictRequired, skipLibCheck: skipLibCheckRequired } =
     requiredTSConfig.compilerOptions as TSConfigCompilerOptions;
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
 
   // only check for it if its required
   if (requiredTSConfig.glint) {
-    isTSConfigGlintPreReq(tsConfigPath, requiredTSConfig, message);
+    isTSConfigGlintPreReq(srcPath, requiredTSConfig, message);
   }
+
+  const tsConfigPath = findNearestTSConfig(srcPath)!;
+
   // this will fetch all the compilerOptions from tsconfig extends as well
-  const { strict, skipLibCheck } = getTSConfigCompilerOptionsCanonical(basePath, tsConfigPath);
+  const { strict, skipLibCheck } = getTSConfigCompilerOptionsCanonical(tsConfigPath);
 
   if (strict === strictRequired && skipLibCheck === skipLibCheckRequired) {
     return true;
@@ -57,8 +59,8 @@ export function isTSConfigPreReq(basePath: string, requiredTSConfig: PreReqTSCon
 }
 
 // should cover all eslint extensions
-export function isESLintPreReq(basePath: string, requiredParser: string): boolean {
-  const lintConfigPath = getEsLintConfigPath(basePath);
+export function isESLintPreReq(srcPath: string, rootPath: string, requiredParser: string): boolean {
+  const lintConfigPath = findNearestESLintConfig(srcPath, rootPath);
   if (!lintConfigPath) {
     throw new Error(
       `Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist. Please add one and try again.`
@@ -77,19 +79,12 @@ export function isESLintPreReq(basePath: string, requiredParser: string): boolea
   return true;
 }
 
-export function getEsLintConfigPath(basePath: string): string {
-  // glob against the following file extension patterns and return the first match
-  const configPath = fastGlob.sync(join(basePath, '.eslintrc?(.{js,yml,json,yaml,cjs})'))[0];
-  return configPath;
-}
-
 function isTSConfigGlintPreReq(
-  tsConfigPath: string,
+  basePath: string,
   requiredTSConfigGlint: Pick<PreReqTSConfig, 'glint'>,
   message?: string
 ): void {
-  // the glint key isn't supported by with ts API so we have to grab it manually
-  const { glint } = readTSConfig<TSConfig>(tsConfigPath);
+  const glint = tryLoadGlintConfig(basePath);
   const { glint: glintRequired } = requiredTSConfigGlint;
 
   if (!glint && glintRequired) {
@@ -118,27 +113,17 @@ function isTSConfigGlintPreReq(
   }
 }
 
-export function isExistsESLintConfig(basePath: string): boolean {
-  const lintConfigPath = getEsLintConfigPath(basePath);
+export function isExistsESLintConfig(srcPath: string, rootPath: string): boolean {
+  const lintConfigPath = findNearestESLintConfig(srcPath, rootPath);
   if (!lintConfigPath) {
     throw new Error(`Eslint config (.eslintrc.{js,yml,json,yaml,cjs}) does not exist.`);
   }
   return true;
 }
 
-export function isExistsPackageJSON(basePath: string): boolean {
-  const packageJsonPath = resolve(basePath, 'package.json');
-  if (!existsSync(packageJsonPath)) {
-    throw new Error(
-      `${packageJsonPath} does not exists. Please run rehearsal inside a project with a valid package.json.`
-    );
-  }
-  return true;
-}
-
-export function isExistsTSConfig(basePath: string): boolean {
-  const tsConfigPath = resolve(basePath, 'tsconfig.json');
-  if (!existsSync(tsConfigPath)) {
+export function isExistsTSConfig(srcPath: string, rootPath: string): boolean {
+  const tsConfigPath = findNearestTSConfig(srcPath, rootPath);
+  if (!tsConfigPath) {
     throw new Error(
       `${tsConfigPath} does not exists. Please run rehearsal inside a project with a valid tsconfig.json.`
     );
@@ -146,8 +131,9 @@ export function isExistsTSConfig(basePath: string): boolean {
   return true;
 }
 
-export function isValidGitIgnore(basePath: string): boolean {
-  const gitignorePath = resolve(basePath, '.gitignore');
+export function isValidGitIgnore(rootPath: string): boolean {
+  const gitignorePath = resolve(rootPath, '.gitignore');
+
   if (!existsSync(gitignorePath)) {
     return true;
   }
@@ -163,15 +149,24 @@ export function isValidGitIgnore(basePath: string): boolean {
   return true;
 }
 
-export function isDepsPreReq(basePath: string, requiredDeps: Record<string, string>): boolean {
-  // read the package.json
-  const packageJSON = readJSONSync(resolve(basePath, 'package.json')) as PackageJson;
+export function isDepsPreReq(
+  srcPath: string,
+  rootPath: string,
+  requiredDeps: Record<string, string>
+): boolean {
+  // Read the package.json
+
+  const nearestPackageJson = readJSONSync(findNearestPackageJson(srcPath)!) as PackageJson;
+  const rootPackageJSON = readJSONSync(resolve(rootPath, 'package.json')) as PackageJson;
+
   const invalidVersion: string[] = [];
   const message: string[] = [];
-  // grab ALL packageJson dependencies and devDependencies as a single array with versions
+  // Grab ALL nearest and root package.json dependencies and devDependencies as a single array with versions
   const packageJSONDeps = {
-    ...packageJSON.dependencies,
-    ...packageJSON.devDependencies,
+    ...rootPackageJSON.dependencies,
+    ...rootPackageJSON.devDependencies,
+    ...nearestPackageJson.dependencies,
+    ...nearestPackageJson.devDependencies,
   } as Record<string, string>;
 
   // all the deps which are missing
@@ -179,7 +174,8 @@ export function isDepsPreReq(basePath: string, requiredDeps: Record<string, stri
     (dep) => !Object.keys(packageJSONDeps).includes(extractDepName(dep))
   );
 
-  DEBUG_CALLBACK('basePath', basePath);
+  DEBUG_CALLBACK('rootPath', rootPath);
+  DEBUG_CALLBACK('srcPath', srcPath);
   DEBUG_CALLBACK('packageJSONDeps', packageJSONDeps);
   DEBUG_CALLBACK('missingDeps', missingDeps);
 

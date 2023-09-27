@@ -96,12 +96,34 @@ export function findPackageRootDirectory(startPath: string, stopPath?: string): 
 }
 
 export function findNearestPackageJson(startPath: string, stopPath?: string): string | undefined {
-  const foundPackageJson = findUpSync('package.json', {
-    cwd: startPath,
-    stopAt: stopPath,
-  });
+  return findNearestFileName('package.json', startPath, stopPath);
+}
 
-  return foundPackageJson;
+export function findNearestTSConfig(startPath: string, stopPath?: string): string | undefined {
+  return findNearestFileName('tsconfig.json', startPath, stopPath);
+}
+
+export function findNearestESLintConfig(startPath: string, stopPath?: string): string | undefined {
+  const configNames = [
+    '.eslintrc.js',
+    '.eslintrc.json',
+    '.eslintrc.cjs',
+    '.eslintrc.yml',
+    '.eslintrc.yaml',
+  ];
+
+  return findNearestFileName(configNames, startPath, stopPath);
+}
+
+/**
+ * Finds fhe first found file
+ */
+export function findNearestFileName(
+  fileName: string | string[],
+  startPath: string,
+  stopPath?: string
+): string | undefined {
+  return findUpSync(fileName, { cwd: startPath, stopAt: stopPath });
 }
 
 // rather than explicitly setting from node_modules dir we need to handle workspaces use case
