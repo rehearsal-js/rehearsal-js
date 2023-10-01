@@ -1219,7 +1219,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4(supports-color@6.1.0)
       lodash.debounce: 4.0.8
-      resolve: 1.22.2
+      resolve: 1.22.4
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -1235,7 +1235,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4(supports-color@6.1.0)
       lodash.debounce: 4.0.8
-      resolve: 1.22.2
+      resolve: 1.22.4
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -1251,7 +1251,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4(supports-color@6.1.0)
       lodash.debounce: 4.0.8
-      resolve: 1.22.2
+      resolve: 1.22.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7263,7 +7263,7 @@ packages:
       glob: 7.2.3
       pkg-up: 2.0.0
       reselect: 3.0.1
-      resolve: 1.22.2
+      resolve: 1.22.4
     dev: true
 
   /babel-plugin-module-resolver@4.1.0:
@@ -7274,7 +7274,7 @@ packages:
       glob: 7.2.3
       pkg-up: 3.1.0
       reselect: 4.1.7
-      resolve: 1.22.2
+      resolve: 1.22.4
     dev: true
 
   /babel-plugin-polyfill-corejs2@0.3.3(@babel/core@7.21.4):
@@ -9785,7 +9785,7 @@ packages:
       lodash: 4.17.21
       mini-css-extract-plugin: 2.7.5(webpack@5.79.0)
       parse5: 6.0.1
-      resolve: 1.22.2
+      resolve: 1.22.4
       resolve-package-path: 4.0.3
       semver: 7.5.4
       style-loader: 2.0.0(webpack@5.79.0)
@@ -9825,7 +9825,7 @@ packages:
       lodash: 4.17.21
       mini-css-extract-plugin: 2.7.5(webpack@5.88.2)
       parse5: 6.0.1
-      resolve: 1.22.2
+      resolve: 1.22.4
       resolve-package-path: 4.0.3
       semver: 7.5.4
       style-loader: 2.0.0(webpack@5.88.2)
@@ -10116,7 +10116,7 @@ packages:
       ember-cli-babel-plugin-helpers: 1.1.1
       execa: 1.0.0
       fs-extra: 7.0.1
-      resolve: 1.22.2
+      resolve: 1.22.4
       rsvp: 4.8.5
       semver: 6.3.1
       stagehand: 1.0.1
@@ -10175,7 +10175,7 @@ packages:
       debug: 4.3.4(supports-color@6.1.0)
       execa: 4.1.0
       fs-extra: 9.1.0
-      resolve: 1.22.2
+      resolve: 1.22.4
       rsvp: 4.8.5
       semver: 7.5.4
       stagehand: 1.0.1
@@ -15036,7 +15036,7 @@ packages:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
     dependencies:
       hosted-git-info: 2.8.9
-      resolve: 1.22.2
+      resolve: 1.22.4
       semver: 5.7.1
       validate-npm-package-license: 3.0.4
     dev: true
@@ -16407,7 +16407,7 @@ packages:
     engines: {node: 8.* || 10.* || >= 12}
     dependencies:
       path-root: 0.1.1
-      resolve: 1.22.2
+      resolve: 1.22.4
     dev: true
 
   /resolve-package-path@3.1.0:
