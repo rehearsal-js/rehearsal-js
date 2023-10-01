@@ -59,7 +59,7 @@
     "minimatch": "^9.0.3",
     "simple-git": "^3.17.0",
     "tmp": "^0.2.1",
-    "type-fest": "^3.8.0",
+    "type-fest": "^4.3.3",
     "which": "^3.0.0",
     "winston": "^3.8.2",
     "yaml": "^2.2.1"

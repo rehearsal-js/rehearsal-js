@@ -201,8 +201,8 @@ importers:
         specifier: ^0.2.1
         version: 0.2.1
       type-fest:
-        specifier: ^3.8.0
-        version: 3.8.0
+        specifier: ^4.3.3
+        version: 4.3.3
       which:
         specifier: ^3.0.0
         version: 3.0.0
@@ -384,8 +384,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       type-fest:
-        specifier: ^3.8.0
-        version: 3.8.0
+        specifier: ^4.3.3
+        version: 4.3.3
       typescript:
         specifier: ^5
         version: 5.2.2
@@ -523,8 +523,8 @@ importers:
         specifier: ^0.34.3
         version: 0.34.3(vitest@0.34.3)
       type-fest:
-        specifier: ^3.8.0
-        version: 3.8.0
+        specifier: ^4.3.3
+        version: 4.3.3
       vitest:
         specifier: ^0.34.3
         version: 0.34.3
@@ -862,8 +862,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1
       type-fest:
-        specifier: ^3.10.0
-        version: 3.10.0(typescript@5.2.2)
+        specifier: ^4.3.3
+        version: 4.3.3
       vitest:
         specifier: ^0.34.3
         version: 0.34.3
@@ -951,8 +951,8 @@ importers:
         specifier: ^3.17.0
         version: 3.17.0
       type-fest:
-        specifier: ^3.8.0
-        version: 3.8.0
+        specifier: ^4.3.3
+        version: 4.3.3
       typescript:
         specifier: ^5
         version: 5.2.2
@@ -18215,18 +18215,9 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  /type-fest@3.10.0(typescript@5.2.2):
-    resolution: {integrity: sha512-hmAPf1datm+gt3c2mvu0sJyhFy6lTkIGf0GzyaZWxRLnabQfPUqg6tF95RPg6sLxKI7nFLGdFxBcf2/7+GXI+A==}
-    engines: {node: '>=14.16'}
-    peerDependencies:
-      typescript: '>=4.7.0'
-    dependencies:
-      typescript: 5.2.2
-    dev: true
-
-  /type-fest@3.8.0:
-    resolution: {integrity: sha512-FVNSzGQz9Th+/9R6Lvv7WIAkstylfHN2/JYxkyhhmKFYh9At2DST8t6L6Lref9eYO8PXFTfG9Sg1Agg0K3vq3Q==}
-    engines: {node: '>=14.16'}
+  /type-fest@4.3.3:
+    resolution: {integrity: sha512-bxhiFii6BBv6UiSDq7uKTMyADT9unXEl3ydGefndVLxFeB44LRbT4K7OJGDYSyDrKnklCC1Pre68qT2wbUl2Aw==}
+    engines: {node: '>=16'}
 
   /type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
