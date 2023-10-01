@@ -128,7 +128,7 @@
     "vitest": "^0.34.3",
     "webpack": "^5.0.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3",
+    "webpack-dev-server": "^4.15.1",
     "winston": "^3.8.2"
   },
   "packageManager": "pnpm@8.6.7",
