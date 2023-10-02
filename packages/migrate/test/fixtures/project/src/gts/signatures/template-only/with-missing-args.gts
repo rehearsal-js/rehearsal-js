@@ -16,3 +16,9 @@ interface GoodbyeSignature {}
 export const Goodbye: TemplateOnlyComponent<GoodbyeSignature> = <template>
   <span>Goodbye, {{@name}}!</span>
 </template>;
+
+// Missing Signature
+
+export const Salutation: TemplateOnlyComponent = <template>
+  <span>Salutation, {{@name}}!</span>
+</template>;

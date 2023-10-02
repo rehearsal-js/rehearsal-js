@@ -17,6 +17,7 @@ import {
   getNearestComponentClassDeclaration,
   getNearestTemplateOnlyComponentVariableDeclaration,
   getPropertyOnComponentSignatureInterface,
+  type LikeTemplateOnlyComponentVariableDeclaration,
 } from './glint-parsing-utils.js';
 import type { CodeFix, DiagnosticWithContext } from '../../types.js';
 
@@ -126,7 +127,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
 
     // Handle Component Class usecase
     if (!hasComponentSignature(classDeclaration)) {
-      return this.fixMissingComponentSignatureInterface(
+      return this.fixMissingComponentSignatureInterfaceForClass(
         glintDiagnostic,
         sourceFile,
         classDeclaration
@@ -160,7 +161,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     );
   }
 
-  private fixMissingComponentSignatureInterface(
+  private fixMissingComponentSignatureInterfaceForClass(
     d: GlintDiagnosticWithContext,
     sourceFile: ts.SourceFile,
     classDeclaration: ts.ClassDeclaration
@@ -318,8 +319,7 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     const signatureIdentifier = getComponentSignatureNameFromTemplateOnlyComponent(toc);
 
     if (!signatureIdentifier) {
-      // TODO This is a ToC but there is no signature, we can fix this.
-      return;
+      return this.fixMissingComponentSignatureInterfaceForTemplate(d, sourceFile, toc);
     }
 
     const signatureInterface = getInterfaceByIdentifier(sourceFile, signatureIdentifier);
@@ -337,5 +337,64 @@ export class AddMissingArgToComponentSignature implements CodeFix {
     }
 
     return this.fixMissingArgumentOnArgsProperty(d, sourceFile, signatureInterface, argName);
+  }
+
+  private fixMissingComponentSignatureInterfaceForTemplate(
+    d: GlintDiagnosticWithContext,
+    sourceFile: ts.SourceFile,
+    toc: LikeTemplateOnlyComponentVariableDeclaration
+  ): ts.CodeFixAction | undefined {
+    if (!toc.type) {
+      // Case where the TOC does not have the TemplateOnlyComponent type applied.
+      return;
+    }
+
+    const originalType = d.glintService.transformManager.getOriginalRange(
+      sourceFile.fileName,
+      toc.type.pos,
+      toc.type.end
+    );
+
+    if (!ts.isIdentifier(toc.name)) {
+      return;
+    }
+
+    // Get variable name for the TOC
+    const variableName: string = toc.name.escapedText.toString();
+
+    const signatureName = `${variableName}Signature`;
+
+    const changes: [ts.FileTextChanges] = [
+      ChangesFactory.insertText(d.file, originalType.originalEnd, `<${signatureName}>`),
+    ];
+
+    if (!getInterfaceByName(sourceFile, signatureName)) {
+      let targetNode: ts.Node = toc;
+
+      // Findup from toc to the last node before the file.
+      while (!ts.isSourceFile(targetNode.parent)) {
+        targetNode = targetNode.parent;
+      }
+
+      const originalTOC = d.glintService.transformManager.getOriginalRange(
+        sourceFile.fileName,
+        targetNode.pos,
+        targetNode.end
+      );
+      // Add interface above TOC variable declaration
+      const addSignatureChange = ChangesFactory.insertText(
+        d.file,
+        originalTOC.originalStart,
+        `\n\nexport interface ${signatureName} { Args: {} }\n\n`
+      );
+
+      changes.push(addSignatureChange);
+    }
+
+    return createCodeFixAction(
+      'addMissingArgToComponentSignature',
+      changes,
+      'Adds the Arg property to the Component Signature'
+    );
   }
 }
