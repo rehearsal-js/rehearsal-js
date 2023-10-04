@@ -1,3 +1,32 @@
+## 2.3.0 (2023-10-04)
+
+* feat(codefix): add parse utils for template only components (#1274) ([4f57cad](https://github.com/rehearsal-js/rehearsal-js/commit/4f57cad)), closes [#1274](https://github.com/rehearsal-js/rehearsal-js/issues/1274)
+* feat(codefix): adds missing args to component signature for TOC (#1276) ([6a1234a](https://github.com/rehearsal-js/rehearsal-js/commit/6a1234a)), closes [#1276](https://github.com/rehearsal-js/rehearsal-js/issues/1276)
+* feat(codefix): create component signature interface for TOC (#1278) ([3e9c370](https://github.com/rehearsal-js/rehearsal-js/commit/3e9c370)), closes [#1278](https://github.com/rehearsal-js/rehearsal-js/issues/1278)
+* feat(codefix): support TOC type from `@ember/component/template-only` (#1279) ([5ce0a27](https://github.com/rehearsal-js/rehearsal-js/commit/5ce0a27)), closes [#1279](https://github.com/rehearsal-js/rehearsal-js/issues/1279)
+* chore: unwind circular monorepo deps (#1271) ([ae02c03](https://github.com/rehearsal-js/rehearsal-js/commit/ae02c03)), closes [#1271](https://github.com/rehearsal-js/rehearsal-js/issues/1271)
+* chore(deps-dev): bump @commitlint/config-conventional from 17.6.7 to 17.7.0 (#1257) ([de20e75](https://github.com/rehearsal-js/rehearsal-js/commit/de20e75)), closes [#1257](https://github.com/rehearsal-js/rehearsal-js/issues/1257)
+* chore(deps-dev): bump @glimmerx/babel-preset from 0.6.7 to 0.6.8 (#1267) ([2c796ac](https://github.com/rehearsal-js/rehearsal-js/commit/2c796ac)), closes [#1267](https://github.com/rehearsal-js/rehearsal-js/issues/1267)
+* chore(deps-dev): bump @tsconfig/ember from 2.0.0 to 3.0.0 (#1254) ([695de62](https://github.com/rehearsal-js/rehearsal-js/commit/695de62)), closes [#1254](https://github.com/rehearsal-js/rehearsal-js/issues/1254)
+* chore(deps-dev): bump @types/ember from 4.0.3 to 4.0.4 (#1259) ([6ef0ffe](https://github.com/rehearsal-js/rehearsal-js/commit/6ef0ffe)), closes [#1259](https://github.com/rehearsal-js/rehearsal-js/issues/1259)
+* chore(deps-dev): bump @types/ember__engine from 4.0.4 to 4.0.5 (#1261) ([5f6cb32](https://github.com/rehearsal-js/rehearsal-js/commit/5f6cb32)), closes [#1261](https://github.com/rehearsal-js/rehearsal-js/issues/1261)
+* chore(deps-dev): bump @types/ember__runloop from 4.0.2 to 4.0.4 (#1258) ([90f75fd](https://github.com/rehearsal-js/rehearsal-js/commit/90f75fd)), closes [#1258](https://github.com/rehearsal-js/rehearsal-js/issues/1258)
+* chore(deps-dev): bump @types/ember-data__adapter from 4.0.1 to 4.0.2 (#1269) ([a9a6ce0](https://github.com/rehearsal-js/rehearsal-js/commit/a9a6ce0)), closes [#1269](https://github.com/rehearsal-js/rehearsal-js/issues/1269)
+* chore(deps-dev): bump @types/ember-data__store from 4.0.2 to 4.0.3 (#1263) ([88643da](https://github.com/rehearsal-js/rehearsal-js/commit/88643da)), closes [#1263](https://github.com/rehearsal-js/rehearsal-js/issues/1263)
+* chore(deps-dev): bump @types/node from 20.3.3 to 20.5.9 (#1272) ([3f5e737](https://github.com/rehearsal-js/rehearsal-js/commit/3f5e737)), closes [#1272](https://github.com/rehearsal-js/rehearsal-js/issues/1272)
+* chore(deps-dev): bump ember-template-lint from 5.6.0 to 5.11.2 (#1265) ([825854e](https://github.com/rehearsal-js/rehearsal-js/commit/825854e)), closes [#1265](https://github.com/rehearsal-js/rehearsal-js/issues/1265)
+* chore(deps-dev): bump eslint-plugin-import from 2.27.5 to 2.28.1 (#1256) ([b1221a7](https://github.com/rehearsal-js/rehearsal-js/commit/b1221a7)), closes [#1256](https://github.com/rehearsal-js/rehearsal-js/issues/1256)
+* chore(deps-dev): bump qunit-dom from 1.1.0 to 2.0.0 (#1264) ([b9fffe2](https://github.com/rehearsal-js/rehearsal-js/commit/b9fffe2)), closes [#1264](https://github.com/rehearsal-js/rehearsal-js/issues/1264)
+* chore(deps-dev): bump typescript-json-schema from 0.56.0 to 0.60.0 (#1260) ([0df5b4f](https://github.com/rehearsal-js/rehearsal-js/commit/0df5b4f)), closes [#1260](https://github.com/rehearsal-js/rehearsal-js/issues/1260)
+* chore(deps-dev): bump webpack from 5.79.0 to 5.88.2 (#1253) ([58c52c9](https://github.com/rehearsal-js/rehearsal-js/commit/58c52c9)), closes [#1253](https://github.com/rehearsal-js/rehearsal-js/issues/1253)
+* chore(gh-action-bot): adding new diagnostics ([b84f052](https://github.com/rehearsal-js/rehearsal-js/commit/b84f052))
+* chore(gh-action-bot): adding new diagnostics ([b15292f](https://github.com/rehearsal-js/rehearsal-js/commit/b15292f))
+* chore(gh-action-bot): adding new diagnostics ([f9e213a](https://github.com/rehearsal-js/rehearsal-js/commit/f9e213a))
+* chore(gh-action-bot): adding new diagnostics ([e8c3daf](https://github.com/rehearsal-js/rehearsal-js/commit/e8c3daf))
+* fix: better validation to TS and Glint configs + Glint project detection (#1241) ([5627183](https://github.com/rehearsal-js/rehearsal-js/commit/5627183)), closes [#1241](https://github.com/rehearsal-js/rehearsal-js/issues/1241)
+
+
+
 ## 2.2.0 (2023-08-31)
 
 * feat: progress & duration in the CLI (#1240) ([593bc11](https://github.com/rehearsal-js/rehearsal-js/commit/593bc11)), closes [#1240](https://github.com/rehearsal-js/rehearsal-js/issues/1240)
