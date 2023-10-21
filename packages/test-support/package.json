@@ -39,7 +39,7 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.3",
     "ember-cli": "^4.11.0",
-    "ember-data": "^4.11.3",
+    "ember-data": "^5.3.0",
     "ember-source": "^5.1.2",
     "vitest": "^0.34.3"
   },
