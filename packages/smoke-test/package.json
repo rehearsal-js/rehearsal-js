@@ -32,7 +32,7 @@
     "@glimmerx/helper": "^0.6.7",
     "@glimmerx/modifier": "^0.6.7",
     "@glimmerx/prettier-plugin-component-templates": "^0.6.0",
-    "@glint/core": "^1.1.0",
+    "@glint/core": "^1.2.1",
     "@glint/environment-ember-loose": "^1.1.0",
     "@glint/environment-ember-template-imports": "^1.1.0",
     "@glint/environment-glimmerx": "^1.1.0",

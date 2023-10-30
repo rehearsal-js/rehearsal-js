@@ -18,8 +18,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:packages/reporter
@@ -290,8 +290,8 @@ importers:
   packages/migrate:
     dependencies:
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@rehearsal/migration-graph':
         specifier: workspace:*
         version: link:../migration-graph
@@ -412,8 +412,8 @@ importers:
   packages/plugins:
     dependencies:
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@rehearsal/codefixes':
         specifier: workspace:*
         version: link:../codefixes
@@ -498,8 +498,8 @@ importers:
   packages/service:
     dependencies:
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@rehearsal/utils':
         specifier: workspace:*
         version: link:../utils
@@ -513,8 +513,8 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       vscode-uri:
-        specifier: ^3.0.7
-        version: 3.0.7
+        specifier: ^3.0.8
+        version: 3.0.8
     devDependencies:
       '@rehearsal/reporter':
         specifier: workspace:*
@@ -586,8 +586,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.5
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@glint/environment-ember-loose':
         specifier: ^1.1.0
         version: 1.1.0(@glimmer/component@1.1.2)(@glint/template@1.1.0)(@types/ember__array@4.0.3)(@types/ember__component@4.0.14)(@types/ember__controller@4.0.4)(@types/ember__object@4.0.5)(@types/ember__routing@4.0.12)(ember-cli-htmlbars@6.2.0)(ember-modifier@4.1.0)
@@ -5089,8 +5089,8 @@ packages:
     resolution: {integrity: sha512-St2PfnRBbS/B1xQMBw1qExVMC4Kg2aW80qk6VQc+r2RDdBc7pfWcC7mO8Tv6p0o9cIQXdVzBOds49PFEifICow==}
     dev: true
 
-  /@glint/core@1.1.0(typescript@5.2.2):
-    resolution: {integrity: sha512-SeAdKrQF65NRDzzmkwUC0VRZjBDysQXeIKXhyCUtXaatFDeyC0zdESJRcUykMdQoI5R6MKcts2X3gthLRuEGKA==}
+  /@glint/core@1.2.1(typescript@5.2.2):
+    resolution: {integrity: sha512-25Zn65aLSN1M7s0D950sTNElZYRqa6HFA0xcT03iI/vQd1F6c3luMAXbFrsTSHlktZx2dqJ38c2dUnZJQBQgMw==}
     hasBin: true
     peerDependencies:
       typescript: '>=4.8.0'
@@ -5103,7 +5103,7 @@ packages:
       uuid: 8.3.2
       vscode-languageserver: 8.1.0
       vscode-languageserver-textdocument: 1.0.8
-      vscode-uri: 3.0.7
+      vscode-uri: 3.0.8
       yargs: 17.7.2
     transitivePeerDependencies:
       - supports-color
@@ -18725,8 +18725,8 @@ packages:
     dependencies:
       vscode-languageserver-protocol: 3.17.3
 
-  /vscode-uri@3.0.7:
-    resolution: {integrity: sha512-eOpPHogvorZRobNqJGhapa0JdwaxpjVvyBp0QIUMRMSf8ZAlqOdEquKuRmw9Qwu0qXtJIWqFtMkmvJjUZmMjVA==}
+  /vscode-uri@3.0.8:
+    resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
   /walk-sync@0.2.7:
     resolution: {integrity: sha512-OH8GdRMowEFr0XSHQeX5fGweO6zSVHo7bG/0yJQx6LAj9Oukz0C8heI3/FYectT66gY0IPGe89kOvU410/UNpg==}

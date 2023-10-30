@@ -58,7 +58,7 @@
     "winston": "^3.8.2"
   },
   "peerDependencies": {
-    "@glint/core": "^1.1.0",
+    "@glint/core": "^1.2.1",
     "typescript": "^5"
   },
   "packageManager": "pnpm@8.6.7",

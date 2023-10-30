@@ -13,7 +13,7 @@
     "@ember/test-helpers": "^2.9.3",
     "@glimmer/component": "^1.1.2",
     "@glimmerx/component": "^0.6.8",
-    "@glint/core": "^1.1.0",
+    "@glint/core": "^1.2.1",
     "@glint/environment-ember-loose": "^1.1.0",
     "@glint/environment-ember-template-imports": "^1.1.0",
     "@glint/environment-glimmerx": "^1.1.0",
