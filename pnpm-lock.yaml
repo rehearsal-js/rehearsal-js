@@ -18,8 +18,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@glint/core':
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.2.2)
+        specifier: ^1.2.1
+        version: 1.2.1(typescript@5.2.2)
       '@rehearsal/reporter':
         specifier: workspace:*
         version: link:packages/reporter
@@ -5107,6 +5107,26 @@ packages:
       yargs: 17.7.2
     transitivePeerDependencies:
       - supports-color
+
+  /@glint/core@1.2.1(typescript@5.2.2):
+    resolution: {integrity: sha512-25Zn65aLSN1M7s0D950sTNElZYRqa6HFA0xcT03iI/vQd1F6c3luMAXbFrsTSHlktZx2dqJ38c2dUnZJQBQgMw==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=4.8.0'
+    dependencies:
+      '@glimmer/syntax': 0.84.3
+      escape-string-regexp: 4.0.0
+      semver: 7.5.4
+      silent-error: 1.1.1
+      typescript: 5.2.2
+      uuid: 8.3.2
+      vscode-languageserver: 8.1.0
+      vscode-languageserver-textdocument: 1.0.8
+      vscode-uri: 3.0.8
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@glint/environment-ember-loose@1.1.0(@glimmer/component@1.1.2)(@glint/template@1.1.0)(@types/ember__array@4.0.3)(@types/ember__component@4.0.14)(@types/ember__controller@4.0.4)(@types/ember__object@4.0.5)(@types/ember__routing@4.0.12)(ember-cli-htmlbars@6.2.0)(ember-modifier@4.1.0):
     resolution: {integrity: sha512-Qwr3OAptRZ8zqxaPvpVBdbSiiImYMRNu+0IPQGaDutqOV80GzWYeiMuEyPC0Nwy4mQ3991YxE24Q+a5/FTfTNw==}
@@ -18725,12 +18745,8 @@ packages:
     dependencies:
       vscode-languageserver-protocol: 3.17.3
 
-  /vscode-uri@3.0.7:
-    resolution: {integrity: sha512-eOpPHogvorZRobNqJGhapa0JdwaxpjVvyBp0QIUMRMSf8ZAlqOdEquKuRmw9Qwu0qXtJIWqFtMkmvJjUZmMjVA==}
-
   /vscode-uri@3.0.8:
     resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
-    dev: false
 
   /walk-sync@0.2.7:
     resolution: {integrity: sha512-OH8GdRMowEFr0XSHQeX5fGweO6zSVHo7bG/0yJQx6LAj9Oukz0C8heI3/FYectT66gY0IPGe89kOvU410/UNpg==}
