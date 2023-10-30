@@ -2,7 +2,7 @@
 // about how it should be imported (╯°□°)╯︵ ┻━┻
 // eslint-disable-next-line import/default
 import { URI } from 'vscode-uri';
-import * as ts from 'typescript';
+import ts from 'typescript';
 import {
   DiagnosticSeverity,
   type TextDocumentEdit,
