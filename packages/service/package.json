@@ -37,7 +37,7 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@glint/core": "^1.1.0",
+    "@glint/core": "^1.2.1",
     "@rehearsal/utils": "workspace:*",
     "find-up": "^6.3.0",
     "vscode-languageserver": "^8.1.0",
