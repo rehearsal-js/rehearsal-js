@@ -1,8 +1,8 @@
 // This is disabled because vscode-uri is a commonjs module, which causes TS and Eslint to disagree
 // about how it should be imported (╯°□°)╯︵ ┻━┻
 // eslint-disable-next-line import/default
-import VSCodeURI from 'vscode-uri';
-import ts from 'typescript';
+import { URI } from 'vscode-uri';
+import * as ts from 'typescript';
 import {
   DiagnosticSeverity,
   type TextDocumentEdit,
@@ -182,7 +182,7 @@ export class GlintService implements Service {
           // This is disabled because vscode-uri is a commonjs module, which causes TS and Eslint
           // to disagree about how it should be imported (╯°□°)╯︵ ┻━┻
           // eslint-disable-next-line import/no-named-as-default-member
-          const filePath = VSCodeURI.URI.parse(change.textDocument.uri).fsPath.replace(/\\/g, '/');
+          const filePath = URI.parse(change.textDocument.uri).fsPath.replace(/\\/g, '/');
 
           const fixSourceFile = this.getSourceFile(filePath);
 
