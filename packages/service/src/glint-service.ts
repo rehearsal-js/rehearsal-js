@@ -1,6 +1,3 @@
-// This is disabled because vscode-uri is a commonjs module, which causes TS and Eslint to disagree
-// about how it should be imported (╯°□°)╯︵ ┻━┻
-// eslint-disable-next-line import/default
 import { URI } from 'vscode-uri';
 import ts from 'typescript';
 import {
