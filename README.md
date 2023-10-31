@@ -365,6 +365,7 @@ let id = entityInfo.id;
 # Improve Type Inference
 
 ## Add Missing Types
+
 You can improve typing by adding additional typed packages to the project. For example:
 
 ```
@@ -376,18 +377,24 @@ You can improve typing by adding additional typed packages to the project. For e
 You will find out which types packages to add after you run rehearsal migrate and when you inspect the rehearsal TODOS. Once you add these packages, run `rehearsal fix`
 
 ## Remove Invalid JSDoc Comments
+
 By default Rehearsal will prioritize types coming from JSDoc directives as these are explictly stated from the user. However in instances where JSDoc directives are invalid / outdated, the type inference will also be invalid. To remedy this simply delete the invalid JSDoc comment in question and re-run `rehearsal fix`.
 
 # Post Migration
+
 ## Package.json Directives
+
 After your project has been migrated to TypeScript, remember to update your export paths in package.json. eg `main`, `files`, and `types`. Rehearsal will handle your TypeScript migration, however it will not handle the build step in transpiling TS -> JS. For that take a look at [integrating-with-build-tools](https://www.typescriptlang.org/docs/handbook/integrating-with-build-tools.html).
 
 #### JS Dist Files
+
 `main`: point to the transpiled .js file in dist (produced either by babel or tsc)
 `files`: point to the transpiled .js file in dist (produced either by babel or tsc)
 
 #### Type Declaration Files
+
 `types`: point to the declaration files `d.ts` in dist (produced by tsc)
 
 # Known Limitations
+
 Rehearsal will do its best to infer types, via a series of plugins. Type inference is a complex problem, and Rehearsal is not perfect. Under the hood Rehearsal will infer types from JSDoc, ESLint, TypeScript Compiler and Rehearsal Plugins. Many times there are multiple possible types Rehearsal can infer, and it will choose the first one. This is not always the correct type, and you will need to manually fix these errors. Rehearsal will report these errors in the "rehearsal-report" file and with inline "`@ts-expect-error @rehearsal TODO`" comments in the code.
