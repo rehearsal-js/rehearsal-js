@@ -38,14 +38,14 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@rehearsal/ts-utils": "workspace:*",
+    "@rehearsal/ts-utils": "^2.3.2",
     "debug": "^4.3.4",
     "vscode-languageserver": "^8.1.0"
   },
   "devDependencies": {
-    "@rehearsal/migrate": "workspace:*",
-    "@rehearsal/reporter": "workspace:*",
-    "@rehearsal/service": "workspace:*",
+    "@rehearsal/migrate": "^2.3.2",
+    "@rehearsal/reporter": "^2.3.2",
+    "@rehearsal/service": "^2.3.2",
     "@vitest/coverage-v8": "^0.34.3",
     "fixturify": "^3.0.0",
     "fixturify-project": "^5.2.0",
@@ -54,9 +54,6 @@
     "prettier": "^3.0.2",
     "tmp": "^0.2.1",
     "vitest": "^0.34.3"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
   },
   "packageManager": "pnpm@8.6.7",
   "engines": {
