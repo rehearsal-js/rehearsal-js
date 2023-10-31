@@ -36,12 +36,12 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@rehearsal/migrate": "^2.3.2",
-    "@rehearsal/migration-graph": "^2.3.2",
-    "@rehearsal/reporter": "^2.3.2",
-    "@rehearsal/service": "^2.3.2",
-    "@rehearsal/ts-utils": "^2.3.2",
-    "@rehearsal/utils": "^2.3.2",
+    "@rehearsal/migrate": "workspace:*",
+    "@rehearsal/migration-graph": "workspace:*",
+    "@rehearsal/reporter": "workspace:*",
+    "@rehearsal/service": "workspace:*",
+    "@rehearsal/ts-utils": "workspace:*",
+    "@rehearsal/utils": "workspace:*",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
     "compare-versions": "6.0.0-rc.1",
@@ -65,7 +65,7 @@
     "yaml": "^2.2.1"
   },
   "devDependencies": {
-    "@rehearsal/test-support": "^2.3.2",
+    "@rehearsal/test-support": "workspace:*",
     "@types/js-yaml": "^4.0.5",
     "@types/which": "^3.0.0",
     "@vitest/coverage-v8": "^0.34.3",

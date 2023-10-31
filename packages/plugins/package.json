@@ -37,9 +37,9 @@
     "version": "pnpm version"
   },
   "dependencies": {
-    "@rehearsal/codefixes": "^2.3.2",
-    "@rehearsal/ts-utils": "^2.3.2",
-    "@rehearsal/utils": "^2.3.2",
+    "@rehearsal/codefixes": "workspace:*",
+    "@rehearsal/ts-utils": "workspace:*",
+    "@rehearsal/utils": "workspace:*",
     "@types/object-hash": "^3.0.2",
     "debug": "^4.3.4",
     "eslint": "^8.40.0",
@@ -48,8 +48,8 @@
     "vscode-languageserver": "^8.1.0"
   },
   "devDependencies": {
-    "@rehearsal/reporter": "^2.3.2",
-    "@rehearsal/service": "^2.3.2",
+    "@rehearsal/reporter": "workspace:*",
+    "@rehearsal/service": "workspace:*",
     "@types/eslint": "^8.37.0",
     "@vitest/coverage-v8": "^0.34.3",
     "fixturify-project": "^5.2.0",
