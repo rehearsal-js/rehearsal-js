@@ -1,3 +1,22 @@
+## <small>2.3.1 (2023-10-31)</small>
+
+* chore: fix lockfile ([73532b8](https://github.com/rehearsal-js/rehearsal-js/commit/73532b8))
+* chore(deps-dev): bump @babel/preset-env from 7.21.4 to 7.23.2 (#1302) ([c25f7e2](https://github.com/rehearsal-js/rehearsal-js/commit/c25f7e2)), closes [#1302](https://github.com/rehearsal-js/rehearsal-js/issues/1302)
+* chore(deps-dev): bump @ember/string and @types/ember__string (#1284) ([af6dd10](https://github.com/rehearsal-js/rehearsal-js/commit/af6dd10)), closes [#1284](https://github.com/rehearsal-js/rehearsal-js/issues/1284)
+* chore(deps-dev): bump @glimmerx/modifier from 0.6.7 to 0.6.8 (#1281) ([7c1d8d1](https://github.com/rehearsal-js/rehearsal-js/commit/7c1d8d1)), closes [#1281](https://github.com/rehearsal-js/rehearsal-js/issues/1281)
+* chore(deps-dev): bump @types/ember__engine from 4.0.4 to 4.0.7 (#1289) ([3cef93c](https://github.com/rehearsal-js/rehearsal-js/commit/3cef93c)), closes [#1289](https://github.com/rehearsal-js/rehearsal-js/issues/1289)
+* chore(deps-dev): bump @typescript-eslint/eslint-plugin from 5.58.0 to 5.62.0 (#1283) ([dcf82ed](https://github.com/rehearsal-js/rehearsal-js/commit/dcf82ed)), closes [#1283](https://github.com/rehearsal-js/rehearsal-js/issues/1283)
+* chore(deps-dev): bump ember-template-lint from 5.6.0 to 5.11.2 (#1282) ([f0519ef](https://github.com/rehearsal-js/rehearsal-js/commit/f0519ef)), closes [#1282](https://github.com/rehearsal-js/rehearsal-js/issues/1282)
+* chore(deps-dev): bump webpack-dev-server from 3.10.3 to 4.15.1 (#1298) ([4611d74](https://github.com/rehearsal-js/rehearsal-js/commit/4611d74)), closes [#1298](https://github.com/rehearsal-js/rehearsal-js/issues/1298)
+* chore(deps): bump es-module-lexer from 1.2.1 to 1.3.1 (#1294) ([7484bbd](https://github.com/rehearsal-js/rehearsal-js/commit/7484bbd)), closes [#1294](https://github.com/rehearsal-js/rehearsal-js/issues/1294)
+* chore(deps): bump fast-glob from 3.2.12 to 3.3.1 (#1293) ([ec7c43b](https://github.com/rehearsal-js/rehearsal-js/commit/ec7c43b)), closes [#1293](https://github.com/rehearsal-js/rehearsal-js/issues/1293)
+* chore(deps): bump magic-string from 0.30.0 to 0.30.5 (#1303) ([4abb7fc](https://github.com/rehearsal-js/rehearsal-js/commit/4abb7fc)), closes [#1303](https://github.com/rehearsal-js/rehearsal-js/issues/1303)
+* chore(deps): bump type-fest from 3.8.0 to 4.3.3 (#1299) ([f0441bd](https://github.com/rehearsal-js/rehearsal-js/commit/f0441bd)), closes [#1299](https://github.com/rehearsal-js/rehearsal-js/issues/1299)
+* chore(gh-action-bot): adding new diagnostics ([4e5965d](https://github.com/rehearsal-js/rehearsal-js/commit/4e5965d))
+* (fix) Updating glint-service to use the exported `URI` method from vscode-uri (#1304) ([2af1820](https://github.com/rehearsal-js/rehearsal-js/commit/2af1820)), closes [#1304](https://github.com/rehearsal-js/rehearsal-js/issues/1304)
+
+
+
 ## 2.3.0 (2023-10-04)
 
 * feat(codefix): add parse utils for template only components (#1274) ([4f57cad](https://github.com/rehearsal-js/rehearsal-js/commit/4f57cad)), closes [#1274](https://github.com/rehearsal-js/rehearsal-js/issues/1274)

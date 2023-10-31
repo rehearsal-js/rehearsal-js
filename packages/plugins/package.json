@@ -1,6 +1,6 @@
 {
   "name": "@rehearsal/plugins",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Rehearsal JavaScript to TypeScript Shared Libraries",
   "keywords": [
     "rehearsal",
