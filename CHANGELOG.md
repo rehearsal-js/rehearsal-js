@@ -1,3 +1,9 @@
+## <small>2.3.2 (2023-10-31)</small>
+
+* chore(readme): fix readme ([b9abc55](https://github.com/rehearsal-js/rehearsal-js/commit/b9abc55))
+
+
+
 ## <small>2.3.1 (2023-10-31)</small>
 
 * chore: fix lockfile ([73532b8](https://github.com/rehearsal-js/rehearsal-js/commit/73532b8))
