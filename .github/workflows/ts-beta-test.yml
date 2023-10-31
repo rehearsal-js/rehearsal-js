@@ -57,7 +57,7 @@ jobs:
         name: Create GitHub issue if tests fail
         if: failure() && github.event_name == 'schedule'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.G_ACCESS_TOKEN }}
           REPO: ${{ github.repository }}
           WORKFLOW: ${{ github.workflow }}
           JOB: ${{ github.job }}
