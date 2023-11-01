@@ -40,7 +40,7 @@ importers:
         version: 8.1.0
       '@types/lodash.get':
         specifier: ^4.4.7
-        version: 4.4.7
+        version: 4.4.8
       '@types/micromatch':
         specifier: ^4.0.2
         version: 4.0.2
@@ -6082,8 +6082,8 @@ packages:
       '@types/node': 20.5.9
     dev: true
 
-  /@types/lodash.get@4.4.7:
-    resolution: {integrity: sha512-af34Mj+KdDeuzsJBxc/XeTtOx0SZHZNLd+hdrn+PcKGQs0EG2TJTzQAOTCZTgDJCArahlCzLWSy8c2w59JRz7Q==}
+  /@types/lodash.get@4.4.8:
+    resolution: {integrity: sha512-XK+co6sBkJxh1vaVP8al6cAA17dX//RNCknGG8JhpHFJfxq/GXKAYB9NKheG22pu2xpWpxfFd65W08EhH2IFlg==}
     dependencies:
       '@types/lodash': 4.14.192
     dev: true
